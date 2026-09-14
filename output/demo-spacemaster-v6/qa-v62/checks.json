@@ -1,0 +1,363 @@
+{
+  "version": "6.2.0",
+  "at": "2026-09-12T06:26:21.944Z",
+  "checks": [
+    {
+      "name": "all V6.2 domain suites are present",
+      "ok": true
+    },
+    {
+      "name": "Node domain and source tests pass; no browser was launched",
+      "ok": true
+    },
+    {
+      "name": "release title and version identify V6.2",
+      "ok": true
+    },
+    {
+      "name": "V6 storage and backup schema retained",
+      "ok": true
+    },
+    {
+      "name": "compiled script parses 0",
+      "ok": true
+    },
+    {
+      "name": "compiled script parses 1",
+      "ok": true
+    },
+    {
+      "name": "compiled extension present project-input",
+      "ok": true
+    },
+    {
+      "name": "compiled extension present decision-refinement",
+      "ok": true
+    },
+    {
+      "name": "compiled extension present workflow-branches",
+      "ok": true
+    },
+    {
+      "name": "compiled extension present release-policy",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K01",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K02",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K03",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K04",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K05",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K06",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K07",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K08",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K09",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K10",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged K11",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged FT01",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged FT02",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged FT03",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged FT04",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged PM00",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged PM01",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged PM02",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged PM03",
+      "ok": true
+    },
+    {
+      "name": "original image unchanged PM04",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/artifact-workspace.css",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/artifact-workspace.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/app.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/auto.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/core.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/data.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/engine.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/export.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/illustrations.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/modals.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/render.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/tokens.css",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/base/ui.css",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/build.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/demo-input.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/experience.css",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/experience.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/merged.css",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/merged.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/navigation.css",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/package.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/product-copy.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/scenarios.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/shell.css",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/shell.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/verify-artifact-workspace.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/verify-conversation-entry.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/verify-navigation.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/verify-scope-controls.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/verify-shell.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/verify-visual.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/verify-yolo.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/verify.mjs",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/visual.css",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged src/merged-v5/yolo.js",
+      "ok": true
+    },
+    {
+      "name": "historical V5 unchanged Lilith Workspace v5.html",
+      "ok": true
+    }
+  ],
+  "domainTestsPassed": 74,
+  "htmlSha256": "311a517496ddf2b07620d90ae554fbc405e8658d435fdd7554ca450005f4f495",
+  "sourceHashes": {
+    "src/demo-spacemaster-v6/archive-images.mjs": "58832f5b9eaad529b0f19bca4e3eef50973041ac6159e8586ad347e3d7f33e24",
+    "src/demo-spacemaster-v6/artifact-workspace.css": "3c92599517e196bd4af368b96a199c912c8d734d09455fb225a25563e2ceb5b1",
+    "src/demo-spacemaster-v6/artifact-workspace.js": "898eadf16022b02f80c7b115896c9982ff5658a2810612cdb1c3f6d49805eabb",
+    "src/demo-spacemaster-v6/build.mjs": "14d75217f1c27d746dd10feb99707a61157b59b6e4639f06f9ab240d1a9c5af6",
+    "src/demo-spacemaster-v6/decision-refinement.css": "a8d15f51cda1538cabde75c0d1f63244dc57dbaa4fad55a5f749f34b945b0d2f",
+    "src/demo-spacemaster-v6/decision-refinement.js": "0bfa89d62888bb7efe95d9696ab33719ce990dcc5f7ce793e557435fb8cc3da4",
+    "src/demo-spacemaster-v6/decision-ui.css": "5ecba0e0397f0ad41216ee10db1f1382156f41048e19790f654d2803d2f3bf7d",
+    "src/demo-spacemaster-v6/decision-ui.js": "85da28958299b6bbd219f959083cbff7f37cf2aa190d9a853afd33cb34e5aaa0",
+    "src/demo-spacemaster-v6/demo-content.js": "8948701e5dfe5ea566ab55370f47419fb833a7fa723e2b125358945ab1a22596",
+    "src/demo-spacemaster-v6/demo-images.css": "ce4734557c6ba0e582f0a89c6ad44a6c8f2c96f268148cb81f2d2a352f0d7aa7",
+    "src/demo-spacemaster-v6/demo-images.js": "4d13cf9c4b2d52181d2836a0411b3c54ccef58aa5f818baa663f384d6953c208",
+    "src/demo-spacemaster-v6/demo-input.js": "68b3acd60572dd2ca8188a8ed80cbb5dbe1f08a91c487361455f344d61b0e647",
+    "src/demo-spacemaster-v6/demo-story.js": "bc85ba413aa2952da31a19fdbc3a113de8030449b87a123b49535ffb2f47e01d",
+    "src/demo-spacemaster-v6/experience.css": "4baea6d3fc879fb9adff089674ebe95b66f44ad2017d721e40932791c932af25",
+    "src/demo-spacemaster-v6/experience.js": "c9d658f59bd1e9470216784bdf18c2dd7f803a4fbbbea9fe745c4c3840ff4ded",
+    "src/demo-spacemaster-v6/image-production.css": "9235b91ffe1689c49377bb7bd9fb7203477ca9508f2ced108934ee2d7a2aa6a5",
+    "src/demo-spacemaster-v6/image-production.js": "f6abe9bb3971a80aa44991eb28d41ee2d3d7c0c2376445c2df959973ec57b493",
+    "src/demo-spacemaster-v6/merged.css": "1c097783315d4d93a683f40478fb5d360c0f4d9d5ac2c805f3e1f3ea83cb3930",
+    "src/demo-spacemaster-v6/merged.js": "f1dd9be2e0306324eb45445ae834d2ec6aa5eb88f627324bd806a71a47f7a617",
+    "src/demo-spacemaster-v6/navigation.css": "42dd1dc47d82c0ba1c89fc2620ad285abd9bb37e4dd4d9423a90183792560b38",
+    "src/demo-spacemaster-v6/package-v62.mjs": "627e525d4385e144a99c4dba859fd35334974aa3ffbfcbcd451b8702661ca6cb",
+    "src/demo-spacemaster-v6/package.mjs": "d5b06a5dfcecd3196edbb97f6b38284679564c7824704ca958fa7be94b844fb1",
+    "src/demo-spacemaster-v6/product-copy.mjs": "24293876616720936f89336a8dc7227bbbf6275d3fa31db015ac933d7bb9d666",
+    "src/demo-spacemaster-v6/project-input.css": "9193de212ed438a3c1bbfb25c1502998fad9197303f2e8e8983d0fe91db92644",
+    "src/demo-spacemaster-v6/project-input.js": "6b866bcfeb2d55c14114605144f81ae34c424147b31f162a4af7803ae9fff0f6",
+    "src/demo-spacemaster-v6/release-policy.js": "41e8c6947c6488dc1a530604b32f16d43a65171c3cb2d0753b5a5b31ad5b94ed",
+    "src/demo-spacemaster-v6/scenarios.js": "f0abdca3518bfe604424904b7c0fb49c0d026affb7b053454cb5caaf65324a48",
+    "src/demo-spacemaster-v6/shell.css": "a332a975aa8c8f4c18a334a7279d689fbe87dca11a8eac471255fa703d7bec1a",
+    "src/demo-spacemaster-v6/shell.js": "3383047125fb909db7131a86f082260305cda33e86af08a69f7ae800737ae6d9",
+    "src/demo-spacemaster-v6/unified-plan.js": "e574ad46b58ce9f847dfcf92fe991ad9bd07acabde2ec66ae1e07e3d9eac1a5c",
+    "src/demo-spacemaster-v6/verify-artifact-workspace.mjs": "03ffd66406dceb76c1d56cec025f8e469dfd9691471fb396106005547a265ef7",
+    "src/demo-spacemaster-v6/verify-browser-independent.mjs": "8aa2455556495e950febd62e1a0f2977c07571d644ab147bf9f8e30b89eee999",
+    "src/demo-spacemaster-v6/verify-conversation-entry.mjs": "3e05d75065c581d6c12319e9b99e56c6c5c7d3f1d416d42b56111dfea3d077bd",
+    "src/demo-spacemaster-v6/verify-decision-ui.mjs": "e2d0eca63226c46e421eb0ea6033d76c6f8e12fcb4c10ef1f5a2dbd688c4f524",
+    "src/demo-spacemaster-v6/verify-demo.mjs": "6d0185cdcec56bc2f27b67c42d810a56b7a2614b1343b6e569f0c1dd0043694c",
+    "src/demo-spacemaster-v6/verify-images.mjs": "45074d0355e3d60d8361ac183172d615956d0d0c21209dc687bb20c4f81a54e9",
+    "src/demo-spacemaster-v6/verify-message-routing.mjs": "95d576222fa39bfbc9667bc4b5c1c3f7b32cd104d30a10131ad9d2c533210025",
+    "src/demo-spacemaster-v6/verify-navigation.mjs": "ecab13c409017113eb384ab5c3014335691f0042a50e669495c9a344be72fb31",
+    "src/demo-spacemaster-v6/verify-production.mjs": "a2dbde2400471ddf16de7a80fc34efee25d6a3fb0bb15f9bbf6472cf59cef8fb",
+    "src/demo-spacemaster-v6/verify-project-creation.mjs": "377fa6f73811ce814b8432c74ce6d2cc0e8ee76d61f7140d9b01e8557051086c",
+    "src/demo-spacemaster-v6/verify-qa-copy.mjs": "007b72d8f4f2b94cfe683718ce1ac5ea73a1d57a94f98c295e894f3aba1737ec",
+    "src/demo-spacemaster-v6/verify-refinement-visual.mjs": "bccfb25380f660262fbe629de0e0aa415f33a85942557d83d5235d852d3dfe13",
+    "src/demo-spacemaster-v6/verify-release.mjs": "a733d09ff315c38872f353294bac1e396e1fb53d730402946b3b74a652436b90",
+    "src/demo-spacemaster-v6/verify-scope-controls.mjs": "0c0462caed92eaa09c31e0437a7d98b129f7badd3fe9235fbcdaca74734335ac",
+    "src/demo-spacemaster-v6/verify-shell.mjs": "eeaf5a8df3545ca445e9544c1c56d6feafdb2a66f288759f823c9ef402448e06",
+    "src/demo-spacemaster-v6/verify-unified-plan.mjs": "06666c8117763deb077e3ef8bc295753d9dfbcc025919758a3b562bd441079f8",
+    "src/demo-spacemaster-v6/verify-v5-legacy.mjs": "3262fe6744e7493eb827ae67b8527d3c6fd38435a6c6cd7909e4605dacb9260d",
+    "src/demo-spacemaster-v6/verify-v62.mjs": "e12713587c6428c6eec3eb699546dda394e9e94952f23049e52842e348625c35",
+    "src/demo-spacemaster-v6/verify-visual.mjs": "47a5ca0b748b68182f8f94144b479020c684aa6cee338ccf258a86ddfccde1f7",
+    "src/demo-spacemaster-v6/verify-workspace-refinement.mjs": "ef2aa56e80cb96f854986a9274fcbfdc1ac1d26d5546fbf28ae5b2f2dabf3e34",
+    "src/demo-spacemaster-v6/verify-yolo.mjs": "d20aca5ce0d7b0d106d11553ef5379098363dc800ec8c8da057fc5c27888966f",
+    "src/demo-spacemaster-v6/verify.mjs": "db65394e2673d2f37b023ee64d2c5831f5a3a441c055d39d7c5df7d31a02e87d",
+    "src/demo-spacemaster-v6/visual.css": "7acb0f5c6f043160167cc1dbd59142c6cdbb4a362ebd260e5558010d28ec7f33",
+    "src/demo-spacemaster-v6/workflow-branches.css": "92ecd3d119120cc8010c01990130e3be73507da08bfa1929aa2b68adfb4e90c5",
+    "src/demo-spacemaster-v6/workflow-branches.js": "c1bb4dab39fe45e8528cf92581df9c11a03fa7a1e25b1882798567e028510551",
+    "src/demo-spacemaster-v6/workspace-refinement.css": "e719f40c53aef60aea52632d4e0bababe6b0d7176cd4c64b7539b7e9b06873f9",
+    "src/demo-spacemaster-v6/workspace-refinement.js": "d3e0970c3bf0b8af8dcd57d6370fab004d4213b409d8206024bd400effc8bd37",
+    "src/demo-spacemaster-v6/yolo.js": "a8229aef58bfc0c2f6f78096218e08b9931ffd48e5709a92e6d5d11c42380f35",
+    "src/demo-spacemaster-v6/base/app.js": "779b6076e3fa2e0ff8e4f84cb47c5d9017584d9beaa2b9d219c865f9e058bf6b",
+    "src/demo-spacemaster-v6/base/auto.js": "6d105d3ab0d7f88cb4397e13fd41cdea8e77dc9a75d5aeb075c5f50b59996427",
+    "src/demo-spacemaster-v6/base/core.js": "bf42cbe1376726510f3d06a944b2382ad7d76ea6c5c97530170a1641900573a5",
+    "src/demo-spacemaster-v6/base/data.js": "b03b7a6c86a090670f5fd540397df12277d27f6ff82658e3f105dd4f21fc7571",
+    "src/demo-spacemaster-v6/base/engine.js": "ef9f99d2d083fcafdaa730e6984bf8609bc8f0b52f66e5d908ac2ecc603d358d",
+    "src/demo-spacemaster-v6/base/export.js": "ec6cdf921e8c24c83c58cc03edd51e4cb514f9a68f69203369e280b106a9ee11",
+    "src/demo-spacemaster-v6/base/illustrations.js": "fbb1abc44e89c9d29137034c2285941669cb4e3905a5168b9166d33a49df6ae1",
+    "src/demo-spacemaster-v6/base/modals.js": "e12d0493526d38d0a41fbfedd54e49f88220349eb3fb3dc73e678cf16efb9f99",
+    "src/demo-spacemaster-v6/base/render.js": "323b046abef23bc5aa5fb6bd87e7a4323111c1bcd22ccf6ddd4106ea3d0b2647",
+    "src/demo-spacemaster-v6/base/tokens.css": "057a0b4f19fe414a547ae47946b3b7c93c1546184fb23c97962d45fcaa780f1b",
+    "src/demo-spacemaster-v6/base/ui.css": "7f991dd5234d5b88efe197d813f057164a4492c005eabc2627d068aa75fe8c3b",
+    "tests/v62-decisions.test.cjs": "52144c0c2b27fdc87bcb9705489f6a8cc48ae5690bed555a614ffb9c599c25d6",
+    "tests/v62-integration.test.cjs": "312766808a72be6b0cf74cb646927e8a05da340e43bd0ac9848141430ff81df1",
+    "tests/v62-plan.test.cjs": "81291bd983fc3415bfa8fb0b719e141e50b062cb95741ada058ce94a12546611",
+    "tests/v62-project-input.test.cjs": "143cc0141329959d1ea2ef289c19e4e0f2b406dcb383aeeeb217a08ec442ef50",
+    "tests/v62-release.test.cjs": "e3aa5f240207e20d9ebebc46277d6219e92276f92a6b5fc3976584f0994f5bcf",
+    "tests/v62-workflows.test.cjs": "b39cfcfc509945d8cf5ff696799acd95f792252ed3ac9b6520fd84cf91ef132b"
+  },
+  "browser": {
+    "status": "not_run",
+    "reason": "Browser URL policy blocked the prototype. No alternate browser or URL was used."
+  },
+  "visual": {
+    "status": "not_run"
+  },
+  "offlineOpen": {
+    "status": "not_run"
+  },
+  "story": {
+    "status": "domain_only",
+    "note": "Chapter lifecycle and decision contracts tested; full rendered story not run."
+  }
+}

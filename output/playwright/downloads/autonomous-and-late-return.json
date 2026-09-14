@@ -1,0 +1,1054 @@
+{
+  "schema": "6.0.0-spacemaster-demo",
+  "actor": "lin",
+  "view": "chat",
+  "threadId": "chat-mu0m69pu-bt49",
+  "projectId": null,
+  "threads": [
+    {
+      "id": "quick-1",
+      "title": "新的工作",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0m5fet-b6pn",
+          "role": "assistant",
+          "text": "已载入 3 份合成资料变体。本轮选用已更新；已有成果仍保留原引用。",
+          "at": "2026-09-14T02:18:04.997Z"
+        },
+        {
+          "id": "msg-mu0m5gy8-j4vt",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T02:18:06.992Z",
+          "artifactIds": [
+            "artifact-mu0m5gy8-2bt3"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0m5gy8-2bt3",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0m5gy9-6se2",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T02:18:06.993Z",
+          "artifactIds": [
+            "artifact-mu0m5gy9-n3rm"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0m5gy9-n3rm",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0m6b38-qybx",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T02:18:46.052Z",
+          "artifactIds": [
+            "artifact-mu0m6b38-wmz5"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0m6b38-wmz5",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0m6b39-o64t",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T02:18:46.053Z",
+          "artifactIds": [
+            "artifact-mu0m6b38-n6rb"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0m6b38-n6rb",
+              "revision": 1
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T02:17:35.760Z",
+      "marketing": {
+        "scene": "social",
+        "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+        "goalRevision": 1,
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-9rgm",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-o051",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-q8f1",
+            "revision": 1
+          }
+        ],
+        "excluded": [],
+        "status": "open",
+        "variant": "changed"
+      }
+    },
+    {
+      "id": "chat-mu0m69pu-bt49",
+      "title": "请帮我写一首诗",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0m8jrp-llbj",
+          "role": "user",
+          "text": "请帮我写一首诗",
+          "at": "2026-09-14T02:20:30.613Z"
+        },
+        {
+          "id": "msg-mu0m8jrp-2777",
+          "role": "assistant",
+          "text": "本原型未接实时模型，暂不能自动判断这项请求的制作方法。原文已保留；可以编辑普通文档、制定计划，或显式选择演示场景。",
+          "at": "2026-09-14T02:20:30.613Z",
+          "mdActions": [
+            [
+              "建立普通文档",
+              "document"
+            ],
+            [
+              "制定计划",
+              "plan"
+            ],
+            [
+              "选择演示场景",
+              "guide"
+            ]
+          ]
+        }
+      ],
+      "created": "2026-09-14T02:18:44.274Z",
+      "marketing": {
+        "scene": "general",
+        "goal": "请帮我写一首诗",
+        "goalRevision": 2,
+        "selected": [],
+        "excluded": [],
+        "status": "open"
+      }
+    }
+  ],
+  "projects": [],
+  "tasks": [],
+  "artifacts": [
+    {
+      "id": "artifact-mu0m5gy8-2bt3",
+      "title": "下周五条社媒文字与排期",
+      "kind": "social-calendar",
+      "domain": "other",
+      "threadId": "quick-1",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0m5gy8-ntct",
+          "data": {
+            "title": "下周五条社媒文字与排期",
+            "summary": "文字草稿与排期可逐条修改；没有图片和发布前置要求。",
+            "posts": [
+              {
+                "id": "post-mu0m5gy8-0jby",
+                "date": "下周一",
+                "channel": "小红书",
+                "goal": "建立认知",
+                "angle": "一小块桌面",
+                "body": "搬家前，先从一份物件清单开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              },
+              {
+                "id": "post-mu0m5gy8-rosv",
+                "date": "下周二",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "玄关物件归位",
+                "body": "搬家前，先从一份物件清单开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              },
+              {
+                "id": "post-mu0m5gy8-h181",
+                "date": "下周三",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "搬家打包",
+                "body": "搬家前，先从打包顺序开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              },
+              {
+                "id": "post-mu0m5gy8-97ei",
+                "date": "下周四",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "整理常见问题",
+                "body": "搬家前，先从一份物件清单开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              },
+              {
+                "id": "post-mu0m5gy8-3w2v",
+                "date": "下周五",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "一周复盘",
+                "body": "搬家前，先从一份物件清单开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              }
+            ],
+            "simulation": true,
+            "variant": "changed"
+          },
+          "refs": [
+            {
+              "id": "upload-mu0m5fet-9rgm",
+              "title": "北岚生活-已有事实-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0m5fet-o051",
+              "title": "北岚生活-确认表达-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0m5fet-q8f1",
+              "title": "北岚生活-旧文案-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:18:06.992Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0m5fk4-7hau"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0m5gy9-n3rm",
+      "title": "另一份工作文档",
+      "kind": "marketing-document",
+      "domain": "other",
+      "threadId": "quick-1",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0m5gy9-8vsl",
+          "data": {
+            "title": "另一份工作文档",
+            "summary": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。",
+            "sections": [
+              {
+                "id": "goal",
+                "title": "本次目标",
+                "body": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。"
+              },
+              {
+                "id": "body",
+                "title": "工作正文",
+                "body": "在此编辑工作内容。"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "upload-mu0m5fet-9rgm",
+              "title": "北岚生活-已有事实-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0m5fet-o051",
+              "title": "北岚生活-确认表达-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0m5fet-q8f1",
+              "title": "北岚生活-旧文案-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:18:06.993Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "user-document",
+          "contextSnapshotId": "context-mu0m5fk4-7hau"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0m6b38-wmz5",
+      "title": "下周五条社媒文字与排期",
+      "kind": "social-calendar",
+      "domain": "other",
+      "threadId": "quick-1",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0m6b38-4vmh",
+          "data": {
+            "title": "下周五条社媒文字与排期",
+            "summary": "文字草稿与排期可逐条修改；没有图片和发布前置要求。",
+            "posts": [
+              {
+                "id": "post-mu0m6b38-52rq",
+                "date": "下周一",
+                "channel": "小红书",
+                "goal": "建立认知",
+                "angle": "一小块桌面",
+                "body": "搬家前，先从一份物件清单开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              },
+              {
+                "id": "post-mu0m6b38-h6la",
+                "date": "下周二",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "玄关物件归位",
+                "body": "搬家前，先从一份物件清单开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              },
+              {
+                "id": "post-mu0m6b38-os34",
+                "date": "下周三",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "搬家打包",
+                "body": "搬家前，先从打包顺序开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              },
+              {
+                "id": "post-mu0m6b38-71dy",
+                "date": "下周四",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "整理常见问题",
+                "body": "搬家前，先从一份物件清单开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              },
+              {
+                "id": "post-mu0m6b38-4kjl",
+                "date": "下周五",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "一周复盘",
+                "body": "搬家前，先从一份物件清单开始。北岚生活目前提供搬家打包文字清单，先确认哪些东西要带走，再决定如何分装。不提供答疑或上门服务。",
+                "cta": "查看搬家打包文字清单"
+              }
+            ],
+            "simulation": true,
+            "variant": "changed"
+          },
+          "refs": [
+            {
+              "id": "upload-mu0m5fet-9rgm",
+              "title": "北岚生活-已有事实-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0m5fet-o051",
+              "title": "北岚生活-确认表达-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0m5fet-q8f1",
+              "title": "北岚生活-旧文案-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:18:46.052Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0m69p2-unmr"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0m6b38-n6rb",
+      "title": "另一份工作文档",
+      "kind": "marketing-document",
+      "domain": "other",
+      "threadId": "quick-1",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0m6b38-2g75",
+          "data": {
+            "title": "另一份工作文档",
+            "summary": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。",
+            "sections": [
+              {
+                "id": "goal",
+                "title": "本次目标",
+                "body": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。"
+              },
+              {
+                "id": "body",
+                "title": "工作正文",
+                "body": "在此编辑工作内容。"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "upload-mu0m5fet-9rgm",
+              "title": "北岚生活-已有事实-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0m5fet-o051",
+              "title": "北岚生活-确认表达-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0m5fet-q8f1",
+              "title": "北岚生活-旧文案-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:18:46.052Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "user-document",
+          "contextSnapshotId": "context-mu0m69p2-unmr"
+        }
+      ],
+      "marketing": true
+    }
+  ],
+  "submissions": [],
+  "deliveries": [],
+  "transfers": [],
+  "runs": [],
+  "activity": [
+    {
+      "id": "ev-mu0m6b38-im9d",
+      "title": "已形成工作文档",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:18:46.052Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0m6b38-dru2",
+      "title": "已形成社媒内容与排期",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:18:46.052Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0m5gy9-2du6",
+      "title": "已形成工作文档",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:18:06.993Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0m5gy8-zzdy",
+      "title": "已形成社媒内容与排期",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:18:06.992Z",
+      "actor": "lin"
+    }
+  ],
+  "uploads": [
+    {
+      "id": "upload-mu0m5fet-9rgm",
+      "threadId": "quick-1",
+      "projectId": null,
+      "name": "北岚生活-已有事实-变体.txt",
+      "text": "【合成事实 v2】北岚生活只提供搬家打包文字清单，暂不提供每周答疑；不包含上门服务。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 120,
+      "created": "2026-09-14T02:18:04.997Z",
+      "revision": 1,
+      "fixtureKey": "social:facts:changed",
+      "fixtureVariant": "changed"
+    },
+    {
+      "id": "upload-mu0m5fet-o051",
+      "threadId": "quick-1",
+      "projectId": null,
+      "name": "北岚生活-确认表达-变体.txt",
+      "text": "【合成表达 v1】确认方向：让当下的生活更有条理。语气具体、平等、不制造焦虑。不夸大空间变化；不使用保证、最好、第一等绝对承诺。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 186,
+      "created": "2026-09-14T02:18:04.997Z",
+      "revision": 1,
+      "fixtureKey": "social:expression:changed",
+      "fixtureVariant": "changed"
+    },
+    {
+      "id": "upload-mu0m5fet-q8f1",
+      "threadId": "quick-1",
+      "projectId": null,
+      "name": "北岚生活-旧文案-变体.txt",
+      "text": "【合成旧文案 v1】新的一周，从桌面的一小块开始。不是一次整理所有东西，先为每天用的物件找到固定位置。收藏清单，周末挑一件试试。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 186,
+      "created": "2026-09-14T02:18:04.997Z",
+      "revision": 1,
+      "fixtureKey": "social:old-copy:changed",
+      "fixtureVariant": "changed"
+    }
+  ],
+  "selectedAssets": [
+    "img-front",
+    "img-open",
+    "img-detail"
+  ],
+  "canvas": null,
+  "contextSelection": null,
+  "filters": {
+    "domain": "all"
+  },
+  "settings": {
+    "theme": "light",
+    "density": "comfortable",
+    "speed": 1
+  },
+  "auto": null,
+  "runId": null,
+  "paused": false,
+  "mobileNav": false,
+  "openCanvases": [],
+  "panelStack": [],
+  "panelDrafts": {
+    "md-plan|plan-mu0m5fhk-3jw6": {
+      "values": {
+        "md-plan-goal": {
+          "value": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。"
+        },
+        "md-item-title-item-mu0m5fhk-ry2y": {
+          "value": "下周五条社媒文字与排期",
+          "checked": false
+        },
+        "md-item-kind-item-mu0m5fhk-ry2y": {
+          "value": "social-calendar"
+        },
+        "md-item-input-item-mu0m5fhk-ry2y": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0m5fhk-ry2y": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-item-title-item-mu0m5fi2-37zi": {
+          "value": "另一份工作文档",
+          "checked": false
+        },
+        "md-item-kind-item-mu0m5fi2-37zi": {
+          "value": "marketing-document"
+        },
+        "md-item-input-item-mu0m5fi2-37zi": {
+          "value": "本次选用资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0m5fi2-37zi": {
+          "value": "可编辑文档",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T02:18:44.251Z"
+    },
+    "settings|": {
+      "values": {
+        "pref-theme": {
+          "value": "light"
+        },
+        "pref-speed": {
+          "value": "1"
+        }
+      },
+      "at": "2026-09-14T02:21:22.240Z"
+    }
+  },
+  "composerDrafts": {
+    "quick-1": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+    "chat-mu0m69pu-bt49": ""
+  },
+  "workbenchWidth": 62,
+  "plans": [
+    {
+      "id": "plan-mu0m5fhk-3jw6",
+      "threadId": "quick-1",
+      "projectId": null,
+      "marketing": true,
+      "revision": 4,
+      "status": "completed",
+      "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0m5fhk-ry2y",
+          "title": "下周五条社媒文字与排期",
+          "kind": "social-calendar",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "artifactId": "artifact-mu0m6b38-wmz5"
+        },
+        {
+          "id": "item-mu0m5fi2-37zi",
+          "title": "另一份工作文档",
+          "kind": "marketing-document",
+          "input": "本次选用资料",
+          "output": "可编辑文档",
+          "status": "done",
+          "artifactId": "artifact-mu0m6b38-n6rb"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0m5fhk-ry2y",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            },
+            {
+              "id": "item-mu0m5fi2-37zi",
+              "title": "另一份工作文档",
+              "kind": "marketing-document",
+              "input": "本次选用资料",
+              "output": "可编辑文档",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T02:18:05.130Z"
+        },
+        {
+          "revision": 2,
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0m5fhk-ry2y",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            },
+            {
+              "id": "item-mu0m5fi2-37zi",
+              "title": "另一份工作文档",
+              "kind": "marketing-document",
+              "input": "本次选用资料",
+              "output": "可编辑文档",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T02:18:05.187Z"
+        },
+        {
+          "revision": 3,
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0m5fhk-ry2y",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0m5gy8-2bt3"
+            },
+            {
+              "id": "item-mu0m5fi2-37zi",
+              "title": "另一份工作文档",
+              "kind": "marketing-document",
+              "input": "本次选用资料",
+              "output": "可编辑文档",
+              "status": "done",
+              "artifactId": "artifact-mu0m5gy9-n3rm"
+            }
+          ],
+          "at": "2026-09-14T02:18:44.246Z"
+        }
+      ],
+      "created": "2026-09-14T02:18:05.096Z",
+      "currentItem": "item-mu0m5fhk-ry2y"
+    }
+  ],
+  "batches": [],
+  "workModes": {
+    "quick-1": "yolo"
+  },
+  "taskFilter": "mine",
+  "projectCollapsed": {},
+  "expandedSellingPoints": {},
+  "inspectorOpen": false,
+  "inspectorTab": "status",
+  "libraryPushes": [],
+  "externalSources": [],
+  "unifiedPlanMigration": 1,
+  "inputEvidence": [],
+  "inputSnapshots": [],
+  "inputUploadAttempts": [],
+  "inputContextChanges": [],
+  "workflowBranches": {
+    "jobs": [],
+    "selected": [],
+    "draft": {},
+    "activeJob": null,
+    "mode": "search",
+    "modeDrafts": {
+      "search": {}
+    },
+    "jobDrafts": {},
+    "positions": {}
+  },
+  "md": {
+    "schema": 2,
+    "snapshots": [
+      {
+        "id": "context-mu0m5fk4-7hau",
+        "threadId": "quick-1",
+        "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T02:18:05.188Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-9rgm",
+            "revision": 1,
+            "title": "北岚生活-已有事实-变体.txt",
+            "text": "【合成事实 v2】北岚生活只提供搬家打包文字清单，暂不提供每周答疑；不包含上门服务。",
+            "fixtureKey": "social:facts:changed",
+            "fixtureVariant": "changed",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-o051",
+            "revision": 1,
+            "title": "北岚生活-确认表达-变体.txt",
+            "text": "【合成表达 v1】确认方向：让当下的生活更有条理。语气具体、平等、不制造焦虑。不夸大空间变化；不使用保证、最好、第一等绝对承诺。",
+            "fixtureKey": "social:expression:changed",
+            "fixtureVariant": "changed",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-q8f1",
+            "revision": 1,
+            "title": "北岚生活-旧文案-变体.txt",
+            "text": "【合成旧文案 v1】新的一周，从桌面的一小块开始。不是一次整理所有东西，先为每天用的物件找到固定位置。收藏清单，周末挑一件试试。",
+            "fixtureKey": "social:old-copy:changed",
+            "fixtureVariant": "changed",
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0m5fhk-3jw6",
+          "revision": 3,
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0m5fhk-ry2y",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            },
+            {
+              "id": "item-mu0m5fi2-37zi",
+              "title": "另一份工作文档",
+              "kind": "marketing-document",
+              "input": "本次选用资料",
+              "output": "可编辑文档",
+              "status": "pending"
+            }
+          ]
+        }
+      },
+      {
+        "id": "context-mu0m69p2-unmr",
+        "threadId": "quick-1",
+        "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T02:18:44.247Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-9rgm",
+            "revision": 1,
+            "title": "北岚生活-已有事实-变体.txt",
+            "text": "【合成事实 v2】北岚生活只提供搬家打包文字清单，暂不提供每周答疑；不包含上门服务。",
+            "fixtureKey": "social:facts:changed",
+            "fixtureVariant": "changed",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-o051",
+            "revision": 1,
+            "title": "北岚生活-确认表达-变体.txt",
+            "text": "【合成表达 v1】确认方向：让当下的生活更有条理。语气具体、平等、不制造焦虑。不夸大空间变化；不使用保证、最好、第一等绝对承诺。",
+            "fixtureKey": "social:expression:changed",
+            "fixtureVariant": "changed",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0m5fet-q8f1",
+            "revision": 1,
+            "title": "北岚生活-旧文案-变体.txt",
+            "text": "【合成旧文案 v1】新的一周，从桌面的一小块开始。不是一次整理所有东西，先为每天用的物件找到固定位置。收藏清单，周末挑一件试试。",
+            "fixtureKey": "social:old-copy:changed",
+            "fixtureVariant": "changed",
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0m5fhk-3jw6",
+          "revision": 4,
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0m5fhk-ry2y",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0m5gy8-2bt3"
+            },
+            {
+              "id": "item-mu0m5fi2-37zi",
+              "title": "另一份工作文档",
+              "kind": "marketing-document",
+              "input": "本次选用资料",
+              "output": "可编辑文档",
+              "status": "done",
+              "artifactId": "artifact-mu0m5gy9-n3rm"
+            }
+          ]
+        }
+      }
+    ],
+    "runs": [
+      {
+        "id": "local-run-mu0m5fk4-a96q",
+        "threadId": "quick-1",
+        "projectId": null,
+        "planId": "plan-mu0m5fhk-3jw6",
+        "planRevision": 3,
+        "items": [
+          {
+            "id": "item-mu0m5fhk-ry2y",
+            "title": "下周五条社媒文字与排期",
+            "kind": "social-calendar",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending"
+          },
+          {
+            "id": "item-mu0m5fi2-37zi",
+            "title": "另一份工作文档",
+            "kind": "marketing-document",
+            "input": "本次选用资料",
+            "output": "可编辑文档",
+            "status": "pending"
+          }
+        ],
+        "snapshotId": "context-mu0m5fk4-7hau",
+        "meta": {
+          "scene": "social",
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0m5fet-9rgm",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0m5fet-o051",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0m5fet-q8f1",
+              "revision": 1
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "variant": "changed"
+        },
+        "status": "done",
+        "created": "2026-09-14T02:18:05.188Z",
+        "completedIds": [
+          "item-mu0m5fhk-ry2y",
+          "item-mu0m5fi2-37zi"
+        ],
+        "actor": "lin",
+        "ended": "2026-09-14T02:18:06.993Z"
+      },
+      {
+        "id": "local-run-mu0m69p3-jaj7",
+        "threadId": "quick-1",
+        "projectId": null,
+        "planId": "plan-mu0m5fhk-3jw6",
+        "planRevision": 4,
+        "items": [
+          {
+            "id": "item-mu0m5fhk-ry2y",
+            "title": "下周五条社媒文字与排期",
+            "kind": "social-calendar",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "done",
+            "artifactId": "artifact-mu0m5gy8-2bt3"
+          },
+          {
+            "id": "item-mu0m5fi2-37zi",
+            "title": "另一份工作文档",
+            "kind": "marketing-document",
+            "input": "本次选用资料",
+            "output": "可编辑文档",
+            "status": "done",
+            "artifactId": "artifact-mu0m5gy9-n3rm"
+          }
+        ],
+        "snapshotId": "context-mu0m69p2-unmr",
+        "meta": {
+          "scene": "social",
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0m5fet-9rgm",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0m5fet-o051",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0m5fet-q8f1",
+              "revision": 1
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "variant": "changed"
+        },
+        "status": "done",
+        "created": "2026-09-14T02:18:44.247Z",
+        "completedIds": [
+          "item-mu0m5fhk-ry2y",
+          "item-mu0m5fi2-37zi"
+        ],
+        "actor": "lin",
+        "ended": "2026-09-14T02:18:46.053Z"
+      }
+    ],
+    "decisions": [],
+    "imports": [],
+    "scope": "work",
+    "editDrafts": {}
+  },
+  "dockState": {
+    "kind": "settings",
+    "arg": ""
+  },
+  "inspectorProjectId": null
+}

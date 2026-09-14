@@ -1,0 +1,1655 @@
+{
+  "schema": "6.0.0-spacemaster-demo",
+  "actor": "lin",
+  "view": "chat",
+  "threadId": "quick-1",
+  "projectId": null,
+  "threads": [
+    {
+      "id": "quick-1",
+      "title": "新的工作",
+      "projectId": null,
+      "messages": [],
+      "created": "2026-09-14T02:00:43.247Z",
+      "marketing": {
+        "scene": "general",
+        "goal": "",
+        "goalRevision": 1,
+        "selected": [],
+        "excluded": [],
+        "status": "open"
+      }
+    },
+    {
+      "id": "sample-chat-launch",
+      "title": "SpaceMaster 墨西哥上市",
+      "projectId": "sample-launch",
+      "messages": [],
+      "created": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "sample-chat-website",
+      "title": "产品资料与上市计划",
+      "projectId": "sample-website",
+      "messages": [],
+      "created": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "sample-chat-retail",
+      "title": "产品资料与上市计划",
+      "projectId": "sample-retail",
+      "messages": [],
+      "created": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "spacemaster-de-chat",
+      "title": "上市工作计划",
+      "projectId": "spacemaster-de",
+      "messages": [
+        {
+          "id": "msg-mu0l6a3d-gugg",
+          "role": "assistant",
+          "text": "已开始当前工作：1 项。完成后进入待处理，由你采用。",
+          "at": "2026-09-14T01:50:45.145Z",
+          "batchId": "batch-mu0l6a3d-azl4"
+        },
+        {
+          "id": "msg-mu0l6a3n-eckc",
+          "role": "assistant",
+          "text": "产品策略草稿已保存，接下来进行自检。",
+          "at": "2026-09-14T01:50:45.155Z",
+          "runId": "run-mu0l6a3n-y432",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0l6exc-oibv",
+          "role": "assistant",
+          "text": "产品策略已完成自检，等待你集中审核。",
+          "at": "2026-09-14T01:50:51.408Z",
+          "runId": "run-mu0l6exc-z9f0",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0l6jr5-wh4l",
+          "role": "assistant",
+          "text": "1 项草稿已完成制作与自检，已保存到「SpaceMaster 德国官网上市海报」。请集中查看，确认要采用的内容。",
+          "at": "2026-09-14T01:50:57.665Z",
+          "batchId": "batch-mu0l6a3d-azl4"
+        },
+        {
+          "id": "msg-mu0l7odv-60n0",
+          "role": "user",
+          "text": "把人群修改为厨房升级与旧冰箱替换，不泛指大家庭。",
+          "at": "2026-09-14T01:51:50.323Z"
+        },
+        {
+          "id": "msg-mu0l7oe0-0x5d",
+          "role": "assistant",
+          "text": "已保存新候选，原采用版本保持不变。",
+          "at": "2026-09-14T01:51:50.328Z",
+          "runId": "run-mu0l7oe0-2qkx",
+          "artifactIds": [
+            "artifact-mu0l6edb-z48z"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0l6edb-z48z",
+              "revision": 2
+            }
+          ],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        }
+      ],
+      "created": "2026-09-14T01:29:53.601Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": "sample-launch",
+      "name": "SpaceMaster 墨西哥上市",
+      "model": "MDRS761MYM45A",
+      "category": "冰箱",
+      "tier": "Hero",
+      "market": "MX",
+      "markets": [
+        "MX"
+      ],
+      "channels": [
+        "web",
+        "retail"
+      ],
+      "language": "es-MX",
+      "goal": "完成墨西哥上市策略与官网、门店物料。",
+      "owner": "lin",
+      "scopeConfirmed": false,
+      "ruleVersion": 2,
+      "threadId": "sample-chat-launch",
+      "created": "2026-09-14T01:29:53.601Z",
+      "contextArtifacts": [],
+      "sample": true,
+      "inputContextRevision": 1,
+      "productName": "SpaceMaster",
+      "v62InputMigrated": true,
+      "inputsReady": true,
+      "marketingProfessional": true
+    },
+    {
+      "id": "sample-website",
+      "name": "嵌入式洗碗机 · 新品上市",
+      "model": "待补充",
+      "category": "洗碗机",
+      "tier": "Hero",
+      "market": "MX",
+      "markets": [
+        "MX"
+      ],
+      "channels": [
+        "web"
+      ],
+      "language": "es-MX",
+      "goal": "准备洗碗机新品的价值主张与官网内容。",
+      "owner": "lin",
+      "scopeConfirmed": false,
+      "ruleVersion": 2,
+      "threadId": "sample-chat-website",
+      "created": "2026-09-14T01:29:53.601Z",
+      "contextArtifacts": [],
+      "sample": true,
+      "productName": "嵌入式洗碗机",
+      "inputsReady": false,
+      "inputContextRevision": 1,
+      "v62InputMigrated": true,
+      "marketingProfessional": true
+    },
+    {
+      "id": "sample-retail",
+      "name": "智能电饭煲 · 市场推广",
+      "model": "待补充",
+      "category": "电饭煲",
+      "tier": "Hero",
+      "market": "MX",
+      "markets": [
+        "MX"
+      ],
+      "channels": [
+        "retail"
+      ],
+      "language": "es-MX",
+      "goal": "准备电饭煲的使用场景、卖点与门店物料。",
+      "owner": "lin",
+      "scopeConfirmed": false,
+      "ruleVersion": 2,
+      "threadId": "sample-chat-retail",
+      "created": "2026-09-14T01:29:53.601Z",
+      "contextArtifacts": [],
+      "sample": true,
+      "productName": "智能电饭煲",
+      "inputsReady": false,
+      "inputContextRevision": 1,
+      "v62InputMigrated": true,
+      "marketingProfessional": true
+    },
+    {
+      "id": "spacemaster-de",
+      "threadId": "spacemaster-de-chat",
+      "name": "SpaceMaster 德国官网上市海报",
+      "productName": "SpaceMaster",
+      "model": "MDRS761MYM45A",
+      "category": "冰箱",
+      "tier": "Hero",
+      "market": "DE",
+      "markets": [
+        "DE"
+      ],
+      "language": "de-DE",
+      "channels": [
+        "web"
+      ],
+      "goal": "为 SpaceMaster 准备德国官网上市海报，型号 MDRS761MYM45A。使用 Canva 提供的图片，整理产品六视角、木色厨房场景、四类卖点图、模特替换候选和德语官网横幅。法语、阿拉伯语作为其他语言版本。保留策略、FABE 和 Message House，完成后集中查看草稿。",
+      "owner": "lin",
+      "scopeConfirmed": true,
+      "ruleVersion": 1,
+      "created": "2026-09-14T01:29:53.601Z",
+      "contextArtifacts": [],
+      "inputsReady": true,
+      "demoScenario": "spacemaster-de",
+      "inputContextRevision": 1,
+      "v62InputMigrated": true,
+      "scope": [
+        {
+          "kind": "strategy",
+          "domain": "strategy",
+          "name": "产品策略",
+          "category": "必需",
+          "reason": "已确认的德国官网交付范围",
+          "maturity": "draft",
+          "requirement": "内容、来源与固定引用完整；集中采用版本。"
+        },
+        {
+          "kind": "fabe",
+          "domain": "strategy",
+          "name": "FABE 价值体系",
+          "category": "必需",
+          "reason": "已确认的德国官网交付范围",
+          "maturity": "draft",
+          "requirement": "内容、来源与固定引用完整；集中采用版本。"
+        },
+        {
+          "kind": "mh",
+          "domain": "strategy",
+          "name": "Message House",
+          "category": "必需",
+          "reason": "DE · de-DE",
+          "maturity": "draft",
+          "requirement": "内容、来源与固定引用完整；集中采用版本。"
+        },
+        {
+          "kind": "productImages",
+          "domain": "asset",
+          "name": "产品六视角集合",
+          "category": "必需",
+          "reason": "已确认的德国官网交付范围",
+          "maturity": "draft",
+          "requirement": "内容、来源与固定引用完整；集中采用版本。"
+        },
+        {
+          "kind": "scene",
+          "domain": "asset",
+          "name": "厨房场景素材",
+          "category": "必需",
+          "reason": "已确认的德国官网交付范围",
+          "maturity": "draft",
+          "requirement": "内容、来源与固定引用完整；集中采用版本。"
+        },
+        {
+          "kind": "featureImages",
+          "domain": "asset",
+          "name": "卖点图集合",
+          "category": "必需",
+          "reason": "已确认的德国官网交付范围",
+          "maturity": "draft",
+          "requirement": "内容、来源与固定引用完整；集中采用版本。"
+        },
+        {
+          "kind": "websitePoster",
+          "domain": "material",
+          "name": "德国官网海报",
+          "category": "必需",
+          "reason": "已确认的德国官网交付范围",
+          "maturity": "approved",
+          "requirement": "固定德语图片、文案转录、用途与来源说明通过审核。"
+        }
+      ],
+      "marketingProfessional": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-mu0l6a3d-i2na",
+      "projectId": "spacemaster-de",
+      "kind": "strategy",
+      "domain": "strategy",
+      "name": "产品策略",
+      "maturity": "draft",
+      "requirement": "内容、来源与固定引用完整；集中采用版本。",
+      "reason": "已确认的德国官网交付范围",
+      "ruleVersion": 1,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "draft_ready",
+      "revision": 1,
+      "artifactId": "artifact-mu0l6edb-z48z"
+    },
+    {
+      "id": "task-mu0l6a3d-ut9u",
+      "projectId": "spacemaster-de",
+      "kind": "fabe",
+      "domain": "strategy",
+      "name": "FABE 价值体系",
+      "maturity": "draft",
+      "requirement": "内容、来源与固定引用完整；集中采用版本。",
+      "reason": "已确认的德国官网交付范围",
+      "ruleVersion": 1,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "todo",
+      "revision": 1,
+      "artifactId": null
+    },
+    {
+      "id": "task-mu0l6a3d-efis",
+      "projectId": "spacemaster-de",
+      "kind": "mh",
+      "domain": "strategy",
+      "name": "Message House",
+      "maturity": "draft",
+      "requirement": "内容、来源与固定引用完整；集中采用版本。",
+      "reason": "DE · de-DE",
+      "ruleVersion": 1,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "todo",
+      "revision": 1,
+      "artifactId": null
+    },
+    {
+      "id": "task-mu0l6a3d-ghcr",
+      "projectId": "spacemaster-de",
+      "kind": "productImages",
+      "domain": "asset",
+      "name": "产品六视角集合",
+      "maturity": "draft",
+      "requirement": "内容、来源与固定引用完整；集中采用版本。",
+      "reason": "已确认的德国官网交付范围",
+      "ruleVersion": 1,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "todo",
+      "revision": 1,
+      "artifactId": null
+    },
+    {
+      "id": "task-mu0l6a3d-uxe1",
+      "projectId": "spacemaster-de",
+      "kind": "scene",
+      "domain": "asset",
+      "name": "厨房场景素材",
+      "maturity": "draft",
+      "requirement": "内容、来源与固定引用完整；集中采用版本。",
+      "reason": "已确认的德国官网交付范围",
+      "ruleVersion": 1,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "todo",
+      "revision": 1,
+      "artifactId": null
+    },
+    {
+      "id": "task-mu0l6a3d-pu62",
+      "projectId": "spacemaster-de",
+      "kind": "featureImages",
+      "domain": "asset",
+      "name": "卖点图集合",
+      "maturity": "draft",
+      "requirement": "内容、来源与固定引用完整；集中采用版本。",
+      "reason": "已确认的德国官网交付范围",
+      "ruleVersion": 1,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "todo",
+      "revision": 1,
+      "artifactId": null
+    },
+    {
+      "id": "task-mu0l6a3d-azqs",
+      "projectId": "spacemaster-de",
+      "kind": "websitePoster",
+      "domain": "material",
+      "name": "德国官网海报",
+      "maturity": "approved",
+      "requirement": "固定德语图片、文案转录、用途与来源说明通过审核。",
+      "reason": "已确认的德国官网交付范围",
+      "ruleVersion": 1,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "todo",
+      "revision": 1,
+      "artifactId": null
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "artifact-mu0l6edb-z48z",
+      "title": "以生活场景承接产品识别，让官网主视觉更完整",
+      "kind": "strategy",
+      "domain": "strategy",
+      "projectId": "spacemaster-de",
+      "taskId": "task-mu0l6a3d-i2na",
+      "active": 1,
+      "accepted": 0,
+      "pending": 2,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0l6edb-y2dz",
+          "data": {
+            "title": "以生活场景承接产品识别，让官网主视觉更完整",
+            "summary": "先保证产品一致，再用厨房场景展示生活关系，以简洁品类表达完成德国官网横幅。",
+            "sections": [
+              {
+                "id": "audience",
+                "title": "优先人群",
+                "body": "以关注厨房焕新和冰箱替换的用户作为创意讨论对象。该设定来自工作目标，未经过德国消费者研究验证，不填写人群占比或购买转化结论。",
+                "label": "工作假设",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "context",
+                "title": "生活场景",
+                "body": "明亮木色厨房、岛台与自然光形成主场景，产品清晰可辨；画面不替代安装说明。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "position",
+                "title": "产品定位",
+                "body": "以 SpaceMaster 产品身份、可见设计和厨房情境构成官网入口。暂不采用容量、电压、节能、保鲜时长与嵌入式承诺。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "priorities",
+                "title": "表达优先级",
+                "body": "产品外观一致、生活关系清楚、各语种含义一致。按照文字长度和阅读方向核对版式。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "channel",
+                "title": "渠道表达",
+                "body": "官网横幅包含品类标题、简短副文、品牌、产品小图和场景，不等于完整 PDP、页面上线或门店印刷物料。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "exclusions",
+                "title": "不进入本次传播",
+                "body": "不从场景贴合推断嵌入式，不从外观推断内部参数，不将翻译当市场批准，不把现成 PNG 展示称作新模型调用。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              }
+            ]
+          },
+          "refs": [],
+          "author": "lin",
+          "created": "2026-09-14T01:50:50.687Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "offline-fixture"
+        },
+        {
+          "num": 2,
+          "id": "revision-mu0l7soe-sy23",
+          "data": {
+            "title": "以生活场景承接产品识别，让官网主视觉更完整",
+            "summary": "先保证产品一致，再用厨房场景展示生活关系，以简洁品类表达完成德国官网横幅。",
+            "sections": [
+              {
+                "id": "audience",
+                "title": "优先人群",
+                "body": "把人群修改为厨房升级与旧冰箱替换，不泛指大家庭。",
+                "label": "工作假设",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "context",
+                "title": "生活场景",
+                "body": "明亮木色厨房、岛台与自然光形成主场景，产品清晰可辨；画面不替代安装说明。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "position",
+                "title": "产品定位",
+                "body": "以 SpaceMaster 产品身份、可见设计和厨房情境构成官网入口。暂不采用容量、电压、节能、保鲜时长与嵌入式承诺。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "priorities",
+                "title": "表达优先级",
+                "body": "产品外观一致、生活关系清楚、各语种含义一致。按照文字长度和阅读方向核对版式。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "channel",
+                "title": "渠道表达",
+                "body": "官网横幅包含品类标题、简短副文、品牌、产品小图和场景，不等于完整 PDP、页面上线或门店印刷物料。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              },
+              {
+                "id": "exclusions",
+                "title": "不进入本次传播",
+                "body": "不从场景贴合推断嵌入式，不从外观推断内部参数，不将翻译当市场批准，不把现成 PNG 展示称作新模型调用。",
+                "label": "创作建议",
+                "sources": [
+                  "DE01",
+                  "DE02",
+                  "DE03"
+                ]
+              }
+            ]
+          },
+          "refs": [],
+          "author": "lin",
+          "created": "2026-09-14T01:51:55.886Z",
+          "note": "用户反馈：把人群修改为厨房升级与旧冰箱替换，不泛指大家庭。",
+          "source": "offline-fixture"
+        }
+      ],
+      "checks": {
+        "1": {
+          "passed": true,
+          "artifactId": "artifact-mu0l6edb-z48z",
+          "revision": 1,
+          "at": "2026-09-14T01:50:56.936Z",
+          "findings": [
+            {
+              "title": "文件与固定版本",
+              "ok": true,
+              "status": "checked",
+              "detail": "文件、尺寸与哈希完整。六视角齐套不代表不可见结构已验证。"
+            },
+            {
+              "title": "用途与内容",
+              "ok": true,
+              "status": "checked",
+              "detail": "用于德国官网创意评审；图内安装声明保留待核验，不等于产品事实批准。"
+            },
+            {
+              "title": "来源与范围",
+              "ok": true,
+              "status": "checked",
+              "detail": "Canva / 用户提供。法语、阿语国家待选；人物候选变化独立记录，不影响其他已完成内容。"
+            }
+          ],
+          "previewReady": true,
+          "formalReady": true,
+          "checkScope": "internal-preview",
+          "deliveryScope": {
+            "members": [],
+            "country": null,
+            "language": null,
+            "selectionVersion": 1
+          },
+          "layers": [
+            {
+              "key": "content-0",
+              "label": "文件与固定版本",
+              "status": "checked",
+              "detail": "文件、尺寸与哈希完整。六视角齐套不代表不可见结构已验证。"
+            },
+            {
+              "key": "content-1",
+              "label": "用途与内容",
+              "status": "checked",
+              "detail": "用于德国官网创意评审；图内安装声明保留待核验，不等于产品事实批准。"
+            },
+            {
+              "key": "content-2",
+              "label": "来源与范围",
+              "status": "checked",
+              "detail": "Canva / 用户提供。法语、阿语国家待选；人物候选变化独立记录，不影响其他已完成内容。"
+            }
+          ]
+        }
+      },
+      "threadId": "spacemaster-de-chat",
+      "historical": false
+    }
+  ],
+  "submissions": [],
+  "deliveries": [],
+  "transfers": [],
+  "runs": [
+    {
+      "id": "run-mu0l6a3n-y432",
+      "kind": "strategy",
+      "name": "产品策略",
+      "actor": "lin",
+      "projectId": "spacemaster-de",
+      "threadId": "spacemaster-de-chat",
+      "status": "done",
+      "started": "2026-09-14T01:50:45.155Z",
+      "module": "gtm",
+      "sources": [
+        "DE01",
+        "DE02",
+        "DE03"
+      ],
+      "thought": "读取当前项目与固定来源。整理已提供图片的版本与来源；候选不自动采用，图片修改范围单独记录。",
+      "events": [
+        {
+          "id": "call-mu0l6a3n-712t",
+          "seq": 1,
+          "name": "source.read",
+          "label": "读取项目与固定来源",
+          "transport": "本地资料",
+          "input": {
+            "model": "MDRS761MYM45A",
+            "market": "DE"
+          },
+          "output": {
+            "origin": "supplied",
+            "runtime": false
+          },
+          "plannedOutput": {
+            "origin": "supplied",
+            "runtime": false
+          },
+          "status": "done",
+          "started": "2026-09-14T01:50:45.159Z",
+          "ended": "2026-09-14T01:50:48.798Z"
+        },
+        {
+          "id": "call-mu0l6a3n-tsol",
+          "seq": 2,
+          "name": "artifact.prepare",
+          "label": "整理产品策略与来源关系",
+          "transport": "本地工作区",
+          "input": {
+            "kind": "strategy"
+          },
+          "output": {
+            "saved": true,
+            "autoApprove": false
+          },
+          "plannedOutput": {
+            "saved": true,
+            "autoApprove": false
+          },
+          "status": "done",
+          "started": "2026-09-14T01:50:48.807Z",
+          "ended": "2026-09-14T01:50:50.679Z"
+        }
+      ],
+      "retry": "strategy",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0l6a3d-azl4",
+      "ended": "2026-09-14T01:50:50.688Z"
+    },
+    {
+      "id": "run-mu0l6exc-z9f0",
+      "kind": "check",
+      "name": "核对固定内容版本",
+      "actor": "lin",
+      "projectId": "spacemaster-de",
+      "threadId": "spacemaster-de-chat",
+      "status": "done",
+      "started": "2026-09-14T01:50:51.408Z",
+      "module": "gtm",
+      "sources": [
+        "DE01",
+        "DE02",
+        "DE03"
+      ],
+      "thought": "读取当前项目与固定来源。整理已提供图片的版本与来源；候选不自动采用，图片修改范围单独记录。",
+      "events": [
+        {
+          "id": "call-mu0l6exc-7zfs",
+          "seq": 1,
+          "name": "source.read",
+          "label": "读取项目与固定来源",
+          "transport": "本地资料",
+          "input": {
+            "model": "MDRS761MYM45A",
+            "market": "DE"
+          },
+          "output": {
+            "origin": "supplied",
+            "runtime": false
+          },
+          "plannedOutput": {
+            "origin": "supplied",
+            "runtime": false
+          },
+          "status": "done",
+          "started": "2026-09-14T01:50:51.412Z",
+          "ended": "2026-09-14T01:50:55.049Z"
+        },
+        {
+          "id": "call-mu0l6exc-sykv",
+          "seq": 2,
+          "name": "artifact.prepare",
+          "label": "整理核对固定内容版本与来源关系",
+          "transport": "本地工作区",
+          "input": {
+            "kind": "check"
+          },
+          "output": {
+            "saved": true,
+            "autoApprove": false
+          },
+          "plannedOutput": {
+            "saved": true,
+            "autoApprove": false
+          },
+          "status": "done",
+          "started": "2026-09-14T01:50:55.059Z",
+          "ended": "2026-09-14T01:50:56.930Z"
+        }
+      ],
+      "retry": "check",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0l6a3d-azl4",
+      "ended": "2026-09-14T01:50:56.936Z"
+    },
+    {
+      "id": "run-mu0l7oe0-2qkx",
+      "kind": "modify",
+      "name": "按反馈形成新候选",
+      "actor": "lin",
+      "projectId": "spacemaster-de",
+      "threadId": "spacemaster-de-chat",
+      "status": "done",
+      "started": "2026-09-14T01:51:50.328Z",
+      "module": "gtm",
+      "sources": [
+        "DE01",
+        "DE02",
+        "DE03"
+      ],
+      "thought": "读取当前项目与固定来源。整理已提供图片的版本与来源；候选不自动采用，图片修改范围单独记录。",
+      "events": [
+        {
+          "id": "call-mu0l7oe0-jld0",
+          "seq": 1,
+          "name": "source.read",
+          "label": "读取项目与固定来源",
+          "transport": "本地资料",
+          "input": {
+            "model": "MDRS761MYM45A",
+            "market": "DE"
+          },
+          "output": {
+            "origin": "supplied",
+            "runtime": false
+          },
+          "plannedOutput": {
+            "origin": "supplied",
+            "runtime": false
+          },
+          "status": "done",
+          "started": "2026-09-14T01:51:50.333Z",
+          "ended": "2026-09-14T01:51:53.982Z"
+        },
+        {
+          "id": "call-mu0l7oe0-8pr5",
+          "seq": 2,
+          "name": "artifact.prepare",
+          "label": "整理按反馈形成新候选与来源关系",
+          "transport": "本地工作区",
+          "input": {
+            "kind": "modify"
+          },
+          "output": {
+            "saved": true,
+            "autoApprove": false
+          },
+          "plannedOutput": {
+            "saved": true,
+            "autoApprove": false
+          },
+          "status": "done",
+          "started": "2026-09-14T01:51:53.991Z",
+          "ended": "2026-09-14T01:51:55.875Z"
+        }
+      ],
+      "retry": "modify",
+      "savedSelection": null,
+      "savedCanvas": {
+        "id": "artifact-mu0l6edb-z48z",
+        "num": 1,
+        "tab": "content"
+      },
+      "ended": "2026-09-14T01:51:55.886Z"
+    }
+  ],
+  "activity": [
+    {
+      "id": "ev-mu0l7soe-6cej",
+      "title": "已形成新建议",
+      "detail": "以生活场景承接产品识别，让官网主视觉更完整 v2；当前采用版本未被覆盖。",
+      "projectId": "spacemaster-de",
+      "at": "2026-09-14T01:51:55.886Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0l6edb-oa38",
+      "title": "已形成产品策略",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": "spacemaster-de",
+      "at": "2026-09-14T01:50:50.687Z",
+      "actor": "lin"
+    }
+  ],
+  "uploads": [],
+  "selectedAssets": [
+    "img-front",
+    "img-open",
+    "img-detail"
+  ],
+  "canvas": null,
+  "contextSelection": null,
+  "filters": {
+    "domain": "all"
+  },
+  "settings": {
+    "theme": "light",
+    "density": "comfortable",
+    "speed": 1
+  },
+  "auto": null,
+  "runId": null,
+  "paused": false,
+  "mobileNav": false,
+  "openCanvases": [
+    {
+      "id": "artifact-mu0l6edb-z48z",
+      "num": 2
+    }
+  ],
+  "panelStack": [],
+  "panelDrafts": {
+    "plan|plan-mu0l57pe-3wfe": {
+      "values": {
+        "plan-goal": {
+          "value": "为 SpaceMaster 准备德国官网上市海报，型号 MDRS761MYM45A。使用 Canva 提供的图片，整理产品六视角、木色厨房场景、四类卖点图、模特替换候选和德语官网横幅。法语、阿拉伯语作为其他语言版本。保留策略、FABE 和 Message House，完成后集中查看草稿。"
+        },
+        "plan-mode": {
+          "value": "collaborate"
+        },
+        "plan-current-kind": {
+          "value": "strategy"
+        }
+      },
+      "at": "2026-09-14T01:50:45.145Z"
+    },
+    "batch|batch-mu0l6a3d-azl4": {
+      "values": {
+        "batch-feedback": {
+          "value": ""
+        }
+      },
+      "at": "2026-09-14T01:51:50.241Z"
+    },
+    "compare|artifact-mu0l6edb-z48z|2": {
+      "values": {
+        "batch-feedback": {
+          "value": ""
+        }
+      },
+      "at": "2026-09-14T01:52:35.766Z"
+    },
+    "settings|": {
+      "values": {
+        "pref-theme": {
+          "value": "light"
+        },
+        "pref-speed": {
+          "value": "1"
+        }
+      },
+      "at": "2026-09-14T02:02:58.139Z"
+    },
+    "md-import|": {
+      "values": {
+        "pref-theme": {
+          "value": "light"
+        },
+        "pref-speed": {
+          "value": "1"
+        }
+      },
+      "at": "2026-09-14T02:02:38.896Z"
+    }
+  },
+  "composerDrafts": {
+    "quick-1": "",
+    "spacemaster-de-chat": ""
+  },
+  "workbenchWidth": 62,
+  "plans": [
+    {
+      "id": "plan-mu0l57pe-3wfe",
+      "projectId": "spacemaster-de",
+      "threadId": "spacemaster-de-chat",
+      "owner": "lin",
+      "revision": 2,
+      "status": "confirmed",
+      "mode": "collaborate",
+      "goal": "为 SpaceMaster 准备德国官网上市海报，型号 MDRS761MYM45A。使用 Canva 提供的图片，整理产品六视角、木色厨房场景、四类卖点图、模特替换候选和德语官网横幅。法语、阿拉伯语作为其他语言版本。保留策略、FABE 和 Message House，完成后集中查看草稿。",
+      "kinds": [
+        "strategy",
+        "fabe",
+        "mh",
+        "productImages",
+        "scene",
+        "featureImages",
+        "websitePoster"
+      ],
+      "notes": [],
+      "created": "2026-09-14T01:49:55.395Z",
+      "context": {
+        "product": "SpaceMaster",
+        "model": "MDRS761MYM45A",
+        "category": "冰箱",
+        "market": "DE",
+        "language": "de-DE",
+        "channels": [
+          "web"
+        ],
+        "inputSnapshotId": "input-fixture-spacemaster-de",
+        "contextRevision": 1
+      },
+      "currentKind": "strategy",
+      "scopeAccepted": true,
+      "batchId": "batch-mu0l6a3d-azl4",
+      "confirmedAt": "2026-09-14T01:50:45.145Z"
+    }
+  ],
+  "batches": [
+    {
+      "id": "batch-mu0l6a3d-azl4",
+      "projectId": "spacemaster-de",
+      "threadId": "spacemaster-de-chat",
+      "owner": "lin",
+      "reviewer": "reviewer",
+      "plan": {
+        "id": "plan-mu0l57pe-3wfe",
+        "projectId": "spacemaster-de",
+        "threadId": "spacemaster-de-chat",
+        "owner": "lin",
+        "revision": 2,
+        "status": "draft",
+        "mode": "collaborate",
+        "goal": "为 SpaceMaster 准备德国官网上市海报，型号 MDRS761MYM45A。使用 Canva 提供的图片，整理产品六视角、木色厨房场景、四类卖点图、模特替换候选和德语官网横幅。法语、阿拉伯语作为其他语言版本。保留策略、FABE 和 Message House，完成后集中查看草稿。",
+        "kinds": [
+          "strategy",
+          "fabe",
+          "mh",
+          "productImages",
+          "scene",
+          "featureImages",
+          "websitePoster"
+        ],
+        "notes": [],
+        "created": "2026-09-14T01:49:55.395Z",
+        "context": {
+          "product": "SpaceMaster",
+          "model": "MDRS761MYM45A",
+          "category": "冰箱",
+          "market": "DE",
+          "language": "de-DE",
+          "channels": [
+            "web"
+          ],
+          "inputSnapshotId": "input-fixture-spacemaster-de",
+          "contextRevision": 1
+        },
+        "currentKind": "strategy",
+        "scopeAccepted": true
+      },
+      "inputSnapshot": {
+        "id": "input-fixture-spacemaster-de",
+        "projectId": "spacemaster-de",
+        "version": 1,
+        "contextRevision": 1,
+        "identity": "[\"SpaceMaster\",\"冰箱\",\"MDRS761MYM45A\",\"DE\",\"de-DE\",[\"web\"]]",
+        "context": {
+          "name": "SpaceMaster 德国官网上市海报",
+          "productName": "SpaceMaster",
+          "category": "冰箱",
+          "model": "MDRS761MYM45A",
+          "market": "DE",
+          "language": "de-DE",
+          "channels": [
+            "web"
+          ],
+          "tier": "Hero",
+          "goal": "为 SpaceMaster 准备德国官网上市海报，型号 MDRS761MYM45A。使用 Canva 提供的图片，整理产品六视角、木色厨房场景、四类卖点图、模特替换候选和德语官网横幅。法语、阿拉伯语作为其他语言版本。保留策略、FABE 和 Message House，完成后集中查看草稿。"
+        },
+        "confirmedBy": "lin",
+        "confirmedAt": "2026-09-14T01:29:53.601Z",
+        "fixture": true,
+        "evidence": [
+          {
+            "id": "fixture-evidence-spacemaster-de-DE01",
+            "sourceId": "DE01",
+            "sourceType": "fixture",
+            "projectId": "spacemaster-de",
+            "sourceName": "SpaceMaster 产品与图像输入",
+            "excerpt": "用户确认型号 MDRS761MYM45A；Canva 六视角、厨房场景与四语言海报，另有用户提供卖点图及模特候选。图中文字不反写产品事实。",
+            "locator": "预置演示资料 / DE01",
+            "model": "MDRS761MYM45A",
+            "market": "DE",
+            "category": "product",
+            "status": "verified",
+            "verifiedBy": "lin",
+            "verifiedAt": "2026-09-14T01:29:53.601Z"
+          },
+          {
+            "id": "fixture-evidence-spacemaster-de-DE02",
+            "sourceId": "DE02",
+            "sourceType": "fixture",
+            "projectId": "spacemaster-de",
+            "sourceName": "德国官网创意与内容 Brief",
+            "excerpt": "德国 / de-DE / 官网横幅。厨房焕新和冰箱替换作为工作假设；木色厨房、自然光、产品清晰可辨。",
+            "locator": "预置演示资料 / DE02",
+            "model": "MDRS761MYM45A",
+            "market": "DE",
+            "category": "product",
+            "status": "verified",
+            "verifiedBy": "lin",
+            "verifiedAt": "2026-09-14T01:29:53.601Z"
+          },
+          {
+            "id": "fixture-evidence-spacemaster-de-DE03",
+            "sourceId": "DE03",
+            "sourceType": "fixture",
+            "projectId": "spacemaster-de",
+            "sourceName": "图像及声明检查边界",
+            "excerpt": "文件齐套不代表结构真实性已确认。德国配置、安装方式缺少适用依据；现成 PNG 不等于已接入实时生成或图层编辑。",
+            "locator": "预置演示资料 / DE03",
+            "model": "MDRS761MYM45A",
+            "market": "DE",
+            "category": "product",
+            "status": "verified",
+            "verifiedBy": "lin",
+            "verifiedAt": "2026-09-14T01:29:53.601Z"
+          },
+          {
+            "id": "fixture-evidence-spacemaster-de-DE04",
+            "sourceId": "DE04",
+            "sourceType": "fixture",
+            "projectId": "spacemaster-de",
+            "sourceName": "交付规则与来源",
+            "excerpt": "七项交付：Strategy、FABE、Message House、六视角、场景、卖点图和德国官网海报。前六项确认草稿，德语海报固定版审核；法语和阿语国家待选。",
+            "locator": "预置演示资料 / DE04",
+            "model": "MDRS761MYM45A",
+            "market": "DE",
+            "category": "product",
+            "status": "verified",
+            "verifiedBy": "lin",
+            "verifiedAt": "2026-09-14T01:29:53.601Z"
+          }
+        ]
+      },
+      "projectSnapshot": {
+        "id": "spacemaster-de",
+        "threadId": "spacemaster-de-chat",
+        "name": "SpaceMaster 德国官网上市海报",
+        "productName": "SpaceMaster",
+        "model": "MDRS761MYM45A",
+        "category": "冰箱",
+        "tier": "Hero",
+        "market": "DE",
+        "markets": [
+          "DE"
+        ],
+        "language": "de-DE",
+        "channels": [
+          "web"
+        ],
+        "goal": "为 SpaceMaster 准备德国官网上市海报，型号 MDRS761MYM45A。使用 Canva 提供的图片，整理产品六视角、木色厨房场景、四类卖点图、模特替换候选和德语官网横幅。法语、阿拉伯语作为其他语言版本。保留策略、FABE 和 Message House，完成后集中查看草稿。",
+        "owner": "lin",
+        "scopeConfirmed": true,
+        "ruleVersion": 1,
+        "created": "2026-09-14T01:29:53.601Z",
+        "contextArtifacts": [],
+        "inputsReady": true,
+        "demoScenario": "spacemaster-de",
+        "inputContextRevision": 1,
+        "v62InputMigrated": true,
+        "scope": [
+          {
+            "kind": "strategy",
+            "domain": "strategy",
+            "name": "产品策略",
+            "category": "必需",
+            "reason": "已确认的德国官网交付范围",
+            "maturity": "draft",
+            "requirement": "内容、来源与固定引用完整；集中采用版本。"
+          },
+          {
+            "kind": "fabe",
+            "domain": "strategy",
+            "name": "FABE 价值体系",
+            "category": "必需",
+            "reason": "已确认的德国官网交付范围",
+            "maturity": "draft",
+            "requirement": "内容、来源与固定引用完整；集中采用版本。"
+          },
+          {
+            "kind": "mh",
+            "domain": "strategy",
+            "name": "Message House",
+            "category": "必需",
+            "reason": "DE · de-DE",
+            "maturity": "draft",
+            "requirement": "内容、来源与固定引用完整；集中采用版本。"
+          },
+          {
+            "kind": "productImages",
+            "domain": "asset",
+            "name": "产品六视角集合",
+            "category": "必需",
+            "reason": "已确认的德国官网交付范围",
+            "maturity": "draft",
+            "requirement": "内容、来源与固定引用完整；集中采用版本。"
+          },
+          {
+            "kind": "scene",
+            "domain": "asset",
+            "name": "厨房场景素材",
+            "category": "必需",
+            "reason": "已确认的德国官网交付范围",
+            "maturity": "draft",
+            "requirement": "内容、来源与固定引用完整；集中采用版本。"
+          },
+          {
+            "kind": "featureImages",
+            "domain": "asset",
+            "name": "卖点图集合",
+            "category": "必需",
+            "reason": "已确认的德国官网交付范围",
+            "maturity": "draft",
+            "requirement": "内容、来源与固定引用完整；集中采用版本。"
+          },
+          {
+            "kind": "websitePoster",
+            "domain": "material",
+            "name": "德国官网海报",
+            "category": "必需",
+            "reason": "已确认的德国官网交付范围",
+            "maturity": "approved",
+            "requirement": "固定德语图片、文案转录、用途与来源说明通过审核。"
+          }
+        ]
+      },
+      "items": [
+        {
+          "kind": "strategy",
+          "taskId": "task-mu0l6a3d-i2na",
+          "status": "ready",
+          "decision": "pending",
+          "selected": true,
+          "artifactId": "artifact-mu0l6edb-z48z",
+          "revision": 1,
+          "checks": [
+            {
+              "passed": true,
+              "artifactId": "artifact-mu0l6edb-z48z",
+              "revision": 1,
+              "at": "2026-09-14T01:50:56.936Z",
+              "findings": [
+                {
+                  "title": "文件与固定版本",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "文件、尺寸与哈希完整。六视角齐套不代表不可见结构已验证。"
+                },
+                {
+                  "title": "用途与内容",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "用于德国官网创意评审；图内安装声明保留待核验，不等于产品事实批准。"
+                },
+                {
+                  "title": "来源与范围",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "Canva / 用户提供。法语、阿语国家待选；人物候选变化独立记录，不影响其他已完成内容。"
+                }
+              ],
+              "previewReady": true,
+              "formalReady": true,
+              "checkScope": "internal-preview",
+              "deliveryScope": {
+                "members": [],
+                "country": null,
+                "language": null,
+                "selectionVersion": 1
+              },
+              "layers": [
+                {
+                  "key": "content-0",
+                  "label": "文件与固定版本",
+                  "status": "checked",
+                  "detail": "文件、尺寸与哈希完整。六视角齐套不代表不可见结构已验证。"
+                },
+                {
+                  "key": "content-1",
+                  "label": "用途与内容",
+                  "status": "checked",
+                  "detail": "用于德国官网创意评审；图内安装声明保留待核验，不等于产品事实批准。"
+                },
+                {
+                  "key": "content-2",
+                  "label": "来源与范围",
+                  "status": "checked",
+                  "detail": "Canva / 用户提供。法语、阿语国家待选；人物候选变化独立记录，不影响其他已完成内容。"
+                }
+              ]
+            }
+          ],
+          "error": null
+        }
+      ],
+      "status": "ready",
+      "created": "2026-09-14T01:50:45.145Z",
+      "events": [],
+      "execution": "current",
+      "externalRefs": [],
+      "completedAt": "2026-09-14T01:50:57.665Z"
+    }
+  ],
+  "workModes": {
+    "spacemaster-de-chat": "collaborate"
+  },
+  "taskFilter": "mine",
+  "projectCollapsed": {},
+  "expandedSellingPoints": {},
+  "inspectorOpen": false,
+  "inspectorTab": "status",
+  "libraryPushes": [],
+  "externalSources": [],
+  "unifiedPlanMigration": 1,
+  "inputEvidence": [
+    {
+      "id": "fixture-evidence-sample-launch-P01",
+      "sourceId": "P01",
+      "sourceType": "fixture",
+      "projectId": "sample-launch",
+      "sourceName": "墨西哥产品资料",
+      "excerpt": "用户提供的历史资料记录：570 L；115 V；1775 × 910 × 698 mm；Side by Side。此处演示产品事实读取，不是实时 PIM 查询。",
+      "locator": "预置演示资料 / P01",
+      "model": "MDRS761MYM45A",
+      "market": "MX",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "fixture-evidence-sample-launch-P02",
+      "sourceId": "P02",
+      "sourceType": "fixture",
+      "projectId": "sample-launch",
+      "sourceName": "产品功能说明",
+      "excerpt": "历史记录列有薄壁空间设计、Counter Depth、Inverter Quattro、WiFi 和水／冰分配。不能从功能名称推断节能百分比或适配所有厨房。",
+      "locator": "预置演示资料 / P02",
+      "model": "MDRS761MYM45A",
+      "market": "MX",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "fixture-evidence-sample-launch-R01",
+      "sourceId": "R01",
+      "sourceType": "fixture",
+      "projectId": "sample-launch",
+      "sourceName": "墨西哥厨房与购买场景",
+      "excerpt": "演示观察：厨房升级、集中采购、日常饮品取用，可作为候选使用情境。这不是实际访谈、市场统计或代表性结论。",
+      "locator": "预置演示资料 / R01",
+      "model": "MDRS761MYM45A",
+      "market": "MX",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "fixture-evidence-sample-launch-C01",
+      "sourceId": "C01",
+      "sourceType": "fixture",
+      "projectId": "sample-launch",
+      "sourceName": "MX 渠道表达建议",
+      "excerpt": "POP 标题简短，产品与声明可辨识；官网可展开功能。不得添加无依据的销量排名、节能比例或保鲜天数。用于演示检查，不代替法规审核。",
+      "locator": "预置演示资料 / C01",
+      "model": "MDRS761MYM45A",
+      "market": "MX",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "fixture-evidence-spacemaster-de-DE01",
+      "sourceId": "DE01",
+      "sourceType": "fixture",
+      "projectId": "spacemaster-de",
+      "sourceName": "SpaceMaster 产品与图像输入",
+      "excerpt": "用户确认型号 MDRS761MYM45A；Canva 六视角、厨房场景与四语言海报，另有用户提供卖点图及模特候选。图中文字不反写产品事实。",
+      "locator": "预置演示资料 / DE01",
+      "model": "MDRS761MYM45A",
+      "market": "DE",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "fixture-evidence-spacemaster-de-DE02",
+      "sourceId": "DE02",
+      "sourceType": "fixture",
+      "projectId": "spacemaster-de",
+      "sourceName": "德国官网创意与内容 Brief",
+      "excerpt": "德国 / de-DE / 官网横幅。厨房焕新和冰箱替换作为工作假设；木色厨房、自然光、产品清晰可辨。",
+      "locator": "预置演示资料 / DE02",
+      "model": "MDRS761MYM45A",
+      "market": "DE",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "fixture-evidence-spacemaster-de-DE03",
+      "sourceId": "DE03",
+      "sourceType": "fixture",
+      "projectId": "spacemaster-de",
+      "sourceName": "图像及声明检查边界",
+      "excerpt": "文件齐套不代表结构真实性已确认。德国配置、安装方式缺少适用依据；现成 PNG 不等于已接入实时生成或图层编辑。",
+      "locator": "预置演示资料 / DE03",
+      "model": "MDRS761MYM45A",
+      "market": "DE",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T01:29:53.601Z"
+    },
+    {
+      "id": "fixture-evidence-spacemaster-de-DE04",
+      "sourceId": "DE04",
+      "sourceType": "fixture",
+      "projectId": "spacemaster-de",
+      "sourceName": "交付规则与来源",
+      "excerpt": "七项交付：Strategy、FABE、Message House、六视角、场景、卖点图和德国官网海报。前六项确认草稿，德语海报固定版审核；法语和阿语国家待选。",
+      "locator": "预置演示资料 / DE04",
+      "model": "MDRS761MYM45A",
+      "market": "DE",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T01:29:53.601Z"
+    }
+  ],
+  "inputSnapshots": [
+    {
+      "id": "input-fixture-sample-launch",
+      "projectId": "sample-launch",
+      "version": 1,
+      "contextRevision": 1,
+      "identity": "[\"SpaceMaster\",\"冰箱\",\"MDRS761MYM45A\",\"MX\",\"es-MX\",[\"retail\",\"web\"]]",
+      "context": {
+        "name": "SpaceMaster 墨西哥上市",
+        "productName": "SpaceMaster",
+        "category": "冰箱",
+        "model": "MDRS761MYM45A",
+        "market": "MX",
+        "language": "es-MX",
+        "channels": [
+          "web",
+          "retail"
+        ],
+        "tier": "Hero",
+        "goal": "完成墨西哥上市策略与官网、门店物料。"
+      },
+      "confirmedBy": "lin",
+      "confirmedAt": "2026-09-14T01:29:53.601Z",
+      "fixture": true,
+      "evidence": [
+        {
+          "id": "fixture-evidence-sample-launch-P01",
+          "sourceId": "P01",
+          "sourceType": "fixture",
+          "projectId": "sample-launch",
+          "sourceName": "墨西哥产品资料",
+          "excerpt": "用户提供的历史资料记录：570 L；115 V；1775 × 910 × 698 mm；Side by Side。此处演示产品事实读取，不是实时 PIM 查询。",
+          "locator": "预置演示资料 / P01",
+          "model": "MDRS761MYM45A",
+          "market": "MX",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T01:29:53.601Z"
+        },
+        {
+          "id": "fixture-evidence-sample-launch-P02",
+          "sourceId": "P02",
+          "sourceType": "fixture",
+          "projectId": "sample-launch",
+          "sourceName": "产品功能说明",
+          "excerpt": "历史记录列有薄壁空间设计、Counter Depth、Inverter Quattro、WiFi 和水／冰分配。不能从功能名称推断节能百分比或适配所有厨房。",
+          "locator": "预置演示资料 / P02",
+          "model": "MDRS761MYM45A",
+          "market": "MX",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T01:29:53.601Z"
+        },
+        {
+          "id": "fixture-evidence-sample-launch-R01",
+          "sourceId": "R01",
+          "sourceType": "fixture",
+          "projectId": "sample-launch",
+          "sourceName": "墨西哥厨房与购买场景",
+          "excerpt": "演示观察：厨房升级、集中采购、日常饮品取用，可作为候选使用情境。这不是实际访谈、市场统计或代表性结论。",
+          "locator": "预置演示资料 / R01",
+          "model": "MDRS761MYM45A",
+          "market": "MX",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T01:29:53.601Z"
+        },
+        {
+          "id": "fixture-evidence-sample-launch-C01",
+          "sourceId": "C01",
+          "sourceType": "fixture",
+          "projectId": "sample-launch",
+          "sourceName": "MX 渠道表达建议",
+          "excerpt": "POP 标题简短，产品与声明可辨识；官网可展开功能。不得添加无依据的销量排名、节能比例或保鲜天数。用于演示检查，不代替法规审核。",
+          "locator": "预置演示资料 / C01",
+          "model": "MDRS761MYM45A",
+          "market": "MX",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T01:29:53.601Z"
+        }
+      ]
+    },
+    {
+      "id": "input-fixture-spacemaster-de",
+      "projectId": "spacemaster-de",
+      "version": 1,
+      "contextRevision": 1,
+      "identity": "[\"SpaceMaster\",\"冰箱\",\"MDRS761MYM45A\",\"DE\",\"de-DE\",[\"web\"]]",
+      "context": {
+        "name": "SpaceMaster 德国官网上市海报",
+        "productName": "SpaceMaster",
+        "category": "冰箱",
+        "model": "MDRS761MYM45A",
+        "market": "DE",
+        "language": "de-DE",
+        "channels": [
+          "web"
+        ],
+        "tier": "Hero",
+        "goal": "为 SpaceMaster 准备德国官网上市海报，型号 MDRS761MYM45A。使用 Canva 提供的图片，整理产品六视角、木色厨房场景、四类卖点图、模特替换候选和德语官网横幅。法语、阿拉伯语作为其他语言版本。保留策略、FABE 和 Message House，完成后集中查看草稿。"
+      },
+      "confirmedBy": "lin",
+      "confirmedAt": "2026-09-14T01:29:53.601Z",
+      "fixture": true,
+      "evidence": [
+        {
+          "id": "fixture-evidence-spacemaster-de-DE01",
+          "sourceId": "DE01",
+          "sourceType": "fixture",
+          "projectId": "spacemaster-de",
+          "sourceName": "SpaceMaster 产品与图像输入",
+          "excerpt": "用户确认型号 MDRS761MYM45A；Canva 六视角、厨房场景与四语言海报，另有用户提供卖点图及模特候选。图中文字不反写产品事实。",
+          "locator": "预置演示资料 / DE01",
+          "model": "MDRS761MYM45A",
+          "market": "DE",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T01:29:53.601Z"
+        },
+        {
+          "id": "fixture-evidence-spacemaster-de-DE02",
+          "sourceId": "DE02",
+          "sourceType": "fixture",
+          "projectId": "spacemaster-de",
+          "sourceName": "德国官网创意与内容 Brief",
+          "excerpt": "德国 / de-DE / 官网横幅。厨房焕新和冰箱替换作为工作假设；木色厨房、自然光、产品清晰可辨。",
+          "locator": "预置演示资料 / DE02",
+          "model": "MDRS761MYM45A",
+          "market": "DE",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T01:29:53.601Z"
+        },
+        {
+          "id": "fixture-evidence-spacemaster-de-DE03",
+          "sourceId": "DE03",
+          "sourceType": "fixture",
+          "projectId": "spacemaster-de",
+          "sourceName": "图像及声明检查边界",
+          "excerpt": "文件齐套不代表结构真实性已确认。德国配置、安装方式缺少适用依据；现成 PNG 不等于已接入实时生成或图层编辑。",
+          "locator": "预置演示资料 / DE03",
+          "model": "MDRS761MYM45A",
+          "market": "DE",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T01:29:53.601Z"
+        },
+        {
+          "id": "fixture-evidence-spacemaster-de-DE04",
+          "sourceId": "DE04",
+          "sourceType": "fixture",
+          "projectId": "spacemaster-de",
+          "sourceName": "交付规则与来源",
+          "excerpt": "七项交付：Strategy、FABE、Message House、六视角、场景、卖点图和德国官网海报。前六项确认草稿，德语海报固定版审核；法语和阿语国家待选。",
+          "locator": "预置演示资料 / DE04",
+          "model": "MDRS761MYM45A",
+          "market": "DE",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T01:29:53.601Z"
+        }
+      ]
+    }
+  ],
+  "inputUploadAttempts": [],
+  "inputContextChanges": [],
+  "workflowBranches": {
+    "jobs": [],
+    "selected": [],
+    "draft": {},
+    "activeJob": null,
+    "mode": "search",
+    "modeDrafts": {
+      "search": {}
+    },
+    "jobDrafts": {},
+    "positions": {}
+  },
+  "md": {
+    "schema": 2,
+    "snapshots": [],
+    "runs": [],
+    "decisions": [],
+    "imports": [],
+    "scope": "work",
+    "editDrafts": {}
+  },
+  "dockState": {
+    "kind": "settings",
+    "arg": ""
+  },
+  "examplesAdded": true,
+  "productExamplesUpdated": true,
+  "imageViews": {},
+  "artifactWorkspace": {
+    "origin": {
+      "view": "chat",
+      "projectId": "spacemaster-de",
+      "threadId": "spacemaster-de-chat",
+      "filters": {
+        "domain": "all"
+      },
+      "taskFilter": "mine",
+      "selection": null,
+      "listScroll": 0,
+      "chatScroll": 17.5,
+      "focusAction": "open-artifact",
+      "focusArg": "artifact-mu0l6edb-z48z|1"
+    },
+    "independent": false,
+    "chatVisible": true,
+    "scrolls": {
+      "artifact-mu0l6edb-z48z|1|content": 0,
+      "artifact-mu0l6edb-z48z|2|content": 0
+    },
+    "chatScroll": 17.5,
+    "discussionBound": false
+  },
+  "decisionLauncherThread": null
+}

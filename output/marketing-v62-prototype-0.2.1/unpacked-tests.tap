@@ -1,0 +1,674 @@
+
+> mokina-marketing-desktop-prototype@0.2.1 test
+> npm run test:v62 && npm run test:marketing
+
+
+> mokina-marketing-desktop-prototype@0.2.1 test:v62
+> node --test tests/v62-*.test.cjs
+
+TAP version 13
+# Subtest: declining a candidate preserves the adopted version, history and the old submission snapshot
+ok 1 - declining a candidate preserves the adopted version, history and the old submission snapshot
+  ---
+  duration_ms: 5.113833
+  type: 'test'
+  ...
+# Subtest: defer first candidate removes its pending count without inventing an adopted result
+ok 2 - defer first candidate removes its pending count without inventing an adopted result
+  ---
+  duration_ms: 1.358375
+  type: 'test'
+  ...
+# Subtest: selection cancellation creates a new collection version and zero selection cannot complete delivery
+ok 3 - selection cancellation creates a new collection version and zero selection cannot complete delivery
+  ---
+  duration_ms: 1.711167
+  type: 'test'
+  ...
+# Subtest: German selection cannot absorb French or Arabic members, and known person defects cannot be selected
+ok 4 - German selection cannot absorb French or Arabic members, and known person defects cannot be selected
+  ---
+  duration_ms: 1.714125
+  type: 'test'
+  ...
+# Subtest: file readability is distinct from authenticity, rights and local declarations
+ok 5 - file readability is distinct from authenticity, rights and local declarations
+  ---
+  duration_ms: 1.07025
+  type: 'test'
+  ...
+# Subtest: formal submission remains blocked while explicit internal review pins selected members and scope
+ok 6 - formal submission remains blocked while explicit internal review pins selected members and scope
+  ---
+  duration_ms: 1.176875
+  type: 'test'
+  ...
+# Subtest: withdrawal is limited to the pending submitter who still owns the task
+ok 7 - withdrawal is limited to the pending submitter who still owns the task
+  ---
+  duration_ms: 1.060833
+  type: 'test'
+  ...
+# Subtest: returned fixed version requires a new candidate, adoption and recheck before resubmission
+ok 8 - returned fixed version requires a new candidate, adoption and recheck before resubmission
+  ---
+  duration_ms: 1.555542
+  type: 'test'
+  ...
+# Subtest: selected delivery exports omit unselected languages while candidate archive retains history
+ok 9 - selected delivery exports omit unselected languages while candidate archive retains history
+  ---
+  duration_ms: 1.338375
+  type: 'test'
+  ...
+# Subtest: closing a batch candidate keeps its version link but removes the adoption action
+ok 10 - closing a batch candidate keeps its version link but removes the adoption action
+  ---
+  duration_ms: 1.048583
+  type: 'test'
+  ...
+# Subtest: member adoption advances the active batch result while keeping the plan and prior execution result
+ok 11 - member adoption advances the active batch result while keeping the plan and prior execution result
+  ---
+  duration_ms: 1.014042
+  type: 'test'
+  ...
+# Subtest: legacy adopted members are read compatibly without rewriting fixed historical data
+ok 12 - legacy adopted members are read compatibly without rewriting fixed historical data
+  ---
+  duration_ms: 0.603
+  type: 'test'
+  ...
+# Subtest: the visible member evidence form saves a fixed record into a new candidate and preserves prior submission
+ok 13 - the visible member evidence form saves a fixed record into a new candidate and preserves prior submission
+  ---
+  duration_ms: 1.458333
+  type: 'test'
+  ...
+# Subtest: member evidence requires location, responsible person, scope, a valid future expiry and current edit authority
+ok 14 - member evidence requires location, responsible person, scope, a valid future expiry and current edit authority
+  ---
+  duration_ms: 0.757583
+  type: 'test'
+  ...
+# Subtest: user evidence cannot overwrite a known defect or silently apply to a changed file hash
+ok 15 - user evidence cannot overwrite a known defect or silently apply to a changed file hash
+  ---
+  duration_ms: 0.610708
+  type: 'test'
+  ...
+# Subtest: new evidence history is versioned and expired evidence is not considered confirmed
+ok 16 - new evidence history is versioned and expired evidence is not considered confirmed
+  ---
+  duration_ms: 0.658334
+  type: 'test'
+  ...
+# Subtest: structured project-input drafts can be previewed but cannot pass formal content readiness
+ok 17 - structured project-input drafts can be previewed but cannot pass formal content readiness
+  ---
+  duration_ms: 0.542125
+  type: 'test'
+  ...
+# Subtest: full build chain initializes V6 schema and keeps migrations idempotent
+ok 18 - full build chain initializes V6 schema and keeps migrations idempotent
+  ---
+  duration_ms: 27.917541
+  type: 'test'
+  ...
+# Subtest: 21 story steps preserve fixed German internal reviews without duplicate messages or fake receipts
+ok 19 - 21 story steps preserve fixed German internal reviews without duplicate messages or fake receipts
+  ---
+  duration_ms: 71.690417
+  type: 'test'
+  ...
+# Subtest: new product input and decision wrappers produce an editable internal draft with fixed evidence
+ok 20 - new product input and decision wrappers produce an editable internal draft with fixed evidence
+  ---
+  duration_ms: 12.029625
+  type: 'test'
+  ...
+# Subtest: saving a plan creates no tasks or execution; channels determine the actual deliverables
+ok 21 - saving a plan creates no tasks or execution; channels determine the actual deliverables
+  ---
+  duration_ms: 3.790458
+  type: 'test'
+  ...
+# Subtest: current work is explicit and a repeated start reuses the same immutable batch
+ok 22 - current work is explicit and a repeated start reuses the same immutable batch
+  ---
+  duration_ms: 2.503333
+  type: 'test'
+  ...
+# Subtest: external dependency content and reference keep the same frozen version after navigation and adoption change
+ok 23 - external dependency content and reference keep the same frozen version after navigation and adoption change
+  ---
+  duration_ms: 1.467833
+  type: 'test'
+  ...
+# Subtest: input and product changes require explicit synchronization, missing inputs never execute
+ok 24 - input and product changes require explicit synchronization, missing inputs never execute
+  ---
+  duration_ms: 1.89
+  type: 'test'
+  ...
+# Subtest: unknown historic deliverables stay visible and unsupported current work cannot start
+ok 25 - unknown historic deliverables stay visible and unsupported current work cannot start
+  ---
+  duration_ms: 0.846
+  type: 'test'
+  ...
+# Subtest: legacy migration is idempotent and never duplicates historical tasks or approvals
+ok 26 - legacy migration is idempotent and never duplicates historical tasks or approvals
+  ---
+  duration_ms: 0.697417
+  type: 'test'
+  ...
+# Subtest: explicit source revocation during execution blocks result creation rather than trusting the frozen snapshot
+ok 27 - explicit source revocation during execution blocks result creation rather than trusting the frozen snapshot
+  ---
+  duration_ms: 0.942375
+  type: 'test'
+  ...
+# Subtest: 上传文本在本项目显示，上传本身不产生就绪或事实确认
+ok 28 - 上传文本在本项目显示，上传本身不产生就绪或事实确认
+  ---
+  duration_ms: 11.116792
+  type: 'test'
+  ...
+# Subtest: 已读取文本只能核对正文中的摘录，拒绝不存在的事实或另一个项目的文件
+ok 29 - 已读取文本只能核对正文中的摘录，拒绝不存在的事实或另一个项目的文件
+  ---
+  duration_ms: 0.595375
+  type: 'test'
+  ...
+# Subtest: 新项目必须有具体产品证据，市场和竞品摘录不能单独放行
+ok 30 - 新项目必须有具体产品证据，市场和竞品摘录不能单独放行
+  ---
+  duration_ms: 0.528583
+  type: 'test'
+  ...
+# Subtest: 保存快照后就绪，重复保存同一组不重复版本；返回值不能改内部快照
+ok 31 - 保存快照后就绪，重复保存同一组不重复版本；返回值不能改内部快照
+  ---
+  duration_ms: 0.404167
+  type: 'test'
+  ...
+# Subtest: 字段修改列影响并使新输入待核对，旧批次与快照内容不改变
+ok 32 - 字段修改列影响并使新输入待核对，旧批次与快照内容不改变
+  ---
+  duration_ms: 0.608667
+  type: 'test'
+  ...
+# Subtest: 仅项目负责人可以修订字段、核对来源、保存或撤销证据资格
+ok 33 - 仅项目负责人可以修订字段、核对来源、保存或撤销证据资格
+  ---
+  duration_ms: 0.474083
+  type: 'test'
+  ...
+# Subtest: 外部来源登记与核对分开，引用快照含手工摘录和来源网址
+ok 34 - 外部来源登记与核对分开，引用快照含手工摘录和来源网址
+  ---
+  duration_ms: 0.385625
+  type: 'test'
+  ...
+# Subtest: 资料失效动态阻止旧批次使用，普通新版本不冒充撤权
+ok 35 - 资料失效动态阻止旧批次使用，普通新版本不冒充撤权
+  ---
+  duration_ms: 0.354375
+  type: 'test'
+  ...
+# Subtest: 个人输入不再静默关联德国，文字创建与按钮共享创建表单
+ok 36 - 个人输入不再静默关联德国，文字创建与按钮共享创建表单
+  ---
+  duration_ms: 0.736041
+  type: 'test'
+  ...
+# Subtest: 新产品全部交付只能使用本项目快照，不借用冰箱参数或图像
+ok 37 - 新产品全部交付只能使用本项目快照，不借用冰箱参数或图像
+  ---
+  duration_ms: 1.031958
+  type: 'test'
+  ...
+# Subtest: 生成期间继续读启动快照，项目新版本和其他项目导航不改变旧正文
+ok 38 - 生成期间继续读启动快照，项目新版本和其他项目导航不改变旧正文
+  ---
+  duration_ms: 1.014291
+  type: 'test'
+  ...
+# Subtest: 德国与历史墨西哥 fixture 迁移幂等，保留旧成果和提交记录
+ok 39 - 德国与历史墨西哥 fixture 迁移幂等，保留旧成果和提交记录
+  ---
+  duration_ms: 0.785417
+  type: 'test'
+  ...
+# Subtest: 单渠道项目不出现其他渠道交付，也不能直接调用其他渠道制作
+ok 40 - 单渠道项目不出现其他渠道交付，也不能直接调用其他渠道制作
+  ---
+  duration_ms: 0.439417
+  type: 'test'
+  ...
+# Subtest: 上传部分失败逐项保留原因，异步读取始终登记到开始选择的项目
+ok 41 - 上传部分失败逐项保留原因，异步读取始终登记到开始选择的项目
+  ---
+  duration_ms: 0.524791
+  type: 'test'
+  ...
+# Subtest: 个人查看其他项目背景仍走辅助面板，只有编辑进入资料工作区
+ok 42 - 个人查看其他项目背景仍走辅助面板，只有编辑进入资料工作区
+  ---
+  duration_ms: 0.4965
+  type: 'test'
+  ...
+# Subtest: 安全工作稿导出包含事实快照，不进入旧产品图与海报导出
+ok 43 - 安全工作稿导出包含事实快照，不进入旧产品图与海报导出
+  ---
+  duration_ms: 0.74375
+  type: 'test'
+  ...
+# Subtest: 预置来源可以标记失效并立即阻止运行中的固定快照
+ok 44 - 预置来源可以标记失效并立即阻止运行中的固定快照
+  ---
+  duration_ms: 0.342958
+  type: 'test'
+  ...
+# Subtest: 选区修改打开本地正文编辑器，不创建计划或调用旧墨西哥改稿
+ok 45 - 选区修改打开本地正文编辑器，不创建计划或调用旧墨西哥改稿
+  ---
+  duration_ms: 0.718334
+  type: 'test'
+  ...
+# Subtest: 改稿不能覆盖事实摘录；已有新候选和非负责人不能保存旧底稿
+ok 46 - 改稿不能覆盖事实摘录；已有新候选和非负责人不能保存旧底稿
+  ---
+  duration_ms: 0.459167
+  type: 'test'
+  ...
+# Subtest: an unconfirmed enterprise contract cannot be converted into formal approval by a local clean check
+ok 47 - an unconfirmed enterprise contract cannot be converted into formal approval by a local clean check
+  ---
+  duration_ms: 0.994333
+  type: 'test'
+  ...
+# Subtest: the story finishing its chapters does not claim business tasks or delivery have completed
+ok 48 - the story finishing its chapters does not claim business tasks or delivery have completed
+  ---
+  duration_ms: 1.197625
+  type: 'test'
+  ...
+# Subtest: a failed chapter stays incomplete and retains the actionable error
+ok 49 - a failed chapter stays incomplete and retains the actionable error
+  ---
+  duration_ms: 1.035
+  type: 'test'
+  ...
+# Subtest: independent search uses local input and never creates a project or silently includes fixtures
+ok 50 - independent search uses local input and never creates a project or silently includes fixtures
+  ---
+  duration_ms: 2.5365
+  type: 'test'
+  ...
+# Subtest: empty, inaccessible, missing and revoked search results retain distinct next actions
+ok 51 - empty, inaccessible, missing and revoked search results retain distinct next actions
+  ---
+  duration_ms: 0.889333
+  type: 'test'
+  ...
+# Subtest: governance retains editable descriptions and explicit decisions without altering source records
+ok 52 - governance retains editable descriptions and explicit decisions without altering source records
+  ---
+  duration_ms: 0.529041
+  type: 'test'
+  ...
+# Subtest: content check reports local findings and preserves original text through repair and recheck
+ok 53 - content check reports local findings and preserves original text through repair and recheck
+  ---
+  duration_ms: 1.207084
+  type: 'test'
+  ...
+# Subtest: opaque file and site inspections do not simulate parsing or web access
+ok 54 - opaque file and site inspections do not simulate parsing or web access
+  ---
+  duration_ms: 0.678833
+  type: 'test'
+  ...
+# Subtest: direct continuation fixes the original version and saves an actual editable candidate
+ok 55 - direct continuation fixes the original version and saves an actual editable candidate
+  ---
+  duration_ms: 0.853916
+  type: 'test'
+  ...
+# Subtest: pure extension requires explicit escalation for fact changes and cannot inherit approvals
+ok 56 - pure extension requires explicit escalation for fact changes and cannot inherit approvals
+  ---
+  duration_ms: 0.498833
+  type: 'test'
+  ...
+# Subtest: revoked source and ownership changes block continued writes
+ok 57 - revoked source and ownership changes block continued writes
+  ---
+  duration_ms: 0.386125
+  type: 'test'
+  ...
+# Subtest: human handoff receipts remain unverified and duplicates do not create repeated records
+ok 58 - human handoff receipts remain unverified and duplicates do not create repeated records
+  ---
+  duration_ms: 0.543042
+  type: 'test'
+  ...
+# Subtest: failed publishing closes only after evidence, repair, recheck and a completion receipt
+ok 59 - failed publishing closes only after evidence, repair, recheck and a completion receipt
+  ---
+  duration_ms: 0.551833
+  type: 'test'
+  ...
+# Subtest: knowledge handoff requires source evidence and retained knowledge body
+ok 60 - knowledge handoff requires source evidence and retained knowledge body
+  ---
+  duration_ms: 0.307459
+  type: 'test'
+  ...
+# Subtest: manual inbox keeps two primary decision tabs and exposes inputs, transfer and failures
+ok 61 - manual inbox keeps two primary decision tabs and exposes inputs, transfer and failures
+  ---
+  duration_ms: 0.520375
+  type: 'test'
+  ...
+# Subtest: transfer cancellation preserves the original assignee
+ok 62 - transfer cancellation preserves the original assignee
+  ---
+  duration_ms: 0.611042
+  type: 'test'
+  ...
+# Subtest: approval delivery becomes a native-upload handoff without fake external receipts
+ok 63 - approval delivery becomes a native-upload handoff without fake external receipts
+  ---
+  duration_ms: 0.45475
+  type: 'test'
+  ...
+# Subtest: workflow rendering escapes hostile user text and retains reversible return context
+ok 64 - workflow rendering escapes hostile user text and retains reversible return context
+  ---
+  duration_ms: 0.829042
+  type: 'test'
+  ...
+# Subtest: denied source text is not searched or copied into result snapshots
+ok 65 - denied source text is not searched or copied into result snapshots
+  ---
+  duration_ms: 0.333833
+  type: 'test'
+  ...
+# Subtest: assigned feedback remains actionable after reloading state and only its owner repairs it
+ok 66 - assigned feedback remains actionable after reloading state and only its owner repairs it
+  ---
+  duration_ms: 0.322917
+  type: 'test'
+  ...
+# Subtest: expired transfer cannot change ownership when accepted
+ok 67 - expired transfer cannot change ownership when accepted
+  ---
+  duration_ms: 0.257458
+  type: 'test'
+  ...
+# Subtest: legacy successful receipt and item history survive native-upload handoff preparation
+ok 68 - legacy successful receipt and item history survive native-upload handoff preparation
+  ---
+  duration_ms: 0.419667
+  type: 'test'
+  ...
+# Subtest: the original homepage asset and check shortcuts enter the independent workflows
+ok 69 - the original homepage asset and check shortcuts enter the independent workflows
+  ---
+  duration_ms: 0.258083
+  type: 'test'
+  ...
+# Subtest: empty work and missing-input tasks can upload in place and resume the original search
+ok 70 - empty work and missing-input tasks can upload in place and resume the original search
+  ---
+  duration_ms: 0.538375
+  type: 'test'
+  ...
+# Subtest: mode drafts and job drafts survive normal navigation and local-state restoration
+ok 71 - mode drafts and job drafts survive normal navigation and local-state restoration
+  ---
+  duration_ms: 0.495375
+  type: 'test'
+  ...
+# Subtest: independent navigation identifies its location and omits the originating conversation status
+ok 72 - independent navigation identifies its location and omits the originating conversation status
+  ---
+  duration_ms: 0.389417
+  type: 'test'
+  ...
+# Subtest: returning to a job restores the captured workflow scroll and field selection
+ok 73 - returning to a job restores the captured workflow scroll and field selection
+  ---
+  duration_ms: 0.638459
+  type: 'test'
+  ...
+# Subtest: internally reviewed work remains in the manual inbox for its formal-use owner
+ok 74 - internally reviewed work remains in the manual inbox for its formal-use owner
+  ---
+  duration_ms: 0.316334
+  type: 'test'
+  ...
+1..74
+# tests 74
+# suites 0
+# pass 74
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 147.051667
+
+> mokina-marketing-desktop-prototype@0.2.1 test:marketing
+> node --test tests/marketing-workspace.test.cjs
+
+TAP version 13
+# Subtest: independent storage is used from initial load, with no seeded projects
+ok 1 - independent storage is used from initial load, with no seeded projects
+  ---
+  duration_ms: 24.561458
+  type: 'test'
+  ...
+# Subtest: saving edited plan preserves item identity and creates no result
+ok 2 - saving edited plan preserves item identity and creates no result
+  ---
+  duration_ms: 11.856292
+  type: 'test'
+  ...
+# Subtest: async result stays with A while B has its own draft, repeated return ignored
+ok 3 - async result stays with A while B has its own draft, repeated return ignored
+  ---
+  duration_ms: 11.011708
+  type: 'test'
+  ...
+# Subtest: cancelled late completion never creates result
+ok 4 - cancelled late completion never creates result
+  ---
+  duration_ms: 10.377791
+  type: 'test'
+  ...
+# Subtest: run fixes input variant despite subsequent source replacement
+ok 5 - run fixes input variant despite subsequent source replacement
+  ---
+  duration_ms: 10.60125
+  type: 'test'
+  ...
+# Subtest: custom input cannot be relabelled as scenario-generated
+ok 6 - custom input cannot be relabelled as scenario-generated
+  ---
+  duration_ms: 10.820292
+  type: 'test'
+  ...
+# Subtest: brand why only explains, alternate is a cancellable separate artifact
+ok 7 - brand why only explains, alternate is a cancellable separate artifact
+  ---
+  duration_ms: 11.385667
+  type: 'test'
+  ...
+# Subtest: all alternative aliases share negation and create neither artifacts nor plan items
+ok 8 - all alternative aliases share negation and create neither artifacts nor plan items
+  ---
+  duration_ms: 11.559833
+  type: 'test'
+  ...
+# Subtest: negative image clause does not veto a positive text action; ambiguity never runs
+ok 9 - negative image clause does not veto a positive text action; ambiguity never runs
+  ---
+  duration_ms: 10.43875
+  type: 'test'
+  ...
+# Subtest: brand exclusion changes actual touchpoints; unknown scope creates no run or snapshot
+ok 10 - brand exclusion changes actual touchpoints; unknown scope creates no run or snapshot
+  ---
+  duration_ms: 11.123542
+  type: 'test'
+  ...
+# Subtest: social parameters control actual count channel and Gregorian schedule
+ok 11 - social parameters control actual count channel and Gregorian schedule
+  ---
+  duration_ms: 11.281792
+  type: 'test'
+  ...
+# Subtest: structured/text conflicts and unsupported plan fields block generation
+ok 12 - structured/text conflicts and unsupported plan fields block generation
+  ---
+  duration_ms: 10.330084
+  type: 'test'
+  ...
+# Subtest: scope validation rejects contradictory fields and another scene goal
+ok 13 - scope validation rejects contradictory fields and another scene goal
+  ---
+  duration_ms: 10.118792
+  type: 'test'
+  ...
+# Subtest: partial source changes revision and body together without mutating historical snapshot
+ok 14 - partial source changes revision and body together without mutating historical snapshot
+  ---
+  duration_ms: 10.556417
+  type: 'test'
+  ...
+# Subtest: historical mismatch is reported, not rewritten, and revoked source cannot resolve
+ok 15 - historical mismatch is reported, not rewritten, and revoked source cannot resolve
+  ---
+  duration_ms: 10.332166
+  type: 'test'
+  ...
+# Subtest: explicit start in plan mode executes saved single item, save and explanation do not
+ok 16 - explicit start in plan mode executes saved single item, save and explanation do not
+  ---
+  duration_ms: 10.89425
+  type: 'test'
+  ...
+# Subtest: completed work does not rerun without explicit repeat; all runs unfinished only
+ok 17 - completed work does not rerun without explicit repeat; all runs unfinished only
+  ---
+  duration_ms: 10.490042
+  type: 'test'
+  ...
+# Subtest: alternate cancellation and late callback preserve original artifact
+ok 18 - alternate cancellation and late callback preserve original artifact
+  ---
+  duration_ms: 10.402333
+  type: 'test'
+  ...
+# Subtest: followup requires selected supporting analysis and never works from an empty selection
+ok 19 - followup requires selected supporting analysis and never works from an empty selection
+  ---
+  duration_ms: 11.64775
+  type: 'test'
+  ...
+# Subtest: third post candidate preserves four other posts, original and adoption
+ok 20 - third post candidate preserves four other posts, original and adoption
+  ---
+  duration_ms: 10.997375
+  type: 'test'
+  ...
+# Subtest: stale base becomes conflict candidate instead of overwriting
+ok 21 - stale base becomes conflict candidate instead of overwriting
+  ---
+  duration_ms: 10.450833
+  type: 'test'
+  ...
+# Subtest: exact Spec CSV totals, groups and decomposition
+ok 22 - exact Spec CSV totals, groups and decomposition
+  ---
+  duration_ms: 10.349417
+  type: 'test'
+  ...
+# Subtest: CSV rejects invalid inputs and does not guess chronological string order
+ok 23 - CSV rejects invalid inputs and does not guess chronological string order
+  ---
+  duration_ms: 11
+  type: 'test'
+  ...
+# Subtest: quoted CSV and BOM are parsed without losing comma in group name
+ok 24 - quoted CSV and BOM are parsed without losing comma in group name
+  ---
+  duration_ms: 9.931417
+  type: 'test'
+  ...
+# Subtest: selected conclusion only, fixed source version, no complete upstream text
+ok 25 - selected conclusion only, fixed source version, no complete upstream text
+  ---
+  duration_ms: 10.475
+  type: 'test'
+  ...
+# Subtest: refresh restores drafts and marks interrupted simulation
+ok 26 - refresh restores drafts and marks interrupted simulation
+  ---
+  duration_ms: 20.299666
+  type: 'test'
+  ...
+# Subtest: unknown artifact survives full content/export and restore
+ok 27 - unknown artifact survives full content/export and restore
+  ---
+  duration_ms: 19.878916
+  type: 'test'
+  ...
+# Subtest: legacy import is idempotent, ambiguous owners stay historical
+ok 28 - legacy import is idempotent, ambiguous owners stay historical
+  ---
+  duration_ms: 10.487208
+  type: 'test'
+  ...
+# Subtest: fixed snapshot includes plan exclusion and original actor
+ok 29 - fixed snapshot includes plan exclusion and original actor
+  ---
+  duration_ms: 10.328916
+  type: 'test'
+  ...
+# Subtest: source version changes only next snapshot, revoked local source blocked
+ok 30 - source version changes only next snapshot, revoked local source blocked
+  ---
+  duration_ms: 10.333958
+  type: 'test'
+  ...
+# Subtest: plan mode alternate adds delivery without generating; negative request preserves result
+ok 31 - plan mode alternate adds delivery without generating; negative request preserves result
+  ---
+  duration_ms: 10.532083
+  type: 'test'
+  ...
+# Subtest: workflow continuation keeps creation work on save after navigation
+ok 32 - workflow continuation keeps creation work on save after navigation
+  ---
+  duration_ms: 10.409334
+  type: 'test'
+  ...
+# Subtest: backup primitive arrays are not collapsed under missing id
+ok 33 - backup primitive arrays are not collapsed under missing id
+  ---
+  duration_ms: 10.390708
+  type: 'test'
+  ...
+1..33
+# tests 33
+# suites 0
+# pass 33
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 424.463375

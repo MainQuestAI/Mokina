@@ -1,0 +1,23 @@
+.decision-global-bar { justify-content: flex-end; }
+.decision-tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--line, #d6e0e7); margin-bottom: 24px; }
+.decision-tabs button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 4px; border: 0; border-bottom: 2px solid transparent; color: var(--muted, #526576); background: transparent; font: inherit; cursor: pointer; }
+.decision-tabs button[aria-selected="true"] { color: #006ca3; border-bottom-color: #0076b3; font-weight: 500; }
+.decision-tabs button:focus-visible { outline: 2px solid #0076b3; outline-offset: 2px; }
+.decision-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--line, #d6e0e7); }
+.decision-row h3 { font-size: 18px; line-height: 1.5; margin: 0 0 8px; }
+.decision-row h3 span { font-size: 14px; font-weight: 400; }
+.decision-project-group { margin: 24px 0 32px; }
+.decision-project-group > h2 { font-size: 20px; margin-bottom: 16px; }
+.decision-group-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.decision-group-head h3, .decision-group-label { font-size: 14px; color: var(--muted, #526576); font-weight: 500; }
+.batch-item-completion { font-size: 14px; line-height: 1.5; color: var(--muted, #526576); margin: 8px 0; }
+.decision-row p, .decision-empty p { color: var(--muted, #526576); line-height: 1.5; }
+.decision-empty { padding: 48px 0; }
+.decision-empty h2 { font-size: 20px; }
+.decision-action-reason { margin: 0; padding: 8px 24px; color: var(--muted, #526576); font-size: 12px; line-height: 1.5; }
+.decision-submit-list article { padding: 20px 0; border-bottom: 1px solid var(--line, #d6e0e7); }
+.decision-submit-list h3 { font-size: 18px; }
+.decision-submit-list p { line-height: 1.6; }
+.decision-submit-list pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
+.decision-check-result.passed { color: #157347; }
+.decision-check-result.failed { color: #c93636; }

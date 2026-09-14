@@ -1,0 +1,32 @@
+/* Business chapters A01–A09 retain the former story's discussion and approval loop. */
+function demoStep(name,description,doWork){return {name,description,do:doWork};}
+async function demoProduce(kind,text){await autoRequest(text,async()=>{const plan=ensureUnifiedPlan(S.projectId,'collaborate');plan.currentKind=kind;closeModal();const batch=confirmPlan(plan.id,'current');if(!batch?.id)throw Error('无法开始 '+kind);await batchPromise;});const a=byKind(kind);if(!a)throw Error('Missing output '+kind);openCanvas(a.id);await autoWait(2600);return a;}
+async function demoSelectMembers(a,ids){
+  for(const id of ids){openCanvas(a.id,a.pending||a.active);await handle('demo-member',id);if(!window.V62Decisions.selectedIds(revision(a,a.pending||a.active)).includes(id))await handle('demo-member-adopt');}
+}
+async function demoSubmitFixed(a){submitArtifact(a.id,a.active);await autoWait(1200);await handle('v62-submission-scope','internal-review');await handle('decision-submit-check');await autoWait(1200);await handle('v62-submission-confirm','confirmed');await handle('decision-submit-final');if(!S.submissions.some(s=>s.artifactId===a.id&&s.revision===a.active&&s.status==='pending'))throw Error('固定版本未成功提交');}
+AUTO_STEPS.splice(0,AUTO_STEPS.length,
+  demoStep('A01 · 从产品图提出德国官网目标','个人入口建立项目上下文，不生成额外业务任务。',async()=>{const p=enterDemoProject();await autoRequest(DEMO_BRIEF,()=>{addMsg('assistant','已关联 SpaceMaster / MDRS761MYM45A 和 20 张提供图片。接下来整理来源与七项交付范围。');render(true);});await generate('research');openCanvas(byKind('research').id);await autoWait(2200);}),
+  demoStep('A01 · 保存七项交付计划','保存不启动制作；接下来的每项请求只执行当前工作。',async()=>{const p=project(),plan=ensureUnifiedPlan(p.id,'collaborate');await autoPresent('plan',plan.id,2600);await handle('plan-save',plan.id);}),
+  demoStep('A02 · 从依据形成策略','完整六段正文，区分事实、创意与缺口。',()=>demoProduce('strategy','请根据产品图片与德国官网 Brief，形成 SpaceMaster 产品策略。')),
+  demoStep('A02 · 修改并比较策略','保留原版本，明确采用新候选。',async()=>{const a=byKind('strategy');bindArtifactDiscussion('audience',false);await sendPrompt('优先面向厨房焕新和旧冰箱替换用户，保留工作假设，不泛指所有家庭。');await autoPresent('compare',a.id+'|'+a.pending,2200);adopt(a.id,a.pending);}),
+  demoStep('A02 · FABE 表达与依据','产品辨识、厨房生活和简洁呈现。',async()=>{const a=await demoProduce('fabe','整理 FABE，把功能观察、表达推论与依据分别保存。');adopt(a.id,a.pending);}),
+  demoStep('A02 · 德国 Message House','固定引用已选主题，保留完整长短表达。',async()=>{const a=await demoProduce('mh','基于这些主题，编写德国官网的 Message House。');adopt(a.id,a.pending);}),
+  demoStep('A03 · 正视图到六视角','查看六个角度，选入内部草稿；背面结构仍待核对。',async()=>{const a=await demoProduce('productImages','先补齐产品六视角，再准备厨房场景。');for(const id of ['K01','K02','K06']){await handle('demo-member',id);await autoWait(2000);}await demoSelectMembers(a,['K01','K02','K03','K04','K05','K06']);adopt(a.id,a.pending);}),
+  demoStep('A03 · 厨房场景','场景选用不附带真实性、授权或语言批准。',async()=>{const a=await demoProduce('scene','用暖木色厨房、自然光与岛台组织生活场景，保留产品识别。');await demoSelectMembers(a,['K07']);adopt(a.id,a.pending);}),
+  demoStep('A04 · 从主题制作卖点图','固定主题来源，图中声明与产品事实分别核对。',async()=>{const a=await demoProduce('featureImages','把空间收纳卖点做成一张功能图，再展示温度、保鲜和分区温控的表达。');for(const id of ['FT01','FT02','FT03','FT04']){await handle('demo-member',id);await autoWait(2400);}await demoSelectMembers(a,['FT01','FT02','FT03','FT04']);adopt(a.id,a.pending);}),
+  demoStep('A05 · 官网横幅与德语主版','Scene、MH 与卖点集合固定引用。',async()=>{const a=await demoProduce('websitePoster','组合德国官网海报，保留母版、来源和德语文件。');await handle('demo-member','K08');await autoWait(2200);await handle('demo-member','K09');await autoWait(2600);}),
+  demoStep('A06 · 将模特融入场景','先准备带人物的基础画面。',async()=>{openCanvas(byKind('scene').id);await autoRequest('在生活场景里融入成人和儿童模特，准备带人物的基础画面。',()=>handle('demo-integrate-model'));await autoWait(2400);}),
+  demoStep('A06 · 更换模特候选','原图加一个候选，逐张比较，不自动采用。',async()=>{openCanvas(byKind('scene').id);await autoRequest('这套带人物的内容再做几版模特本地化，保留冰箱和原文案。',()=>handle('demo-person-mode'));for(const id of ['PM01','PM02','PM03','PM04']){await handle('demo-member',id);await autoWait(2400);}}),
+  demoStep('A07 · 定位超出范围的变化','只记录当前候选返修，不阻断海报交付。',async()=>{await autoRequest('对比这些候选，检查有没有改到其他地方，只调整有问题的部分。',()=>handle('demo-repair','PM04'));await autoWait(2600);}),
+  demoStep('A08 · 语言变体与集中采用','德语主版、法语和阿语候选状态分开。',async()=>{const a=byKind('websitePoster');openCanvas(a.id);for(const id of ['K09','K10','K11']){await handle('demo-member',id);await autoWait(2400);}await demoSelectMembers(a,['K09']);adopt(a.id,a.pending);}),
+  demoStep('A08 · 协作接手','Ana 接受后才改变责任。',async()=>{const t=taskFor('websitePoster');requestTransfer(t.id);await autoWait(1600);await handle('set-role','ana');acceptTransfer(S.transfers.at(-1).id);openCanvas(byKind('websitePoster').id);await autoWait(1800);}),
+  demoStep('A08 · 检查并提交固定图片','固定图片、语言、说明及上游版本。',async()=>{const a=byKind('websitePoster');await demoSubmitFixed(a);await handle('set-role','reviewer');}),
+  demoStep('A08 · 审核退回具体说明','原提交不变，保留明确修改要求。',async()=>{const s=S.submissions.at(-1);await autoPresent('review',s.id,2600);reviewDecision(s.id,'returned','请补齐交付用途与素材来源说明，图片保持不变。');await handle('set-role','ana');}),
+  demoStep('A08 · 更新说明并重新提交','真实 Material 新版；原图片与哈希不变。',async()=>{const a=byKind('websitePoster');openCanvas(a.id);bindArtifactDiscussion('',false);await sendPrompt('补齐交付用途与素材来源说明：用于德国官网创意评审，Canva / 用户提供，图片保持不变。');await autoPresent('compare',a.id+'|'+a.pending,2400);adopt(a.id,a.pending);await demoSubmitFixed(a);}),
+  demoStep('A08 · 通过德语内部创意评审','仅通过固定德语创意范围，不代表正式传播或其他语言批准。',async()=>{await handle('set-role','reviewer');const s=S.submissions.at(-1);await autoPresent('review',s.id,2600);reviewDecision(s.id,'approved','通过这份德语内部创意评审；产品真实性、安装声明和商业使用条件仍需核对，其他语言单独处理。');}),
+  demoStep('A09 · 查看正式交付缺口','没有正式批准与目标系统回执，不标记 CL 接收成功。',async()=>{await handle('set-role','ana');await autoPresent('content-library','',2400);}),
+  demoStep('A09 · 草稿与未完成事项','草稿、内部评审、正式交付分别收口。',async()=>{await handle('set-role','lin');const p=S.projects.find(demoProject);goProject(p.id,false);addMsg('assistant','本次七类草稿已经整理并保留版本：策略、FABE、Message House、产品六视角、厨房场景、卖点图和德国官网海报。德语固定版已完成内部创意评审。\n\n正式交付尚未完成：产品真实性、安装声明和商业授权仍需核对；未写入真实 CL，也未发布到官网。法语、阿语与人物返修候选单独保留。可以查看、比较、下载草稿或继续处理具体缺口。',{action:'deliverables'});S.canvas=null;S.artifactWorkspace=null;S.view='tasks';render();})
+);
+// Source creation and backups stay in this independent demo namespace.
+window.SpaceMasterDemo={version:RELEASE_VERSION,schema:APP_VERSION,kinds:DEMO_KINDS,get state(){return S},images:MERGED_ASSETS.demoImages.map(({previewURL,...f})=>f)};

@@ -1,0 +1,29 @@
+/* Inherited Midea Operate/Read surface: real images lead, details open on demand. */
+.home-content .product-scenario-grid{grid-template-columns:minmax(0,290px);justify-content:start}
+.home-content .product-scenario-grid .product-tile{height:180px;flex:none;overflow:hidden;background:white}
+.home-content .product-scenario-grid .product-tile img{display:block;width:100%;height:100%;object-fit:contain;min-width:0}
+.home-content .product-scenario-grid .space-preview{height:auto;border-radius:8px}
+.demo-image-work{width:100%;min-width:0}
+.demo-image-work h2{margin:0 0 12px}.demo-image-work>p{margin:0 0 24px}
+.demo-image-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0}
+.demo-image-stage{margin:0;background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.demo-image-stage img{width:100%;height:auto;max-height:440px;object-fit:contain;display:block;background:white}
+.demo-image-stage figcaption{padding:12px 16px;font-size:14px;line-height:1.5}
+.demo-image-thumbs{display:flex;gap:12px;overflow-x:auto;margin:16px 0;padding:4px 2px 12px}
+.demo-image-thumbs button{flex:0 0 126px;background:var(--surface,#fff);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px;text-align:left;font:inherit;font-size:12px}
+.demo-image-thumbs button[aria-pressed=true]{border-color:var(--semantic-color-action-default);box-shadow:inset 0 0 0 1px var(--semantic-color-action-default)}
+.demo-image-thumbs img{width:108px;height:52px;object-fit:contain;background:white;display:block;margin-bottom:8px}
+.demo-image-thumbs span{display:block}.demo-image-thumbs button:focus-visible{outline:2px solid var(--semantic-color-focus);outline-offset:2px}
+.demo-image-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:24px 0}
+.demo-image-overview article{border:1px solid var(--line);border-radius:8px;overflow:hidden;padding-bottom:12px}
+.demo-image-overview img{display:block;width:100%;height:200px;object-fit:contain;background:white}.demo-image-overview h3,.demo-image-overview p,.demo-image-overview .btn{margin:12px 12px 0}
+.demo-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.demo-compare .demo-image-stage img{max-height:440px}
+.demo-image-work>h2{display:none}.demo-image-work>p{margin-bottom:16px}
+.demo-image-thumbs{position:relative}.demo-image-stage img{max-height:clamp(180px,30vh,340px)}
+.demo-image-details{margin:24px 0;border-top:1px solid var(--line);padding-top:16px}.demo-image-details summary{cursor:pointer;font-size:14px;min-height:36px}.demo-image-details p{overflow-wrap:anywhere;max-width:75ch}
+.demo-source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.demo-source-grid .file-card img{width:100%;height:180px;object-fit:contain;background:white}
+.demo-image-dialog{position:fixed;inset:24px;z-index:1000;background:var(--surface,#fff);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;padding:16px;box-shadow:0 16px 60px #0003}
+.demo-image-dialog .row{flex-shrink:0}.demo-image-dialog .demo-original-scroll{overflow:auto;flex:1;margin-top:16px;background:white;text-align:center}.demo-image-dialog img{max-width:100%;height:auto;max-height:100%;object-fit:contain}.demo-image-dialog img.actual-size{max-width:none;max-height:none}
+.demo-image-error{padding:24px;color:var(--ink)}
+.demo-source-grid .file-card p{overflow-wrap:anywhere}.demo-image-work .code{white-space:pre-wrap}
+@media(min-width:851px){.demo-image-work{padding:0}.demo-image-work .btn{font-size:14px}.demo-image-work>h2{font-size:24px}.demo-image-work p{font-size:16px;line-height:1.6}}

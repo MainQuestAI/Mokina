@@ -1,0 +1,12 @@
+/* The artifact owns the work area. Conversation is an optional sibling pane. */
+.artifact-layout-bar{display:flex;align-items:center;gap:16px;min-height:52px;padding:8px 24px;flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--line)}
+.artifact-layout-bar>.btn{white-space:nowrap}.artifact-layout-bar>.btn:first-child{padding-left:0}.artifact-layout-bar>.btn:first-child>.icon{transform:rotate(180deg)}
+.artifact-chat-heading{display:flex;align-items:center;gap:8px;min-height:52px;padding:8px 24px;border-bottom:1px solid var(--line);font-size:14px;flex-shrink:0;color:var(--muted)}
+.artifact-chat-heading>.icon{width:18px;height:18px}
+.main.artifact-focused>.canvas,.main.artifact-focused>.dock-host{width:100%;flex:1;min-width:0;border-left:0}
+.main.artifact-focused>.work-resizer{display:none}
+.main.artifact-focused>.canvas>.canvas-body>.document,.main.artifact-focused>.dock-host .modal-body>*{max-width:1120px;margin-left:auto;margin-right:auto}
+.main.artifact-focused>.canvas>.canvas-head,.main.artifact-focused>.canvas>.canvas-tabs{padding-left:32px;padding-right:32px}
+.main.artifact-focused>.canvas>.canvas-body{padding:24px 32px}
+.main.artifact-focused .canvas-head h2{max-width:none}
+@media(max-width:850px){.artifact-layout-bar{padding:8px 16px;gap:8px}.artifact-layout-bar>[data-action="artifact-chat-toggle"]{display:none}.artifact-chat-heading{display:none}}

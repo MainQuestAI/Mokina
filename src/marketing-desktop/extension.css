@@ -1,0 +1,27 @@
+/* Only new controls. The V6.2 shell, tokens, fonts and layout stay authoritative. */
+.md-context-strip,.md-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.md-context-strip{font-size:12px;color:var(--muted);padding:8px 0}
+.chat-column>.md-context-strip{padding:0 20px 12px;margin:0;flex-shrink:0}
+.md-plan-item{border-bottom:1px solid var(--line);padding:16px 0}
+.md-plan-item .row .field{flex:1;min-width:0}
+.md-source{display:block;border-bottom:1px solid var(--line);padding:12px 0;font-size:12px;line-height:1.8}
+.md-source label{display:flex;gap:8px;align-items:flex-start}
+.md-source .btn{margin-top:6px}
+.md-table-scroll{overflow:auto;max-width:100%;border:1px solid var(--line);border-radius:6px;margin:16px 0}
+.md-table{border-collapse:collapse;width:100%;font-size:12px;line-height:1.7;min-width:640px}
+.md-table th,.md-table td{padding:12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.md-table th{background:var(--bg);white-space:nowrap}
+.md-table td.md-body-cell{min-width:240px;max-width:380px;white-space:pre-wrap}
+.md-document .section p{white-space:pre-wrap}
+.md-document .section{scroll-margin-top:16px}
+.md-pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9;font-size:12px}
+.md-editor textarea{min-height:140px}
+.md-notice{margin:12px 0}
+.md-source-picker{max-height:300px;overflow:auto}
+.md-run{margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:6px}
+.md-scope{margin-bottom:16px}
+.md-field-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.md-config{border:1px solid var(--line);padding:12px;margin:12px 0;border-radius:6px;min-width:0}
+.md-config legend{font-size:12px;color:var(--muted);padding:0 6px}
+.md-config .choice{padding:6px;min-height:32px}
+@media(max-width:850px){.md-field-pair{grid-template-columns:1fr}.md-plan-item .row{flex-wrap:wrap}}

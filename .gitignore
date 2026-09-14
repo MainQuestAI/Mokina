@@ -1,0 +1,5 @@
+.playwright-cli/
+.DS_Store
+/tmp/
+# GitHub blocks the generated offline archives above 100 MB; keep them in the local delivery output.
+/output/**/*.zip

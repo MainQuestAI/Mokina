@@ -1,0 +1,64 @@
+/* V6.2 preserves the Midea workspace tokens and gives decisions a readable scope. */
+.v62-delivery-selection,
+.v62-candidate-decision,
+.v62-submission-target,
+.v62-candidate-history,
+.v62-submission-history {
+  margin-block: var(--foundation-space-s16);
+  padding-block: var(--foundation-space-s16);
+  border-block-start: 1px solid var(--ui-line, #d6e0e7);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.v62-delivery-selection h3,
+.v62-candidate-decision h3,
+.v62-submission-target h3 { margin-block: 0 var(--foundation-space-s8); }
+.v62-delivery-selection p,
+.v62-candidate-decision p,
+.v62-submission-target p { max-width: 72ch; margin-block: var(--foundation-space-s8); }
+.v62-candidate-decision input {
+  display: block;
+  width: 100%;
+  margin-block: var(--foundation-space-s8) var(--foundation-space-s12);
+}
+.v62-check-details { margin-block: var(--foundation-space-s16); }
+.v62-member-evidence { padding-block: var(--foundation-space-s16); overflow-wrap: anywhere; }
+.v62-member-evidence input:not([type="checkbox"]),
+.v62-member-evidence select,
+.v62-member-evidence textarea { width: 100%; max-width: 100%; }
+.v62-member-evidence textarea { min-height: 100px; resize: vertical; }
+.v62-member-evidence .field { margin-block: var(--foundation-space-s12); }
+.v62-check-details summary { cursor: pointer; min-height: 36px; padding-block: var(--foundation-space-s8); }
+.v62-check-layers > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--foundation-space-s4) var(--foundation-space-s12);
+  padding-block: var(--foundation-space-s12);
+  border-block-end: 1px solid var(--ui-line, #d6e0e7);
+}
+.v62-check-layers p { grid-column: 1 / -1; margin: 0; color: var(--ui-text-secondary, #526576); overflow-wrap: anywhere; }
+.v62-check-layers span { color: var(--brand-color-navy); }
+.v62-scope-choice { margin: 0; padding: var(--foundation-space-s16); border: 1px solid var(--ui-line, #d6e0e7); border-radius: var(--foundation-radius-r8); }
+.v62-scope-choice legend { padding-inline: var(--foundation-space-s8); font-weight: 500; }
+.v62-scope-choice label,
+.v62-scope-confirm { display: flex; align-items: flex-start; gap: var(--foundation-space-s8); padding-block: var(--foundation-space-s8); line-height: 1.6; }
+.v62-scope-choice input,
+.v62-scope-confirm input { width: 18px; height: 18px; margin-block-start: 4px; flex: 0 0 auto; accent-color: var(--brand-color-blue); }
+.v62-scope-choice p { margin: 0 0 var(--foundation-space-s12); padding-inline-start: 26px; color: var(--ui-text-secondary, #526576); }
+.v62-candidate-history > div,
+.v62-submission-history > div { padding-block: var(--foundation-space-s12); border-block-end: 1px solid var(--ui-line, #d6e0e7); }
+.v62-delivery-selection .btn:disabled { opacity: .65; cursor: not-allowed; }
+.v62-candidate-decision input:focus-visible,
+.v62-scope-choice input:focus-visible,
+.v62-scope-confirm input:focus-visible,
+.v62-check-details summary:focus-visible { outline: 2px solid var(--brand-color-blue); outline-offset: 3px; }
+@media (max-width: 640px) {
+  .v62-check-layers > div { grid-template-columns: minmax(0, 1fr); }
+  .v62-check-layers p { grid-column: 1; }
+  .v62-candidate-decision input { font-size: 16px; }
+  .v62-member-evidence input,
+  .v62-member-evidence textarea,
+  .v62-member-evidence select { font-size: 16px; }
+  .v62-delivery-selection .row { align-items: stretch; }
+  .v62-delivery-selection .btn { white-space: normal; min-height: 44px; }
+}

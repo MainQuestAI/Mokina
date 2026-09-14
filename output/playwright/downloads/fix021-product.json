@@ -1,0 +1,2777 @@
+{
+  "schema": "6.0.0-spacemaster-demo",
+  "actor": "lin",
+  "view": "files",
+  "threadId": "chat-mu0pd89q-m5gl",
+  "projectId": "project-mu0pd89q-64f0",
+  "threads": [
+    {
+      "id": "quick-1",
+      "title": "新的工作",
+      "projectId": null,
+      "messages": [],
+      "created": "2026-09-14T03:47:46.216Z",
+      "marketing": {
+        "scene": "launch",
+        "goal": "",
+        "goalRevision": 1,
+        "selected": [],
+        "excluded": [],
+        "status": "open"
+      }
+    },
+    {
+      "id": "chat-mu0pd89q-m5gl",
+      "title": "新的工作",
+      "projectId": "project-mu0pd89q-64f0",
+      "messages": [
+        {
+          "id": "msg-mu0pgmfc-97bb",
+          "role": "assistant",
+          "text": "已开始全部制作：5 项。完成后进入待处理，由你采用。",
+          "at": "2026-09-14T03:50:46.152Z",
+          "batchId": "batch-mu0pgmfb-tzdq"
+        },
+        {
+          "id": "msg-mu0pgmfm-3e3a",
+          "role": "assistant",
+          "text": "产品策略草稿已保存，接下来进行自检。",
+          "at": "2026-09-14T03:50:46.162Z",
+          "runId": "run-mu0pgmfm-0j3d",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0pgr8r-551o",
+          "role": "assistant",
+          "text": "产品策略已完成自检，等待你集中审核。",
+          "at": "2026-09-14T03:50:52.395Z",
+          "runId": "run-mu0pgr8r-0x7g",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0pgw28-5s8t",
+          "role": "assistant",
+          "text": "FABE 价值体系草稿已保存，接下来进行自检。",
+          "at": "2026-09-14T03:50:58.640Z",
+          "runId": "run-mu0pgw28-sq1q",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0ph117-3czw",
+          "role": "assistant",
+          "text": "FABE 价值体系已完成自检，等待你集中审核。",
+          "at": "2026-09-14T03:51:05.083Z",
+          "runId": "run-mu0ph117-w098",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0ph5zh-iev8",
+          "role": "assistant",
+          "text": "Message House草稿已保存，接下来进行自检。",
+          "at": "2026-09-14T03:51:11.501Z",
+          "runId": "run-mu0ph5zh-1j1q",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0phb2o-19pt",
+          "role": "assistant",
+          "text": "Message House已完成自检，等待你集中审核。",
+          "at": "2026-09-14T03:51:18.096Z",
+          "runId": "run-mu0phb2o-1nik",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0phg61-72fy",
+          "role": "assistant",
+          "text": "产品素材集合草稿已保存，接下来进行自检。",
+          "at": "2026-09-14T03:51:24.697Z",
+          "runId": "run-mu0phg61-hx4a",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0phl1o-k5dd",
+          "role": "assistant",
+          "text": "产品素材集合已完成自检，等待你集中审核。",
+          "at": "2026-09-14T03:51:31.020Z",
+          "runId": "run-mu0phl1o-umng",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0phpxg-kt3h",
+          "role": "assistant",
+          "text": "官网内容草稿已保存，接下来进行自检。",
+          "at": "2026-09-14T03:51:37.348Z",
+          "runId": "run-mu0phpxg-b6yu",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0phura-z4ug",
+          "role": "assistant",
+          "text": "官网内容已完成自检，等待你集中审核。",
+          "at": "2026-09-14T03:51:43.606Z",
+          "runId": "run-mu0phura-meun",
+          "artifactIds": [],
+          "artifactRefs": [],
+          "action": null,
+          "scopeProject": null,
+          "check": null
+        },
+        {
+          "id": "msg-mu0phzkk-pm22",
+          "role": "assistant",
+          "text": "5 项草稿已完成制作与自检，已保存到「0.2.1 净化器官网回归」。请集中查看，确认要采用的内容。",
+          "at": "2026-09-14T03:51:49.844Z",
+          "batchId": "batch-mu0pgmfb-tzdq"
+        }
+      ],
+      "created": "2026-09-14T03:48:07.838Z",
+      "marketing": {
+        "scene": "general",
+        "goal": "",
+        "goalRevision": 1,
+        "selected": [],
+        "excluded": [],
+        "status": "open"
+      }
+    }
+  ],
+  "projects": [
+    {
+      "name": "0.2.1 净化器官网回归",
+      "productName": "轻净空气净化器",
+      "model": "QX-100",
+      "category": "空气净化器",
+      "market": "德国",
+      "language": "德语",
+      "goal": "",
+      "channels": [
+        "web"
+      ],
+      "id": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "owner": "lin",
+      "tier": "Hero",
+      "markets": [
+        "德国"
+      ],
+      "scopeConfirmed": true,
+      "ruleVersion": 2,
+      "created": "2026-09-14T03:48:07.838Z",
+      "contextArtifacts": [],
+      "inputsReady": true,
+      "inputContextRevision": 1,
+      "v62InputMigrated": true,
+      "scope": [
+        {
+          "kind": "strategy",
+          "domain": "strategy",
+          "name": "产品策略",
+          "reason": "Hero 产品基础交付",
+          "category": "必需",
+          "maturity": "draft",
+          "requirement": "可讨论的策略草稿；区分产品事实、工作假设与证据缺口。"
+        },
+        {
+          "kind": "fabe",
+          "domain": "strategy",
+          "name": "FABE 价值体系",
+          "reason": "Hero 产品基础交付",
+          "category": "必需",
+          "maturity": "draft",
+          "requirement": "形成可用价值主题，完整关联 Feature、Advantage、Benefit 与 Evidence。"
+        },
+        {
+          "kind": "mh",
+          "domain": "strategy",
+          "name": "Message House",
+          "reason": "德国 · 德语",
+          "category": "必需",
+          "maturity": "draft",
+          "requirement": "完整 MH 草稿，保留长短表达、功能支撑与适用说明。"
+        },
+        {
+          "kind": "assets",
+          "domain": "asset",
+          "name": "产品与功能素材包",
+          "reason": "已选择视觉内容渠道",
+          "category": "条件匹配",
+          "maturity": "draft",
+          "requirement": "至少两项适用素材；型号与用途一致；排除未确认授权项。"
+        },
+        {
+          "kind": "web",
+          "domain": "material",
+          "name": "官网产品页内容",
+          "reason": "品牌官网渠道",
+          "category": "条件匹配",
+          "maturity": "draft",
+          "requirement": "可预览官网内容草稿；含主张、卖点与型号说明。"
+        }
+      ],
+      "marketingProfessional": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-mu0pgmfb-q3xb",
+      "projectId": "project-mu0pd89q-64f0",
+      "kind": "strategy",
+      "domain": "strategy",
+      "name": "产品策略",
+      "maturity": "draft",
+      "requirement": "可讨论的策略草稿；区分产品事实、工作假设与证据缺口。",
+      "reason": "Hero 产品基础交付",
+      "ruleVersion": 2,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "draft_ready",
+      "revision": 1,
+      "artifactId": "artifact-mu0pgqoj-coa2"
+    },
+    {
+      "id": "task-mu0pgmfb-sz8y",
+      "projectId": "project-mu0pd89q-64f0",
+      "kind": "fabe",
+      "domain": "strategy",
+      "name": "FABE 价值体系",
+      "maturity": "draft",
+      "requirement": "形成可用价值主题，完整关联 Feature、Advantage、Benefit 与 Evidence。",
+      "reason": "Hero 产品基础交付",
+      "ruleVersion": 2,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "draft_ready",
+      "revision": 1,
+      "artifactId": "artifact-mu0ph0bi-3b0l"
+    },
+    {
+      "id": "task-mu0pgmfb-zz8n",
+      "projectId": "project-mu0pd89q-64f0",
+      "kind": "mh",
+      "domain": "strategy",
+      "name": "Message House",
+      "maturity": "draft",
+      "requirement": "完整 MH 草稿，保留长短表达、功能支撑与适用说明。",
+      "reason": "德国 · 德语",
+      "ruleVersion": 2,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "draft_ready",
+      "revision": 1,
+      "artifactId": "artifact-mu0pha8r-jche"
+    },
+    {
+      "id": "task-mu0pgmfb-140d",
+      "projectId": "project-mu0pd89q-64f0",
+      "kind": "assets",
+      "domain": "asset",
+      "name": "产品与功能素材包",
+      "maturity": "draft",
+      "requirement": "至少两项适用素材；型号与用途一致；排除未确认授权项。",
+      "reason": "已选择视觉内容渠道",
+      "ruleVersion": 2,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "draft_ready",
+      "revision": 1,
+      "artifactId": "artifact-mu0phkf9-97cb"
+    },
+    {
+      "id": "task-mu0pgmfb-kko6",
+      "projectId": "project-mu0pd89q-64f0",
+      "kind": "web",
+      "domain": "material",
+      "name": "官网产品页内容",
+      "maturity": "draft",
+      "requirement": "可预览官网内容草稿；含主张、卖点与型号说明。",
+      "reason": "品牌官网渠道",
+      "ruleVersion": 2,
+      "assignee": "lin",
+      "reviewer": "reviewer",
+      "status": "draft_ready",
+      "revision": 1,
+      "artifactId": "artifact-mu0phu6z-data"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "artifact-mu0pgqoj-coa2",
+      "title": "轻净空气净化器 · 产品策略",
+      "kind": "strategy",
+      "domain": "strategy",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "projectId": "project-mu0pd89q-64f0",
+      "taskId": "task-mu0pgmfb-q3xb",
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0pgqoj-i5lc",
+          "data": {
+            "title": "轻净空气净化器 · 产品策略",
+            "summary": "整理产品身份、事实依据与待验证的业务方向。",
+            "sections": [
+              {
+                "id": "identity",
+                "title": "本次使用的产品与范围",
+                "body": "轻净空气净化器 / QX-100\n品类：空气净化器\n市场：德国\n语言：德语\n渠道：品牌官网",
+                "label": "项目输入快照",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "fact-evidence-mu0pecx6-bdhc",
+                "title": "0.2.1 合成产品说明",
+                "body": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "label": "已核对产品摘录",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "goal",
+                "title": "工作目标",
+                "body": "0.2.1 净化器官网回归",
+                "label": "用户输入",
+                "sources": []
+              },
+              {
+                "id": "work",
+                "title": "本次整理范围",
+                "body": "整理产品身份、事实依据与待验证的业务方向。",
+                "label": "本地结构化整理",
+                "sources": []
+              },
+              {
+                "id": "unknown",
+                "title": "仍需补充与判断",
+                "body": "目标人群、使用场景、竞争结论、功能优势、利益点、传播主张、适用声明和素材使用权，只有在相应依据或人工判断完成后才能确定。未提供的信息保留未知。",
+                "label": "证据与业务缺口",
+                "sources": []
+              }
+            ],
+            "projectInputDraft": true,
+            "simulation": true,
+            "modelCalled": false,
+            "imageGenerated": false,
+            "language": "德语",
+            "inputSnapshot": {
+              "id": "input-snapshot-mu0pezef-gz3t",
+              "projectId": "project-mu0pd89q-64f0",
+              "version": 1,
+              "contextRevision": 1,
+              "identity": "[\"轻净空气净化器\",\"空气净化器\",\"QX-100\",\"德国\",\"德语\",[\"web\"]]",
+              "context": {
+                "name": "0.2.1 净化器官网回归",
+                "productName": "轻净空气净化器",
+                "category": "空气净化器",
+                "model": "QX-100",
+                "market": "德国",
+                "language": "德语",
+                "channels": [
+                  "web"
+                ],
+                "tier": "Hero",
+                "goal": ""
+              },
+              "evidence": [
+                {
+                  "id": "evidence-mu0pecx6-bdhc",
+                  "projectId": "project-mu0pd89q-64f0",
+                  "sourceId": null,
+                  "sourceType": "manual",
+                  "sourceName": "0.2.1 合成产品说明",
+                  "url": null,
+                  "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                  "locator": "合成测试说明第1段",
+                  "model": "QX-100",
+                  "market": "德国",
+                  "category": "product",
+                  "status": "verified",
+                  "verifiedBy": "lin",
+                  "verifiedAt": "2026-09-14T03:49:00.522Z",
+                  "captureMethod": "manual-excerpt"
+                }
+              ],
+              "confirmedBy": "lin",
+              "confirmedAt": "2026-09-14T03:49:29.655Z",
+              "fingerprint": "[\"[\\\"轻净空气净化器\\\",\\\"空气净化器\\\",\\\"QX-100\\\",\\\"德国\\\",\\\"德语\\\",[\\\"web\\\"]]\",[\"evidence-mu0pecx6-bdhc\"]]",
+              "fixture": false
+            },
+            "sourceEvidence": [
+              {
+                "id": "evidence-mu0pecx6-bdhc",
+                "projectId": "project-mu0pd89q-64f0",
+                "sourceId": null,
+                "sourceType": "manual",
+                "sourceName": "0.2.1 合成产品说明",
+                "url": null,
+                "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "locator": "合成测试说明第1段",
+                "model": "QX-100",
+                "market": "德国",
+                "category": "product",
+                "status": "verified",
+                "verifiedBy": "lin",
+                "verifiedAt": "2026-09-14T03:49:00.522Z",
+                "captureMethod": "manual-excerpt"
+              }
+            ]
+          },
+          "refs": [],
+          "author": "lin",
+          "created": "2026-09-14T03:50:51.667Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "offline-fixture"
+        }
+      ],
+      "checks": {
+        "1": {
+          "passed": true,
+          "artifactId": "artifact-mu0pgqoj-coa2",
+          "revision": 1,
+          "at": "2026-09-14T03:50:57.909Z",
+          "draftOnly": true,
+          "findings": [
+            {
+              "title": "结构与固定依据",
+              "ok": true,
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "title": "草稿使用范围",
+              "ok": true,
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "title": "正式内容与图片",
+              "ok": false,
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ],
+          "previewReady": true,
+          "formalReady": false,
+          "checkScope": "internal-preview",
+          "deliveryScope": {
+            "members": [],
+            "country": null,
+            "language": "德语",
+            "selectionVersion": 1
+          },
+          "layers": [
+            {
+              "key": "content-0",
+              "label": "结构与固定依据",
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "key": "content-1",
+              "label": "草稿使用范围",
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "key": "formal-content",
+              "label": "正式内容与图片",
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "artifact-mu0ph0bi-3b0l",
+      "title": "轻净空气净化器 · FABE 价值体系",
+      "kind": "fabe",
+      "domain": "strategy",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "projectId": "project-mu0pd89q-64f0",
+      "taskId": "task-mu0pgmfb-sz8y",
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0ph0bi-xu8c",
+          "data": {
+            "title": "轻净空气净化器 · FABE 价值体系",
+            "summary": "由已核对摘录建立 Feature 候选；Advantage、Benefit 与宣传语仍需业务推导。",
+            "sections": [
+              {
+                "id": "identity",
+                "title": "本次使用的产品与范围",
+                "body": "轻净空气净化器 / QX-100\n品类：空气净化器\n市场：德国\n语言：德语\n渠道：品牌官网",
+                "label": "项目输入快照",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "fact-evidence-mu0pecx6-bdhc",
+                "title": "0.2.1 合成产品说明",
+                "body": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "label": "已核对产品摘录",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "goal",
+                "title": "工作目标",
+                "body": "0.2.1 净化器官网回归",
+                "label": "用户输入",
+                "sources": []
+              },
+              {
+                "id": "work",
+                "title": "本次整理范围",
+                "body": "由已核对摘录建立 Feature 候选；Advantage、Benefit 与宣传语仍需业务推导。",
+                "label": "本地结构化整理",
+                "sources": []
+              },
+              {
+                "id": "unknown",
+                "title": "仍需补充与判断",
+                "body": "目标人群、使用场景、竞争结论、功能优势、利益点、传播主张、适用声明和素材使用权，只有在相应依据或人工判断完成后才能确定。未提供的信息保留未知。",
+                "label": "证据与业务缺口",
+                "sources": []
+              }
+            ],
+            "projectInputDraft": true,
+            "simulation": true,
+            "modelCalled": false,
+            "imageGenerated": false,
+            "language": "德语",
+            "inputSnapshot": {
+              "id": "input-snapshot-mu0pezef-gz3t",
+              "projectId": "project-mu0pd89q-64f0",
+              "version": 1,
+              "contextRevision": 1,
+              "identity": "[\"轻净空气净化器\",\"空气净化器\",\"QX-100\",\"德国\",\"德语\",[\"web\"]]",
+              "context": {
+                "name": "0.2.1 净化器官网回归",
+                "productName": "轻净空气净化器",
+                "category": "空气净化器",
+                "model": "QX-100",
+                "market": "德国",
+                "language": "德语",
+                "channels": [
+                  "web"
+                ],
+                "tier": "Hero",
+                "goal": ""
+              },
+              "evidence": [
+                {
+                  "id": "evidence-mu0pecx6-bdhc",
+                  "projectId": "project-mu0pd89q-64f0",
+                  "sourceId": null,
+                  "sourceType": "manual",
+                  "sourceName": "0.2.1 合成产品说明",
+                  "url": null,
+                  "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                  "locator": "合成测试说明第1段",
+                  "model": "QX-100",
+                  "market": "德国",
+                  "category": "product",
+                  "status": "verified",
+                  "verifiedBy": "lin",
+                  "verifiedAt": "2026-09-14T03:49:00.522Z",
+                  "captureMethod": "manual-excerpt"
+                }
+              ],
+              "confirmedBy": "lin",
+              "confirmedAt": "2026-09-14T03:49:29.655Z",
+              "fingerprint": "[\"[\\\"轻净空气净化器\\\",\\\"空气净化器\\\",\\\"QX-100\\\",\\\"德国\\\",\\\"德语\\\",[\\\"web\\\"]]\",[\"evidence-mu0pecx6-bdhc\"]]",
+              "fixture": false
+            },
+            "sourceEvidence": [
+              {
+                "id": "evidence-mu0pecx6-bdhc",
+                "projectId": "project-mu0pd89q-64f0",
+                "sourceId": null,
+                "sourceType": "manual",
+                "sourceName": "0.2.1 合成产品说明",
+                "url": null,
+                "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "locator": "合成测试说明第1段",
+                "model": "QX-100",
+                "market": "德国",
+                "category": "product",
+                "status": "verified",
+                "verifiedBy": "lin",
+                "verifiedAt": "2026-09-14T03:49:00.522Z",
+                "captureMethod": "manual-excerpt"
+              }
+            ],
+            "points": [
+              {
+                "id": "point-evidence-mu0pecx6-bdhc",
+                "title": "0.2.1 合成产品说明",
+                "feature": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "advantage": "待业务推导",
+                "benefit": "待业务确认",
+                "evidence": [
+                  "evidence-mu0pecx6-bdhc"
+                ],
+                "selected": true,
+                "claim": "待编写并核对",
+                "short": "待编写",
+                "long": "待编写",
+                "disclaimer": "仅记录事实摘录，尚未形成已批准宣传表述。"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "artifact-mu0pgqoj-coa2",
+              "kind": "strategy",
+              "revision": 1,
+              "title": "轻净空气净化器 · 产品策略"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T03:51:04.158Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "offline-fixture"
+        }
+      ],
+      "checks": {
+        "1": {
+          "passed": true,
+          "artifactId": "artifact-mu0ph0bi-3b0l",
+          "revision": 1,
+          "at": "2026-09-14T03:51:10.586Z",
+          "draftOnly": true,
+          "findings": [
+            {
+              "title": "结构与固定依据",
+              "ok": true,
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "title": "草稿使用范围",
+              "ok": true,
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "title": "正式内容与图片",
+              "ok": false,
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ],
+          "previewReady": true,
+          "formalReady": false,
+          "checkScope": "internal-preview",
+          "deliveryScope": {
+            "members": [],
+            "country": null,
+            "language": "德语",
+            "selectionVersion": 1
+          },
+          "layers": [
+            {
+              "key": "content-0",
+              "label": "结构与固定依据",
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "key": "content-1",
+              "label": "草稿使用范围",
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "key": "formal-content",
+              "label": "正式内容与图片",
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "artifact-mu0pha8r-jche",
+      "title": "轻净空气净化器 · Message House",
+      "kind": "mh",
+      "domain": "strategy",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "projectId": "project-mu0pd89q-64f0",
+      "taskId": "task-mu0pgmfb-zz8n",
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0pha8r-eirk",
+          "data": {
+            "title": "轻净空气净化器 · Message House",
+            "summary": "汇集已确认事实与上游选用表达，待人工补充目标语言的传播主张。",
+            "sections": [
+              {
+                "id": "identity",
+                "title": "本次使用的产品与范围",
+                "body": "轻净空气净化器 / QX-100\n品类：空气净化器\n市场：德国\n语言：德语\n渠道：品牌官网",
+                "label": "项目输入快照",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "fact-evidence-mu0pecx6-bdhc",
+                "title": "0.2.1 合成产品说明",
+                "body": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "label": "已核对产品摘录",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "goal",
+                "title": "工作目标",
+                "body": "0.2.1 净化器官网回归",
+                "label": "用户输入",
+                "sources": []
+              },
+              {
+                "id": "work",
+                "title": "本次整理范围",
+                "body": "汇集已确认事实与上游选用表达，待人工补充目标语言的传播主张。",
+                "label": "本地结构化整理",
+                "sources": []
+              },
+              {
+                "id": "unknown",
+                "title": "仍需补充与判断",
+                "body": "目标人群、使用场景、竞争结论、功能优势、利益点、传播主张、适用声明和素材使用权，只有在相应依据或人工判断完成后才能确定。未提供的信息保留未知。",
+                "label": "证据与业务缺口",
+                "sources": []
+              }
+            ],
+            "projectInputDraft": true,
+            "simulation": true,
+            "modelCalled": false,
+            "imageGenerated": false,
+            "language": "德语",
+            "inputSnapshot": {
+              "id": "input-snapshot-mu0pezef-gz3t",
+              "projectId": "project-mu0pd89q-64f0",
+              "version": 1,
+              "contextRevision": 1,
+              "identity": "[\"轻净空气净化器\",\"空气净化器\",\"QX-100\",\"德国\",\"德语\",[\"web\"]]",
+              "context": {
+                "name": "0.2.1 净化器官网回归",
+                "productName": "轻净空气净化器",
+                "category": "空气净化器",
+                "model": "QX-100",
+                "market": "德国",
+                "language": "德语",
+                "channels": [
+                  "web"
+                ],
+                "tier": "Hero",
+                "goal": ""
+              },
+              "evidence": [
+                {
+                  "id": "evidence-mu0pecx6-bdhc",
+                  "projectId": "project-mu0pd89q-64f0",
+                  "sourceId": null,
+                  "sourceType": "manual",
+                  "sourceName": "0.2.1 合成产品说明",
+                  "url": null,
+                  "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                  "locator": "合成测试说明第1段",
+                  "model": "QX-100",
+                  "market": "德国",
+                  "category": "product",
+                  "status": "verified",
+                  "verifiedBy": "lin",
+                  "verifiedAt": "2026-09-14T03:49:00.522Z",
+                  "captureMethod": "manual-excerpt"
+                }
+              ],
+              "confirmedBy": "lin",
+              "confirmedAt": "2026-09-14T03:49:29.655Z",
+              "fingerprint": "[\"[\\\"轻净空气净化器\\\",\\\"空气净化器\\\",\\\"QX-100\\\",\\\"德国\\\",\\\"德语\\\",[\\\"web\\\"]]\",[\"evidence-mu0pecx6-bdhc\"]]",
+              "fixture": false
+            },
+            "sourceEvidence": [
+              {
+                "id": "evidence-mu0pecx6-bdhc",
+                "projectId": "project-mu0pd89q-64f0",
+                "sourceId": null,
+                "sourceType": "manual",
+                "sourceName": "0.2.1 合成产品说明",
+                "url": null,
+                "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "locator": "合成测试说明第1段",
+                "model": "QX-100",
+                "market": "德国",
+                "category": "product",
+                "status": "verified",
+                "verifiedBy": "lin",
+                "verifiedAt": "2026-09-14T03:49:00.522Z",
+                "captureMethod": "manual-excerpt"
+              }
+            ],
+            "points": [
+              {
+                "id": "point-evidence-mu0pecx6-bdhc",
+                "title": "0.2.1 合成产品说明",
+                "feature": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "advantage": "待业务推导",
+                "benefit": "待业务确认",
+                "evidence": [
+                  "evidence-mu0pecx6-bdhc"
+                ],
+                "selected": true,
+                "claim": "待编写并核对",
+                "short": "待编写",
+                "long": "待编写",
+                "disclaimer": "仅记录事实摘录，尚未形成已批准宣传表述。"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "artifact-mu0ph0bi-3b0l",
+              "kind": "fabe",
+              "revision": 1,
+              "title": "轻净空气净化器 · FABE 价值体系"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T03:51:17.019Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "offline-fixture"
+        }
+      ],
+      "checks": {
+        "1": {
+          "passed": true,
+          "artifactId": "artifact-mu0pha8r-jche",
+          "revision": 1,
+          "at": "2026-09-14T03:51:23.613Z",
+          "draftOnly": true,
+          "findings": [
+            {
+              "title": "结构与固定依据",
+              "ok": true,
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "title": "草稿使用范围",
+              "ok": true,
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "title": "正式内容与图片",
+              "ok": false,
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ],
+          "previewReady": true,
+          "formalReady": false,
+          "checkScope": "internal-preview",
+          "deliveryScope": {
+            "members": [],
+            "country": null,
+            "language": "德语",
+            "selectionVersion": 1
+          },
+          "layers": [
+            {
+              "key": "content-0",
+              "label": "结构与固定依据",
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "key": "content-1",
+              "label": "草稿使用范围",
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "key": "formal-content",
+              "label": "正式内容与图片",
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "artifact-mu0phkf9-97cb",
+      "title": "轻净空气净化器 · 产品素材集合",
+      "kind": "assets",
+      "domain": "asset",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "projectId": "project-mu0pd89q-64f0",
+      "taskId": "task-mu0pgmfb-140d",
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0phkf9-loc3",
+          "data": {
+            "title": "轻净空气净化器 · 产品素材集合",
+            "summary": "记录本项目已提供的素材与待补缺口，未检索外部资产，也未生成图片。",
+            "sections": [
+              {
+                "id": "identity",
+                "title": "本次使用的产品与范围",
+                "body": "轻净空气净化器 / QX-100\n品类：空气净化器\n市场：德国\n语言：德语\n渠道：品牌官网",
+                "label": "项目输入快照",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "fact-evidence-mu0pecx6-bdhc",
+                "title": "0.2.1 合成产品说明",
+                "body": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "label": "已核对产品摘录",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "goal",
+                "title": "工作目标",
+                "body": "0.2.1 净化器官网回归",
+                "label": "用户输入",
+                "sources": []
+              },
+              {
+                "id": "work",
+                "title": "本次整理范围",
+                "body": "记录本项目已提供的素材与待补缺口，未检索外部资产，也未生成图片。",
+                "label": "本地结构化整理",
+                "sources": []
+              },
+              {
+                "id": "unknown",
+                "title": "仍需补充与判断",
+                "body": "目标人群、使用场景、竞争结论、功能优势、利益点、传播主张、适用声明和素材使用权，只有在相应依据或人工判断完成后才能确定。未提供的信息保留未知。",
+                "label": "证据与业务缺口",
+                "sources": []
+              }
+            ],
+            "projectInputDraft": true,
+            "simulation": true,
+            "modelCalled": false,
+            "imageGenerated": false,
+            "language": "德语",
+            "inputSnapshot": {
+              "id": "input-snapshot-mu0pezef-gz3t",
+              "projectId": "project-mu0pd89q-64f0",
+              "version": 1,
+              "contextRevision": 1,
+              "identity": "[\"轻净空气净化器\",\"空气净化器\",\"QX-100\",\"德国\",\"德语\",[\"web\"]]",
+              "context": {
+                "name": "0.2.1 净化器官网回归",
+                "productName": "轻净空气净化器",
+                "category": "空气净化器",
+                "model": "QX-100",
+                "market": "德国",
+                "language": "德语",
+                "channels": [
+                  "web"
+                ],
+                "tier": "Hero",
+                "goal": ""
+              },
+              "evidence": [
+                {
+                  "id": "evidence-mu0pecx6-bdhc",
+                  "projectId": "project-mu0pd89q-64f0",
+                  "sourceId": null,
+                  "sourceType": "manual",
+                  "sourceName": "0.2.1 合成产品说明",
+                  "url": null,
+                  "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                  "locator": "合成测试说明第1段",
+                  "model": "QX-100",
+                  "market": "德国",
+                  "category": "product",
+                  "status": "verified",
+                  "verifiedBy": "lin",
+                  "verifiedAt": "2026-09-14T03:49:00.522Z",
+                  "captureMethod": "manual-excerpt"
+                }
+              ],
+              "confirmedBy": "lin",
+              "confirmedAt": "2026-09-14T03:49:29.655Z",
+              "fingerprint": "[\"[\\\"轻净空气净化器\\\",\\\"空气净化器\\\",\\\"QX-100\\\",\\\"德国\\\",\\\"德语\\\",[\\\"web\\\"]]\",[\"evidence-mu0pecx6-bdhc\"]]",
+              "fixture": false
+            },
+            "sourceEvidence": [
+              {
+                "id": "evidence-mu0pecx6-bdhc",
+                "projectId": "project-mu0pd89q-64f0",
+                "sourceId": null,
+                "sourceType": "manual",
+                "sourceName": "0.2.1 合成产品说明",
+                "url": null,
+                "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "locator": "合成测试说明第1段",
+                "model": "QX-100",
+                "market": "德国",
+                "category": "product",
+                "status": "verified",
+                "verifiedBy": "lin",
+                "verifiedAt": "2026-09-14T03:49:00.522Z",
+                "captureMethod": "manual-excerpt"
+              }
+            ]
+          },
+          "refs": [],
+          "author": "lin",
+          "created": "2026-09-14T03:51:30.213Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "offline-fixture"
+        }
+      ],
+      "checks": {
+        "1": {
+          "passed": true,
+          "artifactId": "artifact-mu0phkf9-97cb",
+          "revision": 1,
+          "at": "2026-09-14T03:51:36.544Z",
+          "draftOnly": true,
+          "findings": [
+            {
+              "title": "结构与固定依据",
+              "ok": true,
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "title": "草稿使用范围",
+              "ok": true,
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "title": "正式内容与图片",
+              "ok": false,
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ],
+          "previewReady": true,
+          "formalReady": false,
+          "checkScope": "internal-preview",
+          "deliveryScope": {
+            "members": [],
+            "country": null,
+            "language": "德语",
+            "selectionVersion": 1
+          },
+          "layers": [
+            {
+              "key": "content-0",
+              "label": "结构与固定依据",
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "key": "content-1",
+              "label": "草稿使用范围",
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "key": "formal-content",
+              "label": "正式内容与图片",
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "artifact-mu0phu6z-data",
+      "title": "轻净空气净化器 · 官网内容",
+      "kind": "web",
+      "domain": "material",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "projectId": "project-mu0pd89q-64f0",
+      "taskId": "task-mu0pgmfb-kko6",
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0phu6z-b6f9",
+          "data": {
+            "title": "轻净空气净化器 · 官网内容",
+            "summary": "整理本项目官网内容结构，页面视觉与正式文案待制作。",
+            "sections": [
+              {
+                "id": "identity",
+                "title": "本次使用的产品与范围",
+                "body": "轻净空气净化器 / QX-100\n品类：空气净化器\n市场：德国\n语言：德语\n渠道：品牌官网",
+                "label": "项目输入快照",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "fact-evidence-mu0pecx6-bdhc",
+                "title": "0.2.1 合成产品说明",
+                "body": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "label": "已核对产品摘录",
+                "sources": [
+                  "evidence-mu0pecx6-bdhc"
+                ]
+              },
+              {
+                "id": "goal",
+                "title": "工作目标",
+                "body": "0.2.1 净化器官网回归",
+                "label": "用户输入",
+                "sources": []
+              },
+              {
+                "id": "work",
+                "title": "本次整理范围",
+                "body": "整理本项目官网内容结构，页面视觉与正式文案待制作。",
+                "label": "本地结构化整理",
+                "sources": []
+              },
+              {
+                "id": "unknown",
+                "title": "仍需补充与判断",
+                "body": "目标人群、使用场景、竞争结论、功能优势、利益点、传播主张、适用声明和素材使用权，只有在相应依据或人工判断完成后才能确定。未提供的信息保留未知。",
+                "label": "证据与业务缺口",
+                "sources": []
+              }
+            ],
+            "projectInputDraft": true,
+            "simulation": true,
+            "modelCalled": false,
+            "imageGenerated": false,
+            "language": "德语",
+            "inputSnapshot": {
+              "id": "input-snapshot-mu0pezef-gz3t",
+              "projectId": "project-mu0pd89q-64f0",
+              "version": 1,
+              "contextRevision": 1,
+              "identity": "[\"轻净空气净化器\",\"空气净化器\",\"QX-100\",\"德国\",\"德语\",[\"web\"]]",
+              "context": {
+                "name": "0.2.1 净化器官网回归",
+                "productName": "轻净空气净化器",
+                "category": "空气净化器",
+                "model": "QX-100",
+                "market": "德国",
+                "language": "德语",
+                "channels": [
+                  "web"
+                ],
+                "tier": "Hero",
+                "goal": ""
+              },
+              "evidence": [
+                {
+                  "id": "evidence-mu0pecx6-bdhc",
+                  "projectId": "project-mu0pd89q-64f0",
+                  "sourceId": null,
+                  "sourceType": "manual",
+                  "sourceName": "0.2.1 合成产品说明",
+                  "url": null,
+                  "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                  "locator": "合成测试说明第1段",
+                  "model": "QX-100",
+                  "market": "德国",
+                  "category": "product",
+                  "status": "verified",
+                  "verifiedBy": "lin",
+                  "verifiedAt": "2026-09-14T03:49:00.522Z",
+                  "captureMethod": "manual-excerpt"
+                }
+              ],
+              "confirmedBy": "lin",
+              "confirmedAt": "2026-09-14T03:49:29.655Z",
+              "fingerprint": "[\"[\\\"轻净空气净化器\\\",\\\"空气净化器\\\",\\\"QX-100\\\",\\\"德国\\\",\\\"德语\\\",[\\\"web\\\"]]\",[\"evidence-mu0pecx6-bdhc\"]]",
+              "fixture": false
+            },
+            "sourceEvidence": [
+              {
+                "id": "evidence-mu0pecx6-bdhc",
+                "projectId": "project-mu0pd89q-64f0",
+                "sourceId": null,
+                "sourceType": "manual",
+                "sourceName": "0.2.1 合成产品说明",
+                "url": null,
+                "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+                "locator": "合成测试说明第1段",
+                "model": "QX-100",
+                "market": "德国",
+                "category": "product",
+                "status": "verified",
+                "verifiedBy": "lin",
+                "verifiedAt": "2026-09-14T03:49:00.522Z",
+                "captureMethod": "manual-excerpt"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "artifact-mu0pha8r-jche",
+              "kind": "mh",
+              "revision": 1,
+              "title": "轻净空气净化器 · Message House"
+            },
+            {
+              "id": "artifact-mu0phkf9-97cb",
+              "kind": "assets",
+              "revision": 1,
+              "title": "轻净空气净化器 · 产品素材集合"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T03:51:42.875Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "offline-fixture"
+        }
+      ],
+      "checks": {
+        "1": {
+          "passed": true,
+          "artifactId": "artifact-mu0phu6z-data",
+          "revision": 1,
+          "at": "2026-09-14T03:51:49.121Z",
+          "draftOnly": true,
+          "findings": [
+            {
+              "title": "结构与固定依据",
+              "ok": true,
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "title": "草稿使用范围",
+              "ok": true,
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "title": "正式内容与图片",
+              "ok": false,
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ],
+          "previewReady": true,
+          "formalReady": false,
+          "checkScope": "internal-preview",
+          "deliveryScope": {
+            "members": [],
+            "country": null,
+            "language": "德语",
+            "selectionVersion": 1
+          },
+          "layers": [
+            {
+              "key": "content-0",
+              "label": "结构与固定依据",
+              "status": "checked",
+              "detail": "结构化草稿与已核对输入快照已保存。"
+            },
+            {
+              "key": "content-1",
+              "label": "草稿使用范围",
+              "status": "checked",
+              "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+            },
+            {
+              "key": "formal-content",
+              "label": "正式内容与图片",
+              "status": "pending",
+              "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "submissions": [],
+  "deliveries": [],
+  "transfers": [],
+  "runs": [
+    {
+      "id": "run-mu0pgmfm-0j3d",
+      "kind": "strategy",
+      "name": "整理产品策略",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:50:46.162Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0pgmfm-mdkz",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:50:46.165Z",
+          "ended": "2026-09-14T03:50:49.806Z"
+        },
+        {
+          "id": "call-mu0pgmfm-zrwy",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "strategy"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:50:49.815Z",
+          "ended": "2026-09-14T03:50:51.658Z"
+        }
+      ],
+      "retry": "strategy",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:50:51.668Z"
+    },
+    {
+      "id": "run-mu0pgr8r-0x7g",
+      "kind": "check",
+      "name": "整理当前工作",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:50:52.395Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0pgr8r-8f0w",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:50:52.400Z",
+          "ended": "2026-09-14T03:50:56.040Z"
+        },
+        {
+          "id": "call-mu0pgr8r-jncy",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "check"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:50:56.051Z",
+          "ended": "2026-09-14T03:50:57.898Z"
+        }
+      ],
+      "retry": "check",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:50:57.909Z"
+    },
+    {
+      "id": "run-mu0pgw28-sq1q",
+      "kind": "fabe",
+      "name": "整理FABE 价值体系",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:50:58.640Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0pgw28-hq7i",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:50:58.645Z",
+          "ended": "2026-09-14T03:51:02.283Z"
+        },
+        {
+          "id": "call-mu0pgw28-u50j",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "fabe"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:02.295Z",
+          "ended": "2026-09-14T03:51:04.147Z"
+        }
+      ],
+      "retry": "fabe",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:51:04.158Z"
+    },
+    {
+      "id": "run-mu0ph117-w098",
+      "kind": "check",
+      "name": "整理当前工作",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:51:05.083Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0ph117-j29h",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:05.088Z",
+          "ended": "2026-09-14T03:51:08.726Z"
+        },
+        {
+          "id": "call-mu0ph117-i5f3",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "check"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:08.735Z",
+          "ended": "2026-09-14T03:51:10.582Z"
+        }
+      ],
+      "retry": "check",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:51:10.586Z"
+    },
+    {
+      "id": "run-mu0ph5zh-1j1q",
+      "kind": "mh",
+      "name": "整理Message House",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:51:11.501Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0ph5zh-2ek1",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:11.505Z",
+          "ended": "2026-09-14T03:51:15.152Z"
+        },
+        {
+          "id": "call-mu0ph5zh-jv6u",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "mh"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:15.156Z",
+          "ended": "2026-09-14T03:51:17.006Z"
+        }
+      ],
+      "retry": "mh",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:51:17.019Z"
+    },
+    {
+      "id": "run-mu0phb2o-1nik",
+      "kind": "check",
+      "name": "整理当前工作",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:51:18.096Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0phb2o-m17c",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:18.100Z",
+          "ended": "2026-09-14T03:51:21.747Z"
+        },
+        {
+          "id": "call-mu0phb2o-z6y8",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "check"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:21.757Z",
+          "ended": "2026-09-14T03:51:23.604Z"
+        }
+      ],
+      "retry": "check",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:51:23.613Z"
+    },
+    {
+      "id": "run-mu0phg61-hx4a",
+      "kind": "assets",
+      "name": "整理产品素材集合",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:51:24.697Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0phg61-he5g",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:24.702Z",
+          "ended": "2026-09-14T03:51:28.345Z"
+        },
+        {
+          "id": "call-mu0phg61-17f4",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "assets"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:28.357Z",
+          "ended": "2026-09-14T03:51:30.209Z"
+        }
+      ],
+      "retry": "assets",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:51:30.213Z"
+    },
+    {
+      "id": "run-mu0phl1o-umng",
+      "kind": "check",
+      "name": "整理当前工作",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:51:31.020Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0phl1o-r6m3",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:31.026Z",
+          "ended": "2026-09-14T03:51:34.673Z"
+        },
+        {
+          "id": "call-mu0phl1o-cyn1",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "check"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:34.684Z",
+          "ended": "2026-09-14T03:51:36.535Z"
+        }
+      ],
+      "retry": "check",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:51:36.544Z"
+    },
+    {
+      "id": "run-mu0phpxg-b6yu",
+      "kind": "web",
+      "name": "整理官网内容",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:51:37.348Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0phpxg-th7i",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:37.352Z",
+          "ended": "2026-09-14T03:51:40.999Z"
+        },
+        {
+          "id": "call-mu0phpxg-pr8c",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "web"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:41.010Z",
+          "ended": "2026-09-14T03:51:42.865Z"
+        }
+      ],
+      "retry": "web",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:51:42.876Z"
+    },
+    {
+      "id": "run-mu0phura-meun",
+      "kind": "check",
+      "name": "整理当前工作",
+      "actor": "lin",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "status": "done",
+      "started": "2026-09-14T03:51:43.606Z",
+      "module": "workspace",
+      "sources": [
+        "evidence-mu0pecx6-bdhc"
+      ],
+      "thought": "读取本项目已确认的输入快照，按结构保存工作草稿。未知信息保留缺口；未调用实时模型或外部搜索。",
+      "events": [
+        {
+          "id": "call-mu0phura-ploh",
+          "seq": 1,
+          "name": "input.snapshot.read",
+          "label": "读取固定输入快照",
+          "transport": "本地原型",
+          "input": {
+            "snapshotId": "input-snapshot-mu0pezef-gz3t",
+            "model": "QX-100"
+          },
+          "output": {
+            "evidenceCount": 1
+          },
+          "plannedOutput": {
+            "evidenceCount": 1
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:43.611Z",
+          "ended": "2026-09-14T03:51:47.250Z"
+        },
+        {
+          "id": "call-mu0phura-bgqi",
+          "seq": 2,
+          "name": "draft.organize",
+          "label": "整理结构化工作草稿",
+          "transport": "本地规则整理",
+          "input": {
+            "kind": "check"
+          },
+          "output": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "plannedOutput": {
+            "modelCalled": false,
+            "imageGenerated": false,
+            "approved": false
+          },
+          "status": "done",
+          "started": "2026-09-14T03:51:47.260Z",
+          "ended": "2026-09-14T03:51:49.110Z"
+        }
+      ],
+      "retry": "check",
+      "savedSelection": null,
+      "savedCanvas": null,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "ended": "2026-09-14T03:51:49.121Z"
+    }
+  ],
+  "activity": [
+    {
+      "id": "ev-mu0phu6z-0wn9",
+      "title": "已形成官网内容",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": "project-mu0pd89q-64f0",
+      "at": "2026-09-14T03:51:42.875Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0phkf9-0elr",
+      "title": "已形成产品素材集合",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": "project-mu0pd89q-64f0",
+      "at": "2026-09-14T03:51:30.213Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0pha8r-vjan",
+      "title": "已形成Message House",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": "project-mu0pd89q-64f0",
+      "at": "2026-09-14T03:51:17.019Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0ph0bi-2neu",
+      "title": "已形成FABE 价值体系",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": "project-mu0pd89q-64f0",
+      "at": "2026-09-14T03:51:04.158Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0pgqoj-s9hp",
+      "title": "已形成产品策略",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": "project-mu0pd89q-64f0",
+      "at": "2026-09-14T03:50:51.667Z",
+      "actor": "lin"
+    }
+  ],
+  "uploads": [],
+  "selectedAssets": [
+    "img-front",
+    "img-open",
+    "img-detail"
+  ],
+  "canvas": null,
+  "contextSelection": null,
+  "filters": {
+    "domain": "all"
+  },
+  "settings": {
+    "theme": "light",
+    "density": "comfortable",
+    "speed": 1
+  },
+  "auto": null,
+  "runId": null,
+  "paused": false,
+  "mobileNav": false,
+  "openCanvases": [],
+  "panelStack": [
+    {
+      "kind": "plan",
+      "arg": "plan-mu0pecy3-pz7g"
+    },
+    {
+      "kind": "batch",
+      "arg": "batch-mu0pgmfb-tzdq"
+    }
+  ],
+  "panelDrafts": {
+    "plan|plan-mu0pecy3-pz7g": {
+      "values": {
+        "plan-goal": {
+          "value": "0.2.1 净化器官网回归"
+        },
+        "plan-mode": {
+          "value": "yolo"
+        },
+        "plan-current-kind": {
+          "value": "strategy"
+        }
+      },
+      "at": "2026-09-14T03:50:46.152Z"
+    },
+    "batch|batch-mu0pgmfb-tzdq": {
+      "values": {
+        "batch-feedback": {
+          "value": ""
+        }
+      },
+      "at": "2026-09-14T03:53:30.450Z"
+    },
+    "settings|": {
+      "values": {
+        "pref-theme": {
+          "value": "light"
+        },
+        "pref-speed": {
+          "value": "1"
+        }
+      },
+      "at": "2026-09-14T03:53:30.454Z"
+    }
+  },
+  "composerDrafts": {
+    "quick-1": "",
+    "chat-mu0pd89q-m5gl": ""
+  },
+  "workbenchWidth": 62,
+  "plans": [
+    {
+      "id": "plan-mu0pecy3-pz7g",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "owner": "lin",
+      "revision": 3,
+      "status": "confirmed",
+      "mode": "yolo",
+      "goal": "0.2.1 净化器官网回归",
+      "kinds": [
+        "strategy",
+        "fabe",
+        "mh",
+        "assets",
+        "web"
+      ],
+      "notes": [],
+      "created": "2026-09-14T03:49:00.555Z",
+      "context": {
+        "product": "轻净空气净化器",
+        "model": "QX-100",
+        "category": "空气净化器",
+        "market": "德国",
+        "language": "德语",
+        "channels": [
+          "web"
+        ],
+        "inputSnapshotId": "input-snapshot-mu0pezef-gz3t",
+        "contextRevision": 1
+      },
+      "currentKind": "strategy",
+      "scopeAccepted": true,
+      "batchId": "batch-mu0pgmfb-tzdq",
+      "confirmedAt": "2026-09-14T03:50:46.151Z"
+    }
+  ],
+  "batches": [
+    {
+      "id": "batch-mu0pgmfb-tzdq",
+      "projectId": "project-mu0pd89q-64f0",
+      "threadId": "chat-mu0pd89q-m5gl",
+      "owner": "lin",
+      "reviewer": "reviewer",
+      "plan": {
+        "id": "plan-mu0pecy3-pz7g",
+        "projectId": "project-mu0pd89q-64f0",
+        "threadId": "chat-mu0pd89q-m5gl",
+        "owner": "lin",
+        "revision": 3,
+        "status": "draft",
+        "mode": "yolo",
+        "goal": "0.2.1 净化器官网回归",
+        "kinds": [
+          "strategy",
+          "fabe",
+          "mh",
+          "assets",
+          "web"
+        ],
+        "notes": [],
+        "created": "2026-09-14T03:49:00.555Z",
+        "context": {
+          "product": "轻净空气净化器",
+          "model": "QX-100",
+          "category": "空气净化器",
+          "market": "德国",
+          "language": "德语",
+          "channels": [
+            "web"
+          ],
+          "inputSnapshotId": "input-snapshot-mu0pezef-gz3t",
+          "contextRevision": 1
+        },
+        "currentKind": "strategy",
+        "scopeAccepted": true
+      },
+      "inputSnapshot": {
+        "id": "input-snapshot-mu0pezef-gz3t",
+        "projectId": "project-mu0pd89q-64f0",
+        "version": 1,
+        "contextRevision": 1,
+        "identity": "[\"轻净空气净化器\",\"空气净化器\",\"QX-100\",\"德国\",\"德语\",[\"web\"]]",
+        "context": {
+          "name": "0.2.1 净化器官网回归",
+          "productName": "轻净空气净化器",
+          "category": "空气净化器",
+          "model": "QX-100",
+          "market": "德国",
+          "language": "德语",
+          "channels": [
+            "web"
+          ],
+          "tier": "Hero",
+          "goal": ""
+        },
+        "evidence": [
+          {
+            "id": "evidence-mu0pecx6-bdhc",
+            "projectId": "project-mu0pd89q-64f0",
+            "sourceId": null,
+            "sourceType": "manual",
+            "sourceName": "0.2.1 合成产品说明",
+            "url": null,
+            "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+            "locator": "合成测试说明第1段",
+            "model": "QX-100",
+            "market": "德国",
+            "category": "product",
+            "status": "verified",
+            "verifiedBy": "lin",
+            "verifiedAt": "2026-09-14T03:49:00.522Z",
+            "captureMethod": "manual-excerpt"
+          }
+        ],
+        "confirmedBy": "lin",
+        "confirmedAt": "2026-09-14T03:49:29.655Z",
+        "fingerprint": "[\"[\\\"轻净空气净化器\\\",\\\"空气净化器\\\",\\\"QX-100\\\",\\\"德国\\\",\\\"德语\\\",[\\\"web\\\"]]\",[\"evidence-mu0pecx6-bdhc\"]]",
+        "fixture": false
+      },
+      "projectSnapshot": {
+        "name": "0.2.1 净化器官网回归",
+        "productName": "轻净空气净化器",
+        "model": "QX-100",
+        "category": "空气净化器",
+        "market": "德国",
+        "language": "德语",
+        "goal": "",
+        "channels": [
+          "web"
+        ],
+        "id": "project-mu0pd89q-64f0",
+        "threadId": "chat-mu0pd89q-m5gl",
+        "owner": "lin",
+        "tier": "Hero",
+        "markets": [
+          "德国"
+        ],
+        "scopeConfirmed": true,
+        "ruleVersion": 2,
+        "created": "2026-09-14T03:48:07.838Z",
+        "contextArtifacts": [],
+        "inputsReady": true,
+        "inputContextRevision": 1,
+        "v62InputMigrated": true,
+        "scope": [
+          {
+            "kind": "strategy",
+            "domain": "strategy",
+            "name": "产品策略",
+            "reason": "Hero 产品基础交付",
+            "category": "必需",
+            "maturity": "draft",
+            "requirement": "可讨论的策略草稿；区分产品事实、工作假设与证据缺口。"
+          },
+          {
+            "kind": "fabe",
+            "domain": "strategy",
+            "name": "FABE 价值体系",
+            "reason": "Hero 产品基础交付",
+            "category": "必需",
+            "maturity": "draft",
+            "requirement": "形成可用价值主题，完整关联 Feature、Advantage、Benefit 与 Evidence。"
+          },
+          {
+            "kind": "mh",
+            "domain": "strategy",
+            "name": "Message House",
+            "reason": "德国 · 德语",
+            "category": "必需",
+            "maturity": "draft",
+            "requirement": "完整 MH 草稿，保留长短表达、功能支撑与适用说明。"
+          },
+          {
+            "kind": "assets",
+            "domain": "asset",
+            "name": "产品与功能素材包",
+            "reason": "已选择视觉内容渠道",
+            "category": "条件匹配",
+            "maturity": "draft",
+            "requirement": "至少两项适用素材；型号与用途一致；排除未确认授权项。"
+          },
+          {
+            "kind": "web",
+            "domain": "material",
+            "name": "官网产品页内容",
+            "reason": "品牌官网渠道",
+            "category": "条件匹配",
+            "maturity": "draft",
+            "requirement": "可预览官网内容草稿；含主张、卖点与型号说明。"
+          }
+        ]
+      },
+      "items": [
+        {
+          "kind": "strategy",
+          "taskId": "task-mu0pgmfb-q3xb",
+          "status": "ready",
+          "decision": "pending",
+          "selected": true,
+          "artifactId": "artifact-mu0pgqoj-coa2",
+          "revision": 1,
+          "checks": [
+            {
+              "passed": true,
+              "artifactId": "artifact-mu0pgqoj-coa2",
+              "revision": 1,
+              "at": "2026-09-14T03:50:57.909Z",
+              "draftOnly": true,
+              "findings": [
+                {
+                  "title": "结构与固定依据",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "title": "草稿使用范围",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "title": "正式内容与图片",
+                  "ok": false,
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ],
+              "previewReady": true,
+              "formalReady": false,
+              "checkScope": "internal-preview",
+              "deliveryScope": {
+                "members": [],
+                "country": null,
+                "language": "德语",
+                "selectionVersion": 1
+              },
+              "layers": [
+                {
+                  "key": "content-0",
+                  "label": "结构与固定依据",
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "key": "content-1",
+                  "label": "草稿使用范围",
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "key": "formal-content",
+                  "label": "正式内容与图片",
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ]
+            }
+          ],
+          "error": null
+        },
+        {
+          "kind": "fabe",
+          "taskId": "task-mu0pgmfb-sz8y",
+          "status": "ready",
+          "decision": "pending",
+          "selected": true,
+          "artifactId": "artifact-mu0ph0bi-3b0l",
+          "revision": 1,
+          "checks": [
+            {
+              "passed": true,
+              "artifactId": "artifact-mu0ph0bi-3b0l",
+              "revision": 1,
+              "at": "2026-09-14T03:51:10.586Z",
+              "draftOnly": true,
+              "findings": [
+                {
+                  "title": "结构与固定依据",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "title": "草稿使用范围",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "title": "正式内容与图片",
+                  "ok": false,
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ],
+              "previewReady": true,
+              "formalReady": false,
+              "checkScope": "internal-preview",
+              "deliveryScope": {
+                "members": [],
+                "country": null,
+                "language": "德语",
+                "selectionVersion": 1
+              },
+              "layers": [
+                {
+                  "key": "content-0",
+                  "label": "结构与固定依据",
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "key": "content-1",
+                  "label": "草稿使用范围",
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "key": "formal-content",
+                  "label": "正式内容与图片",
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ]
+            }
+          ],
+          "error": null
+        },
+        {
+          "kind": "mh",
+          "taskId": "task-mu0pgmfb-zz8n",
+          "status": "ready",
+          "decision": "pending",
+          "selected": true,
+          "artifactId": "artifact-mu0pha8r-jche",
+          "revision": 1,
+          "checks": [
+            {
+              "passed": true,
+              "artifactId": "artifact-mu0pha8r-jche",
+              "revision": 1,
+              "at": "2026-09-14T03:51:23.613Z",
+              "draftOnly": true,
+              "findings": [
+                {
+                  "title": "结构与固定依据",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "title": "草稿使用范围",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "title": "正式内容与图片",
+                  "ok": false,
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ],
+              "previewReady": true,
+              "formalReady": false,
+              "checkScope": "internal-preview",
+              "deliveryScope": {
+                "members": [],
+                "country": null,
+                "language": "德语",
+                "selectionVersion": 1
+              },
+              "layers": [
+                {
+                  "key": "content-0",
+                  "label": "结构与固定依据",
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "key": "content-1",
+                  "label": "草稿使用范围",
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "key": "formal-content",
+                  "label": "正式内容与图片",
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ]
+            }
+          ],
+          "error": null
+        },
+        {
+          "kind": "assets",
+          "taskId": "task-mu0pgmfb-140d",
+          "status": "ready",
+          "decision": "pending",
+          "selected": true,
+          "artifactId": "artifact-mu0phkf9-97cb",
+          "revision": 1,
+          "checks": [
+            {
+              "passed": true,
+              "artifactId": "artifact-mu0phkf9-97cb",
+              "revision": 1,
+              "at": "2026-09-14T03:51:36.544Z",
+              "draftOnly": true,
+              "findings": [
+                {
+                  "title": "结构与固定依据",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "title": "草稿使用范围",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "title": "正式内容与图片",
+                  "ok": false,
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ],
+              "previewReady": true,
+              "formalReady": false,
+              "checkScope": "internal-preview",
+              "deliveryScope": {
+                "members": [],
+                "country": null,
+                "language": "德语",
+                "selectionVersion": 1
+              },
+              "layers": [
+                {
+                  "key": "content-0",
+                  "label": "结构与固定依据",
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "key": "content-1",
+                  "label": "草稿使用范围",
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "key": "formal-content",
+                  "label": "正式内容与图片",
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ]
+            }
+          ],
+          "error": null
+        },
+        {
+          "kind": "web",
+          "taskId": "task-mu0pgmfb-kko6",
+          "status": "ready",
+          "decision": "pending",
+          "selected": true,
+          "artifactId": "artifact-mu0phu6z-data",
+          "revision": 1,
+          "checks": [
+            {
+              "passed": true,
+              "artifactId": "artifact-mu0phu6z-data",
+              "revision": 1,
+              "at": "2026-09-14T03:51:49.121Z",
+              "draftOnly": true,
+              "findings": [
+                {
+                  "title": "结构与固定依据",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "title": "草稿使用范围",
+                  "ok": true,
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "title": "正式内容与图片",
+                  "ok": false,
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ],
+              "previewReady": true,
+              "formalReady": false,
+              "checkScope": "internal-preview",
+              "deliveryScope": {
+                "members": [],
+                "country": null,
+                "language": "德语",
+                "selectionVersion": 1
+              },
+              "layers": [
+                {
+                  "key": "content-0",
+                  "label": "结构与固定依据",
+                  "status": "checked",
+                  "detail": "结构化草稿与已核对输入快照已保存。"
+                },
+                {
+                  "key": "content-1",
+                  "label": "草稿使用范围",
+                  "status": "checked",
+                  "detail": "仅核对结构与来源。产品真实性、宣传表达、授权和正式渠道交付尚需检查；未调用模型或生成图片。"
+                },
+                {
+                  "key": "formal-content",
+                  "label": "正式内容与图片",
+                  "status": "pending",
+                  "detail": "当前仅按项目输入整理结构和证据摘录，尚未形成并验证正式宣传文案、成品图片、真实性与使用授权。需要完成对应内容制作与核验后形成新版本。"
+                }
+              ]
+            }
+          ],
+          "error": null
+        }
+      ],
+      "status": "ready",
+      "created": "2026-09-14T03:50:46.151Z",
+      "events": [],
+      "execution": "all",
+      "externalRefs": [],
+      "completedAt": "2026-09-14T03:51:49.844Z"
+    }
+  ],
+  "workModes": {
+    "chat-mu0pd89q-m5gl": "yolo"
+  },
+  "taskFilter": "mine",
+  "projectCollapsed": {
+    "project-mu0pd89q-64f0": false
+  },
+  "expandedSellingPoints": {},
+  "inspectorOpen": false,
+  "inspectorTab": "status",
+  "libraryPushes": [],
+  "externalSources": [],
+  "unifiedPlanMigration": 1,
+  "inputEvidence": [
+    {
+      "id": "evidence-mu0pecx6-bdhc",
+      "projectId": "project-mu0pd89q-64f0",
+      "sourceId": null,
+      "sourceType": "manual",
+      "sourceName": "0.2.1 合成产品说明",
+      "url": null,
+      "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+      "locator": "合成测试说明第1段",
+      "model": "QX-100",
+      "market": "德国",
+      "category": "product",
+      "status": "verified",
+      "verifiedBy": "lin",
+      "verifiedAt": "2026-09-14T03:49:00.522Z",
+      "captureMethod": "manual-excerpt"
+    }
+  ],
+  "inputSnapshots": [
+    {
+      "id": "input-snapshot-mu0pezef-gz3t",
+      "projectId": "project-mu0pd89q-64f0",
+      "version": 1,
+      "contextRevision": 1,
+      "identity": "[\"轻净空气净化器\",\"空气净化器\",\"QX-100\",\"德国\",\"德语\",[\"web\"]]",
+      "context": {
+        "name": "0.2.1 净化器官网回归",
+        "productName": "轻净空气净化器",
+        "category": "空气净化器",
+        "model": "QX-100",
+        "market": "德国",
+        "language": "德语",
+        "channels": [
+          "web"
+        ],
+        "tier": "Hero",
+        "goal": ""
+      },
+      "evidence": [
+        {
+          "id": "evidence-mu0pecx6-bdhc",
+          "projectId": "project-mu0pd89q-64f0",
+          "sourceId": null,
+          "sourceType": "manual",
+          "sourceName": "0.2.1 合成产品说明",
+          "url": null,
+          "excerpt": "轻净空气净化器 QX-100 面向德国市场。本合成示例支持三档风速与可更换滤芯；未提供净化率、噪声、能耗或医疗效果证据，不作相关承诺。",
+          "locator": "合成测试说明第1段",
+          "model": "QX-100",
+          "market": "德国",
+          "category": "product",
+          "status": "verified",
+          "verifiedBy": "lin",
+          "verifiedAt": "2026-09-14T03:49:00.522Z",
+          "captureMethod": "manual-excerpt"
+        }
+      ],
+      "confirmedBy": "lin",
+      "confirmedAt": "2026-09-14T03:49:29.655Z",
+      "fingerprint": "[\"[\\\"轻净空气净化器\\\",\\\"空气净化器\\\",\\\"QX-100\\\",\\\"德国\\\",\\\"德语\\\",[\\\"web\\\"]]\",[\"evidence-mu0pecx6-bdhc\"]]",
+      "fixture": false
+    }
+  ],
+  "inputUploadAttempts": [],
+  "inputContextChanges": [],
+  "workflowBranches": {
+    "jobs": [],
+    "selected": [],
+    "draft": {},
+    "activeJob": null,
+    "mode": "search",
+    "modeDrafts": {
+      "search": {}
+    },
+    "jobDrafts": {},
+    "positions": {}
+  },
+  "md": {
+    "schema": 2,
+    "snapshots": [],
+    "runs": [],
+    "decisions": [],
+    "imports": [],
+    "scope": "work",
+    "editDrafts": {}
+  },
+  "dockState": {
+    "kind": "settings",
+    "arg": ""
+  },
+  "artifactWorkspace": null,
+  "v62InputSection": "v62-files"
+}

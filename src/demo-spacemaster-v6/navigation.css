@@ -1,0 +1,62 @@
+/* Local work controls sit below global navigation, never beside account controls. */
+.work-context-bar{height:auto;min-height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 26px}
+.work-view-tabs,.work-context-actions{display:flex;align-items:center;gap:8px;min-width:0}
+.work-view-tabs .tab{min-height:41px;padding:10px 8px}
+.work-context-actions{margin-left:auto;gap:14px}
+.work-context-actions>.btn{font-size:12px;font-weight:400;min-height:34px;border:0;background:transparent;padding:6px 4px;white-space:nowrap}
+.work-context-actions>.btn.active{color:var(--blue)}
+.work-context-actions .icon{width:15px;height:15px}
+.work-status-entry small{font-size:11px;color:var(--muted);margin-left:2px}
+.work-status-entry .is-running{color:var(--blue)}
+.personal-work-label{font-size:12px;color:var(--muted)}
+/* Project-row actions appear only when the row is in use, including keyboard focus. */
+.project-tree-row{position:relative}
+.project-row-actions{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;gap:2px;opacity:0;pointer-events:none;background:var(--subtle)}
+.current-project>.project-row-actions{background:var(--selected)}
+.project-row-actions>.icon-btn{width:28px;height:32px;flex-shrink:0}.project-row-actions .icon{width:18px;height:18px}
+.project-tree-row:hover>.project-row-actions,.project-tree-row:focus-within>.project-row-actions,.project-tree-row.menu-open>.project-row-actions{opacity:1;pointer-events:auto}
+.project-tree-row:hover>.tree-project,.project-tree-row:focus-within>.tree-project,.project-tree-row.menu-open>.tree-project{padding-right:60px}
+.project-row-menu{position:absolute;top:100%;right:0;width:204px;z-index:50;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px}
+.project-row-menu>.btn{display:flex;width:100%;justify-content:flex-start;border:0;text-align:left}
+.project-row-menu>.btn:hover,.project-row-menu>.btn:focus-visible{background:var(--selected)}
+.composer-project-context{display:flex;align-items:center;gap:4px}.composer-project-context>.icon-btn{width:24px;height:24px}.composer-project-context>.icon-btn>.icon{width:14px;height:14px}
+.assistant-head .lilith-mark{display:grid;place-items:center;width:24px;height:24px;flex:0 0 24px;background:transparent;color:var(--ink);border-radius:0}
+.lilith-symbol{display:block;width:24px;height:24px}
+@media(hover:none){.project-row-actions{opacity:1;pointer-events:auto}.project-tree-row>.tree-project{padding-right:60px}}
+.sidebar .account-entry{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;padding:12px 10px 5px;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;text-align:left;min-width:0}
+.account-entry .account-copy{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.account-copy strong{font-size:13px;font-weight:500}.account-copy small{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.account-entry>.icon{width:14px;height:14px;flex-shrink:0}.account-entry:hover{background:var(--selected)}
+/* The short inspector overlays without replacing/resizing an open artifact or editor. */
+.main.inspector-open{padding-right:0}
+.main.inspector-open>.canvas{display:flex}
+.main.inspector-open>.dock-host{display:flex}
+.main.inspector-open>.work-resizer{display:block}
+.main.inspector-open.has-canvas>.chat-column{flex:1;min-width:300px;max-width:none}
+.main.inspector-open>.view-content{display:block}
+.work-inspector{z-index:30;top:10px;right:12px;bottom:auto;width:min(330px,calc(100% - 24px));max-height:calc(100% - 20px);min-height:250px;border-radius:10px}
+.work-inspector>header{align-items:flex-start}.work-inspector>header p{font-size:11px;line-height:1.5;color:var(--muted);margin:5px 0 0;max-width:215px;overflow-wrap:anywhere}
+.work-inspector>header>.btn{white-space:nowrap;font-size:11px;margin-top:-3px}.inspector-body{flex:0 1 auto}
+.main.has-utility-page>:not(.utility-host){display:none!important}
+.utility-host{width:100%;min-width:0;overflow-y:auto;background:var(--bg)}
+.utility-page{width:min(100%,1000px);margin:auto;padding:32px 40px 60px}
+.utility-page>.modal-head{display:block;padding:0;border:0;background:transparent}
+.utility-page>.modal-head>.btn{margin:0 0 26px;padding-left:0}.utility-page>.modal-head .icon{transform:rotate(180deg)}
+.utility-page h1{font-size:28px;line-height:1.4;font-weight:500}
+.utility-page>.modal-body{padding:26px 0;max-height:none;overflow:visible}
+.utility-page>.modal-foot{padding:20px 0;justify-content:flex-start;background:transparent;border-top:1px solid var(--line);flex-wrap:wrap}
+.utility-page .field{margin-bottom:24px;max-width:560px}.utility-page .field>label{display:block;margin-bottom:9px}.utility-page select{width:100%;padding:10px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px}
+.utility-page .module-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:16px;padding:24px}.utility-page .module-card .row{flex-wrap:wrap}.utility-page .module-card h3{display:flex;align-items:center;gap:8px}
+.home-content .scenario-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px;align-items:stretch}
+.home-content .scenario-grid .space-preview{width:auto;max-width:none;min-width:0;height:100%;border-radius:12px}
+.home-content .scenario-grid .product-tile{height:180px;background:#fff}
+.scenario-product{width:140px;height:145px;max-width:100%}
+.home-content .scenario-grid .space-preview>div:nth-child(2){flex:1;padding:18px 16px 12px}
+.home-content .scenario-grid h3{font-size:14px;font-weight:500}.home-content .scenario-grid p{margin-top:4px;font-size:12px;line-height:1.7}
+.home-content .scenario-grid .space-preview>.btn{margin:6px 16px 16px}
+.official-project-source{padding:20px 0;border-top:1px solid var(--line);margin-top:20px}.official-project-source p{line-height:1.8;margin:8px 0;font-size:13px;color:var(--muted)}.official-project-source a{font-size:12px;color:var(--blue)}
+.demo-typing .selection-chip{display:none}.demo-input-label{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px;margin:0 0 8px}.demo-typing .composer-frame{border-color:var(--brand)}
+.demo-input-label .icon{width:14px;height:14px}
+@media(max-width:850px){.main.inspector-open.has-canvas>.chat-column,.main.inspector-open.has-details>.chat-column{display:none}.main.inspector-open>.work-resizer{display:none}.work-context-bar{flex-wrap:wrap;padding:0 16px;gap:0}.work-context-actions{gap:12px}.utility-page{padding:26px 24px 40px}}
+@media(max-width:640px){.work-context-bar{padding:0 12px}.work-view-tabs{width:100%;justify-content:space-between}.work-context-actions{padding:2px 0 5px}.personal-work-label+.work-context-actions{padding:0}.work-context-actions>.btn{font-size:11px}.main.inspector-open:not(.has-canvas):not(.has-details)>.chat-column{display:flex}.work-inspector{width:calc(100% - 24px);max-height:calc(100% - 20px)}.utility-page{padding:24px 18px 36px}.utility-page h1{font-size:24px}.home-content .scenario-grid{grid-template-columns:1fr}.home-content .scenario-grid .space-preview{max-width:none}.home-content .scenario-grid .product-tile{height:190px}}
+@media(max-width:850px){.main.demo-composing>.chat-column{display:flex!important;width:100%;min-width:0;max-width:none}.main.demo-composing>.canvas,.main.demo-composing>.dock-host,.main.demo-composing>.work-resizer{display:none}}

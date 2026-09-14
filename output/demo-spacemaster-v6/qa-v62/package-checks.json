@@ -1,0 +1,12 @@
+{
+  "version": "6.2.0",
+  "entry": "/Users/dingcheng/Coding-Project/02-key-project/Lilith-原型/output/demo-spacemaster-v6/release-v62/Lilith SpaceMaster V6.2/Lilith SpaceMaster Demo V6.html",
+  "archive": "/Users/dingcheng/Coding-Project/02-key-project/Lilith-原型/output/demo-spacemaster-v6/Lilith SpaceMaster V6.2.zip",
+  "bytes": 97331433,
+  "htmlSha256": "311a517496ddf2b07620d90ae554fbc405e8658d435fdd7554ca450005f4f495",
+  "zipSha256": "123caf50d2995deb198d1679098a815fb8f2f7d1435ab3a481f7879bca09e30f",
+  "originalHashes": 20,
+  "zipIntegrity": "passed",
+  "offlineOpen": "not_run_browser_policy",
+  "visual": "not_run"
+}

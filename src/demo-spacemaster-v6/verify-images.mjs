@@ -1,0 +1,45 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+const root=path.resolve(import.meta.dirname,'../..'),out=path.join(root,'output/demo-spacemaster-v6');
+const tests=`(async()=>{
+ const checks=[];const check=(name,ok)=>{checks.push({name,ok:!!ok});if(!ok)throw Error(name)};window.__LILITH_QA_TIME_SCALE=100;window.demoChecks=checks;
+ S=makeState();MODAL=null;initializeConversationEntry();render();
+ check('personal launcher is the default',S.projectId===null&&!!document.querySelector('.home-content'));
+ localStorage.setItem('lilith-midea-integrated-v5','WORKING-VERSION-SENTINEL');persist();check('demo persistence leaves working storage intact',localStorage.getItem('lilith-midea-integrated-v5')==='WORKING-VERSION-SENTINEL');
+ check('demo uses distinct schema and key',STORAGE_KEY==='lilith-spacemaster-demo-v6'&&APP_VERSION==='6.0.0-spacemaster-demo');
+ const p=enterDemoProject();S.workModes[S.threadId]='plan';const plan=discussPlan(DEMO_BRIEF,'plan');check('saving plan creates no tasks or runs',!S.tasks.length&&!S.runs.length&&plan.kinds.length===7);
+ const b=confirmPlan(plan.id,'all');await batchPromise;check('autonomous batch has seven ready deliverables',b.items.length===7&&b.items.every(i=>i.status==='ready'));
+ check('autonomous work never adopts or approves',S.artifacts.every(a=>!a.accepted)&&!S.submissions.length&&!S.deliveries.length);
+ check('dependencies reference fixed upstream versions',revision(byKind('websitePoster'),1).refs.length===3&&revision(byKind('scene'),1).refs.some(r=>r.kind==='productImages'));
+ check('all twenty supplied files represented without extra tasks',new Set(S.artifacts.flatMap(a=>revision(a,1).data.items||[])).size===20&&S.tasks.length===7);
+ closeModal();await handle('nav','library');const a=byKind('productImages');await handle('open-artifact',a.id+'|1');
+ check('image list opens independent reading',S.view==='artifact'&&!document.querySelector('#composer')&&navigationView()==='library');
+ check('six actual angles visible in overview',document.querySelectorAll('.demo-image-overview article').length===6);
+ const fixed=JSON.stringify(revision(a,1));await handle('demo-member','K06');await handle('demo-compare');check('view and compare do not adopt or mutate',!a.accepted&&JSON.stringify(revision(a,1))===fixed);
+ await handle('demo-discuss');check('discussion binds current image and fixed version',S.contextSelection.member==='K06'&&S.contextSelection.revision===1&&!!document.querySelector('#composer'));
+ document.querySelector('#composer').value='保留这个视角的讨论草稿';await handle('demo-member','K02');check('member switch updates binding and preserves draft',S.contextSelection.member==='K02'&&document.querySelector('#composer').value==='保留这个视角的讨论草稿');
+ await handle('artifact-back');check('back restores results navigation',S.view==='library');
+ openCanvas(byKind('scene').id);await handle('demo-person-mode');await handle('demo-member','PM04');check('person comparison shows original plus one candidate',document.querySelectorAll('.demo-compare img').length===2&&document.querySelector('.demo-compare img').alt.includes('人物原图'));
+ check('negative candidate describes concrete product drift',document.querySelector('.demo-image-work').textContent.includes('右门新增分配器'));
+ const scene=byKind('scene'),original=JSON.stringify(revision(scene,1));await handle('demo-repair','PM04');check('single repair creates request without replacing pixels',revision(scene,scene.pending).data.renderRequests[0].member==='PM04'&&JSON.stringify(revision(scene,1))===original);
+ check('person repair does not create extra task',S.tasks.length===7);
+ const poster=byKind('websitePoster');openCanvas(poster.id);await handle('demo-member','K10');check('French keeps unknown country',revision(poster,1).data.variants.K10.country===null&&document.querySelector('.demo-image-work').textContent.includes('目标国家待选'));
+ await handle('demo-member','K09');check('banner preserves original dimensions',document.querySelector('.demo-image-stage img').getAttribute('width')==='1769'&&document.querySelector('.demo-image-stage img').getAttribute('height')==='592');
+ // Finish only the user-selected batch items; reviewers remain separate.
+ for(const item of b.items)adopt(item.artifactId,item.revision);check('adoption completes six drafts but not approved material',S.tasks.filter(t=>t.status==='done').length===6&&taskFor('websitePoster').status!=='done');
+ async function submitFixed(a,n){submitArtifact(a.id,n);await handle('decision-submit-check');await handle('decision-submit-final');}
+ openCanvas(poster.id,1);await submitFixed(poster,1);const s=S.submissions.at(-1),snap=JSON.stringify(s.snapshot);await submitFixed(poster,1);check('repeat submission does not duplicate',S.submissions.length===1);
+ S.actor='reviewer';reviewDecision(s.id,'returned','补齐来源和用途，图片保持不变。');S.actor='lin';openCanvas(poster.id,1);bindArtifactDiscussion('',false);await modifySelected('补齐交付用途与素材来源说明：德国官网创意评审，Canva / 用户提供，图片保持不变。');const v=revision(poster,poster.pending);
+ check('real note revision keeps original image hash',v.data.deliveryNote!==s.snapshot.data.deliveryNote&&v.data.files.find(f=>f.id==='K09').sha256===s.snapshot.data.files.find(f=>f.id==='K09').sha256&&JSON.stringify(s.snapshot)===snap);
+ adopt(poster.id,v.num);await submitFixed(poster,v.num);S.actor='reviewer';const approved=S.submissions.at(-1);reviewDecision(approved.id,'approved','批准当前德语演示包。');while(S.deliveries.at(-1).status==='sending')await new Promise(r=>setTimeout(r,10));const d=S.deliveries.at(-1);check('approval starts independent partial receipt',d.status==='partial'&&d.items[0].status==='received');await ingest(d.id,true);check('failed attachment recovery preserves approval',d.status==='received'&&approved.status==='approved'&&S.submissions.length===2);
+ check('approval does not approve French or Arabic',approved.snapshot.data.mainMember==='K09'&&approved.snapshot.data.variants.K10.status==='candidate'&&approved.snapshot.data.variants.K11.status==='candidate');
+ await preloadDemoFiles(S.artifacts.flatMap(a=>a.versions));check('all originals decode',await Promise.all(MERGED_ASSETS.demoImages.map(async f=>{const im=new Image();im.src=await loadDemoOriginal(f.id);await im.decode();return im.naturalWidth===f.width&&im.naturalHeight===f.height})).then(x=>x.every(Boolean)));
+ const files=versionFiles(poster,approved.snapshot,'已批准固定快照');check('approved export contains actual German PNG only',!!files['originals/K09.png']&&!files['originals/K10.png']&&!Object.keys(files).some(k=>k.endsWith('.svg')));
+ check('actual PNG header is valid',files['originals/K09.png'][0]===137&&files['originals/K09.png'][1]===80);
+ let captured;const dl=download;download=(name,data,type)=>captured={name,data,type};await exportApproved(approved.id);download=dl;window.demoApprovedZip=captured.data;check('approved ZIP export includes pixel payload',captured.data.length>demoImage('K09').bytes);
+ S.actor='lin';closeModal();await handle('nav','library');openCanvas(poster.id,approved.revision);window.demoVisualPoster=poster.id;window.demoVisualScene=scene.id;window.demoVisualProducts=a.id;
+ persist();check('working version storage still untouched after full lifecycle',localStorage.getItem('lilith-midea-integrated-v5')==='WORKING-VERSION-SENTINEL');localStorage.removeItem('lilith-midea-integrated-v5');return checks;
+})()`;
+const r=spawnSync('bun',['run','/Users/dingcheng/.gstack/repos/gstack/bin/gstack-render.ts',path.join(root,'Lilith SpaceMaster Demo V6.html'),'--timeout','180000','--eval',tests,'--out',out+'/checks.json','--screenshot',out+'/poster-focused.jpg','--width','1440','--height','1000','--jpeg','--eval',`(()=>{openCanvas(window.demoVisualScene,1);handle('demo-person-mode');return true})()`,'--screenshot',out+'/person-compare.jpg','--width','1888','--height','1100','--jpeg','--eval',`(()=>{openCanvas(window.demoVisualProducts,1);handle('demo-discuss');return true})()`,'--screenshot',out+'/images-discussion.jpg','--width','1280','--height','960','--jpeg','--eval',`(()=>{let b='';for(let i=0;i<window.demoApprovedZip.length;i+=8192)b+=String.fromCharCode(...window.demoApprovedZip.subarray(i,i+8192));return 'data:application/zip;base64,'+btoa(b)})()`,'--out',out+'/approved-export.zip'],{encoding:'utf8',timeout:195000});
+fs.writeFileSync(out+'/images-verification.log',(r.stdout||'')+(r.stderr||''));console.log(r.stdout,r.stderr);if(r.status)process.exit(r.status);

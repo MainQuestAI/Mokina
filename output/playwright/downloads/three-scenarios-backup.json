@@ -1,0 +1,4000 @@
+{
+  "schema": "6.0.0-spacemaster-demo",
+  "actor": "lin",
+  "view": "workflow",
+  "threadId": "chat-mu0lu8u9-fpgp",
+  "projectId": null,
+  "threads": [
+    {
+      "id": "quick-1",
+      "title": "比较北岚生活的年轻租住人群与有孩子家庭，",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0k4fps-6p5l",
+          "role": "assistant",
+          "text": "已载入 2 份合成资料。本轮选用已更新；已有成果仍保留原引用。",
+          "at": "2026-09-14T01:21:19.504Z"
+        },
+        {
+          "id": "msg-mu0k4uww-tu5s",
+          "role": "user",
+          "text": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "at": "2026-09-14T01:21:39.200Z"
+        },
+        {
+          "id": "msg-mu0k4uwx-3828",
+          "role": "assistant",
+          "text": "先把目标和交付范围放进计划。你可以调整内容；保存不制作。",
+          "at": "2026-09-14T01:21:39.201Z",
+          "mdActions": [
+            [
+              "调整工作计划",
+              "plan",
+              "plan-mu0k4uwx-6gwq"
+            ],
+            [
+              "检查本次依据",
+              "sources"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0k7m5s-mhpd",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T01:23:47.824Z",
+          "artifactIds": [
+            "artifact-mu0k7m5s-510d"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0k7m5s-510d",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0k93d9-e17p",
+          "role": "user",
+          "text": "为什么不同时覆盖两类受众？",
+          "at": "2026-09-14T01:24:56.781Z"
+        },
+        {
+          "id": "msg-mu0k93d9-7fyu",
+          "role": "assistant",
+          "text": "针对「北岚生活 · 90 天品牌策略备忘录」v1：选择年轻租住人群：访谈中的小空间、可移动与低承诺尝试，适合在 90 天内以具体方法建立认知。有孩子家庭对稳定、安全与长期服务证据要求更高，本轮不同时覆盖。\n这只是对当前示例内容的解释，没有生成新版本。",
+          "at": "2026-09-14T01:24:56.781Z"
+        },
+        {
+          "id": "msg-mu0k93e6-hqmo",
+          "role": "user",
+          "text": "保留方向，再补一个对照方案",
+          "at": "2026-09-14T01:24:56.814Z"
+        },
+        {
+          "id": "msg-mu0k93e6-ad65",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T01:24:56.814Z",
+          "artifactIds": [
+            "artifact-mu0k93e6-a3l6"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0k93e6-a3l6",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0k93e6-2jox",
+          "role": "assistant",
+          "text": "已新增独立对照方案，原方案保留。",
+          "at": "2026-09-14T01:24:56.814Z",
+          "mdActions": [
+            [
+              "打开对照方案",
+              "open",
+              "artifact-mu0k93e6-a3l6|1"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0kaf51-rikx",
+          "role": "assistant",
+          "text": "已保存 v2 候选，基于 v1。原版和采用决定保持不变。",
+          "at": "2026-09-14T01:25:58.693Z",
+          "artifactIds": [
+            "artifact-mu0k7m5s-510d"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0k7m5s-510d",
+              "revision": 2
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T01:20:18.153Z",
+      "marketing": {
+        "scene": "brand",
+        "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+        "goalRevision": 1,
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0k4fps-h7w8",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0k4fps-ya4e",
+            "revision": 1
+          }
+        ],
+        "excluded": [],
+        "status": "open",
+        "variant": "base",
+        "constraints": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。"
+      }
+    },
+    {
+      "id": "chat-mu0kbfwu-sp2j",
+      "title": "根据已有事实、确认表达和旧文案，制作下周",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0kc43k-krom",
+          "role": "assistant",
+          "text": "已载入 3 份合成资料。本轮选用已更新；已有成果仍保留原引用。",
+          "at": "2026-09-14T01:27:17.696Z"
+        },
+        {
+          "id": "msg-mu0kc441-w1o1",
+          "role": "user",
+          "text": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "at": "2026-09-14T01:27:17.713Z"
+        },
+        {
+          "id": "msg-mu0kc441-zijb",
+          "role": "assistant",
+          "text": "先把目标和交付范围放进计划。你可以调整内容；保存不制作。",
+          "at": "2026-09-14T01:27:17.713Z",
+          "mdActions": [
+            [
+              "调整工作计划",
+              "plan",
+              "plan-mu0kc441-ifhr"
+            ],
+            [
+              "检查本次依据",
+              "sources"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0kc5jd-2h9k",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T01:27:19.561Z",
+          "artifactIds": [
+            "artifact-mu0kc5jc-f7w7"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0kc5jc-f7w7",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0kd3rx-x2m9",
+          "role": "assistant",
+          "text": "已保存 v2 候选，基于 v1。原版和采用决定保持不变。",
+          "at": "2026-09-14T01:28:03.933Z",
+          "artifactIds": [
+            "artifact-mu0kc5jc-f7w7"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0kc5jc-f7w7",
+              "revision": 2
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0kee0q-yaqi",
+          "role": "assistant",
+          "text": "已保存 v3 候选，基于 v2。原版和采用决定保持不变。",
+          "at": "2026-09-14T01:29:03.866Z",
+          "artifactIds": [
+            "artifact-mu0kc5jc-f7w7"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0kc5jc-f7w7",
+              "revision": 3
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T01:26:46.350Z",
+      "marketing": {
+        "scene": "social",
+        "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+        "goalRevision": 1,
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0kc43k-upj3",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0kc43k-dsmr",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0kc43k-195d",
+            "revision": 1
+          }
+        ],
+        "excluded": [],
+        "status": "open",
+        "variant": "base",
+        "constraints": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。"
+      }
+    },
+    {
+      "id": "chat-mu0kex1m-y0xf",
+      "title": "比较两期社媒数据，区分结构变化与分组表现",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0kez9e-4euz",
+          "role": "assistant",
+          "text": "已添加 operations.csv：已载入本地正文。",
+          "at": "2026-09-14T01:29:31.394Z"
+        },
+        {
+          "id": "msg-mu0kfft0-zzf3",
+          "role": "user",
+          "text": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+          "at": "2026-09-14T01:29:52.836Z"
+        },
+        {
+          "id": "msg-mu0kfft0-kqhh",
+          "role": "assistant",
+          "text": "先把目标和交付范围放进计划。你可以调整内容；保存不制作。",
+          "at": "2026-09-14T01:29:52.836Z",
+          "mdActions": [
+            [
+              "调整工作计划",
+              "plan",
+              "plan-mu0kfft0-7oih"
+            ],
+            [
+              "检查本次依据",
+              "sources"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0kfh7y-r5kg",
+          "role": "assistant",
+          "text": "计算结果已保存，建议为情景演示。",
+          "at": "2026-09-14T01:29:54.670Z",
+          "artifactIds": [
+            "artifact-mu0kfh7y-bic4"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0kfh7y-bic4",
+              "revision": 1
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T01:29:28.522Z",
+      "marketing": {
+        "scene": "analytics",
+        "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+        "goalRevision": 1,
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0kez9e-wjcz",
+            "revision": 1
+          }
+        ],
+        "excluded": [],
+        "status": "open",
+        "constraints": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。"
+      }
+    },
+    {
+      "id": "chat-mu0khmhg-sunk",
+      "title": "依据所选结论，制定下周三条实用内容计划；",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0khmhj-k3ef",
+          "role": "user",
+          "text": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "at": "2026-09-14T01:31:34.807Z"
+        },
+        {
+          "id": "msg-mu0khmhj-txdo",
+          "role": "assistant",
+          "text": "带入所选结论：\n内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。\n来源：两期社媒运营分析 v1",
+          "at": "2026-09-14T01:31:34.807Z",
+          "mdActions": [
+            [
+              "制定三条内容计划",
+              "plan"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0khra8-koyf",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T01:31:41.024Z",
+          "artifactIds": [
+            "artifact-mu0khra8-xofo"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0khra8-xofo",
+              "revision": 1
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T01:31:34.804Z",
+      "marketing": {
+        "scene": "social",
+        "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+        "goalRevision": 1,
+        "selected": [
+          {
+            "type": "artifact",
+            "id": "artifact-mu0kfh7y-bic4",
+            "revision": 1,
+            "selection": [
+              "mix"
+            ],
+            "summary": "内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+          }
+        ],
+        "excluded": [],
+        "status": "open",
+        "followup": true
+      }
+    },
+    {
+      "id": "chat-mu0l35m0-qjyz",
+      "title": "新的工作",
+      "projectId": "project-mu0l35m0-a6d3",
+      "messages": [
+        {
+          "id": "msg-mu0l35mw-rwrx",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T01:48:19.400Z",
+          "artifactIds": [
+            "artifact-mu0l35mw-64gc"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0l35mw-64gc",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0l6wro-5uwg",
+          "role": "assistant",
+          "text": "已保存 v2 候选，基于 v1。原版和采用决定保持不变。",
+          "at": "2026-09-14T01:51:14.532Z",
+          "artifactIds": [
+            "artifact-mu0l35mw-64gc"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0l35mw-64gc",
+              "revision": 2
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T01:48:19.368Z",
+      "marketing": {
+        "scene": "general",
+        "goal": "",
+        "goalRevision": 1,
+        "selected": [],
+        "excluded": [],
+        "status": "open"
+      }
+    },
+    {
+      "id": "chat-mu0l6wtc-t1bh",
+      "title": "新的工作",
+      "projectId": "project-mu0l35m0-a6d3",
+      "messages": [
+        {
+          "id": "msg-mu0l6wtz-paba",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T01:51:14.615Z",
+          "artifactIds": [
+            "artifact-mu0l6wtz-m5ob"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0l6wtz-m5ob",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0l6wuw-fbya",
+          "role": "assistant",
+          "text": "已保存 v2 候选，基于 v1。原版和采用决定保持不变。",
+          "at": "2026-09-14T01:51:14.648Z",
+          "artifactIds": [
+            "artifact-mu0l6wtz-m5ob"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0l6wtz-m5ob",
+              "revision": 2
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T01:51:14.592Z",
+      "marketing": {
+        "scene": "general",
+        "goal": "",
+        "goalRevision": 1,
+        "selected": [],
+        "excluded": [],
+        "status": "open"
+      }
+    },
+    {
+      "id": "chat-mu0la12z-dqbn",
+      "title": "新的工作",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0la14a-jqw7",
+          "role": "assistant",
+          "text": "已载入 2 份合成资料。本轮选用已更新；已有成果仍保留原引用。",
+          "at": "2026-09-14T01:53:40.138Z"
+        },
+        {
+          "id": "msg-mu0la2jq-ga1u",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T01:53:41.990Z",
+          "artifactIds": [
+            "artifact-mu0la2jp-5rd6"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0la2jp-5rd6",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0lbvjk-o23z",
+          "role": "assistant",
+          "text": "已添加 custom-interview.txt：已载入本地正文。",
+          "at": "2026-09-14T01:55:06.224Z"
+        },
+        {
+          "id": "msg-mu0lj0e7-r3d1",
+          "role": "assistant",
+          "text": "已添加 custom-interview.txt：已载入本地正文。",
+          "at": "2026-09-14T02:00:39.103Z"
+        },
+        {
+          "id": "msg-mu0lpa2g-amyn",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T02:05:31.576Z",
+          "artifactIds": [
+            "artifact-mu0lpa2g-5fd7"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0lpa2g-5fd7",
+              "revision": 1
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T01:53:40.091Z",
+      "marketing": {
+        "scene": "brand",
+        "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+        "goalRevision": 1,
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-wsc8",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-qiwr",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0lbvji-d1ft",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0lj0e4-uvpi",
+            "revision": 1
+          }
+        ],
+        "excluded": [],
+        "status": "open",
+        "variant": "base"
+      }
+    },
+    {
+      "id": "chat-mu0lu8u9-fpgp",
+      "title": "先讨论北岚生活的受众，先不制作",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0lu8vz-u7wj",
+          "role": "assistant",
+          "text": "已载入 2 份合成资料变体。本轮选用已更新；已有成果仍保留原引用。",
+          "at": "2026-09-14T02:09:23.327Z"
+        },
+        {
+          "id": "msg-mu0luwcs-35vt",
+          "role": "user",
+          "text": "先讨论北岚生活的受众，先不制作",
+          "at": "2026-09-14T02:09:53.740Z"
+        },
+        {
+          "id": "msg-mu0luwcs-qw6a",
+          "role": "assistant",
+          "text": "先讨论目标与范围，不开始制作。你可以明确优先对象、交付数量及不做什么。",
+          "at": "2026-09-14T02:09:53.740Z",
+          "mdActions": [
+            [
+              "调整工作计划",
+              "plan"
+            ],
+            [
+              "查看本次依据",
+              "sources"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0luxt9-yzgl",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T02:09:55.629Z",
+          "artifactIds": [
+            "artifact-mu0luxt8-qhfr"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0luxt8-qhfr",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0lw7mm-0j1i",
+          "role": "user",
+          "text": "为什么不同时覆盖两类受众？",
+          "at": "2026-09-14T02:10:55.006Z"
+        },
+        {
+          "id": "msg-mu0lw7mm-z0jc",
+          "role": "assistant",
+          "text": "针对「90 天品牌策略备忘录」v1：选择有孩子家庭：用持续记录日常协作问题建立关系，不泛讲“理想家庭”。访谈变体提供了稳定交流小组与连续参与意愿，年轻租住人群近期难以稳定参与。\n这只是对当前示例内容的解释，没有生成新版本。",
+          "at": "2026-09-14T02:10:55.006Z"
+        }
+      ],
+      "created": "2026-09-14T02:09:23.265Z",
+      "marketing": {
+        "scene": "brand",
+        "goal": "先讨论北岚生活的受众，先不制作",
+        "goalRevision": 2,
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0lu8vz-nd6y",
+            "revision": 1
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0lu8vz-2xr9",
+            "revision": 1
+          }
+        ],
+        "excluded": [],
+        "status": "open",
+        "variant": "changed"
+      }
+    },
+    {
+      "id": "chat-mu0lwn8g-bmmf",
+      "title": "新的工作",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0lz2g3-cil9",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T02:13:08.259Z",
+          "artifactIds": [
+            "artifact-mu0lz2g2-l9nd"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0lz2g2-l9nd",
+              "revision": 1
+            }
+          ]
+        },
+        {
+          "id": "msg-mu0lz2iu-m23f",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T02:13:08.358Z",
+          "artifactIds": [
+            "artifact-mu0lz2iu-whda"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0lz2iu-whda",
+              "revision": 1
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T02:11:15.232Z",
+      "marketing": {
+        "scene": "general",
+        "goal": "",
+        "goalRevision": 1,
+        "selected": [
+          {
+            "type": "artifact",
+            "id": "artifact-mu0kc5jc-f7w7",
+            "revision": 3
+          }
+        ],
+        "excluded": [],
+        "status": "open"
+      }
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-mu0l35m0-a6d3",
+      "name": "北岚季度营销",
+      "goal": "",
+      "channels": [],
+      "owner": "lin",
+      "contextArtifacts": [],
+      "created": "2026-09-14T01:48:19.368Z",
+      "marketingProfessional": false,
+      "threadId": "chat-mu0l35m0-qjyz",
+      "inputContextRevision": 1,
+      "v62InputMigrated": true,
+      "inputsReady": false
+    }
+  ],
+  "tasks": [],
+  "artifacts": [
+    {
+      "id": "artifact-mu0k7m5s-510d",
+      "title": "北岚生活 · 90 天品牌策略备忘录",
+      "kind": "marketing-memo",
+      "domain": "other",
+      "threadId": "quick-1",
+      "projectId": null,
+      "taskId": null,
+      "active": 2,
+      "accepted": 2,
+      "pending": null,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0k7m5s-t3tx",
+          "data": {
+            "title": "北岚生活 · 90 天品牌策略备忘录",
+            "summary": "先面向年轻租住人群，以可小步尝试、可带走的生活方法建立认知。",
+            "sections": [
+              {
+                "id": "audience",
+                "title": "优先受众与取舍",
+                "body": "选择年轻租住人群：访谈中的小空间、可移动与低承诺尝试，适合在 90 天内以具体方法建立认知。有孩子家庭对稳定、安全与长期服务证据要求更高，本轮不同时覆盖。"
+              },
+              {
+                "id": "direction",
+                "title": "90 天沟通方向",
+                "body": "方向：住得不必永久，日常可以有条理。前 30 天聚焦一个小空间，中 30 天围绕搬家与可移动组织方法，后 30 天收集重复使用和适用边界反馈。"
+              },
+              {
+                "id": "touchpoints",
+                "title": "只维护两个触点",
+                "body": "触点一：小红书，呈现可保存的小空间清单。触点二：每周文字答疑，整理尝试反馈与不适用情形。两个触点分别承担发现与持续交流。"
+              },
+              {
+                "id": "validation",
+                "title": "验证方式与停止条件",
+                "body": "先记录收藏、有效问题、重复尝试反馈及触达构成，不把点赞等同于品牌认知或购买。30 天后比较两个主题的有效反馈；若没有稳定反馈，缩小主题或停止该方向。缺少样本量、成本及销售归因数据，不给出市场份额或销量承诺。"
+              }
+            ],
+            "simulation": true,
+            "variant": "base",
+            "alternative": false
+          },
+          "refs": [
+            {
+              "id": "upload-mu0k4fps-h7w8",
+              "title": "北岚生活-年轻租住人群访谈.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0k4fps-ya4e",
+              "title": "北岚生活-有孩子家庭访谈.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:23:47.824Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0k7krm-oj29"
+        },
+        {
+          "num": 2,
+          "id": "revision-mu0kaf51-a1sz",
+          "data": {
+            "title": "北岚生活 · 90 天品牌策略备忘录",
+            "summary": "先面向年轻租住人群，以可小步尝试、可带走的生活方法建立认知。",
+            "sections": [
+              {
+                "id": "audience",
+                "title": "优先受众与取舍",
+                "body": "选择年轻租住人群：访谈中的小空间、可移动与低承诺尝试，适合在 90 天内以具体方法建立认知。有孩子家庭对稳定、安全与长期服务证据要求更高，本轮不同时覆盖。"
+              },
+              {
+                "id": "direction",
+                "title": "90 天沟通方向",
+                "body": "方向保留：先面向年轻租住人群。前 30 天只验证小空间清单，后 60 天根据有效反馈调整，不增加第三个触点。"
+              },
+              {
+                "id": "touchpoints",
+                "title": "只维护两个触点",
+                "body": "触点一：小红书，呈现可保存的小空间清单。触点二：每周文字答疑，整理尝试反馈与不适用情形。两个触点分别承担发现与持续交流。"
+              },
+              {
+                "id": "validation",
+                "title": "验证方式与停止条件",
+                "body": "先记录收藏、有效问题、重复尝试反馈及触达构成，不把点赞等同于品牌认知或购买。30 天后比较两个主题的有效反馈；若没有稳定反馈，缩小主题或停止该方向。缺少样本量、成本及销售归因数据，不给出市场份额或销量承诺。"
+              }
+            ],
+            "simulation": true,
+            "variant": "base",
+            "alternative": false
+          },
+          "refs": [
+            {
+              "id": "upload-mu0k4fps-h7w8",
+              "title": "北岚生活-年轻租住人群访谈.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0k4fps-ya4e",
+              "title": "北岚生活-有孩子家庭访谈.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:25:58.693Z",
+          "note": "用户编辑指定内容",
+          "source": "user-edit",
+          "basisVersion": 1,
+          "sectionId": "direction",
+          "contextSnapshotId": "context-mu0k7krm-oj29",
+          "conflict": false
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0k93e6-a3l6",
+      "title": "北岚生活 · 对照沟通方案",
+      "kind": "marketing-memo",
+      "domain": "other",
+      "threadId": "quick-1",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0k93e6-0ynx",
+          "data": {
+            "title": "北岚生活 · 对照沟通方案",
+            "summary": "先面向有孩子家庭，围绕减轻日常整理协作负担建立认知。",
+            "sections": [
+              {
+                "id": "audience",
+                "title": "优先受众与取舍",
+                "body": "选择有孩子家庭：用持续记录日常协作问题建立关系，不泛讲“理想家庭”。这是保留的对照方向，优点是问题持续；代价是信任建立与服务证明需求更高，现有证据尚不充分。"
+              },
+              {
+                "id": "direction",
+                "title": "90 天沟通方向",
+                "body": "方向：让一家人的整理更容易协作。前 30 天收集真实分工问题，中 30 天分享过程记录，后 30 天复盘哪些方法愿意重复。避免把全部整理责任压给家长。"
+              },
+              {
+                "id": "touchpoints",
+                "title": "只维护两个触点",
+                "body": "触点一：微信公众号，展开家庭整理分工案例和适用条件。触点二：固定频率的小组文字交流，收集持续使用反馈。不增加第三渠道。"
+              },
+              {
+                "id": "validation",
+                "title": "验证方式与停止条件",
+                "body": "先记录收藏、有效问题、重复尝试反馈及触达构成，不把点赞等同于品牌认知或购买。30 天后比较两个主题的有效反馈；若没有稳定反馈，缩小主题或停止该方向。缺少样本量、成本及销售归因数据，不给出市场份额或销量承诺。"
+              }
+            ],
+            "simulation": true,
+            "variant": "base",
+            "alternative": true
+          },
+          "refs": [
+            {
+              "id": "upload-mu0k4fps-h7w8",
+              "title": "北岚生活-年轻租住人群访谈.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0k4fps-ya4e",
+              "title": "北岚生活-有孩子家庭访谈.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:24:56.814Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0k7krm-oj29"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0kc5jc-f7w7",
+      "title": "下周五条社媒文字与排期",
+      "kind": "social-calendar",
+      "domain": "other",
+      "threadId": "chat-mu0kbfwu-sp2j",
+      "projectId": null,
+      "taskId": null,
+      "active": 3,
+      "accepted": 3,
+      "pending": null,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0kc5jc-gbyy",
+          "data": {
+            "title": "下周五条社媒文字与排期",
+            "summary": "文字草稿与排期可逐条修改；没有图片和发布前置要求。",
+            "posts": [
+              {
+                "id": "post-mu0kc5jc-ck6z",
+                "date": "下周一",
+                "channel": "小红书",
+                "goal": "建立认知",
+                "angle": "一小块桌面",
+                "body": "新的一周，不必一次整理所有东西。先为桌面上每天用的三件物品找一个固定位置，观察明天是否更容易取用。让当下的生活更有条理。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-h1m2",
+                "date": "下周二",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "玄关物件归位",
+                "body": "回家时，钥匙和随身物件放在哪里？今天只观察一个习惯，再试着留出固定归位的位置。清单提供参考，不要求你的家长得一样。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-1b1u",
+                "date": "下周三",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "搬家打包",
+                "body": "搬家时，先写下到新住处第一晚会用到的物品，再决定哪些装在同一箱。把明天要用的东西留在容易找到的位置，不必今天解决所有收纳问题。北岚生活的搬家打包清单可以作为开始。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-4mav",
+                "date": "下周四",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "整理常见问题",
+                "body": "整理不是对生活打分。如果一个方法总让你多走几步，先记录不方便的地方。每周文字答疑里，我们从具体问题讨论适合你的调整。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-eixm",
+                "date": "下周五",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "一周复盘",
+                "body": "这一周，哪一处整理愿意继续保留？选一件有用的方法，也记下一件不适用的建议。小步尝试，比一次完成所有事情更容易复盘。",
+                "cta": "收藏清单，选择一件尝试"
+              }
+            ],
+            "simulation": true,
+            "variant": "base"
+          },
+          "refs": [
+            {
+              "id": "upload-mu0kc43k-upj3",
+              "title": "北岚生活-已有事实.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0kc43k-dsmr",
+              "title": "北岚生活-确认表达.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0kc43k-195d",
+              "title": "北岚生活-旧文案.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:27:19.560Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0kc457-is1j"
+        },
+        {
+          "num": 2,
+          "id": "revision-mu0kd3rx-dml9",
+          "data": {
+            "title": "下周五条社媒文字与排期",
+            "summary": "文字草稿与排期可逐条修改；没有图片和发布前置要求。",
+            "posts": [
+              {
+                "id": "post-mu0kc5jc-ck6z",
+                "date": "下周一",
+                "channel": "小红书",
+                "goal": "建立认知",
+                "angle": "一小块桌面",
+                "body": "新的一周，不必一次整理所有东西。先为桌面上每天用的三件物品找一个固定位置，观察明天是否更容易取用。让当下的生活更有条理。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-h1m2",
+                "date": "下周二",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "玄关物件归位",
+                "body": "回家时，钥匙和随身物件放在哪里？今天只观察一个习惯，再试着留出固定归位的位置。清单提供参考，不要求你的家长得一样。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-1b1u",
+                "date": "下周三",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "搬家打包",
+                "body": "搬家时，先写下到新住处第一晚会用到的物品，再决定哪些装在同一箱。把明天要用的东西留在容易找到的位置，不必今天解决所有收纳问题。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-4mav",
+                "date": "下周四",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "整理常见问题",
+                "body": "整理不是对生活打分。如果一个方法总让你多走几步，先记录不方便的地方。每周文字答疑里，我们从具体问题讨论适合你的调整。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-eixm",
+                "date": "下周五",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "一周复盘",
+                "body": "这一周，哪一处整理愿意继续保留？选一件有用的方法，也记下一件不适用的建议。小步尝试，比一次完成所有事情更容易复盘。",
+                "cta": "收藏清单，选择一件尝试"
+              }
+            ],
+            "simulation": true,
+            "variant": "base"
+          },
+          "refs": [
+            {
+              "id": "upload-mu0kc43k-upj3",
+              "title": "北岚生活-已有事实.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0kc43k-dsmr",
+              "title": "北岚生活-确认表达.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0kc43k-195d",
+              "title": "北岚生活-旧文案.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:28:03.933Z",
+          "note": "缩短选定条目（确定性文字裁剪演示）",
+          "source": "user-edit",
+          "basisVersion": 1,
+          "sectionId": "post-mu0kc5jc-1b1u",
+          "contextSnapshotId": "context-mu0kc457-is1j",
+          "conflict": false
+        },
+        {
+          "num": 3,
+          "id": "revision-mu0kee0q-5gq5",
+          "data": {
+            "title": "下周五条社媒文字与排期",
+            "summary": "文字草稿与排期可逐条修改；没有图片和发布前置要求。",
+            "posts": [
+              {
+                "id": "post-mu0kc5jc-ck6z",
+                "date": "下周一",
+                "channel": "小红书",
+                "goal": "建立认知",
+                "angle": "一小块桌面",
+                "body": "新的一周，不必一次整理所有东西。先为桌面上每天用的三件物品找一个固定位置，观察明天是否更容易取用。让当下的生活更有条理。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-h1m2",
+                "date": "下周二",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "玄关物件归位",
+                "body": "回家时，钥匙和随身物件放在哪里？今天只观察一个习惯，再试着留出固定归位的位置。清单提供参考，不要求你的家长得一样。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-1b1u",
+                "date": "下周四",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "搬家打包",
+                "body": "搬家时，先写下到新住处第一晚会用到的物品，再决定哪些装在同一箱。把明天要用的东西留在容易找到的位置，不必今天解决所有收纳问题。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-4mav",
+                "date": "下周四",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "整理常见问题",
+                "body": "整理不是对生活打分。如果一个方法总让你多走几步，先记录不方便的地方。每周文字答疑里，我们从具体问题讨论适合你的调整。",
+                "cta": "收藏清单，选择一件尝试"
+              },
+              {
+                "id": "post-mu0kc5jc-eixm",
+                "date": "下周五",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "一周复盘",
+                "body": "这一周，哪一处整理愿意继续保留？选一件有用的方法，也记下一件不适用的建议。小步尝试，比一次完成所有事情更容易复盘。",
+                "cta": "收藏清单，选择一件尝试"
+              }
+            ],
+            "simulation": true,
+            "variant": "base"
+          },
+          "refs": [
+            {
+              "id": "upload-mu0kc43k-upj3",
+              "title": "北岚生活-已有事实.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0kc43k-dsmr",
+              "title": "北岚生活-确认表达.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0kc43k-195d",
+              "title": "北岚生活-旧文案.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:29:03.866Z",
+          "note": "用户编辑指定内容",
+          "source": "user-edit",
+          "basisVersion": 2,
+          "sectionId": "post-mu0kc5jc-1b1u",
+          "contextSnapshotId": "context-mu0kc457-is1j",
+          "conflict": false
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0kfh7y-bic4",
+      "title": "两期社媒运营分析",
+      "kind": "operations-analysis",
+      "domain": "other",
+      "threadId": "chat-mu0kex1m-y0xf",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0kfh7y-2fqf",
+          "data": {
+            "title": "两期社媒运营分析",
+            "summary": "总体互动率 5.25% → 3.875%，变化 -1.375 个百分点。需同时看分组表现和曝光构成。",
+            "analysis": {
+              "totals": [
+                {
+                  "period": "previous",
+                  "impressions": 40000,
+                  "interactions": 2100,
+                  "rate": 0.0525
+                },
+                {
+                  "period": "current",
+                  "impressions": 40000,
+                  "interactions": 1550,
+                  "rate": 0.03875
+                }
+              ],
+              "groups": [
+                {
+                  "group": "practical_tips",
+                  "values": [
+                    {
+                      "impressions": 30000,
+                      "interactions": 1800,
+                      "rate": 0.06,
+                      "share": 0.75
+                    },
+                    {
+                      "impressions": 10000,
+                      "interactions": 650,
+                      "rate": 0.065,
+                      "share": 0.25
+                    }
+                  ]
+                },
+                {
+                  "group": "product_intro",
+                  "values": [
+                    {
+                      "impressions": 10000,
+                      "interactions": 300,
+                      "rate": 0.03,
+                      "share": 0.25
+                    },
+                    {
+                      "impressions": 30000,
+                      "interactions": 900,
+                      "rate": 0.03,
+                      "share": 0.75
+                    }
+                  ]
+                }
+              ],
+              "delta": -0.013749999999999998,
+              "weighted": 0.0375,
+              "composition": -0.015,
+              "within": 0.0012500000000000011,
+              "warning": ""
+            },
+            "sections": [
+              {
+                "id": "overall",
+                "title": "总体与分组表现",
+                "body": "总体变化不能替代分组判断。practical_tips：6% → 6.5%；product_intro：3% → 3%。"
+              },
+              {
+                "id": "mix",
+                "title": "内容结构与接续方向",
+                "body": "使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+              },
+              {
+                "id": "experiments",
+                "title": "两项建议实验（情景演示）",
+                "body": "实验一：在相近时段和投入条件下增加实用内容占比，比较分组互动率及总互动。实验二：同一实用主题分别测试步骤清单与问题答疑表达，记录收藏和有效提问。先固定观察窗口与样本要求，不声称实验已经有效。"
+              },
+              {
+                "id": "limits",
+                "title": "口径与数据不足",
+                "body": "互动率＝互动次数÷曝光次数；合计使用总互动除以总曝光，不简单平均分组率。结构分解采用固定顺序，仅描述构成变化。缺少曝光用户去重、流量来源、成本和销售归因，不能推断品牌认知、销量或广告收益。"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "upload-mu0kez9e-wjcz",
+              "title": "operations.csv",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:29:54.670Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "local-computation",
+          "contextSnapshotId": "context-mu0kfftq-778b"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0khra8-xofo",
+      "title": "下周三条实用内容计划",
+      "kind": "social-calendar",
+      "domain": "other",
+      "threadId": "chat-mu0khmhg-sunk",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0khra8-ll8n",
+          "data": {
+            "title": "下周三条实用内容计划",
+            "summary": "依据所选分析结论增加实用内容；具体产品事实需另行补充。",
+            "posts": [
+              {
+                "id": "post-mu0khra8-87jp",
+                "date": "下周一",
+                "channel": "小红书",
+                "goal": "建立认知",
+                "angle": "桌面整理步骤",
+                "body": "围绕“桌面整理步骤”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              },
+              {
+                "id": "post-mu0khra8-53at",
+                "date": "下周二",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "搬家清单方法",
+                "body": "围绕“搬家清单方法”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              },
+              {
+                "id": "post-mu0khra8-4anj",
+                "date": "下周三",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "整理协作复盘",
+                "body": "围绕“整理协作复盘”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              }
+            ],
+            "simulation": true,
+            "variant": "base"
+          },
+          "refs": [
+            {
+              "id": "artifact-mu0kfh7y-bic4",
+              "title": "两期社媒运营分析",
+              "kind": "operations-analysis",
+              "revision": 1,
+              "type": "artifact"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:31:41.024Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0khpw2-p6vn"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0l35mw-64gc",
+      "title": "工作文档",
+      "kind": "marketing-document",
+      "domain": "other",
+      "threadId": "chat-mu0l35m0-qjyz",
+      "projectId": "project-mu0l35m0-a6d3",
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 2,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0l35mw-0h4b",
+          "data": {
+            "title": "工作文档",
+            "summary": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。",
+            "sections": [
+              {
+                "id": "goal",
+                "title": "本次目标",
+                "body": ""
+              },
+              {
+                "id": "body",
+                "title": "工作正文",
+                "body": "在此编辑工作内容。"
+              }
+            ]
+          },
+          "refs": [],
+          "author": "lin",
+          "created": "2026-09-14T01:48:19.400Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "user-document",
+          "contextSnapshotId": "context-mu0l35mw-jbxk"
+        },
+        {
+          "num": 2,
+          "id": "revision-mu0l6wro-nbua",
+          "data": {
+            "title": "工作文档",
+            "summary": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。",
+            "sections": [
+              {
+                "id": "goal",
+                "title": "本次目标",
+                "body": ""
+              },
+              {
+                "id": "body",
+                "title": "工作正文",
+                "body": "一般项目 A 的文档草稿，切页后保留"
+              }
+            ]
+          },
+          "refs": [],
+          "author": "lin",
+          "created": "2026-09-14T01:51:14.532Z",
+          "note": "用户编辑指定内容",
+          "source": "user-edit",
+          "basisVersion": 1,
+          "sectionId": "",
+          "contextSnapshotId": "context-mu0l35mw-jbxk",
+          "conflict": false
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0l6wtz-m5ob",
+      "title": "工作文档",
+      "kind": "marketing-document",
+      "domain": "other",
+      "threadId": "chat-mu0l6wtc-t1bh",
+      "projectId": "project-mu0l35m0-a6d3",
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 2,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0l6wtz-9ou8",
+          "data": {
+            "title": "工作文档",
+            "summary": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。",
+            "sections": [
+              {
+                "id": "goal",
+                "title": "本次目标",
+                "body": ""
+              },
+              {
+                "id": "body",
+                "title": "工作正文",
+                "body": "在此编辑工作内容。"
+              }
+            ]
+          },
+          "refs": [],
+          "author": "lin",
+          "created": "2026-09-14T01:51:14.615Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "user-document",
+          "contextSnapshotId": "context-mu0l6wtz-bagm"
+        },
+        {
+          "num": 2,
+          "id": "revision-mu0l6wuw-vyxm",
+          "data": {
+            "title": "工作文档",
+            "summary": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。",
+            "sections": [
+              {
+                "id": "goal",
+                "title": "本次目标",
+                "body": ""
+              },
+              {
+                "id": "body",
+                "title": "工作正文",
+                "body": "B 文档，只属于 B"
+              }
+            ]
+          },
+          "refs": [],
+          "author": "lin",
+          "created": "2026-09-14T01:51:14.648Z",
+          "note": "用户编辑指定内容",
+          "source": "user-edit",
+          "basisVersion": 1,
+          "sectionId": "",
+          "contextSnapshotId": "context-mu0l6wtz-bagm",
+          "conflict": false
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0la2jp-5rd6",
+      "title": "90 天品牌策略备忘录",
+      "kind": "marketing-memo",
+      "domain": "other",
+      "threadId": "chat-mu0la12z-dqbn",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0la2jp-u18f",
+          "data": {
+            "title": "90 天品牌策略备忘录",
+            "summary": "先面向年轻租住人群，以可小步尝试、可带走的生活方法建立认知。",
+            "sections": [
+              {
+                "id": "audience",
+                "title": "优先受众与取舍",
+                "body": "选择年轻租住人群：访谈中的小空间、可移动与低承诺尝试，适合在 90 天内以具体方法建立认知。有孩子家庭对稳定、安全与长期服务证据要求更高，本轮不同时覆盖。"
+              },
+              {
+                "id": "direction",
+                "title": "90 天沟通方向",
+                "body": "方向：住得不必永久，日常可以有条理。前 30 天聚焦一个小空间，中 30 天围绕搬家与可移动组织方法，后 30 天收集重复使用和适用边界反馈。"
+              },
+              {
+                "id": "touchpoints",
+                "title": "只维护两个触点",
+                "body": "触点一：小红书，呈现可保存的小空间清单。触点二：每周文字答疑，整理尝试反馈与不适用情形。两个触点分别承担发现与持续交流。"
+              },
+              {
+                "id": "validation",
+                "title": "验证方式与停止条件",
+                "body": "先记录收藏、有效问题、重复尝试反馈及触达构成，不把点赞等同于品牌认知或购买。30 天后比较两个主题的有效反馈；若没有稳定反馈，缩小主题或停止该方向。缺少样本量、成本及销售归因数据，不给出市场份额或销量承诺。"
+              }
+            ],
+            "simulation": true,
+            "variant": "base",
+            "alternative": false
+          },
+          "refs": [
+            {
+              "id": "upload-mu0la14a-wsc8",
+              "title": "北岚生活-年轻租住人群访谈.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0la14a-qiwr",
+              "title": "北岚生活-有孩子家庭访谈.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T01:53:41.989Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0la15i-u6j5"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0lpa2g-5fd7",
+      "title": "custom-interview.txt",
+      "kind": "file-attachment",
+      "domain": "other",
+      "threadId": "chat-mu0la12z-dqbn",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0lpa2g-16xa",
+          "data": {
+            "title": "custom-interview.txt",
+            "summary": "原始文件；仅保存本地内容，不推断正文。",
+            "file": {
+              "name": "custom-interview.txt",
+              "mime": "text/plain",
+              "size": 237,
+              "text": "本地读取验证资料：海岸生活访谈（合成）。\n本轮只讨论用户在搬家前的准备，不宣称提供整理服务。\n该文件不是内置北岚生活示例；原型不得冒充已经据此自动生成品牌策略。\n"
+            }
+          },
+          "refs": [
+            {
+              "id": "upload-mu0lbvji-d1ft",
+              "title": "custom-interview.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:05:31.576Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "user-document",
+          "contextSnapshotId": "context-mu0lpa2f-drdx"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0luxt8-qhfr",
+      "title": "90 天品牌策略备忘录",
+      "kind": "marketing-memo",
+      "domain": "other",
+      "threadId": "chat-mu0lu8u9-fpgp",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0luxt8-bcb5",
+          "data": {
+            "title": "90 天品牌策略备忘录",
+            "summary": "先面向有孩子家庭，围绕减轻日常整理协作负担建立认知。",
+            "sections": [
+              {
+                "id": "audience",
+                "title": "优先受众与取舍",
+                "body": "选择有孩子家庭：用持续记录日常协作问题建立关系，不泛讲“理想家庭”。访谈变体提供了稳定交流小组与连续参与意愿，年轻租住人群近期难以稳定参与。"
+              },
+              {
+                "id": "direction",
+                "title": "90 天沟通方向",
+                "body": "方向：让一家人的整理更容易协作。前 30 天收集真实分工问题，中 30 天分享过程记录，后 30 天复盘哪些方法愿意重复。避免把全部整理责任压给家长。"
+              },
+              {
+                "id": "touchpoints",
+                "title": "只维护两个触点",
+                "body": "触点一：微信公众号，展开家庭整理分工案例和适用条件。触点二：固定频率的小组文字交流，收集持续使用反馈。不增加第三渠道。"
+              },
+              {
+                "id": "validation",
+                "title": "验证方式与停止条件",
+                "body": "先记录收藏、有效问题、重复尝试反馈及触达构成，不把点赞等同于品牌认知或购买。30 天后比较两个主题的有效反馈；若没有稳定反馈，缩小主题或停止该方向。缺少样本量、成本及销售归因数据，不给出市场份额或销量承诺。"
+              }
+            ],
+            "simulation": true,
+            "variant": "changed",
+            "alternative": false
+          },
+          "refs": [
+            {
+              "id": "upload-mu0lu8vz-nd6y",
+              "title": "北岚生活-年轻租住人群访谈-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            },
+            {
+              "id": "upload-mu0lu8vz-2xr9",
+              "title": "北岚生活-有孩子家庭访谈-变体.txt",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:09:55.628Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0luwf3-2jx5"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0lz2g2-l9nd",
+      "title": "工作文档",
+      "kind": "marketing-document",
+      "domain": "other",
+      "threadId": "chat-mu0lwn8g-bmmf",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0lz2g2-qphd",
+          "data": {
+            "title": "工作文档",
+            "summary": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。",
+            "sections": [
+              {
+                "id": "goal",
+                "title": "本次目标",
+                "body": ""
+              },
+              {
+                "id": "body",
+                "title": "工作正文",
+                "body": "在此编辑工作内容。"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "artifact-mu0kc5jc-f7w7",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "revision": 1,
+              "type": "artifact"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:13:08.258Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "user-document",
+          "contextSnapshotId": "context-mu0lz2g2-y1hj"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0lz2iu-whda",
+      "title": "工作文档",
+      "kind": "marketing-document",
+      "domain": "other",
+      "threadId": "chat-mu0lwn8g-bmmf",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0lz2iu-ggkz",
+          "data": {
+            "title": "工作文档",
+            "summary": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。",
+            "sections": [
+              {
+                "id": "goal",
+                "title": "本次目标",
+                "body": ""
+              },
+              {
+                "id": "body",
+                "title": "工作正文",
+                "body": "在此编辑工作内容。"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "artifact-mu0kc5jc-f7w7",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "revision": 3,
+              "type": "artifact"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:13:08.358Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "user-document",
+          "contextSnapshotId": "context-mu0lz2iu-h34e"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0m4ccb-ybe1",
+      "title": "内容拓展草稿",
+      "kind": "notes",
+      "domain": "other",
+      "threadId": "chat-mu0lwn8g-bmmf",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0m4ccb-cuk6",
+          "data": {
+            "title": "内容拓展草稿",
+            "summary": "中国 · 中文 · 内部文字。原批准不自动覆盖新市场、语言或用途；本次保留为内部草稿。",
+            "sections": [
+              {
+                "id": "draft",
+                "title": "本次内容草稿",
+                "body": "能力页草稿：只改变表达，返回后继续。",
+                "label": "用户编辑 · 本地草稿",
+                "sources": []
+              },
+              {
+                "id": "change",
+                "title": "变化与复用条件",
+                "body": "仅改变表达，不改变产品事实或策略",
+                "label": "待业务核对",
+                "sources": []
+              },
+              {
+                "id": "origin",
+                "title": "固定来源",
+                "body": "北岚生活 · 对照沟通方案 v1。来源原文快照随工作记录保留；新稿未继承批准。",
+                "label": "版本引用",
+                "sources": []
+              }
+            ],
+            "workflowBranchId": "branch-mu0m34q8-0t1e",
+            "market": "中国",
+            "language": "中文",
+            "channel": "内部文字",
+            "externalVerified": false
+          },
+          "refs": [
+            {
+              "id": "artifact-mu0k93e6-a3l6",
+              "kind": "marketing-memo",
+              "revision": 1,
+              "title": "北岚生活 · 对照沟通方案"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T02:17:14.363Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "offline-fixture"
+        }
+      ]
+    }
+  ],
+  "submissions": [],
+  "deliveries": [],
+  "transfers": [],
+  "runs": [],
+  "activity": [
+    {
+      "id": "ev-mu0m4ccb-s48b",
+      "title": "已形成资料摘要",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:17:14.363Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0lz2iu-20z6",
+      "title": "已形成工作文档",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:13:08.358Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0lz2g2-h31c",
+      "title": "已形成工作文档",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:13:08.258Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0luxt8-ngdg",
+      "title": "已形成品牌策略备忘录",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:09:55.628Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0lpa2g-8wbh",
+      "title": "已形成file-attachment",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T02:05:31.576Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0la2jp-5fib",
+      "title": "已形成品牌策略备忘录",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T01:53:41.989Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0l6wuw-vil6",
+      "title": "已形成新建议",
+      "detail": "工作文档 v2；当前采用版本未被覆盖。",
+      "projectId": "project-mu0l35m0-a6d3",
+      "at": "2026-09-14T01:51:14.648Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0l6wtz-y59d",
+      "title": "已形成工作文档",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": "project-mu0l35m0-a6d3",
+      "at": "2026-09-14T01:51:14.615Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0l6wro-edpx",
+      "title": "已形成新建议",
+      "detail": "工作文档 v2；当前采用版本未被覆盖。",
+      "projectId": "project-mu0l35m0-a6d3",
+      "at": "2026-09-14T01:51:14.532Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0l35mw-slaz",
+      "title": "已形成工作文档",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": "project-mu0l35m0-a6d3",
+      "at": "2026-09-14T01:48:19.400Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0khra8-ko0q",
+      "title": "已形成社媒内容与排期",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T01:31:41.024Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0kfh7y-gpsx",
+      "title": "已形成运营分析",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T01:29:54.670Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0kee0q-5joh",
+      "title": "已形成新建议",
+      "detail": "下周五条社媒文字与排期 v3；当前采用版本未被覆盖。",
+      "projectId": null,
+      "at": "2026-09-14T01:29:03.866Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0kd3rx-d38l",
+      "title": "已形成新建议",
+      "detail": "下周五条社媒文字与排期 v2；当前采用版本未被覆盖。",
+      "projectId": null,
+      "at": "2026-09-14T01:28:03.933Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0kc5jd-v956",
+      "title": "已形成社媒内容与排期",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T01:27:19.561Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0kaf51-9elz",
+      "title": "已形成新建议",
+      "detail": "北岚生活 · 90 天品牌策略备忘录 v2；当前采用版本未被覆盖。",
+      "projectId": null,
+      "at": "2026-09-14T01:25:58.693Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0k93e6-qzwb",
+      "title": "已形成品牌策略备忘录",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T01:24:56.814Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0k7m5s-i0p7",
+      "title": "已形成品牌策略备忘录",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T01:23:47.824Z",
+      "actor": "lin"
+    }
+  ],
+  "uploads": [
+    {
+      "id": "upload-mu0k4fps-h7w8",
+      "threadId": "quick-1",
+      "projectId": null,
+      "name": "北岚生活-年轻租住人群访谈.txt",
+      "text": "【合成访谈 v1】北岚生活是虚构家居服务品牌。年轻租住人群在搬家与短期居住中希望少做不可逆改造，喜欢可带走、可小步尝试的空间整理方法。顾虑：被当成临时生活、预算浪费、建议不适合小空间。愿意保存具体清单，通过小红书发现方法；每周可尝试一件小事。没有代表性样本量，不能推断市场规模。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 411,
+      "created": "2026-09-14T01:21:19.504Z",
+      "revision": 1,
+      "fixtureKey": "brand:renters:base",
+      "fixtureVariant": "base"
+    },
+    {
+      "id": "upload-mu0k4fps-ya4e",
+      "threadId": "quick-1",
+      "projectId": null,
+      "name": "北岚生活-有孩子家庭访谈.txt",
+      "text": "【合成访谈 v1】有孩子家庭关注日常收纳协作、长期稳定与安全边界，希望看到完整使用条件和真实验证。顾虑：泛泛的美好生活承诺、整理增加家长负担。信任需要较长周期与持续服务案例，现有资料尚不足以作安全或功效声明。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 306,
+      "created": "2026-09-14T01:21:19.504Z",
+      "revision": 1,
+      "fixtureKey": "brand:families:base",
+      "fixtureVariant": "base"
+    },
+    {
+      "id": "upload-mu0kc43k-upj3",
+      "threadId": "chat-mu0kbfwu-sp2j",
+      "projectId": null,
+      "name": "北岚生活-已有事实.txt",
+      "text": "【合成事实 v1】北岚生活提供一份可下载的空间整理清单及每周一次文字答疑。清单覆盖玄关、桌面和搬家打包三个主题；不包含上门服务，不承诺效果比例。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 210,
+      "created": "2026-09-14T01:27:17.696Z",
+      "revision": 1,
+      "fixtureKey": "social:facts:base",
+      "fixtureVariant": "base"
+    },
+    {
+      "id": "upload-mu0kc43k-dsmr",
+      "threadId": "chat-mu0kbfwu-sp2j",
+      "projectId": null,
+      "name": "北岚生活-确认表达.txt",
+      "text": "【合成表达 v1】确认方向：让当下的生活更有条理。语气具体、平等、不制造焦虑。不夸大空间变化；不使用保证、最好、第一等绝对承诺。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 186,
+      "created": "2026-09-14T01:27:17.696Z",
+      "revision": 1,
+      "fixtureKey": "social:expression:base",
+      "fixtureVariant": "base"
+    },
+    {
+      "id": "upload-mu0kc43k-195d",
+      "threadId": "chat-mu0kbfwu-sp2j",
+      "projectId": null,
+      "name": "北岚生活-旧文案.txt",
+      "text": "【合成旧文案 v1】新的一周，从桌面的一小块开始。不是一次整理所有东西，先为每天用的物件找到固定位置。收藏清单，周末挑一件试试。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 186,
+      "created": "2026-09-14T01:27:17.696Z",
+      "revision": 1,
+      "fixtureKey": "social:old-copy:base",
+      "fixtureVariant": "base"
+    },
+    {
+      "id": "upload-mu0kez9e-wjcz",
+      "threadId": "chat-mu0kex1m-y0xf",
+      "projectId": null,
+      "name": "operations.csv",
+      "mime": "text/csv",
+      "size": 178,
+      "revision": 1,
+      "created": "2026-09-14T01:29:31.394Z",
+      "type": "text",
+      "text": "period,content_type,impressions,interactions\nprevious,practical_tips,30000,1800\nprevious,product_intro,10000,300\ncurrent,practical_tips,10000,650\ncurrent,product_intro,30000,900\n"
+    },
+    {
+      "id": "upload-mu0la14a-wsc8",
+      "threadId": "chat-mu0la12z-dqbn",
+      "projectId": null,
+      "name": "北岚生活-年轻租住人群访谈.txt",
+      "text": "【合成访谈 v1】北岚生活是虚构家居服务品牌。年轻租住人群在搬家与短期居住中希望少做不可逆改造，喜欢可带走、可小步尝试的空间整理方法。顾虑：被当成临时生活、预算浪费、建议不适合小空间。愿意保存具体清单，通过小红书发现方法；每周可尝试一件小事。没有代表性样本量，不能推断市场规模。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 411,
+      "created": "2026-09-14T01:53:40.138Z",
+      "revision": 1,
+      "fixtureKey": "brand:renters:base",
+      "fixtureVariant": "base"
+    },
+    {
+      "id": "upload-mu0la14a-qiwr",
+      "threadId": "chat-mu0la12z-dqbn",
+      "projectId": null,
+      "name": "北岚生活-有孩子家庭访谈.txt",
+      "text": "【合成访谈 v1】有孩子家庭关注日常收纳协作、长期稳定与安全边界，希望看到完整使用条件和真实验证。顾虑：泛泛的美好生活承诺、整理增加家长负担。信任需要较长周期与持续服务案例，现有资料尚不足以作安全或功效声明。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 306,
+      "created": "2026-09-14T01:53:40.138Z",
+      "revision": 1,
+      "fixtureKey": "brand:families:base",
+      "fixtureVariant": "base"
+    },
+    {
+      "id": "upload-mu0lbvji-d1ft",
+      "threadId": "chat-mu0la12z-dqbn",
+      "projectId": null,
+      "name": "custom-interview.txt",
+      "mime": "text/plain",
+      "size": 237,
+      "revision": 1,
+      "created": "2026-09-14T01:55:06.222Z",
+      "type": "text",
+      "text": "本地读取验证资料：海岸生活访谈（合成）。\n本轮只讨论用户在搬家前的准备，不宣称提供整理服务。\n该文件不是内置北岚生活示例；原型不得冒充已经据此自动生成品牌策略。\n"
+    },
+    {
+      "id": "upload-mu0lj0e4-uvpi",
+      "threadId": "chat-mu0la12z-dqbn",
+      "projectId": null,
+      "name": "custom-interview.txt",
+      "mime": "text/plain",
+      "size": 237,
+      "revision": 1,
+      "created": "2026-09-14T02:00:39.100Z",
+      "type": "text",
+      "text": "本地读取验证资料：海岸生活访谈（合成）。\n本轮只讨论用户在搬家前的准备，不宣称提供整理服务。\n该文件不是内置北岚生活示例；原型不得冒充已经据此自动生成品牌策略。\n"
+    },
+    {
+      "id": "upload-mu0lu8vz-nd6y",
+      "threadId": "chat-mu0lu8u9-fpgp",
+      "projectId": null,
+      "name": "北岚生活-年轻租住人群访谈-变体.txt",
+      "text": "【合成访谈 v2】年轻租住人群表示近期频繁迁居，无法持续参与每周活动，主要希望偶尔查询搬家清单；当前 90 天沟通条件下难以稳定触达。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 187,
+      "created": "2026-09-14T02:09:23.327Z",
+      "revision": 1,
+      "fixtureKey": "brand:renters:changed",
+      "fixtureVariant": "changed"
+    },
+    {
+      "id": "upload-mu0lu8vz-2xr9",
+      "threadId": "chat-mu0lu8u9-fpgp",
+      "projectId": null,
+      "name": "北岚生活-有孩子家庭访谈-变体.txt",
+      "text": "【合成访谈 v2】有孩子家庭已有稳定的每周整理交流小组，愿意连续 90 天记录整理协作问题。关注减轻家长负担，不希望看到安全或功效的无依据承诺。",
+      "type": "text",
+      "mime": "text/plain",
+      "size": 202,
+      "created": "2026-09-14T02:09:23.327Z",
+      "revision": 1,
+      "fixtureKey": "brand:families:changed",
+      "fixtureVariant": "changed"
+    }
+  ],
+  "selectedAssets": [
+    "img-front",
+    "img-open",
+    "img-detail"
+  ],
+  "canvas": null,
+  "contextSelection": null,
+  "filters": {
+    "domain": "all"
+  },
+  "settings": {
+    "theme": "light",
+    "density": "comfortable",
+    "speed": 1
+  },
+  "auto": null,
+  "runId": null,
+  "paused": false,
+  "mobileNav": false,
+  "openCanvases": [],
+  "panelStack": [],
+  "panelDrafts": {
+    "md-plan|plan-mu0k4uwx-6gwq": {
+      "values": {
+        "md-plan-goal": {
+          "value": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。"
+        },
+        "md-item-title-item-mu0k4uwx-1n23": {
+          "value": "90 天品牌策略备忘录",
+          "checked": false
+        },
+        "md-item-kind-item-mu0k4uwx-1n23": {
+          "value": "marketing-memo"
+        },
+        "md-item-input-item-mu0k4uwx-1n23": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0k4uwx-1n23": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不做产品上市、不做 FABE/MH、不做图片，只比较受众与两个触点"
+        }
+      },
+      "at": "2026-09-14T01:23:46.022Z"
+    },
+    "md-edit|artifact-mu0k7m5s-510d|1|direction": {
+      "values": {
+        "md-edit-sections.1.body": {
+          "value": "方向保留：先面向年轻租住人群。前 30 天只验证小空间清单，后 60 天根据有效反馈调整，不增加第三个触点。"
+        }
+      },
+      "at": "2026-09-14T01:25:58.693Z"
+    },
+    "md-plan|plan-mu0kc441-ifhr": {
+      "values": {
+        "md-plan-goal": {
+          "value": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。"
+        },
+        "md-item-title-item-mu0kc441-90s8": {
+          "value": "下周五条社媒文字与排期",
+          "checked": false
+        },
+        "md-item-kind-item-mu0kc441-90s8": {
+          "value": "social-calendar"
+        },
+        "md-item-input-item-mu0kc441-90s8": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0kc441-90s8": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T01:27:17.758Z"
+    },
+    "md-edit|artifact-mu0kc5jc-f7w7|2|post-mu0kc5jc-1b1u": {
+      "values": {
+        "md-edit-posts.2.date": {
+          "value": "下周四",
+          "checked": false
+        },
+        "md-edit-posts.2.channel": {
+          "value": "小红书",
+          "checked": false
+        },
+        "md-edit-posts.2.goal": {
+          "value": "收集有效反馈",
+          "checked": false
+        },
+        "md-edit-posts.2.angle": {
+          "value": "搬家打包",
+          "checked": false
+        },
+        "md-edit-posts.2.body": {
+          "value": "搬家时，先写下到新住处第一晚会用到的物品，再决定哪些装在同一箱。把明天要用的东西留在容易找到的位置，不必今天解决所有收纳问题。"
+        },
+        "md-edit-posts.2.cta": {
+          "value": "收藏清单，选择一件尝试",
+          "checked": false
+        }
+      },
+      "at": "2026-09-14T01:29:03.866Z"
+    },
+    "md-plan|plan-mu0kfft0-7oih": {
+      "values": {
+        "md-plan-goal": {
+          "value": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。"
+        },
+        "md-item-title-item-mu0kfft0-dmlb": {
+          "value": "两期社媒运营分析",
+          "checked": false
+        },
+        "md-item-kind-item-mu0kfft0-dmlb": {
+          "value": "operations-analysis"
+        },
+        "md-item-input-item-mu0kfft0-dmlb": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0kfft0-dmlb": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T01:29:52.868Z"
+    },
+    "md-followup|artifact-mu0kfh7y-bic4|1": {
+      "values": {
+        "md-followup-goal": {
+          "value": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。"
+        }
+      },
+      "at": "2026-09-14T01:31:13.452Z"
+    },
+    "md-followup-preview|": {
+      "values": {
+        "md-followup-goal": {
+          "value": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。"
+        }
+      },
+      "at": "2026-09-14T01:31:13.452Z"
+    },
+    "md-plan|plan-mu0khmhj-sqix": {
+      "values": {
+        "md-plan-goal": {
+          "value": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。"
+        },
+        "md-item-title-item-mu0khmhj-z530": {
+          "value": "下周三条实用内容计划",
+          "checked": false
+        },
+        "md-item-kind-item-mu0khmhj-z530": {
+          "value": "social-calendar"
+        },
+        "md-item-input-item-mu0khmhj-z530": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0khmhj-z530": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T01:31:39.222Z"
+    },
+    "md-project|": {
+      "values": {
+        "md-project-name": {
+          "value": "北岚季度营销",
+          "checked": false
+        },
+        "md-project-goal": {
+          "value": ""
+        }
+      },
+      "at": "2026-09-14T01:48:19.371Z"
+    },
+    "capabilities|": {
+      "values": {
+        "md-edit-summary": {
+          "value": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。"
+        },
+        "md-edit-sections.0.body": {
+          "value": ""
+        },
+        "md-edit-sections.1.body": {
+          "value": "一般项目 A 的文档草稿，切页后保留"
+        }
+      },
+      "at": "2026-09-14T01:49:39.566Z"
+    },
+    "md-edit|artifact-mu0l35mw-64gc|1|": {
+      "values": {
+        "md-edit-summary": {
+          "value": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。"
+        },
+        "md-edit-sections.0.body": {
+          "value": ""
+        },
+        "md-edit-sections.1.body": {
+          "value": "一般项目 A 的文档草稿，切页后保留"
+        }
+      },
+      "at": "2026-09-14T01:51:14.532Z"
+    },
+    "md-edit|artifact-mu0l6wtz-m5ob|1|": {
+      "values": {
+        "md-edit-summary": {
+          "value": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。"
+        },
+        "md-edit-sections.0.body": {
+          "value": ""
+        },
+        "md-edit-sections.1.body": {
+          "value": "B 文档，只属于 B"
+        }
+      },
+      "at": "2026-09-14T01:51:14.648Z"
+    },
+    "md-plan|plan-mu0la14r-rx76": {
+      "values": {
+        "md-plan-goal": {
+          "value": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。"
+        },
+        "md-item-title-item-mu0la14r-fznc": {
+          "value": "90 天品牌策略备忘录",
+          "checked": false
+        },
+        "md-item-kind-item-mu0la14r-fznc": {
+          "value": "marketing-memo"
+        },
+        "md-item-input-item-mu0la14r-fznc": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0la14r-fznc": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T02:03:24.226Z"
+    },
+    "md-plan|plan-mu0luwd8-nq4n": {
+      "values": {
+        "md-plan-goal": {
+          "value": "先讨论北岚生活的受众，先不制作"
+        },
+        "md-item-title-item-mu0luwd8-jha0": {
+          "value": "90 天品牌策略备忘录",
+          "checked": false
+        },
+        "md-item-kind-item-mu0luwd8-jha0": {
+          "value": "marketing-memo"
+        },
+        "md-item-input-item-mu0luwd8-jha0": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0luwd8-jha0": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T02:09:53.827Z"
+    },
+    "md-edit|artifact-mu0lz2g2-l9nd|1|": {
+      "values": {
+        "md-edit-summary": {
+          "value": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。"
+        },
+        "md-edit-sections.0.body": {
+          "value": ""
+        },
+        "md-edit-sections.1.body": {
+          "value": "在此编辑工作内容。"
+        }
+      },
+      "at": "2026-09-14T02:13:08.292Z"
+    },
+    "md-edit|artifact-mu0lz2iu-whda|1|": {
+      "values": {
+        "md-edit-summary": {
+          "value": "用户目标与选用资料已固定。正文由用户编辑，本原型未调用模型。"
+        },
+        "md-edit-sections.0.body": {
+          "value": ""
+        },
+        "md-edit-sections.1.body": {
+          "value": "在此编辑工作内容。"
+        }
+      },
+      "at": "2026-09-14T02:13:08.391Z"
+    },
+    "settings|": {
+      "values": {
+        "pref-theme": {
+          "value": "light"
+        },
+        "pref-speed": {
+          "value": "1"
+        }
+      },
+      "at": "2026-09-14T02:17:37.901Z"
+    }
+  },
+  "composerDrafts": {
+    "quick-1": "",
+    "chat-mu0kbfwu-sp2j": "",
+    "chat-mu0kex1m-y0xf": "",
+    "chat-mu0khmhg-sunk": "",
+    "chat-mu0l35m0-qjyz": "A-恢复验证",
+    "chat-mu0l6wtc-t1bh": "B-恢复验证",
+    "chat-mu0la12z-dqbn": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+    "chat-mu0lu8u9-fpgp": "",
+    "chat-mu0lwn8g-bmmf": ""
+  },
+  "workbenchWidth": 62,
+  "plans": [
+    {
+      "id": "plan-mu0k4uwx-6gwq",
+      "threadId": "quick-1",
+      "projectId": null,
+      "marketing": true,
+      "revision": 3,
+      "status": "completed",
+      "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+      "exclusions": "不做产品上市、不做 FABE/MH、不做图片，只比较受众与两个触点",
+      "items": [
+        {
+          "id": "item-mu0k4uwx-1n23",
+          "title": "90 天品牌策略备忘录",
+          "kind": "marketing-memo",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "artifactId": "artifact-mu0k7m5s-510d"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0k4uwx-1n23",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T01:23:34.991Z"
+        },
+        {
+          "revision": 2,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不做产品上市、不做 FABE/MH、不做图片，只比较受众与两个触点",
+          "items": [
+            {
+              "id": "item-mu0k4uwx-1n23",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T01:23:46.018Z"
+        }
+      ],
+      "created": "2026-09-14T01:21:39.201Z",
+      "currentItem": "item-mu0k4uwx-1n23"
+    },
+    {
+      "id": "plan-mu0kc441-ifhr",
+      "threadId": "chat-mu0kbfwu-sp2j",
+      "projectId": null,
+      "marketing": true,
+      "revision": 3,
+      "status": "completed",
+      "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0kc441-90s8",
+          "title": "下周五条社媒文字与排期",
+          "kind": "social-calendar",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "artifactId": "artifact-mu0kc5jc-f7w7"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0kc441-90s8",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T01:27:17.738Z"
+        },
+        {
+          "revision": 2,
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0kc441-90s8",
+              "title": "下周五条社媒文字与排期",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T01:27:17.754Z"
+        }
+      ],
+      "created": "2026-09-14T01:27:17.713Z",
+      "currentItem": "item-mu0kc441-90s8"
+    },
+    {
+      "id": "plan-mu0kfft0-7oih",
+      "threadId": "chat-mu0kex1m-y0xf",
+      "projectId": null,
+      "marketing": true,
+      "revision": 2,
+      "status": "completed",
+      "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0kfft0-dmlb",
+          "title": "两期社媒运营分析",
+          "kind": "operations-analysis",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "artifactId": "artifact-mu0kfh7y-bic4"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0kfft0-dmlb",
+              "title": "两期社媒运营分析",
+              "kind": "operations-analysis",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T01:29:52.862Z"
+        }
+      ],
+      "created": "2026-09-14T01:29:52.836Z",
+      "currentItem": "item-mu0kfft0-dmlb"
+    },
+    {
+      "id": "plan-mu0khmhj-sqix",
+      "threadId": "chat-mu0khmhg-sunk",
+      "projectId": null,
+      "marketing": true,
+      "revision": 2,
+      "status": "completed",
+      "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0khmhj-z530",
+          "title": "下周三条实用内容计划",
+          "kind": "social-calendar",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "artifactId": "artifact-mu0khra8-xofo"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0khmhj-z530",
+              "title": "下周三条实用内容计划",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T01:31:39.218Z"
+        }
+      ],
+      "created": "2026-09-14T01:31:34.807Z",
+      "currentItem": "item-mu0khmhj-z530"
+    },
+    {
+      "id": "plan-mu0la14r-rx76",
+      "threadId": "chat-mu0la12z-dqbn",
+      "projectId": null,
+      "marketing": true,
+      "revision": 5,
+      "status": "draft",
+      "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0la14r-fznc",
+          "title": "90 天品牌策略备忘录",
+          "kind": "marketing-memo",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "artifactId": "artifact-mu0la2jp-5rd6"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T01:53:40.182Z"
+        },
+        {
+          "revision": 2,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0la2jp-5rd6"
+            }
+          ],
+          "at": "2026-09-14T01:54:21.246Z"
+        },
+        {
+          "revision": 3,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0la2jp-5rd6"
+            }
+          ],
+          "at": "2026-09-14T01:54:38.654Z"
+        },
+        {
+          "revision": 4,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0la2jp-5rd6"
+            }
+          ],
+          "at": "2026-09-14T02:01:30.015Z"
+        }
+      ],
+      "created": "2026-09-14T01:53:40.155Z",
+      "currentItem": "item-mu0la14r-fznc"
+    },
+    {
+      "id": "plan-mu0luwd8-nq4n",
+      "threadId": "chat-mu0lu8u9-fpgp",
+      "projectId": null,
+      "marketing": true,
+      "revision": 3,
+      "status": "completed",
+      "goal": "先讨论北岚生活的受众，先不制作",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0luwd8-jha0",
+          "title": "90 天品牌策略备忘录",
+          "kind": "marketing-memo",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "artifactId": "artifact-mu0luxt8-qhfr"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "先讨论北岚生活的受众，先不制作",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0luwd8-jha0",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T02:09:53.773Z"
+        },
+        {
+          "revision": 2,
+          "goal": "先讨论北岚生活的受众，先不制作",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0luwd8-jha0",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T02:09:53.823Z"
+        }
+      ],
+      "created": "2026-09-14T02:09:53.756Z",
+      "currentItem": "item-mu0luwd8-jha0"
+    }
+  ],
+  "batches": [],
+  "workModes": {
+    "chat-mu0lu8u9-fpgp": "plan"
+  },
+  "taskFilter": "mine",
+  "projectCollapsed": {
+    "project-mu0l35m0-a6d3": false
+  },
+  "expandedSellingPoints": {},
+  "inspectorOpen": false,
+  "inspectorTab": "status",
+  "libraryPushes": [],
+  "externalSources": [],
+  "unifiedPlanMigration": 1,
+  "inputEvidence": [],
+  "inputSnapshots": [],
+  "inputUploadAttempts": [],
+  "inputContextChanges": [],
+  "workflowBranches": {
+    "jobs": [
+      {
+        "id": "branch-mu0m34q8-0t1e",
+        "type": "continue",
+        "title": "内容拓展草稿",
+        "owner": "lin",
+        "projectId": null,
+        "status": "ready",
+        "created": "2026-09-14T02:16:17.840Z",
+        "updated": "2026-09-14T02:17:14.364Z",
+        "simulation": true,
+        "externalStatus": "not_connected",
+        "events": [
+          {
+            "id": "event-mu0m34q8-dl6u",
+            "action": "continuation_created",
+            "note": "固定引用 北岚生活 · 对照沟通方案 v1；未重新执行整套上市计划。",
+            "actor": "lin",
+            "at": "2026-09-14T02:16:17.840Z"
+          },
+          {
+            "id": "event-mu0m4ccc-1391",
+            "action": "draft_saved",
+            "note": "已保存可编辑本地候选；待采用与按用途审批。",
+            "actor": "lin",
+            "at": "2026-09-14T02:17:14.364Z"
+          }
+        ],
+        "mode": "extension",
+        "continuationKey": "[\"artifact-mu0k93e6-a3l6\",1,\"extension\",\"中国\",\"中文\",\"内部文字\",\"仅改变表达，不改变产品事实或策略\",\"内容拓展草稿\",\"先面向有孩子家庭，围绕减轻日常整理协作负担建立认知。\"]",
+        "refs": [
+          {
+            "id": "artifact-mu0k93e6-a3l6",
+            "kind": "marketing-memo",
+            "revision": 1,
+            "title": "北岚生活 · 对照沟通方案",
+            "projectId": null,
+            "origin": "本地成果",
+            "permission": "unverified",
+            "snapshot": {
+              "num": 1,
+              "id": "revision-mu0k93e6-0ynx",
+              "data": {
+                "title": "北岚生活 · 对照沟通方案",
+                "summary": "先面向有孩子家庭，围绕减轻日常整理协作负担建立认知。",
+                "sections": [
+                  {
+                    "id": "audience",
+                    "title": "优先受众与取舍",
+                    "body": "选择有孩子家庭：用持续记录日常协作问题建立关系，不泛讲“理想家庭”。这是保留的对照方向，优点是问题持续；代价是信任建立与服务证明需求更高，现有证据尚不充分。"
+                  },
+                  {
+                    "id": "direction",
+                    "title": "90 天沟通方向",
+                    "body": "方向：让一家人的整理更容易协作。前 30 天收集真实分工问题，中 30 天分享过程记录，后 30 天复盘哪些方法愿意重复。避免把全部整理责任压给家长。"
+                  },
+                  {
+                    "id": "touchpoints",
+                    "title": "只维护两个触点",
+                    "body": "触点一：微信公众号，展开家庭整理分工案例和适用条件。触点二：固定频率的小组文字交流，收集持续使用反馈。不增加第三渠道。"
+                  },
+                  {
+                    "id": "validation",
+                    "title": "验证方式与停止条件",
+                    "body": "先记录收藏、有效问题、重复尝试反馈及触达构成，不把点赞等同于品牌认知或购买。30 天后比较两个主题的有效反馈；若没有稳定反馈，缩小主题或停止该方向。缺少样本量、成本及销售归因数据，不给出市场份额或销量承诺。"
+                  }
+                ],
+                "simulation": true,
+                "variant": "base",
+                "alternative": true
+              },
+              "refs": [
+                {
+                  "id": "upload-mu0k4fps-h7w8",
+                  "title": "北岚生活-年轻租住人群访谈.txt",
+                  "kind": "file",
+                  "revision": 1,
+                  "type": "upload"
+                },
+                {
+                  "id": "upload-mu0k4fps-ya4e",
+                  "title": "北岚生活-有孩子家庭访谈.txt",
+                  "kind": "file",
+                  "revision": 1,
+                  "type": "upload"
+                }
+              ],
+              "author": "lin",
+              "created": "2026-09-14T01:24:56.814Z",
+              "note": "Lilith 形成初始工作草稿",
+              "source": "scenario-demo",
+              "contextSnapshotId": "context-mu0k7krm-oj29"
+            }
+          }
+        ],
+        "market": "中国",
+        "language": "中文",
+        "channel": "内部文字",
+        "change": "仅改变表达，不改变产品事实或策略",
+        "draftText": "能力页草稿：只改变表达，返回后继续。",
+        "steps": [
+          "核对复用条件",
+          "编辑本次渠道内容",
+          "检查与采用",
+          "按用途提交审批"
+        ],
+        "reuseStatus": "原批准不自动覆盖新市场、语言或用途；本次保留为内部草稿。",
+        "threadId": "chat-mu0lwn8g-bmmf",
+        "artifactId": "artifact-mu0m4ccb-ybe1",
+        "outputRevision": 1
+      }
+    ],
+    "selected": [],
+    "draft": {
+      "owner": "lin"
+    },
+    "activeJob": "branch-mu0m34q8-0t1e",
+    "mode": "history",
+    "modeDrafts": {
+      "search": {},
+      "history": {
+        "owner": "lin"
+      },
+      "continue": {
+        "sourceId": "artifact-mu0k93e6-a3l6",
+        "continuationMode": "extension",
+        "market": "中国",
+        "language": "中文",
+        "channel": "内部文字",
+        "change": "仅改变表达，不改变产品事实或策略"
+      }
+    },
+    "jobDrafts": {
+      "history": {},
+      "": {},
+      "branch-mu0m34q8-0t1e": {
+        "editBody": "能力页草稿：只改变表达，返回后继续。"
+      }
+    },
+    "positions": {
+      "mode:history": {
+        "scroll": 0,
+        "field": null
+      },
+      "job:branch-mu0m34q8-0t1e": {
+        "scroll": 0,
+        "field": null
+      }
+    },
+    "error": "",
+    "origin": {
+      "view": "chat",
+      "projectId": null,
+      "threadId": "chat-mu0lu8u9-fpgp",
+      "canvas": null,
+      "artifactWorkspace": null,
+      "contextSelection": null
+    }
+  },
+  "md": {
+    "schema": 2,
+    "snapshots": [
+      {
+        "id": "context-mu0k7krm-oj29",
+        "threadId": "quick-1",
+        "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T01:23:46.018Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0k4fps-h7w8",
+            "revision": 1,
+            "title": "北岚生活-年轻租住人群访谈.txt",
+            "text": "【合成访谈 v1】北岚生活是虚构家居服务品牌。年轻租住人群在搬家与短期居住中希望少做不可逆改造，喜欢可带走、可小步尝试的空间整理方法。顾虑：被当成临时生活、预算浪费、建议不适合小空间。愿意保存具体清单，通过小红书发现方法；每周可尝试一件小事。没有代表性样本量，不能推断市场规模。",
+            "fixtureKey": "brand:renters:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0k4fps-ya4e",
+            "revision": 1,
+            "title": "北岚生活-有孩子家庭访谈.txt",
+            "text": "【合成访谈 v1】有孩子家庭关注日常收纳协作、长期稳定与安全边界，希望看到完整使用条件和真实验证。顾虑：泛泛的美好生活承诺、整理增加家长负担。信任需要较长周期与持续服务案例，现有资料尚不足以作安全或功效声明。",
+            "fixtureKey": "brand:families:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": []
+      },
+      {
+        "id": "context-mu0kc457-is1j",
+        "threadId": "chat-mu0kbfwu-sp2j",
+        "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T01:27:17.755Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0kc43k-upj3",
+            "revision": 1,
+            "title": "北岚生活-已有事实.txt",
+            "text": "【合成事实 v1】北岚生活提供一份可下载的空间整理清单及每周一次文字答疑。清单覆盖玄关、桌面和搬家打包三个主题；不包含上门服务，不承诺效果比例。",
+            "fixtureKey": "social:facts:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0kc43k-dsmr",
+            "revision": 1,
+            "title": "北岚生活-确认表达.txt",
+            "text": "【合成表达 v1】确认方向：让当下的生活更有条理。语气具体、平等、不制造焦虑。不夸大空间变化；不使用保证、最好、第一等绝对承诺。",
+            "fixtureKey": "social:expression:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0kc43k-195d",
+            "revision": 1,
+            "title": "北岚生活-旧文案.txt",
+            "text": "【合成旧文案 v1】新的一周，从桌面的一小块开始。不是一次整理所有东西，先为每天用的物件找到固定位置。收藏清单，周末挑一件试试。",
+            "fixtureKey": "social:old-copy:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": []
+      },
+      {
+        "id": "context-mu0kfftq-778b",
+        "threadId": "chat-mu0kex1m-y0xf",
+        "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T01:29:52.862Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0kez9e-wjcz",
+            "revision": 1,
+            "title": "operations.csv",
+            "text": "period,content_type,impressions,interactions\nprevious,practical_tips,30000,1800\nprevious,product_intro,10000,300\ncurrent,practical_tips,10000,650\ncurrent,product_intro,30000,900\n",
+            "fixtureKey": null,
+            "fixtureVariant": null,
+            "mime": "text/csv",
+            "read": true
+          }
+        ],
+        "excluded": []
+      },
+      {
+        "id": "context-mu0khpw2-p6vn",
+        "threadId": "chat-mu0khmhg-sunk",
+        "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T01:31:39.218Z",
+        "selected": [
+          {
+            "type": "artifact",
+            "id": "artifact-mu0kfh7y-bic4",
+            "revision": 1,
+            "selection": [
+              "mix"
+            ],
+            "summary": "内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。",
+            "title": "两期社媒运营分析",
+            "text": "内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。",
+            "data": {
+              "sections": [
+                {
+                  "id": "mix",
+                  "title": "内容结构与接续方向",
+                  "body": "使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+                }
+              ]
+            }
+          }
+        ],
+        "excluded": []
+      },
+      {
+        "id": "context-mu0l35mw-jbxk",
+        "threadId": "chat-mu0l35m0-qjyz",
+        "goal": "",
+        "goalRevision": 1,
+        "reason": "建立普通文档",
+        "created": "2026-09-14T01:48:19.400Z",
+        "selected": [],
+        "excluded": []
+      },
+      {
+        "id": "context-mu0l6wtz-bagm",
+        "threadId": "chat-mu0l6wtc-t1bh",
+        "goal": "",
+        "goalRevision": 1,
+        "reason": "建立普通文档",
+        "created": "2026-09-14T01:51:14.615Z",
+        "selected": [],
+        "excluded": []
+      },
+      {
+        "id": "context-mu0la15i-u6j5",
+        "threadId": "chat-mu0la12z-dqbn",
+        "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T01:53:40.182Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-wsc8",
+            "revision": 1,
+            "title": "北岚生活-年轻租住人群访谈.txt",
+            "text": "【合成访谈 v1】北岚生活是虚构家居服务品牌。年轻租住人群在搬家与短期居住中希望少做不可逆改造，喜欢可带走、可小步尝试的空间整理方法。顾虑：被当成临时生活、预算浪费、建议不适合小空间。愿意保存具体清单，通过小红书发现方法；每周可尝试一件小事。没有代表性样本量，不能推断市场规模。",
+            "fixtureKey": "brand:renters:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-qiwr",
+            "revision": 1,
+            "title": "北岚生活-有孩子家庭访谈.txt",
+            "text": "【合成访谈 v1】有孩子家庭关注日常收纳协作、长期稳定与安全边界，希望看到完整使用条件和真实验证。顾虑：泛泛的美好生活承诺、整理增加家长负担。信任需要较长周期与持续服务案例，现有资料尚不足以作安全或功效声明。",
+            "fixtureKey": "brand:families:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0la14r-rx76",
+          "revision": 2,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ]
+        }
+      },
+      {
+        "id": "context-mu0lawu6-8it2",
+        "threadId": "chat-mu0la12z-dqbn",
+        "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T01:54:21.246Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-wsc8",
+            "revision": 1,
+            "title": "北岚生活-年轻租住人群访谈.txt",
+            "text": "【合成访谈 v1】北岚生活是虚构家居服务品牌。年轻租住人群在搬家与短期居住中希望少做不可逆改造，喜欢可带走、可小步尝试的空间整理方法。顾虑：被当成临时生活、预算浪费、建议不适合小空间。愿意保存具体清单，通过小红书发现方法；每周可尝试一件小事。没有代表性样本量，不能推断市场规模。",
+            "fixtureKey": "brand:renters:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-qiwr",
+            "revision": 1,
+            "title": "北岚生活-有孩子家庭访谈.txt",
+            "text": "【合成访谈 v1】有孩子家庭关注日常收纳协作、长期稳定与安全边界，希望看到完整使用条件和真实验证。顾虑：泛泛的美好生活承诺、整理增加家长负担。信任需要较长周期与持续服务案例，现有资料尚不足以作安全或功效声明。",
+            "fixtureKey": "brand:families:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0la14r-rx76",
+          "revision": 3,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0la2jp-5rd6"
+            }
+          ]
+        }
+      },
+      {
+        "id": "context-mu0lba9q-lpej",
+        "threadId": "chat-mu0la12z-dqbn",
+        "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T01:54:38.654Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-wsc8",
+            "revision": 1,
+            "title": "北岚生活-年轻租住人群访谈.txt",
+            "text": "【合成访谈 v1】北岚生活是虚构家居服务品牌。年轻租住人群在搬家与短期居住中希望少做不可逆改造，喜欢可带走、可小步尝试的空间整理方法。顾虑：被当成临时生活、预算浪费、建议不适合小空间。愿意保存具体清单，通过小红书发现方法；每周可尝试一件小事。没有代表性样本量，不能推断市场规模。",
+            "fixtureKey": "brand:renters:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-qiwr",
+            "revision": 1,
+            "title": "北岚生活-有孩子家庭访谈.txt",
+            "text": "【合成访谈 v1】有孩子家庭关注日常收纳协作、长期稳定与安全边界，希望看到完整使用条件和真实验证。顾虑：泛泛的美好生活承诺、整理增加家长负担。信任需要较长周期与持续服务案例，现有资料尚不足以作安全或功效声明。",
+            "fixtureKey": "brand:families:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0la14r-rx76",
+          "revision": 4,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0la2jp-5rd6"
+            }
+          ]
+        }
+      },
+      {
+        "id": "context-mu0lk3og-3417",
+        "threadId": "chat-mu0la12z-dqbn",
+        "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T02:01:30.016Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-wsc8",
+            "revision": 1,
+            "title": "北岚生活-年轻租住人群访谈.txt",
+            "text": "【合成访谈 v1】北岚生活是虚构家居服务品牌。年轻租住人群在搬家与短期居住中希望少做不可逆改造，喜欢可带走、可小步尝试的空间整理方法。顾虑：被当成临时生活、预算浪费、建议不适合小空间。愿意保存具体清单，通过小红书发现方法；每周可尝试一件小事。没有代表性样本量，不能推断市场规模。",
+            "fixtureKey": "brand:renters:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0la14a-qiwr",
+            "revision": 1,
+            "title": "北岚生活-有孩子家庭访谈.txt",
+            "text": "【合成访谈 v1】有孩子家庭关注日常收纳协作、长期稳定与安全边界，希望看到完整使用条件和真实验证。顾虑：泛泛的美好生活承诺、整理增加家长负担。信任需要较长周期与持续服务案例，现有资料尚不足以作安全或功效声明。",
+            "fixtureKey": "brand:families:base",
+            "fixtureVariant": "base",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0lbvji-d1ft",
+            "revision": 1,
+            "title": "custom-interview.txt",
+            "text": "本地读取验证资料：海岸生活访谈（合成）。\n本轮只讨论用户在搬家前的准备，不宣称提供整理服务。\n该文件不是内置北岚生活示例；原型不得冒充已经据此自动生成品牌策略。\n",
+            "fixtureKey": null,
+            "fixtureVariant": null,
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0lj0e4-uvpi",
+            "revision": 1,
+            "title": "custom-interview.txt",
+            "text": "本地读取验证资料：海岸生活访谈（合成）。\n本轮只讨论用户在搬家前的准备，不宣称提供整理服务。\n该文件不是内置北岚生活示例；原型不得冒充已经据此自动生成品牌策略。\n",
+            "fixtureKey": null,
+            "fixtureVariant": null,
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0la14r-rx76",
+          "revision": 5,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0la2jp-5rd6"
+            }
+          ]
+        }
+      },
+      {
+        "id": "context-mu0lpa2f-drdx",
+        "threadId": "chat-mu0la12z-dqbn",
+        "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+        "goalRevision": 1,
+        "reason": "保存文件成果",
+        "created": "2026-09-14T02:05:31.575Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0lbvji-d1ft",
+            "revision": 1,
+            "title": "custom-interview.txt",
+            "text": "本地读取验证资料：海岸生活访谈（合成）。\n本轮只讨论用户在搬家前的准备，不宣称提供整理服务。\n该文件不是内置北岚生活示例；原型不得冒充已经据此自动生成品牌策略。\n",
+            "fixtureKey": null,
+            "fixtureVariant": null,
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0la14r-rx76",
+          "revision": 5,
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0la14r-fznc",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "done",
+              "artifactId": "artifact-mu0la2jp-5rd6"
+            }
+          ]
+        }
+      },
+      {
+        "id": "context-mu0luwf3-2jx5",
+        "threadId": "chat-mu0lu8u9-fpgp",
+        "goal": "先讨论北岚生活的受众，先不制作",
+        "goalRevision": 2,
+        "reason": "开始制作",
+        "created": "2026-09-14T02:09:53.823Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0lu8vz-nd6y",
+            "revision": 1,
+            "title": "北岚生活-年轻租住人群访谈-变体.txt",
+            "text": "【合成访谈 v2】年轻租住人群表示近期频繁迁居，无法持续参与每周活动，主要希望偶尔查询搬家清单；当前 90 天沟通条件下难以稳定触达。",
+            "fixtureKey": "brand:renters:changed",
+            "fixtureVariant": "changed",
+            "mime": "text/plain",
+            "read": true
+          },
+          {
+            "type": "upload",
+            "id": "upload-mu0lu8vz-2xr9",
+            "revision": 1,
+            "title": "北岚生活-有孩子家庭访谈-变体.txt",
+            "text": "【合成访谈 v2】有孩子家庭已有稳定的每周整理交流小组，愿意连续 90 天记录整理协作问题。关注减轻家长负担，不希望看到安全或功效的无依据承诺。",
+            "fixtureKey": "brand:families:changed",
+            "fixtureVariant": "changed",
+            "mime": "text/plain",
+            "read": true
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0luwd8-nq4n",
+          "revision": 3,
+          "goal": "先讨论北岚生活的受众，先不制作",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0luwd8-jha0",
+              "title": "90 天品牌策略备忘录",
+              "kind": "marketing-memo",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ]
+        }
+      },
+      {
+        "id": "context-mu0lz2g2-y1hj",
+        "threadId": "chat-mu0lwn8g-bmmf",
+        "goal": "",
+        "goalRevision": 1,
+        "reason": "建立普通文档",
+        "created": "2026-09-14T02:13:08.258Z",
+        "selected": [
+          {
+            "type": "artifact",
+            "id": "artifact-mu0kc5jc-f7w7",
+            "revision": 1,
+            "title": "下周五条社媒文字与排期",
+            "text": "# 下周五条社媒文字与排期 · v1\n\n文字草稿与排期可逐条修改；没有图片和发布前置要求。\n\n## 1. 一小块桌面\n下周一 · 小红书\n目标：建立认知\n新的一周，不必一次整理所有东西。先为桌面上每天用的三件物品找一个固定位置，观察明天是否更容易取用。让当下的生活更有条理。\nCTA：收藏清单，选择一件尝试\n\n## 2. 玄关物件归位\n下周二 · 小红书\n目标：收集有效反馈\n回家时，钥匙和随身物件放在哪里？今天只观察一个习惯，再试着留出固定归位的位置。清单提供参考，不要求你的家长得一样。\nCTA：收藏清单，选择一件尝试\n\n## 3. 搬家打包\n下周三 · 小红书\n目标：收集有效反馈\n搬家时，先写下到新住处第一晚会用到的物品，再决定哪些装在同一箱。把明天要用的东西留在容易找到的位置，不必今天解决所有收纳问题。北岚生活的搬家打包清单可以作为开始。\nCTA：收藏清单，选择一件尝试\n\n## 4. 整理常见问题\n下周四 · 小红书\n目标：收集有效反馈\n整理不是对生活打分。如果一个方法总让你多走几步，先记录不方便的地方。每周文字答疑里，我们从具体问题讨论适合你的调整。\nCTA：收藏清单，选择一件尝试\n\n## 5. 一周复盘\n下周五 · 小红书\n目标：收集有效反馈\n这一周，哪一处整理愿意继续保留？选一件有用的方法，也记下一件不适用的建议。小步尝试，比一次完成所有事情更容易复盘。\nCTA：收藏清单，选择一件尝试\n\n来源：[{\"id\":\"upload-mu0kc43k-upj3\",\"title\":\"北岚生活-已有事实.txt\",\"kind\":\"file\",\"revision\":1,\"type\":\"upload\"},{\"id\":\"upload-mu0kc43k-dsmr\",\"title\":\"北岚生活-确认表达.txt\",\"kind\":\"file\",\"revision\":1,\"type\":\"upload\"},{\"id\":\"upload-mu0kc43k-195d\",\"title\":\"北岚生活-旧文案.txt\",\"kind\":\"file\",\"revision\":1,\"type\":\"upload\"}]\n依据快照：context-mu0kc457-is1j\n本地原型，不代表正式发布。",
+            "data": {
+              "title": "下周五条社媒文字与排期",
+              "summary": "文字草稿与排期可逐条修改；没有图片和发布前置要求。",
+              "posts": [
+                {
+                  "id": "post-mu0kc5jc-ck6z",
+                  "date": "下周一",
+                  "channel": "小红书",
+                  "goal": "建立认知",
+                  "angle": "一小块桌面",
+                  "body": "新的一周，不必一次整理所有东西。先为桌面上每天用的三件物品找一个固定位置，观察明天是否更容易取用。让当下的生活更有条理。",
+                  "cta": "收藏清单，选择一件尝试"
+                },
+                {
+                  "id": "post-mu0kc5jc-h1m2",
+                  "date": "下周二",
+                  "channel": "小红书",
+                  "goal": "收集有效反馈",
+                  "angle": "玄关物件归位",
+                  "body": "回家时，钥匙和随身物件放在哪里？今天只观察一个习惯，再试着留出固定归位的位置。清单提供参考，不要求你的家长得一样。",
+                  "cta": "收藏清单，选择一件尝试"
+                },
+                {
+                  "id": "post-mu0kc5jc-1b1u",
+                  "date": "下周三",
+                  "channel": "小红书",
+                  "goal": "收集有效反馈",
+                  "angle": "搬家打包",
+                  "body": "搬家时，先写下到新住处第一晚会用到的物品，再决定哪些装在同一箱。把明天要用的东西留在容易找到的位置，不必今天解决所有收纳问题。北岚生活的搬家打包清单可以作为开始。",
+                  "cta": "收藏清单，选择一件尝试"
+                },
+                {
+                  "id": "post-mu0kc5jc-4mav",
+                  "date": "下周四",
+                  "channel": "小红书",
+                  "goal": "收集有效反馈",
+                  "angle": "整理常见问题",
+                  "body": "整理不是对生活打分。如果一个方法总让你多走几步，先记录不方便的地方。每周文字答疑里，我们从具体问题讨论适合你的调整。",
+                  "cta": "收藏清单，选择一件尝试"
+                },
+                {
+                  "id": "post-mu0kc5jc-eixm",
+                  "date": "下周五",
+                  "channel": "小红书",
+                  "goal": "收集有效反馈",
+                  "angle": "一周复盘",
+                  "body": "这一周，哪一处整理愿意继续保留？选一件有用的方法，也记下一件不适用的建议。小步尝试，比一次完成所有事情更容易复盘。",
+                  "cta": "收藏清单，选择一件尝试"
+                }
+              ],
+              "simulation": true,
+              "variant": "base"
+            }
+          }
+        ],
+        "excluded": []
+      },
+      {
+        "id": "context-mu0lz2iu-h34e",
+        "threadId": "chat-mu0lwn8g-bmmf",
+        "goal": "",
+        "goalRevision": 1,
+        "reason": "建立普通文档",
+        "created": "2026-09-14T02:13:08.358Z",
+        "selected": [
+          {
+            "type": "artifact",
+            "id": "artifact-mu0kc5jc-f7w7",
+            "revision": 3,
+            "title": "下周五条社媒文字与排期",
+            "text": "# 下周五条社媒文字与排期 · v3\n\n文字草稿与排期可逐条修改；没有图片和发布前置要求。\n\n## 1. 一小块桌面\n下周一 · 小红书\n目标：建立认知\n新的一周，不必一次整理所有东西。先为桌面上每天用的三件物品找一个固定位置，观察明天是否更容易取用。让当下的生活更有条理。\nCTA：收藏清单，选择一件尝试\n\n## 2. 玄关物件归位\n下周二 · 小红书\n目标：收集有效反馈\n回家时，钥匙和随身物件放在哪里？今天只观察一个习惯，再试着留出固定归位的位置。清单提供参考，不要求你的家长得一样。\nCTA：收藏清单，选择一件尝试\n\n## 3. 搬家打包\n下周四 · 小红书\n目标：收集有效反馈\n搬家时，先写下到新住处第一晚会用到的物品，再决定哪些装在同一箱。把明天要用的东西留在容易找到的位置，不必今天解决所有收纳问题。\nCTA：收藏清单，选择一件尝试\n\n## 4. 整理常见问题\n下周四 · 小红书\n目标：收集有效反馈\n整理不是对生活打分。如果一个方法总让你多走几步，先记录不方便的地方。每周文字答疑里，我们从具体问题讨论适合你的调整。\nCTA：收藏清单，选择一件尝试\n\n## 5. 一周复盘\n下周五 · 小红书\n目标：收集有效反馈\n这一周，哪一处整理愿意继续保留？选一件有用的方法，也记下一件不适用的建议。小步尝试，比一次完成所有事情更容易复盘。\nCTA：收藏清单，选择一件尝试\n\n来源：[{\"id\":\"upload-mu0kc43k-upj3\",\"title\":\"北岚生活-已有事实.txt\",\"kind\":\"file\",\"revision\":1,\"type\":\"upload\"},{\"id\":\"upload-mu0kc43k-dsmr\",\"title\":\"北岚生活-确认表达.txt\",\"kind\":\"file\",\"revision\":1,\"type\":\"upload\"},{\"id\":\"upload-mu0kc43k-195d\",\"title\":\"北岚生活-旧文案.txt\",\"kind\":\"file\",\"revision\":1,\"type\":\"upload\"}]\n依据快照：context-mu0kc457-is1j\n本地原型，不代表正式发布。",
+            "data": {
+              "title": "下周五条社媒文字与排期",
+              "summary": "文字草稿与排期可逐条修改；没有图片和发布前置要求。",
+              "posts": [
+                {
+                  "id": "post-mu0kc5jc-ck6z",
+                  "date": "下周一",
+                  "channel": "小红书",
+                  "goal": "建立认知",
+                  "angle": "一小块桌面",
+                  "body": "新的一周，不必一次整理所有东西。先为桌面上每天用的三件物品找一个固定位置，观察明天是否更容易取用。让当下的生活更有条理。",
+                  "cta": "收藏清单，选择一件尝试"
+                },
+                {
+                  "id": "post-mu0kc5jc-h1m2",
+                  "date": "下周二",
+                  "channel": "小红书",
+                  "goal": "收集有效反馈",
+                  "angle": "玄关物件归位",
+                  "body": "回家时，钥匙和随身物件放在哪里？今天只观察一个习惯，再试着留出固定归位的位置。清单提供参考，不要求你的家长得一样。",
+                  "cta": "收藏清单，选择一件尝试"
+                },
+                {
+                  "id": "post-mu0kc5jc-1b1u",
+                  "date": "下周四",
+                  "channel": "小红书",
+                  "goal": "收集有效反馈",
+                  "angle": "搬家打包",
+                  "body": "搬家时，先写下到新住处第一晚会用到的物品，再决定哪些装在同一箱。把明天要用的东西留在容易找到的位置，不必今天解决所有收纳问题。",
+                  "cta": "收藏清单，选择一件尝试"
+                },
+                {
+                  "id": "post-mu0kc5jc-4mav",
+                  "date": "下周四",
+                  "channel": "小红书",
+                  "goal": "收集有效反馈",
+                  "angle": "整理常见问题",
+                  "body": "整理不是对生活打分。如果一个方法总让你多走几步，先记录不方便的地方。每周文字答疑里，我们从具体问题讨论适合你的调整。",
+                  "cta": "收藏清单，选择一件尝试"
+                },
+                {
+                  "id": "post-mu0kc5jc-eixm",
+                  "date": "下周五",
+                  "channel": "小红书",
+                  "goal": "收集有效反馈",
+                  "angle": "一周复盘",
+                  "body": "这一周，哪一处整理愿意继续保留？选一件有用的方法，也记下一件不适用的建议。小步尝试，比一次完成所有事情更容易复盘。",
+                  "cta": "收藏清单，选择一件尝试"
+                }
+              ],
+              "simulation": true,
+              "variant": "base"
+            }
+          }
+        ],
+        "excluded": []
+      }
+    ],
+    "runs": [
+      {
+        "id": "local-run-mu0k7krm-08nu",
+        "threadId": "quick-1",
+        "projectId": null,
+        "planId": "plan-mu0k4uwx-6gwq",
+        "planRevision": 3,
+        "items": [
+          {
+            "id": "item-mu0k4uwx-1n23",
+            "title": "90 天品牌策略备忘录",
+            "kind": "marketing-memo",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending"
+          }
+        ],
+        "snapshotId": "context-mu0k7krm-oj29",
+        "status": "done",
+        "created": "2026-09-14T01:23:46.018Z",
+        "completedIds": [
+          "item-mu0k4uwx-1n23"
+        ],
+        "actor": "lin",
+        "ended": "2026-09-14T01:23:47.824Z"
+      },
+      {
+        "id": "local-run-mu0kc457-xu6e",
+        "threadId": "chat-mu0kbfwu-sp2j",
+        "projectId": null,
+        "planId": "plan-mu0kc441-ifhr",
+        "planRevision": 3,
+        "items": [
+          {
+            "id": "item-mu0kc441-90s8",
+            "title": "下周五条社媒文字与排期",
+            "kind": "social-calendar",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending"
+          }
+        ],
+        "snapshotId": "context-mu0kc457-is1j",
+        "meta": {
+          "scene": "social",
+          "goal": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0kc43k-upj3",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0kc43k-dsmr",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0kc43k-195d",
+              "revision": 1
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "variant": "base",
+          "constraints": "根据已有事实、确认表达和旧文案，制作下周五条社媒文字及排期，包含目标、角度、正文和 CTA。不要图片，不重做 FABE/MH，不发布。"
+        },
+        "status": "done",
+        "created": "2026-09-14T01:27:17.755Z",
+        "completedIds": [
+          "item-mu0kc441-90s8"
+        ],
+        "actor": "lin",
+        "ended": "2026-09-14T01:27:19.561Z"
+      },
+      {
+        "id": "local-run-mu0kfftq-wjpi",
+        "threadId": "chat-mu0kex1m-y0xf",
+        "projectId": null,
+        "planId": "plan-mu0kfft0-7oih",
+        "planRevision": 2,
+        "items": [
+          {
+            "id": "item-mu0kfft0-dmlb",
+            "title": "两期社媒运营分析",
+            "kind": "operations-analysis",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending"
+          }
+        ],
+        "snapshotId": "context-mu0kfftq-778b",
+        "meta": {
+          "scene": "analytics",
+          "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0kez9e-wjcz",
+              "revision": 1
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "constraints": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。"
+        },
+        "status": "done",
+        "created": "2026-09-14T01:29:52.862Z",
+        "completedIds": [
+          "item-mu0kfft0-dmlb"
+        ],
+        "actor": "lin",
+        "ended": "2026-09-14T01:29:54.670Z"
+      },
+      {
+        "id": "local-run-mu0khpw2-bq5d",
+        "threadId": "chat-mu0khmhg-sunk",
+        "projectId": null,
+        "planId": "plan-mu0khmhj-sqix",
+        "planRevision": 2,
+        "items": [
+          {
+            "id": "item-mu0khmhj-z530",
+            "title": "下周三条实用内容计划",
+            "kind": "social-calendar",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending"
+          }
+        ],
+        "snapshotId": "context-mu0khpw2-p6vn",
+        "meta": {
+          "scene": "social",
+          "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "artifact",
+              "id": "artifact-mu0kfh7y-bic4",
+              "revision": 1,
+              "selection": [
+                "mix"
+              ],
+              "summary": "内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "followup": true
+        },
+        "status": "done",
+        "created": "2026-09-14T01:31:39.218Z",
+        "completedIds": [
+          "item-mu0khmhj-z530"
+        ],
+        "actor": "lin",
+        "ended": "2026-09-14T01:31:41.024Z"
+      },
+      {
+        "id": "local-run-mu0la15i-kj2h",
+        "threadId": "chat-mu0la12z-dqbn",
+        "projectId": null,
+        "planId": "plan-mu0la14r-rx76",
+        "planRevision": 2,
+        "items": [
+          {
+            "id": "item-mu0la14r-fznc",
+            "title": "90 天品牌策略备忘录",
+            "kind": "marketing-memo",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending"
+          }
+        ],
+        "snapshotId": "context-mu0la15i-u6j5",
+        "meta": {
+          "scene": "brand",
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0la14a-wsc8",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0la14a-qiwr",
+              "revision": 1
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "variant": "base"
+        },
+        "status": "done",
+        "created": "2026-09-14T01:53:40.182Z",
+        "completedIds": [
+          "item-mu0la14r-fznc"
+        ],
+        "actor": "lin",
+        "ended": "2026-09-14T01:53:41.990Z"
+      },
+      {
+        "id": "local-run-mu0lawu6-2f7c",
+        "threadId": "chat-mu0la12z-dqbn",
+        "projectId": null,
+        "planId": "plan-mu0la14r-rx76",
+        "planRevision": 3,
+        "items": [
+          {
+            "id": "item-mu0la14r-fznc",
+            "title": "90 天品牌策略备忘录",
+            "kind": "marketing-memo",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "done",
+            "artifactId": "artifact-mu0la2jp-5rd6"
+          }
+        ],
+        "snapshotId": "context-mu0lawu6-8it2",
+        "meta": {
+          "scene": "brand",
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0la14a-wsc8",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0la14a-qiwr",
+              "revision": 1
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "variant": "base"
+        },
+        "status": "cancelled",
+        "created": "2026-09-14T01:54:21.246Z",
+        "completedIds": [],
+        "actor": "lin",
+        "ended": "2026-09-14T01:54:21.273Z"
+      },
+      {
+        "id": "local-run-mu0lba9r-zjv6",
+        "threadId": "chat-mu0la12z-dqbn",
+        "projectId": null,
+        "planId": "plan-mu0la14r-rx76",
+        "planRevision": 4,
+        "items": [
+          {
+            "id": "item-mu0la14r-fznc",
+            "title": "90 天品牌策略备忘录",
+            "kind": "marketing-memo",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "done",
+            "artifactId": "artifact-mu0la2jp-5rd6"
+          }
+        ],
+        "snapshotId": "context-mu0lba9q-lpej",
+        "meta": {
+          "scene": "brand",
+          "goal": "比较北岚生活的年轻租住人群与有孩子家庭，制定 90 天品牌沟通方向，只维护两个内容触点；不做产品上市。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0la14a-wsc8",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0la14a-qiwr",
+              "revision": 1
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "variant": "base"
+        },
+        "status": "interrupted",
+        "created": "2026-09-14T01:54:38.655Z",
+        "completedIds": [],
+        "actor": "lin"
+      },
+      {
+        "id": "local-run-mu0luwf3-cren",
+        "threadId": "chat-mu0lu8u9-fpgp",
+        "projectId": null,
+        "planId": "plan-mu0luwd8-nq4n",
+        "planRevision": 3,
+        "items": [
+          {
+            "id": "item-mu0luwd8-jha0",
+            "title": "90 天品牌策略备忘录",
+            "kind": "marketing-memo",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending"
+          }
+        ],
+        "snapshotId": "context-mu0luwf3-2jx5",
+        "meta": {
+          "scene": "brand",
+          "goal": "先讨论北岚生活的受众，先不制作",
+          "goalRevision": 2,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0lu8vz-nd6y",
+              "revision": 1
+            },
+            {
+              "type": "upload",
+              "id": "upload-mu0lu8vz-2xr9",
+              "revision": 1
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "variant": "changed"
+        },
+        "status": "done",
+        "created": "2026-09-14T02:09:53.823Z",
+        "completedIds": [
+          "item-mu0luwd8-jha0"
+        ],
+        "actor": "lin",
+        "ended": "2026-09-14T02:09:55.630Z"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "decision-mu0kb3rt-n3qf",
+        "artifactId": "artifact-mu0k7m5s-510d",
+        "revision": 2,
+        "previous": 0,
+        "action": "adopt",
+        "actor": "lin",
+        "at": "2026-09-14T01:26:30.617Z",
+        "threadId": "quick-1"
+      },
+      {
+        "id": "decision-mu0kee1h-lerc",
+        "artifactId": "artifact-mu0kc5jc-f7w7",
+        "revision": 3,
+        "previous": 0,
+        "action": "adopt",
+        "actor": "lin",
+        "at": "2026-09-14T01:29:03.893Z",
+        "threadId": "chat-mu0kbfwu-sp2j"
+      }
+    ],
+    "imports": [],
+    "scope": "work",
+    "editDrafts": {},
+    "sourceAll": true
+  },
+  "dockState": {
+    "kind": "settings",
+    "arg": ""
+  },
+  "inspectorProjectId": null,
+  "artifactWorkspace": null,
+  "decisionLauncherThread": null,
+  "inspectorEditing": false
+}

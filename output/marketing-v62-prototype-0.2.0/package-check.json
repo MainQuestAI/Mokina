@@ -1,0 +1,12 @@
+{
+  "created": "2026-09-14T02:33:26.300Z",
+  "zip": "/Users/dingcheng/Coding-Project/02-key-project/Mokina/output/marketing-v62-prototype-0.2.0/Marketing Desktop V6.2 交互原型 0.2.0.zip",
+  "sha256": "08e0a3eeaef234cc29f00d51bf27d80b9afe69c6053cbabd3b1ad154f5f5d271",
+  "unzip": true,
+  "rebuild": true,
+  "tests": true,
+  "downloadContentChecks": true,
+  "files": 264,
+  "htmlSha256": "96167b7f9e7ddfaa3480460ea14d24702ba4ad8f1c89ea912d0e8ffed706d0e9",
+  "baselineSha256": "311a517496ddf2b07620d90ae554fbc405e8658d435fdd7554ca450005f4f495"
+}

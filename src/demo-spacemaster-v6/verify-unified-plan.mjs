@@ -1,0 +1,55 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {chromium} from '/Users/dingcheng/.gstack/repos/gstack/node_modules/playwright/index.mjs';
+const root=path.resolve(import.meta.dirname,'../..');
+const browser=await chromium.launch({headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
+page.on('pageerror',e=>errors.push(e.message));
+try{
+  await page.goto(pathToFileURL(path.join(root,'Lilith SpaceMaster Demo V6.html')).href);
+  if(!await page.evaluate(()=>typeof ensureUnifiedPlan==='function'))throw Error('Build V6 before running unified-plan verification.');
+  const checks=await page.evaluate(()=>{
+    const result=[];const check=(name,ok)=>result.push({name,ok:!!ok});
+    S=makeState();MODAL=null;S.runId=null;const de=S.projects.find(demoProject),mx=S.projects.find(p=>p.id==='sample-launch');
+    S.projectId=mx.id;const dePlan=ensureUnifiedPlan(de.id,'collaborate');
+    check('German plan uses explicit project while Mexico selected',dePlan.goal===de.goal&&dePlan.kinds.join()===DEMO_KINDS.join());
+    S.projectId=de.id;const mxPlan=ensureUnifiedPlan(mx.id);
+    check('Mexico plan excludes German kinds',!mxPlan.kinds.includes('websitePoster')&&mxPlan.kinds.includes('pop'));
+    check('all plan descriptions defined',!planPanelHTML(dePlan).includes('undefined')&&!planPanelHTML(mxPlan).includes('undefined'));
+    const originalTasks=S.tasks.length;collectPlanEdits(dePlan);
+    check('save never creates batch or tasks',!S.batches.length&&S.tasks.length===originalTasks);
+    const count=S.plans.length;check('all entry points reuse project draft',ensureUnifiedPlan(de.id).id===dePlan.id&&S.plans.length===count);
+    const previousContext=JSON.stringify(dePlan.context);dePlan.context.market='MX';check('structured context mismatch blocks execution',validateUnifiedPlan(dePlan).some(x=>x.includes('变化')));dePlan.context=JSON.parse(previousContext);
+    dePlan.kinds.push('unsupported');check('unknown legacy delivery remains visible and blocks',planPanelHTML(dePlan).includes('暂不支持')&&validateUnifiedPlan(dePlan).length>0);dePlan.kinds.pop();
+    dePlan.currentKind='scene';check('current task missing input blocks',validateUnifiedPlan(dePlan,'current').some(x=>x.includes('缺少输入')));dePlan.currentKind='strategy';
+    check('full plan permits dependencies in batch',validateUnifiedPlan(dePlan,'all').length===0);
+    const realLaunch=launchBatch;launchBatch=()=>null;closeModal();S.actor=de.owner;
+    const b=confirmPlan(dePlan.id,'current');check('collaboration starts exactly current item',b?.items.length===1&&b.items[0].kind==='strategy');
+    const tasksAfter=S.tasks.length,batchesAfter=S.batches.length;confirmPlan(dePlan.id,'current');check('repeated start is idempotent',S.tasks.length===tasksAfter&&S.batches.length===batchesAfter);
+    const snapshot=JSON.stringify(b.plan);const next=ensureUnifiedPlan(de.id);next.goal='下一版目标';check('new draft cannot alter running snapshot',JSON.stringify(b.plan)===snapshot&&next.id!==dePlan.id);
+    closeModal();const all=confirmPlan(next.id,'all');check('autonomous includes seven deliverables',all?.items.length===7);check('new run reuses task identities',S.tasks.length===tasksAfter);
+    launchBatch=realLaunch;
+    S=makeState();MODAL=null;S.runId=null;enterDemoProject();confirmScope(de.id,DEMO_KINDS);const existing=newArtifact('strategy',makeContent('strategy'));adopt(existing.id,1);const candidate=addRevision(existing,clone(revision(existing,1).data),'候选核验');const candidatePlan=ensureUnifiedPlan(de.id);candidatePlan.currentKind='strategy';launchBatch=()=>null;closeModal();const cb=confirmPlan(candidatePlan.id,'current');check('pending version is not accepted by accepted older version',cb.items[0].revision===candidate.num&&cb.items[0].decision==='pending');check('unchecked existing draft is checked without duplicate generation',cb.items[0].status==='checking'&&cb.items[0].artifactId===existing.id);launchBatch=realLaunch;
+    const legacy=makeState();legacy.plans=[];legacy.projects.find(p=>p.id===mx.id).scopeConfirmed=true;legacy.projects.find(p=>p.id===mx.id).scope=[{kind:'strategy'}];
+    const old=JSON.stringify(legacy.tasks);migrateUnifiedPlans(legacy);const once=JSON.stringify(legacy);migrateUnifiedPlans(legacy);
+    check('legacy migration is idempotent',JSON.stringify(legacy)===once);check('legacy migration preserves tasks and accepted scope',JSON.stringify(legacy.tasks)===old&&legacy.plans[0].scopeAccepted);
+    const emptyLegacy=makeState();emptyLegacy.plans=[];emptyLegacy.tasks=[];const ep=emptyLegacy.projects.find(demoProject);ep.scopeConfirmed=true;delete ep.scope;migrateUnifiedPlans(emptyLegacy);check('accepted old scope without task rows becomes usable plan',emptyLegacy.plans.find(p=>p.projectId===ep.id)?.kinds.length===7&&emptyLegacy.tasks.length===0);
+    S.projectId=null;check('personal planning does not choose fallback project',ensurePlanProject()===null);
+    return result;
+  });
+  checks.push(...await page.evaluate(async()=>{
+    S=makeState();MODAL=null;S.runId=null;window.__LILITH_QA_TIME_SCALE=100;
+    const de=S.projects.find(demoProject),mx=S.projects.find(p=>p.id==='sample-launch');
+    S.projectId=null;await handle('start-yolo');const picker=MODAL?.kind==='project-picker';await handle('choose-project',de.id);const picked=MODAL?.kind==='plan'&&planById(MODAL.arg)?.mode==='yolo';closeModal();
+    const input='为德国官网准备新一版产品主视觉。';discussPlan(input);const goalKept=planById(MODAL.arg)?.goal===input;
+    const mode=document.querySelector('#plan-mode');mode.value='yolo';mode.dispatchEvent(new Event('change',{bubbles:true}));const modeAll=!!document.querySelector('[data-action="plan-start-all"]')&&!document.querySelector('[data-action="plan-start-current"]');closeModal();
+    enterDemoProject();
+    const plan=ensureUnifiedPlan(de.id,'collaborate');plan.currentKind='strategy';const b=confirmPlan(plan.id,'current');
+    S.projectId=mx.id;S.threadId=mx.threadId;await batchPromise;
+    const a=byKind('strategy',de.id);
+    return [{name:'personal autonomous entry offers explicit project picker',ok:picker&&picked},{name:'first user goal preserved in plan',ok:goalKept},{name:'mode selection updates single matching start button',ok:modeAll},{name:'background batch keeps original project while navigating',ok:!!a&&a.projectId===de.id&&b.status==='ready'&&S.projectId===mx.id},{name:'background content uses German project inputs',ok:!!a&&revision(a,1).data.sections[0].body.includes('德国')}];
+  }));
+  const output={checks,errors};fs.mkdirSync(path.join(root,'output/demo-spacemaster-v6/qa-unified-plan'),{recursive:true});fs.writeFileSync(path.join(root,'output/demo-spacemaster-v6/qa-unified-plan/checks.json'),JSON.stringify(output,null,2));console.log(JSON.stringify(output,null,2));
+  if(checks.some(c=>!c.ok)||errors.length)process.exitCode=1;
+}finally{await browser.close();}

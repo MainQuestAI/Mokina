@@ -1,0 +1,1129 @@
+{
+  "schema": "6.0.0-spacemaster-demo",
+  "actor": "lin",
+  "view": "chat",
+  "threadId": "chat-mu0p96yc-g9rc",
+  "projectId": null,
+  "threads": [
+    {
+      "id": "quick-1",
+      "title": "比较两期社媒数据，区分结构变化与分组表现",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0p3rdp-2184",
+          "role": "assistant",
+          "text": "已添加 operations.csv：已载入本地正文。",
+          "at": "2026-09-14T03:40:46.045Z"
+        },
+        {
+          "id": "msg-mu0p3rf1-tcfm",
+          "role": "user",
+          "text": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+          "at": "2026-09-14T03:40:46.093Z"
+        },
+        {
+          "id": "msg-mu0p3rf1-6sde",
+          "role": "assistant",
+          "text": "先讨论并保存范围；制作前会校验计划要求。未覆盖的内容可以人工编辑。",
+          "at": "2026-09-14T03:40:46.093Z",
+          "mdActions": [
+            [
+              "调整工作计划",
+              "plan",
+              "plan-mu0p3rf1-rtix"
+            ],
+            [
+              "检查本次依据",
+              "sources"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0p4ifc-dcel",
+          "role": "assistant",
+          "text": "已添加 operations.csv：已载入本地正文。",
+          "at": "2026-09-14T03:41:21.096Z"
+        },
+        {
+          "id": "msg-mu0p6sgm-fkze",
+          "role": "assistant",
+          "text": "已开始所选范围的情景演示，可取消；结果保存为草稿。",
+          "at": "2026-09-14T03:43:07.414Z"
+        },
+        {
+          "id": "msg-mu0p6tum-dves",
+          "role": "assistant",
+          "text": "计算结果已保存，建议为情景演示。",
+          "at": "2026-09-14T03:43:09.214Z",
+          "artifactIds": [
+            "artifact-mu0p6tum-wivg"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0p6tum-wivg",
+              "revision": 1
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T03:40:30.762Z",
+      "marketing": {
+        "scene": "analytics",
+        "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+        "goalRevision": 2,
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0p3rdm-i3fi",
+            "revision": 1
+          }
+        ],
+        "excluded": [
+          "upload-mu0p4ifc-1vv6"
+        ],
+        "status": "open"
+      }
+    },
+    {
+      "id": "chat-mu0p8116-qz74",
+      "title": "依据所选结论，制定下周三条实用内容计划；",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0p8118-rznb",
+          "role": "user",
+          "text": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "at": "2026-09-14T03:44:05.180Z"
+        },
+        {
+          "id": "msg-mu0p8118-sbwk",
+          "role": "assistant",
+          "text": "带入所选结论：\n内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。\n来源：两期社媒运营分析 v1",
+          "at": "2026-09-14T03:44:05.180Z",
+          "mdActions": [
+            [
+              "制定三条内容计划",
+              "plan"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0p813r-pvz8",
+          "role": "assistant",
+          "text": "请选用支持“增加实用内容进行验证”的分析结论；当前结论未覆盖此接续示例，可人工编辑普通文档。",
+          "at": "2026-09-14T03:44:05.271Z"
+        }
+      ],
+      "created": "2026-09-14T03:44:05.178Z",
+      "marketing": {
+        "scene": "social",
+        "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+        "goalRevision": 1,
+        "selected": [],
+        "excluded": [
+          "artifact-mu0p6tum-wivg"
+        ],
+        "status": "open",
+        "followup": true
+      }
+    },
+    {
+      "id": "chat-mu0p96yc-g9rc",
+      "title": "依据所选结论，制定下周三条实用内容计划；",
+      "projectId": null,
+      "messages": [
+        {
+          "id": "msg-mu0p96ye-0l2b",
+          "role": "user",
+          "text": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "at": "2026-09-14T03:44:59.510Z"
+        },
+        {
+          "id": "msg-mu0p96ye-y5jw",
+          "role": "assistant",
+          "text": "带入所选结论：\n内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。\n来源：两期社媒运营分析 v1",
+          "at": "2026-09-14T03:44:59.510Z",
+          "mdActions": [
+            [
+              "制定三条内容计划",
+              "plan"
+            ]
+          ]
+        },
+        {
+          "id": "msg-mu0p96zj-os5b",
+          "role": "assistant",
+          "text": "已开始所选范围的情景演示，可取消；结果保存为草稿。",
+          "at": "2026-09-14T03:44:59.551Z"
+        },
+        {
+          "id": "msg-mu0p98dj-pbyf",
+          "role": "assistant",
+          "text": "草稿已保存。情景演示结果不代表真实模型生成。",
+          "at": "2026-09-14T03:45:01.351Z",
+          "artifactIds": [
+            "artifact-mu0p98di-0rdm"
+          ],
+          "artifactRefs": [
+            {
+              "id": "artifact-mu0p98di-0rdm",
+              "revision": 1
+            }
+          ]
+        }
+      ],
+      "created": "2026-09-14T03:44:59.508Z",
+      "marketing": {
+        "scene": "social",
+        "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+        "goalRevision": 1,
+        "selected": [
+          {
+            "type": "artifact",
+            "id": "artifact-mu0p6tum-wivg",
+            "revision": 1,
+            "selection": [
+              "mix"
+            ],
+            "summary": "内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+          }
+        ],
+        "excluded": [],
+        "status": "open",
+        "followup": true
+      }
+    }
+  ],
+  "projects": [],
+  "tasks": [],
+  "artifacts": [
+    {
+      "id": "artifact-mu0p6tum-wivg",
+      "title": "两期社媒运营分析",
+      "kind": "operations-analysis",
+      "domain": "other",
+      "threadId": "quick-1",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0p6tum-mija",
+          "data": {
+            "title": "两期社媒运营分析",
+            "summary": "总体互动率 5.25% → 3.875%，变化 -1.375 个百分点。需同时看分组表现和曝光构成。",
+            "analysis": {
+              "totals": [
+                {
+                  "period": "previous",
+                  "impressions": 40000,
+                  "interactions": 2100,
+                  "rate": 0.0525
+                },
+                {
+                  "period": "current",
+                  "impressions": 40000,
+                  "interactions": 1550,
+                  "rate": 0.03875
+                }
+              ],
+              "groups": [
+                {
+                  "group": "practical_tips",
+                  "values": [
+                    {
+                      "impressions": 30000,
+                      "interactions": 1800,
+                      "rate": 0.06,
+                      "share": 0.75
+                    },
+                    {
+                      "impressions": 10000,
+                      "interactions": 650,
+                      "rate": 0.065,
+                      "share": 0.25
+                    }
+                  ]
+                },
+                {
+                  "group": "product_intro",
+                  "values": [
+                    {
+                      "impressions": 10000,
+                      "interactions": 300,
+                      "rate": 0.03,
+                      "share": 0.25
+                    },
+                    {
+                      "impressions": 30000,
+                      "interactions": 900,
+                      "rate": 0.03,
+                      "share": 0.75
+                    }
+                  ]
+                }
+              ],
+              "delta": -0.013749999999999998,
+              "weighted": 0.0375,
+              "composition": -0.015,
+              "within": 0.0012500000000000011,
+              "warning": ""
+            },
+            "sections": [
+              {
+                "id": "overall",
+                "title": "总体与分组表现",
+                "body": "总体变化不能替代分组判断。practical_tips：6% → 6.5%；product_intro：3% → 3%。"
+              },
+              {
+                "id": "mix",
+                "title": "内容结构与接续方向",
+                "body": "使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+              },
+              {
+                "id": "experiments",
+                "title": "两项建议实验（情景演示）",
+                "body": "实验一：在相近时段和投入条件下增加实用内容占比，比较分组互动率及总互动。实验二：同一实用主题分别测试步骤清单与问题答疑表达，记录收藏和有效提问。先固定观察窗口与样本要求，不声称实验已经有效。"
+              },
+              {
+                "id": "limits",
+                "title": "口径与数据不足",
+                "body": "互动率＝互动次数÷曝光次数；合计使用总互动除以总曝光，不简单平均分组率。结构分解采用固定顺序，仅描述构成变化。缺少曝光用户去重、流量来源、成本和销售归因，不能推断品牌认知、销量或广告收益。"
+              }
+            ]
+          },
+          "refs": [
+            {
+              "id": "upload-mu0p3rdm-i3fi",
+              "title": "operations.csv",
+              "kind": "file",
+              "revision": 1,
+              "type": "upload"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T03:43:09.214Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "local-computation",
+          "contextSnapshotId": "context-mu0p6sgi-p16j"
+        }
+      ],
+      "marketing": true
+    },
+    {
+      "id": "artifact-mu0p98di-0rdm",
+      "title": "下周3条社媒文字与排期",
+      "kind": "social-calendar",
+      "domain": "other",
+      "threadId": "chat-mu0p96yc-g9rc",
+      "projectId": null,
+      "taskId": null,
+      "active": 1,
+      "accepted": 0,
+      "pending": 1,
+      "versions": [
+        {
+          "num": 1,
+          "id": "revision-mu0p98di-h8bq",
+          "data": {
+            "title": "下周3条社媒文字与排期",
+            "summary": "依据所选分析结论增加实用内容；具体产品事实需另行补充。 当前 3 条；渠道是排期配置，不代表平台专门改写。",
+            "posts": [
+              {
+                "id": "post-mu0p96zf-evbb",
+                "date": "下周一",
+                "channel": "小红书",
+                "goal": "建立认知",
+                "angle": "桌面整理步骤",
+                "body": "围绕“桌面整理步骤”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              },
+              {
+                "id": "post-mu0p96zf-aacc",
+                "date": "下周二",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "搬家清单方法",
+                "body": "围绕“搬家清单方法”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              },
+              {
+                "id": "post-mu0p96zf-fv0e",
+                "date": "下周三",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "整理协作复盘",
+                "body": "围绕“整理协作复盘”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              }
+            ],
+            "simulation": true,
+            "variant": "base",
+            "config": {
+              "count": 3,
+              "channel": "xiaohongshu",
+              "startDate": ""
+            }
+          },
+          "refs": [
+            {
+              "id": "artifact-mu0p6tum-wivg",
+              "title": "两期社媒运营分析",
+              "kind": "operations-analysis",
+              "revision": 1,
+              "type": "artifact"
+            }
+          ],
+          "author": "lin",
+          "created": "2026-09-14T03:45:01.350Z",
+          "note": "Lilith 形成初始工作草稿",
+          "source": "scenario-demo",
+          "contextSnapshotId": "context-mu0p96zf-aqex"
+        }
+      ],
+      "marketing": true
+    }
+  ],
+  "submissions": [],
+  "deliveries": [],
+  "transfers": [],
+  "runs": [],
+  "activity": [
+    {
+      "id": "ev-mu0p98di-8lfz",
+      "title": "已形成社媒内容与排期",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T03:45:01.350Z",
+      "actor": "lin"
+    },
+    {
+      "id": "ev-mu0p6tum-cy7r",
+      "title": "已形成运营分析",
+      "detail": "草稿 v1 已保存；不是正式批准。",
+      "projectId": null,
+      "at": "2026-09-14T03:43:09.214Z",
+      "actor": "lin"
+    }
+  ],
+  "uploads": [
+    {
+      "id": "upload-mu0p3rdm-i3fi",
+      "threadId": "quick-1",
+      "projectId": null,
+      "name": "operations.csv",
+      "mime": "text/csv",
+      "size": 178,
+      "revision": 1,
+      "created": "2026-09-14T03:40:46.042Z",
+      "type": "text",
+      "text": "period,content_type,impressions,interactions\nprevious,practical_tips,30000,1800\nprevious,product_intro,10000,300\ncurrent,practical_tips,10000,650\ncurrent,product_intro,30000,900\n"
+    },
+    {
+      "id": "upload-mu0p4ifc-1vv6",
+      "threadId": "quick-1",
+      "projectId": null,
+      "name": "operations.csv",
+      "mime": "text/csv",
+      "size": 178,
+      "revision": 1,
+      "created": "2026-09-14T03:41:21.096Z",
+      "type": "text",
+      "text": "period,content_type,impressions,interactions\nprevious,practical_tips,30000,1800\nprevious,product_intro,10000,300\ncurrent,practical_tips,10000,650\ncurrent,product_intro,30000,900\n"
+    }
+  ],
+  "selectedAssets": [
+    "img-front",
+    "img-open",
+    "img-detail"
+  ],
+  "canvas": null,
+  "contextSelection": null,
+  "filters": {
+    "domain": "all"
+  },
+  "settings": {
+    "theme": "light",
+    "density": "comfortable",
+    "speed": 1
+  },
+  "auto": null,
+  "runId": null,
+  "paused": false,
+  "mobileNav": false,
+  "openCanvases": [],
+  "panelStack": [],
+  "panelDrafts": {
+    "md-sources|": {
+      "values": {
+        "md-previous": {
+          "value": "previous"
+        },
+        "md-current": {
+          "value": "current"
+        }
+      },
+      "at": "2026-09-14T03:43:05.783Z"
+    },
+    "md-plan|plan-mu0p3rf1-rtix": {
+      "values": {
+        "md-plan-goal": {
+          "value": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。"
+        },
+        "md-item-title-item-mu0p3rf1-onko": {
+          "value": "两期社媒运营分析",
+          "checked": false
+        },
+        "md-item-kind-item-mu0p3rf1-onko": {
+          "value": "operations-analysis"
+        },
+        "md-item-input-item-mu0p3rf1-onko": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0p3rf1-onko": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T03:43:07.413Z"
+    },
+    "md-followup|artifact-mu0p6tum-wivg|1": {
+      "values": {
+        "md-followup-goal": {
+          "value": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。"
+        }
+      },
+      "at": "2026-09-14T03:44:59.488Z"
+    },
+    "md-followup-preview|": {
+      "values": {
+        "md-followup-goal": {
+          "value": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。"
+        }
+      },
+      "at": "2026-09-14T03:44:59.488Z"
+    },
+    "md-plan|plan-mu0p8118-9xih": {
+      "values": {
+        "md-plan-goal": {
+          "value": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。"
+        },
+        "md-item-title-item-mu0p8118-ct28": {
+          "value": "下周三条实用内容计划",
+          "checked": false
+        },
+        "md-item-kind-item-mu0p8118-ct28": {
+          "value": "social-calendar"
+        },
+        "md-count-item-mu0p8118-ct28": {
+          "value": "3",
+          "checked": false
+        },
+        "md-channel-item-mu0p8118-ct28": {
+          "value": "xiaohongshu"
+        },
+        "md-date-item-mu0p8118-ct28": {
+          "value": "",
+          "checked": false
+        },
+        "md-item-input-item-mu0p8118-ct28": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0p8118-ct28": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T03:44:59.413Z"
+    },
+    "md-plan|plan-mu0p96ye-5k73": {
+      "values": {
+        "md-plan-goal": {
+          "value": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。"
+        },
+        "md-item-title-item-mu0p96ye-2moi": {
+          "value": "下周三条实用内容计划",
+          "checked": false
+        },
+        "md-item-kind-item-mu0p96ye-2moi": {
+          "value": "social-calendar"
+        },
+        "md-count-item-mu0p96ye-2moi": {
+          "value": "3",
+          "checked": false
+        },
+        "md-channel-item-mu0p96ye-2moi": {
+          "value": "xiaohongshu"
+        },
+        "md-date-item-mu0p96ye-2moi": {
+          "value": "",
+          "checked": false
+        },
+        "md-item-input-item-mu0p96ye-2moi": {
+          "value": "本次依据中选用的资料",
+          "checked": false
+        },
+        "md-item-output-item-mu0p96ye-2moi": {
+          "value": "可阅读、编辑和比较的草稿",
+          "checked": false
+        },
+        "md-plan-exclusions": {
+          "value": "不自动发布；不创建未选择的后续任务"
+        }
+      },
+      "at": "2026-09-14T03:44:59.550Z"
+    },
+    "settings|": {
+      "values": {
+        "pref-theme": {
+          "value": "light"
+        },
+        "pref-speed": {
+          "value": "1"
+        }
+      },
+      "at": "2026-09-14T03:45:35.783Z"
+    }
+  },
+  "composerDrafts": {
+    "quick-1": "",
+    "chat-mu0p8116-qz74": "",
+    "chat-mu0p96yc-g9rc": ""
+  },
+  "workbenchWidth": 62,
+  "plans": [
+    {
+      "id": "plan-mu0p3rf1-rtix",
+      "threadId": "quick-1",
+      "projectId": null,
+      "marketing": true,
+      "revision": 2,
+      "status": "completed",
+      "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0p3rf1-onko",
+          "title": "两期社媒运营分析",
+          "kind": "operations-analysis",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "config": {},
+          "configExplicit": false,
+          "artifactId": "artifact-mu0p6tum-wivg"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0p3rf1-onko",
+              "title": "两期社媒运营分析",
+              "kind": "operations-analysis",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T03:43:07.409Z"
+        }
+      ],
+      "created": "2026-09-14T03:40:46.093Z",
+      "currentItem": "item-mu0p3rf1-onko",
+      "validation": []
+    },
+    {
+      "id": "plan-mu0p8118-9xih",
+      "threadId": "chat-mu0p8116-qz74",
+      "projectId": null,
+      "marketing": true,
+      "revision": 2,
+      "status": "draft",
+      "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0p8118-ct28",
+          "title": "下周三条实用内容计划",
+          "kind": "social-calendar",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "pending",
+          "config": {
+            "count": 3,
+            "channel": "xiaohongshu",
+            "startDate": ""
+          },
+          "configExplicit": false
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0p8118-ct28",
+              "title": "下周三条实用内容计划",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T03:44:05.267Z"
+        }
+      ],
+      "created": "2026-09-14T03:44:05.180Z",
+      "currentItem": "item-mu0p8118-ct28",
+      "validation": []
+    },
+    {
+      "id": "plan-mu0p96ye-5k73",
+      "threadId": "chat-mu0p96yc-g9rc",
+      "projectId": null,
+      "marketing": true,
+      "revision": 2,
+      "status": "completed",
+      "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+      "exclusions": "不自动发布；不创建未选择的后续任务",
+      "items": [
+        {
+          "id": "item-mu0p96ye-2moi",
+          "title": "下周三条实用内容计划",
+          "kind": "social-calendar",
+          "input": "本次依据中选用的资料",
+          "output": "可阅读、编辑和比较的草稿",
+          "status": "done",
+          "config": {
+            "count": 3,
+            "channel": "xiaohongshu",
+            "startDate": ""
+          },
+          "configExplicit": false,
+          "artifactId": "artifact-mu0p98di-0rdm"
+        }
+      ],
+      "history": [
+        {
+          "revision": 1,
+          "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0p96ye-2moi",
+              "title": "下周三条实用内容计划",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending"
+            }
+          ],
+          "at": "2026-09-14T03:44:59.546Z"
+        }
+      ],
+      "created": "2026-09-14T03:44:59.510Z",
+      "currentItem": "item-mu0p96ye-2moi",
+      "validation": []
+    }
+  ],
+  "batches": [],
+  "workModes": {},
+  "taskFilter": "mine",
+  "projectCollapsed": {},
+  "expandedSellingPoints": {},
+  "inspectorOpen": false,
+  "inspectorTab": "status",
+  "libraryPushes": [],
+  "externalSources": [],
+  "unifiedPlanMigration": 1,
+  "inputEvidence": [],
+  "inputSnapshots": [],
+  "inputUploadAttempts": [],
+  "inputContextChanges": [],
+  "workflowBranches": {
+    "jobs": [],
+    "selected": [],
+    "draft": {},
+    "activeJob": null,
+    "mode": "search",
+    "modeDrafts": {
+      "search": {}
+    },
+    "jobDrafts": {},
+    "positions": {}
+  },
+  "md": {
+    "schema": 2,
+    "snapshots": [
+      {
+        "id": "context-mu0p6sgi-p16j",
+        "threadId": "quick-1",
+        "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+        "goalRevision": 2,
+        "reason": "开始制作",
+        "created": "2026-09-14T03:43:07.410Z",
+        "selected": [
+          {
+            "type": "upload",
+            "id": "upload-mu0p3rdm-i3fi",
+            "revision": 1,
+            "title": "operations.csv",
+            "text": "period,content_type,impressions,interactions\nprevious,practical_tips,30000,1800\nprevious,product_intro,10000,300\ncurrent,practical_tips,10000,650\ncurrent,product_intro,30000,900\n",
+            "fixtureKey": null,
+            "fixtureVariant": null,
+            "mime": "text/csv",
+            "read": true
+          }
+        ],
+        "excluded": [
+          "upload-mu0p4ifc-1vv6"
+        ],
+        "plan": {
+          "id": "plan-mu0p3rf1-rtix",
+          "revision": 2,
+          "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0p3rf1-onko",
+              "title": "两期社媒运营分析",
+              "kind": "operations-analysis",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending",
+              "config": {},
+              "configExplicit": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "context-mu0p96zf-aqex",
+        "threadId": "chat-mu0p96yc-g9rc",
+        "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+        "goalRevision": 1,
+        "reason": "开始制作",
+        "created": "2026-09-14T03:44:59.547Z",
+        "selected": [
+          {
+            "type": "artifact",
+            "id": "artifact-mu0p6tum-wivg",
+            "revision": 1,
+            "selection": [
+              "mix"
+            ],
+            "summary": "内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。",
+            "title": "两期社媒运营分析",
+            "text": "内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。",
+            "data": {
+              "sections": [
+                {
+                  "id": "mix",
+                  "title": "内容结构与接续方向",
+                  "body": "使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+                }
+              ]
+            }
+          }
+        ],
+        "excluded": [],
+        "plan": {
+          "id": "plan-mu0p96ye-5k73",
+          "revision": 2,
+          "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "exclusions": "不自动发布；不创建未选择的后续任务",
+          "items": [
+            {
+              "id": "item-mu0p96ye-2moi",
+              "title": "下周三条实用内容计划",
+              "kind": "social-calendar",
+              "input": "本次依据中选用的资料",
+              "output": "可阅读、编辑和比较的草稿",
+              "status": "pending",
+              "config": {
+                "count": 3,
+                "channel": "xiaohongshu",
+                "startDate": ""
+              },
+              "configExplicit": false
+            }
+          ]
+        }
+      }
+    ],
+    "runs": [
+      {
+        "id": "local-run-mu0p6sgi-qj0v",
+        "threadId": "quick-1",
+        "projectId": null,
+        "planId": "plan-mu0p3rf1-rtix",
+        "planRevision": 2,
+        "items": [
+          {
+            "id": "item-mu0p3rf1-onko",
+            "title": "两期社媒运营分析",
+            "kind": "operations-analysis",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending",
+            "config": {},
+            "configExplicit": false
+          }
+        ],
+        "snapshotId": "context-mu0p6sgi-p16j",
+        "meta": {
+          "scene": "analytics",
+          "goal": "比较两期社媒数据，区分结构变化与分组表现，给出两项实验建议；先不写文案、不改排期。",
+          "goalRevision": 2,
+          "selected": [
+            {
+              "type": "upload",
+              "id": "upload-mu0p3rdm-i3fi",
+              "revision": 1
+            }
+          ],
+          "excluded": [
+            "upload-mu0p4ifc-1vv6"
+          ],
+          "status": "open"
+        },
+        "status": "done",
+        "created": "2026-09-14T03:43:07.410Z",
+        "completedIds": [
+          "item-mu0p3rf1-onko"
+        ],
+        "actor": "lin",
+        "prepared": [
+          {
+            "title": "两期社媒运营分析",
+            "summary": "总体互动率 5.25% → 3.875%，变化 -1.375 个百分点。需同时看分组表现和曝光构成。",
+            "analysis": {
+              "totals": [
+                {
+                  "period": "previous",
+                  "impressions": 40000,
+                  "interactions": 2100,
+                  "rate": 0.0525
+                },
+                {
+                  "period": "current",
+                  "impressions": 40000,
+                  "interactions": 1550,
+                  "rate": 0.03875
+                }
+              ],
+              "groups": [
+                {
+                  "group": "practical_tips",
+                  "values": [
+                    {
+                      "impressions": 30000,
+                      "interactions": 1800,
+                      "rate": 0.06,
+                      "share": 0.75
+                    },
+                    {
+                      "impressions": 10000,
+                      "interactions": 650,
+                      "rate": 0.065,
+                      "share": 0.25
+                    }
+                  ]
+                },
+                {
+                  "group": "product_intro",
+                  "values": [
+                    {
+                      "impressions": 10000,
+                      "interactions": 300,
+                      "rate": 0.03,
+                      "share": 0.25
+                    },
+                    {
+                      "impressions": 30000,
+                      "interactions": 900,
+                      "rate": 0.03,
+                      "share": 0.75
+                    }
+                  ]
+                }
+              ],
+              "delta": -0.013749999999999998,
+              "weighted": 0.0375,
+              "composition": -0.015,
+              "within": 0.0012500000000000011,
+              "warning": ""
+            },
+            "sections": [
+              {
+                "id": "overall",
+                "title": "总体与分组表现",
+                "body": "总体变化不能替代分组判断。practical_tips：6% → 6.5%；product_intro：3% → 3%。"
+              },
+              {
+                "id": "mix",
+                "title": "内容结构与接续方向",
+                "body": "使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+              },
+              {
+                "id": "experiments",
+                "title": "两项建议实验（情景演示）",
+                "body": "实验一：在相近时段和投入条件下增加实用内容占比，比较分组互动率及总互动。实验二：同一实用主题分别测试步骤清单与问题答疑表达，记录收藏和有效提问。先固定观察窗口与样本要求，不声称实验已经有效。"
+              },
+              {
+                "id": "limits",
+                "title": "口径与数据不足",
+                "body": "互动率＝互动次数÷曝光次数；合计使用总互动除以总曝光，不简单平均分组率。结构分解采用固定顺序，仅描述构成变化。缺少曝光用户去重、流量来源、成本和销售归因，不能推断品牌认知、销量或广告收益。"
+              }
+            ]
+          }
+        ],
+        "ended": "2026-09-14T03:43:09.214Z"
+      },
+      {
+        "id": "local-run-mu0p96zf-jacx",
+        "threadId": "chat-mu0p96yc-g9rc",
+        "projectId": null,
+        "planId": "plan-mu0p96ye-5k73",
+        "planRevision": 2,
+        "items": [
+          {
+            "id": "item-mu0p96ye-2moi",
+            "title": "下周三条实用内容计划",
+            "kind": "social-calendar",
+            "input": "本次依据中选用的资料",
+            "output": "可阅读、编辑和比较的草稿",
+            "status": "pending",
+            "config": {
+              "count": 3,
+              "channel": "xiaohongshu",
+              "startDate": ""
+            },
+            "configExplicit": false
+          }
+        ],
+        "snapshotId": "context-mu0p96zf-aqex",
+        "meta": {
+          "scene": "social",
+          "goal": "依据所选结论，制定下周三条实用内容计划；具体产品事实后续补充。",
+          "goalRevision": 1,
+          "selected": [
+            {
+              "type": "artifact",
+              "id": "artifact-mu0p6tum-wivg",
+              "revision": 1,
+              "selection": [
+                "mix"
+              ],
+              "summary": "内容结构与接续方向\n使用前期分组率与本期曝光权重计算为 3.75%。结构项 -1.5 个百分点，分组率变化项 0.125 个百分点。对实用内容可考虑增加曝光进行验证；这不是因果证明。"
+            }
+          ],
+          "excluded": [],
+          "status": "open",
+          "followup": true
+        },
+        "status": "done",
+        "created": "2026-09-14T03:44:59.547Z",
+        "completedIds": [
+          "item-mu0p96ye-2moi"
+        ],
+        "actor": "lin",
+        "prepared": [
+          {
+            "title": "下周3条社媒文字与排期",
+            "summary": "依据所选分析结论增加实用内容；具体产品事实需另行补充。 当前 3 条；渠道是排期配置，不代表平台专门改写。",
+            "posts": [
+              {
+                "id": "post-mu0p96zf-evbb",
+                "date": "下周一",
+                "channel": "小红书",
+                "goal": "建立认知",
+                "angle": "桌面整理步骤",
+                "body": "围绕“桌面整理步骤”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              },
+              {
+                "id": "post-mu0p96zf-aacc",
+                "date": "下周二",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "搬家清单方法",
+                "body": "围绕“搬家清单方法”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              },
+              {
+                "id": "post-mu0p96zf-fv0e",
+                "date": "下周三",
+                "channel": "小红书",
+                "goal": "收集有效反馈",
+                "angle": "整理协作复盘",
+                "body": "围绕“整理协作复盘”制作一条实用方法内容。先明确适用情境，再给出可尝试的步骤，最后记录读者反馈；具体事实和服务能力待补充，不作承诺。",
+                "cta": "收集读者对步骤的反馈"
+              }
+            ],
+            "simulation": true,
+            "variant": "base",
+            "config": {
+              "count": 3,
+              "channel": "xiaohongshu",
+              "startDate": ""
+            }
+          }
+        ],
+        "ended": "2026-09-14T03:45:01.351Z"
+      }
+    ],
+    "decisions": [],
+    "imports": [],
+    "scope": "work",
+    "editDrafts": {}
+  },
+  "dockState": {
+    "kind": "settings",
+    "arg": ""
+  },
+  "inspectorProjectId": null,
+  "artifactWorkspace": {
+    "origin": {
+      "view": "chat",
+      "projectId": null,
+      "threadId": "quick-1",
+      "filters": {
+        "domain": "all"
+      },
+      "taskFilter": "mine",
+      "selection": null,
+      "listScroll": 0,
+      "chatScroll": 351.5,
+      "focusAction": "open-artifact",
+      "focusArg": "artifact-mu0p6tum-wivg|1"
+    },
+    "independent": false,
+    "chatVisible": true,
+    "scrolls": {
+      "artifact-mu0p6tum-wivg|1|content": 0
+    },
+    "chatScroll": 326,
+    "discussionBound": false
+  },
+  "decisionLauncherThread": null,
+  "inspectorEditing": false
+}

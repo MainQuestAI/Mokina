@@ -1,0 +1,16 @@
+{
+  "name": "mokina-marketing-desktop-prototype",
+  "private": true,
+  "version": "0.2.1",
+  "scripts": {
+    "build:v62": "node src/demo-spacemaster-v6/build.mjs",
+    "build": "node src/marketing-desktop/build.mjs",
+    "test:v62": "node --test tests/v62-*.test.cjs",
+    "test:marketing": "node --test tests/marketing-workspace.test.cjs",
+    "test": "npm run test:v62 && npm run test:marketing",
+    "dev": "python3 -m http.server 4178 --bind 127.0.0.1",
+    "package": "node src/marketing-desktop/package.mjs",
+    "verify:downloads": "node scripts/verify-marketing-downloads.cjs",
+    "verify:repair-downloads": "node scripts/verify-marketing-repair-downloads.cjs"
+  }
+}

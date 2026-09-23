@@ -3459,6 +3459,7 @@ function FileVersionManagerModal({
   // version is then zero-fetch (and, because the srcDoc string value is stable,
   // zero-reparse). `inFlightRef` dedupes concurrent hover-prefetch + click.
   const contentCacheRef = useRef<Map<string, string>>(new Map());
+  const frozenPreviewCacheRef = useRef<Map<string, string>>(new Map());
   const inFlightRef = useRef<Map<string, Promise<void>>>(new Map());
   const trackingArtifactId = useMemo(
     () => anonymizeArtifactId({ projectId, fileName: file.name }),
@@ -3576,8 +3577,11 @@ function FileVersionManagerModal({
     viewerOnly || !selectedVersion || selectedVersion.current || restoring || loadingContent || !selectedContentMatchesVersion;
   const srcDoc = useMemo(() => {
     if (!selectedContent) return '';
-    return fileVersionPreviewSrcDoc(projectId, file.name, selectedContent);
-  }, [file.name, projectId, selectedContent]);
+    const preview = selectedVersion?.current
+      ? selectedContent
+      : (selectedId ? frozenPreviewCacheRef.current.get(selectedId) : undefined) ?? selectedContent;
+    return fileVersionPreviewSrcDoc(projectId, file.name, preview);
+  }, [file.name, projectId, selectedContent, selectedId, selectedVersion]);
   const frameReady = loadedSrcDoc === srcDoc;
 
   useEffect(() => {
@@ -3597,7 +3601,10 @@ function FileVersionManagerModal({
       workspaceContext,
     )
       .then((result) => {
-        if (result) contentCacheRef.current.set(versionId, result.content);
+        if (result) {
+          contentCacheRef.current.set(versionId, result.content);
+          if (result.frozenContent) frozenPreviewCacheRef.current.set(versionId, result.frozenContent);
+        }
       })
       .catch(() => {})
       .finally(() => {

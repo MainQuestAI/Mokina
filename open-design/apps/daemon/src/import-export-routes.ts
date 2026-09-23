@@ -755,7 +755,7 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
       versionId,
       metadata,
     );
-    return result.content;
+    return result.frozenContent ?? result.content;
   }
 
   function screenshotRenderClientError(
@@ -809,7 +809,7 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
         : null;
       let ownerMeta: { size: number; mime: string };
       if (historical) {
-        ownerMeta = { size: Buffer.byteLength(historical.content), mime: historical.version.mime };
+        ownerMeta = { size: Buffer.byteLength(historical.frozenContent ?? historical.content), mime: historical.version.mime };
       } else {
         try {
           ownerMeta = await resolveProjectFilePath(PROJECTS_DIR, projectId, fileName, project.metadata);
@@ -841,7 +841,7 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
       // A historical snapshot may only use its own bytes. Reading a local
       // dependency from the current project would silently mix versions.
       const exportSource = historical
-        ? { relPath: fileName, html: historical.content }
+        ? { relPath: fileName, html: historical.frozenContent ?? historical.content }
         : await (async () => {
             const ownerFile = await readProjectFile(PROJECTS_DIR, projectId, fileName, project.metadata);
             return resolveHtmlExportSource({

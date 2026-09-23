@@ -135,6 +135,31 @@ describe('project file versions', () => {
     });
   });
 
+  it('freezes each version’s local image bytes before a later image update', async () => {
+    await withProject(async (projectsRoot, projectId) => {
+      const directory = projectDir(projectsRoot, projectId);
+      const imagePath = path.join(directory, 'product.png');
+      const oldImage = Buffer.from('old synthetic image bytes');
+      const newImage = Buffer.from('new synthetic image bytes');
+      await writeFile(imagePath, oldImage);
+      const first = await createProjectFileVersion(projectsRoot, projectId, 'report.html',
+        '<html><body><h1>旧版</h1><img src="product.png"></body></html>');
+      await writeFile(imagePath, newImage);
+      const second = await createProjectFileVersion(projectsRoot, projectId, 'report.html',
+        '<html><body><h1>新版</h1><img src="product.png"></body></html>');
+
+      const oldVersion = await readProjectFileVersion(projectsRoot, projectId, 'report.html', first.id);
+      const newVersion = await readProjectFileVersion(projectsRoot, projectId, 'report.html', second.id);
+      expect(oldVersion.frozenContent).toContain(`data:image/png;base64,${oldImage.toString('base64')}`);
+      expect(oldVersion.frozenContent).not.toContain(newImage.toString('base64'));
+      expect(newVersion.frozenContent).toContain(`data:image/png;base64,${newImage.toString('base64')}`);
+      expect(oldVersion.content).toContain('旧版');
+      await renameProjectFileVersionStore(projectsRoot, projectId, 'report.html', 'renamed.html');
+      const renamedOld = await readProjectFileVersion(projectsRoot, projectId, 'renamed.html', first.id);
+      expect(renamedOld.frozenContent).toBe(oldVersion.frozenContent);
+    });
+  });
+
   it('records manual provenance and ignores non-HTML files', async () => {
     await withProject(async (projectsRoot, projectId) => {
       const textVersion = await ensureCurrentProjectFileVersion(

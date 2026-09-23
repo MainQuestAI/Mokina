@@ -10,7 +10,8 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { isSafeId, kindFor, mimeFor, resolveProjectDir, validateProjectPath } from './projects.js';
+import { isSafeId, kindFor, mimeFor, readProjectFile, resolveProjectDir, resolveProjectFilePath, validateProjectPath } from './projects.js';
+import { bundleStandaloneHtml } from './artifacts/standalone-html.js';
 
 const VERSION_ROOT = '.file-versions';
 const VERSION_MANIFEST = 'manifest.json';
@@ -41,6 +42,7 @@ interface VersionEntry {
   mime: string;
   kind: ProjectFileKind;
   contentPath: string;
+  frozenContentPath?: string;
   contentDigest?: string;
   parentVersionId?: string;
   origin?: ArtifactOrigin;
@@ -174,9 +176,9 @@ export async function withProjectFileVersionLock<T>(
     fn({
       safeName,
       createVersion: (content, options = {}) =>
-        createProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options),
+        createProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options, metadata),
       ensureCurrentVersion: (content, options = {}) =>
-        ensureCurrentProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options),
+        ensureCurrentProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options, metadata),
       matchVersionContent: (content, versionId) =>
         resolveProjectFileVersionContentMatchUnlocked(
           projectsRoot,
@@ -314,6 +316,9 @@ function normalizeManifestEntry(raw: Record<string, unknown>, fileName: string, 
     kind: (typeof raw.kind === 'string' ? raw.kind : kindFor(fileName)) as ProjectFileKind,
     contentPath: normalizeContentPath(raw.contentPath, id),
   };
+  if (typeof raw.frozenContentPath === 'string' && /^[A-Za-z0-9._-]+\.html$/u.test(raw.frozenContentPath) && !raw.frozenContentPath.includes('..')) {
+    entry.frozenContentPath = raw.frozenContentPath;
+  }
   if (promptSource) entry.promptSource = promptSource;
   if (restoreFromVersionId) {
     entry.restoreFromVersionId = restoreFromVersionId;
@@ -483,7 +488,7 @@ export async function readProjectFileVersion(
   fileName: string,
   versionId: string,
   metadata?: unknown,
-): Promise<{ version: ProjectFileVersion; content: string }> {
+): Promise<{ version: ProjectFileVersion; content: string; frozenContent?: string }> {
   const safeName = validateUserFileName(fileName);
   const safeVersionId = String(versionId || '').trim();
   if (!safeVersionId || !VERSION_ID_RE.test(safeVersionId)) {
@@ -497,9 +502,13 @@ export async function readProjectFileVersion(
     throw codedError('version not found', 'ENOENT');
   }
   const content = await readFile(path.join(versionRootFor(projectsRoot, projectId, safeName), entry.contentPath), 'utf8');
+  const frozenContent = entry.frozenContentPath
+    ? await readFile(path.join(versionRootFor(projectsRoot, projectId, safeName), entry.frozenContentPath), 'utf8')
+    : undefined;
   return {
     version: publicVersion(entry, state.currentVersionId),
     content,
+    ...(frozenContent ? { frozenContent } : {}),
   };
 }
 
@@ -514,7 +523,7 @@ export async function createProjectFileVersion(
   const safeName = validateUserFileName(fileName);
   assertProjectAvailable(projectsRoot, projectId, metadata);
   return withVersionFileLock(projectsRoot, projectId, safeName, () =>
-    createProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options),
+    createProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options, metadata),
   );
 }
 
@@ -524,6 +533,7 @@ async function createProjectFileVersionUnlocked(
   safeName: string,
   content: string,
   options: CreateProjectFileVersionOptions,
+  metadata?: unknown,
 ): Promise<ProjectFileVersion> {
   const root = versionRootFor(projectsRoot, projectId, safeName);
   await mkdir(root, { recursive: true });
@@ -601,6 +611,37 @@ async function createProjectFileVersionUnlocked(
   if (options.baseVersionId) entry.baseVersionId = options.baseVersionId;
   if (options.operationId) entry.operationId = options.operationId;
   await writeFile(path.join(root, contentPath), text);
+  // Freeze local HTML resources while the version is captured. A failed or
+  // incomplete bundle leaves the source version intact; historical export
+  // will reject it instead of silently reading today's project resources.
+  if (entry.mime.startsWith('text/html')) {
+    try {
+      const bundled = await bundleStandaloneHtml({
+        entryPath: safeName,
+        html: text,
+        readAsset: async (projectPath) => {
+          let file;
+          try {
+            file = await resolveProjectFilePath(projectsRoot, projectId, projectPath, metadata);
+          } catch (error) {
+            if (errorCode(error) === 'ENOENT') return null;
+            throw error;
+          }
+          return {
+            mime: file.mime,
+            size: file.size,
+            read: async () => (await readProjectFile(projectsRoot, projectId, projectPath, metadata)).buffer,
+          };
+        },
+      });
+      if (bundled.externalDependencies.length === 0) {
+        entry.frozenContentPath = `${String(version).padStart(4, '0')}-${id}-frozen.html`;
+        await writeFile(path.join(root, entry.frozenContentPath), bundled.html);
+      }
+    } catch {
+      // Keep the source version; export validates unresolved resources.
+    }
+  }
   const nextEntries = [...entries, entry];
   await writeVersionManifest(projectsRoot, projectId, safeName, nextEntries, {
     currentVersionId: options.candidate ? priorCurrentVersionId : id,
@@ -692,6 +733,13 @@ export async function renameProjectFileVersionStore(
       } catch (err) {
         if (errorCode(err) !== 'ENOENT' && errorCode(err) !== 'EEXIST') throw err;
       }
+      if (entry.frozenContentPath) {
+        try {
+          await rename(path.join(oldRoot, entry.frozenContentPath), path.join(newRoot, entry.frozenContentPath));
+        } catch (err) {
+          if (errorCode(err) !== 'ENOENT' && errorCode(err) !== 'EEXIST') throw err;
+        }
+      }
     }
     await writeVersionManifest(
       projectsRoot,
@@ -721,7 +769,7 @@ export async function ensureCurrentProjectFileVersion(
   if (!/\.html?$/i.test(safeName)) return null;
   assertProjectAvailable(projectsRoot, projectId, metadata);
   return withVersionFileLock(projectsRoot, projectId, safeName, () =>
-    ensureCurrentProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options),
+    ensureCurrentProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options, metadata),
   );
 }
 
@@ -731,6 +779,7 @@ async function ensureCurrentProjectFileVersionUnlocked(
   safeName: string,
   content: string,
   options: CreateProjectFileVersionOptions,
+  metadata?: unknown,
 ): Promise<ProjectFileVersion | null> {
   if (!/\.html?$/i.test(safeName)) return null;
   const text = String(content ?? '');
@@ -763,7 +812,7 @@ async function ensureCurrentProjectFileVersionUnlocked(
       }
     }
   }
-  return createProjectFileVersionUnlocked(projectsRoot, projectId, safeName, text, options);
+  return createProjectFileVersionUnlocked(projectsRoot, projectId, safeName, text, options, metadata);
 }
 
 export async function resolveProjectFileVersionContentMatch(

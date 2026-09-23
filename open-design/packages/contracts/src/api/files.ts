@@ -119,6 +119,8 @@ export interface ProjectFileVersionsResponse {
 export interface ProjectFileVersionResponse {
   version: ProjectFileVersion;
   content: string;
+  /** Self-contained HTML snapshot for historically accurate preview/export. */
+  frozenContent?: string;
 }
 
 export interface CreateProjectFileVersionRequest {

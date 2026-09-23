@@ -9,6 +9,7 @@ import {
   type UseEventStreamResult,
 } from '../hooks/useEventStream';
 import { workspaceResourceUrl } from './workspace-identity';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 
 // Collab realtime hop-2 — the workspace-scoped invalidation SSE
 // (`GET /api/workspace/events`). One shared connection for the whole nav shell:
@@ -56,6 +57,6 @@ export function useWorkspaceInvalidation(
   return useEventStream(url ?? WORKSPACE_EVENTS_PATH, {
     events: handlers as Record<string, (data: unknown) => void>,
     ...(options.onActive ? { onActive: options.onActive } : {}),
-    enabled: Boolean(url) && (options.enabled ?? true),
+    enabled: !MOKINA_LOCAL_EDITION && Boolean(url) && (options.enabled ?? true),
   });
 }

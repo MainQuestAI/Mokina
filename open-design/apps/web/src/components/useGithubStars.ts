@@ -7,6 +7,7 @@
 
 import { useEffect, useState } from 'react';
 import type { OpenDesignGithubRepoResponse } from '@open-design/contracts';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 
 const API = '/api/github/open-design';
 const REPO = 'https://github.com/nexu-io/open-design';
@@ -106,6 +107,7 @@ export function useGithubStars(): number | null {
   });
 
   useEffect(() => {
+    if (MOKINA_LOCAL_EDITION) return;
     const now = Date.now();
     const cached = memoryCache ?? readPersistedCache();
     if (cached && now - cached.ts < CACHE_TTL_MS) {

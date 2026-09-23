@@ -2653,6 +2653,32 @@ export interface ProjectFilePreview {
   sections: ProjectFilePreviewSection[];
 }
 
+export interface ProjectMaterialExtraction {
+  name: string;
+  contentDigest: string;
+  status: 'read' | 'partial' | 'unreadable';
+  limitations: string[];
+  sections: Array<{ location: string; text: string }>;
+}
+
+export async function fetchProjectMaterial(
+  projectId: string,
+  name: string,
+  workspaceContext?: WorkspaceCollabContext | null,
+): Promise<ProjectMaterialExtraction | { error: string }> {
+  try {
+    const response = await fetch(
+      `/api/projects/${encodeURIComponent(projectId)}/files/${encodeURIComponent(name)}/material`,
+      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+    );
+    if (response.ok) return (await response.json()) as ProjectMaterialExtraction;
+    const body = await response.json().catch(() => null) as { error?: { message?: string } } | null;
+    return { error: body?.error?.message || `资料提取失败（${response.status}）` };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : '资料提取连接失败' };
+  }
+}
+
 export async function fetchProjectFilePreview(
   projectId: string,
   name: string,

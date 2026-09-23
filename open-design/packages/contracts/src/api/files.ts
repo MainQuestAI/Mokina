@@ -88,6 +88,11 @@ export type ArtifactOriginStatus =
   | 'unknown';
 
 export interface ProjectFileVersion {
+  /** AI proposal saved without advancing the working file. */
+  candidate?: boolean;
+  baseVersionId?: string;
+  operationId?: string;
+  adoptionOperationId?: string;
   id: string;
   fileName: string;
   version: number;

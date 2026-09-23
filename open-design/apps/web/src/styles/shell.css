@@ -1239,6 +1239,7 @@ body:has(.artifact-version-panel) .ws-tabs-file-actions-before {
 }
 .artifact-version-panel__preview {
   position: relative;
+  flex-shrink: 0;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -1324,7 +1325,8 @@ body:has(.artifact-version-panel) .ws-tabs-file-actions-before {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: 0;
+  flex: 1 1 120px;
+  min-height: 72px;
   overflow: auto;
   /* Give the scrollbar its own lane in the panel's right padding instead of
      overlapping the cards: extend the list into the padding and re-inset the
@@ -1332,6 +1334,33 @@ body:has(.artifact-version-panel) .ws-tabs-file-actions-before {
      sits ~10px further right. */
   margin-right: -10px;
   padding-right: 10px;
+}
+.artifact-version-panel__continuation {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 106px;
+  max-height: 205px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  font-size: 12px;
+}
+.artifact-version-panel__continuation > p { margin: 0; color: var(--text-muted); line-height: 1.4; }
+.artifact-version-panel__continuation label { display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
+.artifact-version-panel__continuation label > input { flex: 0 0 16px; width: 16px; height: 16px; margin: 1px 0 0; }
+.artifact-version-panel__continuation label > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.artifact-version-panel__continuation textarea { min-height: 42px; padding: 7px; resize: vertical; font: inherit; }
+.artifact-version-panel__continuation select { min-height: 32px; padding: 5px 7px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-panel); color: inherit; font: inherit; }
+.artifact-version-panel__continuation > button {
+  position: sticky;
+  bottom: 0;
+  flex-shrink: 0;
+  min-height: 30px;
+  background: var(--bg-panel);
+  font: inherit;
 }
 .artifact-version-card {
   position: relative;
@@ -2592,3 +2621,21 @@ a.avatar-item:visited {
 .split:has(.chat-message-rail) > .split-resize-handle::before {
   inset-inline-start: 0;
 }
+
+.mokina-material-picker {
+  margin: 8px 12px;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface, transparent);
+  font-size: 12px;
+}
+.mokina-material-picker summary { cursor: pointer; font-weight: 650; }
+.mokina-material-picker p { margin: 8px 0; line-height: 1.5; }
+.mokina-material-picker__files { display: grid; max-height: 150px; overflow: auto; gap: 5px; margin: 9px 0; }
+.mokina-material-picker__files label { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.mokina-material-picker__files input { width: 15px; height: 15px; flex: none; }
+.mokina-material-picker__files span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mokina-material-picker textarea { box-sizing: border-box; width: 100%; min-height: 54px; resize: vertical; }
+.mokina-material-picker button { margin-top: 8px; padding: 6px 10px; border-radius: 6px; background: var(--accent); color: white; }
+.mokina-material-picker button:disabled { opacity: .5; cursor: default; }

@@ -24,6 +24,10 @@ type VersionPromptSource = ProjectFileVersionPromptSource;
 type VersionSource = ProjectFileVersionSource;
 
 interface VersionEntry {
+  candidate?: boolean;
+  baseVersionId?: string;
+  operationId?: string;
+  adoptionOperationId?: string;
   id: string;
   fileName: string;
   version: number;
@@ -49,6 +53,9 @@ interface VersionManifestState {
 }
 
 export interface CreateProjectFileVersionOptions {
+  candidate?: boolean;
+  baseVersionId?: string;
+  operationId?: string;
   prompt?: string | null;
   promptSource?: VersionPromptSource;
   source?: VersionSource;
@@ -129,7 +136,10 @@ async function withVersionFileLock<T>(
   fileName: string,
   fn: () => Promise<T>,
 ): Promise<T> {
-  return withVersionLockKey(versionLockKey(projectsRoot, projectId, fileName), fn);
+  return withVersionLockKey(versionLockKey(projectsRoot, projectId, fileName), async () => {
+    await recoverCandidateAdoptionUnlocked(projectsRoot, projectId, fileName);
+    return fn();
+  });
 }
 
 async function withVersionFileLocks<T>(
@@ -311,6 +321,10 @@ function normalizeManifestEntry(raw: Record<string, unknown>, fileName: string, 
   if (contentDigest) entry.contentDigest = contentDigest;
   if (parentVersionId) entry.parentVersionId = parentVersionId;
   if (origin) entry.origin = origin;
+  if (raw.candidate === true) entry.candidate = true;
+  if (normalizeVersionId(raw.baseVersionId)) entry.baseVersionId = String(raw.baseVersionId);
+  if (normalizeVersionId(raw.operationId)) entry.operationId = String(raw.operationId);
+  if (normalizeVersionId(raw.adoptionOperationId)) entry.adoptionOperationId = String(raw.adoptionOperationId);
   return entry;
 }
 
@@ -391,7 +405,17 @@ async function writeVersionManifest(
   if (typeof options.deletedAt === 'number' && Number.isFinite(options.deletedAt)) {
     manifest.deletedAt = options.deletedAt;
   }
-  await writeFile(path.join(root, VERSION_MANIFEST), JSON.stringify(manifest, null, 2));
+  await writeAtomic(path.join(root, VERSION_MANIFEST), JSON.stringify(manifest, null, 2));
+}
+
+async function writeAtomic(target: string, content: string): Promise<void> {
+  const temporary = `${target}.${randomUUID()}.tmp`;
+  try {
+    await writeFile(temporary, content, { flag: 'wx' });
+    await rename(temporary, target);
+  } finally {
+    await rm(temporary, { force: true });
+  }
 }
 
 function publicVersion(entry: VersionEntry, currentId: string | null): ProjectFileVersion {
@@ -413,6 +437,10 @@ function publicVersion(entry: VersionEntry, currentId: string | null): ProjectFi
   if (entry.contentDigest) version.contentDigest = entry.contentDigest;
   if (entry.parentVersionId) version.parentVersionId = entry.parentVersionId;
   if (entry.origin) version.origin = entry.origin;
+  if (entry.candidate) version.candidate = true;
+  if (entry.baseVersionId) version.baseVersionId = entry.baseVersionId;
+  if (entry.operationId) version.operationId = entry.operationId;
+  if (entry.adoptionOperationId) version.adoptionOperationId = entry.adoptionOperationId;
   return version;
 }
 
@@ -444,6 +472,7 @@ export async function listProjectFileVersions(
 ): Promise<ProjectFileVersion[]> {
   const safeName = validateUserFileName(fileName);
   assertProjectAvailable(projectsRoot, projectId, metadata);
+  await recoverCandidateAdoption(projectsRoot, projectId, safeName);
   const state = await readVersionManifestState(projectsRoot, projectId, safeName);
   return state.entries.map((entry) => publicVersion(entry, state.currentVersionId));
 }
@@ -461,6 +490,7 @@ export async function readProjectFileVersion(
     throw codedError('version id required', 'EINVAL');
   }
   assertProjectAvailable(projectsRoot, projectId, metadata);
+  await recoverCandidateAdoption(projectsRoot, projectId, safeName);
   const state = await readVersionManifestState(projectsRoot, projectId, safeName);
   const entry = state.entries.find((item) => item.id === safeVersionId);
   if (!entry) {
@@ -498,6 +528,21 @@ async function createProjectFileVersionUnlocked(
   const root = versionRootFor(projectsRoot, projectId, safeName);
   await mkdir(root, { recursive: true });
   const state = await readVersionManifestState(projectsRoot, projectId, safeName);
+  if (options.operationId) {
+    if (!VERSION_ID_RE.test(options.operationId)) throw codedError('invalid operation id', 'EINVAL');
+    const saved = state.entries.find((entry) => entry.operationId === options.operationId);
+    if (saved) {
+      if (saved.contentDigest !== projectFileVersionContentDigest(content)
+        || saved.baseVersionId !== options.baseVersionId) {
+        throw codedError('operation already saved with different content or base', 'VERSION_OPERATION_CONFLICT');
+      }
+      return publicVersion(saved, state.currentVersionId);
+    }
+  }
+  if (options.candidate && (!options.baseVersionId
+    || !state.entries.some((entry) => entry.id === options.baseVersionId))) {
+    throw codedError('candidate requires a fixed base version', 'VERSION_BASE_MISSING');
+  }
   const preserveDeletedHistory =
     typeof options.restoreFromVersionId === 'string' &&
     state.entries.some((entry) => entry.id === options.restoreFromVersionId);
@@ -552,12 +597,15 @@ async function createProjectFileVersionUnlocked(
     const origin = normalizeArtifactOrigin(options.origin);
     if (origin) entry.origin = origin;
   }
+  if (options.candidate) entry.candidate = true;
+  if (options.baseVersionId) entry.baseVersionId = options.baseVersionId;
+  if (options.operationId) entry.operationId = options.operationId;
   await writeFile(path.join(root, contentPath), text);
   const nextEntries = [...entries, entry];
   await writeVersionManifest(projectsRoot, projectId, safeName, nextEntries, {
-    currentVersionId: id,
+    currentVersionId: options.candidate ? priorCurrentVersionId : id,
   });
-  return publicVersion(entry, id);
+  return publicVersion(entry, options.candidate ? priorCurrentVersionId : id);
 }
 
 export async function markProjectFileVersionStoreDeleted(
@@ -778,4 +826,111 @@ export async function getProjectFileVersionRootStats(
   const entries = await readdir(root).catch(() => []);
   const st = await stat(root).catch(() => null);
   return { root, entries, mtime: st?.mtimeMs ?? 0 };
+}
+
+interface CandidateAdoptionJournal {
+  operationId: string;
+  versionId: string;
+  expectedCurrentVersionId: string;
+  targetFile: string;
+}
+
+function candidateAdoptionJournalPath(projectsRoot: string, projectId: string, fileName: string): string {
+  return path.join(versionRootFor(projectsRoot, projectId, fileName), 'candidate-adoption.json');
+}
+
+async function recoverCandidateAdoptionUnlocked(
+  projectsRoot: string,
+  projectId: string,
+  fileName: string,
+): Promise<void> {
+  const journalPath = candidateAdoptionJournalPath(projectsRoot, projectId, fileName);
+  let journal: CandidateAdoptionJournal;
+  try {
+    journal = JSON.parse(await readFile(journalPath, 'utf8')) as CandidateAdoptionJournal;
+  } catch (error) {
+    if (errorCode(error) === 'ENOENT') return;
+    throw error;
+  }
+  const state = await readVersionManifestState(projectsRoot, projectId, fileName);
+  const chosen = state.entries.find((entry) => entry.id === journal.versionId);
+  const prior = state.entries.find((entry) => entry.id === journal.expectedCurrentVersionId);
+  // A process may stop after the manifest commits but before removing the journal.
+  // That state is already complete; clearing the journal must be repeatable.
+  if (chosen?.adoptionOperationId === journal.operationId && state.currentVersionId === chosen.id) {
+    await rm(journalPath, { force: true });
+    return;
+  }
+  if (!chosen?.contentDigest || !prior?.contentDigest || !chosen.candidate
+    || chosen.baseVersionId !== prior.id || !VERSION_ID_RE.test(journal.operationId)
+    || !path.isAbsolute(journal.targetFile)) {
+    throw codedError('candidate adoption journal is invalid', 'VERSION_JOURNAL_INVALID');
+  }
+  if (state.currentVersionId !== prior.id && state.currentVersionId !== chosen.id) {
+    throw codedError('candidate adoption conflicts with current version', 'VERSION_STALE');
+  }
+  const desired = await readFile(path.join(versionRootFor(projectsRoot, projectId, fileName), chosen.contentPath), 'utf8');
+  if (projectFileVersionContentDigest(desired) !== chosen.contentDigest) {
+    throw codedError('candidate snapshot changed', 'VERSION_DIGEST_MISMATCH');
+  }
+  const working = await readFile(journal.targetFile, 'utf8');
+  const workingDigest = projectFileVersionContentDigest(working);
+  if (workingDigest !== chosen.contentDigest && workingDigest !== prior.contentDigest) {
+    throw codedError('working file changed during adoption', 'VERSION_EXTERNAL_CHANGE');
+  }
+  if (workingDigest !== chosen.contentDigest) await writeAtomic(journal.targetFile, desired);
+  chosen.candidate = false;
+  chosen.adoptionOperationId = journal.operationId;
+  await writeVersionManifest(projectsRoot, projectId, fileName, state.entries, { currentVersionId: chosen.id });
+  await rm(journalPath, { force: true });
+}
+
+export async function recoverCandidateAdoption(
+  projectsRoot: string,
+  projectId: string,
+  fileName: string,
+): Promise<void> {
+  const safeName = validateUserFileName(fileName);
+  await withVersionLockKey(versionLockKey(projectsRoot, projectId, safeName), () =>
+    recoverCandidateAdoptionUnlocked(projectsRoot, projectId, safeName));
+}
+
+/** Adopt a fixed candidate using the same file lock and version store as normal edits. */
+export async function adoptCandidateVersion(
+  projectsRoot: string,
+  projectId: string,
+  fileName: string,
+  versionId: string,
+  expectedCurrentVersionId: string,
+  operationId: string,
+  targetFile: string,
+  metadata?: unknown,
+): Promise<ProjectFileVersion> {
+  const safeName = validateUserFileName(fileName);
+  assertProjectAvailable(projectsRoot, projectId, metadata);
+  if (![versionId, expectedCurrentVersionId, operationId].every((value) => VERSION_ID_RE.test(value))) {
+    throw codedError('valid version and operation ids are required', 'EINVAL');
+  }
+  return withVersionFileLock(projectsRoot, projectId, safeName, async () => {
+    const state = await readVersionManifestState(projectsRoot, projectId, safeName);
+    const chosen = state.entries.find((entry) => entry.id === versionId);
+    if (!chosen) throw codedError('candidate not found', 'ENOENT');
+    if (chosen.adoptionOperationId === operationId) return publicVersion(chosen, state.currentVersionId);
+    if (!chosen.candidate) throw codedError('version is not an unadopted candidate', 'VERSION_NOT_CANDIDATE');
+    if (state.currentVersionId !== expectedCurrentVersionId || chosen.baseVersionId !== expectedCurrentVersionId) {
+      throw codedError('current version changed; compare again', 'VERSION_STALE');
+    }
+    const prior = state.entries.find((entry) => entry.id === expectedCurrentVersionId);
+    if (!prior?.contentDigest) throw codedError('current version has no verifiable snapshot', 'VERSION_BASE_MISSING');
+    const working = await readFile(targetFile, 'utf8');
+    if (projectFileVersionContentDigest(working) !== prior.contentDigest) {
+      throw codedError('working file differs from current version', 'VERSION_EXTERNAL_CHANGE');
+    }
+    const journal: CandidateAdoptionJournal = { operationId, versionId, expectedCurrentVersionId, targetFile };
+    await writeAtomic(candidateAdoptionJournalPath(projectsRoot, projectId, safeName), JSON.stringify(journal));
+    await recoverCandidateAdoptionUnlocked(projectsRoot, projectId, safeName);
+    chosen.candidate = false;
+    chosen.adoptionOperationId = operationId;
+    return publicVersion(chosen, chosen.id);
+  });
 }

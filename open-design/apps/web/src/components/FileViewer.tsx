@@ -96,6 +96,7 @@ import {
   measurePreviewBlockOffsets,
 } from './markdown-scroll-sync';
 import { useT, useI18n } from '../i18n';
+import { randomUUID as newClientOperationId } from '../utils/uuid';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
 import {
   notifyTeamProjectsChanged,
@@ -107,7 +108,8 @@ import {
   publicFilePublishFailureKey,
   type PublicFilePublishFailureKey,
 } from '../collab/public-file-publish';
-import { moveWorkspaceProject } from '../state/projects';
+import { createProject, moveWorkspaceProject } from '../state/projects';
+import { navigate } from '../router';
 import { MoveToTeamConfirmDialog, moveConfirmSkipped } from './MoveToTeamConfirmDialog';
 import type { Dict, Locale } from '../i18n/types';
 import {
@@ -125,6 +127,8 @@ import {
   fetchProjectFileVersion,
   fetchProjectFileVersions,
   fetchProjectFilePreview,
+  fetchProjectMaterial,
+  type ProjectMaterialExtraction,
   fetchProjectPreviewBaseHref,
   fetchProjectFiles,
   fetchProjectFilePublicPublication,
@@ -3254,6 +3258,7 @@ function isHtmlVersionableFile(file: ProjectFile): boolean {
 }
 
 function fileVersionSourceLabel(version: ProjectFileVersion, t: TranslateFn): string {
+  if (version.candidate) return '待采用候选';
   if (version.source === 'manual') return t('fileViewer.versions.sourceManual');
   if (version.source === 'restore') return t('fileViewer.versions.sourceRestore');
   return t('fileViewer.versions.sourceAi');
@@ -3414,6 +3419,32 @@ function FileVersionManagerModal({
   const restorePopoverId = useId();
   const [downloadMenuVersionId, setDownloadMenuVersionId] = useState<string | null>(null);
   const [versionExportToast, setVersionExportToast] = useState<ExportToastState | null>(null);
+  const [selectedContinuationSections, setSelectedContinuationSections] = useState<string[]>([]);
+  const [continuationBackground, setContinuationBackground] = useState('');
+  const [continuationBusy, setContinuationBusy] = useState(false);
+  const [revisionSectionId, setRevisionSectionId] = useState('');
+  const [revisionRequest, setRevisionRequest] = useState('');
+  const [revisionBusy, setRevisionBusy] = useState(false);
+  const [revisionProgress, setRevisionProgress] = useState('');
+  const revisionStorageKey = `mokina:revision:${projectId}:${file.name}`;
+  const [pendingRevisionJob, setPendingRevisionJob] = useState<{
+    runId: string; revisionProjectId: string; baseVersionId: string;
+    sectionId: string; prompt: string; operationId: string;
+  } | null>(null);
+  useEffect(() => {
+    let savedJob: NonNullable<typeof pendingRevisionJob> | null = null;
+    try {
+      const raw = localStorage.getItem(revisionStorageKey);
+      if (raw) {
+        const job = JSON.parse(raw) as typeof pendingRevisionJob;
+        if (job?.runId && job.revisionProjectId && job.baseVersionId && job.sectionId
+          && typeof job.prompt === 'string' && job.operationId) {
+          savedJob = job;
+        }
+      }
+    } catch { /* Damaged local recovery state must not block version viewing. */ }
+    setPendingRevisionJob(savedJob);
+  }, [revisionStorageKey]);
   const [versionImageExportVersionId, setVersionImageExportVersionId] = useState<string | null>(null);
   const [versionImageExportFormat, setVersionImageExportFormat] = useState<ImageExportFormat>('png');
   const [versionImageExportInFlight, setVersionImageExportInFlight] = useState(false);
@@ -3527,6 +3558,20 @@ function FileVersionManagerModal({
     : null;
   const visibleExportToast = versionExportToast ?? exportToast ?? null;
   const selectedContentMatchesVersion = Boolean(selectedId && selectedContentVersionId === selectedId && selectedContent);
+  const continuationSections = useMemo(() => {
+    if (!selectedContentMatchesVersion || !selectedContent || typeof DOMParser === 'undefined') return [];
+    const doc = new DOMParser().parseFromString(selectedContent, 'text/html');
+    const seen = new Set<string>();
+    return Array.from(doc.querySelectorAll('[data-mokina-id]')).flatMap((element) => {
+      const id = element.getAttribute('data-mokina-id') ?? '';
+      if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/u.test(id) || element.id !== id || seen.has(id)
+        || element.parentElement?.closest('[data-mokina-id]')) return [];
+      seen.add(id);
+      return [{ id, text: element.textContent?.trim() ?? '' }];
+    });
+  }, [selectedContent, selectedContentMatchesVersion]);
+  useEffect(() => { setSelectedContinuationSections([]); }, [selectedId]);
+  useEffect(() => { setRevisionSectionId(''); }, [selectedId]);
   const restoreDisabled =
     viewerOnly || !selectedVersion || selectedVersion.current || restoring || loadingContent || !selectedContentMatchesVersion;
   const srcDoc = useMemo(() => {
@@ -3809,7 +3854,7 @@ function FileVersionManagerModal({
       content,
       title: version.current ? file.name.replace(/\.html?$/i, '') || file.name : fileVersionExportTitle(file.name, version),
       version,
-      ...(version.current ? {} : { versionId: version.id }),
+      versionId: version.id,
     };
     setVersionExportToast(null);
     await action(context);
@@ -3926,6 +3971,38 @@ function FileVersionManagerModal({
       });
     };
     try {
+      if (selectedVersion.candidate) {
+        const current = versions.find((version) => version.current);
+        if (!current || current.id !== selectedVersion.baseVersionId) {
+          setError('当前稿已变化；请比较后重新生成候选。');
+          return;
+        }
+        const response = await fetch(
+          `/api/projects/${encodeURIComponent(projectId)}/files/${file.name.split('/').map(encodeURIComponent).join('/')}/versions/${encodeURIComponent(selectedVersion.id)}/adopt`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+            },
+            body: JSON.stringify({
+              expectedCurrentVersionId: current.id,
+              operationId: newClientOperationId(),
+            }),
+          },
+        );
+        if (!response.ok) {
+          const body = await response.json().catch(() => null) as { error?: { message?: string } } | null;
+          setError(body?.error?.message || '候选采用失败；当前稿保持不变。');
+          return;
+        }
+        const adopted = await response.json() as { version: ProjectFileVersion };
+        await onRestored(selectedContent, adopted.version);
+        await loadVersions(adopted.version.id);
+        closingAfterRestore = true;
+        onClose();
+        return;
+      }
       const result = await restoreProjectFileVersion(
         projectId,
         file.name,
@@ -3947,8 +4024,175 @@ function FileVersionManagerModal({
       }
       closingAfterRestore = true;
       onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '版本操作失败');
     } finally {
       if (!closingAfterRestore) setRestoring(false);
+    }
+  }
+
+  async function continueFromSelectedSections() {
+    if (!selectedVersion || !selectedContentMatchesVersion || continuationBusy) return;
+    const chosen = continuationSections.filter((section) => selectedContinuationSections.includes(section.id));
+    if (chosen.length === 0) { setError('请先选择至少一个章节。'); return; }
+    const total = chosen.reduce((sum, section) => sum + section.text.length, 0);
+    if (total > 24_000) { setError('选定章节超过 24,000 字符；请缩小选择。'); return; }
+    setContinuationBusy(true);
+    setError(null);
+    try {
+      const fixed = {
+        schemaVersion: 1,
+        source: { projectId, fileName: file.name, versionId: selectedVersion.id },
+        sections: chosen,
+        background: continuationBackground.trim(),
+      };
+      const prompt = [
+        '请基于以下固定结论继续工作。先讨论方向；我明确要求交付时再生成方案。',
+        '只使用下列摘录和我补充的背景；不要读取或推断原项目的其他资料。',
+        ...chosen.map((section) => `【${section.id}】\n${section.text}`),
+        continuationBackground.trim() ? `【补充背景】\n${continuationBackground.trim()}` : '',
+      ].filter(Boolean).join('\n\n');
+      const project = await createProject({
+        name: `${file.name.replace(/\.html?$/iu, '')} · 接续`,
+        skillId: null,
+        designSystemId: null,
+        metadata: { kind: 'other', intent: 'marketing' },
+        pluginId: 'mokina-marketing-plan',
+        pendingPrompt: prompt,
+        workspaceContext,
+      });
+      const saved = await writeProjectTextFile(
+        project.project.id,
+        'MOKINA-CONTINUATION.json',
+        JSON.stringify(fixed, null, 2),
+        undefined,
+        workspaceContext,
+      );
+      if (!saved) throw new Error('接续项目已创建，但固定摘录未保存；请重试前检查该项目。');
+      onClose();
+      navigate({ kind: 'project', projectId: project.project.id, conversationId: project.conversationId, fileName: null });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '接续创建失败');
+    } finally {
+      setContinuationBusy(false);
+    }
+  }
+
+  async function finishChapterCandidate(job: NonNullable<typeof pendingRevisionJob>) {
+    let terminal: { status: string; error?: string | null } | null = null;
+    for (let attempt = 0; attempt < 180; attempt++) {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      const statusResponse = await fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
+        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
+      if (!statusResponse.ok) continue;
+      const statusBody = await statusResponse.json() as { run?: { status: string; error?: string | null }; status?: string; error?: string | null };
+      const status = statusBody.run ?? statusBody;
+      if (typeof status.status === 'string' && ['succeeded', 'failed', 'canceled'].includes(status.status)) {
+        terminal = { status: status.status, error: status.error };
+        break;
+      }
+    }
+    if (!terminal) throw new Error(`修订运行 ${job.runId} 尚未完成；稍后可恢复，当前稿未变化。`);
+    if (terminal.status !== 'succeeded') throw new Error(terminal.error || `修订运行 ${terminal.status}；当前稿未变化。`);
+    setRevisionProgress('正在校验并保存候选…');
+    const replacement = await fetchProjectFileText(job.revisionProjectId,
+      'MOKINA-REPLACEMENT.html', { cache: 'no-store', workspaceContext });
+    if (!replacement) throw new Error('模型未写出 MOKINA-REPLACEMENT.html；当前稿未变化。');
+    const candidateResponse = await fetch(
+      `/api/projects/${encodeURIComponent(projectId)}/files/${file.name.split('/').map(encodeURIComponent).join('/')}/candidates`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}) },
+        body: JSON.stringify({ baseVersionId: job.baseVersionId, sectionId: job.sectionId,
+          replacementHtml: replacement, operationId: job.operationId, prompt: job.prompt }),
+      },
+    );
+    if (!candidateResponse.ok) {
+      const body = await candidateResponse.json().catch(() => null) as { error?: { message?: string } } | null;
+      throw new Error(body?.error?.message || '替换章节校验失败；当前稿未变化。');
+    }
+    const result = await candidateResponse.json() as { version: ProjectFileVersion };
+    localStorage.removeItem(revisionStorageKey);
+    setPendingRevisionJob(null);
+    await loadVersions(result.version.id);
+    setRevisionProgress('候选已保存；请预览后再采用。');
+  }
+
+  async function resumeChapterCandidate() {
+    if (!pendingRevisionJob || revisionBusy) return;
+    setRevisionBusy(true);
+    setError(null);
+    setRevisionProgress('正在恢复上次修订…');
+    try { await finishChapterCandidate(pendingRevisionJob); }
+    catch (cause) { setRevisionProgress(''); setError(cause instanceof Error ? cause.message : '恢复修订失败'); }
+    finally { setRevisionBusy(false); }
+  }
+
+  async function generateChapterCandidate() {
+    if (!selectedVersion?.current || !selectedContentMatchesVersion || !selectedContent || revisionBusy) return;
+    const request = revisionRequest.trim();
+    if (!revisionSectionId || !request) { setError('请选择章节并填写修改要求。'); return; }
+    const doc = new DOMParser().parseFromString(selectedContent, 'text/html');
+    const original = Array.from(doc.querySelectorAll('[data-mokina-id]'))
+      .find(element => element.id === revisionSectionId && element.getAttribute('data-mokina-id') === revisionSectionId);
+    if (!original || original.outerHTML.length > 24_000) { setError('所选章节不可用或超过 24,000 字符。'); return; }
+    const baseVersionId = selectedVersion.id;
+    setRevisionBusy(true);
+    setRevisionProgress('正在创建独立修订工作…');
+    setError(null);
+    try {
+      const prompt = [
+        `只修改 HTML 章节 ${revisionSectionId}。根据下方用户要求，生成一个完整的替换章节元素。`,
+        `请把结果写入 MOKINA-REPLACEMENT.html。文件必须且只能包含一个顶层元素，其 id 与 data-mokina-id 都等于 ${revisionSectionId}。不要输出整篇 HTML、Markdown 代码围栏或其他章节。保留可核对事实，不编造来源。`,
+        `【修改要求】\n${request}`,
+        `【原章节】\n${original.outerHTML}`,
+      ].join('\n\n');
+      const sourceResponse = await fetch(`/api/projects/${encodeURIComponent(projectId)}`,
+        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
+      if (!sourceResponse.ok) throw new Error('无法核对原项目的营销场景；当前稿未变化。');
+      const sourceBody = await sourceResponse.json() as { project?: { metadata?: { scenarioBinding?: { pluginId?: string } } } };
+      const boundPlugin = sourceBody?.project?.metadata?.scenarioBinding?.pluginId;
+      const revisionPlugin = boundPlugin === 'mokina-marketing-plan' || boundPlugin === 'mokina-market-analysis'
+        ? boundPlugin : 'mokina-market-analysis';
+      const revisionProject = await createProject({
+        name: `${file.name} · ${revisionSectionId} 修订`,
+        skillId: null,
+        designSystemId: null,
+        metadata: { kind: 'other', intent: 'marketing' },
+        pluginId: revisionPlugin,
+        workspaceContext,
+      });
+      const snapshotSaved = await writeProjectTextFile(revisionProject.project.id,
+        'MOKINA-BASE-SECTION.html', original.outerHTML, undefined, workspaceContext);
+      if (!snapshotSaved) throw new Error('原章节快照保存失败，模型尚未运行。');
+      setRevisionProgress('正在运行 Codex 生成替换章节…');
+      const runResponse = await fetch('/api/runs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}) },
+        body: JSON.stringify({
+          agentId: 'codex', projectId: revisionProject.project.id,
+          conversationId: revisionProject.conversationId,
+          sessionMode: 'design', message: prompt, currentPrompt: prompt,
+          priorTranscript: '', locale: 'zh-CN',
+          skillId: null, skillIds: [], designSystemId: null, attachments: [],
+        }),
+      });
+      if (!runResponse.ok) {
+        const body = await runResponse.json().catch(() => null) as { error?: { message?: string } } | null;
+        throw new Error(body?.error?.message || `修订运行启动失败（${runResponse.status}）`);
+      }
+      const created = await runResponse.json() as { runId: string };
+      if (!created.runId) throw new Error('修订运行未返回 ID');
+      const job = { runId: created.runId, revisionProjectId: revisionProject.project.id,
+        baseVersionId, sectionId: revisionSectionId, prompt: request, operationId: newClientOperationId() };
+      localStorage.setItem(revisionStorageKey, JSON.stringify(job));
+      setPendingRevisionJob(job);
+      await finishChapterCandidate(job);
+    } catch (cause) {
+      setRevisionProgress('');
+      setError(cause instanceof Error ? cause.message : '生成候选失败');
+    } finally {
+      setRevisionBusy(false);
     }
   }
 
@@ -4126,6 +4370,56 @@ function FileVersionManagerModal({
             })
           )}
         </div>
+        {continuationSections.length > 0 && selectedVersion?.current ? (
+          <section className="artifact-version-panel__continuation" aria-label="AI 章节修订">
+            <strong>AI 修订章节</strong>
+            <p>Codex 在独立工作中只接收所选章节；结果先保存为候选，预览后再采用。</p>
+            <select value={revisionSectionId} disabled={viewerOnly || revisionBusy}
+              aria-label="要修订的章节" onChange={event => setRevisionSectionId(event.target.value)}>
+              <option value="">选择章节</option>
+              {continuationSections.map(section => <option key={section.id} value={section.id}>{section.id}：{section.text.slice(0, 42)}</option>)}
+            </select>
+            <textarea value={revisionRequest} disabled={viewerOnly || revisionBusy}
+              onChange={event => setRevisionRequest(event.target.value)}
+              placeholder="只针对所选章节写出具体修改要求" aria-label="章节修改要求" />
+            <button type="button" disabled={viewerOnly || revisionBusy || !revisionSectionId || !revisionRequest.trim()}
+              onClick={() => { void generateChapterCandidate(); }}>
+              {revisionBusy ? '正在生成候选…' : '生成候选（不改当前稿）'}
+            </button>
+            {pendingRevisionJob ? <button type="button" disabled={viewerOnly || revisionBusy}
+              onClick={() => { void resumeChapterCandidate(); }}>
+              恢复上次修订候选
+            </button> : null}
+            {revisionProgress ? <p role="status">{revisionProgress}</p> : null}
+          </section>
+        ) : null}
+        {continuationSections.length > 0 && selectedVersion ? (
+          <section className="artifact-version-panel__continuation" aria-label="选择性接续">
+            <strong>以此继续</strong>
+            <p>从 v{selectedVersion.version} 选择结论；新项目只保存这些固定摘录，发送前可修改请求。</p>
+            {continuationSections.map((section) => (
+              <label key={section.id}>
+                <input
+                  type="checkbox"
+                  checked={selectedContinuationSections.includes(section.id)}
+                  onChange={(event) => setSelectedContinuationSections((current) =>
+                    event.target.checked ? [...current, section.id] : current.filter((id) => id !== section.id))}
+                />
+                <span>{section.id}：{section.text.slice(0, 90)}</span>
+              </label>
+            ))}
+            <textarea
+              value={continuationBackground}
+              onChange={(event) => setContinuationBackground(event.target.value)}
+              placeholder="可选：补充品牌、目标或约束"
+              aria-label="接续背景"
+            />
+            <button type="button" disabled={viewerOnly || continuationBusy || selectedContinuationSections.length === 0}
+              onClick={() => { void continueFromSelectedSections(); }}>
+              {continuationBusy ? '正在创建…' : '创建接续项目（不发送）'}
+            </button>
+          </section>
+        ) : null}
         <footer className="artifact-version-panel__foot">
           <button
             type="button"
@@ -4146,7 +4440,7 @@ function FileVersionManagerModal({
             }}
           >
             <RemixIcon name={restoring ? 'loader-4-line' : 'arrow-go-back-line'} size={15} />
-            {restoring ? t('fileViewer.versions.restoring') : t('fileViewer.versions.restore')}
+            {restoring ? t('fileViewer.versions.restoring') : selectedVersion?.candidate ? '采用候选' : t('fileViewer.versions.restore')}
           </button>
           <button
             type="button"
@@ -4174,8 +4468,8 @@ function FileVersionManagerModal({
             role="dialog"
             aria-label={t('fileViewer.versions.restoreConfirmTitle')}
           >
-            <h3>{t('fileViewer.versions.restoreConfirmTitle')}</h3>
-            <p>{t('fileViewer.versions.restoreHelp')}</p>
+            <h3>{selectedVersion.candidate ? '采用此候选？' : t('fileViewer.versions.restoreConfirmTitle')}</h3>
+            <p>{selectedVersion.candidate ? '采用前会核对基础版本和当前文件；冲突时当前稿保持不变。' : t('fileViewer.versions.restoreHelp')}</p>
             <div className="file-version-restore-confirm-actions">
               <button
                 type="button"
@@ -4201,7 +4495,7 @@ function FileVersionManagerModal({
                   void restoreVersion();
                 }}
               >
-                {t('fileViewer.versions.restoreConfirmCta')}
+                {selectedVersion.candidate ? '采用候选' : t('fileViewer.versions.restoreConfirmCta')}
               </button>
             </div>
           </div>
@@ -7221,15 +7515,24 @@ function DocumentPreviewViewer({
   const t = useT();
   const { workspaceContext } = useProjectCollabContext();
   const [preview, setPreview] = useState<ProjectFilePreview | null>(null);
+  const [material, setMaterial] = useState<ProjectMaterialExtraction | null>(null);
+  const [materialError, setMaterialError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setPreview(null);
-    void fetchProjectFilePreview(projectId, file.name, workspaceContext).then((next) => {
+    setMaterial(null);
+    setMaterialError(null);
+    void Promise.all([
+      fetchProjectFilePreview(projectId, file.name, workspaceContext),
+      fetchProjectMaterial(projectId, file.name, workspaceContext),
+    ]).then(([next, extracted]) => {
       if (!cancelled) {
         setPreview(next);
+        if ('error' in extracted) setMaterialError(extracted.error);
+        else setMaterial(extracted);
         setLoading(false);
       }
     });
@@ -7262,6 +7565,16 @@ function DocumentPreviewViewer({
                 ))}
               </section>
             ))}
+            {material ? (
+              <details className="mokina-material-extraction" open>
+                <summary>可核对提取结果 · {material.status === 'read' ? '已读取' : material.status === 'partial' ? '部分读取' : '不可读取'}</summary>
+                {material.limitations.map((limitation, index) => <p key={index}>{limitation}</p>)}
+                {material.sections.slice(0, 30).map((section, index) => (
+                  <p key={`${section.location}-${index}`}><strong>{section.location}</strong>　{section.text}</p>
+                ))}
+                {material.sections.length > 30 ? <p>仅在此处展示前 30 条摘录。</p> : null}
+              </details>
+            ) : <p>{materialError || '资料提取不可用'}；预览内容不能视为已传入模型。</p>}
           </div>
         ) : (
           <div className="viewer-empty">{t('fileViewer.previewUnavailable')}</div>

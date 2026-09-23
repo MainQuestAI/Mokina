@@ -9,6 +9,7 @@
 // the same person. (v2: renamed from `anonymous_id`.)
 
 import crypto from 'node:crypto';
+import { isMokinaLocalEdition } from './mokina/edition.js';
 import os from 'node:os';
 import { PostHog } from 'posthog-node';
 import type { Request } from 'express';
@@ -179,6 +180,7 @@ export interface PosthogConfig {
 export function readPosthogConfig(
   env: NodeJS.ProcessEnv = process.env,
 ): PosthogConfig | null {
+  if (isMokinaLocalEdition()) return null;
   const key = env.POSTHOG_KEY?.trim();
   if (!key) return null;
   const host = (env.POSTHOG_HOST?.trim() || DEFAULT_HOST).replace(/\/+$/, '');

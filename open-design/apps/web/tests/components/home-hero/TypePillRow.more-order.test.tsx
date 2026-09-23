@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 //
-// OPEND-3146: the Home type row keeps 原型 / 幻灯片 / 文档 inline and folds
+// Mokina keeps its marketing workflows inline and folds
 // EVERY other artifact type into 更多, in one product-fixed order. Nothing an
 // earlier row offered may be lost to the fold, and the fold's order is a
 // product list, not catalog order.
@@ -21,6 +21,9 @@ afterEach(() => {
 });
 
 const EXPECTED_MORE_ORDER = [
+  'prototype',
+  'deck',
+  'document',
   'image',
   'hyperframes',
   'web-clone',
@@ -44,8 +47,8 @@ function renderRow() {
 }
 
 describe('TypePillRow — 更多 (OPEND-3146)', () => {
-  it('keeps the three lead types inline and lists the other seven behind 更多 in product order', () => {
-    expect([...HOME_TYPE_ROW_IDS]).toEqual(['prototype', 'deck', 'document']);
+  it('keeps the marketing entries inline and lists upstream types behind 更多', () => {
+    expect([...HOME_TYPE_ROW_IDS]).toEqual(['mokina-market-analysis', 'mokina-marketing-plan']);
     expect([...HOME_TYPE_ROW_MORE_IDS]).toEqual(EXPECTED_MORE_ORDER);
 
     renderRow();

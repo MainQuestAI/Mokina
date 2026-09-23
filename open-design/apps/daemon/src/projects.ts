@@ -1607,6 +1607,7 @@ const EXT_MIME = {
   '.json': 'application/json; charset=utf-8',
   '.md': 'text/markdown; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
+  '.csv': 'text/csv; charset=utf-8',
   '.pdf': 'application/pdf',
   '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
@@ -1735,7 +1736,7 @@ export function kindFor(name) {
   }
   if (['.mp4', '.mov', '.webm'].includes(ext)) return 'video';
   if (['.mp3', '.wav', '.m4a'].includes(ext)) return 'audio';
-  if (['.md', '.txt'].includes(ext)) return 'text';
+  if (['.md', '.txt', '.csv'].includes(ext)) return 'text';
   if (['.js', '.mjs', '.cjs', '.ts', '.tsx', '.json', '.css', '.py'].includes(ext)) {
     return 'code';
   }

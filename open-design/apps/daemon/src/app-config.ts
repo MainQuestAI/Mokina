@@ -24,6 +24,7 @@ import path from 'node:path';
 import type { OdNextRolloutMode } from '@open-design/contracts';
 
 import { expandHomePrefix } from './home-expansion.js';
+import { isMokinaLocalEdition } from './mokina/edition.js';
 
 import {
   readInstallationFile,
@@ -735,21 +736,16 @@ function filterAllowedKeys(obj: Record<string, unknown>): AppConfigPrefs {
   return normalizeRetiredAgentPrefs(normalizeAgentCliEnvPrefs(result as AppConfigPrefs));
 }
 
-// Fill in telemetry defaults when the saved config has no `telemetry`
-// field at all (fresh install, pre-disclosure). `metrics` / `content`
-// default to true so onboarding-funnel events emit from the first
-// render — without these defaults the gate at
-// `analytics.ts` (`if (cfg.telemetry?.metrics !== true) return`)
-// dropped every event a user fired before the post-onboarding
-// disclosure modal had a chance to set them. An EXPLICIT `false`
-// the user previously saved is preserved (only `undefined` gets
-// the new default), so opt-out users stay opted out across the
-// 0.7.x → 0.8.0 upgrade.
+// Fresh Mokina installations do not enable upstream product telemetry.
+// Preserve an explicit saved preference for compatibility with existing data.
 function applyTelemetryDefaults(prefs: AppConfigPrefs): AppConfigPrefs {
+  if (isMokinaLocalEdition()) {
+    return { ...prefs, telemetry: { metrics: false, content: false, artifactManifest: false } };
+  }
   if (prefs.telemetry === undefined) {
     return {
       ...prefs,
-      telemetry: { metrics: true, content: true },
+      telemetry: { metrics: false, content: false },
     };
   }
   return prefs;
@@ -915,7 +911,7 @@ async function doWrite(
     ? inferAgentCliEnvIntentForExplicitEnvWrite(next as AppConfigPrefs)
     : next as AppConfigPrefs;
   const normalizedNext = normalizeAgentCliEnvPrefs(nextWithInferredIntent);
-  const normalizedNextWithoutRetiredAgents = normalizeRetiredAgentPrefs(normalizedNext);
+  const normalizedNextWithoutRetiredAgents = applyTelemetryDefaults(normalizeRetiredAgentPrefs(normalizedNext));
   const file = configFile(dataDir);
   await mkdir(path.dirname(file), { recursive: true });
   const tmp = file + '.' + randomBytes(4).toString('hex') + '.tmp';
@@ -927,7 +923,7 @@ async function doWrite(
       && typeof normalizedNextWithoutRetiredAgents.installationId === 'string'
       && existing.installationId !== normalizedNextWithoutRetiredAgents.installationId
     ));
-  const metricsWereExplicitlyDisabled = isMetricsExplicitlyDisabled(partial.telemetry);
+  const metricsWereExplicitlyDisabled = isMokinaLocalEdition() || isMetricsExplicitlyDisabled(partial.telemetry);
   const shouldClearAttribution = installationIdWasExplicitlyReset || metricsWereExplicitlyDisabled;
   // Mirror the identity bits to the channel-root installation file so they
   // survive a namespace-scoped data-dir wipe. Only fires when the caller

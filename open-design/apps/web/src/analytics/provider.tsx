@@ -38,6 +38,7 @@ import {
   isFirstSession,
 } from './identity';
 import { randomUUID } from '../utils/uuid';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 
 interface AnalyticsContextValue {
   // The track helper accepts any event/props pair; per-event safety is
@@ -155,6 +156,7 @@ export async function resolveAppVersionForCapture(current: string): Promise<stri
 export function useAppVersion(): string {
   const [version, setVersion] = useState(APP_VERSION_PLACEHOLDER);
   useEffect(() => {
+    if (MOKINA_LOCAL_EDITION) return undefined;
     let cancelled = false;
     void (async () => {
       const next = await loadRuntimeAppVersion();
@@ -290,6 +292,7 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
 
   const track = useCallback<AnalyticsContextValue['track']>(
     (event, properties, options) => {
+      if (MOKINA_LOCAL_EDITION) return;
       const insertId = options?.insertId ?? randomUUID();
       const requestId = options?.requestId ?? null;
       // Attach request_id to the in-flight fetch wrapper too, so the daemon
@@ -322,6 +325,7 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
         }
       }
       void (async () => {
+        if (MOKINA_LOCAL_EDITION) return;
         const resolvedAppVersion = await resolveAppVersionForCapture(appVersion);
         const client = await getAnalyticsClient({
           anonymousId: identity.anonymousId,
@@ -350,6 +354,7 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
     () => ({
       track,
       setConsent: (granted: boolean) => {
+        if (MOKINA_LOCAL_EDITION) return;
         applyConsent(granted);
         if (!granted) {
           // Clear the header-injection state so the fetch wrapper effect

@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import type { OpenDesignDiscordPresenceResponse } from '@open-design/contracts';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 
 const API = '/api/community/discord';
 const LS_KEY = 'open-design:discord-presence';
@@ -83,6 +84,7 @@ export function useDiscordPresence(): CachedPresence | null {
   });
 
   useEffect(() => {
+    if (MOKINA_LOCAL_EDITION) return;
     const now = Date.now();
     const cached = memoryCache ?? readPersistedCache();
     if (cached && now - cached.ts < CACHE_TTL_MS) {

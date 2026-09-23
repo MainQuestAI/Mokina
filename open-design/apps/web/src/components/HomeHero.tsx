@@ -4120,6 +4120,8 @@ function ShortcutsMenu({
 // Scenario subtitle shown under the title on the illustrated card rail.
 function homeHeroChipDescription(chipId: string, t: ReturnType<typeof useT>): string {
   switch (chipId) {
+    case 'mokina-market-analysis': return '以资料和来源形成可核对的市场判断';
+    case 'mokina-marketing-plan': return '连接目标、受众、行动、预算和验证';
     case 'prototype': return t('homeHero.chip.prototypeDesc');
     case 'web-clone': return t('homeHero.chip.webCloneDesc');
     case 'wireframe': return t('homeHero.chip.wireframeDesc');

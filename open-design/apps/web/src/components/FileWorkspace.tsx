@@ -31,6 +31,7 @@ import { useDeckPreviewScale } from '../lib/use-deck-preview-scale';
 import { isMacPlatform } from '../utils/platform';
 import {
   deleteProjectFile,
+  fetchProjectMaterial,
   fetchProjectFileText,
   fetchProjectFolders,
   fetchPluginExampleHtml,
@@ -45,10 +46,12 @@ import {
   startDesignSystemTokenContractRebuildJob,
   updateDesignSystemDraft,
   type UploadProjectFilesResult,
+  type ProjectMaterialExtraction,
   uploadProjectFiles,
   writeProjectBase64File,
   writeProjectTextFile,
 } from '../providers/registry';
+import { createProject } from '../state/projects';
 import type { Dict } from '../i18n/types';
 import { STAGE_ATTACHMENT_EVENT, type StageAttachmentEventDetail } from './ChatComposer';
 import { setPendingDesignSystemCreateEntry } from '../analytics/ds-create-entry';
@@ -1309,6 +1312,95 @@ interface WorkspaceActionToast {
   role?: 'status' | 'alert';
   tone?: WorkspaceToastTone;
   ttlMs?: number;
+}
+
+const MOKINA_MATERIAL_EXTENSIONS = /\.(?:txt|md|csv|pdf|docx|xlsx|pptx)$/i;
+
+function MokinaMaterialPicker({ projectName, projectId, files }: {
+  projectName: string;
+  projectId: string;
+  files: ProjectFile[];
+}) {
+  const { workspaceContext } = useProjectCollabContext();
+  const candidates = useMemo(() => files.filter(file => MOKINA_MATERIAL_EXTENSIONS.test(file.name)), [files]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [brief, setBrief] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  if (candidates.length === 0) return null;
+
+  async function startWithSelectedMaterials() {
+    if (busy) return;
+    if (!selected.length) { setError('请至少选择一份资料。'); return; }
+    setBusy(true);
+    setError(null);
+    try {
+      const extracted = await Promise.all(selected.map(name => fetchProjectMaterial(projectId, name, workspaceContext)));
+      const materials: ProjectMaterialExtraction[] = [];
+      for (let index = 0; index < selected.length; index++) {
+        const result = extracted[index];
+        if (!result || 'error' in result) throw new Error(`${selected[index]}：${result && 'error' in result ? result.error : '资料读取失败'}`);
+        if (result.status === 'unreadable') throw new Error(`${selected[index]} 无可用文本；请检查原件或换用文本版本。`);
+        materials.push(result);
+      }
+      const snapshot = [
+        '# 本次选入资料的固定摘录',
+        '以下仅包含用户本次勾选的资料；位置指向当次提取的原件。未勾选资料不在此工作空间中。',
+        ...materials.map(material => [
+          `## ${material.name}`,
+          `提取状态：${material.status === 'partial' ? '部分读取' : '已读取'}`,
+          `内容摘要：${material.contentDigest}`,
+          ...material.limitations.map(value => `读取限制：${value}`),
+          ...material.sections.map(section => `### ${section.location}\n${section.text}`),
+        ].join('\n\n')),
+      ].join('\n\n');
+      if (snapshot.length > 32_000) throw new Error(`选入内容共 ${snapshot.length} 字，超过本次工作 32,000 字上限；请减少勾选的资料。`);
+      const prompt = [
+        brief.trim() || '请先基于本次选入资料讨论市场问题与可验证的营销方向；我明确要求交付时再生成成果。',
+        '本次只能依据下列固定摘录及我在此工作中提供的新信息。请标明资料位置、提取限制、事实与推断；不要读取原项目或未选资料。',
+        snapshot,
+      ].join('\n\n');
+      const created = await createProject({
+        name: `${projectName} · 资料分析`,
+        skillId: null,
+        designSystemId: null,
+        metadata: { kind: 'other', intent: 'marketing' },
+        pluginId: 'mokina-market-analysis',
+        pendingPrompt: prompt,
+        workspaceContext,
+      });
+      const saved = await writeProjectTextFile(created.project.id, 'MOKINA-MATERIALS.md', snapshot, undefined, workspaceContext);
+      if (!saved) throw new Error(`已创建项目 ${created.project.name}，但固定摘录保存失败。草稿仍保留选入内容，请先核对后再发送。`);
+      navigate({ kind: 'project', projectId: created.project.id, conversationId: created.conversationId, fileName: null });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '资料选入失败');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <details className="mokina-material-picker">
+      <summary>选入资料，开始独立市场分析</summary>
+      <p>新工作只保存勾选资料的固定文字摘录。未勾选文件不会复制到新项目；发送草稿前不会运行模型。</p>
+      <div className="mokina-material-picker__files">
+        {candidates.map(file => (
+          <label key={file.name}>
+            <input type="checkbox" checked={selected.includes(file.name)} disabled={busy}
+              onChange={event => setSelected(current => event.target.checked
+                ? [...current, file.name] : current.filter(name => name !== file.name))} />
+            <span>{file.name}</span>
+          </label>
+        ))}
+      </div>
+      <textarea value={brief} disabled={busy} onChange={event => setBrief(event.target.value)}
+        placeholder="本次要讨论的市场问题或目标（可选）" aria-label="本次市场问题或目标" />
+      {error ? <p role="alert">{error}</p> : null}
+      <button type="button" disabled={busy || !selected.length} onClick={() => void startWithSelectedMaterials()}>
+        {busy ? '正在提取资料…' : `用 ${selected.length} 份资料创建工作`}
+      </button>
+    </details>
+  );
 }
 
 export function FileWorkspace({
@@ -4264,6 +4356,9 @@ export function FileWorkspace({
           <Icon name="lock" size={14} />
           <span>{readonlyNotice}</span>
         </div>
+      ) : null}
+      {!viewerOnly && !designSystemProject && !initialMaterializationPending ? (
+        <MokinaMaterialPicker projectId={projectId} projectName={projectName || '市场工作'} files={files} />
       ) : null}
       <div className="ws-body">
         {/* Banner moved into DesignFilesPanel for the Design Files tab so

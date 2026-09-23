@@ -9,6 +9,9 @@ export default defineConfig({
     },
   },
   test: {
+    // Existing upstream component contracts remain exercised in their original
+    // mode; Mokina's default mode is checked through the running Web/desktop QA.
+    env: { NEXT_PUBLIC_MOKINA_EDITION: 'off' },
     environment: 'node',
     include: ['tests/**/*.test.{ts,tsx}'],
     // Keep this above the shared Testing Library asyncUtilTimeout so failed

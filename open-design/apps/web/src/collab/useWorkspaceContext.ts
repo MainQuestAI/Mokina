@@ -16,6 +16,7 @@ import {
   buildWorkspaceSeatSummary,
 } from '@open-design/contracts';
 import { coalescedGet, forceCoalescedGet } from '../lib/coalesced-get';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { BackoffController, type BackoffOptions } from '../lib/backoff';
 import {
   markProjectDisplaySnapshotsDirty,
@@ -711,6 +712,11 @@ export function useWorkspaceContext(): WorkspaceContextState {
       exactScopeOnly?: boolean;
     } = {},
   ) => {
+    if (MOKINA_LOCAL_EDITION) {
+      if (mountedRef.current) setState({ context: null, resourceReadIdentity: null,
+        loading: false, identityChangePending: false });
+      return;
+    }
     const requestEpoch = ++requestEpochRef.current;
     const requestGeneration = workspaceContextRequestToken;
     if (options.markLoading && mountedRef.current) {
@@ -1249,7 +1255,7 @@ export function useWorkspaceBillingResponse(
   const workspaceMemberId = context?.workspaceMemberId?.trim() ?? '';
   const hasExactWorkspaceScope = Boolean(context && workspaceId && workspaceMemberId);
   const billingScopeKey =
-    contextLoading || !hasExactWorkspaceScope
+    MOKINA_LOCAL_EDITION || contextLoading || !hasExactWorkspaceScope
       ? null
       : `workspace-billing:workspace:${workspaceId}:member:${workspaceMemberId}`;
   const billingUrl =

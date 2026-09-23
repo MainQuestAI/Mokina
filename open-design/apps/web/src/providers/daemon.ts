@@ -43,6 +43,7 @@ import type {
 } from '@open-design/contracts';
 import { OD_NEXT_AGENT_DECLARED_BLOCK_REASON } from '@open-design/contracts';
 import type { StreamHandlers } from './anthropic';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 
 /**
  * 取消来源的四个合法值。服务端说了才算,说不清就不认 —— UI 把 `user_stop`
@@ -1427,6 +1428,7 @@ export interface VelaLoginStatusRead {
 export function readVelaLoginStatus(
   options: { refresh?: boolean } = {},
 ): Promise<VelaLoginStatusRead> {
+  if (MOKINA_LOCAL_EDITION) return Promise.resolve({ ok: false, httpStatus: 503, body: null });
   const query = options.refresh ? '?refresh=1' : '';
   const url = `/api/integrations/vela/status${query}`;
   const accountGeneration = currentWorkspaceAccountGeneration();
@@ -1460,6 +1462,7 @@ export async function fetchVelaLoginStatus(options: { refresh?: boolean } = {}):
 }
 
 export async function fetchAmrWalletSnapshot(options: { refresh?: boolean } = {}): Promise<AmrWalletSnapshot | null> {
+  if (MOKINA_LOCAL_EDITION) return null;
   try {
     const query = options.refresh ? '?refresh=1' : '';
     const resp = await fetch(`/api/integrations/vela/wallet${query}`, { cache: 'no-store' });
@@ -1471,6 +1474,7 @@ export async function fetchAmrWalletSnapshot(options: { refresh?: boolean } = {}
 }
 
 export async function fetchAmrModels(): Promise<AmrModelsResponse | null> {
+  if (MOKINA_LOCAL_EDITION) return null;
   try {
     const resp = await fetch('/api/amr/models', { cache: 'no-store' });
     if (!resp.ok) return null;

@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    env: { MOKINA_LOCAL_EDITION: 'off' },
     environment: 'node',
     // These suites mutate process-wide env/PATH and bind real local servers.
     // Keep files serial so fake agent binaries stay scoped to their tests.

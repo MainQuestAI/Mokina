@@ -1,0 +1,26 @@
+{
+  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
+  "specVersion": "1.0.0",
+  "name": "mokina-marketing-plan",
+  "title": "可操作营销方案",
+  "version": "0.0.1",
+  "description": "把目标、受众、行动、预算、周期和验证连接成可执行方案。",
+  "license": "Apache-2.0",
+  "author": { "name": "Mokina" },
+  "tags": ["scenario", "marketing", "planning"],
+  "compat": { "agentSkills": [{ "path": "./SKILL.md" }] },
+  "od": {
+    "kind": "scenario",
+    "taskKind": "new-generation",
+    "scenario": "marketing-plan",
+    "mode": "scenario",
+    "context": { "skills": [{ "path": "./SKILL.md" }], "assets": ["./references/report-contract.md"] },
+    "pipeline": { "stages": [
+      { "id": "discovery", "atoms": ["discovery-question-form"] },
+      { "id": "generate", "atoms": ["file-write", "live-artifact"] }
+    ] },
+    "capabilities": ["prompt:inject", "fs:write"],
+    "useCase": { "query": { "en": "Build an actionable marketing plan from the provided goals and constraints. Discuss first if requested; create a self-contained HTML plan only when asked.", "zh-CN": "基于目标、资料与约束制定可操作营销方案。用户要求先讨论时不要生成文件；明确要求交付时生成自包含 HTML 方案。" }, "exampleOutputs": [] },
+    "inputs": []
+  }
+}

@@ -33,6 +33,8 @@ import type { IconName } from '../Icon';
 // independently of the default-binding mapping.
 export type ChipScenarioPluginId =
   | DefaultScenarioPluginId
+  | 'mokina-market-analysis'
+  | 'mokina-marketing-plan'
   | 'example-hyperframes'
   // Powered-preview scenarios: real-time GPU / off-main-thread artifacts that
   // render in the cross-origin-isolated "powered preview" iframe. Kept as
@@ -102,6 +104,32 @@ export interface HomeHeroChip {
 }
 
 export const HOME_HERO_CHIPS: ReadonlyArray<HomeHeroChip> = [
+  {
+    id: 'mokina-market-analysis',
+    label: '市场与竞品分析',
+    icon: 'bar-chart-box',
+    group: 'create',
+    description: '以资料和来源形成可核对的市场判断',
+    action: {
+      kind: 'apply-scenario',
+      pluginId: 'mokina-market-analysis',
+      projectKind: 'other',
+      projectMetadata: { kind: 'other', intent: 'marketing' },
+    },
+  },
+  {
+    id: 'mokina-marketing-plan',
+    label: '可操作营销方案',
+    icon: 'file-text',
+    group: 'create',
+    description: '连接目标、受众、行动、预算和验证',
+    action: {
+      kind: 'apply-scenario',
+      pluginId: 'mokina-marketing-plan',
+      projectKind: 'other',
+      projectMetadata: { kind: 'other', intent: 'marketing' },
+    },
+  },
   {
     id: 'create-brand-kit',
     // Inline English fallback only — the rendered label is localized through
@@ -381,12 +409,11 @@ export function chipsForGroup(group: ChipGroup): HomeHeroChip[] {
   return HOME_HERO_CHIPS.filter((c) => c.group === group);
 }
 
-// Fixed Home information architecture. Only these ten output types are
-// top-level choices. Action-only create entries (for example Create Design
-// System) are intentionally excluded. Prototype leads and Slide deck follows;
-// the media scenarios trail so at typical widths they live in the 更多
-// overflow popover rather than the visible pill row.
+// Mokina puts its two marketing workflows first and keeps all upstream output
+// types reachable through 更多. Action-only create entries stay excluded.
 export const CREATE_RAIL_ORDER = [
+  'mokina-market-analysis',
+  'mokina-marketing-plan',
   'prototype',
   'deck',
   'document',
@@ -399,13 +426,14 @@ export const CREATE_RAIL_ORDER = [
   'audio',
 ] as const;
 
-// The Home type row is an explicit product decision, not a width computation
-// (OPEND-3146, 2026-09-16): three entry types stay inline, and 更多 holds EVERY
-// other create type in this exact order, so no artifact kind loses its
-// discoverable entry to the fold. The two lists together cover
+// The Home type row is an explicit product decision: the marketing entries
+// stay inline, and 更多 holds EVERY other create type. The lists together cover
 // `CREATE_RAIL_ORDER`; `TypePillRow.more-order.test.tsx` pins both.
-export const HOME_TYPE_ROW_IDS: readonly string[] = ['prototype', 'deck', 'document'];
+export const HOME_TYPE_ROW_IDS: readonly string[] = ['mokina-market-analysis', 'mokina-marketing-plan'];
 export const HOME_TYPE_ROW_MORE_IDS: readonly string[] = [
+  'prototype',
+  'deck',
+  'document',
   'image',
   'hyperframes',
   'web-clone',
@@ -421,7 +449,9 @@ export const HOME_TYPE_ROW_MORE_IDS: readonly string[] = [
 // single tidy row. Website clone starts
 // from someone else's site rather than the user's design system, so it stays
 // off the design-system teaser too.
-const ONBOARDING_ARTIFACT_OMIT = new Set<string>(['web-clone', 'video', 'audio']);
+const ONBOARDING_ARTIFACT_OMIT = new Set<string>([
+  'mokina-market-analysis', 'mokina-marketing-plan', 'web-clone', 'video', 'audio',
+]);
 
 // The artifact chips shown on the onboarding "build a design system" step — a
 // curated single-row subset of the create rail. Derived from CREATE_RAIL_ORDER

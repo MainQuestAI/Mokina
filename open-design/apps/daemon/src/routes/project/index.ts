@@ -62,6 +62,7 @@ import { createProjectArtifactFile } from '../../artifacts/create.js';
 import { ArtifactPublicationBlockedError } from '../../artifacts/publication-guard.js';
 import { ArtifactRegressionError } from '../../artifacts/stub-guard.js';
 import {
+  adoptCandidateVersion,
   ensureCurrentProjectFileVersion,
   isProjectFileVersionPath,
   listProjectFileVersions,
@@ -70,6 +71,8 @@ import {
   renameProjectFileVersionStore,
   withProjectFileVersionLock,
 } from '../../project-file-versions.js';
+import { replaceHtmlSection } from '../../mokina/sections.js';
+import { readMokinaMaterial } from '../../mokina/materials.js';
 import {
   createUserDesignSystem,
   deleteUserDesignSystem,
@@ -7233,6 +7236,20 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
     }
   });
 
+  app.get('/api/projects/:id/files/:name/material', async (req, res) => {
+    try {
+      const project = getProject(db, req.params.id);
+      if (!project) return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
+      if (!await authorizeProjectRequest(req, res, project.id, { mode: 'read' })) return;
+      const file = await readProjectFile(PROJECTS_DIR, req.params.id, req.params.name, project.metadata);
+      res.json(await readMokinaMaterial(file.name, file.buffer));
+    } catch (error: any) {
+      const status = error?.code === 'ENOENT' ? 404 : 400;
+      sendApiError(res, status, status === 404 ? 'FILE_NOT_FOUND' : 'BAD_REQUEST',
+        error?.message || 'material extraction failed');
+    }
+  });
+
   app.get(/^\/api\/projects\/([^/]+)\/files\/(.+)\/versions$/u, async (req, res) => {
     try {
       const params = req.params as unknown as { 0?: string; 1?: string };
@@ -7306,6 +7323,74 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
         status === 404 ? 'FILE_NOT_FOUND' : 'BAD_REQUEST',
         String(err?.message || err),
       );
+    }
+  });
+
+  app.post(/^\/api\/projects\/([^/]+)\/files\/(.+)\/candidates$/u, async (req, res) => {
+    try {
+      const params = req.params as unknown as { 0?: string; 1?: string };
+      const projectId = String(params[0] ?? '');
+      const fileName = String(params[1] ?? '');
+      if (rejectInternalVersionPath(res, fileName)) return;
+      const project = getProject(db, projectId);
+      if (!project) return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
+      if (!await enforceWorkspaceProjectMutation(
+        req, res, sendApiError, getWorkspaceProject, getWorkspaceProjectByProjectId,
+        db, project.id, 'writeFiles',
+      )) return;
+      if (!/\.html?$/iu.test(fileName)) return sendApiError(res, 400, 'BAD_REQUEST', 'HTML file required');
+      const { baseVersionId, sectionId, replacementHtml, operationId, prompt } = req.body ?? {};
+      if (![baseVersionId, sectionId, replacementHtml, operationId].every((value) => typeof value === 'string' && value.length > 0)) {
+        return sendApiError(res, 400, 'BAD_REQUEST', 'base version, chapter, replacement and operation id are required');
+      }
+      const base = await readProjectFileVersion(PROJECTS_DIR, project.id, fileName, baseVersionId, project.metadata);
+      const candidate = replaceHtmlSection(base.content, sectionId, replacementHtml);
+      const version = await withProjectFileVersionLock(
+        PROJECTS_DIR, project.id, fileName, project.metadata,
+        (lock) => lock.createVersion(candidate, {
+          candidate: true,
+          baseVersionId,
+          operationId,
+          source: 'ai',
+          prompt: typeof prompt === 'string' ? prompt : null,
+          label: `候选：${sectionId}`,
+        }),
+      );
+      res.json({ version });
+    } catch (err: any) {
+      const code = String(err?.code ?? '');
+      sendApiError(res, code.startsWith('VERSION_') ? 409 : code === 'ENOENT' ? 404 : 400,
+        code.startsWith('VERSION_') ? 'CONFLICT' : 'BAD_REQUEST', String(err?.message || err));
+    }
+  });
+
+  app.post(/^\/api\/projects\/([^/]+)\/files\/(.+)\/versions\/([^/]+)\/adopt$/u, async (req, res) => {
+    try {
+      const params = req.params as unknown as { 0?: string; 1?: string; 2?: string };
+      const projectId = String(params[0] ?? '');
+      const fileName = String(params[1] ?? '');
+      const versionId = String(params[2] ?? '');
+      if (rejectInternalVersionPath(res, fileName)) return;
+      const project = getProject(db, projectId);
+      if (!project) return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
+      if (!await enforceWorkspaceProjectMutation(
+        req, res, sendApiError, getWorkspaceProject, getWorkspaceProjectByProjectId,
+        db, project.id, 'writeFiles',
+      )) return;
+      const { expectedCurrentVersionId, operationId } = req.body ?? {};
+      if (typeof expectedCurrentVersionId !== 'string' || typeof operationId !== 'string') {
+        return sendApiError(res, 400, 'BAD_REQUEST', 'compared current version and operation id required');
+      }
+      const target = await resolveProjectFilePath(PROJECTS_DIR, project.id, fileName, project.metadata);
+      const version = await adoptCandidateVersion(
+        PROJECTS_DIR, project.id, fileName, versionId,
+        expectedCurrentVersionId, operationId, target.filePath, project.metadata,
+      );
+      res.json({ version });
+    } catch (err: any) {
+      const code = String(err?.code ?? '');
+      sendApiError(res, code.startsWith('VERSION_') ? 409 : code === 'ENOENT' ? 404 : 400,
+        code.startsWith('VERSION_') ? 'CONFLICT' : 'BAD_REQUEST', String(err?.message || err));
     }
   });
 

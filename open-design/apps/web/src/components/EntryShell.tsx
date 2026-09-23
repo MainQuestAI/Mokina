@@ -110,6 +110,7 @@ import {
 } from './entry-rail-account-state';
 import { LibrarySection } from './LibrarySection';
 import { UpdaterPopup } from './UpdaterPopup';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { WhatsNewPopup } from './WhatsNewPopup';
 import { DeepSeekHarnessSetupDialog } from './DeepSeekHarnessSetupDialog';
 import type { HomeAmrBalanceGateBlock } from './HomeAmrBalanceGateDialogs';
@@ -735,7 +736,9 @@ export function EntryShell({
   workspaceContextRef.current = workspaceContext;
   const workspaceContextStateRef = useRef(workspaceContextState);
   workspaceContextStateRef.current = workspaceContextState;
-  const workspaceBillingResponse = useWorkspaceBillingResponse();
+  const workspaceBillingResponse = useWorkspaceBillingResponse(
+    MOKINA_LOCAL_EDITION ? { context: null, loading: true } : undefined,
+  );
   // Plan and money are both workspace-scoped questions, so both go through a
   // context-partitioned projection. `response.summary` on its own is an ACCOUNT
   // read (`workspaceId: null` by contract) — feeding it to the rail's plan
@@ -1732,7 +1735,7 @@ export function EntryShell({
   // to the rail footer in the signed-out shell. `EntryNavRail` decides which —
   // the shell only supplies the host, which renders nothing until the real
   // updater reports a downloaded, unopened installer.
-  const updaterSlot = (
+  const updaterSlot = MOKINA_LOCAL_EDITION ? null : (
     <UpdaterPopup
       allowSilentUpdates={config.allowSilentUpdates}
       silentUpdatePreferenceReady={daemonAppConfigReady}
@@ -1845,7 +1848,7 @@ export function EntryShell({
           }}
           onOpenSearch={() => setProjectSearchOpen(true)}
           open={railOpen}
-          topRightSlot={topRightCampaignAudience || (homeCampaignHostsVisible && amrLoggedIn === true) ? (
+          topRightSlot={!MOKINA_LOCAL_EDITION && (topRightCampaignAudience || (homeCampaignHostsVisible && amrLoggedIn === true)) ? (
             <>
               {topRightCampaignAudience ? (
                 <WorkbenchCampaignBadge
@@ -1868,9 +1871,9 @@ export function EntryShell({
               ) : null}
             </>
           ) : null}
-          context={railWorkspaceContext}
-          billing={workspaceBilling}
-          balanceUsd={workspaceBalanceUsd}
+          context={MOKINA_LOCAL_EDITION ? null : railWorkspaceContext}
+          billing={MOKINA_LOCAL_EDITION ? null : workspaceBilling}
+          balanceUsd={MOKINA_LOCAL_EDITION ? null : workspaceBalanceUsd}
           onOpenSettings={onOpenSettings}
           onInvite={() => changeView('members')}
           onSignInCloud={() => navigate({ kind: 'home', view: 'onboarding' })}
@@ -1880,7 +1883,7 @@ export function EntryShell({
           // Keep the account slot neutral until Cloud answers successfully;
           // only a successful null context (or known local sign-out) may show
           // the sign-in card.
-          footerNotice={accountFooterNotice}
+          footerNotice={MOKINA_LOCAL_EDITION ? null : accountFooterNotice}
           /* Same catalog and same opener the 全部项目 grid uses below, so the
              rail's 最近浏览过 list and that view's 最近浏览过 tab are two views of
              ONE list rather than two sorts of two lists. */
@@ -1918,7 +1921,7 @@ export function EntryShell({
               the workspace tabs bar (entryRailBridge), the updater popup host
               lives in the rail footer, and everything below is fixed-position
               or portalled so it occupies no layout space here. */}
-          <WhatsNewPopup active={view === 'home' && !goPlanSunsetMessagePending} />
+          {!MOKINA_LOCAL_EDITION ? <WhatsNewPopup active={view === 'home' && !goPlanSunsetMessagePending} /> : null}
           {/* The campaign badge lives in EntryNavRail's top-right cluster so it
               stays beside the account module across every entry tab. */}
           <div
@@ -2254,8 +2257,10 @@ function OnboardingView({
 }) {
   const t = useT();
   const analytics = useAnalytics();
-  const [step, setStep] = useState(0);
-  const [runtime, setRuntime] = useState<'amr' | 'local' | 'byok' | null>(null);
+  const [step, setStep] = useState(MOKINA_LOCAL_EDITION ? 2 : 0);
+  const [runtime, setRuntime] = useState<'amr' | 'local' | 'byok' | null>(
+    MOKINA_LOCAL_EDITION ? 'local' : null,
+  );
   const [runtimeSetupEntry, setRuntimeSetupEntry] = useState<'cloud' | 'chooser'>('chooser');
   const [modelSource, setModelSource] = useState<'amr' | 'local' | 'byok'>('amr');
   const modelSourceOptionRefs = useRef<
@@ -2796,7 +2801,10 @@ function OnboardingView({
 
   function selectDefaultCliAgent(availableAgents: AgentInfo[]): AgentInfo | null {
     const selectedAgent =
-      availableAgents.find((agent) => agent.id === config.agentId) ?? availableAgents[0] ?? null;
+      availableAgents.find((agent) => agent.id === config.agentId)
+      ?? (MOKINA_LOCAL_EDITION ? availableAgents.find((agent) => agent.id === 'codex') : null)
+      ?? availableAgents[0]
+      ?? null;
     if (!selectedAgent) return null;
     if (selectedAgent.id !== config.agentId) {
       onAgentChange(selectedAgent.id);
@@ -3954,14 +3962,14 @@ function OnboardingView({
       <div className="onboarding-view__body">
         <div className="onboarding-view__content">
           <div className="onboarding-view__panel">
-            <button
+            {!MOKINA_LOCAL_EDITION ? <button
               type="button"
               className="onboarding-view__back-to-cloud"
               onClick={handleBackWithTracking}
             >
               <Icon name="chevron-left" size={14} />
               <span>{t('settings.onboardingBack')}</span>
-            </button>
+            </button> : null}
             <OnboardingPanelHeader
               title={
                 runtime === 'byok'

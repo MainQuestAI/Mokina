@@ -72,6 +72,16 @@
   line-height: 1.65;
   white-space: pre-wrap;
 }
+.mokina-material-extraction {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+}
+.mokina-material-extraction summary { cursor: pointer; font-weight: 700; }
+.mokina-material-extraction p:first-of-type { margin-top: 14px; }
+.mokina-material-extraction strong { color: var(--text-muted); font-size: 12px; }
 .markdown-rendered {
   --markdown-code-bg: var(--code-body-bg);
   --markdown-code-bar: var(--code-header-bg);

@@ -28,6 +28,7 @@ import { formatDiscordPresenceCount, useDiscordPresence } from './useDiscordPres
 import { Icon } from './Icon';
 import { SocialShareGrid } from './SocialShareGrid';
 import { enterpriseUrl } from './enterpriseUrl';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 
 const DISCORD_URL = 'https://discord.gg/mHAjSMV6gz';
 const X_URL = 'https://x.com/OpenDesignHQ';
@@ -155,7 +156,7 @@ export function EntrySettingsMenu({
   }, [open, analytics.track, pageName]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || MOKINA_LOCAL_EDITION) return;
     let cancelled = false;
     setOpenDesignShare(null);
     void createSocialSharePayload(openDesignShareRequest)
@@ -275,6 +276,7 @@ export function EntrySettingsMenu({
             </div>
           </section>
 
+          {!MOKINA_LOCAL_EDITION ? <>
           <section className="entry-settings-menu__section">
             <div className="entry-settings-menu__section-title">
               <Icon name="external-link" size={14} />
@@ -488,6 +490,7 @@ export function EntrySettingsMenu({
             <span>{t('entry.followXiaohongshuLabel')}</span>
             <Icon name="external-link" size={12} className="entry-settings-menu__item-end" />
           </a>
+          </> : null}
 
           <div className="entry-settings-menu__divider" aria-hidden />
 

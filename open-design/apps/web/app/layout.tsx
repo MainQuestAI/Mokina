@@ -13,10 +13,10 @@ import '../src/components/HoverTouchpointOverlay.module.css';
 import '../src/components/ProductionCampaignBadge.module.css';
 
 export const metadata: Metadata = {
-  title: 'OpenDesign',
+  title: 'Mokina',
   icons: {
-    icon: '/app-icon.png',
-    apple: '/app-icon.png',
+    icon: '/mokina-icon.svg',
+    apple: '/mokina-icon.svg',
   },
 };
 

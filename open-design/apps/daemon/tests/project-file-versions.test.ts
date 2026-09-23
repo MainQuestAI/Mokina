@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  adoptCandidateVersion,
   createProjectFileVersion,
   ensureCurrentProjectFileVersion,
   getProjectFileVersionRootStats,
@@ -14,7 +15,7 @@ import {
   renameProjectFileVersionStore,
   resolveProjectFileVersionContentMatch,
 } from '../src/project-file-versions.js';
-import { ensureProject } from '../src/projects.js';
+import { ensureProject, projectDir } from '../src/projects.js';
 
 describe('project file versions', () => {
   async function withProject(fn: (projectsRoot: string, projectId: string) => Promise<void>) {
@@ -27,6 +28,38 @@ describe('project file versions', () => {
       await rm(projectsRoot, { recursive: true, force: true });
     }
   }
+
+  it('keeps candidates off current, rejects stale adoption, and recovers a committed adoption journal', async () => {
+    await withProject(async (projectsRoot, projectId) => {
+      const fileName = 'brand.html';
+      const workingPath = path.join(projectDir(projectsRoot, projectId), fileName);
+      const baseContent = '<section id="budget" data-mokina-id="budget">100</section>';
+      await writeFile(workingPath, baseContent);
+      const base = await createProjectFileVersion(projectsRoot, projectId, fileName, baseContent);
+      const candidate = await createProjectFileVersion(projectsRoot, projectId, fileName,
+        '<section id="budget" data-mokina-id="budget">200</section>',
+        { candidate: true, baseVersionId: base.id, operationId: 'candidate-one' });
+      expect(candidate).toMatchObject({ candidate: true, current: false, baseVersionId: base.id });
+      expect(await readFile(workingPath, 'utf8')).toBe(baseContent);
+      await expect(adoptCandidateVersion(projectsRoot, projectId, fileName, candidate.id,
+        'wrong-base', 'adopt-one', workingPath)).rejects.toMatchObject({ code: 'VERSION_STALE' });
+
+      const adopted = await adoptCandidateVersion(projectsRoot, projectId, fileName, candidate.id,
+        base.id, 'adopt-one', workingPath);
+      expect(adopted).toMatchObject({ current: true, adoptionOperationId: 'adopt-one' });
+      expect(await readFile(workingPath, 'utf8')).toContain('200');
+      const root = (await getProjectFileVersionRootStats(projectsRoot, projectId, fileName)).root;
+      const journalPath = path.join(root, 'candidate-adoption.json');
+      await writeFile(journalPath, JSON.stringify({ operationId: 'adopt-one', versionId: candidate.id,
+        expectedCurrentVersionId: base.id, targetFile: workingPath }));
+      const versions = await listProjectFileVersions(projectsRoot, projectId, fileName);
+      expect(versions.find((version) => version.id === candidate.id)).toMatchObject({ current: true });
+      expect((await getProjectFileVersionRootStats(projectsRoot, projectId, fileName)).entries)
+        .not.toContain('candidate-adoption.json');
+      expect((await adoptCandidateVersion(projectsRoot, projectId, fileName, candidate.id,
+        base.id, 'adopt-one', workingPath)).id).toBe(candidate.id);
+    });
+  });
 
   it('snapshots HTML content, dedupes unchanged current content, and marks the latest version current', async () => {
     await withProject(async (projectsRoot, projectId) => {

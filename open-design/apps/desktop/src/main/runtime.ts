@@ -1527,7 +1527,7 @@ export function createSplashWindow(): SplashWindowHandle {
     height: 900,
     resizable: false,
     show: true,
-    title: "OpenDesign",
+    title: "Mokina",
     width: 1280,
     webPreferences: {
       contextIsolation: true,
@@ -2244,7 +2244,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
 
   const consoleEntries: DesktopConsoleEntry[] = [];
   const petWindow = createDesktopPetWindow(preloadPath, options.osLocale);
-  const windowTitle = options.windowTitle ?? "OpenDesign";
+  const windowTitle = options.windowTitle ?? "Mokina";
   const window = new BrowserWindow({
     height: 900,
     icon: resolveDesktopIconPath(),

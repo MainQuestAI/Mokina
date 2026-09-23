@@ -797,37 +797,28 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
       if (!fileName) {
         return sendApiError(res, 400, 'BAD_REQUEST', 'fileName required');
       }
-      if (typeof body?.versionId === 'string' && body.versionId.trim()) {
-        return sendApiError(
-          res,
-          409,
-          'CONFLICT',
-          'standalone HTML cannot export a historical entry with current project dependencies',
-          { details: { kind: 'historical-dependency-snapshot-unavailable' } },
-        );
-      }
+      const versionId = normalizeExportVersionId(body?.versionId);
 
       const project = getProject(db, projectId);
       if (!project) {
         return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
       }
 
-      let ownerMeta;
-      try {
-        ownerMeta = await resolveProjectFilePath(
-          PROJECTS_DIR,
-          projectId,
-          fileName,
-          project.metadata,
-        );
-      } catch (error: any) {
-        const missing = error?.code === 'ENOENT';
-        return sendApiError(
-          res,
-          missing ? 404 : 400,
-          missing ? 'FILE_NOT_FOUND' : 'BAD_REQUEST',
-          missing ? `HTML entry not found: ${fileName}` : String(error?.message || error),
-        );
+      const historical = versionId
+        ? await readProjectFileVersion(PROJECTS_DIR, projectId, fileName, versionId, project.metadata)
+        : null;
+      let ownerMeta: { size: number; mime: string };
+      if (historical) {
+        ownerMeta = { size: Buffer.byteLength(historical.content), mime: historical.version.mime };
+      } else {
+        try {
+          ownerMeta = await resolveProjectFilePath(PROJECTS_DIR, projectId, fileName, project.metadata);
+        } catch (error: any) {
+          const missing = error?.code === 'ENOENT';
+          return sendApiError(res, missing ? 404 : 400,
+            missing ? 'FILE_NOT_FOUND' : 'BAD_REQUEST',
+            missing ? `HTML entry not found: ${fileName}` : String(error?.message || error));
+        }
       }
       if (ownerMeta.size > MAX_STANDALONE_ENTRY_BYTES) {
         return sendApiError(
@@ -847,22 +838,24 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
         );
       }
 
-      const ownerFile = await readProjectFile(
-        PROJECTS_DIR,
-        projectId,
-        fileName,
-        project.metadata,
-      );
-      const exportSource = await resolveHtmlExportSource({
-        projectId,
-        projectsRoot: PROJECTS_DIR,
-        relPath: fileName,
-        html: ownerFile.buffer.toString('utf8'),
-        metadata: project.metadata,
-        readProjectFile,
-        resolveProjectFilePath,
-      });
+      // A historical snapshot may only use its own bytes. Reading a local
+      // dependency from the current project would silently mix versions.
+      const exportSource = historical
+        ? { relPath: fileName, html: historical.content }
+        : await (async () => {
+            const ownerFile = await readProjectFile(PROJECTS_DIR, projectId, fileName, project.metadata);
+            return resolveHtmlExportSource({
+              projectId,
+              projectsRoot: PROJECTS_DIR,
+              relPath: fileName,
+              html: ownerFile.buffer.toString('utf8'),
+              metadata: project.metadata,
+              readProjectFile,
+              resolveProjectFilePath,
+            });
+          })();
       const assetReader: StandaloneAssetReader = async (projectPath) => {
+        if (historical) return null;
         let meta;
         try {
           meta = await resolveProjectFilePath(
@@ -894,6 +887,10 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
         html: exportSource.html,
         readAsset: assetReader,
       });
+      if (historical && bundled.externalDependencies.length > 0) {
+        return sendApiError(res, 422, 'VALIDATION_FAILED',
+          'historical HTML still needs external resources and cannot be delivered offline');
+      }
 
       const titleBase = typeof body?.title === 'string' && body.title.trim()
         ? body.title.trim()
@@ -929,6 +926,9 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
         const code = status === 422 ? 'VALIDATION_FAILED' : 'BAD_REQUEST';
         return sendApiError(res, status, code, standaloneError.message, { details });
       }
+      if (error?.code === 'ENOENT') {
+        return sendApiError(res, 404, 'VERSION_NOT_FOUND', String(error?.message || error));
+      }
       return sendApiError(res, 400, 'BAD_REQUEST', String(error?.message || error));
     }
   }
@@ -956,6 +956,22 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
       const metadata = project?.metadata ?? null;
       const versionId = normalizeExportVersionId(body?.versionId);
       const sourceHtml = await readExportVersionSource(projectId, fileName, versionId, metadata);
+      if (versionId && sourceHtml !== undefined) {
+        try {
+          const frozenOnly = await bundleStandaloneHtml({
+            entryPath: fileName,
+            html: sourceHtml,
+            readAsset: async () => null,
+          });
+          if (frozenOnly.externalDependencies.length > 0) {
+            return sendApiError(res, 422, 'VALIDATION_FAILED',
+              'historical HTML has resources outside this version');
+          }
+        } catch (error: any) {
+          return sendApiError(res, 422, 'VALIDATION_FAILED',
+            error?.message || 'historical resources are unavailable');
+        }
+      }
       if (format === 'image' && imageFormat != null && imageFormat !== 'png' && imageFormat !== 'jpeg') {
         return sendApiError(res, 400, 'BAD_REQUEST', 'imageFormat must be png or jpeg');
       }
@@ -1726,19 +1742,32 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
         };
       };
 
-      const exportSource = await resolveHtmlExportSource({
-        projectId: req.params.id,
-        projectsRoot: PROJECTS_DIR,
-        relPath,
-        html: ownerHtml,
-        metadata: project?.metadata,
-        readProjectFile,
-        resolveProjectFilePath,
-      });
+      if (versionId) {
+        const frozenOnly = await bundleStandaloneHtml({
+          entryPath: relPath,
+          html: ownerHtml,
+          readAsset: async () => null,
+        });
+        if (frozenOnly.externalDependencies.length > 0) {
+          return sendApiError(res, 422, 'VALIDATION_FAILED',
+            'historical HTML has resources outside this version; export a self-contained version instead');
+        }
+      }
+      const exportSource = versionId
+        ? { relPath, html: ownerHtml }
+        : await resolveHtmlExportSource({
+            projectId: req.params.id,
+            projectsRoot: PROJECTS_DIR,
+            relPath,
+            html: ownerHtml,
+            metadata: project?.metadata,
+            readProjectFile,
+            resolveProjectFilePath,
+          });
       const rendered = await inlineRelativeAssets(
         exportSource.html,
         exportSource.relPath,
-        fileReader,
+        versionId ? async () => null : fileReader,
       );
       // PR #1312 round-2 (lefarcen P2): top-level browser navigation to
       // this URL sends no Origin header, so the /api middleware lets it

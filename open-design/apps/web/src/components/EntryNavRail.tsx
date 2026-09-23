@@ -64,6 +64,7 @@ import { SignOutConfirmDialog } from './SignOutConfirmDialog';
 import { notifyAmrLoginStatusChanged } from './amrLoginPolling';
 import { Icon } from './Icon';
 import { GITHUB_STARS_FALLBACK_LABEL, formatStars, useGithubStars } from './useGithubStars';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { PlanWordmark, planBadgeTierForWorkspace } from './PlanWordmark';
 import { MarqueeLabel } from './MarqueeLabel';
 import { RemixIcon } from './RemixIcon';
@@ -1350,7 +1351,7 @@ export function EntryTopRightCluster({
           {/* GitHub star chip: its own option in the cluster, right after the
               campaign badge (per product) — it used to live in the account
               menu's social row. */}
-          {clusterVisible ? (
+          {clusterVisible && !MOKINA_LOCAL_EDITION ? (
             <a
               className="entry-top-right-github"
               href={REPO_URL}
@@ -1524,7 +1525,7 @@ export function EntryTopRightCluster({
       {accountInRail
         ? createPortal(
             <div className="entry-nav-rail__account-dock">
-              <RailSocialRow page={page} dimensions={workspaceDimensions} />
+              {!MOKINA_LOCAL_EDITION ? <RailSocialRow page={page} dimensions={workspaceDimensions} /> : null}
               <div
                 ref={accountContainerRef}
                 className={`entry-nav-rail__account${accountOpen ? ' is-menu-open' : ''}`}
@@ -1732,7 +1733,7 @@ export function EntryTopRightCluster({
           it. Signed-out shells have no account module — `EntryNavRail` mounts
           its own MessageCenter for that branch, so this one is context-gated
           to keep exactly one instance (and one unread poller) alive. */}
-      {context ? (
+      {!MOKINA_LOCAL_EDITION && context ? (
         <MessageCenter
           hideTrigger
           returnFocusRef={messageCenterBellRef}
@@ -1787,8 +1788,8 @@ export function WorkspaceTopRightAccountCluster({
     ? workspaceContextLoading === true
     : ambient.loading;
   const billingResponse = useWorkspaceBillingResponse({
-    context,
-    loading: contextLoading,
+    context: MOKINA_LOCAL_EDITION ? null : context,
+    loading: MOKINA_LOCAL_EDITION || contextLoading,
   });
   // Plan and money are both workspace-scoped questions, so both go through a
   // context-partitioned projection — `response.summary` on its own is an
@@ -1813,6 +1814,7 @@ export function WorkspaceTopRightAccountCluster({
     deepSeekCampaignAudience === 'unknown'
       ? null
       : deepSeekCampaignAudience;
+  if (MOKINA_LOCAL_EDITION) return null;
   return (
     <EntryTopRightCluster
       page="project"
@@ -2625,7 +2627,7 @@ export function EntryNavRail({
             className="entry-nav-rail__account-dock entry-nav-rail__account-dock--local"
             data-testid="entry-nav-local-account-dock"
           >
-            <RailSocialRow page={analyticsPage} dimensions={workspaceDimensions} />
+            {!MOKINA_LOCAL_EDITION ? <RailSocialRow page={analyticsPage} dimensions={workspaceDimensions} /> : null}
             <div className="entry-nav-rail__account">
               <button
                 type="button"
@@ -2648,9 +2650,9 @@ export function EntryNavRail({
                 >
                   <Icon name="terminal" size={14} />
                 </span>
-                <span className="entry-nav-rail__account-name">{t('entry.localAccountName')}</span>
+                <span className="entry-nav-rail__account-name">{MOKINA_LOCAL_EDITION ? 'Mokina' : t('entry.localAccountName')}</span>
               </button>
-              <button
+              {!MOKINA_LOCAL_EDITION ? <button
                 type="button"
                 ref={messageCenterRailRef}
                 className="entry-nav-rail__account-bell"
@@ -2672,7 +2674,7 @@ export function EntryNavRail({
                 {messageUnreadCount > 0 ? (
                   <span className="entry-nav-rail__menu-item-dot" aria-hidden />
                 ) : null}
-              </button>
+              </button> : null}
             </div>
           </div>
         </div>
@@ -2683,7 +2685,7 @@ export function EntryNavRail({
           bell above is its opener). Signed-in mounts move into
           `EntryTopRightCluster` — context-gating both sides is what keeps
           exactly one panel (and one unread poller) alive. */}
-      {context ? null : (
+      {MOKINA_LOCAL_EDITION || context ? null : (
         <MessageCenter
           hideTrigger
           returnFocusRef={messageCenterRailRef}

@@ -150,6 +150,7 @@ import type { Recommendation } from '../onboarding/recommendation';
 import type { OnboardingEntry } from '../onboarding/onboarding-entry';
 import { AnimatePresence } from 'motion/react';
 import { DeepSeekV4FlashCampaign } from './DeepSeekV4FlashCampaign';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import type { DeepSeekV4FlashCampaignAudience } from '../campaigns/deepseek-v4-flash';
 
 export interface ActivePlugin {
@@ -831,7 +832,7 @@ export function HomeView({
   const [elevenLabsVoicesLoading, setElevenLabsVoicesLoading] = useState(false);
   // Live AIHubMix image catalogue merged into the home media composer's model
   // picker (replaces the static aihubmix seeds when the fetch resolves).
-  const aihubmixImageModels = useAIHubMixImageModels();
+  const aihubmixImageModels = useAIHubMixImageModels(!MOKINA_LOCAL_EDITION || active?.mediaSurface === 'image');
   const composerImageModels = useMemo(
     () => mergeAihubmixImageModels(IMAGE_MODELS, aihubmixImageModels),
     [aihubmixImageModels],
@@ -1957,7 +1958,7 @@ export function HomeView({
     }
     if (pluginsLoading || pendingChipRestore) return;
     setDefaultTypeSettled(true);
-    const chip = findChip('prototype');
+    const chip = findChip(MOKINA_LOCAL_EDITION ? 'mokina-market-analysis' : 'prototype');
     if (chip?.action.kind !== 'apply-scenario') return;
     const action = chip.action;
     const record = plugins.find((plugin) => plugin.id === action.pluginId);
@@ -3109,7 +3110,7 @@ export function HomeView({
           document.body portal ignores. A docked composer never runs it at all —
           it is a Home-page moment, and a second copy of the modal would fight
           the page one over the same dismissal state. */}
-      {variant === 'dock' ? null : (
+      {variant === 'dock' || MOKINA_LOCAL_EDITION ? null : (
         <DeepSeekV4FlashCampaign
           audience={deepSeekV4FlashCampaignAudience}
           active={isActive}

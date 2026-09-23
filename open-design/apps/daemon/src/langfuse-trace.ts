@@ -18,6 +18,7 @@ import type { EvalContextV2 } from './observability/eval-context.js';
 // See: specs/change/20260507-langfuse-telemetry/spec.md
 
 import { createHash, randomUUID } from 'node:crypto';
+import { isMokinaLocalEdition } from './mokina/edition.js';
 
 import {
   SAFE_RUN_QUALITY_V1_SCHEMA,
@@ -462,6 +463,7 @@ export function readLangfuseConfig(
 export function readTelemetrySinkConfig(
   env: NodeJS.ProcessEnv = process.env,
 ): TelemetrySinkConfig | null {
+  if (isMokinaLocalEdition()) return null;
   const relayUrl = env.OPEN_DESIGN_TELEMETRY_RELAY_URL?.trim();
   if (relayUrl) {
     return {
@@ -509,6 +511,7 @@ export function readRunTelemetrySinkConfig(
   env: NodeJS.ProcessEnv = process.env,
   configuredEnv: Record<string, string> = {},
 ): RunTelemetrySinkConfig | null {
+  if (isMokinaLocalEdition()) return null;
   if (isVelaTelemetryEnabled(env)) {
     const context = readVelaControlApiContext(env, configuredEnv);
     const controlKey = context?.controlKey?.trim() ?? '';

@@ -72,6 +72,7 @@ import { ExperienceSurvey } from './components/ExperienceSurvey';
 import { TooltipLayer } from './components/TooltipLayer';
 import { UpdateDialog } from './components/UpdateDialog';
 import { UpdaterPopup } from './components/UpdaterPopup';
+import { MOKINA_LOCAL_EDITION } from './mokina-edition';
 import {
   openWorkspaceTab,
   removeWorkspaceProjectTabs,
@@ -5663,7 +5664,7 @@ function AppInner() {
         onCompleteOnboarding={handleCompleteOnboarding}
         onSignedOut={handleActiveCloudSignOut}
         onAmrLoginStatusChange={handleAmrLoginStatusChange}
-        artifactUpgradeSlot={
+        artifactUpgradeSlot={MOKINA_LOCAL_EDITION ? undefined :
           amrArtifactUpgradeHomeOffer ? (
             <AmrArtifactUpgradeHomeCard
               key={amrArtifactUpgradeHomeOffer.sessionKey}
@@ -5734,7 +5735,7 @@ function AppInner() {
           <WorkspaceTopRightAccountCluster
             onOpenSettings={openSettings}
             onSignedOut={handleActiveCloudSignOut}
-            updaterSlot={
+            updaterSlot={MOKINA_LOCAL_EDITION ? undefined :
               <UpdaterPopup
                 allowSilentUpdates={config.allowSilentUpdates}
                 silentUpdatePreferenceReady={daemonAppConfigReady}
@@ -5783,7 +5784,7 @@ function AppInner() {
           (`opend.home.*`), so the home view is where they belong: not over a
           project workbench, not over another entry tab, and — since account
           restoration can finish while login is still up — not over onboarding. */}
-      {route.kind === 'home' && route.view === 'home' && (
+      {!MOKINA_LOCAL_EDITION && route.kind === 'home' && route.view === 'home' && (
         <>
           <TestCampaignModal
             authenticated={isAmrSessionAuthenticated(amrLoginStatus)}
@@ -5796,16 +5797,16 @@ function AppInner() {
         </>
       )}
       <TooltipLayer />
-      <UpdateDialog />
+      {!MOKINA_LOCAL_EDITION ? <UpdateDialog /> : null}
       {/* Mounted at shell level, outside the route views, so a survey armed by
           an export inside a project stays on screen when the user navigates
           back to home. */}
-      <ExperienceSurvey
+      {!MOKINA_LOCAL_EDITION ? <ExperienceSurvey
         metricsConsent={config.telemetry?.metrics === true}
         onExposure={() => trackExperienceSurveyShown(analytics.track)}
         onDismiss={() => trackExperienceSurveyDismissed(analytics.track)}
         onSubmit={(answers) => trackExperienceSurveySent(analytics.track, answers)}
-      />
+      /> : null}
       <AmrArtifactUpgradeGate
         cloudModelSelected={config.mode === 'daemon' && config.agentId === 'amr'}
         homeVisible={route.kind === 'home' && route.view === 'home'}

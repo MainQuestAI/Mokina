@@ -6,6 +6,7 @@ export interface ExportCliRequestOptions {
   deck?: boolean;
   imageFormat?: ExportImageFormat;
   title?: string;
+  versionId?: string;
 }
 
 export interface ExportCliDeckModeOptions {
@@ -42,6 +43,7 @@ export function buildExportCliRequestBody(options: ExportCliRequestOptions): Rec
     ...(deck !== undefined ? { deck } : {}),
     ...(options.format === "image" && options.imageFormat ? { imageFormat: options.imageFormat } : {}),
     ...(options.title ? { title: options.title } : {}),
+    ...(options.versionId ? { versionId: options.versionId } : {}),
   };
 }
 

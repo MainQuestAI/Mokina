@@ -250,7 +250,8 @@ const PROJECT_STRING_FLAGS = new Set([
   'client-request-id',
   'agent', 'model', 'service-tier', 'snapshot-id', 'inputs', 'grant-caps', 'editor',
   'title', 'label', 'against', 'seed-from', 'fork-after', 'mode',
-  'source', 'out',
+  'source', 'out', 'base-version-id', 'section-id', 'replacement-file',
+  'operation-id', 'expected-current-version-id',
 ]);
 const PROJECT_RESOURCE_STRING_FLAGS = new Set([
   ...PROJECT_STRING_FLAGS,
@@ -567,7 +568,7 @@ async function runAgent(args) {
 }
 
 const EXPORT_STRING_FLAGS = new Set([
-  'daemon-url', 'project', 'format', 'out', 'output', 'image-format', 'title', 'file',
+  'daemon-url', 'project', 'format', 'out', 'output', 'image-format', 'title', 'file', 'version-id',
   // Backwards-compatible no-ops. Older scripts may still pass these, but
   // export authority is derived from the project id by the daemon.
   'workspace', 'workspace-member',
@@ -594,6 +595,7 @@ Options:
   --deck                   Treat the artifact as a multi-slide deck
   --page, --no-deck        Treat the artifact as a normal scrollable page
   --title <title>          Title used for metadata / default filename
+  --version-id <id>        Export this saved version, including frozen resources
   --json                   Print a machine-readable result envelope
   --daemon-url <url>       Override daemon URL
 
@@ -665,6 +667,7 @@ async function runExport(args) {
     deck: deckMode,
     ...(format === 'image' && flags['image-format'] ? { imageFormat: flags['image-format'] } : {}),
     ...(flags.title ? { title: flags.title } : {}),
+    ...(flags['version-id'] ? { versionId: flags['version-id'] } : {}),
   });
   let resp;
   try {
@@ -8334,6 +8337,11 @@ async function runFiles(args) {
                                                Save the current HTML as a version.
   od files version-restore <projectId> <relpath> <versionId>
                                                Restore a saved HTML as a new current version.
+  od files material <projectId> <relpath>      Extract positioned text and limitations.
+  od files candidate-create <projectId> <relpath>
+                                               Save a chapter replacement without adopting it.
+  od files candidate-adopt <projectId> <relpath> <candidateId>
+                                               Adopt a candidate against the expected current version.
 
 Common options:
   --daemon-url <url>   OpenDesign daemon HTTP base.
@@ -8343,6 +8351,11 @@ Common options:
   --prompt-file <path|->  Read a version prompt from file/stdin where supported.
   --source <ai|manual|restore>
                        Version provenance where supported.
+  --base-version-id <id> --section-id <id> --replacement-file <path|->
+                       Required for candidate-create.
+  --expected-current-version-id <id>
+                       Required for candidate-adopt.
+  --operation-id <id>   Stable idempotency key for candidate operations.
   --json               Emit raw JSON.`);
     process.exit(args.length === 0 ? 2 : 0);
   }
@@ -8523,6 +8536,83 @@ Common options:
       const data = await resp.json();
       if (flags.json) return process.stdout.write(JSON.stringify(data, null, 2) + '\n');
       process.stdout.write(String(data?.content ?? ''));
+      return;
+    }
+    case 'material': {
+      const [id, rel] = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
+      if (!id || !rel) {
+        console.error('Usage: od files material <projectId> <relpath> [--json]');
+        process.exit(2);
+      }
+      const resp = await fetch(
+        `${base}/api/projects/${encodeURIComponent(id)}/files/${encodeProjectRelpath(rel)}/material`,
+        { headers: workspaceHeaders },
+      );
+      if (!resp.ok) return structuredHttpFailure(resp, 'project-not-found');
+      const data = await resp.json();
+      if (flags.json) return process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+      console.log(`${data?.name ?? rel}\t${data?.status ?? 'unknown'}`);
+      for (const section of Array.isArray(data?.sections) ? data.sections : []) {
+        console.log(`${section.location}\t${section.text}`);
+      }
+      for (const limitation of Array.isArray(data?.limitations) ? data.limitations : []) {
+        console.error(`[files] ${limitation}`);
+      }
+      return;
+    }
+    case 'candidate-create': {
+      const [id, rel] = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
+      const baseVersionId = flags['base-version-id'];
+      const sectionId = flags['section-id'];
+      const replacementFile = flags['replacement-file'];
+      const operationId = flags['operation-id'];
+      if (!id || !rel || !baseVersionId || !sectionId || !replacementFile || !operationId) {
+        console.error('Usage: od files candidate-create <projectId> <relpath> --base-version-id <id> --section-id <id> --replacement-file <path|-> --operation-id <id> [--prompt-file <path|->] [--json]');
+        process.exit(2);
+      }
+      if (replacementFile === '-' && flags['prompt-file'] === '-') {
+        console.error('replacement and prompt cannot both read stdin');
+        process.exit(2);
+      }
+      const replacementHtml = replacementFile === '-'
+        ? await readStdinUtf8()
+        : readFileSync(replacementFile, 'utf8');
+      const prompt = await readPromptFromFlags(flags);
+      const resp = await fetch(
+        `${base}/api/projects/${encodeURIComponent(id)}/files/${encodeProjectRelpath(rel)}/candidates`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', ...workspaceHeaders },
+          body: JSON.stringify({ baseVersionId, sectionId, replacementHtml, operationId,
+            ...(prompt !== null ? { prompt } : {}) }),
+        },
+      );
+      if (!resp.ok) return structuredHttpFailure(resp, 'project-not-found');
+      const data = await resp.json();
+      if (flags.json) return process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+      console.log(`[files] candidate v${data?.version?.version ?? '-'} ${data?.version?.id ?? '-'}`);
+      return;
+    }
+    case 'candidate-adopt': {
+      const [id, rel, candidateId] = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
+      const expectedCurrentVersionId = flags['expected-current-version-id'];
+      const operationId = flags['operation-id'];
+      if (!id || !rel || !candidateId || !expectedCurrentVersionId || !operationId) {
+        console.error('Usage: od files candidate-adopt <projectId> <relpath> <candidateId> --expected-current-version-id <id> --operation-id <id> [--json]');
+        process.exit(2);
+      }
+      const resp = await fetch(
+        `${base}/api/projects/${encodeURIComponent(id)}/files/${encodeProjectRelpath(rel)}/versions/${encodeURIComponent(candidateId)}/adopt`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', ...workspaceHeaders },
+          body: JSON.stringify({ expectedCurrentVersionId, operationId }),
+        },
+      );
+      if (!resp.ok) return structuredHttpFailure(resp, 'project-not-found');
+      const data = await resp.json();
+      if (flags.json) return process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+      console.log(`[files] adopted v${data?.version?.version ?? '-'} ${data?.version?.id ?? '-'}`);
       return;
     }
     case 'version-create': {

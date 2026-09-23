@@ -55,6 +55,12 @@ describe('buildExportCliResultEnvelope', () => {
 });
 
 describe('buildExportCliRequestBody', () => {
+  it('pins historical export to the requested version', () => {
+    expect(buildExportCliRequestBody({ fileName: 'report.html', format: 'html', versionId: 'v-old' })).toEqual({
+      fileName: 'report.html',
+      versionId: 'v-old',
+    });
+  });
   it('omits deck for pdf/image when --deck is not provided so the daemon can detect decks', () => {
     expect(buildExportCliRequestBody({ fileName: 'deck.html', format: 'pdf' })).toEqual({
       fileName: 'deck.html',

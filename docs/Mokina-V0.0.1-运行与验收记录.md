@@ -7,6 +7,7 @@
 - 完整 OpenDesign 源码固定在 upstream commit `ac6115406f3f780ef5c624a9aad1a87cbbad882a`，以 Git subtree 导入 `open-design/`；保留其 Apache-2.0 许可证、锁文件、分层 `AGENTS.md` 与原有能力。
 - macOS 本地使用 Node.js `24.15.0`、Corepack pnpm `10.33.2`。在 `open-design/` 执行 `corepack pnpm install --frozen-lockfile`。需要以独立数据目录运行时执行 `OD_DATA_DIR=/absolute/path/to/empty-data corepack pnpm tools-dev run web --namespace mokina-v001 --daemon-port 18583 --web-port 18584 --no-env-file`。端口可按需改动，数据根不能指向现有用户数据。
 - 当前实现有两个官方营销场景包：`mokina-market-analysis` 和 `mokina-marketing-plan`。首页显式选择后，原生项目记录 `scenarioBinding`，继续运行使用该快照。保留“更多”中的上游入口。
+- 原生 `od` CLI 与新增 API 对应：`od files material <projectId> <relpath> --json` 读取资料；`od files candidate-create ... --base-version-id ... --section-id ... --replacement-file ... --operation-id ...` 创建候选，`od files candidate-adopt ... --expected-current-version-id ... --operation-id ...` 采用；`od export <file> --project <id> --format html|pdf --version-id <id>` 导出固定版本。长修改要求可用 `--prompt-file <path|->`，候选替换可用 `--replacement-file <path|->`。
 
 ## 本次已验证
 
@@ -33,11 +34,13 @@
 | 干净目录安装与启动 | 从提交 `28646da` 的 `open-design/` 导出新目录，使用全新 `/tmp/mokina-v001-clean-store` 从网络下载 1131 个锁定依赖包，`pnpm install --frozen-lockfile` 完成；全新数据根启动 Web/daemon，首页 HTTP 200 且标题 Mokina，插件列表含两个营销场景，遥测接口 `enabled=false` | 临时 `/tmp/mokina-v001-clean-check` 运行检查；仅覆盖安装和启动，未在该临时目录再次运行 Codex 主链 |
 | 历史 PDF 边界 | 指定 v1/v2 的 PDF API 各返回真实 PDF；渲染图分别显示“线上”/“线下体验”。未冻结的本地图片依赖在历史 HTML 和 PDF 导出均报 422，未混用当前图片 | PDF 下载字节与逐页图像目视检查、错误响应 |
 | 历史本地图片冻结 | 新保存的 `freeze-demo.html` v1/v2 分别内嵌当时的红色/蓝色 PNG；更新原图片后，指定版本 HTML 出口的解码像素仍是红/蓝。`/export/pdf-image` 两次返回真实 PDF，逐页栅格检查 v1 只有红色像素、v2 只有蓝色像素；历史预览优先使用冻结 HTML | 版本库测试、原生 HTML/PDF API 和栅格像素检查。桌面 `/export/pdf` 会打开系统保存对话框，需要用户选择路径，不作为无人值守 API 判据 |
+| CLI 与 API 对应 | `od files material` 实读 CSV 的行号；`od export --version-id` 导出旧版红色图片；`od files candidate-create` 在当前稿保留“原渠道”的同时保存非 current 候选，`candidate-adopt` 后当前稿变成“CLI 新渠道” | 原生 `od` 命令与源文件读回；候选 `42724fed-6580-4539-bc9d-883f4cf3adfa` |
 
 ## 尚未通过的完成条件
 
 - 长资料的章节级选择、模型工具读取记录。当前选入路径把固定摘录写入请求，但模型进程所在机器仍可能通过额外工具访问其他可读目录，尚无系统级目录沙箱。联网研究的搜索摘要链路已实测；来源全文读取与在实际营销报告中的引用尚未验收。
 - 同类分析或方案在 A/B 两组输入下的实质差异与专业质量检查；AI 章节修订的真实候选/采用已通过，运行中浏览器退出、迟到输出和失败恢复仍需验收。
+- 同场景 A/B 复核曾启动分析场景运行 `b26b1b15-7c62-4510-b226-02ca6d3e5d6e`，工具实际读取了 `brand-a.md` 的 399 元、100 万元、8 周及禁投短视频；随后数分钟没有新模型事件或 `analysis-a.html`，已主动取消，终态 `canceled`。因此不能把已有的 B 组分析与另一任务的 A 组方案当作同场景输入敏感性验收。
 - 选择性接续在原项目修改/删除后的对照，以及对所有可用 Agent 的目录隔离验收。
 - 旧版存量成果的图片资源此前未冻结，仍按 422 拒绝；远程资源无法冻结。长成果的浏览器交互与 PDF 排版、桌面取消/切换/进程重启恢复尚未完整验收。干净目录的安装和启动已通过，完整主链仍由原独立数据根验证。
 - 本地版默认界面与运行时已关闭上游促销、账单、更新和遥测；仍未对每一条设置页、媒体提供商及所有可选上游入口做完整网络审计。用户主动进入保留的上游能力仍可能发起对应请求，不将默认路径证据扩大为全产品承诺。

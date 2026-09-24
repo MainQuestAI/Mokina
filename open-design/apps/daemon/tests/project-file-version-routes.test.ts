@@ -476,6 +476,20 @@ describe('project file version routes', () => {
     expect(await rawResponse.text()).toBe('<html><body>uploaded</body></html>');
   });
 
+  it('does not report a version warning when the HTML write itself fails', async () => {
+    const projectId = await createProject();
+    await fs.mkdir(path.join(projectsRoot(), projectId, 'brand.html'), { recursive: true });
+
+    const response = await fetch(`${baseUrl}/api/projects/${projectId}/files`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'brand.html', content: '<html><body>unsaved</body></html>' }),
+    });
+    expect(response.status).toBe(500);
+    const body = await response.json() as { versionWarning?: { code: string } };
+    expect(body.versionWarning).toBeUndefined();
+  });
+
   it('returns a typed warning when restore writes the file but cannot append the restore version', async () => {
     const projectId = await createProject();
     await writeProjectFile(projectId, 'brand.html', '<html><body>old</body></html>');

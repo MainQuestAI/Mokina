@@ -1362,6 +1362,7 @@ body:has(.artifact-version-panel) .ws-tabs-file-actions-before {
   background: var(--bg-panel);
   font: inherit;
 }
+.artifact-version-panel__continuation--revision > button { position: static; }
 .artifact-version-card {
   position: relative;
   display: grid;
@@ -2630,7 +2631,7 @@ a.avatar-item:visited {
   background: var(--surface, transparent);
   font-size: 12px;
 }
-.mokina-material-picker summary { cursor: pointer; font-weight: 650; }
+.mokina-material-picker summary { cursor: pointer; font-weight: 600; }
 .mokina-material-picker p { margin: 8px 0; line-height: 1.5; }
 .mokina-material-picker__files { display: grid; max-height: 150px; overflow: auto; gap: 5px; margin: 9px 0; }
 .mokina-material-picker__files label { display: flex; align-items: center; gap: 8px; min-width: 0; }

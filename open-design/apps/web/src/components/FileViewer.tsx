@@ -3475,6 +3475,8 @@ function FileVersionManagerModal({
   const [revisionRequest, setRevisionRequest] = useState('');
   const [revisionBusy, setRevisionBusy] = useState(false);
   const [revisionCancelBusy, setRevisionCancelBusy] = useState(false);
+  const [revisionAbandonBusy, setRevisionAbandonBusy] = useState(false);
+  const [confirmAbandonRevision, setConfirmAbandonRevision] = useState(false);
   const [revisionProgress, setRevisionProgress] = useState('');
   const [pendingRevisionStatus, setPendingRevisionStatus] = useState<string | null>(null);
   const [revisionRecoveryLoaded, setRevisionRecoveryLoaded] = useState(false);
@@ -3870,6 +3872,10 @@ function FileVersionManagerModal({
         setConfirmRestore(false);
         return;
       }
+      if (confirmAbandonRevision) {
+        setConfirmAbandonRevision(false);
+        return;
+      }
       onClose();
     };
     document.addEventListener('keydown', onKey);
@@ -3877,6 +3883,7 @@ function FileVersionManagerModal({
   }, [
     onClose,
     confirmRestore,
+    confirmAbandonRevision,
     downloadMenuVersionId,
     versionImageExportVersionId,
     versionImageExportInFlight,
@@ -4250,7 +4257,8 @@ function FileVersionManagerModal({
   }
 
   async function resumeChapterCandidate() {
-    if (!pendingRevisionJob || revisionBusy) return;
+    if (!pendingRevisionJob || revisionBusy || revisionAbandonBusy) return;
+    setConfirmAbandonRevision(false);
     setRevisionBusy(true);
     setError(null);
     setRevisionProgress('正在恢复上次修订…');
@@ -4260,7 +4268,7 @@ function FileVersionManagerModal({
   }
 
   async function cancelChapterCandidate() {
-    if (!pendingRevisionJob || revisionCancelBusy) return;
+    if (!pendingRevisionJob || revisionCancelBusy || revisionAbandonBusy) return;
     const job = pendingRevisionJob;
     setRevisionCancelBusy(true);
     setError(null);
@@ -4297,8 +4305,60 @@ function FileVersionManagerModal({
     }
   }
 
+  async function abandonChapterCandidate() {
+    if (!confirmAbandonRevision || !pendingRevisionJob || pendingRevisionStatus !== 'succeeded'
+      || revisionBusy || revisionCancelBusy || revisionAbandonBusy) return;
+    const job = pendingRevisionJob;
+    setRevisionAbandonBusy(true);
+    setError(null);
+    try {
+      const persisted = parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey));
+      if (!isSameMokinaRevisionJob(persisted, job)) {
+        setPendingRevisionJob(persisted);
+        setPendingRevisionStatus(persisted ? 'unknown' : null);
+        setConfirmAbandonRevision(false);
+        throw new Error('修订记录已变化，请重新检查当前任务。');
+      }
+      const response = await fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
+        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
+      if (!response.ok) {
+        setPendingRevisionStatus('unknown');
+        setConfirmAbandonRevision(false);
+        throw new Error('运行状态暂不可读，请稍后重试。');
+      }
+      const body = await response.json() as { run?: { status: string }; status?: string };
+      if (!revisionPanelActiveRef.current) return;
+      const currentJob = parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey));
+      if (!isSameMokinaRevisionJob(currentJob, job)) {
+        setPendingRevisionJob(currentJob);
+        setPendingRevisionStatus(currentJob ? 'unknown' : null);
+        setConfirmAbandonRevision(false);
+        throw new Error('修订记录已变化，请重新检查当前任务。');
+      }
+      const status = body.run?.status ?? body.status;
+      if (status !== 'succeeded') {
+        setPendingRevisionStatus(status ?? 'unknown');
+        setConfirmAbandonRevision(false);
+        throw new Error('运行尚未成功结束，请先恢复或取消本次修订。');
+      }
+      if (!clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) {
+        throw new Error('修订记录已变化，请重新检查当前任务。');
+      }
+      setPendingRevisionJob(null);
+      setPendingRevisionStatus(null);
+      setConfirmAbandonRevision(false);
+      setRevisionProgress('已放弃本次结果；当前稿未变化，可以重新生成。');
+    } catch (cause) {
+      if (revisionPanelActiveRef.current) {
+        setError(cause instanceof Error ? cause.message : '放弃结果失败');
+      }
+    } finally {
+      if (revisionPanelActiveRef.current) setRevisionAbandonBusy(false);
+    }
+  }
+
   async function generateChapterCandidate() {
-    if (!selectedVersion?.current || !selectedContentMatchesVersion || !selectedContent || revisionBusy
+    if (!selectedVersion?.current || !selectedContentMatchesVersion || !selectedContent || revisionBusy || revisionAbandonBusy
       || !revisionRecoveryLoaded || pendingRevisionJob) return;
     const persistedJob = parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey));
     if (persistedJob) {
@@ -4555,7 +4615,7 @@ function FileVersionManagerModal({
           )}
         </div>
         {continuationSections.length > 0 && selectedVersion?.current ? (
-          <section className="artifact-version-panel__continuation" aria-label="AI 章节修订">
+          <section className="artifact-version-panel__continuation artifact-version-panel__continuation--revision" aria-label="AI 章节修订">
             <strong>AI 修订章节</strong>
             <p>Codex 在独立工作中只接收所选章节；结果先保存为候选，预览后再采用。</p>
             <select value={revisionSectionId} disabled={viewerOnly || revisionBusy}
@@ -4566,20 +4626,37 @@ function FileVersionManagerModal({
             <textarea value={revisionRequest} disabled={viewerOnly || revisionBusy}
               onChange={event => setRevisionRequest(event.target.value)}
               placeholder="只针对所选章节写出具体修改要求" aria-label="章节修改要求" />
-            <button type="button" disabled={viewerOnly || revisionBusy || !revisionRecoveryLoaded
+            <button type="button" disabled={viewerOnly || revisionBusy || revisionAbandonBusy || !revisionRecoveryLoaded
               || Boolean(pendingRevisionJob) || !revisionSectionId || !revisionRequest.trim()}
               onClick={() => { void generateChapterCandidate(); }}>
               {revisionBusy ? '正在生成候选…' : '生成候选（不改当前稿）'}
             </button>
-            {pendingRevisionJob ? <button type="button" disabled={viewerOnly || revisionBusy}
+            {pendingRevisionJob ? <button type="button" disabled={viewerOnly || revisionBusy || revisionAbandonBusy}
               onClick={() => { void resumeChapterCandidate(); }}>
               {pendingRevisionStatus === 'succeeded' ? '保存已完成运行的候选' : '恢复上次修订候选'}
             </button> : null}
             {pendingRevisionJob && pendingRevisionStatus !== 'succeeded' ? <button type="button"
-              disabled={viewerOnly || revisionCancelBusy}
+              disabled={viewerOnly || revisionCancelBusy || revisionAbandonBusy}
               onClick={() => { void cancelChapterCandidate(); }}>
               {revisionCancelBusy ? '正在取消…' : '取消本次修订'}
             </button> : null}
+            {pendingRevisionJob && pendingRevisionStatus === 'succeeded' ? (
+              <>
+                <button type="button" disabled={viewerOnly || revisionBusy || revisionAbandonBusy}
+                  onClick={() => setConfirmAbandonRevision(true)}>放弃本次结果</button>
+                {confirmAbandonRevision ? (
+                  <div role="group" aria-label="确认放弃本次结果">
+                    <p>放弃后可重新生成；本次运行和临时文件仍保留，当前稿不会变化。</p>
+                    <button type="button" disabled={revisionAbandonBusy}
+                      onClick={() => setConfirmAbandonRevision(false)}>返回继续保存</button>
+                    <button type="button" disabled={revisionAbandonBusy}
+                      onClick={() => { void abandonChapterCandidate(); }}>
+                      {revisionAbandonBusy ? '正在核对运行…' : '确认放弃结果'}
+                    </button>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
             {pendingRevisionJob && pendingRevisionStatus === 'unknown' ? <p role="status">运行状态暂不可读，请稍后恢复或取消。</p> : null}
             {revisionProgress ? <p role="status">{revisionProgress}</p> : null}
           </section>

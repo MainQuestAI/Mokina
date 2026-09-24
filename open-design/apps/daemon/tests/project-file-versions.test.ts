@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -14,6 +14,7 @@ import {
   readProjectFileVersion,
   renameProjectFileVersionStore,
   resolveProjectFileVersionContentMatch,
+  withProjectFileVersionLock,
 } from '../src/project-file-versions.js';
 import { ensureProject, projectDir } from '../src/projects.js';
 
@@ -58,6 +59,19 @@ describe('project file versions', () => {
         .not.toContain('candidate-adoption.json');
       expect((await adoptCandidateVersion(projectsRoot, projectId, fileName, candidate.id,
         base.id, 'adopt-one', workingPath)).id).toBe(candidate.id);
+    });
+  });
+
+  it('does not run a locked write when an existing adoption journal is malformed', async () => {
+    await withProject(async (projectsRoot, projectId) => {
+      const root = (await getProjectFileVersionRootStats(projectsRoot, projectId, 'brand.html')).root;
+      await mkdir(root, { recursive: true });
+      await writeFile(path.join(root, 'candidate-adoption.json'), '{invalid-json');
+      let wrote = false;
+      await expect(withProjectFileVersionLock(projectsRoot, projectId, 'brand.html', undefined, async () => {
+        wrote = true;
+      })).rejects.toBeInstanceOf(SyntaxError);
+      expect(wrote).toBe(false);
     });
   });
 

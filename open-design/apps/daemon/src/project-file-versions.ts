@@ -898,7 +898,9 @@ async function recoverCandidateAdoptionUnlocked(
   try {
     journal = JSON.parse(await readFile(journalPath, 'utf8')) as CandidateAdoptionJournal;
   } catch (error) {
-    if (errorCode(error) === 'ENOENT') return;
+    // A blocked version root cannot contain a journal. Let the guarded file
+    // write proceed so version capture can report its own typed warning.
+    if (errorCode(error) === 'ENOENT' || errorCode(error) === 'ENOTDIR') return;
     throw error;
   }
   const state = await readVersionManifestState(projectsRoot, projectId, fileName);

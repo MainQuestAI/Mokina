@@ -111,6 +111,80 @@ describe('project file version routes', () => {
     expect(await rawResponse.text()).toBe('<html><body>recover me</body></html>');
   });
 
+  it('rejects stale candidate restore without changing the working file or history', async () => {
+    const projectId = await createProject();
+    const v1 = '<html><body><section id="plan" data-mokina-id="plan">v1</section></body></html>';
+    await writeProjectFile(projectId, 'plan.html', v1);
+    const initialList = await fetch(`${baseUrl}/api/projects/${projectId}/files/plan.html/versions`);
+    const initial = (await initialList.json()) as { versions: Array<{ id: string; current: boolean }> };
+    const base = initial.versions.find(version => version.current)!;
+    const candidateResponse = await fetch(`${baseUrl}/api/projects/${projectId}/files/plan.html/candidates`, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        baseVersionId: base.id,
+        sectionId: 'plan',
+        replacementHtml: '<section id="plan" data-mokina-id="plan">candidate</section>',
+        operationId: randomUUID(),
+        prompt: 'revise plan',
+      }),
+    });
+    expect(candidateResponse.status).toBe(200);
+    const candidate = (await candidateResponse.json()) as { version: { id: string } };
+
+    const v3 = '<html><body><section id="plan" data-mokina-id="plan">manual v3</section></body></html>';
+    await writeProjectFile(projectId, 'plan.html', v3);
+    const beforeListResponse = await fetch(`${baseUrl}/api/projects/${projectId}/files/plan.html/versions`);
+    const before = (await beforeListResponse.json()) as { versions: Array<{ id: string; current: boolean }> };
+    const beforeCurrent = before.versions.find(version => version.current)?.id;
+
+    const adoptResponse = await fetch(
+      `${baseUrl}/api/projects/${projectId}/files/plan.html/versions/${candidate.version.id}/adopt`,
+      { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ expectedCurrentVersionId: base.id, operationId: randomUUID() }) },
+    );
+    expect(adoptResponse.status).toBe(409);
+
+    const restoreResponse = await fetch(
+      `${baseUrl}/api/projects/${projectId}/files/plan.html/versions/${candidate.version.id}/restore`,
+      { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({}) },
+    );
+    expect(restoreResponse.status).toBe(409);
+    expect(await restoreResponse.json()).toMatchObject({
+      error: { code: 'VERSION_CANDIDATE_REQUIRES_ADOPTION' },
+    });
+    const raw = await fetch(`${baseUrl}/api/projects/${projectId}/raw/plan.html`);
+    expect(await raw.text()).toBe(v3);
+    const afterListResponse = await fetch(`${baseUrl}/api/projects/${projectId}/files/plan.html/versions`);
+    const after = (await afterListResponse.json()) as { versions: Array<{ id: string; current: boolean }> };
+    expect(after.versions).toHaveLength(before.versions.length);
+    expect(after.versions.find(version => version.current)?.id).toBe(beforeCurrent);
+
+    const adoptableResponse = await fetch(`${baseUrl}/api/projects/${projectId}/files/plan.html/candidates`, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        baseVersionId: beforeCurrent,
+        sectionId: 'plan',
+        replacementHtml: '<section id="plan" data-mokina-id="plan">adopted candidate</section>',
+        operationId: randomUUID(),
+        prompt: 'make an adoptable candidate',
+      }),
+    });
+    const adoptable = (await adoptableResponse.json()) as { version: { id: string } };
+    const adoptableOperationId = randomUUID();
+    const successfulAdopt = await fetch(
+      `${baseUrl}/api/projects/${projectId}/files/plan.html/versions/${adoptable.version.id}/adopt`,
+      { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ expectedCurrentVersionId: beforeCurrent, operationId: adoptableOperationId }) },
+    );
+    expect(successfulAdopt.status).toBe(200);
+    await writeProjectFile(projectId, 'plan.html', '<html><body><section id="plan" data-mokina-id="plan">later manual edit</section></body></html>');
+    const restoreAdopted = await fetch(
+      `${baseUrl}/api/projects/${projectId}/files/plan.html/versions/${adoptable.version.id}/restore`,
+      { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({}) },
+    );
+    expect(restoreAdopted.status).toBe(200);
+    const adoptedRaw = await fetch(`${baseUrl}/api/projects/${projectId}/raw/plan.html`);
+    expect(await adoptedRaw.text()).toContain('adopted candidate');
+  });
+
   it('does not mix deleted HTML history into a recreated file at the same path', async () => {
     const projectId = await createProject();
     await writeProjectFile(projectId, 'brand.html', '<html><body>old file</body></html>');

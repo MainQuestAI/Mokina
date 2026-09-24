@@ -164,6 +164,7 @@ import {
   exportAsPdf,
   exportAsZip,
   exportProjectAsHtml,
+  fetchProjectVersionHtml,
   exportProjectAsPdf,
   exportProjectAsPptx,
   exportProjectAsZip,
@@ -3341,6 +3342,52 @@ type ExportToastState = {
   tone: 'default' | 'success' | 'error' | 'loading';
 };
 
+export type MokinaRevisionJob = {
+  runId: string;
+  revisionProjectId: string;
+  baseVersionId: string;
+  sectionId: string;
+  prompt: string;
+  operationId: string;
+};
+
+export function parseMokinaRevisionJob(raw: string | null): MokinaRevisionJob | null {
+  if (!raw) return null;
+  try {
+    const job = JSON.parse(raw) as Partial<MokinaRevisionJob>;
+    return job.runId && job.revisionProjectId && job.baseVersionId && job.sectionId
+      && typeof job.prompt === 'string' && job.operationId
+      ? job as MokinaRevisionJob
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+export function isSameMokinaRevisionJob(a: MokinaRevisionJob | null, b: MokinaRevisionJob): boolean {
+  return Boolean(a && a.runId === b.runId && a.operationId === b.operationId);
+}
+
+export function clearMokinaRevisionJobIfCurrent(
+  storage: Pick<Storage, 'getItem' | 'removeItem'>,
+  key: string,
+  job: MokinaRevisionJob,
+): boolean {
+  if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(storage.getItem(key)), job)) return false;
+  storage.removeItem(key);
+  return true;
+}
+
+export function storeMokinaRevisionJobIfVacant(
+  storage: Pick<Storage, 'getItem' | 'setItem'>,
+  key: string,
+  job: MokinaRevisionJob,
+): boolean {
+  if (parseMokinaRevisionJob(storage.getItem(key))) return false;
+  storage.setItem(key, JSON.stringify(job));
+  return true;
+}
+
 export type DeckKeyboardShortcut = 'next' | 'prev' | 'first' | 'last' | 'reset';
 
 type DeckKeyboardShortcutEvent = Pick<
@@ -3410,6 +3457,8 @@ function FileVersionManagerModal({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedContent, setSelectedContent] = useState<string | null>(currentSource);
   const [selectedContentVersionId, setSelectedContentVersionId] = useState<string | null>(null);
+  const [selectedRenderableContent, setSelectedRenderableContent] = useState<string | null>(null);
+  const [selectedRenderableVersionId, setSelectedRenderableVersionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingContent, setLoadingContent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -3428,26 +3477,17 @@ function FileVersionManagerModal({
   const [revisionCancelBusy, setRevisionCancelBusy] = useState(false);
   const [revisionProgress, setRevisionProgress] = useState('');
   const [pendingRevisionStatus, setPendingRevisionStatus] = useState<string | null>(null);
+  const [revisionRecoveryLoaded, setRevisionRecoveryLoaded] = useState(false);
+  const revisionPanelActiveRef = useRef(true);
   const revisionStorageKey = `mokina:revision:${projectId}:${file.name}`;
-  const [pendingRevisionJob, setPendingRevisionJob] = useState<{
-    runId: string; revisionProjectId: string; baseVersionId: string;
-    sectionId: string; prompt: string; operationId: string;
-  } | null>(null);
+  const [pendingRevisionJob, setPendingRevisionJob] = useState<MokinaRevisionJob | null>(null);
   useEffect(() => {
-    let savedJob: NonNullable<typeof pendingRevisionJob> | null = null;
     let active = true;
-    try {
-      const raw = localStorage.getItem(revisionStorageKey);
-      if (raw) {
-        const job = JSON.parse(raw) as typeof pendingRevisionJob;
-        if (job?.runId && job.revisionProjectId && job.baseVersionId && job.sectionId
-          && typeof job.prompt === 'string' && job.operationId) {
-          savedJob = job;
-        }
-      }
-    } catch { /* Damaged local recovery state must not block version viewing. */ }
-    setPendingRevisionJob(null);
-    setPendingRevisionStatus(null);
+    revisionPanelActiveRef.current = true;
+    const savedJob = parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey));
+    setPendingRevisionJob(savedJob);
+    setPendingRevisionStatus(savedJob ? 'checking' : null);
+    setRevisionRecoveryLoaded(true);
     if (savedJob) {
       const job = savedJob;
       void fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
@@ -3458,23 +3498,28 @@ function FileVersionManagerModal({
           return body.run?.status ?? body.status ?? 'unknown';
         })
         .then(status => {
-          if (!active) return;
+          if (!active || !isSameMokinaRevisionJob(
+            parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return;
           if (status === 'failed' || status === 'canceled') {
-            localStorage.removeItem(revisionStorageKey);
-            setRevisionProgress(`上次修订已${status === 'canceled' ? '取消' : '失败'}；当前稿未变化。`);
+            if (clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) {
+              setPendingRevisionJob(null);
+              setPendingRevisionStatus(null);
+              setRevisionProgress(`上次修订已${status === 'canceled' ? '取消' : '失败'}；当前稿未变化。`);
+            }
           } else {
             setPendingRevisionStatus(status);
             setPendingRevisionJob(job);
           }
         })
         .catch(() => {
-          if (active) {
+          if (active && isSameMokinaRevisionJob(
+            parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) {
             setPendingRevisionStatus('unknown');
             setPendingRevisionJob(job);
           }
         });
     }
-    return () => { active = false; };
+    return () => { active = false; revisionPanelActiveRef.current = false; };
   }, [revisionStorageKey, workspaceContext]);
   const [versionImageExportVersionId, setVersionImageExportVersionId] = useState<string | null>(null);
   const [versionImageExportFormat, setVersionImageExportFormat] = useState<ImageExportFormat>('png');
@@ -3490,7 +3535,8 @@ function FileVersionManagerModal({
   // version is then zero-fetch (and, because the srcDoc string value is stable,
   // zero-reparse). `inFlightRef` dedupes concurrent hover-prefetch + click.
   const contentCacheRef = useRef<Map<string, string>>(new Map());
-  const frozenPreviewCacheRef = useRef<Map<string, string>>(new Map());
+  const renderableContentCacheRef = useRef<Map<string, string>>(new Map());
+  const renderableErrorCacheRef = useRef<Map<string, string>>(new Map());
   const inFlightRef = useRef<Map<string, Promise<void>>>(new Map());
   const trackingArtifactId = useMemo(
     () => anonymizeArtifactId({ projectId, fileName: file.name }),
@@ -3606,13 +3652,12 @@ function FileVersionManagerModal({
   useEffect(() => { setRevisionSectionId(''); }, [selectedId]);
   const restoreDisabled =
     viewerOnly || !selectedVersion || selectedVersion.current || restoring || loadingContent || !selectedContentMatchesVersion;
-  const srcDoc = useMemo(() => {
-    if (!selectedContent) return '';
-    const preview = selectedVersion?.current
-      ? selectedContent
-      : (selectedId ? frozenPreviewCacheRef.current.get(selectedId) : undefined) ?? selectedContent;
-    return fileVersionPreviewSrcDoc(projectId, file.name, preview);
-  }, [file.name, projectId, selectedContent, selectedId, selectedVersion]);
+  const selectedRenderableContentMatchesVersion = Boolean(
+    selectedId && selectedRenderableVersionId === selectedId && selectedRenderableContent,
+  );
+  const srcDoc = useMemo(() => selectedRenderableContentMatchesVersion && selectedRenderableContent
+    ? fileVersionPreviewSrcDoc(projectId, file.name, selectedRenderableContent, workspaceContext)
+    : '', [file.name, projectId, selectedRenderableContent, selectedRenderableContentMatchesVersion, workspaceContext]);
   const frameReady = loadedSrcDoc === srcDoc;
 
   useEffect(() => {
@@ -3622,22 +3667,37 @@ function FileVersionManagerModal({
   // Fetch a single version's HTML into the cache exactly once. Reused by the
   // selection effect and by hover/focus prefetch so a click lands on warm data.
   const primeVersionContent = useCallback((versionId: string): Promise<void> => {
-    if (contentCacheRef.current.has(versionId)) return Promise.resolve();
+    if (contentCacheRef.current.has(versionId) && renderableContentCacheRef.current.has(versionId)) {
+      return Promise.resolve();
+    }
     const pending = inFlightRef.current.get(versionId);
     if (pending) return pending;
-    const request = fetchProjectFileVersion(
-      projectId,
-      file.name,
-      versionId,
-      workspaceContext,
-    )
-      .then((result) => {
-        if (result) {
-          contentCacheRef.current.set(versionId, result.content);
-          if (result.frozenContent) frozenPreviewCacheRef.current.set(versionId, result.frozenContent);
+    const request = Promise.allSettled([
+      fetchProjectFileVersion(projectId, file.name, versionId, workspaceContext),
+      fetchProjectVersionHtml({
+        projectId,
+        filePath: file.name,
+        fallbackTitle: file.name,
+        versionId,
+        workspaceContext,
+      }),
+    ])
+      .then(([rawResult, renderableResult]) => {
+        if (rawResult.status === 'fulfilled' && rawResult.value) {
+          contentCacheRef.current.set(versionId, rawResult.value.content);
+        }
+        if (renderableResult.status === 'fulfilled') {
+          renderableContentCacheRef.current.set(versionId, renderableResult.value.content);
+          renderableErrorCacheRef.current.delete(versionId);
+        } else {
+          renderableErrorCacheRef.current.set(
+            versionId,
+            renderableResult.reason instanceof Error
+              ? renderableResult.reason.message
+              : tRef.current('fileViewer.versions.previewFailed'),
+          );
         }
       })
-      .catch(() => {})
       .finally(() => {
         inFlightRef.current.delete(versionId);
       });
@@ -3720,13 +3780,18 @@ function FileVersionManagerModal({
     if (!selectedId) {
       setSelectedContent(null);
       setSelectedContentVersionId(null);
+      setSelectedRenderableContent(null);
+      setSelectedRenderableVersionId(null);
       return;
     }
     // Cache hit: swap instantly with no fetch, no flash.
     const cached = contentCacheRef.current.get(selectedId);
-    if (cached !== undefined) {
+    const cachedRenderable = renderableContentCacheRef.current.get(selectedId);
+    if (cached !== undefined && cachedRenderable !== undefined) {
       setSelectedContent(cached);
       setSelectedContentVersionId(selectedId);
+      setSelectedRenderableContent(cachedRenderable);
+      setSelectedRenderableVersionId(selectedId);
       setLoadingContent(false);
       setError(null);
       return;
@@ -3739,13 +3804,22 @@ function FileVersionManagerModal({
     void primeVersionContent(selectedId).then(() => {
       if (cancelled) return;
       const next = contentCacheRef.current.get(selectedId);
+      const nextRenderable = renderableContentCacheRef.current.get(selectedId);
       if (next === undefined) {
         setSelectedContent(null);
         setSelectedContentVersionId(null);
-        setError(tRef.current('fileViewer.versions.previewFailed'));
       } else {
         setSelectedContent(next);
         setSelectedContentVersionId(selectedId);
+      }
+      if (nextRenderable === undefined) {
+        setSelectedRenderableContent(null);
+        setSelectedRenderableVersionId(null);
+        setError(renderableErrorCacheRef.current.get(selectedId)
+          ?? tRef.current('fileViewer.versions.previewFailed'));
+      } else {
+        setSelectedRenderableContent(nextRenderable);
+        setSelectedRenderableVersionId(selectedId);
       }
       setLoadingContent(false);
     });
@@ -3973,14 +4047,14 @@ function FileVersionManagerModal({
   }
 
   function openVersionInNewTab() {
-    if (loadingContent || !selectedContentMatchesVersion || !selectedContent || !selectedVersion) return;
+    if (loadingContent || !selectedRenderableContentMatchesVersion || !selectedRenderableContent || !selectedVersion) return;
     fireModalClick('open_in_new_tab', {
       version_source: fileVersionSourceToTracking(selectedVersion),
     });
     openSandboxedPreviewInNewTab(
-      selectedContent,
+      selectedRenderableContent,
       `${file.name} · v${selectedVersion.version}`,
-      fileVersionPreviewOptions(projectId, file.name, selectedContent),
+      fileVersionPreviewOptions(projectId, file.name, selectedRenderableContent, workspaceContext),
     );
   }
 
@@ -4116,14 +4190,19 @@ function FileVersionManagerModal({
     }
   }
 
-  async function finishChapterCandidate(job: NonNullable<typeof pendingRevisionJob>) {
+  async function finishChapterCandidate(job: MokinaRevisionJob): Promise<boolean> {
     let terminal: { status: string; error?: string | null } | null = null;
     for (let attempt = 0; attempt < 180; attempt++) {
       await new Promise(resolve => setTimeout(resolve, 1500));
+      if (!revisionPanelActiveRef.current) return false;
+      if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return false;
       const statusResponse = await fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
         workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
+      if (!revisionPanelActiveRef.current) return false;
       if (!statusResponse.ok) continue;
       const statusBody = await statusResponse.json() as { run?: { status: string; error?: string | null }; status?: string; error?: string | null };
+      if (!revisionPanelActiveRef.current || !isSameMokinaRevisionJob(
+        parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return false;
       const status = statusBody.run ?? statusBody;
       if (typeof status.status === 'string' && ['succeeded', 'failed', 'canceled'].includes(status.status)) {
         terminal = { status: status.status, error: status.error };
@@ -4132,15 +4211,19 @@ function FileVersionManagerModal({
     }
     if (!terminal) throw new Error(`修订运行 ${job.runId} 尚未完成；稍后可恢复，当前稿未变化。`);
     if (terminal.status !== 'succeeded') {
-      localStorage.removeItem(revisionStorageKey);
-      setPendingRevisionJob(null);
-      setPendingRevisionStatus(null);
+      if (clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) {
+        setPendingRevisionJob(null);
+        setPendingRevisionStatus(null);
+      }
       throw new Error(terminal.error || `修订运行 ${terminal.status}；当前稿未变化。`);
     }
+    if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return false;
     setPendingRevisionStatus('succeeded');
     setRevisionProgress('正在校验并保存候选…');
     const replacement = await fetchProjectFileText(job.revisionProjectId,
       'MOKINA-REPLACEMENT.html', { cache: 'no-store', workspaceContext });
+    if (!revisionPanelActiveRef.current) return false;
+    if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return false;
     if (!replacement) throw new Error('模型未写出 MOKINA-REPLACEMENT.html；当前稿未变化。');
     const candidateResponse = await fetch(
       `/api/projects/${encodeURIComponent(projectId)}/files/${file.name.split('/').map(encodeURIComponent).join('/')}/candidates`,
@@ -4151,16 +4234,19 @@ function FileVersionManagerModal({
           replacementHtml: replacement, operationId: job.operationId, prompt: job.prompt }),
       },
     );
+    if (!revisionPanelActiveRef.current) return false;
+    if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return false;
     if (!candidateResponse.ok) {
       const body = await candidateResponse.json().catch(() => null) as { error?: { message?: string } } | null;
       throw new Error(body?.error?.message || '替换章节校验失败；当前稿未变化。');
     }
     const result = await candidateResponse.json() as { version: ProjectFileVersion };
-    localStorage.removeItem(revisionStorageKey);
+    if (!clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) return false;
     setPendingRevisionJob(null);
     setPendingRevisionStatus(null);
     await loadVersions(result.version.id);
     setRevisionProgress('候选已保存；请预览后再采用。');
+    return true;
   }
 
   async function resumeChapterCandidate() {
@@ -4175,37 +4261,52 @@ function FileVersionManagerModal({
 
   async function cancelChapterCandidate() {
     if (!pendingRevisionJob || revisionCancelBusy) return;
+    const job = pendingRevisionJob;
     setRevisionCancelBusy(true);
     setError(null);
     try {
-      const response = await fetch(`/api/runs/${encodeURIComponent(pendingRevisionJob.runId)}/cancel`, {
+      const response = await fetch(`/api/runs/${encodeURIComponent(job.runId)}/cancel`, {
         method: 'POST',
         ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
       });
       if (!response.ok) throw new Error('取消请求失败；请检查运行状态后重试。');
-      const statusResponse = await fetch(`/api/runs/${encodeURIComponent(pendingRevisionJob.runId)}`,
+      const statusResponse = await fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
         workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
       if (!statusResponse.ok) throw new Error('已发送取消请求，但运行状态暂不可读。');
       const body = await statusResponse.json() as { run?: { status: string }; status?: string };
+      if (!revisionPanelActiveRef.current || !isSameMokinaRevisionJob(
+        parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return;
       const status = body.run?.status ?? body.status;
       if (status === 'canceled' || status === 'failed') {
-        localStorage.removeItem(revisionStorageKey);
-        setPendingRevisionJob(null);
-        setPendingRevisionStatus(null);
-        setRevisionProgress('修订已取消；当前稿未变化。');
+        if (clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) {
+          setPendingRevisionJob(null);
+          setPendingRevisionStatus(null);
+          setRevisionProgress('修订已取消；当前稿未变化。');
+        }
       } else {
         setPendingRevisionStatus(status ?? 'unknown');
         setRevisionProgress('已请求取消，等待运行终态。');
       }
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : '取消失败');
+      if (revisionPanelActiveRef.current && isSameMokinaRevisionJob(
+        parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) {
+        setError(cause instanceof Error ? cause.message : '取消失败');
+      }
     } finally {
       setRevisionCancelBusy(false);
     }
   }
 
   async function generateChapterCandidate() {
-    if (!selectedVersion?.current || !selectedContentMatchesVersion || !selectedContent || revisionBusy) return;
+    if (!selectedVersion?.current || !selectedContentMatchesVersion || !selectedContent || revisionBusy
+      || !revisionRecoveryLoaded || pendingRevisionJob) return;
+    const persistedJob = parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey));
+    if (persistedJob) {
+      setPendingRevisionJob(persistedJob);
+      setPendingRevisionStatus('unknown');
+      setError('已有未处理的章节修订；请先恢复或取消。');
+      return;
+    }
     const request = revisionRequest.trim();
     if (!revisionSectionId || !request) { setError('请选择章节并填写修改要求。'); return; }
     const doc = new DOMParser().parseFromString(selectedContent, 'text/html');
@@ -4261,7 +4362,13 @@ function FileVersionManagerModal({
       if (!created.runId) throw new Error('修订运行未返回 ID');
       const job = { runId: created.runId, revisionProjectId: revisionProject.project.id,
         baseVersionId, sectionId: revisionSectionId, prompt: request, operationId: newClientOperationId() };
-      localStorage.setItem(revisionStorageKey, JSON.stringify(job));
+      if (!storeMokinaRevisionJobIfVacant(localStorage, revisionStorageKey, job)) {
+        await fetch(`/api/runs/${encodeURIComponent(job.runId)}/cancel`, {
+          method: 'POST',
+          ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+        }).catch(() => null);
+        throw new Error('已有另一项章节修订；新运行已请求取消，请先处理原修订。');
+      }
       setPendingRevisionJob(job);
       setPendingRevisionStatus('running');
       await finishChapterCandidate(job);
@@ -4292,7 +4399,7 @@ function FileVersionManagerModal({
               className="artifact-version-panel__open"
               aria-label={t('fileViewer.versions.open')}
               title={t('fileViewer.versions.open')}
-              disabled={!selectedContentMatchesVersion || loadingContent}
+              disabled={!selectedRenderableContentMatchesVersion || loadingContent}
               onClick={openVersionInNewTab}
             >
               <RemixIcon name="external-link-line" size={15} />
@@ -4459,7 +4566,8 @@ function FileVersionManagerModal({
             <textarea value={revisionRequest} disabled={viewerOnly || revisionBusy}
               onChange={event => setRevisionRequest(event.target.value)}
               placeholder="只针对所选章节写出具体修改要求" aria-label="章节修改要求" />
-            <button type="button" disabled={viewerOnly || revisionBusy || !revisionSectionId || !revisionRequest.trim()}
+            <button type="button" disabled={viewerOnly || revisionBusy || !revisionRecoveryLoaded
+              || Boolean(pendingRevisionJob) || !revisionSectionId || !revisionRequest.trim()}
               onClick={() => { void generateChapterCandidate(); }}>
               {revisionBusy ? '正在生成候选…' : '生成候选（不改当前稿）'}
             </button>

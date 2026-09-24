@@ -28,7 +28,10 @@ describe('Mokina selected material snapshot', () => {
   it('keeps only selected source ranges and their extraction limits', () => {
     const materials = [{
       name: 'brief.md', contentDigest: 'source-v1', status: 'partial' as const,
-      limitations: ['第 3 页没有可读文本'],
+      limitations: ['仅提取文本与缓存值'],
+      groupLimitations: [
+        { groupId: 'excluded', location: '预算!B41', message: '使用公式缓存值，未重新计算。' },
+      ],
       sections: [
         { location: '第 1 行', text: '预算 100 万', groupId: 'scope', groupLabel: '范围' },
         { location: '第 9 行', text: '未选的 999 万', groupId: 'excluded', groupLabel: '旧数据' },
@@ -37,10 +40,32 @@ describe('Mokina selected material snapshot', () => {
     const groups = groupMokinaMaterialSections(materials);
     const snapshot = buildMokinaMaterialSnapshot(materials, groups, [groups[0]!.key]);
     expect(snapshot).toContain('第 1 行\n预算 100 万');
-    expect(snapshot).toContain('第 3 页没有可读文本');
+    expect(snapshot).toContain('仅提取文本与缓存值');
     expect(snapshot).not.toContain('未选的 999 万');
     expect(snapshot).not.toContain('第 9 行');
+    expect(snapshot).not.toContain('预算!B41');
     expect(snapshot).not.toContain('source-v1');
+  });
+
+  it('includes diagnostics only when their source group is selected', () => {
+    const material = [{
+      name: 'budget.xlsx', contentDigest: 'xlsx-v1', status: 'read' as const,
+      limitations: ['不重新计算公式'],
+      groupLimitations: [
+        { groupId: 'sheet:0:rows:2', location: '预算!B41', message: '使用公式缓存值，未重新计算。' },
+      ],
+      sections: [
+        { location: '预算!A1', text: '允许内容', groupId: 'sheet:0:rows:0', groupLabel: '预算 / 行 1–20' },
+        { location: '预算!B41', text: '987654321', groupId: 'sheet:0:rows:2', groupLabel: '预算 / 行 41–60' },
+      ],
+    }];
+    const groups = groupMokinaMaterialSections(material);
+    const selectedA1 = buildMokinaMaterialSnapshot(material, groups, [groups[0]!.key]);
+    expect(selectedA1).not.toContain('预算!B41');
+    expect(selectedA1).not.toContain('987654321');
+    const selectedB41 = buildMokinaMaterialSnapshot(material, groups, [groups[1]!.key]);
+    expect(selectedB41).toContain('预算!B41：使用公式缓存值，未重新计算。');
+    expect(selectedB41).toContain('987654321');
   });
 
   it('splits a long source group into selectable pieces', () => {

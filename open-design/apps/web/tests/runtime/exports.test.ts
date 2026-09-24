@@ -16,6 +16,7 @@ import {
   isUsablePrintSize,
   reportPrintSizeWhenStable,
   exportProjectAsHtml,
+  fetchProjectVersionHtml,
   exportProjectAsPdf,
   exportProjectAsPptx,
   exportProjectAsZip,
@@ -643,6 +644,27 @@ describe('exportProjectAsHtml', () => {
     });
     expect(capturedFilename).toBe('Main-Page-v1.html');
     expect(await capturedBlob!.text()).toBe('<!doctype html><p>version</p>');
+  });
+
+  it('returns the same fixed HTML body for version preview and new-window reading', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('<!doctype html><img src="data:image/png;base64,red">', {
+      headers: { 'content-type': 'text/html', 'content-disposition': 'attachment; filename="plan-v2.html"' },
+      status: 200,
+    })));
+
+    const result = await fetchProjectVersionHtml({
+      projectId: 'proj 1',
+      filePath: 'plan.html',
+      fallbackTitle: 'Plan v2',
+      versionId: 'version-2',
+      workspaceContext: workspaceContextFixture({ workspaceId: 'workspace-1', workspaceMemberId: 'member-1' }),
+    });
+
+    expect(result.content).toContain('data:image/png;base64,red');
+    expect(result.filename).toBe('plan-v2.html');
+    expect(fetch).toHaveBeenCalledWith('/api/projects/proj%201/export/html', expect.objectContaining({
+      body: JSON.stringify({ fileName: 'plan.html', title: 'Plan v2', versionId: 'version-2' }),
+    }));
   });
 
   it('surfaces structured daemon failures instead of downloading broken source HTML', async () => {

@@ -95,6 +95,17 @@ export async function exportProjectAsHtml(opts: {
   versionId?: string;
   workspaceContext?: WorkspaceCollabContext | null;
 }): Promise<void> {
+  const { blob, filename } = await fetchProjectVersionHtml(opts);
+  triggerDownload(blob, filename);
+}
+
+export async function fetchProjectVersionHtml(opts: {
+  projectId: string;
+  filePath: string;
+  fallbackTitle: string;
+  versionId?: string;
+  workspaceContext?: WorkspaceCollabContext | null;
+}): Promise<{ content: string; blob: Blob; filename: string }> {
   const url = `/api/projects/${encodeURIComponent(opts.projectId)}/export/html`;
   const resp = await fetch(url, {
     method: 'POST',
@@ -121,7 +132,7 @@ export async function exportProjectAsHtml(opts: {
   const blob = await resp.blob();
   const filename = filenameFromContentDisposition(resp)
     ?? `${safeFilename(opts.fallbackTitle, 'artifact')}.html`;
-  triggerDownload(blob, filename);
+  return { content: await blob.text(), blob, filename };
 }
 
 // A file is treated as a preview-chrome wrapper only when it lives inside

@@ -21,6 +21,7 @@ const {
   isOpenDesignHostAvailableMock,
   prepareImageExportTargetMock,
   requestPreviewSnapshotMock,
+  openSandboxedPreviewInNewTabMock,
 } = vi.hoisted(() => ({
   captureHostIframeSnapshotMock: vi.fn(),
   downloadImageDataUrlMock: vi.fn(),
@@ -37,6 +38,7 @@ const {
   isOpenDesignHostAvailableMock: vi.fn(() => false),
   prepareImageExportTargetMock: vi.fn(),
   requestPreviewSnapshotMock: vi.fn(),
+  openSandboxedPreviewInNewTabMock: vi.fn(),
 }));
 
 vi.mock('../../src/runtime/exports', async () => {
@@ -60,6 +62,7 @@ vi.mock('../../src/runtime/exports', async () => {
     isOpenDesignHostAvailable: isOpenDesignHostAvailableMock,
     prepareImageExportTarget: prepareImageExportTargetMock,
     requestPreviewSnapshot: requestPreviewSnapshotMock,
+    openSandboxedPreviewInNewTab: openSandboxedPreviewInNewTabMock,
   };
 });
 
@@ -131,6 +134,15 @@ function setupVersionFetch(file = htmlFile()) {
     if (url === '/api/projects/project-1/files/index.html/versions/v1' && method === 'GET') {
       return new Response(JSON.stringify({ version: priorVersion, content: priorContent }), { status: 200 });
     }
+    if (url === '/api/projects/project-1/export/html' && method === 'POST') {
+      const body = JSON.parse(String(init?.body ?? '{}')) as { versionId?: string };
+      return new Response(body.versionId === 'v1'
+        ? priorContent
+        : '<html><body><h1>Current</h1></body></html>', {
+        status: 200,
+        headers: { 'content-type': 'text/html' },
+      });
+    }
     return new Response(JSON.stringify({}), { status: 404 });
   });
   vi.stubGlobal('fetch', fetchMock);
@@ -171,6 +183,35 @@ describe('FileViewer version download actions', () => {
     vi.unstubAllGlobals();
   });
 
+  it('opens the same fixed historical HTML used by the version panel', async () => {
+    const { priorContent } = setupVersionFetch();
+    const versionDialog = await renderVersionDialog(htmlFile(), 'prior');
+    const openButton = within(versionDialog).getByRole('button', { name: 'Open preview in a new window' });
+    await waitFor(() => expect(openButton).not.toBeDisabled());
+    fireEvent.click(openButton);
+    expect(openSandboxedPreviewInNewTabMock).toHaveBeenCalledWith(
+      priorContent,
+      'index.html · v1',
+      expect.objectContaining({ deck: false }),
+    );
+  });
+
+  it('shows an unfrozen historical resource error without opening the current assets', async () => {
+    const { fetchMock } = setupVersionFetch();
+    const originalFetch = fetchMock.getMockImplementation()!;
+    fetchMock.mockImplementation(async (input, init) => {
+      if (String(input) === '/api/projects/project-1/export/html') {
+        return new Response(JSON.stringify({ error: { message: '历史版本的本地资源未冻结' } }), { status: 422 });
+      }
+      return originalFetch(input, init);
+    });
+    const dialog = await renderVersionDialog(htmlFile(), 'prior');
+    await waitFor(() => expect(within(dialog).getByText('历史版本的本地资源未冻结')).toBeTruthy());
+    expect(within(dialog).getByRole('button', { name: 'Open preview in a new window' })).toBeDisabled();
+    expect(dialog.querySelector('iframe[title="index.html v1"]')).toBeNull();
+    expect(openSandboxedPreviewInNewTabMock).not.toHaveBeenCalled();
+  });
+
   it('routes current version PDFs through the main download PDF exporter', async () => {
     isOpenDesignHostAvailableMock.mockReturnValue(true);
     exportProjectScreenshotPdfMock.mockResolvedValueOnce({ ok: true });
@@ -188,7 +229,7 @@ describe('FileViewer version download actions', () => {
         title: 'index',
       }));
     });
-    expect(exportProjectScreenshotPdfMock.mock.calls[0]?.[0]).not.toHaveProperty('versionId');
+    expect(exportProjectScreenshotPdfMock.mock.calls[0]?.[0]).toHaveProperty('versionId', 'v2');
     expect(requestPreviewSnapshotMock).not.toHaveBeenCalled();
     expect(exportSnapshotAsPdfMock).not.toHaveBeenCalled();
     expect(exportProjectAsPdfMock).not.toHaveBeenCalled();
@@ -360,7 +401,7 @@ describe('FileViewer version download actions', () => {
         projectId: 'project-1',
       }));
     });
-    expect(exportProjectAsHtmlMock.mock.calls[0]?.[0]).not.toHaveProperty('versionId');
+    expect(exportProjectAsHtmlMock.mock.calls[0]?.[0]).toHaveProperty('versionId', 'v2');
 
     openVersionDownloadMenu(versionDialog, 2);
     fireEvent.click(within(versionDialog).getByRole('menuitem', { name: 'Download as .zip' }));
@@ -373,7 +414,7 @@ describe('FileViewer version download actions', () => {
         projectId: 'project-1',
       }));
     });
-    expect(exportProjectAsZipMock.mock.calls[0]?.[0]).not.toHaveProperty('versionId');
+    expect(exportProjectAsZipMock.mock.calls[0]?.[0]).toHaveProperty('versionId', 'v2');
     expect(exportAsHtmlMock).not.toHaveBeenCalled();
     expect(exportAsZipMock).not.toHaveBeenCalled();
   });

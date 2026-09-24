@@ -61,6 +61,11 @@ export interface ProjectMaterialExtraction {
   contentDigest: string;
   status: 'read' | 'partial' | 'unreadable';
   limitations: string[];
+  groupLimitations?: Array<{
+    groupId: string;
+    location: string;
+    message: string;
+  }>;
   sections: Array<{
     location: string;
     text: string;

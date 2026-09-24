@@ -7517,6 +7517,14 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
         versionId,
         project.metadata,
       );
+      if (restored.version.candidate) {
+        return sendApiError(
+          res,
+          409,
+          'VERSION_CANDIDATE_REQUIRES_ADOPTION',
+          '未采用的候选版本必须通过候选采用入口处理。',
+        );
+      }
       const requestPrompt = typeof req.body?.prompt === 'string' && req.body.prompt.trim()
         ? req.body.prompt.trim()
         : null;

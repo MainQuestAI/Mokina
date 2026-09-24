@@ -1365,6 +1365,12 @@ export function buildMokinaMaterialSnapshot(
       `## ${material.name}`,
       `提取状态：${material.status === 'partial' ? '部分读取' : '已读取'}`,
       ...material.limitations.map(value => `读取限制：${value}`),
+      ...(material.groupLimitations ?? [])
+        .filter(limitation => chosen
+          .filter(group => group.name === material.name)
+          .some(group => group.sections.some(section => section.groupId === limitation.groupId
+            || section.groupId?.startsWith(`${limitation.groupId}:part:`))))
+        .map(limitation => `读取限制：${limitation.location}：${limitation.message}`),
       ...chosen.filter(group => group.name === material.name).flatMap(group =>
         group.sections.map(section => `### ${section.location}\n${section.text}`)),
     ].join('\n\n')),
@@ -1470,10 +1476,17 @@ function MokinaMaterialPicker({ projectName, projectId, files }: {
         ))}
       </div>
       {materials ? <div className="mokina-material-picker__preview">
-        {materials.map(material => <p key={material.name}>
-          {material.name}：{material.status === 'partial' ? '部分读取' : '已读取'}。
-          {material.limitations.join(' ')}
-        </p>)}
+        {materials.map(material => <div key={material.name}>
+          <p>
+            {material.name}：{material.status === 'partial' ? '部分读取' : '已读取'}。
+            {material.limitations.join(' ')}
+          </p>
+          {(material.groupLimitations ?? []).map(limitation => (
+            <p key={`${limitation.groupId}:${limitation.location}`}>
+              {limitation.location}：{limitation.message}
+            </p>
+          ))}
+        </div>)}
         <p role="status">已选 {selectedChars.toLocaleString()} / 32,000 字；提取内容超限时会明确标为部分读取。</p>
         {groups.map(group => <label key={group.key}>
           <input type="checkbox" checked={selectedGroups.includes(group.key)} disabled={busy}

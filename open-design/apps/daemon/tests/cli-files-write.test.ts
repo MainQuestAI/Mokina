@@ -128,6 +128,33 @@ describe('od files write / upload (ESM require regression)', () => {
     expect(stub.requests).toHaveLength(0);
   });
 
+  it('`files version-restore` displays the candidate-adoption conflict returned by the daemon', async () => {
+    const server = http.createServer((_req, res) => {
+      res.statusCode = 409;
+      res.setHeader('content-type', 'application/json');
+      res.end(JSON.stringify({
+        error: {
+          code: 'VERSION_CANDIDATE_REQUIRES_ADOPTION',
+          message: '未采用的候选版本必须通过候选采用入口处理。',
+        },
+      }));
+    });
+    await new Promise<void>((resolveListen) => server.listen(0, '127.0.0.1', resolveListen));
+    const address = server.address();
+    if (!address || typeof address === 'string') throw new Error('stub server has no address');
+    try {
+      const result = await runCli([
+        'files', 'version-restore', 'proj-1', 'plan.html', 'candidate-1',
+        '--daemon-url', `http://127.0.0.1:${address.port}`,
+      ]);
+      expect(result.code).toBe(1);
+      expect(`${result.stdout}\n${result.stderr}`).toContain('VERSION_CANDIDATE_REQUIRES_ADOPTION');
+      expect(`${result.stdout}\n${result.stderr}`).toContain('候选版本必须通过候选采用入口');
+    } finally {
+      await new Promise<void>((resolveClose, rejectClose) => server.close(error => error ? rejectClose(error) : resolveClose()));
+    }
+  });
+
   it('`files write` streams stdin into POST /api/projects/:id/files as utf8', async () => {
     const result = await runCli(
       ['files', 'write', 'proj-1', 'notes/brief.md', '--daemon-url', stub.baseUrl],

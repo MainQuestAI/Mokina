@@ -7838,6 +7838,9 @@ describe('FileViewer SVG artifacts', () => {
       if (url === '/api/projects/project-1/files/index.html/versions' && method === 'GET') {
         return new Response(JSON.stringify({ file, versions: [currentVersion, ...earlierVersions] }), { status: 200 });
       }
+      if (url === '/api/projects/project-1/export/html' && method === 'POST') {
+        return new Response(deckSource, { status: 200, headers: { 'content-type': 'text/html' } });
+      }
       return new Response(JSON.stringify({}), { status: 404 });
     });
     vi.stubGlobal('fetch', fetchMock);
@@ -7998,7 +8001,9 @@ describe('FileViewer SVG artifacts', () => {
       const exportCall = fetchMock.mock.calls.find(
         ([input]) => String(input) === '/api/projects/project-1/export/html',
       );
-      expect(exportCall).toBeUndefined();
+      expect(exportCall?.[1]).toMatchObject({ method: 'POST' });
+      expect(within(versionDialog).getByRole('alert').textContent)
+        .toContain('standalone HTML cannot export a historical entry');
     } finally {
       if (originalCreateObjectUrl) {
         Object.defineProperty(URL, 'createObjectURL', {
@@ -8172,6 +8177,15 @@ describe('FileViewer SVG artifacts', () => {
       }
       if (url === '/api/projects/project-1/files/index.html/versions/v1' && method === 'GET') {
         return new Response(JSON.stringify({ error: { code: 'VERSION_NOT_FOUND' } }), { status: 500 });
+      }
+      if (url === '/api/projects/project-1/export/html' && method === 'POST') {
+        const body = JSON.parse(String(init?.body ?? '{}')) as { versionId?: string };
+        if (body.versionId === 'v1') {
+          return Response.json({ error: { message: 'Could not load this version preview.' } }, { status: 422 });
+        }
+        return new Response(body.versionId === 'v2'
+          ? '<html><body><h1>Prior</h1></body></html>'
+          : '<html><body><h1>Current</h1></body></html>', { status: 200 });
       }
       if (url.includes('/restore') && method === 'POST') {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });

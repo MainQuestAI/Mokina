@@ -11,7 +11,7 @@ import type { ProjectMaterialExtraction } from '@open-design/contracts';
 export type MokinaMaterial = ProjectMaterialExtraction;
 
 export async function readMokinaMaterial(name: string, buffer: Buffer): Promise<MokinaMaterial> {
-  const result: MokinaMaterial = { name, contentDigest: createHash('sha256').update(buffer).digest('hex'), status: 'read', limitations: [], sections: [] };
+  const result: MokinaMaterial = { name, contentDigest: createHash('sha256').update(buffer).digest('hex'), status: 'read', limitations: [], groupLimitations: [], sections: [] };
   if (buffer.length > 10 * 1024 * 1024) throw new Error('资料超过 10 MB 读取限制');
   const ext = path.extname(name).toLowerCase();
   const add = (location: string, text: string, groupId: string, groupLabel: string) => {
@@ -50,7 +50,13 @@ export async function readMokinaMaterial(name: string, buffer: Buffer): Promise<
       const file = path.join(directory, 'source.pdf'); await writeFile(file, buffer);
       const { stdout } = await promisify(execFile)('pdftotext', ['-layout', file, '-'], { timeout: 15_000, maxBuffer: 4 * 1024 * 1024 });
       const pages = stdout.split('\f'); if (!pages.at(-1)?.trim()) pages.pop();
-      pages.forEach((page, i) => { if (!page.trim()) { result.status = 'partial'; result.limitations.push(`第 ${i + 1} 页没有可读文本，未进行 OCR。`); } else add(`第 ${i + 1} 页`, page.trim(), `page:${i + 1}`, `第 ${i + 1} 页`); });
+      pages.forEach((page, i) => {
+        const location = `第 ${i + 1} 页`;
+        if (!page.trim()) {
+          result.status = 'partial';
+          result.groupLimitations?.push({ groupId: `page:${i + 1}`, location, message: '没有可读文本，未进行 OCR。' });
+        } else add(location, page.trim(), `page:${i + 1}`, location);
+      });
       result.limitations.push('仅读取文本层；图片、扫描页和复杂图表未识别。');
     } catch { result.status = 'unreadable'; result.limitations.push('PDF 文本提取失败；请检查 pdftotext，或提供文本版本。'); }
     finally { await rm(directory, { recursive: true, force: true }); }
@@ -118,17 +124,22 @@ export async function readMokinaMaterial(name: string, buffer: Buffer): Promise<
         const $ = await xml(file);
         $('c').each((_i, cell) => {
           const c = $(cell); const location = `${title}!${c.attr('r') ?? '?'}`; const value = c.find('v').text();
-          if (c.find('f').length && (!c.find('v').length || !value.trim())) { result.status = 'partial'; result.limitations.push(`${location} 公式没有缓存值，未读取结果。`); return; }
-          const formatId = formats[Number(c.attr('s') ?? 0)] ?? 0;
-          const customFormat = styles ? styles('numFmt').toArray().find(f => Number(styles(f).attr('numFmtId')) === formatId) : undefined;
-          const code = customFormat && styles ? styles(customFormat).attr('formatCode') ?? '' : '';
-          const isDate = (formatId >= 14 && formatId <= 22) || (formatId >= 45 && formatId <= 47) || /[ydh]/i.test(code.replace(/"[^"]*"/g, ''));
           const row = Number(c.attr('r')?.match(/\d+$/u)?.[0] ?? 1);
           const block = Math.floor((row - 1) / 20);
           const groupId = `sheet:${sheetIndex}:rows:${block}`;
           const groupLabel = `${title} / 行 ${block * 20 + 1}–${block * 20 + 20}`;
+          const hasFormula = c.find('f').length > 0;
+          if (hasFormula && (!c.find('v').length || !value.trim())) {
+            result.status = 'partial';
+            result.groupLimitations?.push({ groupId, location, message: '公式没有缓存值，未读取结果。' });
+            return;
+          }
+          const formatId = formats[Number(c.attr('s') ?? 0)] ?? 0;
+          const customFormat = styles ? styles('numFmt').toArray().find(f => Number(styles(f).attr('numFmtId')) === formatId) : undefined;
+          const code = customFormat && styles ? styles(customFormat).attr('formatCode') ?? '' : '';
+          const isDate = (formatId >= 14 && formatId <= 22) || (formatId >= 45 && formatId <= 47) || /[ydh]/i.test(code.replace(/"[^"]*"/g, ''));
+          if (hasFormula) result.groupLimitations?.push({ groupId, location, message: '使用公式缓存值，未重新计算。' });
           if (isDate && value) { add(location, `日期/时间单元格：Excel 序列值 ${value}（格式 ${code || formatId}；未推断时区）`, groupId, groupLabel); return; }
-          if (c.find('f').length) result.limitations.push(`${location} 使用公式缓存值 ${value}，未重新计算。`);
           add(location, c.attr('t') === 's' ? (value.trim() ? strings[Number(value)] ?? '' : '') : c.attr('t') === 'inlineStr' ? c.find('t').text() : value, groupId, groupLabel);
         });
       }

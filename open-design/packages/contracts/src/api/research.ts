@@ -22,6 +22,8 @@ export interface ResearchSource {
   title: string;
   url: string;
   snippet: string;
+  /** Tavily basic search returns a search excerpt, not the source page body. */
+  evidenceType?: 'search_summary' | 'original';
   publishedAt?: string;
   provider: string;
 }

@@ -1,7 +1,7 @@
 # Mokina 营销成果 HTML 约定
 
 - 单个自包含 HTML 文件，内联 CSS、脚本、图表数据和 SVG。不要引用项目内会漂移的图片、CSS、JS；无法内联时明确说明，不能声称历史版本可独立交付。
-- 每个可修改章节同时使用稳定且唯一的 `id` 与同值 `data-mokina-id`，如 `objectives`、`audience`、`directions`、`actions`、`budget`、`measurement`、`sources`。章节之间不得嵌套，ID 不随标题措辞改变。
+- 每个可修改的顶层章节同时使用稳定且唯一的 `id` 与同值 `data-mokina-id`，如 `objectives`、`audience`、`directions`、`actions`、`budget`、`measurement`、`sources`。这些章节之间不得嵌套；内部锚点只用普通 `id`。ID 不随标题措辞改变。
 - 引用在对应判断附近标出来源 ID；来源表记录文件或网页、定位、访问时间、实际摘录，以及“原文”“摘要”“推断”的区分。
 - 数值写明单位和时间口径；缺失、空值、公式无缓存值和估算不得混为零或事实。
 - `@media print` 保持正文、表格、来源可读，避免关键表格行被截断。图表同时给出文本或数据表。

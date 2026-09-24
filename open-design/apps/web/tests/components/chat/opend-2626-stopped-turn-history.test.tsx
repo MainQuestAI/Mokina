@@ -27,7 +27,7 @@
  * 夹具形状照抄真机落库记录:TodoWrite 的 `tool_use.id` 带 `:todo-task` 后缀、
  * 对应的 `tool_result.toolUseId` 不带;整条流没有任何终态事件。
  */
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -134,6 +134,14 @@ const labelsOf = (root: HTMLElement): string[] =>
     .map((el) => el.getAttribute('aria-label') ?? '');
 
 describe('OPEND-2626 · 停止过的历史回合恢复后的终态', () => {
+  it('daemon 重启的中断显示真实状态，并提供可用重试入口', () => {
+    const retry = vi.fn();
+    render(<AssistantMessage message={{ ...STOPPED_TURN, cancelOrigin: 'daemon_shutdown' }}
+      streaming={false} isLast projectId="p1" onRetryInterrupted={retry} />);
+    expect(screen.getByTestId('assistant-label').textContent).toContain(en['chat.runError.title.agentCrashed']);
+    fireEvent.click(screen.getByTestId('assistant-retry-interrupted'));
+    expect(retry).toHaveBeenCalledOnce();
+  });
   it('壳头不再自称「进行中」—— 那是真的在跑的回合才说的话', () => {
     const { container } = renderRestoredHistoryTurn();
     const text = container.textContent ?? '';

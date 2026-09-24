@@ -2636,6 +2636,11 @@ a.avatar-item:visited {
 .mokina-material-picker__files label { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .mokina-material-picker__files input { width: 15px; height: 15px; flex: none; }
 .mokina-material-picker__files span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mokina-material-picker__preview { display: grid; gap: 6px; max-height: 300px; overflow: auto; margin: 10px 0; padding: 8px; border: 1px solid var(--border); border-radius: 7px; }
+.mokina-material-picker__preview label { display: grid; grid-template-columns: 16px minmax(0, 1fr); column-gap: 8px; align-items: start; }
+.mokina-material-picker__preview label input { grid-row: span 2; margin: 3px 0 0; }
+.mokina-material-picker__preview label span, .mokina-material-picker__preview label small { overflow-wrap: anywhere; }
+.mokina-material-picker__preview label small { grid-column: 2; opacity: .75; }
 .mokina-material-picker textarea { box-sizing: border-box; width: 100%; min-height: 54px; resize: vertical; }
 .mokina-material-picker button { margin-top: 8px; padding: 6px 10px; border-radius: 6px; background: var(--accent); color: white; }
 .mokina-material-picker button:disabled { opacity: .5; cursor: default; }

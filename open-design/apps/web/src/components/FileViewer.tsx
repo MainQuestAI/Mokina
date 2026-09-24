@@ -3425,7 +3425,9 @@ function FileVersionManagerModal({
   const [revisionSectionId, setRevisionSectionId] = useState('');
   const [revisionRequest, setRevisionRequest] = useState('');
   const [revisionBusy, setRevisionBusy] = useState(false);
+  const [revisionCancelBusy, setRevisionCancelBusy] = useState(false);
   const [revisionProgress, setRevisionProgress] = useState('');
+  const [pendingRevisionStatus, setPendingRevisionStatus] = useState<string | null>(null);
   const revisionStorageKey = `mokina:revision:${projectId}:${file.name}`;
   const [pendingRevisionJob, setPendingRevisionJob] = useState<{
     runId: string; revisionProjectId: string; baseVersionId: string;
@@ -3433,6 +3435,7 @@ function FileVersionManagerModal({
   } | null>(null);
   useEffect(() => {
     let savedJob: NonNullable<typeof pendingRevisionJob> | null = null;
+    let active = true;
     try {
       const raw = localStorage.getItem(revisionStorageKey);
       if (raw) {
@@ -3443,8 +3446,36 @@ function FileVersionManagerModal({
         }
       }
     } catch { /* Damaged local recovery state must not block version viewing. */ }
-    setPendingRevisionJob(savedJob);
-  }, [revisionStorageKey]);
+    setPendingRevisionJob(null);
+    setPendingRevisionStatus(null);
+    if (savedJob) {
+      const job = savedJob;
+      void fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
+        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined)
+        .then(async response => {
+          if (!response.ok) throw new Error('运行状态暂不可读');
+          const body = await response.json() as { run?: { status: string }; status?: string };
+          return body.run?.status ?? body.status ?? 'unknown';
+        })
+        .then(status => {
+          if (!active) return;
+          if (status === 'failed' || status === 'canceled') {
+            localStorage.removeItem(revisionStorageKey);
+            setRevisionProgress(`上次修订已${status === 'canceled' ? '取消' : '失败'}；当前稿未变化。`);
+          } else {
+            setPendingRevisionStatus(status);
+            setPendingRevisionJob(job);
+          }
+        })
+        .catch(() => {
+          if (active) {
+            setPendingRevisionStatus('unknown');
+            setPendingRevisionJob(job);
+          }
+        });
+    }
+    return () => { active = false; };
+  }, [revisionStorageKey, workspaceContext]);
   const [versionImageExportVersionId, setVersionImageExportVersionId] = useState<string | null>(null);
   const [versionImageExportFormat, setVersionImageExportFormat] = useState<ImageExportFormat>('png');
   const [versionImageExportInFlight, setVersionImageExportInFlight] = useState(false);
@@ -4100,7 +4131,13 @@ function FileVersionManagerModal({
       }
     }
     if (!terminal) throw new Error(`修订运行 ${job.runId} 尚未完成；稍后可恢复，当前稿未变化。`);
-    if (terminal.status !== 'succeeded') throw new Error(terminal.error || `修订运行 ${terminal.status}；当前稿未变化。`);
+    if (terminal.status !== 'succeeded') {
+      localStorage.removeItem(revisionStorageKey);
+      setPendingRevisionJob(null);
+      setPendingRevisionStatus(null);
+      throw new Error(terminal.error || `修订运行 ${terminal.status}；当前稿未变化。`);
+    }
+    setPendingRevisionStatus('succeeded');
     setRevisionProgress('正在校验并保存候选…');
     const replacement = await fetchProjectFileText(job.revisionProjectId,
       'MOKINA-REPLACEMENT.html', { cache: 'no-store', workspaceContext });
@@ -4121,6 +4158,7 @@ function FileVersionManagerModal({
     const result = await candidateResponse.json() as { version: ProjectFileVersion };
     localStorage.removeItem(revisionStorageKey);
     setPendingRevisionJob(null);
+    setPendingRevisionStatus(null);
     await loadVersions(result.version.id);
     setRevisionProgress('候选已保存；请预览后再采用。');
   }
@@ -4133,6 +4171,37 @@ function FileVersionManagerModal({
     try { await finishChapterCandidate(pendingRevisionJob); }
     catch (cause) { setRevisionProgress(''); setError(cause instanceof Error ? cause.message : '恢复修订失败'); }
     finally { setRevisionBusy(false); }
+  }
+
+  async function cancelChapterCandidate() {
+    if (!pendingRevisionJob || revisionCancelBusy) return;
+    setRevisionCancelBusy(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/runs/${encodeURIComponent(pendingRevisionJob.runId)}/cancel`, {
+        method: 'POST',
+        ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      });
+      if (!response.ok) throw new Error('取消请求失败；请检查运行状态后重试。');
+      const statusResponse = await fetch(`/api/runs/${encodeURIComponent(pendingRevisionJob.runId)}`,
+        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
+      if (!statusResponse.ok) throw new Error('已发送取消请求，但运行状态暂不可读。');
+      const body = await statusResponse.json() as { run?: { status: string }; status?: string };
+      const status = body.run?.status ?? body.status;
+      if (status === 'canceled' || status === 'failed') {
+        localStorage.removeItem(revisionStorageKey);
+        setPendingRevisionJob(null);
+        setPendingRevisionStatus(null);
+        setRevisionProgress('修订已取消；当前稿未变化。');
+      } else {
+        setPendingRevisionStatus(status ?? 'unknown');
+        setRevisionProgress('已请求取消，等待运行终态。');
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '取消失败');
+    } finally {
+      setRevisionCancelBusy(false);
+    }
   }
 
   async function generateChapterCandidate() {
@@ -4194,6 +4263,7 @@ function FileVersionManagerModal({
         baseVersionId, sectionId: revisionSectionId, prompt: request, operationId: newClientOperationId() };
       localStorage.setItem(revisionStorageKey, JSON.stringify(job));
       setPendingRevisionJob(job);
+      setPendingRevisionStatus('running');
       await finishChapterCandidate(job);
     } catch (cause) {
       setRevisionProgress('');
@@ -4395,8 +4465,14 @@ function FileVersionManagerModal({
             </button>
             {pendingRevisionJob ? <button type="button" disabled={viewerOnly || revisionBusy}
               onClick={() => { void resumeChapterCandidate(); }}>
-              恢复上次修订候选
+              {pendingRevisionStatus === 'succeeded' ? '保存已完成运行的候选' : '恢复上次修订候选'}
             </button> : null}
+            {pendingRevisionJob && pendingRevisionStatus !== 'succeeded' ? <button type="button"
+              disabled={viewerOnly || revisionCancelBusy}
+              onClick={() => { void cancelChapterCandidate(); }}>
+              {revisionCancelBusy ? '正在取消…' : '取消本次修订'}
+            </button> : null}
+            {pendingRevisionJob && pendingRevisionStatus === 'unknown' ? <p role="status">运行状态暂不可读，请稍后恢复或取消。</p> : null}
             {revisionProgress ? <p role="status">{revisionProgress}</p> : null}
           </section>
         ) : null}

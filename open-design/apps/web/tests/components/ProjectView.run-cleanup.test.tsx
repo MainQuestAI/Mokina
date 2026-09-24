@@ -500,6 +500,14 @@ describe('retry target resolution', () => {
       .toBeNull();
     expect(resolveRetryTarget([failedAssistant], failedAssistant.id)).toBeNull();
   });
+
+  it('retries daemon-shutdown interruption while leaving user cancellation final', () => {
+    const interrupted = { ...failedAssistant, runStatus: 'canceled' as const,
+      cancelOrigin: 'daemon_shutdown' as const };
+    expect(resolveRetryTarget([userMessage, interrupted], interrupted.id)?.userMsg).toBe(userMessage);
+    expect(resolveRetryTarget([userMessage,
+      { ...interrupted, cancelOrigin: 'user_stop' }], interrupted.id)).toBeNull();
+  });
 });
 
 describe('ProjectView daemon cleanup', () => {

@@ -61,6 +61,26 @@ describe('project file versions', () => {
     });
   });
 
+  it('rejects adoption when a manual edit changed the working file after candidate creation', async () => {
+    await withProject(async (projectsRoot, projectId) => {
+      const fileName = 'brand.html';
+      const workingPath = path.join(projectDir(projectsRoot, projectId), fileName);
+      const original = '<section id="budget" data-mokina-id="budget">100</section>';
+      await writeFile(workingPath, original);
+      const base = await createProjectFileVersion(projectsRoot, projectId, fileName, original);
+      const candidate = await createProjectFileVersion(projectsRoot, projectId, fileName,
+        '<section id="budget" data-mokina-id="budget">200</section>',
+        { candidate: true, baseVersionId: base.id, operationId: 'candidate-manual-race' });
+      const manual = '<section id="budget" data-mokina-id="budget">150 manual</section>';
+      await writeFile(workingPath, manual);
+      await expect(adoptCandidateVersion(projectsRoot, projectId, fileName, candidate.id,
+        base.id, 'adopt-manual-race', workingPath)).rejects.toMatchObject({ code: 'VERSION_EXTERNAL_CHANGE' });
+      expect(await readFile(workingPath, 'utf8')).toBe(manual);
+      expect((await listProjectFileVersions(projectsRoot, projectId, fileName))
+        .find(version => version.id === candidate.id)).toMatchObject({ candidate: true, current: false });
+    });
+  });
+
   it('snapshots HTML content, dedupes unchanged current content, and marks the latest version current', async () => {
     await withProject(async (projectsRoot, projectId) => {
       const first = await ensureCurrentProjectFileVersion(

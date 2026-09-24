@@ -34,10 +34,11 @@ export interface DesignDeliveryInput {
  * failed process run.
  */
 export function isRetryableAssistantTerminalFailure(
-  message: Pick<ChatMessage, 'runStatus' | 'resultDeliveryState'>,
+  message: Pick<ChatMessage, 'runStatus' | 'resultDeliveryState' | 'cancelOrigin'>,
 ): boolean {
   return (
     message.runStatus === 'failed' ||
+    (message.runStatus === 'canceled' && message.cancelOrigin === 'daemon_shutdown') ||
     message.resultDeliveryState === 'no_result' ||
     message.resultDeliveryState === 'delivery_failed'
   );

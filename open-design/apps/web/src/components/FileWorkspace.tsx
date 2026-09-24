@@ -1316,6 +1316,61 @@ interface WorkspaceActionToast {
 
 const MOKINA_MATERIAL_EXTENSIONS = /\.(?:txt|md|csv|pdf|docx|xlsx|pptx)$/i;
 
+type MokinaSelectionGroup = {
+  key: string;
+  name: string;
+  label: string;
+  sections: ProjectMaterialExtraction['sections'];
+  chars: number;
+};
+
+export function groupMokinaMaterialSections(materials: ProjectMaterialExtraction[]): MokinaSelectionGroup[] {
+  const groups: MokinaSelectionGroup[] = [];
+  for (const material of materials) {
+    let previousId = '';
+    let part = 0;
+    let current: MokinaSelectionGroup | null = null;
+    for (const section of material.sections) {
+      const id = section.groupId ?? section.location;
+      if (id !== previousId) part = 0;
+      if (!current || id !== previousId || current.chars + section.text.length > 8_000) {
+        if (id === previousId) part++;
+        current = {
+          key: `${material.name}:${material.contentDigest}:${id}:${part}`,
+          name: material.name,
+          label: `${section.groupLabel ?? section.location}${part ? ` / 片段 ${part + 1}` : ''}`,
+          sections: [],
+          chars: 0,
+        };
+        groups.push(current);
+      }
+      current.sections.push(section);
+      current.chars += section.text.length;
+      previousId = id;
+    }
+  }
+  return groups;
+}
+
+export function buildMokinaMaterialSnapshot(
+  materials: ProjectMaterialExtraction[],
+  groups: MokinaSelectionGroup[],
+  selectedKeys: string[],
+): string {
+  const chosen = groups.filter(group => selectedKeys.includes(group.key));
+  return [
+    '# 本次选入资料的固定摘录',
+    '以下仅包含用户本次勾选的资料段落；位置指向当次提取的原件。未勾选内容不在此工作空间中。',
+    ...materials.filter(material => chosen.some(group => group.name === material.name)).map(material => [
+      `## ${material.name}`,
+      `提取状态：${material.status === 'partial' ? '部分读取' : '已读取'}`,
+      ...material.limitations.map(value => `读取限制：${value}`),
+      ...chosen.filter(group => group.name === material.name).flatMap(group =>
+        group.sections.map(section => `### ${section.location}\n${section.text}`)),
+    ].join('\n\n')),
+  ].join('\n\n');
+}
+
 function MokinaMaterialPicker({ projectName, projectId, files }: {
   projectName: string;
   projectId: string;
@@ -1325,35 +1380,52 @@ function MokinaMaterialPicker({ projectName, projectId, files }: {
   const candidates = useMemo(() => files.filter(file => MOKINA_MATERIAL_EXTENSIONS.test(file.name)), [files]);
   const [selected, setSelected] = useState<string[]>([]);
   const [brief, setBrief] = useState('');
+  const [materials, setMaterials] = useState<ProjectMaterialExtraction[] | null>(null);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const groups = useMemo(() => groupMokinaMaterialSections(materials ?? []), [materials]);
+  const selectedChars = materials && selectedGroups.length
+    ? buildMokinaMaterialSnapshot(materials, groups, selectedGroups).length : 0;
   if (candidates.length === 0) return null;
 
-  async function startWithSelectedMaterials() {
+  async function readSelectedMaterials(): Promise<ProjectMaterialExtraction[]> {
+    const extracted = await Promise.all(selected.map(name => fetchProjectMaterial(projectId, name, workspaceContext)));
+    return extracted.map((result, index) => {
+      if (!result || 'error' in result) throw new Error(`${selected[index]}：${result && 'error' in result ? result.error : '资料读取失败'}`);
+      if (result.status === 'unreadable') throw new Error(`${selected[index]} 无可用文本；请检查原件或换用文本版本。`);
+      return result;
+    });
+  }
+
+  async function previewSelectedMaterials() {
     if (busy) return;
     if (!selected.length) { setError('请至少选择一份资料。'); return; }
     setBusy(true);
     setError(null);
     try {
-      const extracted = await Promise.all(selected.map(name => fetchProjectMaterial(projectId, name, workspaceContext)));
-      const materials: ProjectMaterialExtraction[] = [];
-      for (let index = 0; index < selected.length; index++) {
-        const result = extracted[index];
-        if (!result || 'error' in result) throw new Error(`${selected[index]}：${result && 'error' in result ? result.error : '资料读取失败'}`);
-        if (result.status === 'unreadable') throw new Error(`${selected[index]} 无可用文本；请检查原件或换用文本版本。`);
-        materials.push(result);
+      setMaterials(await readSelectedMaterials());
+      setSelectedGroups([]);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '资料读取失败');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function startWithSelectedMaterials() {
+    if (busy || !materials) return;
+    if (!selectedGroups.length) { setError('请至少选择一个资料段落。'); return; }
+    setBusy(true);
+    setError(null);
+    try {
+      const refreshed = await readSelectedMaterials();
+      if (refreshed.some((material, index) => material.contentDigest !== materials[index]?.contentDigest)) {
+        setMaterials(null);
+        setSelectedGroups([]);
+        throw new Error('资料在预览后发生变化；请重新预览并选择。');
       }
-      const snapshot = [
-        '# 本次选入资料的固定摘录',
-        '以下仅包含用户本次勾选的资料；位置指向当次提取的原件。未勾选资料不在此工作空间中。',
-        ...materials.map(material => [
-          `## ${material.name}`,
-          `提取状态：${material.status === 'partial' ? '部分读取' : '已读取'}`,
-          `内容摘要：${material.contentDigest}`,
-          ...material.limitations.map(value => `读取限制：${value}`),
-          ...material.sections.map(section => `### ${section.location}\n${section.text}`),
-        ].join('\n\n')),
-      ].join('\n\n');
+      const snapshot = buildMokinaMaterialSnapshot(refreshed, groups, selectedGroups);
       if (snapshot.length > 32_000) throw new Error(`选入内容共 ${snapshot.length} 字，超过本次工作 32,000 字上限；请减少勾选的资料。`);
       const prompt = [
         brief.trim() || '请先基于本次选入资料讨论市场问题与可验证的营销方向；我明确要求交付时再生成成果。',
@@ -1382,22 +1454,41 @@ function MokinaMaterialPicker({ projectName, projectId, files }: {
   return (
     <details className="mokina-material-picker">
       <summary>选入资料，开始独立市场分析</summary>
-      <p>新工作只保存勾选资料的固定文字摘录。未勾选文件不会复制到新项目；发送草稿前不会运行模型。</p>
+      <p>先预览可读范围，再选择要带入新工作的段落。未选内容不会复制到新项目；发送草稿前不会运行模型。</p>
       <div className="mokina-material-picker__files">
         {candidates.map(file => (
           <label key={file.name}>
             <input type="checkbox" checked={selected.includes(file.name)} disabled={busy}
-              onChange={event => setSelected(current => event.target.checked
-                ? [...current, file.name] : current.filter(name => name !== file.name))} />
+              onChange={event => {
+                setSelected(current => event.target.checked
+                  ? [...current, file.name] : current.filter(name => name !== file.name));
+                setMaterials(null);
+                setSelectedGroups([]);
+              }} />
             <span>{file.name}</span>
           </label>
         ))}
       </div>
+      {materials ? <div className="mokina-material-picker__preview">
+        {materials.map(material => <p key={material.name}>
+          {material.name}：{material.status === 'partial' ? '部分读取' : '已读取'}。
+          {material.limitations.join(' ')}
+        </p>)}
+        <p role="status">已选 {selectedChars.toLocaleString()} / 32,000 字；提取内容超限时会明确标为部分读取。</p>
+        {groups.map(group => <label key={group.key}>
+          <input type="checkbox" checked={selectedGroups.includes(group.key)} disabled={busy}
+            onChange={event => setSelectedGroups(current => event.target.checked
+              ? [...current, group.key] : current.filter(key => key !== group.key))} />
+          <span>{group.name} · {group.label} · {group.chars.toLocaleString()} 字</span>
+          <small>{group.sections[0]?.location}：{group.sections[0]?.text.slice(0, 100)}</small>
+        </label>)}
+      </div> : null}
       <textarea value={brief} disabled={busy} onChange={event => setBrief(event.target.value)}
         placeholder="本次要讨论的市场问题或目标（可选）" aria-label="本次市场问题或目标" />
       {error ? <p role="alert">{error}</p> : null}
-      <button type="button" disabled={busy || !selected.length} onClick={() => void startWithSelectedMaterials()}>
-        {busy ? '正在提取资料…' : `用 ${selected.length} 份资料创建工作`}
+      <button type="button" disabled={busy || !selected.length}
+        onClick={() => void (materials ? startWithSelectedMaterials() : previewSelectedMaterials())}>
+        {busy ? '正在处理资料…' : materials ? `用 ${selectedGroups.length} 个段落创建工作` : '预览可读范围'}
       </button>
     </details>
   );

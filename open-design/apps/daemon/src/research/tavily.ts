@@ -114,6 +114,7 @@ export async function tavilySearch(
         typeof r.content === 'string'
           ? r.content.trim().slice(0, 800)
           : '',
+      evidenceType: 'search_summary',
       provider: 'tavily',
       ...(publishedAt ? { publishedAt } : {}),
     });

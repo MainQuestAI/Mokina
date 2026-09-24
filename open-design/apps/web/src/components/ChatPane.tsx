@@ -2407,7 +2407,8 @@ export function ChatPane({
    * 也认「进程成了、东西没交出来」的 `no_result` / `delivery_failed` ——
    * 恢复入口这一族本来就共用它当锚点,兜底卡没有理由另立一套。
    */
-  const turnEndedInTerminalFailure = !!retryAssistant && !failedTurnIsAnEmptyResponse;
+  const turnEndedInTerminalFailure = !!retryAssistant && !failedTurnIsAnEmptyResponse
+    && retryAssistant.cancelOrigin !== 'daemon_shutdown';
   const cardDescription = resolveRunErrorCardDescription({
     handedToAnotherSurface: anotherSurfaceOwnsFailure,
     mappedMessageKey: runFailureUi?.messageKey ?? null,
@@ -4419,6 +4420,9 @@ export function ChatPane({
                   }
                   onResendUserMessage={onResendUserMessage}
                   onRetryImage={handleRetryImage}
+                  interruptedRetryAssistantId={retryAssistant?.cancelOrigin === 'daemon_shutdown'
+                    && onRetry && !recoveryActionsDisabled ? retryAssistant.id : null}
+                  onRetryInterrupted={onRetry ? (message) => onRetry(message, 'manual_retry') : undefined}
                   projectId={projectId}
                   projectKindForTracking={projectKindForTracking}
                   activeConversationId={activeConversationId}
@@ -5179,6 +5183,8 @@ function ChatRows({
   onLowBalanceTurnCardUpgrade,
   onResendUserMessage,
   onRetryImage,
+  interruptedRetryAssistantId,
+  onRetryInterrupted,
   projectId,
   projectKindForTracking,
   activeConversationId,
@@ -5259,6 +5265,8 @@ function ChatRows({
   onResendUserMessage?: (message: ChatMessage) => void;
   /** 生图失败格的「重试」—— 见 ChatPane 的 handleRetryImage(D59) */
   onRetryImage?: (row: { total: number; done: number; failed: number }, index: number) => void;
+  interruptedRetryAssistantId?: string | null;
+  onRetryInterrupted?: (message: ChatMessage) => void;
   streaming: boolean;
   projectId: string | null;
   projectKindForTracking: TrackingProjectKind | null;
@@ -5425,6 +5433,11 @@ function ChatRows({
         onContinueRemainingTasks={
           onContinueRemainingTasks
             ? (todos) => assistantCallbacksRef.current.onContinueRemainingTasks?.(m, todos)
+            : undefined
+        }
+        onRetryInterrupted={
+          interruptedRetryAssistantId === m.id && onRetryInterrupted
+            ? () => onRetryInterrupted(m)
             : undefined
         }
         suppressDirectionForms={hasActiveDesignSystem}
@@ -7178,4 +7191,3 @@ function isProgrammaticBrandAssistantMessage(message: ChatMessage | null | undef
     /程序化.*抽取|程式化.*抽取|抽取已停止/.test(content)
   );
 }
-

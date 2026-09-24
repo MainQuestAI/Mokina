@@ -226,6 +226,7 @@ interface Props {
    */
   previousTodos?: TodoItem[];
   onContinueRemainingTasks?: (todos: TodoItem[]) => void;
+  onRetryInterrupted?: () => void;
   onForkFromMessage?: () => void;
   forking?: boolean;
   onFeedback?: (change: ChatMessageFeedbackChange) => void;
@@ -424,6 +425,7 @@ function AssistantMessageImpl({
   questionFormSubmitDisabled = false,
   previousTodos,
   onContinueRemainingTasks,
+  onRetryInterrupted,
   onForkFromMessage,
   forking = false,
   onFeedback,
@@ -1430,6 +1432,8 @@ function AssistantMessageImpl({
                   // 判据与三条理由都在上面 `hideRunStatus` 的定义处。
                   hideRunStatus,
                   onContinueRemaining: continueRemaining,
+                  onRetryInterrupted,
+                  interrupted: message.runStatus === 'canceled' && message.cancelOrigin === 'daemon_shutdown',
                 }}
               />
             ) : (
@@ -1447,6 +1451,8 @@ function AssistantMessageImpl({
                 createdAt={message.createdAt}
                 hideRunStatus={hideRunStatus}
                 onContinueRemaining={continueRemaining}
+                onRetryInterrupted={onRetryInterrupted}
+                interrupted={message.runStatus === 'canceled' && message.cancelOrigin === 'daemon_shutdown'}
               />
             )}
           </div>
@@ -2102,6 +2108,8 @@ interface AssistantFooterProps {
   hasUnfinishedTodos: boolean;
   hasEmptyResponse: boolean;
   canceled?: boolean;
+  interrupted?: boolean;
+  onRetryInterrupted?: () => void;
   // Pre-output phase: streaming but nothing rendered yet. The label shimmers
   // "Preparing…"; once content lands it flips to "Working".
   preparing?: boolean;
@@ -2133,6 +2141,8 @@ export function AssistantFooter({
   hasUnfinishedTodos,
   hasEmptyResponse,
   canceled = false,
+  interrupted = false,
+  onRetryInterrupted,
   preparing = false,
   preparingStatus = "preparing",
   copyMarkdown,
@@ -2155,6 +2165,7 @@ export function AssistantFooter({
     !copyMarkdown &&
     !onFork &&
     !onContinueRemaining
+    && !onRetryInterrupted
   )
     return null;
   return (
@@ -2193,14 +2204,14 @@ export function AssistantFooter({
               : hasEmptyResponse
               ? t("assistant.emptyResponseLabel")
               : canceled
-              ? t("assistant.canceledLabel")
+              ? interrupted ? t('chat.runError.title.agentCrashed') : t("assistant.canceledLabel")
               : hasUnfinishedTodos
               ? t("assistant.unfinishedLabel")
               : t("assistant.doneLabel")}
           </span>
         </>
       ) : null}
-      {copyMarkdown || onFork || feedbackControls || onContinueRemaining ? (
+      {copyMarkdown || onFork || feedbackControls || onContinueRemaining || onRetryInterrupted ? (
         <span className="assistant-footer-controls">
           {/*
             〔继续剩余任务〕排在最前面。
@@ -2218,6 +2229,12 @@ export function AssistantFooter({
               onClick={onContinueRemaining}
             >
               {t("assistant.continueRemaining")}
+            </button>
+          ) : null}
+          {onRetryInterrupted ? (
+            <button type="button" className="assistant-copy-button assistant-continue-remaining"
+              data-testid="assistant-retry-interrupted" onClick={onRetryInterrupted}>
+              {t('promptTemplates.retry')}
             </button>
           ) : null}
           {/* 稿子的顺序是 赞 → 踩 → 复制 → Fork:先是「这答案好不好」,再是「拿它做点什么」 */}

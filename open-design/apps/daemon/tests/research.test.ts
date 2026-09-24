@@ -42,6 +42,18 @@ describe('research search', () => {
     } satisfies Partial<ResearchError>);
   });
 
+  it('reports a provider failure instead of returning completed findings', async () => {
+    process.env.OD_TAVILY_API_KEY = 'tvly-test';
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('upstream unavailable', { status: 503 })));
+
+    await expect(
+      searchResearch({ projectRoot: await tempProjectRoot(), query: 'EV trends' }),
+    ).rejects.toMatchObject({
+      code: 'RESEARCH_PROVIDER_FAILED',
+      status: 502,
+    } satisfies Partial<ResearchError>);
+  });
+
   it('uses shallow Tavily search and normalizes JSON findings', async () => {
     process.env.OD_TAVILY_API_KEY = 'tvly-test';
     const fetchMock = vi.fn(async (_input: FetchInput, _init?: FetchInit) =>
@@ -78,6 +90,7 @@ describe('research search', () => {
           title: 'EV report',
           url: 'https://example.com/ev',
           snippet: 'EV adoption increased in 2025.',
+          evidenceType: 'search_summary',
           provider: 'tavily',
           publishedAt: '2025-05-01',
         },

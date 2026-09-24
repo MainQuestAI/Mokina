@@ -16,11 +16,47 @@ import {
 import {
   DESIGN_FILES_TAB,
   FileWorkspace,
+  buildMokinaMaterialSnapshot,
+  groupMokinaMaterialSections,
   measureWorkspaceTabBarAfterResize,
   settleManualEditFiles,
   scrollWorkspaceTabsWithWheel,
   settleManualEditExit,
 } from '../../src/components/FileWorkspace';
+
+describe('Mokina selected material snapshot', () => {
+  it('keeps only selected source ranges and their extraction limits', () => {
+    const materials = [{
+      name: 'brief.md', contentDigest: 'source-v1', status: 'partial' as const,
+      limitations: ['第 3 页没有可读文本'],
+      sections: [
+        { location: '第 1 行', text: '预算 100 万', groupId: 'scope', groupLabel: '范围' },
+        { location: '第 9 行', text: '未选的 999 万', groupId: 'excluded', groupLabel: '旧数据' },
+      ],
+    }];
+    const groups = groupMokinaMaterialSections(materials);
+    const snapshot = buildMokinaMaterialSnapshot(materials, groups, [groups[0]!.key]);
+    expect(snapshot).toContain('第 1 行\n预算 100 万');
+    expect(snapshot).toContain('第 3 页没有可读文本');
+    expect(snapshot).not.toContain('未选的 999 万');
+    expect(snapshot).not.toContain('第 9 行');
+    expect(snapshot).not.toContain('source-v1');
+  });
+
+  it('splits a long source group into selectable pieces', () => {
+    const material = [{
+      name: 'report.pdf', contentDigest: 'pdf-v1', status: 'read' as const, limitations: [],
+      sections: [
+        { location: '第 2 页 / 片段 1', text: '甲'.repeat(5_000), groupId: 'page:2', groupLabel: '第 2 页' },
+        { location: '第 2 页 / 片段 2', text: '乙'.repeat(5_000), groupId: 'page:2', groupLabel: '第 2 页' },
+      ],
+    }];
+    const groups = groupMokinaMaterialSections(material);
+    expect(groups.map(group => group.chars)).toEqual([5_000, 5_000]);
+    expect(groups.map(group => group.label)).toEqual(['第 2 页', '第 2 页 / 片段 2']);
+    expect(buildMokinaMaterialSnapshot(material, groups, [groups[1]!.key])).not.toContain('甲');
+  });
+});
 import { ENABLE_BLANK_PAGE_WORKSPACE_ENTRYPOINT } from '../../src/components/workspace/tab-launcher';
 import { I18nProvider } from '../../src/i18n';
 import { DesignFilesPanel } from '../../src/components/DesignFilesPanel';

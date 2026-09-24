@@ -4,6 +4,7 @@ import {
   type PublicFileManualRevokeRequiredData,
   type PublicProjectFilePublication,
 } from '@open-design/contracts';
+export type { ProjectMaterialExtraction } from '@open-design/contracts';
 import { boundedRequestErrorCode } from '../analytics/workspace';
 import type {
   ConnectorAuthConfigPrepareResponse,
@@ -27,6 +28,7 @@ import type {
   ProjectPreviewScopeRenewResponse,
   ProjectPreviewUrlResponse,
   ProjectFileVersion,
+  ProjectMaterialExtraction,
   ProjectFileVersionSource,
   ProjectFileVersionResponse,
   ProjectFileVersionsResponse,
@@ -2651,14 +2653,6 @@ export interface ProjectFilePreview {
   kind: 'pdf' | 'document' | 'presentation' | 'spreadsheet';
   title: string;
   sections: ProjectFilePreviewSection[];
-}
-
-export interface ProjectMaterialExtraction {
-  name: string;
-  contentDigest: string;
-  status: 'read' | 'partial' | 'unreadable';
-  limitations: string[];
-  sections: Array<{ location: string; text: string }>;
 }
 
 export async function fetchProjectMaterial(

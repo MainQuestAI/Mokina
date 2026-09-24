@@ -56,6 +56,20 @@ export interface ProjectFilesResponse {
   files: ProjectFile[];
 }
 
+export interface ProjectMaterialExtraction {
+  name: string;
+  contentDigest: string;
+  status: 'read' | 'partial' | 'unreadable';
+  limitations: string[];
+  sections: Array<{
+    location: string;
+    text: string;
+    /** Stable within this extraction; contentDigest identifies the source revision. */
+    groupId?: string;
+    groupLabel?: string;
+  }>;
+}
+
 export type ProjectFileVersionSource = 'ai' | 'manual' | 'restore';
 export type ProjectFileVersionPromptSource = 'message' | 'project' | 'manual' | 'restore';
 

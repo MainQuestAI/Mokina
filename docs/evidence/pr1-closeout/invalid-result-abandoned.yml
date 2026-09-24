@@ -1,0 +1,96 @@
+- generic [active] [ref=f15e1]:
+  - button "Open Next.js Dev Tools" [ref=f15e35] [cursor=pointer]
+  - alert [ref=f15e39]
+  - generic [ref=f15e232]:
+    - banner "Workspace tabs" [ref=f15e233]:
+      - button "主页" [ref=f15e234] [cursor=pointer]
+    - generic [ref=f15e239]:
+      - generic [ref=f15e241]:
+        - button "历史会话" [ref=f15e245] [cursor=pointer]
+        - button "收起对话栏" [ref=f15e248] [cursor=pointer]
+        - button "修订退出验收" [ref=f15e252] [cursor=pointer]
+      - separator "调整聊天面板大小" [ref=f15e264]
+      - generic [ref=f15e265]:
+        - generic [ref=f15e266]:
+          - tablist "页面" [ref=f15e267]:
+            - tab "设计文件" [ref=f15e268] [cursor=pointer]
+            - tab "review.html 关闭标签页" [selected] [ref=f15e273]:
+              - generic [ref=f15e277]: review.html
+              - button "关闭标签页" [ref=f15e279] [cursor=pointer]
+          - button "新建标签页" [ref=f15e283] [cursor=pointer]
+        - generic [ref=f15e316]:
+          - generic [ref=f15e317]:
+            - generic [ref=f15e318]:
+              - button "重新加载 预览" [ref=f15e319] [cursor=pointer]
+              - tablist "View mode" [ref=f15e322]:
+                - tab "预览" [selected] [ref=f15e323] [cursor=pointer]
+                - tab "代码" [ref=f15e326] [cursor=pointer]
+              - button "预览视口" [ref=f15e331] [cursor=pointer]:
+                - generic [ref=f15e334]: 桌面端
+            - button "更多" [ref=f15e339] [cursor=pointer]
+          - iframe [ref=f15e350]:
+            - generic [ref=f25e1]:
+              - heading "修订验收" [level=1] [ref=f25e2]
+              - generic [ref=f25e3]:
+                - heading "渠道策略" [level=2] [ref=f25e4]
+                - paragraph [ref=f25e5]: 原渠道内容。
+  - generic [ref=f15e352]:
+    - generic [ref=f15e353]:
+      - combobox "继续讨论，或提出要生成、修改的成果…" [ref=f15e355]:
+        - paragraph [ref=f15e356]
+      - generic [aria-hidden]:
+        - generic: 为一款面向开发者的 SaaS 设计一份信息密度高的分析仪表盘 —— 顶部 KPI 条带（含周环比变化）、两张堆叠折线图（MRR 与活跃工作区）、全球使用热力图、留存矩阵、客户排行榜以及实时事件流。深色主题，等宽数字，迷你图作为点缀。
+    - generic [ref=f15e357]:
+      - button "添加" [ref=f15e359] [cursor=pointer]
+      - button "设计体系" [ref=f15e363] [cursor=pointer]
+      - button "账户与设置" [ref=f15e368] [cursor=pointer]:
+        - generic [ref=f15e369]: Default (CLI config)
+      - button "发送" [disabled] [ref=f15e370]
+  - dialog "版本管理" [ref=f15e375]:
+    - banner [ref=f15e376]:
+      - generic [ref=f15e377]:
+        - strong [ref=f15e378]: review.html
+        - paragraph [ref=f15e379]: 历史版本 · 1 个版本
+      - generic [ref=f15e380]:
+        - button "在新窗口打开预览" [ref=f15e381] [cursor=pointer]
+        - button "关闭" [ref=f15e384] [cursor=pointer]
+    - generic [ref=f15e387]:
+      - iframe [ref=f15e388]:
+        - generic [ref=f26e1]:
+          - heading "修订验收" [level=1] [ref=f26e2]
+          - generic [ref=f26e3]:
+            - heading "渠道策略" [level=2] [ref=f26e4]
+            - paragraph [ref=f26e5]: 原渠道内容。
+      - generic [ref=f15e389]:
+        - generic [ref=f15e390]: v1
+        - strong [ref=f15e391]: 9月24日 16:40
+    - listbox "文件版本" [ref=f15e392]:
+      - option "v1 当前 手动编辑 9月24日 16:40" [selected] [ref=f15e393] [cursor=pointer]:
+        - generic [ref=f15e394]: v1
+        - generic [ref=f15e395]:
+          - emphasis [ref=f15e397]: 当前
+          - generic [ref=f15e398]:
+            - generic [ref=f15e399]: 手动编辑
+            - generic [ref=f15e400]: 9月24日 16:40
+    - region "AI 章节修订" [ref=f15e401]:
+      - strong [ref=f15e402]: AI 修订章节
+      - paragraph [ref=f15e403]: Codex 在独立工作中只接收所选章节；结果先保存为候选，预览后再采用。
+      - combobox "要修订的章节" [ref=f15e404]:
+        - option "选择章节" [selected]
+        - option "strategy：渠道策略原渠道内容。"
+      - textbox "章节修改要求" [ref=f15e405]:
+        - /placeholder: 只针对所选章节写出具体修改要求
+      - button "生成候选（不改当前稿）" [disabled] [ref=f15e427]
+      - status [ref=f15e432]: 已放弃本次结果；当前稿未变化，可以重新生成。
+    - region "选择性接续" [ref=f15e409]:
+      - strong [ref=f15e410]: 以此继续
+      - paragraph [ref=f15e411]: 从 v1 选择结论；新项目只保存这些固定摘录，发送前可修改请求。
+      - generic [ref=f15e412]:
+        - checkbox "strategy：渠道策略原渠道内容。" [ref=f15e413]
+        - generic [ref=f15e414]: strategy：渠道策略原渠道内容。
+      - textbox "接续背景" [ref=f15e415]:
+        - /placeholder: 可选：补充品牌、目标或约束
+      - button "创建接续项目（不发送）" [disabled] [ref=f15e416]
+    - contentinfo [ref=f15e417]:
+      - button "切换到此版本" [disabled] [ref=f15e418]
+      - button "下载 版本 1" [ref=f15e421] [cursor=pointer]: 下载

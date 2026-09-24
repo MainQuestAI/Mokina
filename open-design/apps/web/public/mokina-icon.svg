@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Mokina">
+  <rect width="128" height="128" rx="29" fill="#18221d"/>
+  <path d="M24 92V36h15l25 31 25-31h15v56H87V61L64 89 41 61v31Z" fill="#e6f1e6"/>
+  <circle cx="99" cy="29" r="9" fill="#91cfaa"/>
+</svg>

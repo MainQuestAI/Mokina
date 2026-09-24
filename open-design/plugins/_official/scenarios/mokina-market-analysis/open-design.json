@@ -1,0 +1,26 @@
+{
+  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
+  "specVersion": "1.0.0",
+  "name": "mokina-market-analysis",
+  "title": "市场与营销分析",
+  "version": "0.0.1",
+  "description": "基于用户资料与可核对来源形成市场、竞品和营销判断。",
+  "license": "Apache-2.0",
+  "author": { "name": "Mokina" },
+  "tags": ["scenario", "marketing", "analysis"],
+  "compat": { "agentSkills": [{ "path": "./SKILL.md" }] },
+  "od": {
+    "kind": "scenario",
+    "taskKind": "new-generation",
+    "scenario": "marketing-analysis",
+    "mode": "scenario",
+    "context": { "skills": [{ "path": "./SKILL.md" }], "assets": ["./references/report-contract.md"] },
+    "pipeline": { "stages": [
+      { "id": "discovery", "atoms": ["discovery-question-form"] },
+      { "id": "generate", "atoms": ["file-write", "live-artifact"] }
+    ] },
+    "capabilities": ["prompt:inject", "fs:write"],
+    "useCase": { "query": { "en": "Analyze the market question using the provided materials and explicit sources. Discuss first if requested; create a self-contained HTML report only when asked.", "zh-CN": "依据本次选入资料和明确来源分析市场问题。用户要求先讨论时不要生成文件；明确要求交付时生成自包含 HTML 报告。" }, "exampleOutputs": [] },
+    "inputs": []
+  }
+}

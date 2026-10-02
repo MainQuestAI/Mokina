@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 vi.mock('../../src/mokina-edition', () => ({ MOKINA_LOCAL_EDITION: true }));
 
@@ -71,6 +71,7 @@ function setupRecoveryFetch(
   status: 'running' | 'succeeded',
   failure?: 'missing-replacement' | 'invalid-candidate',
   secondStatus?: Promise<Response>,
+  options: { versions?: Array<typeof currentVersion>; historyContent?: Promise<Response> } = {},
 ) {
   let candidateAttempts = 0;
   let statusReads = 0;
@@ -79,7 +80,10 @@ function setupRecoveryFetch(
     const url = typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
     const method = init?.method ?? 'GET';
     if (url === '/api/projects/project-1/files/index.html/versions' && method === 'GET') {
-      return new Response(JSON.stringify({ file, versions: [currentVersion] }), { status: 200 });
+      return new Response(JSON.stringify({ file, versions: options.versions ?? [currentVersion] }), { status: 200 });
+    }
+    if (url === '/api/projects/project-1/files/index.html/versions/old' && options.historyContent) {
+      return options.historyContent;
     }
     if (url === '/api/projects/project-1/export/html' && method === 'POST') {
       return new Response(source, { status: 200, headers: { 'content-type': 'text/html' } });
@@ -149,9 +153,9 @@ describe('Mokina revision recovery UI', () => {
     fireEvent.change(prompt, { target: { value: '保留尚未发送的修订要求' } });
     expect(screen.getByText('所选：v1 · 当前稿')).toBeTruthy();
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toBe(false);
-    // A real pointer press reaches the document's outside-dismiss listener
-    // before click. Switching actions must keep the same panel and its draft.
-    const continueButton = screen.getByRole('button', { name: '继续制作' });
+    // This component test checks state retention. Full-workspace Playwright
+    // coverage separately proves these panel-owned controls are actionable.
+    const continueButton = within(panel).getByRole('button', { name: '继续制作' });
     fireEvent.pointerDown(continueButton);
     expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(panel);
     fireEvent.pointerUp(continueButton);
@@ -159,7 +163,11 @@ describe('Mokina revision recovery UI', () => {
     const continuation = screen.getByRole('region', { name: '选择性接续' });
     await waitFor(() => expect(document.activeElement).toBe(within(continuation).getByRole('checkbox')));
     expect((within(continuation).getByRole('button', { name: '创建接续项目（不发送）' }) as HTMLButtonElement).disabled).toBe(true);
-    const revisionButton = screen.getByRole('button', { name: '修订章节' });
+    const chapter = within(continuation).getByRole('checkbox') as HTMLInputElement;
+    fireEvent.click(chapter);
+    const background = within(continuation).getByRole('textbox', { name: '接续背景' }) as HTMLTextAreaElement;
+    fireEvent.change(background, { target: { value: '保留尚未发送的接续背景' } });
+    const revisionButton = within(panel).getByRole('button', { name: '修订章节' });
     fireEvent.pointerDown(revisionButton);
     expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(panel);
     fireEvent.pointerUp(revisionButton);
@@ -167,9 +175,15 @@ describe('Mokina revision recovery UI', () => {
     await waitFor(() => expect(document.activeElement).toBe(select));
     expect((select as HTMLSelectElement).value).toBe('strategy');
     expect((prompt as HTMLTextAreaElement).value).toBe('保留尚未发送的修订要求');
+    fireEvent.click(continueButton);
+    await waitFor(() => expect(document.activeElement).toBe(chapter));
+    expect(chapter.checked).toBe(true);
+    expect(background.value).toBe('保留尚未发送的接续背景');
+    expect(screen.getByText('所选：v1 · 当前稿')).toBeTruthy();
     fireEvent.pointerDown(document.body);
     expect(screen.queryByRole('dialog', { name: 'Versions' })).toBeNull();
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toBe(false);
+    expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);
   });
 
   it('explains missing chapters instead of silently opening an unrelated version panel', async () => {
@@ -179,6 +193,76 @@ describe('Mokina revision recovery UI', () => {
     const message = await screen.findByText('此版本没有可选择的章节，暂时不能修订或接续。');
     await waitFor(() => expect(document.activeElement).toBe(message));
     expect(screen.queryByRole('button', { name: '创建接续项目（不发送）' })).toBeNull();
+    fireEvent.click(within(screen.getByRole('dialog', { name: 'Versions' })).getByRole('button', { name: '修订章节' }));
+    await waitFor(() => expect(document.activeElement).toBe(message));
+    expect(screen.queryByRole('button', { name: '生成候选（不改当前稿）' })).toBeNull();
+  });
+
+  it('keeps read-only action entries disabled', () => {
+    const { fetchMock } = setupRecoveryFetch('running');
+    render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} viewerOnly />);
+    for (const name of ['修订章节', '继续制作']) {
+      const button = screen.getByRole('button', { name }) as HTMLButtonElement;
+      expect(button.disabled).toBe(true);
+      fireEvent.click(button);
+    }
+    expect(screen.queryByRole('dialog', { name: 'Versions' })).toBeNull();
+    expect(fetchMock.mock.calls.some(([, init]) => init?.method === 'POST')).toBe(false);
+  });
+
+  it('keeps both panel actions available to explain an empty version history', async () => {
+    const { fetchMock } = setupRecoveryFetch('running', undefined, undefined, { versions: [] });
+    const panel = await openRecoveryPanel();
+    for (const name of ['修订章节', '继续制作']) {
+      fireEvent.click(within(panel).getByRole('button', { name }));
+      const status = await within(panel).findByText('尚无已保存版本；请先完成并保存方案。');
+      await waitFor(() => expect(document.activeElement).toBe(status));
+    }
+    expect(fetchMock.mock.calls.some(([url, init]) =>
+      (String(url) === '/api/projects' || String(url) === '/api/runs') && init?.method === 'POST')).toBe(false);
+  });
+
+  it('disables the mounted panel actions when the viewer becomes read-only', async () => {
+    const { fetchMock } = setupRecoveryFetch('running');
+    const view = render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} />);
+    fireEvent.click(screen.getByRole('button', { name: '修订章节' }));
+    const panel = await screen.findByRole('dialog', { name: 'Versions' });
+    await within(panel).findByRole('combobox', { name: '要修订的章节' });
+    view.rerender(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} viewerOnly />);
+    for (const name of ['修订章节', '继续制作']) {
+      expect((within(panel).getByRole('button', { name }) as HTMLButtonElement).disabled).toBe(true);
+    }
+    expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(fetchMock.mock.calls.some(([url, init]) =>
+      (String(url) === '/api/projects' || String(url) === '/api/runs') && init?.method === 'POST')).toBe(false);
+  });
+
+  it('waits for selected history content and handles the latest panel action without changing versions', async () => {
+    const historical = { ...currentVersion, id: 'old', label: '早期方案', current: false };
+    let resolveHistory!: (response: Response) => void;
+    const historyContent = new Promise<Response>(resolve => { resolveHistory = resolve; });
+    const { fetchMock } = setupRecoveryFetch('running', undefined, undefined, {
+      versions: [{ ...currentVersion, version: 2 }, historical], historyContent,
+    });
+    const panel = await openRecoveryPanel();
+    await within(panel).findByRole('combobox', { name: '要修订的章节' });
+    fireEvent.click(within(panel).getByRole('option', { name: /早期方案/ }));
+    fireEvent.click(within(panel).getByRole('button', { name: '修订章节' }));
+    await within(panel).findByText('正在读取所选版本；读取失败时请重新选择版本。');
+    fireEvent.click(within(panel).getByRole('button', { name: '继续制作' }));
+    await act(async () => {
+      resolveHistory(new Response(JSON.stringify({ version: historical,
+        content: '<section id="history" data-mokina-id="history">早期结论</section>' }), { status: 200 }));
+    });
+    const checkbox = await within(panel).findByRole('checkbox', { name: 'history：早期结论' });
+    await waitFor(() => expect(document.activeElement).toBe(checkbox));
+    expect(within(panel).getByText('所选：v1 · 历史稿')).toBeTruthy();
+    fireEvent.click(within(panel).getByRole('button', { name: '修订章节' }));
+    const status = await within(panel).findByText('章节修订仅支持当前稿；请先选择当前版本。');
+    await waitFor(() => expect(document.activeElement).toBe(status));
+    expect(within(panel).queryByRole('combobox', { name: '要修订的章节' })).toBeNull();
+    expect(fetchMock.mock.calls.some(([url, init]) =>
+      (String(url) === '/api/projects' || String(url) === '/api/runs') && init?.method === 'POST')).toBe(false);
   });
 
   it('keeps a running job after cancel fails and blocks a second generation', async () => {

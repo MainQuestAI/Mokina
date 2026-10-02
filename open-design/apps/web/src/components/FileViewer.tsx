@@ -3428,6 +3428,7 @@ function FileVersionManagerModal({
   currentSource,
   entryFrom,
   actionRequest,
+  onActionRequest,
   onExportPdf,
   onOpenImageExport,
   onExportZip,
@@ -3444,6 +3445,7 @@ function FileVersionManagerModal({
   currentSource: string | null;
   entryFrom: 'toolbar' | 'more_menu';
   actionRequest?: MokinaActionRequest | null;
+  onActionRequest: (request: MokinaActionRequest) => void;
   onExportPdf?: (context: HtmlVersionExportContext) => void;
   onOpenImageExport?: (context: HtmlVersionExportContext) => Promise<void> | void;
   onExportZip?: (context: HtmlVersionExportContext) => void;
@@ -4507,6 +4509,15 @@ function FileVersionManagerModal({
         </header>
         {MOKINA_LOCAL_EDITION ? (
           <div className={mokinaActionStyles.context}>
+            <div className={mokinaActionStyles.actions} role="group" aria-label="方案操作">
+              {(['revision', 'continue'] as const).map(action => (
+                <Button key={action} variant="ghost" disabled={viewerOnly}
+                  title={viewerOnly ? t('fileViewer.readonlySharedNoExport') : undefined}
+                  onClick={() => onActionRequest({ action })}>
+                  {action === 'revision' ? '修订章节' : '继续制作'}
+                </Button>
+              ))}
+            </div>
             <strong>{selectedVersion
               ? `所选：v${selectedVersion.version} · ${selectedVersion.candidate ? '候选稿' : selectedVersion.current ? '当前稿' : '历史稿'}`
               : '尚未选择版本'}</strong>
@@ -18613,6 +18624,7 @@ function HtmlViewer({
           currentSource={source}
           entryFrom={versionModalOpen}
           actionRequest={mokinaActionRequest}
+          onActionRequest={setMokinaActionRequest}
           onExportPdf={triggerPdfExport}
           onOpenImageExport={openImageExportModal}
           onExportZip={triggerZipExport}

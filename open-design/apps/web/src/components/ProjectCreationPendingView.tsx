@@ -16,6 +16,8 @@ import {
   writeProjectSplitLayout,
 } from './project-split-layout';
 import styles from './ProjectCreationPendingView.module.css';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import mokinaWorkspaceStyles from './MokinaWorkspace.module.css';
 
 interface Props {
   projectName: string;
@@ -286,7 +288,7 @@ export function ProjectCreationPendingView({
     <>
       <div
         ref={splitRef}
-        className={`split ${styles.split}`}
+        className={`split ${styles.split}${MOKINA_LOCAL_EDITION ? ` ${mokinaWorkspaceStyles.workspaceLayout}` : ''}`}
         style={projectSplitStyle(
           false,
           savedChatPanelWidth.width,

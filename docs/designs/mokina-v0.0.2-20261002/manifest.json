@@ -1,0 +1,112 @@
+{
+  "project": "mokina-v0-0-2-4c39",
+  "capturedOn": "2026-10-02",
+  "productBase": "67d5717",
+  "files": [
+    {
+      "path": "ACCEPTANCE.md",
+      "sha256": "1a22b1fde92513f76e3328e0387a998e99fde2a8593934e8ad387b7072bab863",
+      "bytes": 11222
+    },
+    {
+      "path": "DESIGN-BRIEF.md",
+      "sha256": "52e1fd1fecedee4d4fe2c8aa3fd9b9d3fd7c00b50ea64bceb7343b7411dc20e1",
+      "bytes": 7454
+    },
+    {
+      "path": "DESIGN.md",
+      "sha256": "bc41abba3c9ba071b4ed8dfd3ba71daf41eb5523103dd2db6fcede59c1f467eb",
+      "bytes": 13859
+    },
+    {
+      "path": "MATERIAL-PARAMS.md",
+      "sha256": "7463039ba529514bea7ecb78e6236eecefec51f4e2d9c54739963168382b3455",
+      "bytes": 4200
+    },
+    {
+      "path": "PRODUCT.md",
+      "sha256": "232aaaecd16c0a3dc39b54f2ec83f228c64af19bf3fb4ba323b213d9903ad237",
+      "bytes": 714
+    },
+    {
+      "path": "app.js",
+      "sha256": "1ea7917643422ec475147e899f33e7c8463173cd09a6c3452d19ec685f6a5df8",
+      "bytes": 65625
+    },
+    {
+      "path": "brand-spec.md",
+      "sha256": "34527996b7e846843d4e0e68cabd979477420d5b31c70e93b56096f1176b9dee",
+      "bytes": 1170
+    },
+    {
+      "path": "design-system/liquid-workspace.css",
+      "sha256": "c19dfe4b895fef31de25c4f5ad3c009e96fd29d09b0ba9340dcc6966b04712db",
+      "bytes": 11206
+    },
+    {
+      "path": "design-system/mokina-icons.js",
+      "sha256": "9d9a9995132d4f6b305d4d9bc7ad588e035f23f7cf4a5ccfdfaaccc36bff9954",
+      "bytes": 2041
+    },
+    {
+      "path": "design-system/mokina-layout.js",
+      "sha256": "f047989e26bd6d797de7f2109e8ab622208c1746d7ec4077e004155ed0de7db0",
+      "bytes": 830
+    },
+    {
+      "path": "design-system/mokina-system.css",
+      "sha256": "294a5e6595046e0400714abe54f20b0383dc72ca81679fc6b0a895ac79906849",
+      "bytes": 5814
+    },
+    {
+      "path": "glass-material.js",
+      "sha256": "5e325f28cd98ffc122669f628e4f5d66acaac2ce0a7af422be1b371f7393db23",
+      "bytes": 9414
+    },
+    {
+      "path": "glass.css",
+      "sha256": "86a75d0822a5b5e7e554c5b93d6c247758ed4d4baf3547dab01594dec0293857",
+      "bytes": 11523
+    },
+    {
+      "path": "index.html",
+      "sha256": "0d160cb88228cdcd394f9e20b3c167b2f9dce62bc2ec342305719aa4fe38957e",
+      "bytes": 5313
+    },
+    {
+      "path": "mokina-design-system.html",
+      "sha256": "077e9812edbe6abed383b2fe28538cdddb65587bb1910c15e38e95febb6b0ab7",
+      "bytes": 34699
+    },
+    {
+      "path": "run-tests.js",
+      "sha256": "f765b7db90b567453f7941de7639837d93c25d04ddef622fe58421ab6b4d0ccc",
+      "bytes": 566
+    },
+    {
+      "path": "stage-two.css",
+      "sha256": "8d21f0b70f4caf41f0b915c72ae9118d2c6dbb6bd10d81c6abac007eaa364c72",
+      "bytes": 4397
+    },
+    {
+      "path": "styles.css",
+      "sha256": "f3d4a0c0b7b3f9c95a9be6eb986795130117c7431fffeeea3bda064b2f306561",
+      "bytes": 24214
+    },
+    {
+      "path": "tests/composer-material.test.js",
+      "sha256": "4a46656f7fe6ecba79ab9b8a6180c1a31ec37994c4eb83885f55732a647eff8c",
+      "bytes": 3525
+    },
+    {
+      "path": "tests/glass-cleanup.test.js",
+      "sha256": "8faa9b782169b8a172d4626f9b5c7e6013a49c52f69f0e024e4178143b078977",
+      "bytes": 3478
+    },
+    {
+      "path": "tests/pointer-path.test.js",
+      "sha256": "e64ae6e193e62c77abd023f0d4acb1fa54fd0c59859fccd78d40e6244d80b13b",
+      "bytes": 6083
+    }
+  ]
+}

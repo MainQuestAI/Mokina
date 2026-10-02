@@ -998,7 +998,24 @@ function injectPreviewContentSizeBridge(doc: string, documentEpoch: string): str
 // snapshot bridge) — fast and free of any external script load or network wait.
 function injectExportCaptureBridge(doc: string): string {
   const script = `<script data-od-export-capture-bridge>(function(){
-  function raf(){ return new Promise(function(r){ requestAnimationFrame(function(){ r(); }); }); }
+  // Chromium can suspend animation frames in the offscreen export iframe.
+  // Keep the normal two-frame settle, but never make capture depend on the
+  // iframe becoming visible. Resource readiness is still awaited below.
+  function raf(){
+    return new Promise(function(resolve){
+      var finished = false;
+      var frame = null;
+      var timer = setTimeout(finish, 100);
+      function finish(){
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        if (frame !== null) cancelAnimationFrame(frame);
+        resolve();
+      }
+      frame = requestAnimationFrame(finish);
+    });
+  }
   function settle(){
     var fonts = (document.fonts && document.fonts.ready) ? document.fonts.ready.catch(function(){}) : Promise.resolve();
     var imgs = Promise.all(Array.prototype.slice.call(document.images||[]).map(function(img){

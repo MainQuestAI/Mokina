@@ -21,8 +21,18 @@
   overflow: hidden;
 }
 
-.workspaceLayout :global(.split-chat-slot > .pane) {
-  background: var(--mokina-paper);
+.workspaceLayout > :global(.split-chat-slot) {
+  /* Paint the rounded card without clipping its transcript: rounded clips
+     force Chromium to hit-test scrolling on the main thread. */
+  overflow: visible;
+}
+
+/* Match the global automatic-dark specificity as well as the explicit theme
+   and reduced-transparency rules. The outer card owns the paper in all modes;
+   the inner pane keeps its existing rectangular overflow clip. */
+:global(html) :global(.app) .workspaceLayout :global(.split-chat-slot > .pane) {
+  background: transparent;
+  -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
 
@@ -31,6 +41,10 @@
   background: var(--mokina-glass);
   backdrop-filter: blur(16px) saturate(1.02);
   border-bottom: 1px solid var(--mokina-edge);
+}
+
+.workspaceLayout :global(.split-chat-tabs-dock) {
+  border-radius: 19px 19px 0 0;
 }
 
 .workspaceLayout :global(.ws-body) {
@@ -59,6 +73,10 @@
   display: block;
   width: 3px;
   height: 36px;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 3px;
   background: var(--border);
 }

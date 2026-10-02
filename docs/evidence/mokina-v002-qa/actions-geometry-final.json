@@ -1,0 +1,15 @@
+{
+  "viewport": [
+    1280,
+    720
+  ],
+  "focus": "要修订的章节",
+  "overflow": false,
+  "download": [
+    {
+      "top": 554.1875,
+      "bottom": 590.1875,
+      "visible": true
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-03",
+  "url": "http://127.0.0.1:18604",
+  "healthScore": 91,
+  "provisional": true,
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "title": "Local project requests workspace-only collaboration status",
+      "severity": "low",
+      "category": "console"
+    },
+    {
+      "id": "ISSUE-002",
+      "title": "Continuation retains source project title",
+      "severity": "medium",
+      "category": "functional"
+    },
+    {
+      "id": "ISSUE-003",
+      "title": "Offscreen PDF capture waits indefinitely for animation frames",
+      "severity": "medium",
+      "category": "functional"
+    }
+  ],
+  "categoryScores": {
+    "console": 70,
+    "links": 100,
+    "visual": 100,
+    "functional": 84,
+    "ux": 100,
+    "content": 100,
+    "accessibility": 100
+  },
+  "excluded": [
+    "performance"
+  ],
+  "scope": "workspace and continuation, baseline 9aba0c0"
+}

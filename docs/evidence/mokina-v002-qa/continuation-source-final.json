@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "projectId": "749d161a-56df-4a9f-bac4-121497efe445",
+    "fileName": "plan.html",
+    "versionId": "e4aada2b-f78d-4965-966c-aac2eae29171"
+  },
+  "sections": [
+    {
+      "id": "strategy",
+      "text": "一、策略方向围绕门店试饮组织本地内容，先完成小范围验证，再决定是否扩展投放。"
+    }
+  ],
+  "background": "QA 修复复验：仅保留策略摘录，准备本地门店活动页，暂不发送。"
+}

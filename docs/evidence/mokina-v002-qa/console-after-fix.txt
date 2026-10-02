@@ -1,0 +1,70 @@
+--- BEGIN UNTRUSTED EXTERNAL CONTENT (source: http://127.0.0.1:18604/projects/749d161a-56df-4a9f-bac4-121497efe445/conversations/5a11c5eb-87de-4c0f-83fe-02950d1c680a/files/qa-plain.html) ---
+[2026-10-02T16:17:04.098Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:17:04.146Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:18:30.444Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:18:30.559Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:18:48.344Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:19:17.480Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:19:37.461Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:19:38.491Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:19:38.650Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:20:16.386Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:20:42.897Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:20:42.941Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:22:14.158Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2026-10-02T16:22:14.160Z] [warning] [exportProjectAsPdf] falling back to programmatic PDF: Error: desktop PDF export unavailable (404)
+    at u_ (http://127.0.0.1:18604/_next/static/chunks/0k-auzh15h8s-.js:5054:4225)
+    at async u2 (http://127.0.0.1:18604/_next/static/chunks/0k-auzh15h8s-.js:6550:16120)
+[2026-10-02T16:23:00.321Z] [warning] [exportAsPdf] programmatic PDF failed, falling back to print popup: Error: export capture timed out
+    at http://127.0.0.1:18604/_next/static/chunks/0k-auzh15h8s-.js:5105:1374
+[2026-10-02T16:23:17.096Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:23:17.182Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:24:27.991Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2026-10-02T16:24:27.991Z] [warning] [exportProjectAsPdf] falling back to programmatic PDF: Error: desktop PDF export unavailable (404)
+    at u_ (http://127.0.0.1:18604/_next/static/chunks/0k-auzh15h8s-.js:5054:4225)
+    at async u2 (http://127.0.0.1:18604/_next/static/chunks/0k-auzh15h8s-.js:6550:16120)
+[2026-10-02T16:24:30.624Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:24:30.661Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:25:14.150Z] [warning] [exportAsPdf] programmatic PDF failed, falling back to print popup: Error: export capture timed out
+    at http://127.0.0.1:18604/_next/static/chunks/0k-auzh15h8s-.js:5105:1374
+[2026-10-02T16:26:08.582Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:26:08.619Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:26:40.530Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:26:40.569Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:27:25.399Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2026-10-02T16:27:25.399Z] [warning] [exportProjectAsPdf] falling back to programmatic PDF: Error: desktop PDF export unavailable (404)
+    at u_ (http://127.0.0.1:18604/_next/static/chunks/0k-auzh15h8s-.js:5054:4225)
+    at async u2 (http://127.0.0.1:18604/_next/static/chunks/0k-auzh15h8s-.js:6550:16120)
+[2026-10-02T16:34:06.461Z] [error] Failed to load resource: net::ERR_INCOMPLETE_CHUNKED_ENCODING
+[2026-10-02T16:34:06.462Z] [error] Failed to load resource: net::ERR_INCOMPLETE_CHUNKED_ENCODING
+[2026-10-02T16:34:06.998Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:07.036Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:08.674Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:08.823Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:11.849Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:12.121Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:16.977Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:19.117Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:27.582Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:28.335Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:47.267Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:34:47.868Z] [error] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[2026-10-02T16:35:09.679Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:35:09.796Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:35:43.583Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2026-10-02T16:35:43.583Z] [warning] [exportProjectAsPdf] falling back to programmatic PDF: Error: desktop PDF export unavailable (404)
+    at u_ (http://127.0.0.1:18604/_next/static/chunks/06lu0tl4chswq.js:5071:4225)
+    at async u2 (http://127.0.0.1:18604/_next/static/chunks/06lu0tl4chswq.js:6567:16120)
+[2026-10-02T16:36:17.325Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:36:17.415Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:36:32.079Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:36:44.522Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:37:22.924Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:37:22.962Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:37:27.402Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2026-10-02T16:37:27.402Z] [warning] [exportProjectAsPdf] falling back to programmatic PDF: Error: desktop PDF export unavailable (404)
+    at u_ (http://127.0.0.1:18604/_next/static/chunks/06lu0tl4chswq.js:5071:4225)
+    at async u2 (http://127.0.0.1:18604/_next/static/chunks/06lu0tl4chswq.js:6567:16120)
+[2026-10-02T16:39:50.666Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2026-10-02T16:39:50.750Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+--- END UNTRUSTED EXTERNAL CONTENT ---

@@ -1,0 +1,101 @@
+Scope: all 28 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +1131
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1131, reused 1127, downloaded 0, added 312
+Progress: resolved 1131, reused 1127, downloaded 0, added 708
+Progress: resolved 1131, reused 1127, downloaded 0, added 973
+Progress: resolved 1131, reused 1127, downloaded 0, added 1127
+Progress: resolved 1131, reused 1127, downloaded 0, added 1131, done
+
+devDependencies:
++ @open-design/components 0.8.0 <- packages/components
++ @open-design/daemon 0.22.1 <- apps/daemon
++ @open-design/tools-dev 0.22.1 <- tools/dev
++ @open-design/tools-pack 0.22.1 <- tools/pack
++ @open-design/tools-release 0.22.1 <- tools/release
++ @open-design/tools-serve 0.6.0 <- tools/serve
++ @types/node 20.19.39
++ tsx 4.22.3
++ typescript 5.9.3
++ yaml 2.9.0
+
+. postinstall$ node ./scripts/postinstall.mjs
+. postinstall: postinstall: materialized dom-to-pptx browser bundle
+. postinstall: postinstall: dependency-aware parallel build enabled (concurrency=1)
+. postinstall: postinstall: building packages/release
+. postinstall: > @open-design/release@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/release
+. postinstall: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/components
+. postinstall: > @open-design/components@0.8.0 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/components
+. postinstall: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/platform
+. postinstall: > @open-design/platform@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/platform
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/registry-protocol
+. postinstall: > @open-design/registry-protocol@0.5.0 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/registry-protocol
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/diagnostics
+. postinstall: > @open-design/diagnostics@0.2.0 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/diagnostics
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/dsh-runtime
+. postinstall: > @open-design/dsh-runtime@0.1.0 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/dsh-runtime
+. postinstall: > tsx ./clean.ts && tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/contracts
+. postinstall: > @open-design/contracts@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/contracts
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/download
+. postinstall: > @open-design/download@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/download
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/host
+. postinstall: > @open-design/host@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/host
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/sidecar-proto
+. postinstall: > @open-design/sidecar-proto@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/sidecar-proto
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/sidecar
+. postinstall: > @open-design/sidecar@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/sidecar
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building tools/serve
+. postinstall: > @open-design/tools-serve@0.6.0 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/tools/serve
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly && node --experimental-strip-types ../../packages/metatool/src/cli.ts write .
+. postinstall: {"hash":"3b353617f71d206f073eca6527e2afdb4b381b5eb5a96343d8dc380ecd2136b2","metadataPath":"/Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/tools/serve/dist/metadata.json"}
+. postinstall: postinstall: building packages/standalone
+. postinstall: > @open-design/standalone@0.1.0 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/standalone
+. postinstall: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/agui-adapter
+. postinstall: > @open-design/agui-adapter@0.5.0 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/agui-adapter
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/plugin-runtime
+. postinstall: > @open-design/plugin-runtime@0.5.0 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/plugin-runtime
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building packages/launcher-proto
+. postinstall: > @open-design/launcher-proto@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/packages/launcher-proto
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+. postinstall: postinstall: building tools/dev
+. postinstall: > @open-design/tools-dev@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/tools/dev
+. postinstall: > node ./esbuild.config.mjs && node --experimental-strip-types ../../packages/metatool/src/cli.ts write .
+. postinstall: {"hash":"b771839aa52c2bfb244699a28c54a57e9cb74d90c9a56eb82c037fdd888a8091","metadataPath":"/Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/tools/dev/dist/metadata.json"}
+. postinstall: postinstall: building apps/daemon
+. postinstall: > @open-design/daemon@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/apps/daemon
+. postinstall: > tsc -p tsconfig.json
+. postinstall: postinstall: building tools/pack
+. postinstall: > @open-design/tools-pack@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/tools/pack
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly && node --experimental-strip-types ../../packages/metatool/src/cli.ts write .
+. postinstall: {"hash":"bbddc0d71d3e66ea1c0fbe64661af8256636216c72d1b5642871b981b70f7b1d","metadataPath":"/Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/tools/pack/dist/metadata.json"}
+. postinstall: postinstall: building tools/release
+. postinstall: > @open-design/tools-release@0.22.1 build /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/tools/release
+. postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly && node --experimental-strip-types ../../packages/metatool/src/cli.ts write .
+. postinstall: {"hash":"e391cebb5bf5574e4f02b5135ca1cbe5b9e5859af0cb4c3d8297ae926aabe28d","metadataPath":"/Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design/tools/release/dist/metadata.json"}
+. postinstall: Done
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: @ffmpeg-installer/darwin-arm64@4.1.5,               │
+│   @ffprobe-installer/darwin-arm64@5.0.1, @google/genai@1.52.0,               │
+│   node-pty@1.1.0.                                                            │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 29s using pnpm v10.33.2

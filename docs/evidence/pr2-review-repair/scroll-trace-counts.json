@@ -1,0 +1,32 @@
+{
+  "after-trace": {
+    "InputHandlerProxy::HandleGestureScrollBegin": 60,
+    "PostingHitTestToMainThread": 0,
+    "InputHandlerProxy::HandleGestureScrollUpdate": 60,
+    "WidgetInputHandlerManager::FindScrollTargetOnMainThread": 0
+  },
+  "after-stream-trace": {
+    "InputHandlerProxy::HandleGestureScrollBegin": 11,
+    "PostingHitTestToMainThread": 0,
+    "InputHandlerProxy::HandleGestureScrollUpdate": 11,
+    "WidgetInputHandlerManager::FindScrollTargetOnMainThread": 0
+  },
+  "failed-stale-bundle-trace": {
+    "InputHandlerProxy::HandleGestureScrollBegin": 120,
+    "PostingHitTestToMainThread": 60,
+    "InputHandlerProxy::HandleGestureScrollUpdate": 60,
+    "WidgetInputHandlerManager::FindScrollTargetOnMainThread": 60
+  },
+  "baseline-trace": {
+    "InputHandlerProxy::HandleGestureScrollBegin": 120,
+    "PostingHitTestToMainThread": 60,
+    "InputHandlerProxy::HandleGestureScrollUpdate": 60,
+    "WidgetInputHandlerManager::FindScrollTargetOnMainThread": 60
+  },
+  "baseline-stream-trace": {
+    "InputHandlerProxy::HandleGestureScrollBegin": 22,
+    "PostingHitTestToMainThread": 11,
+    "InputHandlerProxy::HandleGestureScrollUpdate": 11,
+    "WidgetInputHandlerManager::FindScrollTargetOnMainThread": 11
+  }
+}

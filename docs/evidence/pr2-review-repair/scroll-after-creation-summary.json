@@ -1,0 +1,13 @@
+[
+  {
+    "mode": "creation",
+    "createdId": "5912cac3-7ad2-4599-aaff-3f4f5d092abc",
+    "pendingStyle": {
+      "overflow": "hidden",
+      "radius": "0px",
+      "background": "rgba(0, 0, 0, 0)"
+    },
+    "url": "http://127.0.0.1:18604/projects/5912cac3-7ad2-4599-aaff-3f4f5d092abc/conversations/a98da07a-eef5-46be-9b23-d7ab2e2b0539",
+    "scope": "visual pending-to-workspace transition only; empty mock response triggers expected no-preview output failure, not model generation acceptance"
+  }
+]

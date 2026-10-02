@@ -1,0 +1,381 @@
+{
+  "phase": "baseline",
+  "url": "http://127.0.0.1:18604/projects/pr2-scroll-diagnostic/conversations/ba1b2b71-eac4-49fd-8ded-b5725439c2e4",
+  "browser": "154.0.8037.97",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "ancestors": [
+    {
+      "tag": "DIV",
+      "class": "chat-log is-scrollable is-balanced-transcript",
+      "overflow": "hidden auto",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "DIV",
+      "class": "chat-log-viewport",
+      "overflow": "visible",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "DIV",
+      "class": "chat-log-wrap",
+      "overflow": "visible",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "DIV",
+      "class": "ChatRoot-module__ypKJNa__vars pane",
+      "overflow": "hidden",
+      "borderRadius": "0px",
+      "background": "rgb(255, 255, 255)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "DIV",
+      "class": "split-chat-slot",
+      "overflow": "hidden",
+      "borderRadius": "20px",
+      "background": "rgb(255, 255, 255)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "DIV",
+      "class": "split MokinaWorkspace-module__hlmf9a__workspaceLayout",
+      "overflow": "hidden",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "DIV",
+      "class": "app",
+      "overflow": "hidden",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "DIV",
+      "class": "workspace-shell__body",
+      "overflow": "hidden",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "DIV",
+      "class": "workspace-shell workspace-shell--web",
+      "overflow": "hidden",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "BODY",
+      "class": "",
+      "overflow": "visible",
+      "borderRadius": "0px",
+      "background": "rgb(255, 255, 255)",
+      "backdropFilter": "none"
+    },
+    {
+      "tag": "HTML",
+      "class": "",
+      "overflow": "visible",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdropFilter": "none"
+    }
+  ],
+  "top": {
+    "top": 0,
+    "max": 26534
+  },
+  "upSamples": [
+    {
+      "top": 25634,
+      "max": 26534
+    },
+    {
+      "top": 24734,
+      "max": 26534
+    },
+    {
+      "top": 23834,
+      "max": 26534
+    },
+    {
+      "top": 22934,
+      "max": 26534
+    },
+    {
+      "top": 22034,
+      "max": 26534
+    },
+    {
+      "top": 21134,
+      "max": 26534
+    },
+    {
+      "top": 20234,
+      "max": 26534
+    },
+    {
+      "top": 19334,
+      "max": 26534
+    },
+    {
+      "top": 18434,
+      "max": 26534
+    },
+    {
+      "top": 17534,
+      "max": 26534
+    },
+    {
+      "top": 16634,
+      "max": 26534
+    },
+    {
+      "top": 15734,
+      "max": 26534
+    },
+    {
+      "top": 14834,
+      "max": 26534
+    },
+    {
+      "top": 13934,
+      "max": 26534
+    },
+    {
+      "top": 13034,
+      "max": 26534
+    },
+    {
+      "top": 12134,
+      "max": 26534
+    },
+    {
+      "top": 11234,
+      "max": 26534
+    },
+    {
+      "top": 10334,
+      "max": 26534
+    },
+    {
+      "top": 9434,
+      "max": 26534
+    },
+    {
+      "top": 8534,
+      "max": 26534
+    },
+    {
+      "top": 7634,
+      "max": 26534
+    },
+    {
+      "top": 6734,
+      "max": 26534
+    },
+    {
+      "top": 5834,
+      "max": 26534
+    },
+    {
+      "top": 4934,
+      "max": 26534
+    },
+    {
+      "top": 4034,
+      "max": 26534
+    },
+    {
+      "top": 3134,
+      "max": 26534
+    },
+    {
+      "top": 2234,
+      "max": 26534
+    },
+    {
+      "top": 1334,
+      "max": 26534
+    },
+    {
+      "top": 434,
+      "max": 26534
+    },
+    {
+      "top": 0,
+      "max": 26534
+    }
+  ],
+  "downSamples": [
+    {
+      "top": 900,
+      "max": 26534,
+      "before": 0
+    },
+    {
+      "top": 1800,
+      "max": 26534,
+      "before": 900
+    },
+    {
+      "top": 2700,
+      "max": 26534,
+      "before": 1800
+    },
+    {
+      "top": 3600,
+      "max": 26534,
+      "before": 2700
+    },
+    {
+      "top": 4500,
+      "max": 26534,
+      "before": 3600
+    },
+    {
+      "top": 5400,
+      "max": 26534,
+      "before": 4500
+    },
+    {
+      "top": 6300,
+      "max": 26534,
+      "before": 5400
+    },
+    {
+      "top": 7200,
+      "max": 26534,
+      "before": 6300
+    },
+    {
+      "top": 8100,
+      "max": 26534,
+      "before": 7200
+    },
+    {
+      "top": 9000,
+      "max": 26534,
+      "before": 8100
+    },
+    {
+      "top": 9900,
+      "max": 26534,
+      "before": 9000
+    },
+    {
+      "top": 10800,
+      "max": 26534,
+      "before": 9900
+    },
+    {
+      "top": 11700,
+      "max": 26534,
+      "before": 10800
+    },
+    {
+      "top": 12600,
+      "max": 26534,
+      "before": 11700
+    },
+    {
+      "top": 13500,
+      "max": 26534,
+      "before": 12600
+    },
+    {
+      "top": 14400,
+      "max": 26534,
+      "before": 13500
+    },
+    {
+      "top": 15300,
+      "max": 26534,
+      "before": 14400
+    },
+    {
+      "top": 16200,
+      "max": 26534,
+      "before": 15300
+    },
+    {
+      "top": 17100,
+      "max": 26534,
+      "before": 16200
+    },
+    {
+      "top": 18000,
+      "max": 26534,
+      "before": 17100
+    },
+    {
+      "top": 18900,
+      "max": 26534,
+      "before": 18000
+    },
+    {
+      "top": 19800,
+      "max": 26534,
+      "before": 18900
+    },
+    {
+      "top": 20700,
+      "max": 26534,
+      "before": 19800
+    },
+    {
+      "top": 21600,
+      "max": 26534,
+      "before": 20700
+    },
+    {
+      "top": 22500,
+      "max": 26534,
+      "before": 21600
+    },
+    {
+      "top": 23400,
+      "max": 26534,
+      "before": 22500
+    },
+    {
+      "top": 24300,
+      "max": 26534,
+      "before": 23400
+    },
+    {
+      "top": 25200,
+      "max": 26534,
+      "before": 24300
+    },
+    {
+      "top": 26100,
+      "max": 26534,
+      "before": 25200
+    },
+    {
+      "top": 26534,
+      "max": 26534,
+      "before": 26100
+    }
+  ],
+  "bottom": {
+    "top": 26534,
+    "max": 26534
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "date": "2026-10-02T18:40:18.926Z",
+  "browser": "Playwright Chromium 148 headless",
+  "mode": "production server",
+  "results": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sourceUrl": "http://127.0.0.1:18604/projects/749d161a-56df-4a9f-bac4-121497efe445/conversations/5a11c5eb-87de-4c0f-83fe-02950d1c680a/files/plan.html",
+      "version": "v1CurrentManual editOct 02, 10:54 PM",
+      "panelControlsVisible": true,
+      "actionGeometry": {
+        "visibility": "visible",
+        "rect": {
+          "x": 897,
+          "y": 136.5,
+          "width": 64,
+          "height": 36,
+          "top": 136.5,
+          "right": 961,
+          "bottom": 172.5,
+          "left": 897
+        }
+      },
+      "samePanel": true,
+      "preserved": {
+        "revisionSection": "budget",
+        "revisionDraft": true,
+        "continuationSection": "strategy",
+        "continuationDraft": true
+      },
+      "mouseBothDirections": true,
+      "keyboardBothDirections": true,
+      "outsideDismiss": true,
+      "geometry": {
+        "host": {
+          "x": 372,
+          "y": 56,
+          "width": 16,
+          "height": 652,
+          "top": 56,
+          "right": 388,
+          "bottom": 708,
+          "left": 372
+        },
+        "display": "block",
+        "width": 3,
+        "height": 36,
+        "top": "326px",
+        "bottom": "290px",
+        "left": "8px",
+        "transform": "matrix(1, 0, 0, 1, -1.5, -18)",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "roundedClipAncestors": [],
+      "scrollbarHit": {
+        "chat": true,
+        "handle": false
+      },
+      "resize": {
+        "initial": 360,
+        "dragged": 336,
+        "keyboard": 352
+      },
+      "unexpectedWrites": [],
+      "assets": [
+        "/_next/static/chunks/04g478sq7tfy1.js",
+        "/_next/static/chunks/0l2-kpms~pjcn.js",
+        "/_next/static/chunks/turbopack-11cxdgi67mi7m.js",
+        "/_next/static/chunks/0vn4s9-i-gybf.js",
+        "/_next/static/chunks/168hevgpqz9un.js",
+        "/_next/static/chunks/0bnhnqs10zvm0.js",
+        "/_next/static/chunks/111maekilcho2.js",
+        "/_next/static/chunks/0yfrytw1yxitk.js",
+        "/_next/static/chunks/0_9w2-xqmxk.i.js",
+        "/_next/static/chunks/03~yq9q893hmn.js",
+        "/_next/static/chunks/0kle.vb.e1i-k.js",
+        "/_next/static/chunks/0gbo~xxb19m4u.js",
+        "/_next/static/chunks/0cmya~shqifvm.js",
+        "/_next/static/chunks/0o93wxl141~k3.js",
+        "/_next/static/chunks/104jlz7~m~w3j.js",
+        "/_next/static/chunks/0px_k5_29_z~v.js",
+        "/_next/static/chunks/03u46afe7gymh.js",
+        "/_next/static/chunks/01_6tcy31m48h.js",
+        "/_next/static/chunks/11uauszuss5fn.js",
+        "/_next/static/chunks/0wetq.wdvn-lh.js",
+        "/_next/static/chunks/0m73a6tw2f1go.js",
+        "/_next/static/chunks/07v5t67_f2z02.js"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "sourceUrl": "http://127.0.0.1:18604/projects/749d161a-56df-4a9f-bac4-121497efe445/conversations/5a11c5eb-87de-4c0f-83fe-02950d1c680a/files/plan.html",
+      "version": "v1CurrentManual editOct 02, 10:54 PM",
+      "panelControlsVisible": true,
+      "actionGeometry": {
+        "visibility": "visible",
+        "rect": {
+          "x": 1057,
+          "y": 136.5,
+          "width": 64,
+          "height": 36,
+          "top": 136.5,
+          "right": 1121,
+          "bottom": 172.5,
+          "left": 1057
+        }
+      },
+      "samePanel": true,
+      "preserved": {
+        "revisionSection": "budget",
+        "revisionDraft": true,
+        "continuationSection": "strategy",
+        "continuationDraft": true
+      },
+      "mouseBothDirections": true,
+      "keyboardBothDirections": true,
+      "outsideDismiss": true,
+      "geometry": {
+        "host": {
+          "x": 372,
+          "y": 56,
+          "width": 16,
+          "height": 832,
+          "top": 56,
+          "right": 388,
+          "bottom": 888,
+          "left": 372
+        },
+        "display": "block",
+        "width": 3,
+        "height": 36,
+        "top": "416px",
+        "bottom": "380px",
+        "left": "8px",
+        "transform": "matrix(1, 0, 0, 1, -1.5, -18)",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "roundedClipAncestors": [],
+      "scrollbarHit": {
+        "chat": true,
+        "handle": false
+      },
+      "resize": {
+        "initial": 360,
+        "dragged": 336,
+        "keyboard": 352
+      },
+      "unexpectedWrites": [],
+      "assets": [
+        "/_next/static/chunks/04g478sq7tfy1.js",
+        "/_next/static/chunks/0l2-kpms~pjcn.js",
+        "/_next/static/chunks/turbopack-11cxdgi67mi7m.js",
+        "/_next/static/chunks/0vn4s9-i-gybf.js",
+        "/_next/static/chunks/168hevgpqz9un.js",
+        "/_next/static/chunks/0bnhnqs10zvm0.js",
+        "/_next/static/chunks/111maekilcho2.js",
+        "/_next/static/chunks/0yfrytw1yxitk.js",
+        "/_next/static/chunks/0_9w2-xqmxk.i.js",
+        "/_next/static/chunks/03~yq9q893hmn.js",
+        "/_next/static/chunks/0kle.vb.e1i-k.js",
+        "/_next/static/chunks/0gbo~xxb19m4u.js",
+        "/_next/static/chunks/0cmya~shqifvm.js",
+        "/_next/static/chunks/0o93wxl141~k3.js",
+        "/_next/static/chunks/104jlz7~m~w3j.js",
+        "/_next/static/chunks/0px_k5_29_z~v.js",
+        "/_next/static/chunks/03u46afe7gymh.js",
+        "/_next/static/chunks/01_6tcy31m48h.js",
+        "/_next/static/chunks/11uauszuss5fn.js",
+        "/_next/static/chunks/0wetq.wdvn-lh.js",
+        "/_next/static/chunks/0m73a6tw2f1go.js",
+        "/_next/static/chunks/07v5t67_f2z02.js"
+      ]
+    }
+  ]
+}

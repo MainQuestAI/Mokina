@@ -143,12 +143,33 @@ describe('Mokina revision recovery UI', () => {
     fireEvent.click(screen.getByRole('button', { name: '修订章节' }));
     const select = await screen.findByRole('combobox', { name: '要修订的章节' });
     await waitFor(() => expect(document.activeElement).toBe(select));
+    const panel = screen.getByRole('dialog', { name: 'Versions' });
+    fireEvent.change(select, { target: { value: 'strategy' } });
+    const prompt = screen.getByRole('textbox', { name: '章节修改要求' });
+    fireEvent.change(prompt, { target: { value: '保留尚未发送的修订要求' } });
     expect(screen.getByText('所选：v1 · 当前稿')).toBeTruthy();
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toBe(false);
-    fireEvent.click(screen.getByRole('button', { name: '继续制作' }));
+    // A real pointer press reaches the document's outside-dismiss listener
+    // before click. Switching actions must keep the same panel and its draft.
+    const continueButton = screen.getByRole('button', { name: '继续制作' });
+    fireEvent.pointerDown(continueButton);
+    expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(panel);
+    fireEvent.pointerUp(continueButton);
+    fireEvent.click(continueButton);
     const continuation = screen.getByRole('region', { name: '选择性接续' });
     await waitFor(() => expect(document.activeElement).toBe(within(continuation).getByRole('checkbox')));
     expect((within(continuation).getByRole('button', { name: '创建接续项目（不发送）' }) as HTMLButtonElement).disabled).toBe(true);
+    const revisionButton = screen.getByRole('button', { name: '修订章节' });
+    fireEvent.pointerDown(revisionButton);
+    expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(panel);
+    fireEvent.pointerUp(revisionButton);
+    fireEvent.click(revisionButton);
+    await waitFor(() => expect(document.activeElement).toBe(select));
+    expect((select as HTMLSelectElement).value).toBe('strategy');
+    expect((prompt as HTMLTextAreaElement).value).toBe('保留尚未发送的修订要求');
+    fireEvent.pointerDown(document.body);
+    expect(screen.queryByRole('dialog', { name: 'Versions' })).toBeNull();
+    expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toBe(false);
   });
 
   it('explains missing chapters instead of silently opening an unrelated version panel', async () => {

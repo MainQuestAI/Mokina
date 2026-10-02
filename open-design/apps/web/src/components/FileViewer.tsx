@@ -17504,7 +17504,7 @@ function HtmlViewer({
             </div>
           ) : null}
           {MOKINA_LOCAL_EDITION && versioningAvailable && (rawCanShare || rawCanDownload) ? (
-            <div className={mokinaActionStyles.actions} role="group" aria-label="方案操作">
+            <div className={mokinaActionStyles.actions} role="group" aria-label="方案操作" data-od-version-entry="true">
               {(['revision', 'continue'] as const).map(action => (
                 <Button key={action} variant="ghost" disabled={source === null || viewerOnly}
                   title={viewerOnly ? viewerOnlyDisabledTitle : undefined}

@@ -56,6 +56,7 @@
 }
 
 .workspaceLayout > :global(.split-resize-handle)::after {
+  display: block;
   width: 3px;
   height: 36px;
   border-radius: 3px;

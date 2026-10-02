@@ -3,6 +3,10 @@ import type { ArtifactExportFormat } from '../runtime/chat/artifact-export';
 import { AnchoredMenuShell } from './chat/AnchoredMenuShell';
 import { createPortal, flushSync } from 'react-dom';
 import { Button, Input, Select } from '@open-design/components';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import mokinaActionStyles from './MokinaArtifactActions.module.css';
+
+type MokinaActionRequest = { action: 'revision' | 'continue' };
 import {
   getLatestHostPreviewNavigationFailure,
   subscribeHostPreviewNavigationFailure,
@@ -3423,6 +3427,7 @@ function FileVersionManagerModal({
   file,
   currentSource,
   entryFrom,
+  actionRequest,
   onExportPdf,
   onOpenImageExport,
   onExportZip,
@@ -3438,6 +3443,7 @@ function FileVersionManagerModal({
   file: ProjectFile;
   currentSource: string | null;
   entryFrom: 'toolbar' | 'more_menu';
+  actionRequest?: MokinaActionRequest | null;
   onExportPdf?: (context: HtmlVersionExportContext) => void;
   onOpenImageExport?: (context: HtmlVersionExportContext) => Promise<void> | void;
   onExportZip?: (context: HtmlVersionExportContext) => void;
@@ -3650,6 +3656,30 @@ function FileVersionManagerModal({
       return [{ id, text: element.textContent?.trim() ?? '' }];
     });
   }, [selectedContent, selectedContentMatchesVersion]);
+  const revisionSectionRef = useRef<HTMLElement>(null);
+  const continuationSectionRef = useRef<HTMLElement>(null);
+  const actionStatusRef = useRef<HTMLParagraphElement>(null);
+  const handledActionRef = useRef<MokinaActionRequest | null>(null);
+  const actionUnavailable = !selectedVersion
+    ? '尚无已保存版本；请先完成并保存方案。'
+    : !selectedContentMatchesVersion
+      ? '正在读取所选版本；读取失败时请重新选择版本。'
+      : continuationSections.length === 0
+        ? '此版本没有可选择的章节，暂时不能修订或接续。'
+        : actionRequest?.action === 'revision' && !selectedVersion.current
+          ? '章节修订仅支持当前稿；请先选择当前版本。'
+          : null;
+  useEffect(() => {
+    if (!actionRequest || handledActionRef.current === actionRequest || loading
+      || (selectedVersion && !selectedContentMatchesVersion)) return;
+    const target = actionUnavailable ? actionStatusRef.current
+      : actionRequest.action === 'revision' ? revisionSectionRef.current : continuationSectionRef.current;
+    if (!target) return;
+    handledActionRef.current = actionRequest;
+    target.scrollIntoView?.({ block: 'nearest' });
+    const control = target.querySelector<HTMLElement>('select, input, textarea');
+    (control ?? target).focus({ preventScroll: true });
+  }, [actionRequest, loading, selectedVersion, selectedContentMatchesVersion, actionUnavailable]);
   useEffect(() => { setSelectedContinuationSections([]); }, [selectedId]);
   useEffect(() => { setRevisionSectionId(''); }, [selectedId]);
   const restoreDisabled =
@@ -4475,6 +4505,18 @@ function FileVersionManagerModal({
             </button>
           </div>
         </header>
+        {MOKINA_LOCAL_EDITION ? (
+          <div className={mokinaActionStyles.context}>
+            <strong>{selectedVersion
+              ? `所选：v${selectedVersion.version} · ${selectedVersion.candidate ? '候选稿' : selectedVersion.current ? '当前稿' : '历史稿'}`
+              : '尚未选择版本'}</strong>
+            <span>下载与接续使用所选版本；候选稿需采用后才会替换当前稿。</span>
+            {actionRequest && actionUnavailable ? (
+              <p ref={actionStatusRef} tabIndex={-1} role="status">{actionUnavailable}</p>
+            ) : null}
+          </div>
+        ) : null}
+        <div className={MOKINA_LOCAL_EDITION ? mokinaActionStyles.body : mokinaActionStyles.passthrough}>
         <div className="artifact-version-panel__preview">
           {srcDoc ? (
             <iframe
@@ -4615,7 +4657,7 @@ function FileVersionManagerModal({
           )}
         </div>
         {continuationSections.length > 0 && selectedVersion?.current ? (
-          <section className="artifact-version-panel__continuation artifact-version-panel__continuation--revision" aria-label="AI 章节修订">
+          <section ref={revisionSectionRef} tabIndex={-1} className="artifact-version-panel__continuation artifact-version-panel__continuation--revision" aria-label="AI 章节修订">
             <strong>AI 修订章节</strong>
             <p>Codex 在独立工作中只接收所选章节；结果先保存为候选，预览后再采用。</p>
             <select value={revisionSectionId} disabled={viewerOnly || revisionBusy}
@@ -4662,7 +4704,7 @@ function FileVersionManagerModal({
           </section>
         ) : null}
         {continuationSections.length > 0 && selectedVersion ? (
-          <section className="artifact-version-panel__continuation" aria-label="选择性接续">
+          <section ref={continuationSectionRef} tabIndex={-1} className="artifact-version-panel__continuation" aria-label="选择性接续">
             <strong>以此继续</strong>
             <p>从 v{selectedVersion.version} 选择结论；新项目只保存这些固定摘录，发送前可修改请求。</p>
             {continuationSections.map((section) => (
@@ -4688,6 +4730,7 @@ function FileVersionManagerModal({
             </button>
           </section>
         ) : null}
+        </div>
         <footer className="artifact-version-panel__foot">
           <button
             type="button"
@@ -8459,6 +8502,8 @@ function HtmlViewer({
   const toolbarMoreTriggerRef = useRef<HTMLButtonElement | null>(null);
   useDismissOnOutsideInteraction(toolbarMoreOpen, toolbarMoreRef, () => setToolbarMoreOpen(false));
   const [versionModalOpen, setVersionModalOpen] = useState<false | 'toolbar' | 'more_menu'>(false);
+  const [mokinaActionRequest, setMokinaActionRequest] = useState<MokinaActionRequest | null>(null);
+  useEffect(() => { if (!versionModalOpen) setMokinaActionRequest(null); }, [versionModalOpen]);
   const [exportReadyNudge, setExportReadyNudge] = useState(false);
   const exportReadyNudgeSeenRef = useRef<Set<string>>(new Set());
   // Template save UX. We surface a transient "Saved" pill in the share
@@ -17458,6 +17503,20 @@ function HtmlViewer({
               ) : null}
             </div>
           ) : null}
+          {MOKINA_LOCAL_EDITION && versioningAvailable && (rawCanShare || rawCanDownload) ? (
+            <div className={mokinaActionStyles.actions} role="group" aria-label="方案操作">
+              {(['revision', 'continue'] as const).map(action => (
+                <Button key={action} variant="ghost" disabled={source === null || viewerOnly}
+                  title={viewerOnly ? viewerOnlyDisabledTitle : undefined}
+                  onClick={() => {
+                    setMokinaActionRequest({ action });
+                    setVersionModalOpen('toolbar');
+                  }}>
+                  {action === 'revision' ? '修订章节' : '继续制作'}
+                </Button>
+              ))}
+            </div>
+          ) : null}
           {versioningAvailable && (rawCanShare || rawCanDownload) ? (
             <button
               type="button"
@@ -18553,6 +18612,7 @@ function HtmlViewer({
           file={file}
           currentSource={source}
           entryFrom={versionModalOpen}
+          actionRequest={mokinaActionRequest}
           onExportPdf={triggerPdfExport}
           onOpenImageExport={openImageExportModal}
           onExportZip={triggerZipExport}

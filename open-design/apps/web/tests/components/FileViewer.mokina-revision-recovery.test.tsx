@@ -2,6 +2,8 @@
 
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+vi.mock('../../src/mokina-edition', () => ({ MOKINA_LOCAL_EDITION: true }));
+
 import type { ProjectFile } from '../../src/types';
 import { FileViewer } from '../../src/components/FileViewer';
 import {
@@ -133,6 +135,29 @@ describe('Mokina revision recovery UI', () => {
     cleanup();
     localStorage.clear();
     vi.unstubAllGlobals();
+  });
+
+  it('opens chapter revision directly and moves focus without starting a run', async () => {
+    const { fetchMock } = setupRecoveryFetch('running');
+    render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} />);
+    fireEvent.click(screen.getByRole('button', { name: '修订章节' }));
+    const select = await screen.findByRole('combobox', { name: '要修订的章节' });
+    await waitFor(() => expect(document.activeElement).toBe(select));
+    expect(screen.getByText('所选：v1 · 当前稿')).toBeTruthy();
+    expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: '继续制作' }));
+    const continuation = screen.getByRole('region', { name: '选择性接续' });
+    await waitFor(() => expect(document.activeElement).toBe(within(continuation).getByRole('checkbox')));
+    expect((within(continuation).getByRole('button', { name: '创建接续项目（不发送）' }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('explains missing chapters instead of silently opening an unrelated version panel', async () => {
+    setupRecoveryFetch('running');
+    render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml="<html><body>普通成果</body></html>" />);
+    fireEvent.click(screen.getByRole('button', { name: '继续制作' }));
+    const message = await screen.findByText('此版本没有可选择的章节，暂时不能修订或接续。');
+    await waitFor(() => expect(document.activeElement).toBe(message));
+    expect(screen.queryByRole('button', { name: '创建接续项目（不发送）' })).toBeNull();
   });
 
   it('keeps a running job after cancel fails and blocks a second generation', async () => {

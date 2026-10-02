@@ -17,7 +17,7 @@
 
 ## 自动化与生产页面
 
-- 6 个聚焦 Vitest 文件合计 **46 个用例通过**：修订恢复/入口 13、版本下载 13、Mokina 分隔布局 3、祖先圆角裁剪 4、聊天卡片样式 11、网格过渡 2。日志分两次执行，最新入口文件结果见 `logs/pr2-actions-final.log`，其他文件见 `logs/pr2-focused-final.log`。后者命令中曾误写网格文件名，因此只收集了 5 文件；随后已按正确文件名补跑，未把漏收集计作通过。
+- 6 个聚焦 Vitest 文件合计 **46 个用例通过**：修订恢复/入口 13、版本下载 13、Mokina 分隔布局 3、祖先圆角裁剪 4、聊天卡片样式 11、网格过渡 2。日志分两次执行，最新入口文件结果见 `checks/pr2-actions-final.txt`，其他文件见 `checks/pr2-focused-final.txt`。后者命令中曾误写网格文件名，因此只收集了 5 文件；随后已按正确文件名补跑，未把漏收集计作通过。
 - 持久 Playwright 回归 `open-design/e2e/ui/mokina-workspace-actions.test.ts`：3/3，通过单 worker 和两 worker fullyParallel 两种执行模型；增加截图附件后的最终运行也是 3/3，无 skipped、flaky 或 unexpected。汇总见 [ui-runs.json](ui-runs.json)。
 - 生产构建使用 `OD_WEB_OUTPUT_MODE=server pnpm --filter @open-design/web build`，经 `tools-dev --prod` 重启；在完整工作区、真实 portal 和生产 CSS 下，1280×720 与 1440×900 均完成普通鼠标/键盘验收。结果包含实际加载的 Next 资源名，见 [production-actions.json](production-actions.json)。
 - 覆盖指示条几何、鼠标拖拽、ArrowRight 调整、聊天滚动条命中，以及实际聊天祖先无圆角裁剪。异常情况覆盖空版本、无章节、历史稿不能修订、内容读取延迟和只读限制，包括面板打开后权限变为只读。
@@ -49,7 +49,7 @@
 
 ## 首次失败与剩余边界
 
-- 修复前普通点击因隐藏而超时；新增面板内入口组件断言先出现 2 failed / 8 passed，见 `logs/pr2-actions-red.log`。
+- 修复前普通点击因隐藏而超时；新增面板内入口组件断言先出现 2 failed / 8 passed，见 `checks/pr2-actions-red.txt`。
 - 新 Mokina 祖先守卫先出现 1 failed / 3 passed，定位 `.split-chat-slot`；修复后 4/4。
 - 邻近旧样式测试用源码字符串固定要求宽度常量为 4，无法识别原 PR 已有的 Mokina 16px 分支。确认输入与旧 HEAD 一致后，将它改为断言上游模式实际导出值为 4；Mokina 宽度由其独立测试覆盖。
 - 首轮新 UI 测试把版本卡和章节 select 的 option 一并匹配，已限定为版本 listbox，后续完整运行均通过。

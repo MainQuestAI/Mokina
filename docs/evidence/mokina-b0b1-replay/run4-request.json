@@ -1,0 +1,21 @@
+{
+  "agentId": "codex",
+  "message": "请针对文件「传播内容与排期.html」中的章节 data-mokina-id=\"schedule-section\"（两周排期表）做一次单章修订，要求：把排期从「按周粗排」细化为「带具体日期区间（2026-10-12 起）和每日预算上限」的排期表，其余内容口径不变（总预算 50 万元上限、禁止小红书信息流）。\n\n输出方式（重要）：不要修改「传播内容与排期.html」本身。请把修订后的**单个完整章节元素**写入新文件「替换-排期-section.html」：文件内容必须只有一个根元素 <section data-mokina-id=\"schedule-section\">…</section>（含同值 id 属性），不得包含 <!DOCTYPE>、<html>、<head>、<body> 或其他章节。写完该文件后结束。",
+  "currentPrompt": "单章修订：细化「传播内容与排期.html」中 schedule-section 章节的排期表（具体日期区间与每日预算上限），把替换章节单独写入「替换-排期-section.html」（只含一个根 section 元素）。",
+  "priorTranscript": "",
+  "projectId": "mokina-b0-replay-1",
+  "conversationId": "cd68d627-0d6d-4a11-9fab-71bf01830fec",
+  "sessionMode": "design",
+  "userMessageId": "b0-replay-4-req-001-user",
+  "assistantMessageId": "b0-replay-4-req-001-assistant",
+  "clientRequestId": "b0-replay-4-req-001",
+  "skillId": null,
+  "skillIds": [],
+  "designSystemId": null,
+  "attachments": [],
+  "commentAttachments": [],
+  "model": null,
+  "reasoning": null,
+  "serviceTier": null,
+  "locale": "zh-CN"
+}

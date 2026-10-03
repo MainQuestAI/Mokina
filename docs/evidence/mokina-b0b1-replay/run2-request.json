@@ -1,0 +1,21 @@
+{
+  "agentId": "codex",
+  "message": "请阅读项目中的资料文件「晨光茶饮-品牌与产品资料.md」，为本季营销方案撰写第二个章节 HTML 交付物：文件名为「传播内容与排期.html」，内容为「传播内容与排期」章节。\n\nHTML 结构硬性要求（场景 report-contract）：每个可修改的顶层章节同时使用稳定且唯一的 id 与同值 data-mokina-id 属性（如 objectives、audience、directions、actions、budget、measurement、sources 中的相关者）。这些顶层章节之间不得嵌套；内部锚点只用普通 id；ID 不随标题措辞改变。\n\n硬性约束：总预算 50 万元人民币且不得超出；禁止投放小红书信息流广告（不得绕道代理商、达人合作或内容加热）；目标人群为一二线城市 25–35 岁白领女性占比不低于 60%。内容须包含：内容主题方向、渠道内容适配、两周排期表，并注明与「预算分配与渠道优先级」章节的预算口径一致。写完文件后结束。",
+  "currentPrompt": "请阅读项目中的资料文件「晨光茶饮-品牌与产品资料.md」，为本季营销方案撰写第二个章节 HTML 交付物：文件名为「传播内容与排期.html」，内容为「传播内容与排期」章节。（结构要求与约束同上）",
+  "priorTranscript": "",
+  "projectId": "mokina-b0-replay-1",
+  "conversationId": "cd68d627-0d6d-4a11-9fab-71bf01830fec",
+  "sessionMode": "design",
+  "userMessageId": "b0-replay-2-req-001-user",
+  "assistantMessageId": "b0-replay-2-req-001-assistant",
+  "clientRequestId": "b0-replay-2-req-001",
+  "skillId": null,
+  "skillIds": [],
+  "designSystemId": null,
+  "attachments": [],
+  "commentAttachments": [],
+  "model": null,
+  "reasoning": null,
+  "serviceTier": null,
+  "locale": "zh-CN"
+}

@@ -1,0 +1,20 @@
+{
+  "agentId": "codex",
+  "message": "请阅读项目中的资料文件「晨光茶饮-品牌与产品资料.md」，为本季营销方案撰写一个章节 HTML 交付物：文件名为「预算分配与渠道优先级.html」，内容为「预算分配与渠道优先级」章节。硬性约束：总预算 50 万元人民币；禁止投放小红书信息流广告；目标人群为一二线城市 25–35 岁白领女性占比不低于 60%。HTML 须包含预算分配表（含金额与占比）和渠道优先级排序及理由。写完文件后结束。",
+  "currentPrompt": "请阅读项目中的资料文件「晨光茶饮-品牌与产品资料.md」，为本季营销方案撰写一个章节 HTML 交付物：文件名为「预算分配与渠道优先级.html」，内容为「预算分配与渠道优先级」章节。硬性约束：总预算 50 万元人民币；禁止投放小红书信息流广告；目标人群为一二线城市 25–35 岁白领女性占比不低于 60%。HTML 须包含预算分配表（含金额与占比）和渠道优先级排序及理由。写完文件后结束。",
+  "projectId": "mokina-b0-replay-1",
+  "conversationId": "cd68d627-0d6d-4a11-9fab-71bf01830fec",
+  "sessionMode": "design",
+  "userMessageId": "b0-replay-1-req-001-user",
+  "assistantMessageId": "b0-replay-1-req-001-assistant",
+  "clientRequestId": "b0-replay-1-req-001",
+  "skillId": null,
+  "skillIds": [],
+  "designSystemId": null,
+  "attachments": [],
+  "commentAttachments": [],
+  "model": null,
+  "reasoning": null,
+  "serviceTier": null,
+  "locale": "zh-CN"
+}

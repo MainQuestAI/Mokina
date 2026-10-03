@@ -1,0 +1,17 @@
+{
+ "id": "bf7f2b43-f764-4b24-af8d-2e6b2e11a1be",
+ "fileName": "传播内容与排期.html",
+ "version": 3,
+ "label": "候选：schedule-section",
+ "createdAt": 1791013059474,
+ "source": "ai",
+ "prompt": "单章修订：细化排期表为带具体日期区间（2026-10-12 起）和每日预算上限",
+ "size": 17806,
+ "mime": "text/html; charset=utf-8",
+ "kind": "html",
+ "current": true,
+ "contentDigest": "1f70349270519c97bf3a2807bf7118bca92ba575e6988092d2e2d76ed884f97f",
+ "baseVersionId": "47ecb450-60cd-441f-8b53-597d1e8f34ef",
+ "operationId": "b0-cand-001",
+ "adoptionOperationId": "b0-adopt-001"
+}

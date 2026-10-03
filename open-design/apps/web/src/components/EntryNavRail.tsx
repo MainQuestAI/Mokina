@@ -82,6 +82,10 @@ import { useProjectDuplicateFlow } from './project-actions/useProjectDuplicateFl
 import { useWorkspaceProjectMove } from './project-actions/useWorkspaceProjectMove';
 import type { SharedProjectPredicate } from '../collab/all-projects-list';
 import { acknowledgeProjectCompletion, useProjectRunStatuses } from '../hooks/useProjectRunStatuses';
+import {
+  mokinaArtifactLineFromRecord,
+  useMokinaProjectSummaries,
+} from '../hooks/useMokinaProjectSummaries';
 import { MessageCenter } from './MessageCenter';
 import type { EntrySettingsSection } from './EntrySettingsMenu';
 import type { Project } from '../types';
@@ -531,6 +535,14 @@ function RailRecentSection({
     enabled: open,
     workspaceContext,
   });
+  // 成果摘要（Spec B1 FR-04）：与 runs 同一个可见行窗口，只读可见行的
+  // 小元数据（files + 每 HTML 条目 versions，全局并发 ≤2，见
+  // useMokinaProjectSummaries）。行外/折叠时不订阅，不预读全列表。
+  const { t: recentT } = useI18n();
+  const summariesByProjectId = useMokinaProjectSummaries(runStatusProjectIds, {
+    enabled: open,
+    workspaceContext,
+  });
 
   // Opening a project is what spends its ✓ (per product): the finished run on
   // screen is recorded as seen — in the shared feed, so the tab switcher drops
@@ -590,6 +602,7 @@ function RailRecentSection({
                     project={project}
                     workspaceContext={workspaceContext}
                     runStatus={runStatusByProjectId.get(project.id)}
+                    artifactLine={mokinaArtifactLineFromRecord(summariesByProjectId.get(project.id), recentT)}
                     ownedBySelf={ownedBySelf(project.id)}
                     shared={isSharedProject(project.id)}
                     moveToTeamAvailable={moveToTeamAvailable}

@@ -11,6 +11,7 @@ import {
   useLayoutEffect,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
   type SetStateAction,
 } from 'react';
 import { AnimatePresence } from 'motion/react';
@@ -364,6 +365,20 @@ import {
 import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunityPrompt';
 import { CenteredLoader } from './Loading';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import {
+  resolveMokinaProjectEntry,
+  type MokinaFormalEntry,
+} from '../artifacts/mokina-project-entry';
+import { useMokinaProjectSummary } from '../hooks/useMokinaProjectSummaries';
+import {
+  clearSendRequestRecord,
+  loadSendRequestRecords,
+  markSendRequestUnknown,
+  queryRunAccepted,
+  savePendingSendRequest,
+  type SendRequestRecord,
+} from '../runtime/chat/send-request-state';
+import { MokinaEntryChooserDialog } from './MokinaEntryChooserDialog';
 import mokinaWorkspaceStyles from './MokinaWorkspace.module.css';
 import { ProjectCreationPendingChat } from './ProjectCreationPendingView';
 import {
@@ -4706,6 +4721,17 @@ export function ProjectView({
     refreshWorkspaceItems,
   ]);
 
+  // 打开回退（Spec B1 §5.2）：无深链、无有效 tabs 时按成果身份决定初始
+  // 打开目标。Mokina 版走 resolver（1 正式直开 / 多正式选择器 / 0 正式与
+  // legacy 落文件入口 / 读取未知等待不猜零）；OpenDesign 版保持原主文件
+  // 回退。元数据经共享 store（与 recent 行同一份，并发与去重在那边）。
+  // 按需读取（Spec B1 §7）：只在「无深链、无 tabs」的回退分支真正需要
+  // 成果元数据时订阅；其余场景（含全部既有测试路径）不发请求。
+  const mokinaFallbackNeeded = !routeFileName && !openTabsState.active && openTabsState.tabs.length === 0;
+  const mokinaEntryRecord = useMokinaProjectSummary(
+    MOKINA_LOCAL_EDITION && mokinaFallbackNeeded ? project.id : null,
+  );
+  const [mokinaEntryChooser, setMokinaEntryChooser] = useState<{ formals: MokinaFormalEntry[] } | null>(null);
   useEffect(() => {
     if (!tabsLoadedRef.current) return;
     if (hasAppliedInitialPrimaryOpenRef.current) return;
@@ -4718,20 +4744,61 @@ export function ProjectView({
       hasAppliedInitialPrimaryOpenRef.current = true;
       return;
     }
+    if (!MOKINA_LOCAL_EDITION) {
+      const primaryFile = selectPrimaryProjectFile(
+        projectFiles,
+        refreshInitialHomeAttachmentFileNames(),
+      );
+      if (!primaryFile) return;
+      hasAppliedInitialPrimaryOpenRef.current = true;
+      // This default is a host selection, just like requestOpenFile. Persisting
+      // it must not turn an automatically opened search image into a user veto.
+      lastHostRequestedOpenRef.current = primaryFile.name;
+      persistTabsState({ tabs: [primaryFile.name], active: primaryFile.name });
+      return;
+    }
+    const record = mokinaEntryRecord;
+    if (!record || record.status === 'loading' || !record.summary) return;
+    const intent = resolveMokinaProjectEntry({
+      projectId: project.id,
+      entries: record.entries,
+      entriesReadState: record.status,
+      tabs: null,
+      explicitTarget: null,
+      legacyEntryHint: project.metadata?.entryFile ?? null,
+    });
+    if (intent.kind === 'unresolvable') {
+      // 读取失败/无权限：不猜零也不误开，停在项目真实状态。
+      if (intent.reason !== 'entries-loading') {
+        hasAppliedInitialPrimaryOpenRef.current = true;
+      }
+      return;
+    }
+    hasAppliedInitialPrimaryOpenRef.current = true;
+    if (intent.kind === 'open') {
+      lastHostRequestedOpenRef.current = intent.entry;
+      persistTabsState({ tabs: [intent.entry], active: intent.entry });
+      return;
+    }
+    if (intent.kind === 'chooser') {
+      setMokinaEntryChooser({ formals: [...intent.formals] });
+      return;
+    }
+    // workspace（0 个正式成果）：成果读取已确认；仍给文件入口（含 legacy
+    // 主文件，其「未确认采用」身份由行摘要与工作区标注，不在此虚构正式稿）。
     const primaryFile = selectPrimaryProjectFile(
       projectFiles,
       refreshInitialHomeAttachmentFileNames(),
     );
     if (!primaryFile) return;
-    hasAppliedInitialPrimaryOpenRef.current = true;
-    // This default is a host selection, just like requestOpenFile. Persisting
-    // it must not turn an automatically opened search image into a user veto.
     lastHostRequestedOpenRef.current = primaryFile.name;
     persistTabsState({ tabs: [primaryFile.name], active: primaryFile.name });
   }, [
+    mokinaEntryRecord,
     openTabsState.active,
     openTabsState.tabs.length,
     persistTabsState,
+    project.id,
     projectFiles,
     refreshInitialHomeAttachmentFileNames,
     routeFileName,
@@ -8383,6 +8450,35 @@ export function ProjectView({
     }
   }, [commitPreviewComments, enqueueChatSend, project.id, projectRunWorkspaceContext]);
 
+  // 发送三态（Spec B1 §6.3/FR-08）：当前会话的「结果待确认」记录与只读核对。
+  const [pendingSendRecords, setPendingSendRecords] = useState<SendRequestRecord[]>([]);
+  const [pendingSendVerifyNonce, setPendingSendVerifyNonce] = useState(0);
+  useEffect(() => {
+    if (!MOKINA_LOCAL_EDITION || !activeConversationId) return undefined;
+    const readUnknowns = () => loadSendRequestRecords(project.id, activeConversationId)
+      .filter((record) => record.status === 'unknown');
+    setPendingSendRecords(readUnknowns());
+    const unknowns = readUnknowns();
+    if (unknowns.length === 0) return undefined;
+    let cancelled = false;
+    void (async () => {
+      for (const record of unknowns) {
+        const accepted = await queryRunAccepted(project.id, activeConversationId, record.clientRequestId);
+        if (cancelled) return;
+        if (accepted !== null) {
+          // true：已受理 → 清记录（原 run 由既有 reattach 恢复显示，不重新 POST）。
+          // false：daemon 按 clientRequestId 证明从未受理 → 回可发送草稿。
+          clearSendRequestRecord(project.id, activeConversationId, record.clientRequestId);
+        }
+        // null：查询失败 → 保留 unknown，同请求不自动重发。
+        setPendingSendRecords(readUnknowns());
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeConversationId, pendingSendVerifyNonce, project.id]);
+
   const handleSend = useCallback(
     async (
       prompt: string,
@@ -8565,6 +8661,42 @@ export function ProjectView({
       const runConversationId = activeConversationId;
       // This is the accepted retry boundary: all synchronous refusal paths are
       // above it. A later preflight/POST failure supplies its own current surface.
+      // 发送三态（Spec B1 §6.3）：POST 前落 pending；写入失败 → 停在草稿
+      // （返回 false 会让输入框还回正文），绝不无记录地发出请求。
+      const mokinaSendRecord: SendRequestRecord | null = MOKINA_LOCAL_EDITION && !meta?.queueOnly
+        ? (() => {
+            const record: SendRequestRecord = {
+              clientRequestId,
+              projectId: project.id,
+              conversationId: runConversationId,
+              promptPreview: prompt.slice(0, 120),
+              status: 'pending',
+              createdAt: Date.now(),
+            };
+            return savePendingSendRequest({
+              clientRequestId,
+              projectId: project.id,
+              conversationId: runConversationId,
+              prompt,
+            }) ? record : null;
+          })()
+        : null;
+      if (MOKINA_LOCAL_EDITION && !meta?.queueOnly && !mokinaSendRecord) return false;
+      const settleMokinaSend = {
+        onRunCreateAccepted: () => {
+          if (mokinaSendRecord) {
+            clearSendRequestRecord(project.id, runConversationId, clientRequestId);
+          }
+        },
+        onRunCreateFailed: ({ definitive }: { definitive: boolean }) => {
+          if (!mokinaSendRecord) return;
+          if (definitive) clearSendRequestRecord(project.id, runConversationId, clientRequestId);
+          else {
+            markSendRequestUnknown(project.id, runConversationId, clientRequestId);
+            setPendingSendRecords(loadSendRequestRecords(project.id, runConversationId));
+          }
+        },
+      };
       if (retryTarget && meta?.retryOfAssistantId) {
         supersedeRetriedError(runConversationId, meta.retryOfAssistantId, retryTarget.failedAssistant.id);
       }
@@ -10234,6 +10366,7 @@ export function ProjectView({
           signal: controller.signal,
           cancelSignal: cancelController.signal,
           handlers,
+          ...settleMokinaSend,
           projectId: project.id,
           conversationId: runConversationId,
           userMessageId: userMsg.id,
@@ -10478,6 +10611,7 @@ export function ProjectView({
           signal: controller.signal,
           cancelSignal: cancelController.signal,
           handlers,
+          ...settleMokinaSend,
           projectId: project.id,
           conversationId: runConversationId,
           userMessageId: userMsg.id,
@@ -13545,6 +13679,29 @@ export function ProjectView({
 
   // CLI / agent selector lives below the chat conversation (composer footer),
   // not in the top-right header.
+  // 「结果待确认」（Spec B1 FR-08）：unknown 记录的非打断提示 + 只读核对。
+  // 不自动重发、不换 ID；核对是纯 GET，受理与否都只更新本会话状态。
+  const pendingSendNotice: ReactNode = pendingSendRecords.length > 0 ? (
+    <div
+      className="mokina-pending-send"
+      role="status"
+      aria-live="polite"
+      data-testid="mokina-pending-send"
+    >
+      <span className="mokina-pending-send__text">
+        {t('mokina.pendingSend.title')}
+        {pendingSendRecords[0]?.promptPreview ? `：${pendingSendRecords[0].promptPreview}` : ''}
+      </span>
+      <button
+        type="button"
+        className="mokina-pending-send__verify"
+        onClick={() => setPendingSendVerifyNonce((nonce) => nonce + 1)}
+      >
+        {t('mokina.pendingSend.verify')}
+      </button>
+    </div>
+  ) : null;
+
   const executionControls = (
     <>
       <AvatarMenu
@@ -13949,7 +14106,12 @@ export function ProjectView({
               onCollapse={() => setWorkspaceFocused(true)}
               collapseControlLifted={!workspaceFocused}
               backLabel={t('project.backToProjects')}
-              composerFooterAccessory={executionControls}
+              composerFooterAccessory={(
+                <>
+                  {pendingSendNotice}
+                  {executionControls}
+                </>
+              )}
               designSystemPicker={(
                 <DesignSystemPicker
                   variant="home"
@@ -14168,6 +14330,17 @@ export function ProjectView({
             // 和现有弹窗的「暂不需要」同义:任务留在队列里,只是不再是唯一选项。
             setAmrBalanceGateBlock(null);
           }}
+        />
+      ) : null}
+      {mokinaEntryChooser ? (
+        <MokinaEntryChooserDialog
+          formals={mokinaEntryChooser.formals}
+          onPick={(formal) => {
+            setMokinaEntryChooser(null);
+            lastHostRequestedOpenRef.current = formal.entry;
+            persistTabsState({ tabs: [formal.entry], active: formal.entry });
+          }}
+          onClose={() => setMokinaEntryChooser(null)}
         />
       ) : null}
       {amrBalanceGateBlock?.dialog === 'upgrade' ? (

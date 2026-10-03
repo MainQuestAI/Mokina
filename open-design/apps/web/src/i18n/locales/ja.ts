@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const ja: Dict = {
+  'homeHero.materialsEntry': "資料・背景",
+  'mokina.pendingSend.title': "送信結果の確認待ち",
+  'mokina.pendingSend.verify': "送信結果を確認",
+  'mokina.entryChooser.title': "開く成果物を選択",
+  'mokina.entryChooser.cancel': "キャンセル",
+  'mokina.entrySummary.loading': "成果物を読み込み中…",
+  'mokina.entrySummary.failed': "成果物を読み取れません",
+  'mokina.entrySummary.unauthorized': "成果物へのアクセス権がありません",
+  'mokina.entrySummary.empty': "正式な成果物はまだありません",
+  'mokina.entrySummary.legacy': "旧プロジェクト入口（採用未確認）",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

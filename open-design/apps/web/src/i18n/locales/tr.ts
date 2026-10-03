@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const tr: Dict = {
+  'homeHero.materialsEntry': "Materyaller ve arka plan",
+  'mokina.pendingSend.title': "Gönderim sonucu onay bekliyor",
+  'mokina.pendingSend.verify': "Durumu kontrol et",
+  'mokina.entryChooser.title': "Açılacak çıktıyı seçin",
+  'mokina.entryChooser.cancel': "İptal",
+  'mokina.entrySummary.loading': "Çıktılar yükleniyor…",
+  'mokina.entrySummary.failed': "Çıktılar okunamıyor",
+  'mokina.entrySummary.unauthorized': "Çıktılara erişim yok",
+  'mokina.entrySummary.empty': "Henüz resmi çıktı yok",
+  'mokina.entrySummary.legacy': "Eski proje girişi (benimseme onaylanmadı)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

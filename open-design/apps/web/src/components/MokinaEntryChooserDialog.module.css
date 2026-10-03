@@ -1,0 +1,97 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 160;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, #000 42%, transparent);
+}
+
+.dialog {
+  min-width: 300px;
+  max-width: min(420px, calc(100vw - 48px));
+  max-height: min(400px, calc(100vh - 96px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--surface, #fff);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 24%);
+}
+
+.title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-strong, #1a1a1a);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  min-height: 44px;
+  border: 1px solid var(--border, #dbdbdb);
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  color: var(--text, #333);
+  cursor: pointer;
+}
+
+.item:hover:not(:disabled),
+.item:focus-visible {
+  background: color-mix(in srgb, var(--accent, #1f68fe) 8%, transparent);
+  outline: none;
+}
+
+.item:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, #1f68fe) 70%, transparent);
+}
+
+.itemName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemVersion {
+  flex: 0 0 auto;
+  font-size: 13px;
+  color: var(--text-muted, #667);
+}
+
+.cancel {
+  align-self: flex-end;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-muted, #667);
+  cursor: pointer;
+}
+
+.cancel:hover {
+  background: color-mix(in srgb, var(--text, #333) 8%, transparent);
+}

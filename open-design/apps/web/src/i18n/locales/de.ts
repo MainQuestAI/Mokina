@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const de: Dict = {
+  'homeHero.materialsEntry': "Materialien & Hintergrund",
+  'mokina.pendingSend.title': "Sendevergebnis wartet auf Bestätigung",
+  'mokina.pendingSend.verify': "Status prüfen",
+  'mokina.entryChooser.title': "Zu öffnendes Artefakt wählen",
+  'mokina.entryChooser.cancel': "Abbrechen",
+  'mokina.entrySummary.loading': "Artefakte werden geladen…",
+  'mokina.entrySummary.failed': "Artefakte nicht verfügbar",
+  'mokina.entrySummary.unauthorized': "Kein Zugriff auf Artefakte",
+  'mokina.entrySummary.empty': "Noch keine formellen Artefakte",
+  'mokina.entrySummary.legacy': "Legacy-Einstieg (Übernahme unbestätigt)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

@@ -166,3 +166,38 @@
 - 专业质量：单样本定性达标；A/B 约束敏感性 eval 为待办（见 §5）。
 - TASTE-2 未触发（无外部模型配置阻碍）。
 - **B0 可标记完成（A/B eval 待办与场景 UI 重放待办不阻塞 B1 开始，按 TASTE-3 单切片推进）。**
+
+## 9. B1 实现与验收（2026-10-03 补记）
+
+实现范围（Spec §4–§8，分支 `codex/mokina-v0.0.2-b0-b1`）：
+
+| 组 | 交付 | 验证 |
+|---|---|---|
+| G1 | `apps/web/src/artifacts/mokina-project-entry.ts` 纯判定（§5.1 正式判定 + §5.2 打开优先级 + 行摘要）；ProjectView 打开回退按 intent（1 正式直开 / 多正式 `MokinaEntryChooserDialog` 选择器 / 0 正式与 legacy 落文件入口 / 读取未知等待不猜零）；OpenDesign 版（off）保持原 selectPrimaryProjectFile 路径 | 表驱动单测 18 项；e2e `mokina-navigation` 双尺寸（单正式自动打开 ✓、多正式选择器选择 ✓、深链失效不静默回退 ✓） |
+| G4 | `apps/web/src/hooks/useMokinaProjectSummaries.ts` 共享元数据 store：可见行订阅、全局并发 ≤2 队列、订阅级取消（含「取消被 registry 吞成空数组」的过期写防护与新读让位）、采用/删除/重命名事件失效 | rail 单测 20 项（含失效复核）；发现并修复与封面扫描共享请求的 pin 冲突（onboarding 回归） |
+| G2 | `runtime/chat/send-request-state.ts` 三态持久化；streamViaDaemon 增 `onRunCreateAccepted/onRunCreateFailed({definitive})` 回调；handleSend POST 前落 pending（写失败停草稿不 POST）；unknown 只读核对（GET /api/runs 按 clientRequestId 幂等底座）；composer 底部「结果待确认」非打断提示 + 只读核对按钮 | 状态模块单测 7 项（含配额写失败、跨 scope 隔离、8 条上限）；daemon 幂等（同 clientRequestId reused:true）在 B0 已实测 |
+| FR | FR-01/02：直接输入 + 两手动场景已就位，「更多→制作活动页」按 B0 发现后置（TODOS 记录，不做假入口）；FR-03：HomeHero 工作目录行新增「资料/背景」入口 → 既有设计系统视图（Home 保持挂载不丢草稿）；FR-04：recent 行成果摘要一行截断（5 词条 ×19 locale） | P01 截图（见 evidence） |
+| G5 | `e2e/ui/mokina-navigation.test.ts`（新增）+ `mokina-workspace-actions` 既有 3 项 | **e2e 5/5 通过**（双尺寸，suite 隔离生命周期）；P01/P02 生产截图 ×2 尺寸存 `docs/evidence/mokina-b0b1-b1/` |
+| 两版 | Mokina on：最终生产构建 + 18613/18614 实测；off：独立 `NEXT_PUBLIC_MOKINA_EDITION=off` 构建 + `MOKINA_LOCAL_EDITION=off` daemon（18615/18616），home 无 Mokina chips、无资料入口、hero 为原版 Prototype，截图存证 | 不能同一构建换 env 冒充；off 首次验证曾误用 dev 模式服务（无效前提），改 --prod 后通过 |
+
+### B1 过程中修复的自引入问题
+
+1. `MokinaEntryChooserDialog.module.css` overlay z-index 90 → 160（app-scrim-layer 地板 150 硬门槛）。
+2. 元数据 store 与封面扫描共享 `sharedCancellableGet` 请求时以无信号身份 pin 住废弃扫描的 abort——补订阅级 AbortController（可取消读者身份）。
+3. StrictMode 重挂载下 registry 把「订阅取消的 abort」吞成空数组 → store 误写「确认空目录」→ 打开回退误走零正式分支（e2e dev 模式确定性复现）；修复：被中止/过期的读取不落记录 + 新读在途时旧读让位。
+4. ProjectView 元数据 hook 改为仅在打开回退真正需要时订阅（不干扰既有测试桩请求序列，亦是 Spec「按需」要求）。
+
+### 回归与基线失败声明
+
+- 本批后全套 web Vitest：**12701 passed / 8 failed**——8 项与干净 HEAD（stash 后）完全一致，均与本批无关：`deepseek-v4-flash-ui-contract` ×2、`i18n/locales`（zh-CN.homeHero.title 占位符，main 既有）、`state/config.test mergeDaemonConfig`、`HomeHero.rail`、`HomeHero.scenario-cards`、`chips.automatic-default` ×2。
+- guard ✓（期间清理了 B0 遗留在 `e2e/.tmp` 的临时脚本——E2E 布局检查项）；typecheck ✓（含 contracts 重建）；i18n:check ✓；daemon 定向 4 文件 8 项 ✓。
+
+### G6 真实链（B1 增量）
+
+对 B0 真实回放项目（真实产物、真实端点）核对判定输入：`预算分配与渠道优先级.html` formal v1（正常首稿）；`传播内容与排期.html` formal v3 + `adoptionOperationId=b0-adopt-001`（显式采用），与 B0 记录一致——resolver/摘要的真实输入在当前 main 构建上复验通过。发送三态的 daemon 幂等底座（同 clientRequestId 重放 reused:true、无第二 run）为 B0 实测。
+
+### B1 遗留与边界
+
+- e2e 环境侧栏默认折叠：recent 摘要的浏览器级断言由单测覆盖（20 项），e2e 保留 P01 截图作视觉证据；rail 展开态的行摘要人工目验通过（本节截图）。
+- unknown 恢复流程的浏览器级端到端（断网→刷新→核对）未在本轮注入故障演练；由状态单测 + daemon 幂等实测组合覆盖，标注为部分层级证据。
+- 任务 C 开放 CSV 抽测、A/B 约束敏感性 eval：仍为待办（§5）。

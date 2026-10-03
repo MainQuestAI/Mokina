@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const uk: Dict = {
+  'homeHero.materialsEntry': "Матеріали та контекст",
+  'mokina.pendingSend.title': "Результат надсилання очікує підтвердження",
+  'mokina.pendingSend.verify': "Перевірити статус",
+  'mokina.entryChooser.title': "Виберіть результат для відкриття",
+  'mokina.entryChooser.cancel': "Скасувати",
+  'mokina.entrySummary.loading': "Завантаження результатів…",
+  'mokina.entrySummary.failed': "Результати недоступні",
+  'mokina.entrySummary.unauthorized': "Немає доступу до результатів",
+  'mokina.entrySummary.empty': "офіційних результатів ще немає",
+  'mokina.entrySummary.legacy': "Успадкований вхід (прийняття не підтверджено)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

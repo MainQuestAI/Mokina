@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const fr: Dict = {
+  'homeHero.materialsEntry': "Documents et contexte",
+  'mokina.pendingSend.title': "Résultat de l’envoi en attente de confirmation",
+  'mokina.pendingSend.verify': "Vérifier le statut",
+  'mokina.entryChooser.title': "Choisir un livrable à ouvrir",
+  'mokina.entryChooser.cancel': "Annuler",
+  'mokina.entrySummary.loading': "Chargement des livrables…",
+  'mokina.entrySummary.failed': "Livrables indisponibles",
+  'mokina.entrySummary.unauthorized': "Accès aux livrables refusé",
+  'mokina.entrySummary.empty': "Aucun livrable officiel pour l'instant",
+  'mokina.entrySummary.legacy': "Entrée héritée (adoption non confirmée)",
   'invite.header.eyebrow': "Invitation d'équipe",
   'invite.loading': "Chargement de l'invitation…",
   'invite.landing.title': "Rejoindre l'équipe",

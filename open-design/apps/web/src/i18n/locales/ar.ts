@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const ar: Dict = {
+  'homeHero.materialsEntry': "المواد والخلفية",
+  'mokina.pendingSend.title': "نتيجة الإرسال في انتظار التأكيد",
+  'mokina.pendingSend.verify': "تحقق من الحالة",
+  'mokina.entryChooser.title': "اختر مخرجًا لفتحه",
+  'mokina.entryChooser.cancel': "إلغاء",
+  'mokina.entrySummary.loading': "جارٍ تحميل المخرجات…",
+  'mokina.entrySummary.failed': "المخرجات غير متاحة",
+  'mokina.entrySummary.unauthorized': "لا تملك صلاحية الوصول إلى المخرجات",
+  'mokina.entrySummary.empty': "لا توجد مخرجات رسمية بعد",
+  'mokina.entrySummary.legacy': "مدخل قديم (لم يتم تأكيد الاعتماد)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

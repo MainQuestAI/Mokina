@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const id: Dict = {
+  'homeHero.materialsEntry': "Materi & latar belakang",
+  'mokina.pendingSend.title': "Hasil kirim menunggu konfirmasi",
+  'mokina.pendingSend.verify': "Periksa status",
+  'mokina.entryChooser.title': "Pilih artefak untuk dibuka",
+  'mokina.entryChooser.cancel': "Batal",
+  'mokina.entrySummary.loading': "Memuat artefak…",
+  'mokina.entrySummary.failed': "Artefak tidak tersedia",
+  'mokina.entrySummary.unauthorized': "Tidak punya akses ke artefak",
+  'mokina.entrySummary.empty': "Belum ada artefak formal",
+  'mokina.entrySummary.legacy': "Entri warisan (adopsi belum dikonfirmasi)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

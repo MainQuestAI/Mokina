@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const ko: Dict = {
+  'homeHero.materialsEntry': "자료 및 배경",
+  'mokina.pendingSend.title': "전송 결과 확인 대기 중",
+  'mokina.pendingSend.verify': "전송 결과 확인",
+  'mokina.entryChooser.title': "열 산출물 선택",
+  'mokina.entryChooser.cancel': "취소",
+  'mokina.entrySummary.loading': "산출물 불러오는 중…",
+  'mokina.entrySummary.failed': "산출물을 읽을 수 없음",
+  'mokina.entrySummary.unauthorized': "산출물에 대한 접근 권한 없음",
+  'mokina.entrySummary.empty': "아직 정식 산출물이 없음",
+  'mokina.entrySummary.legacy': "기존 프로젝트 항목(채택 미확인)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

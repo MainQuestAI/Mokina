@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const th: Dict = {
+  'homeHero.materialsEntry': "เอกสารและข้อมูลพื้นหลัง",
+  'mokina.pendingSend.title': "ผลการส่งรอการยืนยัน",
+  'mokina.pendingSend.verify': "ตรวจสอบสถานะ",
+  'mokina.entryChooser.title': "เลือกผลงานที่จะเปิด",
+  'mokina.entryChooser.cancel': "ยกเลิก",
+  'mokina.entrySummary.loading': "กำลังโหลดผลงาน…",
+  'mokina.entrySummary.failed': "อ่านผลงานไม่ได้",
+  'mokina.entrySummary.unauthorized': "ไม่มีสิทธิ์เข้าถึงผลงาน",
+  'mokina.entrySummary.empty': "ยังไม่มีผลงานฉบับทางการ",
+  'mokina.entrySummary.legacy': "รายการแบบเดิม (ยังไม่ยืนยันการรับ)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

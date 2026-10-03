@@ -552,6 +552,11 @@ export interface DaemonStreamOptions {
   userMessageId?: string | null;
   assistantMessageId?: string | null;
   clientRequestId?: string | null;
+  /** POST /api/runs 受理（2xx）后回调：发送三态清 pending 记录的锚点。 */
+  onRunCreateAccepted?: () => void;
+  /** POST /api/runs 未受理回调。definitive=true 是 daemon 的明确拒绝
+   * （4xx/最终 5xx）；false 是响应丢失/中止（unknown → 只读核对）。 */
+  onRunCreateFailed?: (info: { definitive: boolean }) => void;
   skillId?: string | null;
   // Per-turn skill ids picked via the composer's @-mention popover. These
   // are layered onto the system prompt for this run only and do not
@@ -1043,6 +1048,8 @@ export async function streamViaDaemon({
   userMessageId,
   assistantMessageId,
   clientRequestId,
+  onRunCreateAccepted,
+  onRunCreateFailed,
   skillId,
   skillIds,
   designSystemId,
@@ -1143,11 +1150,16 @@ export async function streamViaDaemon({
       const delayMs = RUN_CREATE_AUTHORITY_RETRY_DELAYS_MS[attempt];
       if (!retryableAuthorityOutage || delayMs === undefined || cancelSignal?.aborted) break;
       await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
-      if (cancelSignal?.aborted) return;
+      if (cancelSignal?.aborted) {
+        // 受理前被取消：无法证明 daemon 是否已受理 → unknown，由只读核对收口。
+        onRunCreateFailed?.({ definitive: false });
+        return;
+      }
     }
 
     if (!createResp.ok) {
       const text = await createResp.text().catch(() => '');
+      onRunCreateFailed?.({ definitive: true });
       emitRunStatus('failed');
       handlers.onError(daemonCreateRunError(createResp, text));
       return;
@@ -1155,6 +1167,7 @@ export async function streamViaDaemon({
 
     const created = (await createResp.json()) as ChatRunCreateResponse;
     const runId = created.runId;
+    onRunCreateAccepted?.();
     if (created.strategyTask) onRunCreated?.(runId, created.strategyTask);
     else onRunCreated?.(runId);
     // Start the stuck-run watchdog. trackRunProgress is called inside the
@@ -1198,7 +1211,13 @@ export async function streamViaDaemon({
       onStrategyTaskSettled,
     });
   } catch (err) {
-    if ((err as Error).name === 'AbortError') return;
+    if ((err as Error).name === 'AbortError') {
+      // 受理前中止（含网络层 abort）：与响应丢失同义 → unknown。
+      onRunCreateFailed?.({ definitive: false });
+      return;
+    }
+    // fetch 本身抛错（断网/超时）：不是 daemon 的明确拒绝 → unknown。
+    onRunCreateFailed?.({ definitive: false });
     emitRunStatus('failed');
     handlers.onError(err instanceof Error ? err : new Error(String(err)));
   }

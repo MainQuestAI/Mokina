@@ -558,10 +558,12 @@ describe('EntryShell project reopen request priority', () => {
     expect(onOpenProject).toHaveBeenCalledTimes(1);
     expect(homeSignal?.aborted).toBe(true);
     await expect(fetchProjectFiles('project-reopen')).resolves.toEqual(files);
-    expect(fileRequests).toHaveLength(2);
+    // rail 最近行的 G4 元数据读取会并发同一端点；前景读必须是最后一个请求，
+    // 且与被弃的封面扫描互不共用（总数不再固定为 2）。
+    expect(fileRequests.length).toBeGreaterThanOrEqual(2);
     // The foreground read must own a live request of its own: it neither joins
     // the abandoned scan's dead entry nor inherits its aborted signal.
-    const foregroundSignal = fileRequests[1]?.signal;
+    const foregroundSignal = fileRequests.at(-1)?.signal;
     expect(foregroundSignal).toBeDefined();
     expect(foregroundSignal).not.toBe(homeSignal);
     expect(foregroundSignal?.aborted).toBe(false);

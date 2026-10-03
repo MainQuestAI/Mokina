@@ -87,6 +87,7 @@ import type {
 } from '../types';
 import type { ArtifactManifest } from '../artifacts/types';
 import { GENERIC_DEPLOY_ENVELOPE_CODES } from '../analytics/deploy-error-code';
+import { notifyMokinaEntriesChanged } from '../runtime/mokina-entry-events';
 import {
   isOpenDesignHostAvailable,
   openHostExternalUrl,
@@ -3332,6 +3333,7 @@ export async function deleteProjectFile(
     );
     if (!resp.ok) return false;
     invalidateProjectFilesCache(projectId, workspaceContext);
+    notifyMokinaEntriesChanged(projectId);
     return true;
   } catch {
     return false;
@@ -3357,6 +3359,7 @@ export async function renameProjectFile(
     throw new Error(errorBody.message);
   }
   invalidateProjectFilesCache(projectId, workspaceContext);
+  notifyMokinaEntriesChanged(projectId);
   return (await resp.json()) as RenameProjectFileResponse;
 }
 

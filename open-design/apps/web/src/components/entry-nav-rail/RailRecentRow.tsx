@@ -136,6 +136,7 @@ export function RailRecentRow({
   project,
   workspaceContext,
   runStatus,
+  artifactLine,
   ownedBySelf = true,
   shared = false,
   moveToTeamAvailable = false,
@@ -154,6 +155,10 @@ export function RailRecentRow({
    *  run the user has not opened since, the unread dot at the row's end
    *  (OPEND-3133) — and nothing else. */
   runStatus?: ProjectDisplayStatus;
+  /** 成果摘要行（Spec B1 FR-04）：正式稿名+版本，或五态占位文案。由
+   *  Section 从共享元数据 store 组好传入；undefined 表示该行尚未订阅
+   *  元数据读取（不可见行），保持单行渲染。 */
+  artifactLine?: { text: string; state: 'loading' | 'failed' | 'unauthorized' | 'empty' | 'artifacts' } | null;
   /** The daemon's canMutate is privileged-or-self-created and 403s the rest,
    *  so a row someone else shared keeps its mutations disabled with the same
    *  explanation the project cards give (`recentProjects.ownOnlyMutation`). */
@@ -340,7 +345,20 @@ export function RailRecentRow({
               <ProjectFolderGlyph size={16} />
             )}
           </span>
-          <span className="entry-nav-rail__recent-name">{project.name}</span>
+          {/* 名称 + 成果摘要同列纵排（Spec B1 FR-04）：名称最多两行的截断归
+              __recent-name，成果摘要固定一行截断；两段都是按钮的可读名称，
+              摘要被 CSS 省略也不影响可访问名。 */}
+          <span className="entry-nav-rail__recent-text">
+            <span className="entry-nav-rail__recent-name">{project.name}</span>
+            {artifactLine ? (
+              <span
+                className={`entry-nav-rail__recent-artifact${artifactLine.state === 'failed' || artifactLine.state === 'unauthorized' ? ' is-unreadable' : ''}`}
+                data-testid="entry-nav-recent-artifact"
+              >
+                {artifactLine.text}
+              </span>
+            ) : null}
+          </span>
           {/* Completed, unread: the dot at the row's end. The section spends
               it when the row opens the project (`acknowledgeProjectCompletion`
               in the shared run-status store), which is also what drops it from

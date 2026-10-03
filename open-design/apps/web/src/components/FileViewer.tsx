@@ -102,6 +102,7 @@ import {
 import { useT, useI18n } from '../i18n';
 import { randomUUID as newClientOperationId } from '../utils/uuid';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
+import { notifyMokinaEntriesChanged } from '../runtime/mokina-entry-events';
 import {
   notifyTeamProjectsChanged,
   TEAM_PROJECTS_CHANGED_EVENT,
@@ -4148,6 +4149,8 @@ function FileVersionManagerModal({
           return;
         }
         const adopted = await response.json() as { version: ProjectFileVersion };
+        // 正式身份变了：行摘要缓存立即失效（recent 行不得继续展示旧正式稿）。
+        notifyMokinaEntriesChanged(projectId);
         await onRestored(selectedContent, adopted.version);
         await loadVersions(adopted.version.id);
         closingAfterRestore = true;
@@ -4166,6 +4169,8 @@ function FileVersionManagerModal({
         return;
       }
       fireRestoreResult('success', result.versionWarning?.code);
+      // 恢复同样推进 current 版本；行摘要随之失效。
+      notifyMokinaEntriesChanged(projectId);
       const restoredVersion = result.version ?? selectedVersion;
       await onRestored(selectedContent, restoredVersion);
       if (result.versionWarning) {

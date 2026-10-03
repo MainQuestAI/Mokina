@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const ptBR: Dict = {
+  'homeHero.materialsEntry': "Materiais e contexto",
+  'mokina.pendingSend.title': "Resultado do envio aguardando confirmação",
+  'mokina.pendingSend.verify': "Verificar status",
+  'mokina.entryChooser.title': "Escolha um entregável para abrir",
+  'mokina.entryChooser.cancel': "Cancelar",
+  'mokina.entrySummary.loading': "Carregando entregáveis…",
+  'mokina.entrySummary.failed': "Entregáveis indisponíveis",
+  'mokina.entrySummary.unauthorized': "Sem acesso aos entregáveis",
+  'mokina.entrySummary.empty': "Ainda não há entregáveis formais",
+  'mokina.entrySummary.legacy': "Entrada legada (adoção não confirmada)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

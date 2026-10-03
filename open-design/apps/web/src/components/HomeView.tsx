@@ -3096,6 +3096,27 @@ export function HomeView({
   // vertically instead of hugging the top.
   const recentProjectsEmpty = !projectsLoading && projects.length === 0;
 
+  // 资料/背景辅助入口（Spec B1 FR-01/FR-03）：接入既有「设计系统（Brand Kit）」
+  // 视图。Home 在 shell 里保持挂载，往返不丢未发文字与附件；解析与依据视图
+  // 属 B2，此处只做真实入口，不做选择状态。
+  const mokinaMaterialsEntry = MOKINA_LOCAL_EDITION ? (
+    <button
+      type="button"
+      className="home-hero__materials-entry"
+      data-testid="home-materials-entry"
+      onClick={() => {
+        trackHomeChatComposerClick(analytics.track, {
+          page_name: 'home',
+          area: 'chat_composer',
+          element: 'materials_entry',
+        });
+        navigate({ kind: 'home', view: 'design-systems' });
+      }}
+    >
+      {t('homeHero.materialsEntry')}
+    </button>
+  ) : null;
+
   return (
     <div
       className={`home-view${recentProjectsEmpty ? ' home-view--centered' : ''}${
@@ -3122,6 +3143,7 @@ export function HomeView({
       <HomeHero
         variant={variant}
         collapseSignal={collapseSignal}
+        materialsEntry={mokinaMaterialsEntry}
         workspaceContext={workspaceContext}
         ref={inputRef}
         active={isActive}

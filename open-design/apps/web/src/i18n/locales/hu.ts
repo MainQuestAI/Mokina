@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const hu: Dict = {
+  'homeHero.materialsEntry': "Anyagok és háttér",
+  'mokina.pendingSend.title': "A küldés eredménye megerősítésre vár",
+  'mokina.pendingSend.verify': "Állapot ellenőrzése",
+  'mokina.entryChooser.title': "Válassza ki a megnyitandó artefaktot",
+  'mokina.entryChooser.cancel': "Mégse",
+  'mokina.entrySummary.loading': "Artefaktok betöltése…",
+  'mokina.entrySummary.failed': "Az artefaktok nem elérhetők",
+  'mokina.entrySummary.unauthorized': "Nincs hozzáférés az artefaktokhoz",
+  'mokina.entrySummary.empty': "Még nincs hivatalos artefakt",
+  'mokina.entrySummary.legacy': "Örökölt belépés (átvétel nem megerősített)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

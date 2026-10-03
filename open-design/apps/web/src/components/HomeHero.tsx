@@ -232,6 +232,8 @@ interface Props {
   error: string | null;
   showActivePluginChip?: boolean;
   workingDir?: string | null;
+  /** 资料/背景辅助入口（Spec B1 FR-01/FR-03）：渲染在工作目录行首位。 */
+  materialsEntry?: ReactNode;
   recentDirs?: string[];
   onPickWorkingDir?: () => Promise<string | null> | string | null | void;
   onPickLocalCodeDir?: () => Promise<string | null> | string | null | void;
@@ -410,6 +412,7 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
     error,
     showActivePluginChip = true,
     workingDir = null,
+    materialsEntry,
     recentDirs = [],
     onPickWorkingDir,
     onPickLocalCodeDir,
@@ -2469,6 +2472,7 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
           and the design system sits beside the type pill (per product:
           绿色 pill 后面跟设计系统 icon). */}
       <div className="home-hero__workdir-row">
+        {materialsEntry}
         {onPickWorkingDir ? (
           <WorkingDirPicker
             className="home-hero__working-dir-picker"

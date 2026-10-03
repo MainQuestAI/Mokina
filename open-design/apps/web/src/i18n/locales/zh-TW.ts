@@ -1,6 +1,16 @@
 import type { Dict } from "../types";
 
 export const zhTW: Dict = {
+  'homeHero.materialsEntry': "資料與背景",
+  'mokina.pendingSend.title': "結果待確認",
+  'mokina.pendingSend.verify': "核對發送結果",
+  'mokina.entryChooser.title': "選擇要開啟的成果",
+  'mokina.entryChooser.cancel': "取消",
+  'mokina.entrySummary.loading': "讀取成果…",
+  'mokina.entrySummary.failed': "成果無法讀取",
+  'mokina.entrySummary.unauthorized': "無權限讀取成果",
+  'mokina.entrySummary.empty': "暫無正式成果",
+  'mokina.entrySummary.legacy': "舊專案入口（未確認採用）",
   'invite.header.eyebrow': "團隊邀請",
   'invite.loading': "正在載入邀請…",
   'invite.landing.title': "加入團隊",

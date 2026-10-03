@@ -9,6 +9,7 @@ import type { WorkspaceCollabContext } from '@open-design/contracts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EntryNavRail } from '../../src/components/EntryNavRail';
+import { resetMokinaEntrySummaryStore } from '../../src/hooks/useMokinaProjectSummaries';
 import { I18nProvider } from '../../src/i18n';
 import type { Project } from '../../src/types';
 
@@ -66,6 +67,11 @@ const DEFAULT_RUNS: Record<string, RunFixture> = {
 /** What the runs feed answers per project; tests mutate it between polls. */
 let RUNS: Record<string, RunFixture> = { ...DEFAULT_RUNS };
 
+/** 成果元数据 fixtures（G4）：files 列表与每条目 versions。 */
+type FilesFixture = { kind: 'ok'; files: Array<Record<string, unknown>> } | { kind: 'error'; status: number };
+let FILES: Record<string, FilesFixture> = {};
+let VERSIONS: Record<string, { versions: Array<Record<string, unknown>> }> = {};
+
 const originalFetch = globalThis.fetch;
 
 function stubFetch() {
@@ -80,6 +86,22 @@ function stubFetch() {
           : { error: { code: 'FORBIDDEN', message: 'no' } }),
         { status: MOVE_STATUS, headers: { 'Content-Type': 'application/json' } },
       );
+    }
+    const filesMatch = /^\/api\/projects\/([^/]+)\/files$/.exec(url);
+    if (filesMatch) {
+      const id = decodeURIComponent(filesMatch[1]!);
+      const fixture = FILES[id];
+      if (!fixture || fixture.kind === 'error') {
+        return new Response(JSON.stringify({ error: { message: 'no' } }), { status: fixture?.status ?? 500, headers: { 'Content-Type': 'application/json' } });
+      }
+      return new Response(JSON.stringify({ files: fixture.files }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+    const versionsMatch = /^\/api\/projects\/([^/]+)\/files\/(.+)\/versions$/.exec(url);
+    if (versionsMatch) {
+      const id = decodeURIComponent(versionsMatch[1]!);
+      const name = decodeURIComponent(versionsMatch[2]!);
+      const body = VERSIONS[`${id}\u0000${name}`] ?? { versions: [] };
+      return new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
     const match = /^\/api\/runs\?projectId=([^&]+)$/.exec(url);
     if (match) {
@@ -150,8 +172,11 @@ class VisibleRowsObserver {
 
 beforeEach(() => {
   vi.stubGlobal('IntersectionObserver', VisibleRowsObserver);
+  resetMokinaEntrySummaryStore();
   window.localStorage.clear();
   RUNS = { ...DEFAULT_RUNS };
+  FILES = {};
+  VERSIONS = {};
   MOVE_STATUS = 200;
   stubFetch();
 });
@@ -173,7 +198,7 @@ describe('EntryNavRail 最近浏览过 section', () => {
     const rows = screen.getAllByTestId('entry-nav-recent-item');
     // OPEND-2757: no 8-row cap — the ninth (and every later) project is a row
     // too; the list scrolls past ~11 rows instead of dropping them.
-    expect(rows.map((row) => row.textContent)).toEqual(
+    expect(rows.map((row) => row.querySelector('.entry-nav-rail__recent-name')?.textContent)).toEqual(
       ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10'].map((id) => `Project ${id}`),
     );
   });
@@ -234,7 +259,7 @@ describe('EntryNavRail 最近浏览过 section', () => {
     );
     const { rerender } = render(tree(catalog()));
     const rowFor = (id: string) =>
-      screen.getAllByTestId('entry-nav-recent-item').find((row) => row.textContent === `Project ${id}`)!;
+      screen.getAllByTestId('entry-nav-recent-item').find((row) => row.querySelector('.entry-nav-rail__recent-name')?.textContent === `Project ${id}`)!;
     await waitFor(() => {
       expect(within(rowFor('p4')).getByRole('img', { name: 'Completed' })).toBeTruthy();
     });
@@ -298,7 +323,7 @@ describe('EntryNavRail 最近浏览过 section', () => {
     RUNS = { ...DEFAULT_RUNS, p4: { status: 'succeeded', runId: 'r1' } };
     const { onOpen } = renderRail();
     const rowFor = (id: string) =>
-      screen.getAllByTestId('entry-nav-recent-item').find((row) => row.textContent === `Project ${id}`)!;
+      screen.getAllByTestId('entry-nav-recent-item').find((row) => row.querySelector('.entry-nav-rail__recent-name')?.textContent === `Project ${id}`)!;
     await waitFor(() => {
       expect(within(rowFor('p4')).getByRole('img', { name: 'Completed' })).toBeTruthy();
     });
@@ -478,5 +503,80 @@ describe('EntryNavRail 最近浏览过 section', () => {
     for (const name of ['Rename', 'Duplicate project', 'In team space', 'Delete']) {
       expect((within(menu).getByRole('menuitem', { name }) as HTMLButtonElement).disabled, name).toBe(true);
     }
+  });
+});
+
+
+// ---------------------------------------------------------------------------
+// G4：成果摘要行（Spec B1 FR-04 / G4）
+// ---------------------------------------------------------------------------
+
+function currentVersion(version: number, createdAt: number): Record<string, unknown> {
+  return {
+    id: `v-${version}`, fileName: 'a.html', version, label: `Version ${version}`,
+    createdAt, source: 'ai', prompt: null, size: 1, mime: 'text/html', kind: 'html', current: true,
+  };
+}
+
+function htmlFile(name: string): Record<string, unknown> {
+  return { name, kind: 'html', size: 1, mtime: 1, mime: 'text/html; charset=utf-8' };
+}
+
+function artifactLineFor(id: string): HTMLElement | null {
+  const row = screen.getAllByTestId('entry-nav-recent-item')
+    .find((row) => row.querySelector('.entry-nav-rail__recent-name')?.textContent === `Project ${id}`);
+  return row?.querySelector<HTMLElement>('[data-testid="entry-nav-recent-artifact"]') ?? null;
+}
+
+describe('EntryNavRail 最近行成果摘要（G4）', () => {
+  // 独立项目 id（q*）：registry 的 files 读取有一秒合流缓存，与默认 p*
+  // 夹具隔开，避免跨用例命中旧响应。
+  function qProjects(count: number): Project[] {
+    return Array.from({ length: count }, (_, i) => project(`q${i + 1}`, 2_000 - i));
+  }
+
+  it('读取可见行的 files+versions 元数据并渲染正式稿摘要', async () => {
+    FILES = { q1: { kind: 'ok', files: [htmlFile('预算分配与渠道优先级.html')] } };
+    VERSIONS = { 'q1\u0000预算分配与渠道优先级.html': { versions: [currentVersion(3, 5)] } };
+    renderRail({ recentProjects: qProjects(10) });
+    await waitFor(() => {
+      expect(artifactLineFor('q1')?.textContent).toBe('预算分配与渠道优先级.html · v3');
+    });
+    // 元数据读取只落在可见行窗口（首屏 10 行），不预读全列表。
+    const fileIds = vi.mocked(fetch).mock.calls
+      .map(([url]) => (/^\/api\/projects\/([^/]+)\/files$/.exec(String(url))?.[1]))
+      .filter(Boolean)
+      .map((raw) => decodeURIComponent(String(raw)));
+    expect(new Set(fileIds).size).toBeLessThanOrEqual(11);
+    expect(fileIds.every((id) => /^q\d+$/.test(id))).toBe(true);
+  });
+
+  it('空项目行显示「无正式成果」，读取失败行显示「无法读取」（不当作零）', async () => {
+    FILES = {
+      q1: { kind: 'ok', files: [] },
+      q2: { kind: 'error', status: 500 },
+    };
+    renderRail({ recentProjects: qProjects(10) });
+    await waitFor(() => {
+      expect(artifactLineFor('q1')?.textContent).toBe('No formal artifacts yet');
+    });
+    await waitFor(() => {
+      expect(artifactLineFor('q2')?.textContent).toBe('Artifacts unavailable');
+    });
+  });
+
+  it('采用事件后行摘要失效并立即复核，不继续展示旧正式稿', async () => {
+    FILES = { q1: { kind: 'ok', files: [htmlFile('a.html')] } };
+    VERSIONS = { 'q1\u0000a.html': { versions: [currentVersion(3, 5)] } };
+    renderRail({ recentProjects: qProjects(10) });
+    await waitFor(() => {
+      expect(artifactLineFor('q1')?.textContent).toBe('a.html · v3');
+    });
+    // FileViewer 采用成功后派发的事件：v4 成为 current。
+    VERSIONS = { 'q1\u0000a.html': { versions: [currentVersion(4, 9)] } };
+    window.dispatchEvent(new CustomEvent('od:mokina-entry-summaries-changed', { detail: { projectId: 'q1' } }));
+    await waitFor(() => {
+      expect(artifactLineFor('q1')?.textContent).toBe('a.html · v4');
+    });
   });
 });

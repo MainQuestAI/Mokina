@@ -1,6 +1,16 @@
 import type { Dict } from '../types';
 
 export const fa: Dict = {
+  'homeHero.materialsEntry': "مستندات و پیش‌زمینه",
+  'mokina.pendingSend.title': "نتیجه ارسال در انتظار تأیید",
+  'mokina.pendingSend.verify': "بررسی وضعیت",
+  'mokina.entryChooser.title': "خروجی را برای باز کردن انتخاب کنید",
+  'mokina.entryChooser.cancel': "لغو",
+  'mokina.entrySummary.loading': "در حال بارگیری خروجی‌ها…",
+  'mokina.entrySummary.failed': "خروجی‌ها در دسترس نیستند",
+  'mokina.entrySummary.unauthorized': "دسترسی به خروجی‌ها ندارید",
+  'mokina.entrySummary.empty': "هنوز خروجی رسمی وجود ندارد",
+  'mokina.entrySummary.legacy': "ورودی قدیمی (تأیید نشده)",
   'invite.header.eyebrow': "Team invitation",
   'invite.loading': "Loading invitation…",
   'invite.landing.title': "Join the team",

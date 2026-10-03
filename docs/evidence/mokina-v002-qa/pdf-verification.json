@@ -1,0 +1,38 @@
+[
+  {
+    "file": "qa-versions-v1.pdf",
+    "bytes": 15130,
+    "sha256": "e62862ac9be94b23c9073e3fe7b497279babba1721f95e3c2e080fbcf405e6f1",
+    "pages": 1,
+    "pageSizes": [
+      [
+        0.0,
+        0.0,
+        1920.0,
+        2714.6666666666665
+      ]
+    ],
+    "metadata": {
+      "/Producer": "jsPDF 4.2.1",
+      "/CreationDate": "D:20261003003543+08'00'"
+    }
+  },
+  {
+    "file": "plan-v1.pdf",
+    "bytes": 58367,
+    "sha256": "ae4bc67300f9acfee9044eaac848efaf9b1e46688ad5ef4faa99cdc841c87620",
+    "pages": 1,
+    "pageSizes": [
+      [
+        0.0,
+        0.0,
+        1920.0,
+        2714.6666666666665
+      ]
+    ],
+    "metadata": {
+      "/Producer": "jsPDF 4.2.1",
+      "/CreationDate": "D:20261003003727+08'00'"
+    }
+  }
+]

@@ -1,0 +1,76 @@
+
+> open-design@0.22.1 guard /Users/dingcheng/.codex/worktrees/mokina-workspace-qa/Mokina/open-design
+> tsx ./scripts/guard.ts
+
+Residual JavaScript check passed: project-owned code is TypeScript-only.
+Root package-manager lockfile check passed: no bun.lock found.
+Package dependency spec check passed: 27 package.json files, 225 exact specs, 66 workspace:* specs, 7 external-host peer ranges.
+Product-neutrality check passed: public docs, contracts, and prompts use generic orchestrator naming.
+Cross-app import check passed: apps do not import another app's private implementation.
+HTML structural boundary check passed: no hand-rolled boundary lookups outside packages/contracts/src/runtime/html-injection-points.ts.
+@ts-nocheck import check passed: every @ts-nocheck file's relative imports resolve.
+Test layout check passed: apps/packages/tools tests live in sibling tests directories.
+Scripts test-free check passed: no test files under root scripts/.
+Scripts library architecture check passed: workflow control and guard internals stay layered.
+E2E layout check passed: Vitest, Playwright UI, resources, lib, and scripts stay in their lanes.
+Web test layout check passed: web tests stay lightweight and Vitest-only.
+Web import isolation check passed: web runtime imports stay behind contracts and daemon HTTP APIs.
+Run start choke-point check passed: every physical Run starts through the internal run-creation service.
+Tools layout check passed: tools/ top-level entries match the active boundary allowlist.
+Style policy check passed: Tailwind palette classes and enforced hardcoded UI colors stay token-first.
+Craft reference check passed: 239 references across 98 manifests resolve or are explicitly planned.
+What's New document check passed: docs/whats-new.json resolves to highlight id 0.22.1 plus zh-CN override.
+What's New publish workflow check passed: only `publish` holds the `whats-new-publish` environment and its 4 R2 secrets, gated on `validate`.
+HTML plugin preview contract check passed: 0 HTML-backed examples valid.
+Plugin preview manifest check passed: 176 entries consistent with 473 shipped plugins.
+Design system manifest check passed: 152 project manifests valid; DESIGN.md-only systems skipped.
+Design system package quality passed: 151 migrated packages checked; average score 100.
+Design system component fixture report: scanned 152 components.html fixtures.
+Design system component fixture selector coverage:
+- buttons: 133/152 fixtures include .btn, .btn-primary, .btn-secondary, :hover, :focus-visible
+- inputs: 148/152 fixtures include .field, input, label
+- cards: 60/152 fixtures include .card
+- badges: 42/152 fixtures include .badge
+- links: 53/152 fixtures include a
+- keyboard: 48/152 fixtures include kbd
+- icons: 60/152 fixtures include .icon
+- typography: 46/152 fixtures include h1, h2, h3, .lead, .eyebrow, .body-muted, .body-sm
+- layout: 47/152 fixtures include .container, section, .stack-3, .stack-4, .stack-6, .row-between
+Design system component fixture report: most common selector gaps (report-only):
+- badges .badge: missing in 110/152
+- layout .row-between: missing in 104/152
+- keyboard kbd: missing in 104/152
+- links a: missing in 99/152
+- cards .card: missing in 92/152
+- icons .icon: missing in 92/152
+- typography .body-sm: missing in 90/152
+- layout .stack-6: missing in 89/152
+- typography .body-muted: missing in 87/152
+- layout .stack-3: missing in 86/152
+- layout .stack-4: missing in 85/152
+- buttons .btn-secondary: missing in 19/152
+- typography .lead: missing in 14/152
+- typography .eyebrow: missing in 7/152
+- buttons .btn-primary: missing in 6/152
+- inputs .field: missing in 4/152
+Design system component fixture literal inventory (outside :root): 933 color expressions, 4344 px values, 843 hardcoded font-family declarations.
+Design system component fixture report: top literal-heavy fixtures (report-only):
+- design-systems/tom-modern/components.html: 32 colors, 156 px, 14 font-family
+- design-systems/raycast/components.html: 36 colors, 79 px, 7 font-family
+- design-systems/binance/components.html: 30 colors, 45 px, 5 font-family
+- design-systems/stripe/components.html: 15 colors, 51 px, 9 font-family
+- design-systems/airbnb/components.html: 1 colors, 61 px, 12 font-family
+- design-systems/spacex/components.html: 18 colors, 49 px, 7 font-family
+- design-systems/mintlify/components.html: 12 colors, 50 px, 9 font-family
+- design-systems/resend/components.html: 16 colors, 42 px, 12 font-family
+- design-systems/vercel/components.html: 17 colors, 41 px, 10 font-family
+- design-systems/xiaohongshu/components.html: 12 colors, 45 px, 9 font-family
+Design system component fixture report completed in report-only mode.
+Design system token-fixture sync passed: 152 brand pairs aligned (components.html :root matches tokens.css :root).
+Design system A1 required tokens passed: 152 brands declare all 26 A1 tokens.
+Design system A2 required tokens passed: 152 brands declare all 26 A2 tokens.
+Design system B-slot required tokens passed: 152 brands declare all 4 B-slot tokens.
+Design system unknown token allowlist passed: 8538 declarations across 152 brands all match shared schema or brand extensions.
+Design system A2 defaults parity passed: 26 A2 fallbacks match tokens.schema.ts ↔ defaults.css byte-for-byte.
+Design system flag parity passed: 0 prose-only brands produce byte-identical prompts under OD_DESIGN_TOKEN_CHANNEL flag-off vs flag-on; 152 structured brands show the expected token-channel divergence.
+Design system component manifest extraction passed: 152 fixtures summarized (8030 selectors across 1160 present component groups).

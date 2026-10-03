@@ -363,6 +363,8 @@ import {
 } from './design-files/pluginFolderActions';
 import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunityPrompt';
 import { CenteredLoader } from './Loading';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import mokinaWorkspaceStyles from './MokinaWorkspace.module.css';
 import { ProjectCreationPendingChat } from './ProjectCreationPendingView';
 import {
   FALLBACK_MAX_CHAT_PANEL_WIDTH,
@@ -13625,6 +13627,7 @@ export function ProjectView({
         ref={splitRef}
         className={[
           projectSplitClassName(workspaceFocused),
+          MOKINA_LOCAL_EDITION ? mokinaWorkspaceStyles.workspaceLayout : '',
           resizingChatPanel && !workspaceFocused ? 'is-resizing-chat' : '',
         ].filter(Boolean).join(' ')}
         style={projectSplitStyle(workspaceFocused, splitLeftPanelWidth, workspacePanelTrack)}

@@ -21,6 +21,8 @@ export interface TabScopeLoginStatus {
 export const UNSET_ACCOUNT_BUCKET = '__unset__';
 
 export interface TabIdentityScopeInputs {
+  /** Local Mokina does not resolve an upstream account or Workspace. */
+  localEdition?: boolean;
   /** App.tsx's merged AMR login status, or `null` before the first read
    *  completes. */
   amrLoginStatus: TabScopeLoginStatus | null;
@@ -119,6 +121,16 @@ export interface TabIdentityScopeResult {
 export function deriveTabIdentityScope(
   inputs: TabIdentityScopeInputs,
 ): TabIdentityScopeResult {
+  // Local projects have a settled identity even when the intentionally disabled
+  // cloud account read never completes. Keeping this null freezes the active
+  // tab on the previous project while the routed workspace has already changed.
+  if (inputs.localEdition) {
+    return {
+      scopeKey: 'mokina-local::none',
+      nextWorkspaceBucket: 'none',
+      nextAccountBucket: 'mokina-local',
+    };
+  }
   const {
     amrLoginStatus,
     workspaceContext,

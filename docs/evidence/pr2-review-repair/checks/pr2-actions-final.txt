@@ -1,0 +1,12 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/styles/chatpane-grid-transition.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web
+
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+   Start at  02:36:18
+   Duration  11.11s (transform 2.88s, setup 1.73s, import 2.26s, tests 7.13s, environment 904ms)

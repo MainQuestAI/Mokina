@@ -7,6 +7,7 @@
 // reaches a screenshot.
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { SPLIT_RESIZE_HANDLE_WIDTH } from '../../src/components/project-split-layout';
 
 const read = (relative: string) => readFileSync(new URL(relative, import.meta.url), 'utf8');
 
@@ -14,7 +15,6 @@ const shellCss = read('../../src/styles/shell.css');
 const routinesCss = read('../../src/styles/viewer/routines.css');
 const homeHeroCss = read('../../src/styles/home/home-hero.css');
 const projectViewSource = read('../../src/components/ProjectView.tsx');
-const splitLayoutSource = read('../../src/components/project-split-layout.ts');
 const avatarMenuSource = read('../../src/components/AvatarMenu.tsx');
 
 function declarations(css: string, selector: string): string {
@@ -136,10 +136,11 @@ describe('project chat resize gutter (styles/shell.css + routines.css + ProjectV
     );
   });
 
-  it('keeps the layout math on the same 4px', () => {
+  it('keeps the upstream layout math on the same 4px', () => {
     // The split's geometry moved to `project-split-layout.ts` (shared with
     // the creation frame, OPEND-3207); ProjectView consumes it from there.
-    expect(splitLayoutSource).toMatch(/export const SPLIT_RESIZE_HANDLE_WIDTH = 4;/);
+    // Vitest runs in upstream edition; Mokina's wider track has its own suite.
+    expect(SPLIT_RESIZE_HANDLE_WIDTH).toBe(4);
     expect(projectViewSource).toMatch(/SPLIT_RESIZE_HANDLE_WIDTH,?\n[\s\S]*?from '\.\/project-split-layout';/);
   });
 });

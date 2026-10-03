@@ -1,0 +1,38 @@
+{
+  "single-worker": {
+    "stats": {
+      "startTime": "2026-10-02T18:34:43.141Z",
+      "duration": 47687.352,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "workers": 1,
+    "fullyParallel": false
+  },
+  "parallel": {
+    "stats": {
+      "startTime": "2026-10-02T18:35:57.363Z",
+      "duration": 39498.044,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "workers": 2,
+    "fullyParallel": true
+  },
+  "final": {
+    "stats": {
+      "startTime": "2026-10-02T18:37:10.314Z",
+      "duration": 40261.212999999996,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "workers": 2,
+    "fullyParallel": true
+  }
+}

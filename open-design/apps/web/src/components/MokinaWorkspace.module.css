@@ -1,0 +1,104 @@
+/* Mokina workspace chrome. Global descendants are existing host layout
+   contracts; document iframes, transcript rendering and persistence stay owned
+   by their original components. This class also covers the creation handoff. */
+.workspaceLayout {
+  --mokina-paper: var(--bg);
+  --mokina-glass: color-mix(in srgb, var(--bg) 86%, transparent);
+  --mokina-edge: color-mix(in srgb, var(--border) 65%, transparent);
+  margin-inline: 12px;
+  padding-block: 12px;
+  background: color-mix(in srgb, var(--bg) 65%, var(--bg-subtle));
+}
+
+.workspaceLayout > :global(.split-chat-slot),
+.workspaceLayout > :global(.workspace) {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--mokina-edge);
+  border-radius: 20px;
+  background: var(--mokina-paper);
+  box-shadow: 0 4px 18px rgb(0 0 0 / 4%);
+  overflow: hidden;
+}
+
+.workspaceLayout > :global(.split-chat-slot) {
+  /* Paint the rounded card without clipping its transcript: rounded clips
+     force Chromium to hit-test scrolling on the main thread. */
+  overflow: visible;
+}
+
+/* Match the global automatic-dark specificity as well as the explicit theme
+   and reduced-transparency rules. The outer card owns the paper in all modes;
+   the inner pane keeps its existing rectangular overflow clip. */
+:global(html) :global(.app) .workspaceLayout :global(.split-chat-slot > .pane) {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.workspaceLayout :global(.split-chat-tabs-dock),
+.workspaceLayout :global(.ws-tabs-shell) {
+  background: var(--mokina-glass);
+  backdrop-filter: blur(16px) saturate(1.02);
+  border-bottom: 1px solid var(--mokina-edge);
+}
+
+.workspaceLayout :global(.split-chat-tabs-dock) {
+  border-radius: 19px 19px 0 0;
+}
+
+.workspaceLayout :global(.ws-body) {
+  min-height: 0;
+  background: var(--mokina-paper);
+}
+
+.workspaceLayout :global(.viewer-toolbar) {
+  gap: 8px;
+  background: var(--mokina-glass);
+  backdrop-filter: blur(16px) saturate(1.02);
+}
+
+.workspaceLayout :global(.mokina-material-picker) {
+  margin: 8px 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--bg-subtle);
+}
+
+.workspaceLayout > :global(.split-resize-handle)::before {
+  background: transparent;
+}
+
+.workspaceLayout > :global(.split-resize-handle)::after {
+  display: block;
+  width: 3px;
+  height: 36px;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 3px;
+  background: var(--border);
+}
+
+.workspaceLayout > :global(.split-resize-handle:focus-visible)::after {
+  background: var(--accent);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .workspaceLayout {
+    --mokina-glass: var(--bg-panel);
+  }
+
+  .workspaceLayout :global(.split-chat-tabs-dock),
+  .workspaceLayout :global(.ws-tabs-shell),
+  .workspaceLayout :global(.viewer-toolbar) {
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspaceLayout {
+    transition: none;
+  }
+}

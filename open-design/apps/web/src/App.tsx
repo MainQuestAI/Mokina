@@ -1846,6 +1846,7 @@ function AppInner() {
     nextWorkspaceBucket: nextTabScopeWorkspaceId,
     nextAccountBucket: nextTabScopeAccountId,
   } = deriveTabIdentityScope({
+    localEdition: MOKINA_LOCAL_EDITION,
     amrLoginStatus,
     workspaceContext,
     workspaceContextLoading,

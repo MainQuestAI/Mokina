@@ -1,0 +1,25 @@
+{
+  "url": "http://127.0.0.1:18604/projects/pr2-scroll-diagnostic/conversations/ba1b2b71-eac4-49fd-8ded-b5725439c2e4",
+  "browser": "154.0.8037.97",
+  "source": "HTTP SSE mock through real browser run consumer; no model or daemon agent run",
+  "before": {
+    "top": 27161.5,
+    "max": 27162
+  },
+  "afterWheelUp": {
+    "top": 24161.5,
+    "max": 27643
+  },
+  "afterMoreChunks": {
+    "top": 24161.5,
+    "max": 28604
+  },
+  "afterWheelBottom": {
+    "top": 28821,
+    "max": 28821
+  },
+  "afterEnd": {
+    "top": 39105,
+    "max": 39105
+  }
+}

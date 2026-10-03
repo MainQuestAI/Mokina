@@ -33,6 +33,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
+import mokinaWorkspaceStyles from '../../../src/components/MokinaWorkspace.module.css';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SRC = resolve(HERE, '../../../src');
@@ -50,8 +51,17 @@ function stylesheetsInCascadeOrder(): { file: string; css: string }[] {
       /* 生成物或缺席的表跳过 */
     }
   }
+  // ProjectView adds this real module class to .split in Mokina mode. Resolve
+  // its local selector with the same class export used by the component; the
+  // global descendants remain the shared shell contracts above.
+  const mokinaCss = readFileSync(resolve(SRC, 'components/MokinaWorkspace.module.css'), 'utf-8')
+    .replace(/:global\(([^)]+)\)/g, '$1')
+    .replace(/\.workspaceLayout\b/g, `.${mokinaWorkspaceStyles.workspaceLayout}`);
+  out.push({ file: 'components/MokinaWorkspace.module.css', css: mokinaCss });
   return out;
 }
+
+const STYLESHEETS = stylesheetsInCascadeOrder();
 
 function splitTopLevel(list: string): string[] {
   const out: string[] = [];
@@ -104,7 +114,7 @@ function effective(el: Element, props: RegExp): string | null {
   type Hit = { spec: [number, number, number]; order: number; value: string; important: boolean };
   const hits: Hit[] = [];
   let order = 0;
-  for (const { css } of stylesheetsInCascadeOrder()) {
+  for (const { css } of STYLESHEETS) {
     const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '');
     for (const m of stripped.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       const selectorList = m[1]!.trim();
@@ -137,12 +147,12 @@ function effective(el: Element, props: RegExp): string | null {
 }
 
 /** 真实 DOM 祖先链(ProjectView → ChatPane):shell → app → split → slot → pane → wrap → viewport → log。 */
-function mountChatLogChain(): Element[] {
+function mountChatLogChain(mokina: boolean): Element[] {
   const classes = [
     'workspace-shell workspace-shell--web',
     'workspace-shell__body',
     'app',
-    'split',
+    mokina ? `split ${mokinaWorkspaceStyles.workspaceLayout}` : 'split',
     'split-chat-slot',
     'pane',
     'chat-log-wrap',
@@ -183,13 +193,16 @@ function isRounded(el: Element): boolean {
   return !/^0(px|%)?(\s+0(px|%)?)*$/.test(r);
 }
 
-describe('chat log ancestors: no rounded clip (compositor scroll hit-test)', () => {
+describe.each([
+  { edition: 'OpenDesign', mokina: false },
+  { edition: 'Mokina', mokina: true },
+])('$edition chat log ancestors: no rounded clip (compositor scroll hit-test)', ({ mokina }) => {
   afterEach(() => {
     document.body.innerHTML = '';
   });
 
   it('no ancestor of .chat-log combines a clipping overflow with a border-radius', () => {
-    const chain = mountChatLogChain();
+    const chain = mountChatLogChain(mokina);
     const offenders = chain
       .filter((el) => clipsOverflow(el) && isRounded(el))
       .map((el) => `.${el.className.split(' ').join('.')}`);
@@ -198,8 +211,9 @@ describe('chat log ancestors: no rounded clip (compositor scroll hit-test)', () 
 
   it('the chain is what the product renders: the chat card still clips (rectangular)', () => {
     // 反向锚:这条判据不是靠把 overflow 全放开才绿的 —— 卡片仍然裁剪,只是不圆。
-    const chain = mountChatLogChain();
+    const chain = mountChatLogChain(mokina);
     const pane = chain.find((el) => el.classList.contains('pane'))!;
     expect(clipsOverflow(pane)).toBe(true);
+    expect(isRounded(pane)).toBe(false);
   });
 });

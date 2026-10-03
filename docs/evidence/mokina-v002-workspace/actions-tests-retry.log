@@ -1,0 +1,12 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/components/FileViewer.mokina-revision-recovery.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web
+
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  23:45:43
+   Duration  9.51s (transform 1.79s, setup 531ms, import 1.78s, tests 6.67s, environment 447ms)

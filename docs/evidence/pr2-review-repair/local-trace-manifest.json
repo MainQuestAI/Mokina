@@ -1,0 +1,22 @@
+{
+  ".tmp/pr2-scroll-diagnostics/after-trace.json.gz": {
+    "bytes": 1624711,
+    "sha256": "a7de95fafb634a8746654f764ca2d3fa394c26f4bc3a06e22f3eca161b77f3ef"
+  },
+  ".tmp/pr2-scroll-diagnostics/baseline-stream-trace.json.gz": {
+    "bytes": 5901627,
+    "sha256": "c4df2aef120f08c7e819cbeedd719b6bf412895eb1cbb5dc76d48314b74ae865"
+  },
+  ".tmp/pr2-scroll-diagnostics/failed-stale-bundle-trace.json.gz": {
+    "bytes": 1603161,
+    "sha256": "366dc2f21c84915dd877746448c4c75fd996b2610ace25004b80f619e7459927"
+  },
+  ".tmp/pr2-scroll-diagnostics/after-stream-trace.json.gz": {
+    "bytes": 6064655,
+    "sha256": "3a5a7123edac1c062ba16317f98974a0e83f3fdd25c7c981e2ee65ced0629401"
+  },
+  ".tmp/pr2-scroll-diagnostics/baseline-trace.json.gz": {
+    "bytes": 1618026,
+    "sha256": "70a76be8b65247fe464d7cc0f07052a54dc6efc57ff9e6e0786f8241b6ad22d7"
+  }
+}

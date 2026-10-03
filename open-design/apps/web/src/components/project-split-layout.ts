@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 
 /*
  * The project split's chat-column geometry, shared by every surface that
@@ -15,11 +16,11 @@ import type { CSSProperties } from 'react';
  */
 
 export const CHAT_PANEL_WIDTH_STORAGE_KEY = 'open-design.project.chatPanelWidth';
-export const DEFAULT_CHAT_PANEL_WIDTH = 460;
-export const MIN_CHAT_PANEL_WIDTH = 345;
-export const FALLBACK_MAX_CHAT_PANEL_WIDTH = 720;
+export const DEFAULT_CHAT_PANEL_WIDTH = MOKINA_LOCAL_EDITION ? 360 : 460;
+export const MIN_CHAT_PANEL_WIDTH = MOKINA_LOCAL_EDITION ? 316 : 345;
+export const FALLBACK_MAX_CHAT_PANEL_WIDTH = MOKINA_LOCAL_EDITION ? 470 : 720;
 export const MIN_WORKSPACE_PANEL_WIDTH = 400;
-export const SPLIT_RESIZE_HANDLE_WIDTH = 4;
+export const SPLIT_RESIZE_HANDLE_WIDTH = MOKINA_LOCAL_EDITION ? 16 : 4;
 
 const MIN_NORMAL_SPLIT_WIDTH =
   MIN_CHAT_PANEL_WIDTH + SPLIT_RESIZE_HANDLE_WIDTH + MIN_WORKSPACE_PANEL_WIDTH;
@@ -34,8 +35,8 @@ export const STYLESHEET_SPLIT_CHAT_PANEL_WIDTH = DEFAULT_CHAT_PANEL_WIDTH;
 
 export interface SavedChatPanelWidth {
   width: number;
-  /** True when the user dragged the handle at some point: their width wins
-   * over the equal-split default at every container size. */
+  /** True after a user adjustment: the preference wins over the edition's
+   * default, subject to the current viewport and edition's width limits. */
   customized: boolean;
 }
 
@@ -48,11 +49,12 @@ export function maxChatPanelWidthForSplit(splitWidth: number): number {
   if (!Number.isFinite(splitWidth) || splitWidth <= 0) return FALLBACK_MAX_CHAT_PANEL_WIDTH;
   const workspaceMinWidth = workspacePanelMinWidthForSplit(splitWidth);
   const viewportAwareMax = splitWidth - SPLIT_RESIZE_HANDLE_WIDTH - workspaceMinWidth;
-  // Keep the established 720px drag ceiling on ordinary windows, widening it
-  // only as far as the equal split on larger project workspaces. That makes
-  // 1:1 reachable without letting the chat drag past and dominate preview.
+  // Upstream keeps its expandable equal-split ceiling. Mokina reserves more
+  // room for reading artifacts with the design's 316–470px collaboration rail.
   const equalSplitWidth = Math.floor((splitWidth - SPLIT_RESIZE_HANDLE_WIDTH) / 2);
-  const responsiveMax = Math.max(FALLBACK_MAX_CHAT_PANEL_WIDTH, equalSplitWidth);
+  const responsiveMax = MOKINA_LOCAL_EDITION
+    ? FALLBACK_MAX_CHAT_PANEL_WIDTH
+    : Math.max(FALLBACK_MAX_CHAT_PANEL_WIDTH, equalSplitWidth);
   return Math.max(0, Math.min(responsiveMax, Math.floor(viewportAwareMax)));
 }
 
@@ -71,6 +73,9 @@ export function clampChatPanelWidth(
 
 export function defaultChatPanelWidthForSplit(splitWidth: number): number {
   if (!Number.isFinite(splitWidth) || splitWidth <= 0) return DEFAULT_CHAT_PANEL_WIDTH;
+  if (MOKINA_LOCAL_EDITION) {
+    return clampChatPanelWidth(DEFAULT_CHAT_PANEL_WIDTH, maxChatPanelWidthForSplit(splitWidth));
+  }
   const equalHalf = (splitWidth - SPLIT_RESIZE_HANDLE_WIDTH) / 2;
   return clampChatPanelWidth(equalHalf, maxChatPanelWidthForSplit(splitWidth));
 }
@@ -123,8 +128,8 @@ export interface ProjectSplitLayout {
  * the creation frame that precedes it — must resolve its first-paint width
  * through this function with the same inputs, so the column does not move
  * when one surface hands over to the other (OPEND-3207). A saved width wins
- * at every container size; otherwise the column takes the equal split,
- * clamped to what the container allows.
+ * at every container size within the edition's limits; otherwise use its
+ * default (Mokina's reading-first rail or upstream's equal split).
  */
 export function resolveProjectSplitLayout(
   splitWidth: number,

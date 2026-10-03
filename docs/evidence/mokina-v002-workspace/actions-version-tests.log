@@ -1,0 +1,12 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/components/FileViewer.version-open-affordance.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  23:46:29
+   Duration  2.03s (transform 1.20s, setup 488ms, import 1.07s, tests 2ms, environment 405ms)

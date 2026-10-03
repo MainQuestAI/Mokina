@@ -1,0 +1,697 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/components/FileViewer.mokina-revision-recovery.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web
+
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx (10 tests | 2 failed) 6631ms
+     × opens chapter revision directly and moves focus without starting a run 166ms
+     × explains missing chapters instead of silently opening an unrelated version panel 63ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/FileViewer.mokina-revision-recovery.test.tsx > Mokina revision recovery UI > opens chapter revision directly and moves focus without starting a run
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "继续制作"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"artifact-version-panel__head"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "index.html":
+  [36m<strong[39m
+    [33mtitle[39m=[32m"index.html"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Open preview in a new window":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Open preview in a new window"[39m
+    [33mclass[39m=[32m"artifact-version-panel__open"[39m
+    [33mtitle[39m=[32m"Open preview in a new window"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Close":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Close"[39m
+    [33mclass[39m=[32m"artifact-version-panel__close"[39m
+    [33mtitle[39m=[32m"Close"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  listbox:
+
+  Name "File versions":
+  [36m<div[39m
+    [33maria-label[39m=[32m"File versions"[39m
+    [33mclass[39m=[32m"artifact-version-list"[39m
+    [33mrole[39m=[32m"listbox"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "v1CurrentManual editMar 10, 12:00 AM":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mclass[39m=[32m"artifact-version-card is-selected is-current"[39m
+    [33mrole[39m=[32m"option"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "选择章节":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "strategy：原渠道":
+  [36m<option[39m
+    [33mvalue[39m=[32m"strategy"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  emphasis:
+
+  Name "":
+  [36m<em />[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "AI 章节修订":
+  [36m<section[39m
+    [33maria-label[39m=[32m"AI 章节修订"[39m
+    [33mclass[39m=[32m"artifact-version-panel__continuation artifact-version-panel__continuation--revision"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "选择性接续":
+  [36m<section[39m
+    [33maria-label[39m=[32m"选择性接续"[39m
+    [33mclass[39m=[32m"artifact-version-panel__continuation"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "要修订的章节":
+  [36m<select[39m
+    [33maria-label[39m=[32m"要修订的章节"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "章节修改要求":
+  [36m<textarea[39m
+    [33maria-label[39m=[32m"章节修改要求"[39m
+    [33mplaceholder[39m=[32m"只针对所选章节写出具体修改要求"[39m
+  [36m/>[39m
+
+  Name "接续背景":
+  [36m<textarea[39m
+    [33maria-label[39m=[32m"接续背景"[39m
+    [33mplaceholder[39m=[32m"可选：补充品牌、目标或约束"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "生成候选（不改当前稿）":
+  [36m<button[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "创建接续项目（不发送）":
+  [36m<button[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  checkbox:
+
+  Name "strategy：原渠道":
+  [36m<input[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  --------------------------------------------------contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"artifact-version-panel__foot"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Switch to this version":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"dialog"[39m
+    [33mclass[39m=[32m"artifact-version-panel__restore"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Download Version 1":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"Download Version 1"[39m
+    [33mclass[39m=[32m"artifact-version-panel__download"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"Versions"[39m
+  [33mclass[39m=[32m"artifact-version-panel"[39m
+  [33mrole[39m=[32m"dialog"[39m
+[36m>[39m
+  [36m<header[39m
+    [33mclass[39m=[32m"artifact-version-panel__head"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<strong[39m
+        [33mtitle[39m=[32m"index.html"[39m
+      [36m>[39m
+        [0mindex.html[0m
+      [36m</strong>[39m
+      [36m<p>[39m
+        [0mVersion history · 1 version[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"artifact-version-panel__head-actions"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Open preview in a new window"[39m
+        [33mclass[39m=[32m"artifact-version-panel__open"[39m
+        [33mtitle[39m=[32m"Open preview in a new window"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mfill[39m=[32m"currentColor"[39m
+          [33mfocusable[39m=[32m"false"[39m
+          [33mheight[39m=[32m"15"[39m
+          [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"15"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</button>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Close"[39m
+        [33mclass[39m=[32m"artifact-version-panel__close"[39m
+        [33mtitle[39m=[32m"Close"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mfill[39m=[32m"currentColor"[39m
+          [33mfocusable[39m=[32m"false"[39m
+          [33mheight[39m=[32m"17"[39m
+          [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"17"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4149L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</button>[39m
+    [36m</div>[39m
+  [36m</header>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"_context_fe41eb"[39m
+  [36m>[39m
+    [36m<strong>[39m
+      [0m所选：v1 · 当前稿[0m
+    [36m</strong>[39m
+    [36m<span>[39m
+      [0m下载与接续使用所选版本；候选稿需采用后才会替换当前稿。[0m
+    [36m</span>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"_body_fe41eb"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"artifact-version-panel__preview"[39m
+    [36m>[39m
+      [36m<iframe[39m
+        [33msandbox[39m=[32m"allow-scripts allow-downloads"[39m
+        [33msrcdoc[39m=[32m"<html><head><script data-od-srcdoc-transport-activation>(function(){
+  var generation = \"\";
+  var bodyComplete = false;
+  function containsCompletionMarker(node){
+    if (!node || node.nodeType !== 1) return false;
+    if (node.tagName === 'TEMPLATE' && node.getAttribute('data-od-srcdoc-transport-body-complete') === generation) return true;
+    var candidates = node.querySelectorAll ? node.querySelectorAll('template[data-od-srcdoc-transport-body-complete]') : [];
+    for (var i = 0; i < candidates.length; i += 1) {
+      if (candidates[i].getAttribute('data-od-srcdoc-transport-body-complete') === generation) return true;
+    }
+    return false;
+  }
+  var completionObserver = typeof MutationObserver === 'function' ? new MutationObserver(function(records){
+    if (bodyComplete) return;
+    for (var i = 0; i < records.length; i += 1) {
+      var added = records[i].addedNodes || [];
+      for (var j = 0; j < added.length; j += 1) {
+        if (!containsCompletionMarker(added[j])) continue;
+        bodyComplete = true;
+        completionObserver.disconnect();
+        return;
+      }
+    }
+  }) : null;
+  if (completionObserver && document.documentElement) {
+    completionObserver.observe(document.documentElement, { childList: true, subtree: true });
+  }
+  function announceReady(probeId){
+    if (!generation) return;
+    try {
+      if (window.parent && window.parent !== window) {
+        var message = { type: 'od:srcdoc-transport-activated', generation: generation };
+        if (typeof probeId === 'string' && probeId) message.probeId = probeId;
+        message.bodyComplete = bodyComplete;
+        message.documentReadyState = document.readyState;
+        message.bodyPresent = !!document.body;
+        message.bodyChildCount = document.body ? document.body.children.length : 0;
+        message.documentElementChildCount = document.documentElement ? document.documentElement.children.length : 0;
+        window.parent.postMessage(message, '*');
+      }
+    } catch (_) { /* sandboxed parent */ }
+  }
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (data && data.type === 'od:srcdoc-transport-ready-probe') {
+      if (data.generation === generation) announceReady(data.probeId);
+      return;
+    }
+    if (!data || data.type !== 'od:srcdoc-transport-activate' || typeof data.html !== 'string' || typeof data.generation !== 'string' || !data.generation) return;
+    // document.open/write keeps the current Window realm. Re-running an
+    // authored classic script there can fail before execution when it declares
+    // a top-level let/const that the previous document already declared. Ask
+    // the host to remount the shared bootstrap so this generation gets a fresh
+    // realm, then let the one-shot shell perform the initial write.
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'od:srcdoc-transport-reset-required',
+          generation: data.generation
+        }, '*');
+      }
+    } catch (_) { /* sandboxed parent — host recovery will remount on timeout */ }
+  });
+  announceReady();
+})();</script><script data-od-preview-focus-guard>(function(){
+  var lastTrustedInputAt = 0;
+  function userActivated(){
+    return Date.now() - lastTrustedInputAt < 1000;
+  }
+  function markTrustedInput(event){
+    if (event && event.isTrusted) lastTrustedInputAt = Date.now();
+  }
+  document.addEventListener('pointerdown', function(event){
+    markTrustedInput(event);
+  }, true);
+  document.addEventListener('keydown', function(event){
+    markTrustedInput(event);
+  }, true);
+  try {
+    var nativeWindowFocus = window.focus && window.focus.bind(window);
+    Object.defineProperty(window, 'focus...
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx:154:42
+    152|     // This component test checks state retention. Full-workspace Play…
+    153|     // coverage separately proves these panel-owned controls are actio…
+    154|     const continueButton = within(panel).getByRole('button', { name: '…
+       |                                          ^
+    155|     fireEvent.pointerDown(continueButton);
+    156|     expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(pa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/components/FileViewer.mokina-revision-recovery.test.tsx > Mokina revision recovery UI > explains missing chapters instead of silently opening an unrelated version panel
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "修订章节"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"artifact-version-panel__head"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "index.html":
+  [36m<strong[39m
+    [33mtitle[39m=[32m"index.html"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Open preview in a new window":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Open preview in a new window"[39m
+    [33mclass[39m=[32m"artifact-version-panel__open"[39m
+    [33mtitle[39m=[32m"Open preview in a new window"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Close":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Close"[39m
+    [33mclass[39m=[32m"artifact-version-panel__close"[39m
+    [33mtitle[39m=[32m"Close"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<p[39m
+    [33mrole[39m=[32m"status"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  listbox:
+
+  Name "File versions":
+  [36m<div[39m
+    [33maria-label[39m=[32m"File versions"[39m
+    [33mclass[39m=[32m"artifact-version-list"[39m
+    [33mrole[39m=[32m"listbox"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "v1CurrentManual editMar 10, 12:00 AM":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mclass[39m=[32m"artifact-version-card is-selected is-current"[39m
+    [33mrole[39m=[32m"option"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  emphasis:
+
+  Name "":
+  [36m<em />[39m
+
+  --------------------------------------------------contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"artifact-version-panel__foot"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Switch to this version":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"dialog"[39m
+    [33mclass[39m=[32m"artifact-version-panel__restore"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Download Version 1":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"Download Version 1"[39m
+    [33mclass[39m=[32m"artifact-version-panel__download"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"Versions"[39m
+  [33mclass[39m=[32m"artifact-version-panel"[39m
+  [33mrole[39m=[32m"dialog"[39m
+[36m>[39m
+  [36m<header[39m
+    [33mclass[39m=[32m"artifact-version-panel__head"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<strong[39m
+        [33mtitle[39m=[32m"index.html"[39m
+      [36m>[39m
+        [0mindex.html[0m
+      [36m</strong>[39m
+      [36m<p>[39m
+        [0mVersion history · 1 version[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"artifact-version-panel__head-actions"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Open preview in a new window"[39m
+        [33mclass[39m=[32m"artifact-version-panel__open"[39m
+        [33mtitle[39m=[32m"Open preview in a new window"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mfill[39m=[32m"currentColor"[39m
+          [33mfocusable[39m=[32m"false"[39m
+          [33mheight[39m=[32m"15"[39m
+          [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"15"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</button>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Close"[39m
+        [33mclass[39m=[32m"artifact-version-panel__close"[39m
+        [33mtitle[39m=[32m"Close"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mfill[39m=[32m"currentColor"[39m
+          [33mfocusable[39m=[32m"false"[39m
+          [33mheight[39m=[32m"17"[39m
+          [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"17"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4149L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</button>[39m
+    [36m</div>[39m
+  [36m</header>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"_context_fe41eb"[39m
+  [36m>[39m
+    [36m<strong>[39m
+      [0m所选：v1 · 当前稿[0m
+    [36m</strong>[39m
+    [36m<span>[39m
+      [0m下载与接续使用所选版本；候选稿需采用后才会替换当前稿。[0m
+    [36m</span>[39m
+    [36m<p[39m
+      [33mrole[39m=[32m"status"[39m
+      [33mtabindex[39m=[32m"-1"[39m
+    [36m>[39m
+      [0m此版本没有可选择的章节，暂时不能修订或接续。[0m
+    [36m</p>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"_body_fe41eb"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"artifact-version-panel__preview"[39m
+    [36m>[39m
+      [36m<iframe[39m
+        [33msandbox[39m=[32m"allow-scripts allow-downloads"[39m
+        [33msrcdoc[39m=[32m"<html><head><script data-od-srcdoc-transport-activation>(function(){
+  var generation = \"\";
+  var bodyComplete = false;
+  function containsCompletionMarker(node){
+    if (!node || node.nodeType !== 1) return false;
+    if (node.tagName === 'TEMPLATE' && node.getAttribute('data-od-srcdoc-transport-body-complete') === generation) return true;
+    var candidates = node.querySelectorAll ? node.querySelectorAll('template[data-od-srcdoc-transport-body-complete]') : [];
+    for (var i = 0; i < candidates.length; i += 1) {
+      if (candidates[i].getAttribute('data-od-srcdoc-transport-body-complete') === generation) return true;
+    }
+    return false;
+  }
+  var completionObserver = typeof MutationObserver === 'function' ? new MutationObserver(function(records){
+    if (bodyComplete) return;
+    for (var i = 0; i < records.length; i += 1) {
+      var added = records[i].addedNodes || [];
+      for (var j = 0; j < added.length; j += 1) {
+        if (!containsCompletionMarker(added[j])) continue;
+        bodyComplete = true;
+        completionObserver.disconnect();
+        return;
+      }
+    }
+  }) : null;
+  if (completionObserver && document.documentElement) {
+    completionObserver.observe(document.documentElement, { childList: true, subtree: true });
+  }
+  function announceReady(probeId){
+    if (!generation) return;
+    try {
+      if (window.parent && window.parent !== window) {
+        var message = { type: 'od:srcdoc-transport-activated', generation: generation };
+        if (typeof probeId === 'string' && probeId) message.probeId = probeId;
+        message.bodyComplete = bodyComplete;
+        message.documentReadyState = document.readyState;
+        message.bodyPresent = !!document.body;
+        message.bodyChildCount = document.body ? document.body.children.length : 0;
+        message.documentElementChildCount = document.documentElement ? document.documentElement.children.length : 0;
+        window.parent.postMessage(message, '*');
+      }
+    } catch (_) { /* sandboxed parent */ }
+  }
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (data && data.type === 'od:srcdoc-transport-ready-probe') {
+      if (data.generation === generation) announceReady(data.probeId);
+      return;
+    }
+    if (!data || data.type !== 'od:srcdoc-transport-activate' || typeof data.html !== 'string' || typeof data.generation !== 'string' || !data.generation) return;
+    // document.open/write keeps the current Window realm. Re-running an
+    // authored classic script there can fail before execution when it declares
+    // a top-level let/const that the previous document already declared. Ask
+    // the host to remount the shared bootstrap so this generation gets a fresh
+    // realm, then let the one-shot shell perform the initial write.
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'od:srcdoc-transport-reset-required',
+          generation: data.generation
+        }, '*');
+      }
+    } catch (_) { /* sandboxed parent — host recovery will remount on timeout */ }
+  });
+  announceReady();
+})();</script><script data-od-preview-focus-guard>(function(){
+  var lastTrustedInputAt = 0;
+  function userActivated(){
+    return Date.now() - lastTrustedInputAt < 1000;
+  }
+  function markTrustedInput(event){
+    if (event && event.isTrusted) lastTrustedInputAt = Date.now();
+  }
+  document.addEventListener('pointerdown', function(event){
+    markTrustedInput(event);
+  }, true);
+  document.addEventListener('keydown', function...
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx:192:78
+    190|     await waitFor(() => expect(document.activeElement).toBe(message));
+    191|     expect(screen.queryByRole('button', { name: '创建接续项目（不发送）' })).toBe…
+    192|     fireEvent.click(within(screen.getByRole('dialog', { name: 'Version…
+       |                                                                              ^
+    193|     await waitFor(() => expect(document.activeElement).toBe(message));
+    194|     expect(screen.queryByRole('button', { name: '生成候选（不改当前稿）' })).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  02:30:43
+   Duration  8.99s (transform 1.51s, setup 410ms, import 1.52s, tests 6.63s, environment 350ms)
+
+/Users/dingcheng/.codex/worktrees/774f/Mokina/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 test: `vitest run -c vitest.config.ts --maxWorkers=2 tests/components/FileViewer.mokina-revision-recovery.test.tsx`
+Exit status 1

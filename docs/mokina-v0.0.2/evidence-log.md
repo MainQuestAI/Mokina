@@ -129,7 +129,7 @@
 | T04 Codex 连接诊断 | ⬜ 未完成 | 既有 AgentDiagnostic 机制可复用；auth 探测（系统凭据 vs auth.json）与「检查连接」流程未实现；本会话未动 |
 | T05 资料解析与 PDF 依赖 | 🟡 部分 | 服务端完成（parserVersion + OD_PDFTOTEXT_PATH）；打包 pdftotext 闭包未做（依赖 T18 构建） |
 | T06 上下文快照 | 🟡 部分 | 服务端+CLI+真实 HTTP 测试完成；Web 选择面板（T07）未做；真实模型端到端回执未跑 |
-| T07 资料选择 UI | ⬜ 未完成 | — |
+| T07 资料选择 UI | 🟡 主体完成 | 新 `MokinaContextPanel`（原件/可用内容/本次任务三层、服务端冻结、24k 预算展示、SOURCE_CHANGED→重新预览、不可读保留原件并列为未纳入）；选择 helpers 抽到 `runtime/mokina/material-selection`（FileWorkspace 保留再导出）；待发送快照状态 `pending-context-snapshot`（含桌面持久镜像）；ChatComposer `currentRunContextMeta` 自动携带 `mokinaSnapshotId`；run 读取/SSE 新增 `mokinaContext` 回执（statusBody + 启动内存镜像）。测试：panel 4/4、pending store 3/3、FileWorkspace 107/107、composer 37/37、daemon 路由 14/14。未跑：真机端到端（真实模型链路回执目视核对） |
 | T08 场景与产物校验 | 🟡 部分 | 场景包为既有资产（已核对满足最小标准）；structure_invalid 结构校验已接入；双路径 prompt 未改动（既有文本已达标）；专业评分属 T19 |
 | T09 接续 v2 与可靠创建 | 🟡 部分 | v2 载荷（operationId/sourceDigest/versionState/productionIntent）+ 稳定 targetProjectId 复用 + prepared→project-created→snapshot-saved 检查点 journal（镜像到桌面持久存储）已落地并有单测；draft-ready 后的草稿入口与 UI 恢复提示沿用既有 pendingPrompt/navigate 路径 |
 | T10 活动页接续制作 | ⬜ 未完成 | 场景包 mokina-landing-page 未创建 |

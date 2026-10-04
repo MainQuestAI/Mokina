@@ -11195,11 +11195,19 @@ export async function startServer({
         const block = buildMokinaContextPromptBlock(mokinaSnapshotBinding.snapshot);
         runContextPrompt = runContextPrompt.length > 0 ? `${runContextPrompt}\n\n${block}` : block;
       }
+      const mokinaReceipt = buildDeliveryReceipt(
+        mokinaSnapshotBinding.snapshot,
+        run.id,
+        'submitted',
+        new Date().toISOString(),
+      );
       await writeMokinaDeliveryReceipt(
         PROJECTS_DIR,
         mokinaSnapshotBinding.snapshot.projectId,
-        buildDeliveryReceipt(mokinaSnapshotBinding.snapshot, run.id, 'submitted', new Date().toISOString()),
+        mokinaReceipt,
       );
+      // Mirror onto the live run so statusBody/SSE expose it immediately.
+      (run as { mokinaContext?: unknown }).mokinaContext = mokinaReceipt;
     }
     const linkedDirs = (() => {
       if (!Array.isArray(projectRecord?.metadata?.linkedDirs)) return [];

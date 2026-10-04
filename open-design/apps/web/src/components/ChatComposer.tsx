@@ -150,6 +150,7 @@ import {
   type ComposerDraftContext,
 } from '../runtime/chat/composer-draft';
 import { mirrorDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
+import { withPendingMokinaSnapshot } from '../runtime/mokina/pending-context-snapshot';
 import { QuotedRefs } from './chat/QuotedRefs';
 
 type TranslateFn = (key: keyof Dict, vars?: Record<string, string | number>) => string;
@@ -1578,13 +1579,16 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
       const mcpServerIds = stagedMcpServers.map((s) => s.id);
       const connectorIds = stagedConnectors.map((c) => c.id);
       const workspaceItems = selectedWorkspaceContexts;
-      const context: RunContextSelection = {
+      const baseContext: RunContextSelection = {
         ...(skillIds.length > 0 ? { skillIds } : {}),
         ...(pluginIds.length > 0 ? { pluginIds } : {}),
         ...(mcpServerIds.length > 0 ? { mcpServerIds } : {}),
         ...(connectorIds.length > 0 ? { connectorIds } : {}),
         ...(workspaceItems.length > 0 ? { workspaceItems } : {}),
       };
+      // T07: the material panel freezes a context snapshot; the next send of
+      // this project references it so the run receives the frozen excerpts.
+      const context = withPendingMokinaSnapshot(baseContext, projectId);
       const meta: ChatSendMeta = {
         ...(skillIds.length > 0 ? { skillIds } : {}),
         ...(activeAppliedPlugin

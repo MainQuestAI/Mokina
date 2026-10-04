@@ -110,6 +110,7 @@ import {
 } from '../runtime/chat/send-request-state';
 import { mirrorDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
 import type { MokinaContinuationV2 } from '@open-design/contracts';
+import { MokinaCandidateCompare } from './mokina/MokinaCandidateCompare';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
 import { notifyMokinaEntriesChanged } from '../runtime/mokina-entry-events';
 import { enqueueMokinaMetadataRead } from '../hooks/useMokinaProjectSummaries';
@@ -3575,6 +3576,8 @@ function FileVersionManagerModal({
   const [confirmRestore, setConfirmRestore] = useState(false);
   const restorePopoverId = useId();
   const [downloadMenuVersionId, setDownloadMenuVersionId] = useState<string | null>(null);
+  const [candidateCompare, setCandidateCompare] = useState<{ base: ProjectFileVersion; baseHtml: string } | null>(null);
+  const [candidateCompareBusy, setCandidateCompareBusy] = useState(false);
   const [versionExportToast, setVersionExportToast] = useState<ExportToastState | null>(null);
   const [selectedContinuationSections, setSelectedContinuationSections] = useState<string[]>([]);
   const [continuationBackground, setContinuationBackground] = useState('');
@@ -4199,6 +4202,23 @@ function FileVersionManagerModal({
       `${file.name} · v${selectedVersion.version}`,
       fileVersionPreviewOptions(projectId, file.name, selectedRenderableContent, workspaceContext),
     );
+  }
+
+  async function openCandidateCompare() {
+    if (!selectedVersion?.candidate || !selectedVersion.baseVersionId || !selectedContent) return;
+    const base = versions.find((version) => version.id === selectedVersion.baseVersionId);
+    if (!base) { setError('找不到候选的基础版本；请刷新版本列表。'); return; }
+    setCandidateCompareBusy(true);
+    setError(null);
+    try {
+      const response = await fetchProjectFileVersion(projectId, file.name, base.id, workspaceContext);
+      if (!response) throw new Error('基础版本内容读取失败。');
+      setCandidateCompare({ base, baseHtml: response.content });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '比较打开失败');
+    } finally {
+      setCandidateCompareBusy(false);
+    }
   }
 
   async function restoreVersion() {
@@ -4952,6 +4972,16 @@ function FileVersionManagerModal({
         ) : null}
         </div>
         <footer className="artifact-version-panel__foot">
+          {selectedVersion?.candidate ? (
+            <button
+              type="button"
+              className="artifact-version-panel__compare"
+              disabled={candidateCompareBusy}
+              onClick={() => { void openCandidateCompare(); }}
+            >
+              {candidateCompareBusy ? '正在读取基础版本…' : '比较'}
+            </button>
+          ) : null}
           <button
             type="button"
             className={`artifact-version-panel__restore${confirmRestore ? ' active' : ''}`}
@@ -5083,6 +5113,17 @@ function FileVersionManagerModal({
           </div>
         ) : null}
       </aside>
+      {candidateCompare && selectedVersion?.candidate && selectedContent ? (
+        <MokinaCandidateCompare
+          baseVersion={candidateCompare.base}
+          candidateVersion={selectedVersion}
+          baseHtml={candidateCompare.baseHtml}
+          candidateHtml={selectedContent}
+          adopting={restoring}
+          onClose={() => setCandidateCompare(null)}
+          onAdopt={() => { setCandidateCompare(null); void restoreVersion(); }}
+        />
+      ) : null}
       {versionImageExportVersion ? (
         <div className="modal-backdrop viewer-modal-backdrop image-export-backdrop file-version-export-backdrop" role="presentation">
           <div

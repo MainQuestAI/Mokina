@@ -1,0 +1,152 @@
+.backdrop {
+  align-items: center;
+  background: rgba(20, 16, 10, 0.45);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: fixed;
+  z-index: 60;
+}
+
+.dialog {
+  background: var(--surface, #fffdf8);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(15, 10, 2, 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 86vh;
+  max-width: 1040px;
+  overflow: auto;
+  padding: 20px 22px;
+  width: min(94vw, 1040px);
+}
+
+.head {
+  align-items: baseline;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.head strong {
+  font-size: 15px;
+}
+
+.head p {
+  color: var(--muted, #7a6f5d);
+  font-size: 12px;
+  margin: 0;
+}
+
+.meta {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.metaItem {
+  background: rgba(160, 130, 80, 0.08);
+  border-radius: 10px;
+  font-size: 12px;
+  padding: 8px 10px;
+}
+
+.metaItem em {
+  color: var(--muted, #7a6f5d);
+  display: block;
+  font-style: normal;
+  margin-bottom: 2px;
+}
+
+.wide {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 860px) {
+  .wide {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pane {
+  border: 1px solid rgba(120, 95, 45, 0.22);
+  border-radius: 12px;
+  min-height: 160px;
+  overflow: auto;
+  padding: 10px 12px;
+}
+
+.pane h4 {
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+
+.pane pre {
+  font-size: 12px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.wideToggle {
+  display: flex;
+  gap: 6px;
+}
+
+.wideToggle label {
+  align-items: center;
+  border: 1px solid rgba(120, 95, 45, 0.28);
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 12px;
+  gap: 4px;
+  padding: 3px 10px;
+}
+
+.wideToggle input {
+  margin: 0;
+}
+
+.narrowOnly {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .narrowOnly {
+    display: block;
+  }
+
+  .narrowPane {
+    display: none;
+  }
+
+  .narrowPaneActive {
+    display: block;
+  }
+}
+
+.findings {
+  background: rgba(160, 130, 80, 0.08);
+  border-radius: 10px;
+  font-size: 12px;
+  padding: 10px 12px;
+}
+
+.findings ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.findings li {
+  margin: 2px 0;
+}
+
+.foot {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}

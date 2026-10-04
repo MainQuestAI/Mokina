@@ -134,11 +134,11 @@
 | T09 接续 v2 与可靠创建 | 🟡 部分 | v2 载荷（operationId/sourceDigest/versionState/productionIntent）+ 稳定 targetProjectId 复用 + prepared→project-created→snapshot-saved 检查点 journal（镜像到桌面持久存储）已落地并有单测；draft-ready 后的草稿入口与 UI 恢复提示沿用既有 pendingPrompt/navigate 路径 |
 | T10 活动页接续制作 | 🟡 主体完成（未跑真实管线） | 新场景包 `plugins/_official/scenarios/mokina-landing-page`（open-design.json + SKILL.md + references/landing-page-contract.md：自包含、稳定章节、品牌约束、CTA 不得虚构提交/转化）；roster 精确集合测试登记三个 mokina 场景（顺带修复该基线失败）；接续面板新增"目标任务"（讨论/活动页）→ pluginId 与提示语切换。按 P08 约定，真实管线验收前不加可点击生产入口。测试：roster 20/20、bundled 33/33、continuation 17/17。未跑：真实模型生成活动页与导出验收（AC34） |
 | T11 修订发送身份 | 🟡 部分 | Web 修复落地（持久化→派发→CAS 标记）；真实丢响应注入未跑 |
-| T12 候选比较 UI | ⬜ 未完成 | 采用 CAS 服务端既有；比较 UI 未做 |
+| T12 候选比较 UI | 🟡 主体完成 | `MokinaCandidateCompare` 模态（基础/候选章节并排，窄屏切换；非所选区域**字节一致性**判定而非"看起来一样"；数值字面量差异提示；采用/取消入口常显，基稿已非当前时禁用并提示冲突）；纯函数 `candidate-compare`（章节识别/空白化/数值提取）；FileViewer 候选行新增「比较」。测试：helper 4/4、组件 4/4、FileViewer 回归 42/42 |
 | T13 指定版本导出 | 🟡 部分 | Web 菜单与文件名完成；桌面原生 PDF 实测未跑 |
 | T14 恢复包 | 🟡 部分 | 服务端+CLI+HTTP 往返测试完成；Web 入口未做 |
 | T15 诊断与隐私 | 🟡 主体完成 | daemon `GET /api/mokina/diagnostics`：产品/构建/运行时/隐私/网络依赖声明（每项带 nextAction）、codex CLI 探测（60s 缓存）；`assertMokinaDiagnosticsSanitized` 值特征+键名双层扫描；测试 4/4（含 HTTP）。未跑：AC45 的恶意 HTML/IPC 安全测试（既有隔离未改动，T16 视觉/安全收口时统一验证） |
 | T16 八视图与 i18n | ⬜ 未完成 | — |
 | T17 回归与 CI | 🟡 部分 | 本地全量归因完成；CI workflow 未建（账户/远端条件下未跑） |
-| T18 候选发行包 | 🟡 部分 | `.app` 已真实构建并冒烟（上述证据）；未做 dmg/zip 封装、SHA256 清单、用户 Runbook 定稿与签名状态说明 |
+| T18 候选发行包 | 🟡 主体完成 | `.app` + **dmg 均真实构建**：`Mokina-mokina-local.dmg`（397MB，SHA-256 `d71bbbe…d19ee7`）；修复 tools-pack 产物搬运器硬编码名（electron-builder 产出 Mokina 名而 mover 找 Open Design 名）；`docs/mokina-v0.0.2/runbook.md` 完成（安装/依赖/诊断/工作路径/已知限制/未签名说明）。未做：zip 目标、公证、公开分发（按 Spec 不在本轮门槛） |
 | T19 本机三任务与签收 | ⬜ not_run | 依赖 T18 包与用户本人签收；本会话未运行真实模型任务 |

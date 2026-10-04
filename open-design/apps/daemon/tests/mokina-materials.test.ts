@@ -1,6 +1,7 @@
 import JSZip from 'jszip';
 import { describe, expect, it } from 'vitest';
-import { readMokinaMaterial } from '../src/mokina/materials.js';
+import { MOKINA_MATERIAL_PARSER_VERSION, readMokinaMaterial } from '../src/mokina/materials.js';
+import { resolvePdftotextBinary } from '../src/pdftotext.js';
 
 describe('Mokina material extraction', () => {
   it('keeps spreadsheet cell positions and does not invent an uncached formula result', async () => {
@@ -36,5 +37,24 @@ describe('Mokina material extraction', () => {
     expect(material.sections.filter(section => section.groupId?.startsWith('heading:1:part:')).map(section => section.location))
       .toEqual(['第 2 行 / 片段 1', '第 2 行 / 片段 2']);
     expect(material.sections.at(-1)).toMatchObject({ groupId: 'heading:2', groupLabel: '渠道', text: '禁投短视频' });
+  });
+
+  it('stamps every extraction with the parser version for snapshot freezing', async () => {
+    const material = await readMokinaMaterial('notes.txt', Buffer.from('预算 50 万'));
+    expect(material.parserVersion).toBe(MOKINA_MATERIAL_PARSER_VERSION);
+    expect(material.contentDigest).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it('prefers the packaged pdftotext path and falls back to PATH in development', () => {
+    expect(resolvePdftotextBinary({ OD_PDFTOTEXT_PATH: ' /opt/mokina/bin/pdftotext ' })).toBe('/opt/mokina/bin/pdftotext');
+    expect(resolvePdftotextBinary({})).toBe('pdftotext');
+    expect(resolvePdftotextBinary({ OD_PDFTOTEXT_PATH: '   ' })).toBe('pdftotext');
+  });
+
+  it('reports an unreadable PDF with a clear limitation instead of treating the failure text as content', async () => {
+    const material = await readMokinaMaterial('scan.pdf', Buffer.from('%PDF-1.4 not a real pdf'));
+    expect(material.status).toBe('unreadable');
+    expect(material.sections).toEqual([]);
+    expect(material.limitations.join(' ')).toContain('PDF 文本提取失败');
   });
 });

@@ -402,6 +402,7 @@ const SUBCOMMAND_MAP = {
   brand: runBrand,
   brands: runBrand,
   project: runProject,
+  mokina: runMokina,
   strategy: runStrategy,
   workspace: runWorkspace,
   automation: runAutomation,
@@ -2145,6 +2146,116 @@ function surfaceFetchError(err, daemonUrl) {
         'reached from a regular shell.',
     );
   }
+}
+
+function printMokinaHelp() {
+  console.log(`od mokina context prepare --project <id> --snapshot <id> (--selections <json|file|->) [--excluded <json|file>] [--json]
+od mokina context get     --project <id> --snapshot <id> [--json]`);
+}
+
+async function runMokina(args) {
+  const [sub, ...rest] = args;
+  if (sub !== 'context' || args.includes('--help') || args.includes('-h') || sub == null) {
+    printMokinaHelp();
+    process.exit(sub == null || sub === 'help' || args.includes('--help') || args.includes('-h') ? 0 : 2);
+  }
+  const [action, ...actionArgs] = rest;
+  if (action === 'prepare') return runMokinaContextPrepare(actionArgs);
+  if (action === 'get') return runMokinaContextGet(actionArgs);
+  console.error(`unknown subcommand: od mokina context ${action ?? ''}`);
+  printMokinaHelp();
+  process.exit(2);
+}
+
+function parseMokinaContextFlags(rawArgs, { requireSelections }) {
+  let flags;
+  try {
+    flags = parseFlags(rawArgs, {
+      string: ['project', 'snapshot', 'selections', 'excluded', 'daemon-url', 'namespace'],
+      boolean: ['json'],
+    });
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : String(err));
+    process.exit(2);
+  }
+  const projectId = typeof flags.project === 'string' ? flags.project.trim() : '';
+  const snapshotId = typeof flags.snapshot === 'string' ? flags.snapshot.trim() : '';
+  if (!projectId || !snapshotId) {
+    console.error('--project and --snapshot are required');
+    process.exit(2);
+  }
+  if (requireSelections) {
+    if (typeof flags.selections !== 'string' || !flags.selections.trim()) {
+      console.error('--selections is required (inline JSON, file path, or - for stdin)');
+      process.exit(2);
+    }
+  }
+  return { flags, projectId, snapshotId };
+}
+
+async function runMokinaContextPrepare(rawArgs) {
+  const { flags, projectId, snapshotId } = parseMokinaContextFlags(rawArgs, { requireSelections: true });
+  const selections = safeReadJsonFile(flags.selections);
+  if (!Array.isArray(selections)) {
+    console.error('--selections must be a JSON array (or a file/stdin with one)');
+    process.exit(2);
+  }
+  const excluded = typeof flags.excluded === 'string' && flags.excluded.trim()
+    ? safeReadJsonFile(flags.excluded)
+    : [];
+  if (excluded == null || !Array.isArray(excluded)) {
+    console.error('--excluded must be a JSON array when provided');
+    process.exit(2);
+  }
+  const daemonUrl = await cliDaemonUrl(flags);
+  const url = `${daemonUrl.replace(/\/$/, '')}/api/projects/${encodeURIComponent(projectId)}/mokina/context-snapshots`;
+  let resp;
+  try {
+    resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ snapshotId, selections, excluded }),
+    });
+  } catch (err) {
+    console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  const data = await resp.json().catch(() => null);
+  if (!resp.ok) {
+    const message = data && typeof data === 'object' && 'error' in data
+      ? JSON.stringify((data as { error: unknown }).error)
+      : resp.statusText;
+    console.error(`[mokina] ${resp.status} ${message}`);
+    process.exit(1);
+  }
+  if (flags.json) {
+    process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+    return;
+  }
+  const snapshot = (data as { snapshot?: { snapshotId?: string; fingerprint?: string; items?: unknown[] } }).snapshot;
+  console.log(`[mokina] snapshot ${snapshot?.snapshotId ?? snapshotId} (${snapshot?.items?.length ?? 0} items) fingerprint=${snapshot?.fingerprint ?? '?'}`);
+}
+
+async function runMokinaContextGet(rawArgs) {
+  const { flags, projectId, snapshotId } = parseMokinaContextFlags(rawArgs, { requireSelections: false });
+  const daemonUrl = await cliDaemonUrl(flags);
+  const url = `${daemonUrl.replace(/\/$/, '')}/api/projects/${encodeURIComponent(projectId)}/mokina/context-snapshots/${encodeURIComponent(snapshotId)}`;
+  let resp;
+  try {
+    resp = await fetch(url);
+  } catch (err) {
+    console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  const data = await resp.json().catch(() => null);
+  if (!resp.ok) {
+    const message = data && typeof data === 'object' && 'error' in data
+      ? JSON.stringify((data as { error: unknown }).error)
+      : resp.statusText;
+    console.error(`[mokina] ${resp.status} ${message}`);
+    process.exit(1);
+  }
+  process.stdout.write(JSON.stringify(data, null, 2) + '\n');
 }
 
 function parseFlags(argv, opts = {}) {

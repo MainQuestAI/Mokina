@@ -4,6 +4,12 @@ export interface RunContextSelection {
   mcpServerIds?: string[];
   connectorIds?: string[];
   workspaceItems?: WorkspaceContextItem[];
+  /**
+   * Frozen Mokina context snapshot bound to this run (T06). The single new run
+   * reference; there is deliberately no second top-level path. Older callers
+   * omit it and keep working.
+   */
+  mokinaSnapshotId?: string;
 }
 
 export type WorkspaceContextKind =

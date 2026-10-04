@@ -101,6 +101,13 @@ import {
 } from './markdown-scroll-sync';
 import { useT, useI18n } from '../i18n';
 import { randomUUID as newClientOperationId } from '../utils/uuid';
+import {
+  clearSendRequestRecord,
+  markSendRequestDispatched,
+  markSendRequestDraft,
+  markSendRequestUnknown,
+  persistPendingSendRequest,
+} from '../runtime/chat/send-request-state';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
 import { notifyMokinaEntriesChanged } from '../runtime/mokina-entry-events';
 import { enqueueMokinaMetadataRead } from '../hooks/useMokinaProjectSummaries';
@@ -4420,9 +4427,16 @@ function FileVersionManagerModal({
       .find(element => element.id === revisionSectionId && element.getAttribute('data-mokina-id') === revisionSectionId);
     if (!original || original.outerHTML.length > 24_000) { setError('所选章节不可用或超过 24,000 字符。'); return; }
     const baseVersionId = selectedVersion.id;
+    // Stable send identity for this revision attempt (T11): minted BEFORE any
+    // side effect so a lost response can be reconciled against the original
+    // request instead of starting a second model run.
+    const operationId = newClientOperationId();
+    const clientRequestId = operationId;
     setRevisionBusy(true);
     setRevisionProgress('正在创建独立修订工作…');
     setError(null);
+    let sendDispatched = false;
+    let revisionScope: { projectId: string; conversationId: string } | null = null;
     try {
       const prompt = [
         `只修改 HTML 章节 ${revisionSectionId}。根据下方用户要求，生成一个完整的替换章节元素。`,
@@ -4448,6 +4462,36 @@ function FileVersionManagerModal({
       const snapshotSaved = await writeProjectTextFile(revisionProject.project.id,
         'MOKINA-BASE-SECTION.html', original.outerHTML, undefined, workspaceContext);
       if (!snapshotSaved) throw new Error('原章节快照保存失败，模型尚未运行。');
+      revisionScope = { projectId: revisionProject.project.id, conversationId: revisionProject.conversationId };
+      // Persist the full send intent BEFORE the model can run: a storage
+      // failure refuses the POST (PR3 send semantics, Spec T11 §5.3).
+      const sendRecord = await persistPendingSendRequest({
+        projectId: revisionProject.project.id,
+        conversationId: revisionProject.conversationId,
+        clientRequestId,
+        prompt,
+        snapshot: {
+          prompt,
+          extras: {
+            attachments: [], commentAttachments: [], quotes: [],
+            context: { skillIds: [], mcpServerIds: [], connectorIds: [], workspaceItems: [] },
+          },
+          userMessageId: `${clientRequestId}-user`,
+          assistantMessageId: `${clientRequestId}-assistant`,
+        },
+      });
+      if (sendRecord === 'failed') {
+        throw new Error('修订发送意图未能安全保存，未启动作业；请重试。');
+      }
+      const dispatched = markSendRequestDispatched(
+        revisionProject.project.id,
+        revisionProject.conversationId,
+        clientRequestId,
+      );
+      if (!dispatched) {
+        throw new Error('修订发送身份核对失败，未启动作业；请重试。');
+      }
+      sendDispatched = true;
       setRevisionProgress('正在运行 Codex 生成替换章节…');
       const runResponse = await fetch('/api/runs', {
         method: 'POST',
@@ -4455,19 +4499,30 @@ function FileVersionManagerModal({
         body: JSON.stringify({
           agentId: 'codex', projectId: revisionProject.project.id,
           conversationId: revisionProject.conversationId,
+          clientRequestId,
           sessionMode: 'design', message: prompt, currentPrompt: prompt,
           priorTranscript: '', locale: 'zh-CN',
           skillId: null, skillIds: [], designSystemId: null, attachments: [],
         }),
       });
       if (!runResponse.ok) {
+        // 4xx admission refusals are definitive; 5xx may still have been
+        // accepted, so only the definitive branch may drop the record.
+        if (sendDispatched && revisionScope) {
+          if (runResponse.status >= 400 && runResponse.status < 500) {
+            markSendRequestDraft(revisionScope.projectId, revisionScope.conversationId, clientRequestId);
+          } else {
+            markSendRequestUnknown(revisionScope.projectId, revisionScope.conversationId, clientRequestId);
+          }
+        }
         const body = await runResponse.json().catch(() => null) as { error?: { message?: string } } | null;
         throw new Error(body?.error?.message || `修订运行启动失败（${runResponse.status}）`);
       }
       const created = await runResponse.json() as { runId: string };
       if (!created.runId) throw new Error('修订运行未返回 ID');
+      clearSendRequestRecord(revisionProject.project.id, revisionProject.conversationId, clientRequestId);
       const job = { runId: created.runId, revisionProjectId: revisionProject.project.id,
-        baseVersionId, sectionId: revisionSectionId, prompt: request, operationId: newClientOperationId() };
+        baseVersionId, sectionId: revisionSectionId, prompt: request, operationId };
       if (!storeMokinaRevisionJobIfVacant(localStorage, revisionStorageKey, job)) {
         await fetch(`/api/runs/${encodeURIComponent(job.runId)}/cancel`, {
           method: 'POST',
@@ -4479,6 +4534,11 @@ function FileVersionManagerModal({
       setPendingRevisionStatus('running');
       await finishChapterCandidate(job);
     } catch (cause) {
+      // The POST result is unknown unless a branch above already resolved the
+      // record; keep the intent recoverable instead of silently retrying.
+      if (sendDispatched && revisionScope) {
+        markSendRequestUnknown(revisionScope.projectId, revisionScope.conversationId, clientRequestId);
+      }
       setRevisionProgress('');
       setError(cause instanceof Error ? cause.message : '生成候选失败');
     } finally {

@@ -10,6 +10,7 @@ import type {
 } from '@open-design/contracts';
 
 import { listFiles, resolveProjectDir } from './projects.js';
+import { inspectMokinaHtmlStructure, isMokinaScenarioProject } from './mokina/deliverable-structure.js';
 import { findTouchedLinkedPage } from './artifacts/linked-page-delivery.js';
 
 export type RunDeliverableValidation =
@@ -20,7 +21,10 @@ export type RunDeliverableValidation =
   | 'entry_missing'
   | 'entry_not_touched'
   | 'entry_unreadable'
-  | 'type_mismatch';
+  | 'type_mismatch'
+  /** Mokina scenario deliverable exists and is readable but fails the
+   *  structural contract (no addressable sections / broken section ids). */
+  | 'structure_invalid';
 
 export interface RunDeliverableValidationResult {
   valid: boolean;
@@ -186,13 +190,14 @@ export type DeliverableValidationScope = 'run' | 'project';
  *  client's type does not admit. */
 export function projectDeliverableValidation(
   validation: RunDeliverableValidation,
-): 'valid' | 'project_missing' | 'entry_missing' | 'entry_unreadable' | 'type_mismatch' | null {
+): 'valid' | 'project_missing' | 'entry_missing' | 'entry_unreadable' | 'type_mismatch' | 'structure_invalid' | null {
   switch (validation) {
     case 'valid':
     case 'project_missing':
     case 'entry_missing':
     case 'entry_unreadable':
     case 'type_mismatch':
+    case 'structure_invalid':
       return validation;
     default:
       return null;
@@ -336,6 +341,18 @@ async function resolveDeliverable(
     await handle.close();
   } catch {
     return { valid: false, validation: 'entry_unreadable', ...facts };
+  }
+
+  if (selected.kind === 'html' && isMokinaScenarioProject(input.projectMetadata)) {
+    try {
+      const content = await fs.readFile(path.resolve(projectRoot, entryFile), 'utf8');
+      const inspection = inspectMokinaHtmlStructure(content);
+      if (!inspection.ok) {
+        return { valid: false, validation: 'structure_invalid', ...facts };
+      }
+    } catch {
+      return { valid: false, validation: 'entry_unreadable', ...facts };
+    }
   }
 
   return {

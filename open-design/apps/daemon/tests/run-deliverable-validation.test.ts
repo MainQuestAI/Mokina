@@ -409,3 +409,72 @@ describe('project deliverable validation', () => {
     })).resolves.toMatchObject({ valid: false, validation: 'project_missing' });
   });
 });
+
+describe('mokina scenario structure validation', () => {
+  it('reports structure_invalid for a mokina plan without addressable sections', async () => {
+    const fixture = await projectFixture({
+      'plan.html': '<!doctype html><html><body><h1>方案</h1><p>没有章节标记</p></body></html>',
+    });
+
+    await expect(
+      validateRunDeliverable({
+        ...fixture,
+        runStatus: 'succeeded',
+        artifactCount: 1,
+        projectMetadata: {
+          kind: 'other',
+          entryFile: 'plan.html',
+          scenarioBinding: { pluginId: 'mokina-marketing-plan' },
+        },
+      }),
+    ).resolves.toMatchObject({ valid: false, validation: 'structure_invalid', entryFile: 'plan.html' });
+  });
+
+  it('accepts a mokina plan whose sections are addressable, and leaves upstream projects unchecked', async () => {
+    const plan = '<!doctype html><html><body>'
+      + '<section id="objectives" data-mokina-id="objectives"><h2>目标</h2></section>'
+      + '<section id="budget" data-mokina-id="budget"><h2>预算</h2></section>'
+      + '</body></html>';
+    const fixture = await projectFixture({ 'plan.html': plan });
+    await expect(
+      validateRunDeliverable({
+        ...fixture,
+        runStatus: 'succeeded',
+        artifactCount: 1,
+        projectMetadata: {
+          kind: 'other',
+          entryFile: 'plan.html',
+          scenarioBinding: { pluginId: 'mokina-marketing-plan' },
+        },
+      }),
+    ).resolves.toMatchObject({ valid: true, validation: 'valid' });
+
+    const upstream = await projectFixture({ 'index.html': '<!doctype html><html><body>plain</body></html>' });
+    await expect(
+      validateRunDeliverable({
+        ...upstream,
+        runStatus: 'succeeded',
+        artifactCount: 1,
+        projectMetadata: { kind: 'prototype', entryFile: 'index.html' },
+      }),
+    ).resolves.toMatchObject({ valid: true, validation: 'valid' });
+  });
+
+  it('detects missing sections in a plain inspection', async () => {
+    const { inspectMokinaHtmlStructure, isMokinaScenarioProject } = await import(
+      '../src/mokina/deliverable-structure.js'
+    );
+    expect(inspectMokinaHtmlStructure('')).toMatchObject({ ok: false, problems: ['empty-document'] });
+    expect(inspectMokinaHtmlStructure('<html><body>x</body></html>')).toMatchObject({
+      ok: false,
+      problems: ['no-addressable-sections'],
+    });
+    expect(inspectMokinaHtmlStructure('<section data-mokina-id="a" id="a">x</section>')).toMatchObject({
+      ok: true,
+      sectionIds: ['a'],
+    });
+    expect(isMokinaScenarioProject({ scenarioBinding: { pluginId: 'mokina-market-analysis' } })).toBe(true);
+    expect(isMokinaScenarioProject({ scenarioBinding: { pluginId: 'od-default' } })).toBe(false);
+    expect(isMokinaScenarioProject({})).toBe(false);
+  });
+});

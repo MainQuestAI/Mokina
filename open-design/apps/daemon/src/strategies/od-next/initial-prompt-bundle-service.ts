@@ -39,7 +39,11 @@ import {
   resolveOdNextRequestUserPrompt,
   resolveResearchCommandContract,
 } from '../../runtimes/chat-prompt-inputs.js';
-import { renderRunContextPrompt } from '../../runtimes/chat-run-context.js';
+import {
+  renderRunContextPrompt,
+  resolveMokinaSnapshotForRun,
+} from '../../runtimes/chat-run-context.js';
+import { buildMokinaContextPromptBlock } from '../../mokina/context-store.js';
 import type { RunWorkspaceScope } from '../../runtimes/project-amr-trace-env.js';
 import type { RuntimeAgentDef } from '../../runtimes/types.js';
 import type { DetectedRuntimeVersions } from '../../runtimes/detection.js';
@@ -357,7 +361,22 @@ export function createOdNextInitialPromptBundleService(
       taskInputSnapshot,
       path.join(deps.runtimeDataDir, 'od-next-task-inputs'),
     );
-    const runContextPrompt = renderRunContextPrompt(context, project?.metadata);
+    let runContextPrompt = renderRunContextPrompt(context, project?.metadata);
+    // T06: fold the frozen Mokina context block into the prepared bundle. A
+    // snapshot that cannot be re-verified aborts this preparation so the run
+    // falls back instead of silently losing the selected material.
+    const mokinaSnapshotBinding = await resolveMokinaSnapshotForRun({
+      projectsRoot: deps.projectsDir,
+      projectId,
+      context,
+    });
+    if (mokinaSnapshotBinding.status === 'error') {
+      throw new Error(`${mokinaSnapshotBinding.code}: ${mokinaSnapshotBinding.message}`);
+    }
+    if (mokinaSnapshotBinding.status === 'bound') {
+      const block = buildMokinaContextPromptBlock(mokinaSnapshotBinding.snapshot);
+      runContextPrompt = runContextPrompt.length > 0 ? `${runContextPrompt}\n\n${block}` : block;
+    }
     const runtimeToolPrompt = deps.createAgentRuntimeToolPrompt(
       deps.daemonUrl,
       projectRoot && projectId ? { token: 'available' } : null,

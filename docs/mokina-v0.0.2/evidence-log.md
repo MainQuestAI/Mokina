@@ -39,3 +39,43 @@
 - T04 Codex 连接诊断：待核验既有实现后决定增量。
 - T05–T14：未开始。
 - T15–T19：未开始；T19 用户签收为 not_run（必须用户本人完成）。
+
+## T05 资料解析器版本 + PDF 包内依赖（服务端）
+
+| 证据 | 结果 |
+|---|---|
+| 改动 | contracts `ProjectMaterialExtraction.parserVersion?`；daemon `src/pdftotext.ts`（`OD_PDFTOTEXT_PATH` 优先、PATH 回退、`runPdftotext`）；`mokina/materials.ts` 绑定 `MOKINA_MATERIAL_PARSER_VERSION` 并走统一解析入口；`document-preview.ts` 同源解析 |
+| 单测 | `mokina-materials` 6/6（新增 parserVersion、路径优先级、PDF 失败不冒充正文） |
+| 未跑 | tools-pack 打包 pdftotext + dylib + 许可证、清洁 PATH 验证（AC14 打包侧）→ 归入 T18 |
+| typecheck | daemon 0 error |
+
+## T06 不可变上下文快照（服务端）
+
+| 证据 | 结果 |
+|---|---|
+| 改动 | contracts `api/mokina-context.ts`（快照/选择/回执 DTO + 错误码 + 预算常量），`RunContextSelection.mokinaSnapshotId`（含 daemon 镜像 normalize/merge）；daemon `mokina/context-store.ts`（规范 JSON 指纹、来源重读校验、原子写、内容寻址 blob、幂等/冲突、预算、损坏检测、delivery 回执、prompt 块）；路由 `POST/GET /api/projects/:id/mokina/context-snapshots`；受理注入 `chat-run-context.resolveMokinaSnapshotForRun` → server.ts 启动路径注入 + submitted 回执，OD Next bundle 同源注入（读不到即拒绝启动，不静默丢资料）；CLI `od mokina context prepare|get`（UI+CLI 双轨） |
+| 单测 | context-store 11/11；routes 3/3（真实 daemon HTTP：201/200 reused/409 冲突/409 SOURCE_CHANGED/404/413） |
+| 未跑 | Web 选择面板（T07）；run 引用在真实模型链路的端到端回执（T19） |
+| typecheck | daemon 0 error（contracts 已重建） |
+
+## T08 营销场景与产物结构校验（部分）
+
+| 证据 | 结果 |
+|---|---|
+| 现状核对 | 两场景包（open-design.json + SKILL.md + report-contract.md）已在 PR3 内落地且内容满足 §5.2 最小标准；prompt 双实现路径已由 SKILL.md assets 注入 |
+| 新增 | daemon `mokina/deliverable-structure.ts`（可寻址章节结构检查 + mokina 场景识别）；`run-deliverable-validation.ts` 增加 `structure_invalid` 终态；contracts 两处 union 同步（chat.ts / deliverable-syntax.ts） |
+| 测试 | `run-deliverable-validation` 28/28（新增 3 例：缺章节→structure_invalid、合规→valid、上游项目不受影响） |
+| 未跑 | 场景 prompt（SKILL.md）本轮未改——现有文本已覆盖目标/KPI/取舍/预算/来源要求；专业评分属 T19 |
+
+## T11 修订发送身份（FileViewer）
+
+| 证据 | 结果 |
+|---|---|
+| 改动 | `FileViewer.generateChapterCandidate`：POST 前生成稳定 operationId/clientRequestId；`persistPendingSendRequest` 落盘失败即拒绝启动；`markSendRequestDispatched` 通过才 POST；body 携带 clientRequestId；受理成功清理记录；4xx→draft、5xx/网络→unknown；job 复用同一 operationId |
+| 测试 | `FileViewer.mokina-revision-recovery` 13/13；`send-request-state` 21/21 |
+| 未跑 | 真实 daemon 丢响应注入（AC29 的 real-daemon+fake-agent 端到端）→ 需要真实运行链（T19） |
+
+## 回归状态（诚实记录）
+
+- daemon 全量套件：后台运行中（长时间），完成后补记结果。
+- 已确认各包 typecheck：release / contracts / tools-pack / packaged / desktop / web / daemon 均 0 error（截至本记录）。

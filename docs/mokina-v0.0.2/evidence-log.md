@@ -126,7 +126,7 @@
 | T01 独立产品 profile | ✅ 完成（含打包实测） | Info.plist bundleId=ai.mainquest.mokina.preview / 名称 Mokina / 版本 0.0.2-local.1；无 od scheme；包内配置 product 段正确且上游更新/遥测/云键全部缺省；证据同上 |
 | T02 打包依赖闭包 | ✅ 完成（本机 smoke） | 真机 `tools-pack mac start/inspect/stop`：清洁启动、web 200、daemon health 200、独立数据根、只停本实例；证据 `evidence/t02-t18-packaged-smoke.md` |
 | T03 稳定桌面存储 | ✅ 完成 | IPC store + facade + 镜像/hydration；desktop 498/web 相关测试通过 |
-| T04 Codex 连接诊断 | ⬜ 未完成 | 既有 AgentDiagnostic 机制可复用；auth 探测（系统凭据 vs auth.json）与「检查连接」流程未实现；本会话未动 |
+| T04 Codex 连接诊断 | 🟡 服务端完成 | `GET /api/mokina/codex-connection`：`codex login status` 权威探测（同时覆盖文件与系统凭据，不再单看 auth.json）；状态集合复用既有失败分类（cli_missing/login_required/permission_denied/quota_or_billing/network_unavailable/model_unavailable/unknown）；CLI 路径支持 `MOKINA_CODEX_CLI_PATH` 覆盖；30s 缓存；测试 6/6（分类纯函数 + HTTP，确认未登录不得报就绪）。未做：设置页"检查连接"UI 与真实测试任务按钮（属 T16 设置面收口） |
 | T05 资料解析与 PDF 依赖 | 🟡 部分 | 服务端完成（parserVersion + OD_PDFTOTEXT_PATH）；打包 pdftotext 闭包未做（依赖 T18 构建） |
 | T06 上下文快照 | 🟡 部分 | 服务端+CLI+真实 HTTP 测试完成；Web 选择面板（T07）未做；真实模型端到端回执未跑 |
 | T07 资料选择 UI | 🟡 主体完成 | 新 `MokinaContextPanel`（原件/可用内容/本次任务三层、服务端冻结、24k 预算展示、SOURCE_CHANGED→重新预览、不可读保留原件并列为未纳入）；选择 helpers 抽到 `runtime/mokina/material-selection`（FileWorkspace 保留再导出）；待发送快照状态 `pending-context-snapshot`（含桌面持久镜像）；ChatComposer `currentRunContextMeta` 自动携带 `mokinaSnapshotId`；run 读取/SSE 新增 `mokinaContext` 回执（statusBody + 启动内存镜像）。测试：panel 4/4、pending store 3/3、FileWorkspace 107/107、composer 37/37、daemon 路由 14/14。未跑：真机端到端（真实模型链路回执目视核对） |

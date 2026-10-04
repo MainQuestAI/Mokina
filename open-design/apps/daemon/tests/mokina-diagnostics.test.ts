@@ -78,7 +78,11 @@ describe('GET /api/mokina/diagnostics', () => {
   it('serves a sanitized diagnostics report', async () => {
     const response = await fetch(`${baseUrl}/api/mokina/diagnostics`);
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as {
+      product: { productId: string };
+      runtime: { codexCli: string };
+      privacy: { omitted: string[] };
+    };
     assertMokinaDiagnosticsSanitized(body);
     expect(body.product.productId).toBe('mokina');
     expect(['detected', 'missing', 'unknown']).toContain(body.runtime.codexCli);

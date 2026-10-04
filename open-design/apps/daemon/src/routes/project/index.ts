@@ -82,6 +82,7 @@ import {
   assertMokinaDiagnosticsSanitized,
   buildMokinaDiagnostics,
 } from '../../mokina/diagnostics.js';
+import { probeMokinaCodexConnection } from '../../mokina/codex-connection.js';
 import { isMokinaLocalEdition } from '../../mokina/edition.js';
 
 // Router registration happens at daemon boot; close enough for uptime reporting.
@@ -7317,6 +7318,18 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
   // T15: minimum local diagnostics. Sanitized by construction; the test suite
   // scans the response for credential/path/subject leakage.
   let mokinaCodexProbe: { at: number; state: 'detected' | 'missing' } | null = null;
+  // T04: Codex connection check. `codex login status` is the authoritative
+  // login probe (covers file AND system credential storage); the response
+  // uses the daemon's existing failure vocabulary.
+  app.get('/api/mokina/codex-connection', async (_req, res) => {
+    try {
+      const report = await probeMokinaCodexConnection();
+      res.json(report);
+    } catch (error: any) {
+      sendApiError(res, 500, 'CODEX_CONNECTION_FAILED', error?.message || 'connection check failed');
+    }
+  });
+
   app.get('/api/mokina/diagnostics', async (_req, res) => {
     try {
       if (mokinaCodexProbe == null || Date.now() - mokinaCodexProbe.at > 60_000) {

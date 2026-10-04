@@ -25,3 +25,13 @@
 
 覆盖：T05（parserVersion/分组）、T06（快照冻结 + run 注入 + 回执 + 重启持久）、T08（结构校验 valid 终态）、T13（指定版本 HTML 导出自包含）。
 未覆盖（仍属 T19/专业验收）：用户本人在交付包上的签收；专业评分（A/B 五分制）；预算反事实与强制渠道约束的单独打分；活动页真实生成。
+
+---
+
+## 追加：真实活动页运行（T10 真实管线）
+
+- 项目 `mokina-landing-d924a51a` 绑定场景 `mokina-landing-page`。
+- 快照 2 项：`strategy.md` 固定摘录（inline-text）+ `logo.svg` 冻结素材（**staged-file**）。
+- 真实 Codex 运行 `50a7dad5-…`：**succeeded**（约 2m36s），`deliverableValidation=valid`，回执 `status=submitted`。
+- 产物 `landing.html`（6563 字符）：顶层章节恰为 `hero/value/proof/cta`；CTA 标注预览交互，**未出现"提交成功/已发布/真实转化"**；内联了 logo 素材的品牌色与文字。导出件：`e2e-landing-export.html`。
+- 结论：活动页薄场景（T10）真实管线跑通，结构契约与"不虚构回执"要求均被真实产物满足。

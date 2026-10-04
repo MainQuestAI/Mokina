@@ -5,7 +5,9 @@
   inset: 0;
   justify-content: center;
   position: fixed;
-  z-index: 60;
+  /* The standard viewer-modal layer: above the version panel (z-index 85) and
+     level with the other viewer modals (z-index 1700). */
+  z-index: 1700;
 }
 
 .dialog {

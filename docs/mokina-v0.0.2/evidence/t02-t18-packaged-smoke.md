@@ -42,3 +42,9 @@ amrProfile: ABSENT
 - 最终产物：
   - `Mokina-mokina-local.dmg` sha256 `795f81f3cdc17ddcc5fc24a5fa5e8dca32e8421684fb01a49d5215174d38443e`（397,216,361 bytes）
   - `Mokina-mokina-local.zip` sha256 `4b8fc5198b9f761fb239f6a48b19d2bb4e50882dec6ba93f6ce971b207904352`（395,430,300 bytes）
+
+## 最终构建复验（第三轮，含 T12 弹窗层级修复）
+
+- `OD_WEB_OUTPUT_MODE=standalone` web 构建 + `tools-pack mac build --to all`（均 exit 0）。
+- `Mokina-mokina-local.dmg` sha256 `0fd576f2825cd7997c7ba018db67b23f475dea62266eb0cd2266b3b11e8b8f0e`（397,224,820 bytes）
+- `Mokina-mokina-local.zip` sha256 `de47f41088d1846560070bbcf0e54da6d66ad31748c9eaf41a6eb8b4c691d55a`（395,430,241 bytes）

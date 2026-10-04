@@ -2510,3 +2510,49 @@ test('[P1] Mokina revision lost POST response keeps one run and marks the intent
     contentType: 'application/json',
   });
 });
+
+test('[P1] Mokina historical version export locks the clicked version and exports once', async ({ page }, testInfo) => {
+  const projectId = `mokina-version-export-${Date.now()}`;
+  const created = await page.request.post('/api/projects', {
+    data: { id: projectId, name: 'Version export lock', skillId: null, designSystemId: null, metadata: { kind: 'prototype' } },
+  });
+  expect(created.ok()).toBe(true);
+  const html = await readFile(join(process.cwd(), '..', '..', 'docs', 'mokina-v0.0.2', 'evidence', 'e2e-plan-export.html'), 'utf8');
+  const written = await page.request.post(`/api/projects/${projectId}/files`, { data: { name: 'plan.html', content: html } });
+  expect(written.ok()).toBe(true);
+
+  const versionsResponse = await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`);
+  expect(versionsResponse.ok()).toBe(true);
+  const { versions } = (await versionsResponse.json()) as { versions: Array<{ id: string; version: number }> };
+  const current = versions.find((version) => version.version === 1) ?? versions[0]!;
+
+  const exportBodies: Array<Record<string, unknown>> = [];
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().includes('/export/html')) {
+      const body = request.postDataJSON() as Record<string, unknown>;
+      // The viewport primes a renderable copy through the same route with the
+      // raw file name as its title; that is a preview read, not the export.
+      if (body.title !== 'plan.html') exportBodies.push(body);
+    }
+  });
+
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2500);
+  await page.getByRole('button', { name: 'Versions' }).click();
+  await page.waitForTimeout(900);
+  // Pick the oldest version row, then export it.
+  const panel = page.locator('.artifact-version-panel');
+  await panel.getByText('Manual edit').last().click();
+  await page.waitForTimeout(900);
+  await page.getByRole('button', { name: 'Download' }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole('menuitem', { name: 'Export as standalone HTML' }).click();
+  await expect.poll(() => exportBodies.length, { timeout: 10000 }).toBe(1);
+
+  // The export carries exactly the version selected in the panel (T13 lock).
+  expect(exportBodies[0]?.versionId).toBe(current.id);
+  await testInfo.attach('version-export-lock', {
+    body: JSON.stringify({ projectId, versionId: current.id, exportBodies }),
+    contentType: 'application/json',
+  });
+});

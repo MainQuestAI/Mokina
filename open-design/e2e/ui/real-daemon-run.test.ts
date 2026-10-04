@@ -2159,7 +2159,11 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
       expect(response.ok()).toBe(true);
       runId = (await response.json()).runId;
       // The real daemon accepted the original request. Only its receipt is lost.
-      await route.abort('failed');
+      if (viewport.width === 1280) {
+        // A generic structured server error is not proof of refusal either:
+        // the real daemon has already persisted the original run above.
+        await route.fulfill({ status: 500, json: { error: { code: 'INTERNAL_ERROR', message: 'Run preparation failed.' } } });
+      } else await route.abort('failed');
     });
     const composer = page.getByTestId('chat-composer-input');
     await composer.fill('Create a slow reload deterministic smoke artifact');
@@ -2210,4 +2214,45 @@ test('[P1] Mokina PR3 Home first send creates one real daemon run', async ({ pag
   const body = await response.json() as { runs: Array<{ id: string; clientRequestId?: string }> };
   expect(body.runs).toHaveLength(1); expect(body.runs[0]?.clientRequestId).toBeTruthy(); expect(postCount).toBe(1);
   await testInfo.attach('home-first-send-receipt', { body: JSON.stringify({ projectId, conversationId, run: body.runs[0], postCount }), contentType: 'application/json' });
+});
+
+
+test('[P1] Mokina PR3 empty lookup before delayed original delivery preserves request identity', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina delayed original delivery');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  let originalBody: Record<string, unknown> | null = null; let browserPosts = 0;
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    browserPosts += 1; originalBody = route.request().postDataJSON() as Record<string, unknown>;
+    await route.abort('failed'); // Original body is deliberately not delivered yet.
+  });
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  const pending = page.getByTestId('mokina-pending-send');
+  await expect(pending).toBeVisible({ timeout: T.long });
+  const before = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+  expect((await before.json() as { runs: unknown[] }).runs).toEqual([]);
+  const [emptyLookup] = await Promise.all([
+    page.waitForResponse(response => response.request().method() === 'GET' && response.url().includes('/api/runs?')),
+    pending.getByRole('button').click(),
+  ]);
+  expect((await emptyLookup.json() as { runs: unknown[] }).runs).toEqual([]);
+  await expect(pending).toBeVisible();
+  await expect(pending).not.toContainText('Restore unsent draft');
+  await page.getByRole('button', { name: 'Send failed — retry', exact: true }).click();
+  expect(browserPosts).toBe(1); expect(originalBody).not.toBeNull();
+  // Deliver the exact original request to the real daemon only after the empty
+  // GET. This models late network delivery without changing ids or payload.
+  const delivered = await page.request.post('/api/runs', { data: originalBody });
+  expect(delivered.ok(), await delivered.text()).toBe(true);
+  const receipt = await delivered.json() as { runId: string };
+  await pending.getByRole('button').click();
+  await expect(pending).toHaveCount(0);
+  const after = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+  const runs = (await after.json() as { runs: Array<{ id: string; clientRequestId: string }> }).runs;
+  expect(runs).toHaveLength(1); expect(runs[0]?.id).toBe(receipt.runId);
+  expect(runs[0]?.clientRequestId).toBe((originalBody as Record<string, unknown> | null)?.clientRequestId);
+  expect(browserPosts).toBe(1);
+  await testInfo.attach('empty-get-before-original-post-receipt', { body: JSON.stringify({ projectId, conversationId, run: runs[0], browserPosts }), contentType: 'application/json' });
 });

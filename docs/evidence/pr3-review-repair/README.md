@@ -28,6 +28,6 @@ NEXT_PUBLIC_MOKINA_EDITION=off OD_WEB_OUTPUT_MODE=server pnpm --filter @open-des
 OD_WEB_PROD=1 NODE_ENV=production OD_WEB_OUTPUT_MODE=server NEXT_PUBLIC_MOKINA_EDITION=off MOKINA_LOCAL_EDITION=off pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-edition-off.test.ts ui/real-daemon-run.test.ts --grep 'Mokina off production|real daemon run streams, persists, and previews an artifact' --workers=1
 ```
 
-实际运行另设 `PLAYWRIGHT_JSON_OUTPUT_NAME`、`--reporter=list,json` 与隔离 `--output` 保存证据。JSON 内的附件 body 为 base64；`production-screenshots/` 是便于直接查看的 PNG，原 run 受理回执另存 JSON。普通 click/Tab/Enter/Space，无 force 或节点 dispatch。
+实际运行另设 `PLAYWRIGHT_JSON_OUTPUT_NAME`、`--reporter=list,json` 与隔离 `--output` 保存证据。JSON 内的附件 body 为 base64；`production-screenshots/` 是便于直接查看的 PNG；导航截图关闭捕获瞬间的有限入场动画，避免把过渡帧当成最终页面，原 run 受理回执另存 JSON。普通 click/Tab/Enter/Space，无 force 或节点 dispatch。
 
-故障注入使用真实 daemon 受理记录：浏览器将真实 POST 响应丢弃，再点击实际错误重试、刷新、核对与重开；GET 空结果阶段保留待确认，POST 计数始终一。模型端是既有 fake Agent，不能把这一层称为营销专业质量或真实外部 AMR 账户验收。
+故障注入使用真实 daemon 受理记录：浏览器在真实受理后分别丢弃 POST 响应和返回通用结构化 500，再点击实际错误重试、刷新、核对与重开，浏览器 POST 计数始终一。另一个用例先截留原请求，真实 GET 返回空后保持待确认，再递送完全相同的原请求内容，最终只对应原 run。模型端是既有 fake Agent，不能把这一层称为营销专业质量或真实外部 AMR 账户验收。

@@ -8482,8 +8482,8 @@ export function ProjectView({
         const snapshot = record.snapshot;
         setMessages(current => {
           if (messagesConversationIdRef.current !== activeConversationId) return current;
-          const next = current.map(message => message.clientRequestId === record.clientRequestId
-            ? { ...message, error: undefined, errorCode: undefined, resumable: undefined } : message);
+          const next = current.map(message => message.clientRequestId === record.clientRequestId || message.id === snapshot?.userMessageId
+            ? { ...message, sendFailed: undefined, error: undefined, errorCode: undefined, resumable: undefined } : message);
           const assistantId = run.assistantMessageId ?? snapshot?.assistantMessageId;
           if (!assistantId) return next;
           const recovered: ChatMessage = { id: assistantId, role: 'assistant', content: '',
@@ -8528,11 +8528,14 @@ export function ProjectView({
         : null;
       if (meta?.retryOfAssistantId && !retryTarget) return retainComposerDraft();
       if (MOKINA_LOCAL_EDITION) {
-        const originalId = retryTarget?.userMsg.clientRequestId
+        const originalId = retryTarget?.failedAssistant.clientRequestId ?? retryTarget?.userMsg.clientRequestId
           ?? messages.find(message => message.id === meta?.userMessageId)?.clientRequestId
           ?? meta?.clientRequestId;
         if (originalId && loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
-          .some(record => record.clientRequestId === originalId && record.status !== 'draft')) {
+          .some(record => record.status !== 'draft' && (record.clientRequestId === originalId
+            || Boolean(retryTarget && (record.snapshot?.assistantMessageId === retryTarget.failedAssistant.id
+              || record.snapshot?.userMessageId === retryTarget.userMsg.id))
+            || Boolean(retryTarget && !record.snapshot && record.promptPreview === retryTarget.userMsg.content.slice(0, 120))))) {
           setPendingSendVerifyNonce(nonce => nonce + 1);
           sendAdmissionRef.current.set(clientRequestId, 'restore-draft');
           return false;
@@ -8796,6 +8799,7 @@ export function ProjectView({
       const assistantMsg: ChatMessage = {
         id: assistantId,
         role: 'assistant',
+        ...(MOKINA_LOCAL_EDITION ? { clientRequestId } : {}),
         content: '',
         agentId: assistantAgentId,
         agentName: assistantAgentName,
@@ -11218,10 +11222,14 @@ export function ProjectView({
   const [modelPickerOpenSignal, setModelPickerOpenSignal] = useState(0);
   const rerunAfterModelChangeRef = useRef<ChatMessage | null>(null);
   const handleSwitchModel = useCallback((assistantMessage: ChatMessage) => {
-    const originalId = resolveRetryTarget(messages, assistantMessage.id)?.userMsg.clientRequestId;
-    if (MOKINA_LOCAL_EDITION && activeConversationId && originalId
+    const target = resolveRetryTarget(messages, assistantMessage.id);
+    const originalId = target?.failedAssistant.clientRequestId ?? target?.userMsg.clientRequestId;
+    if (MOKINA_LOCAL_EDITION && activeConversationId && target
       && loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
-        .some(record => record.clientRequestId === originalId && record.status !== 'draft')) {
+        .some(record => record.status !== 'draft' && (record.clientRequestId === originalId
+          || record.snapshot?.assistantMessageId === target.failedAssistant.id
+          || record.snapshot?.userMessageId === target.userMsg.id
+          || !record.snapshot && record.promptPreview === target.userMsg.content.slice(0, 120)))) {
       setPendingSendVerifyNonce(nonce => nonce + 1);
       return;
     }
@@ -11243,9 +11251,13 @@ export function ProjectView({
         || retryLocksRef.current.has(retryConversationId)
         || !resolveRetryTarget(messages, assistantMessage.id)
       ) return;
-      const originalRequestId = resolveRetryTarget(messages, assistantMessage.id)?.userMsg.clientRequestId;
-      if (MOKINA_LOCAL_EDITION && originalRequestId && loadSendRequestRecords(project.id, retryConversationId, projectRunAuthorityKey)
-        .some(record => record.clientRequestId === originalRequestId && record.status !== 'draft')) {
+      const target = resolveRetryTarget(messages, assistantMessage.id)!;
+      const originalRequestId = target.failedAssistant.clientRequestId ?? target.userMsg.clientRequestId;
+      if (MOKINA_LOCAL_EDITION && loadSendRequestRecords(project.id, retryConversationId, projectRunAuthorityKey)
+        .some(record => record.status !== 'draft' && (record.clientRequestId === originalRequestId
+          || record.snapshot?.assistantMessageId === target.failedAssistant.id
+          || record.snapshot?.userMessageId === target.userMsg.id
+          || !record.snapshot && record.promptPreview === target.userMsg.content.slice(0, 120)))) {
         setPendingSendVerifyNonce(nonce => nonce + 1);
         return;
       }

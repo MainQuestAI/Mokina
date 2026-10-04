@@ -1312,6 +1312,29 @@ describe('2026-09-14 retry replaces the old error surface without erasing histor
 
 describe('Mokina request admission and recovery join the actual host callbacks', () => {
   beforeEach(() => { mokinaEdition.on = true; });
+  it('a known failed run may start a new attempt, but loss of that retry receipt cannot create a third attempt', async () => {
+    conversationMessages = conversationMessages.map(message => ({ ...message, clientRequestId: 'accepted-original-request' }));
+    streamViaDaemon.mockImplementation(async options => {
+      expect(options.onBeforeRunCreate()).toBe(true);
+      options.onRunCreateFailed({ definitive: false });
+      options.handlers.onError(new Error('retry receipt lost'));
+    });
+    renderProjectView(localConfig); await waitForConversation();
+    fireEvent.click(screen.getByTestId('chat-retry'));
+    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('mokina-pending-send')).toBeTruthy());
+    const receiptKeys = Object.keys(window.localStorage).filter(key => key.startsWith('od:send-request:v2:'));
+    expect(receiptKeys).toHaveLength(1);
+    const receipt = JSON.parse(window.localStorage.getItem(receiptKeys[0]!)!);
+    expect(receipt.clientRequestId).not.toBe('accepted-original-request');
+    expect(receipt.snapshot.assistantMessageId).toBeTruthy();
+    expect(receipt.snapshot.userMessageId).toBe('user-1');
+    fireEvent.click(screen.getByTestId('chat-retry'));
+    await act(async () => {});
+    expect(streamViaDaemon).toHaveBeenCalledTimes(1);
+    expect(Object.keys(window.localStorage).filter(key => key.startsWith('od:send-request:v2:'))).toHaveLength(1);
+  });
+
   it('storage failure retracts the painted turn and tells the real composer contract to retain input', async () => {
     conversationMessages = [];
     renderProjectView(localConfig); await waitForConversation();

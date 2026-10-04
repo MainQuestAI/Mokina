@@ -64,5 +64,53 @@
     "browser": "browser-production-final.json",
     "result": "9 passed, 0 failed, 0 flaky",
     "changedProductSourceDigest": "1a9cc63984f0e2be43a568c1988e8cce6be0c63ff0801748fdf1b0dd0e714743"
+  },
+  "admissionHardenedSourceDigest": "de08c86cb70509babd4eb8b493ba0df299a6767de3ffc946244de53df1c4e130",
+  "admissionOff": {
+    "buildId": "ZI4EIgVVZ1tnJ7nHFRm_A",
+    "buildTimeEdition": "off",
+    "daemonEdition": "off",
+    "OD_WEB_PROD": "1",
+    "OD_WEB_OUTPUT_MODE": "server",
+    "NODE_ENV": "production",
+    "lifecycle": "tools-dev via playwright suite",
+    "log": "build-off-admission-hardening.txt",
+    "browser": "browser-off-admission.json",
+    "result": "2 passed, 0 failed, 0 flaky",
+    "changedProductSourceDigest": "de08c86cb70509babd4eb8b493ba0df299a6767de3ffc946244de53df1c4e130"
+  },
+  "attemptHardenedSourceDigest": "d6b6098c3e341f9008886ee336beec32ef7445dbf9e79b63fe77ddc1bd7c270c",
+  "attemptOff": {
+    "buildId": "KO2hjXzpxRbgvOVlPnTYl",
+    "buildTimeEdition": "off",
+    "daemonEdition": "off",
+    "OD_WEB_PROD": "1",
+    "OD_WEB_OUTPUT_MODE": "server",
+    "NODE_ENV": "production",
+    "lifecycle": "tools-dev via playwright suite",
+    "log": "build-off-attempt-identity.txt",
+    "browser": "browser-off-attempt-identity.json",
+    "result": "2 passed, 0 failed, 0 flaky",
+    "changedProductSourceDigest": "d6b6098c3e341f9008886ee336beec32ef7445dbf9e79b63fe77ddc1bd7c270c"
+  },
+  "attemptOn": {
+    "buildId": "K5BDF9_NuipY8OELrp9mW",
+    "buildTimeEdition": "on",
+    "daemonEdition": "on",
+    "OD_WEB_PROD": "1",
+    "OD_WEB_OUTPUT_MODE": "server",
+    "NODE_ENV": "production",
+    "lifecycle": "tools-dev via playwright suite",
+    "log": "build-on-attempt-identity.txt",
+    "browser": "browser-on-attempt-identity.json",
+    "result": "10 passed, 0 failed, 0 flaky",
+    "changedProductSourceDigest": "d6b6098c3e341f9008886ee336beec32ef7445dbf9e79b63fe77ddc1bd7c270c",
+    "initialRegression": "browser-on-attempt-identity-initial.json: 9 passed / 1 helper assertion failed because intentionally aborted POST has no response; test helper corrected, product source unchanged"
+  },
+  "currentEvidence": {
+    "on": "attemptOn",
+    "off": "attemptOff",
+    "changedProductSourceDigest": "d6b6098c3e341f9008886ee336beec32ef7445dbf9e79b63fe77ddc1bd7c270c",
+    "localBuildRestoredTo": "on"
   }
 }

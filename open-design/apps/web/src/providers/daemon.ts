@@ -557,7 +557,7 @@ export interface DaemonStreamOptions {
   runCreateTimeoutMs?: number;
   onRunCreateAccepted?: () => void;
   /** POST /api/runs 未受理回调。definitive=true 是 daemon 的明确拒绝
-   * （4xx/结构化拒绝）；false 是响应丢失/中止（unknown → 只读核对）。 */
+   * （4xx/明确受理前拒绝）；false 是响应丢失/中止（unknown → 只读核对）。 */
   onRunCreateFailed?: (info: { definitive: boolean }) => void;
   skillId?: string | null;
   // Per-turn skill ids picked via the composer's @-mention popover. These
@@ -1183,10 +1183,12 @@ export async function streamViaDaemon({
 
     if (!createResp.ok) {
       const text = await createResp.text().catch(() => '');
-      // Structured daemon errors prove refusal. An unstructured gateway/server
-      // failure may have lost a receipt after forwarding the POST.
+      // Generic INTERNAL_ERROR may occur after prepare() persisted a run. Only
+      // explicit pre-admission 503 guards prove refusal among server failures.
       const body = (() => { try { return JSON.parse(text) as ApiErrorResponse; } catch { return null; } })();
-      onRunCreateFailed?.({ definitive: createResp.status < 500 || !!body?.error?.code });
+      const refusedBeforeAdmission = createResp.status === 503
+        && (body?.error?.code === 'WORKSPACE_AUTHORITY_UNAVAILABLE' || body?.error?.code === 'UPSTREAM_UNAVAILABLE');
+      onRunCreateFailed?.({ definitive: createResp.status < 500 || refusedBeforeAdmission });
       emitRunStatus('failed');
       handlers.onError(daemonCreateRunError(createResp, text));
       return;

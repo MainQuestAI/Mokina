@@ -1,0 +1,13 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/providers/daemon-run-create-recovery.test.ts tests/components/ProjectView.retry-gating.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+
+ Test Files  2 passed (2)
+      Tests  37 passed (37)
+   Start at  10:59:09
+   Duration  4.08s (transform 2.36s, setup 979ms, import 2.18s, tests 855ms, environment 980ms)
+

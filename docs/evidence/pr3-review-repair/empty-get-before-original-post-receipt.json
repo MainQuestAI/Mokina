@@ -1,0 +1,96 @@
+{
+  "projectId": "real-daemon-Mokina-delayed-original-delivery-1791083594607",
+  "conversationId": "ac91a466-a1c3-4d9c-aec1-6721149836c2",
+  "run": {
+    "id": "62eae8b1-2bdd-43d4-bb4c-898186e2b315",
+    "projectId": "real-daemon-Mokina-delayed-original-delivery-1791083594607",
+    "conversationId": "ac91a466-a1c3-4d9c-aec1-6721149836c2",
+    "assistantMessageId": "bf0b6139-b8d8-4bb2-b25c-508d4696e842",
+    "clientRequestId": "21a17ad9-4004-44d1-8321-aaf5b1c7e852",
+    "agentId": "codex",
+    "designSystemId": null,
+    "designSystemRequestedId": null,
+    "designSystemSelectionSource": "none",
+    "designSystemDigest": null,
+    "appliedPluginSnapshotId": "dbd1ba14-22d7-49fe-be61-e4c2681a2f3e",
+    "pluginId": "example-web-prototype",
+    "strategyRolloutDecision": {
+      "schemaVersion": 1,
+      "decisionClass": "off",
+      "requestedMode": "off",
+      "effectiveMode": "off",
+      "taskType": "prototype",
+      "assignmentBucket": 1536,
+      "eligible": false,
+      "syntheticCanary": false,
+      "reasonCodes": [
+        "od_next_rollout_off",
+        "od_next_rollout_bundled_identity_required",
+        "od_next_rollout_x1_capability_fixture_unverified",
+        "od_next_rollout_capability_runtime_out_of_scope"
+      ],
+      "primaryReasonCode": "od_next_rollout_off"
+    },
+    "status": "running",
+    "createdAt": 1791083596262,
+    "updatedAt": 1791083596323,
+    "terminalAt": null,
+    "cancelRequested": false,
+    "cancelOrigin": null,
+    "terminalTrigger": null,
+    "childPid": 52342,
+    "processGroupId": 52342,
+    "childExited": false,
+    "childExitObservedAt": null,
+    "exitCode": null,
+    "signal": null,
+    "error": null,
+    "errorCode": null,
+    "failureCategory": null,
+    "failureDetail": null,
+    "failureAction": null,
+    "retryable": null,
+    "resumable": false,
+    "endedWithUnfinishedWork": false,
+    "eventsLogPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/.tmp/e2e/playwright-48519-8a41d75b-w0/i0-p48525/scratch/data/runs/62eae8b1-2bdd-43d4-bb4c-898186e2b315/events.jsonl",
+    "workspace": {
+      "storage": {
+        "kind": "od-owned",
+        "baseDir": null
+      },
+      "provenance": null
+    },
+    "mediaExecution": {
+      "mode": "enabled"
+    },
+    "toolBundle": {
+      "mcpServers": []
+    },
+    "promptCache": {
+      "stablePromptHash": "eb5e1b6c33a72a50b09be3f6814f436fe133967bffdb9e670fb50015a40faf3c",
+      "hit": false,
+      "missReason": "new-session",
+      "changedSections": null
+    },
+    "nativeSessionRecovery": {
+      "agentId": "codex",
+      "state": "no_recoverable_session",
+      "acquisition": "stream-captured",
+      "continuation": "native-resume-by-id",
+      "handle": {
+        "present": false,
+        "kind": "cli-thread-id",
+        "display": null,
+        "sha256": null,
+        "redacted": false
+      },
+      "guardReason": null,
+      "fallbackReason": null,
+      "updatedAt": 1791083596276
+    },
+    "clientType": "web",
+    "manualResumeAttemptCount": 0,
+    "rechargeWaitDurationMs": 0
+  },
+  "browserPosts": 1
+}

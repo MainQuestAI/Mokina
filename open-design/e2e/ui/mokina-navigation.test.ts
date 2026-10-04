@@ -23,7 +23,7 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
     await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long });
     await expect(page.getByRole('tab', { name: '预算分配与渠道优先级.html' })).toBeVisible();
     await testInfo.attach(`p03-open-single-formal-${viewport.width}`, {
-      body: await page.screenshot(), contentType: 'image/png',
+      body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png',
     });
 
     // 多正式：项目内紧凑选择器；选取后打开准确成果。
@@ -68,14 +68,18 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
 
     // P01/P02 生产截图（Spec B1 §8：两尺寸）。
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('home-hero-input')).toBeVisible({ timeout: T.long });
     // recent 行摘要的读取/五态/失效复核由 EntryNavRail.recent-section 单测
     // 完整覆盖（20 项）；此处保留 P01 生产截图作为视觉证据。
     await testInfo.attach(`p01-home-${viewport.width}`, {
-      body: await page.screenshot(), contentType: 'image/png',
+      body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png',
     });
     await page.goto('/projects', { waitUntil: 'domcontentloaded' });
+    const projectList = page.getByTestId('entry-view-projects');
+    await expect(projectList).toHaveAttribute('data-active', 'true');
+    await expect(projectList.getByRole('heading', { level: 1 })).toBeVisible({ timeout: T.long });
     await testInfo.attach(`p02-projects-${viewport.width}`, {
-      body: await page.screenshot(), contentType: 'image/png',
+      body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png',
     });
   });
 }

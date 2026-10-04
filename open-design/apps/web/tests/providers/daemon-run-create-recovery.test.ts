@@ -34,8 +34,8 @@ it('an accepted receipt cannot regress to create failure when its stream fails',
   await streamViaDaemon(input);
   expect(input.onRunCreateAccepted).toHaveBeenCalledOnce(); expect(input.onRunCreateFailed).not.toHaveBeenCalled();
 });
-it('unstructured gateway failure is unknown while structured refusal restores the draft', async () => {
-  for (const [body, definitive] of [['gateway receipt lost', false], [JSON.stringify({ error: { code: 'WORKSPACE_AUTHORITY_UNAVAILABLE', message: 'refused' } }), true]] as const) {
+it('generic structured or unstructured server failure is unknown; only explicit pre-admission refusal restores the draft', async () => {
+  for (const [body, definitive] of [['gateway receipt lost', false], [JSON.stringify({ error: { code: 'INTERNAL_ERROR', message: 'Run preparation failed.' } }), false], [JSON.stringify({ error: { code: 'WORKSPACE_AUTHORITY_UNAVAILABLE', message: 'refused' } }), true]] as const) {
     const input = options(); vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(body, { status: 503 }));
     await streamViaDaemon(input); expect(input.onRunCreateFailed).toHaveBeenCalledWith({ definitive });
   }

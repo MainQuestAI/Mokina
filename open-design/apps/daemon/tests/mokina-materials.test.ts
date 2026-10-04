@@ -63,3 +63,37 @@ describe('Mokina material extraction', () => {
     expect(material.limitations.join(' ')).toContain('PDF 文本提取失败');
   });
 });
+
+describe('Mokina material PDF round-trip (needs pdftotext)', () => {
+  it('extracts the text layer of a real generated PDF through the resolved binary', async () => {
+    const { execFile } = await import('node:child_process');
+    const { promisify } = await import('node:util');
+    const { resolvePdftotextBinary } = await import('../src/pdftotext.js');
+    const binary = resolvePdftotextBinary();
+    const available = await promisify(execFile)(binary, ['-v'], { timeout: 3000 }).then(
+      () => true,
+      () => false,
+    );
+    if (!available) {
+      // A machine without poppler keeps the documented explicit-unreadable
+      // fallback; this round-trip only runs where the binary resolves.
+      return;
+    }
+    const { PDFDocument, StandardFonts } = await import('pdf-lib');
+    const pdf = await PDFDocument.create();
+    const font = await pdf.embedFont(StandardFonts.Helvetica);
+    const page = pdf.addPage([420, 200]);
+    page.drawText('Mokina PDF extraction probe 2026', { x: 24, y: 140, size: 16, font });
+    page.drawText('Second line for the text layer.', { x: 24, y: 110, size: 12, font });
+    const bytes = Buffer.from(await pdf.save());
+
+    const material = await readMokinaMaterial('brief.pdf', bytes);
+    expect(material.status).toBe('read');
+    expect(material.parserVersion).toBe(MOKINA_MATERIAL_PARSER_VERSION);
+    const text = material.sections.map((section) => section.text).join('\n');
+    expect(text).toContain('Mokina PDF extraction probe 2026');
+    expect(text).toContain('Second line for the text layer.');
+    expect(material.sections[0]?.location).toBe('第 1 页');
+    expect(material.limitations.join(' ')).toContain('仅读取文本层');
+  });
+});

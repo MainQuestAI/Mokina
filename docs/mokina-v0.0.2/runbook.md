@@ -8,7 +8,7 @@
 | 项 | 值 |
 |---|---|
 | 安装包 | `Mokina-mokina-local.dmg`（397 MB）与 `Mokina-mokina-local.zip`（395 MB） |
-| SHA-256 | dmg `0fd576f2825cd7997c7ba018db67b23f475dea62266eb0cd2266b3b11e8b8f0e`；zip `de47f41088d1846560070bbcf0e54da6d66ad31748c9eaf41a6eb8b4c691d55a`（最终构建，含 T01–T18 全部改动与比较弹窗层级修复） |
+| SHA-256 | dmg `0d875a6c6b2e2372176b3e002b289965cec8d292458b5dd7f39089d535cc4407`；zip `72924f826ac019874612b11f4f2e4da8538d444d98f049e168233b6141d2f9a1`（最终构建，含 T01–T18 全部改动：产品身份、快照、面板、比较弹窗层级、恢复包入口、T04 连接检查） |
 | 应用 | `Mokina.app`，bundle id `ai.mainquest.mokina.preview`，版本 `0.0.2-local.1` |
 | 架构 | arm64（仅本机实测架构） |
 | 签名/公证 | **未签名、未公证**（本地预览；首次打开如被 Gatekeeper 拦截，请用右键→打开，不要把关闭系统保护当作安装步骤） |

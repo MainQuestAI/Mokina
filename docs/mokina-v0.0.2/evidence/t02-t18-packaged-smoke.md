@@ -48,3 +48,9 @@ amrProfile: ABSENT
 - `OD_WEB_OUTPUT_MODE=standalone` web 构建 + `tools-pack mac build --to all`（均 exit 0）。
 - `Mokina-mokina-local.dmg` sha256 `0fd576f2825cd7997c7ba018db67b23f475dea62266eb0cd2266b3b11e8b8f0e`（397,224,820 bytes）
 - `Mokina-mokina-local.zip` sha256 `de47f41088d1846560070bbcf0e54da6d66ad31748c9eaf41a6eb8b4c691d55a`（395,430,241 bytes）
+
+## 最终构建复验（第四轮，含 T04 设置页连接检查）
+
+- web standalone 构建 + `tools-pack mac build --to all`（均 exit 0）。
+- `Mokina-mokina-local.dmg` sha256 `0d875a6c6b2e2372176b3e002b289965cec8d292458b5dd7f39089d535cc4407`
+- `Mokina-mokina-local.zip` sha256 `72924f826ac019874612b11f4f2e4da8538d444d98f049e168233b6141d2f9a1`

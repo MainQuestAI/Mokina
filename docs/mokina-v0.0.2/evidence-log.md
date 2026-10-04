@@ -75,7 +75,15 @@
 | 测试 | `FileViewer.mokina-revision-recovery` 13/13；`send-request-state` 21/21 |
 | 未跑 | 真实 daemon 丢响应注入（AC29 的 real-daemon+fake-agent 端到端）→ 需要真实运行链（T19） |
 
+## T13 指定版本导出（Web 侧）
+
+| 证据 | 结果 |
+|---|---|
+| 改动 | FileViewer 版本下载菜单移除"仅 current 可导出 HTML"限制（当前/历史/候选均可导出，只读权限限制保留）；非当前版本导出文件名带状态词（`-vN-historical` / `-vN-candidate`），当前版本保持原名 |
+| 测试 | `file-viewer-version-download` 14/14（含新增历史版本 standalone HTML 导出用例；原"隐藏历史 HTML"用例改写为"提供历史 HTML 导出"） |
+| 未跑 | 桌面原生 PDF 实测（真实 desktop exporter + 中文/分页检查，AC40）→ T18/T19；候选版本导出截图（AC38 的候选分支）待 UI 状态补充 |
+
 ## 回归状态（诚实记录）
 
-- daemon 全量套件：后台运行中（长时间），完成后补记结果。
+- daemon 全量套件：后台运行中（>40 分钟，未结束），完成后补记结果。
 - 已确认各包 typecheck：release / contracts / tools-pack / packaged / desktop / web / daemon 均 0 error（截至本记录）。

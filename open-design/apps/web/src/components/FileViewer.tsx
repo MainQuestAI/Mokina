@@ -3343,7 +3343,10 @@ function fileVersionPreviewSrcDoc(
 
 function fileVersionExportTitle(fileName: string, version: ProjectFileVersion): string {
   const base = fileName.replace(/\.html?$/i, '') || fileName;
-  return `${base}-v${version.version}`;
+  // Non-current exports carry an explicit state word so a downloaded file can
+  // never be mistaken for the current draft (Spec T13 §7.1).
+  const state = version.candidate ? 'candidate' : version.current ? 'current' : 'historical';
+  return `${base}-v${version.version}-${state}`;
 }
 
 type HtmlVersionExportContext = {
@@ -4934,19 +4937,17 @@ function FileVersionManagerModal({
               <span className="share-menu-icon"><RemixIcon name="file-zip-line" size={15} /></span>
               <span>{t('fileViewer.exportZip')}</span>
             </button>
-            {selectedVersion.current ? (
-              <button
-                type="button"
-                className="share-menu-item"
-                role="menuitem"
-                onClick={() => {
-                  exportVersionHtml(selectedVersion);
-                }}
-              >
-                <span className="share-menu-icon"><RemixIcon name="file-code-line" size={15} /></span>
-                <span>{t('fileViewer.exportHtml')}</span>
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className="share-menu-item"
+              role="menuitem"
+              onClick={() => {
+                exportVersionHtml(selectedVersion);
+              }}
+            >
+              <span className="share-menu-icon"><RemixIcon name="file-code-line" size={15} /></span>
+              <span>{t('fileViewer.exportHtml')}</span>
+            </button>
           </div>
         ) : null}
       </aside>

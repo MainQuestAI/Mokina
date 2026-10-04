@@ -950,6 +950,25 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
   const { db, design } = ctx;
   const { createSseResponse, sendApiError } = ctx.http;
   const { BUNDLED_PLUGINS_DIR, PROJECTS_DIR, RUNTIME_DATA_DIR } = ctx.paths;
+
+  // T06: receipt fallback for run reads. The launch path also mirrors the
+  // receipt onto the live run object; reading the protected file here keeps
+  // the receipt visible after a daemon restart and when the run object was
+  // re-materialized. A run without a snapshot receipt costs one ENOENT check.
+  const attachMokinaReceipt = async <T extends { id?: string; projectId?: string | null; mokinaContext?: unknown }>(
+    status: T,
+    run: { id: string; projectId?: string | null },
+  ): Promise<T> => {
+    if (status.mokinaContext || !run.projectId) return status;
+    try {
+      const { readMokinaDeliveryReceipt } = await import('../mokina/context-store.js');
+      const receipt = await readMokinaDeliveryReceipt(PROJECTS_DIR, run.projectId, run.id);
+      if (receipt) (status as { mokinaContext?: unknown }).mokinaContext = receipt;
+    } catch {
+      // Diagnostics-only field; never fail a run read on it.
+    }
+    return status;
+  };
   const taskInputSnapshotsRoot = path.join(RUNTIME_DATA_DIR, 'od-next-task-inputs');
   const { detectAgents, getAgentDef } = ctx.agents;
   const { startChatRun } = ctx.chat;
@@ -3376,7 +3395,7 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     const run = design.runs.get(resultRunId);
     if (!requestedRun || !run) return sendApiError(res, 404, 'NOT_FOUND', 'run not found');
     if (!await authorizeRunProject(req, res, run, { mode: 'read' })) return;
-    const status = statusWithStrategyTask(run);
+    const status = await attachMokinaReceipt(statusWithStrategyTask(run), run);
     const project = run.projectId ? toProjectRecord(getProject(db, run.projectId)) : null;
     let files: ProjectFileEntry[] = [];
     if (project) {
@@ -3464,7 +3483,7 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     const run = design.runs.get(runId);
     if (!run) return sendApiError(res, 404, 'NOT_FOUND', 'run not found');
     if (!await authorizeRunProject(req, res, run, { mode: 'read' })) return;
-    const status = statusWithStrategyTask(run);
+    const status = await attachMokinaReceipt(statusWithStrategyTask(run), run);
     if (!design.runs.isTerminal(run.status)) {
       res.json(status);
       return;

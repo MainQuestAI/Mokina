@@ -111,6 +111,15 @@
 | 过程中修复 | tools-pack dist 需重建（metatool freshness）；`--to dir` 在 mac 不受支持（改 `--to app`）；bundle 后产品 profile 路径解析改为向上查找包根（`toolsPackRootFromModule`，修复 dist 扁平化下的 ENOENT）——均为本分支新代码问题，已修复并有测试 |
 | 运行冒烟 | 见 `evidence/t02-t18-packaged-smoke.md`（start/inspect/stop 全链路，实例隔离验证） |
 
+## 真实端到端运行（T19 前哨）
+
+| 项 | 结果 |
+|---|---|
+| 场景 | 合成茶饮方案：快照冻结 4 项 → 真实 Codex 运行 → succeeded（约 3m18s） → 结构校验 valid → HTML 导出自包含 |
+| 关键证据 | `evidence/e2e-real-run.md`、`evidence/e2e-plan-export.html`；`mokinaContext` 回执在 daemon 重启后仍可读（新增 GET 磁盘兜底） |
+| 修复 | run 状态读取增加回执磁盘兜底（routes/runs.ts），覆盖重启/对象重建场景；daemon 0 error |
+| 未覆盖 | 用户签收与专业评分（T19，必须用户本人） |
+
 ## 回归状态（已完成归因）
 
 - daemon 全量（本分支，JSON 重跑）：11930 passed / 18-19 failed / 15 skipped（899 文件，其中 1 例为全量并行负载下的 flake，单独复跑通过）。

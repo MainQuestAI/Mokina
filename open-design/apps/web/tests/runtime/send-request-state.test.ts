@@ -9,6 +9,7 @@ import {
   clearSendRequestRecord,
   loadSendRequestRecords,
   markSendRequestUnknown,
+  markSendRequestDraft,
   savePendingSendRequest,
   queryRunAccepted, persistPendingSendRequest,
   markSendRequestDispatched, recoverSendRequestRecords, releaseSendRequestOwnersForTests, resetSendRequestRecordsForTests,
@@ -133,4 +134,77 @@ it('native scope lock serializes simultaneous preparations and keeps all eight o
     expect(saved.filter(Boolean)).toHaveLength(8); expect(loadSendRequestRecords('p1', 'c1')).toHaveLength(8);
     expect(new Set(names).size).toBe(1);
   } finally { if (original) Object.defineProperty(navigator, 'locks', original); else Reflect.deleteProperty(navigator, 'locks'); }
+});
+
+// ── R2 修复（P1-1 / P1-2）红测先行：三态保存结果、在途容量、显式重写 ──
+describe('R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态）', () => {
+  it('unknown/draft 不占在途容量：8 条 unknown 后第 9 条带快照仍可保存', () => {
+    for (let i = 0; i < 8; i += 1) {
+      savePendingSendRequest({ ...SCOPE, clientRequestId: `u-${i}`, prompt: 'x' });
+      markSendRequestUnknown(SCOPE.projectId, SCOPE.conversationId, `u-${i}`);
+    }
+    const result = savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-9', prompt: 'y', snapshot: { prompt: 'y', extras: extras() } });
+    expect(result).toBe('saved');
+    expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId)).toHaveLength(9);
+  });
+
+  it('8 条在途（pending）时新发送返回 skipped：不拒发、不新增记录', () => {
+    for (let i = 0; i < 8; i += 1) savePendingSendRequest({ ...SCOPE, clientRequestId: `p-${i}`, prompt: 'x' });
+    const result = savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-9', prompt: 'y' });
+    expect(result).toBe('skipped');
+    expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId)).toHaveLength(8);
+  });
+
+  it('每 scope 软上限：unknown/draft 攒满后新发送 skipped，不拒发也不淘汰旧记录', () => {
+    for (let i = 0; i < 24; i += 1) {
+      savePendingSendRequest({ ...SCOPE, clientRequestId: `s-${i}`, prompt: 'x' });
+      markSendRequestDraft(SCOPE.projectId, SCOPE.conversationId, `s-${i}`);
+    }
+    const result = savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-25', prompt: 'y' });
+    expect(result).toBe('skipped');
+    expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId)).toHaveLength(24);
+  });
+
+  it('正文超 64Ki：返回 skipped，写预览记录但不写快照（发送不被拒绝）', () => {
+    const big = 'b'.repeat(64 * 1024 + 1);
+    expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'big', prompt: big })).toBe('skipped');
+    const record = loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId).find((r) => r.clientRequestId === 'big');
+    expect(record?.promptPreview).toHaveLength(120);
+    expect(record?.snapshot).toBeUndefined();
+  });
+
+  it('extras 被 sanitize 收窄（25 条引用）：返回 skipped 而不是拒绝发送', () => {
+    const many = extras(); many.quotes = Array.from({ length: 25 }, (_, i) => ({ id: String(i), messageId: 'm', text: 'x' }));
+    expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'shed', prompt: 'x', snapshot: { prompt: 'x', extras: many } })).toBe('skipped');
+  });
+
+  it('allowExisting：同 ID 重写回 pending/prepared，不新增条数，快照可用', () => {
+    savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', prompt: 'old' });
+    markSendRequestUnknown(SCOPE.projectId, SCOPE.conversationId, 'req-1');
+    const result = savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', prompt: 'old', snapshot: { prompt: 'old', extras: extras() }, allowExisting: true });
+    expect(result).toBe('saved');
+    const records = loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId);
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({ status: 'pending', phase: 'prepared' });
+    expect(records[0]?.snapshot?.prompt).toBe('old');
+  });
+
+  it('allowExisting 不受在途容量限制：8 条 pending + 自身 unknown 仍可重写', () => {
+    savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-me', prompt: 'me' });
+    markSendRequestUnknown(SCOPE.projectId, SCOPE.conversationId, 'req-me');
+    for (let i = 0; i < 8; i += 1) savePendingSendRequest({ ...SCOPE, clientRequestId: `q-${i}`, prompt: 'x' });
+    const result = savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-me', prompt: 'me', allowExisting: true });
+    expect(result).toBe('saved');
+    expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId)).toHaveLength(9);
+  });
+
+  it('重复 ID 且无 allowExisting：skipped 且原记录不被覆盖', () => {
+    savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', prompt: 'first', snapshot: { prompt: 'first', extras: extras() } });
+    const result = savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', prompt: 'second' });
+    expect(result).toBe('skipped');
+    const records = loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId);
+    expect(records).toHaveLength(1);
+    expect(records[0]?.snapshot?.prompt).toBe('first');
+    expect(records[0]?.status).toBe('pending');
+  });
 });

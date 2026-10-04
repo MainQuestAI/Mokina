@@ -1,0 +1,26 @@
+{
+  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
+  "specVersion": "1.0.0",
+  "name": "mokina-landing-page",
+  "title": "活动页制作",
+  "version": "0.0.1",
+  "description": "把已定策略、品牌规范与选定素材落实为可核对的自包含活动页。",
+  "license": "Apache-2.0",
+  "author": { "name": "Mokina" },
+  "tags": ["scenario", "marketing", "landing-page"],
+  "compat": { "agentSkills": [{ "path": "./SKILL.md" }] },
+  "od": {
+    "kind": "scenario",
+    "taskKind": "new-generation",
+    "scenario": "marketing-landing-page",
+    "mode": "scenario",
+    "context": { "skills": [{ "path": "./SKILL.md" }], "assets": ["./references/landing-page-contract.md"] },
+    "pipeline": { "stages": [
+      { "id": "discovery", "atoms": ["discovery-question-form"] },
+      { "id": "generate", "atoms": ["file-write", "live-artifact"] }
+    ] },
+    "capabilities": ["prompt:inject", "fs:write"],
+    "useCase": { "query": { "en": "Turn the fixed strategy, brand rules and selected assets into a self-contained HTML landing page. Discuss first if requested; generate the page only when asked.", "zh-CN": "把已定策略、品牌规范与选定素材落实为自包含 HTML 活动页。用户要求先讨论时不要生成文件；明确要求制作时再生成页面。" }, "exampleOutputs": [] },
+    "inputs": []
+  }
+}

@@ -132,7 +132,7 @@
 | T07 资料选择 UI | 🟡 主体完成 | 新 `MokinaContextPanel`（原件/可用内容/本次任务三层、服务端冻结、24k 预算展示、SOURCE_CHANGED→重新预览、不可读保留原件并列为未纳入）；选择 helpers 抽到 `runtime/mokina/material-selection`（FileWorkspace 保留再导出）；待发送快照状态 `pending-context-snapshot`（含桌面持久镜像）；ChatComposer `currentRunContextMeta` 自动携带 `mokinaSnapshotId`；run 读取/SSE 新增 `mokinaContext` 回执（statusBody + 启动内存镜像）。测试：panel 4/4、pending store 3/3、FileWorkspace 107/107、composer 37/37、daemon 路由 14/14。未跑：真机端到端（真实模型链路回执目视核对） |
 | T08 场景与产物校验 | 🟡 部分 | 场景包为既有资产（已核对满足最小标准）；structure_invalid 结构校验已接入；双路径 prompt 未改动（既有文本已达标）；专业评分属 T19 |
 | T09 接续 v2 与可靠创建 | 🟡 部分 | v2 载荷（operationId/sourceDigest/versionState/productionIntent）+ 稳定 targetProjectId 复用 + prepared→project-created→snapshot-saved 检查点 journal（镜像到桌面持久存储）已落地并有单测；draft-ready 后的草稿入口与 UI 恢复提示沿用既有 pendingPrompt/navigate 路径 |
-| T10 活动页接续制作 | ⬜ 未完成 | 场景包 mokina-landing-page 未创建 |
+| T10 活动页接续制作 | 🟡 主体完成（未跑真实管线） | 新场景包 `plugins/_official/scenarios/mokina-landing-page`（open-design.json + SKILL.md + references/landing-page-contract.md：自包含、稳定章节、品牌约束、CTA 不得虚构提交/转化）；roster 精确集合测试登记三个 mokina 场景（顺带修复该基线失败）；接续面板新增"目标任务"（讨论/活动页）→ pluginId 与提示语切换。按 P08 约定，真实管线验收前不加可点击生产入口。测试：roster 20/20、bundled 33/33、continuation 17/17。未跑：真实模型生成活动页与导出验收（AC34） |
 | T11 修订发送身份 | 🟡 部分 | Web 修复落地（持久化→派发→CAS 标记）；真实丢响应注入未跑 |
 | T12 候选比较 UI | ⬜ 未完成 | 采用 CAS 服务端既有；比较 UI 未做 |
 | T13 指定版本导出 | 🟡 部分 | Web 菜单与文件名完成；桌面原生 PDF 实测未跑 |

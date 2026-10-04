@@ -3397,6 +3397,24 @@ export function readMokinaContinuationJournal(raw: string | null): MokinaContinu
   }
 }
 
+export type MokinaContinuationIntent = 'discuss' | 'landing-page';
+
+/** Target scenario + prompt lead for a continuation intent (T10). */
+export function resolveMokinaContinuationTarget(intent: MokinaContinuationIntent): {
+  pluginId: string;
+  promptLead: string;
+} {
+  return intent === 'landing-page'
+    ? {
+        pluginId: 'mokina-landing-page',
+        promptLead: '请基于以下固定结论制作一页活动页。先确认页面结构；我明确要求时再生成自包含 HTML。',
+      }
+    : {
+        pluginId: 'mokina-marketing-plan',
+        promptLead: '请基于以下固定结论继续工作。先讨论方向；我明确要求交付时再生成方案。',
+      };
+}
+
 export function buildMokinaContinuationV2(input: {
   projectId: string;
   fileName: string;
@@ -3407,6 +3425,7 @@ export function buildMokinaContinuationV2(input: {
   targetProjectId: string;
   sections: Array<{ id: string; text: string }>;
   background: string;
+  productionIntent: MokinaContinuationIntent;
 }): MokinaContinuationV2 {
   return {
     schemaVersion: 2,
@@ -3421,7 +3440,7 @@ export function buildMokinaContinuationV2(input: {
     },
     sections: input.sections.map((section) => ({ id: section.id, text: section.text })),
     background: input.background,
-    productionIntent: 'custom',
+    productionIntent: input.productionIntent,
   };
 }
 
@@ -3559,6 +3578,7 @@ function FileVersionManagerModal({
   const [versionExportToast, setVersionExportToast] = useState<ExportToastState | null>(null);
   const [selectedContinuationSections, setSelectedContinuationSections] = useState<string[]>([]);
   const [continuationBackground, setContinuationBackground] = useState('');
+  const [continuationIntent, setContinuationIntent] = useState<MokinaContinuationIntent>('discuss');
   const [continuationBusy, setContinuationBusy] = useState(false);
   const [revisionSectionId, setRevisionSectionId] = useState('');
   const [revisionRequest, setRevisionRequest] = useState('');
@@ -4295,6 +4315,7 @@ function FileVersionManagerModal({
       const operationId = existingJournal?.operationId ?? newClientOperationId();
       const targetProjectId = existingJournal?.targetProjectId ?? newClientOperationId();
       storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'prepared', updatedAt: new Date().toISOString() });
+      const target = resolveMokinaContinuationTarget(continuationIntent);
       const fixed = buildMokinaContinuationV2({
         projectId,
         fileName: file.name,
@@ -4305,9 +4326,10 @@ function FileVersionManagerModal({
         targetProjectId,
         sections: chosen.map((section) => ({ id: section.id, text: section.text })),
         background: continuationBackground.trim(),
+        productionIntent: continuationIntent,
       });
       const prompt = [
-        '请基于以下固定结论继续工作。先讨论方向；我明确要求交付时再生成方案。',
+        target.promptLead,
         '只使用下列摘录和我补充的背景；不要读取或推断原项目的其他资料。',
         ...chosen.map((section) => `【${section.id}】\n${section.text}`),
         continuationBackground.trim() ? `【补充背景】\n${continuationBackground.trim()}` : '',
@@ -4318,7 +4340,7 @@ function FileVersionManagerModal({
         skillId: null,
         designSystemId: null,
         metadata: { kind: 'other', intent: 'marketing' },
-        pluginId: 'mokina-marketing-plan',
+        pluginId: target.pluginId,
         pendingPrompt: prompt,
         workspaceContext,
       });
@@ -4895,6 +4917,27 @@ function FileVersionManagerModal({
                 <span>{section.id}：{section.text.slice(0, 90)}</span>
               </label>
             ))}
+            <fieldset className="artifact-version-panel__continuation-intent">
+              <legend>目标任务</legend>
+              <label>
+                <input
+                  type="radio"
+                  name="mokina-continuation-intent"
+                  checked={continuationIntent === 'discuss'}
+                  onChange={() => setContinuationIntent('discuss')}
+                />
+                <span>讨论方向（默认）</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="mokina-continuation-intent"
+                  checked={continuationIntent === 'landing-page'}
+                  onChange={() => setContinuationIntent('landing-page')}
+                />
+                <span>制作活动页（只创建草稿，不自动生成）</span>
+              </label>
+            </fieldset>
             <textarea
               value={continuationBackground}
               onChange={(event) => setContinuationBackground(event.target.value)}

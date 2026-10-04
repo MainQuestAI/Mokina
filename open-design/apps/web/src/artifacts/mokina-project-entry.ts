@@ -47,6 +47,7 @@ export interface MokinaFormalEntry {
   readonly versionNumber: number;
   /** 采用/创建时间缺失时不虚构，返回 null。 */
   readonly adoptedAt: number | null;
+  readonly createdAt: number | null;
   /** 显式采用过的版本携带 adoptionOperationId；正常首稿为 null。 */
   readonly adoptionOperationId: string | null;
 }
@@ -104,7 +105,8 @@ function verdictOf(metadata: MokinaEntryMetadata): EntryVerdict {
         entry: metadata.entry,
         versionId: v.id,
         versionNumber: v.version,
-        adoptedAt: typeof v.createdAt === 'number' ? v.createdAt : null,
+        adoptedAt: null,
+        createdAt: typeof v.createdAt === 'number' ? v.createdAt : null,
         adoptionOperationId: v.adoptionOperationId ?? null,
       },
       isCandidate,
@@ -253,7 +255,7 @@ export function summarizeMokinaProjectEntries(
     return { state: 'empty', formalCount: 0, primary: null, candidateCount, legacy };
   }
   const primary = formals.reduce((best, current) =>
-    (current.adoptedAt ?? 0) > (best.adoptedAt ?? 0) ? current : best,
+    (current.createdAt ?? 0) > (best.createdAt ?? 0) ? current : best,
   );
   return { state: 'artifacts', formalCount: formals.length, primary, candidateCount, legacy };
 }

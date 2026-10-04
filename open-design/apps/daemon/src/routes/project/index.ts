@@ -7287,7 +7287,7 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
       // one would only manufacture history that never existed, inside a
       // project the member is told they cannot modify. The read itself is
       // never refused: browsing history stays open (飞书 recvq56vFjQKfT).
-      if (workingFileContent !== null && versions.length === 0
+      if (req.query.readOnly !== 'true' && workingFileContent !== null && versions.length === 0
         && await requestCanWriteWorkspaceProject(
           req,
           getWorkspaceProject,

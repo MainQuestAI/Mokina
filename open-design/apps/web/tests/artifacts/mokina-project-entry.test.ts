@@ -76,7 +76,7 @@ describe('mokina-project-entry 正式成果判定', () => {
   it('显式采用版本携带 adoptionOperationId，缺失时 adoptedAt/adoptionOperationId 不虚构', () => {
     const adopted = version({ current: true, adoptionOperationId: 'op-1', createdAt: 42 });
     const formals = determineFormalEntries([entry('a.html', [adopted])]);
-    expect(formals[0]).toMatchObject({ adoptionOperationId: 'op-1', adoptedAt: 42 });
+    expect(formals[0]).toMatchObject({ adoptionOperationId: 'op-1', adoptedAt: null, createdAt: 42 });
     const noTime = version({ current: true, createdAt: undefined as unknown as number });
     expect(determineFormalEntries([entry('b.html', [noTime])])[0]?.adoptedAt).toBeNull();
   });
@@ -93,7 +93,7 @@ describe('mokina-project-entry 打开优先级', () => {
       source: 'explicit',
       entry: 'a.html',
       versionId: 'v-1',
-      formal: { entry: 'a.html', versionId: 'v-1', versionNumber: 2, adoptedAt: 5, adoptionOperationId: null },
+      formal: { entry: 'a.html', versionId: 'v-1', versionNumber: 2, adoptedAt: null, createdAt: 5, adoptionOperationId: null },
     });
   });
 

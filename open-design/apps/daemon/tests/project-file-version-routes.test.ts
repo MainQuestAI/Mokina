@@ -63,6 +63,21 @@ describe('project file version routes', () => {
     await fs.writeFile(path.join(projectDir, '.file-versions'), 'blocked');
   }
 
+  it('readOnly listing of legacy HTML leaves version storage unchanged; normal GET remains compatible', async () => {
+    const projectId = await createProject();
+    const directory = path.join(projectsRoot(), projectId);
+    await fs.mkdir(directory, { recursive: true });
+    await fs.writeFile(path.join(directory, 'legacy.html'), '<html>legacy</html>');
+    const before = await getProjectFileVersionRootStats(projectsRoot(), projectId, 'legacy.html');
+    const readonly = await fetch(`${baseUrl}/api/projects/${projectId}/files/legacy.html/versions?readOnly=true`);
+    expect(readonly.status).toBe(200);
+    expect(((await readonly.json()) as { versions: unknown[] }).versions).toEqual([]);
+    expect(await getProjectFileVersionRootStats(projectsRoot(), projectId, 'legacy.html')).toEqual(before);
+    const compatible = await fetch(`${baseUrl}/api/projects/${projectId}/files/legacy.html/versions`);
+    expect(compatible.status).toBe(200);
+    expect(((await compatible.json()) as { versions: unknown[] }).versions).toHaveLength(1);
+  });
+
   it('lists and restores HTML history after the working file is deleted', async () => {
     const projectId = await createProject();
     await writeProjectFile(projectId, 'brand.html', '<html><body>recover me</body></html>');

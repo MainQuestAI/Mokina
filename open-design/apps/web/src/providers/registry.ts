@@ -2816,18 +2816,19 @@ function projectFileVersionsUrl(projectId: string, name: string): string {
  * "Version 1" instead of the owner's real history.
  */
 export async function fetchProjectFileVersions(
-  projectId: string,
-  name: string,
-  workspaceContext?: WorkspaceCollabContext | null,
+  projectId: string, name: string, workspaceContext?: WorkspaceCollabContext | null,
+  options?: import('@open-design/contracts').ProjectFileVersionsQuery & { signal?: AbortSignal; requireAuthoritative?: boolean },
 ): Promise<ProjectFileVersionsResponse | null> {
   try {
-    const resp = await fetch(projectFileVersionsUrl(projectId, name), {
-      cache: 'no-store',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
-    });
-    if (!resp.ok) return null;
-    return (await resp.json()) as ProjectFileVersionsResponse;
-  } catch {
+    const url = projectFileVersionsUrl(projectId, name) + (options?.readOnly ? '?readOnly=true' : '');
+    const resp = await fetch(url, { cache: 'no-store', signal: options?.signal,
+      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}) });
+    if (!resp.ok) throw Object.assign(new Error(`Project versions request failed (${resp.status})`), { status: resp.status });
+    const body = await resp.json() as ProjectFileVersionsResponse;
+    if (!Array.isArray(body.versions)) throw new Error('Project versions response was malformed');
+    return body;
+  } catch (error) {
+    if (options?.requireAuthoritative) throw error;
     return null;
   }
 }

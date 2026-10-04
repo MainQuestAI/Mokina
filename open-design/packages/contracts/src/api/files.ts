@@ -130,6 +130,9 @@ export interface ProjectFileVersion {
   origin?: ArtifactOrigin;
 }
 
+/** readOnly lists saved history without creating a baseline version. */
+export interface ProjectFileVersionsQuery { readOnly?: boolean; }
+
 export interface ProjectFileVersionsResponse {
   file: ProjectFile;
   versions: ProjectFileVersion[];

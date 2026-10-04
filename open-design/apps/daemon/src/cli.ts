@@ -8330,7 +8330,7 @@ async function runFiles(args) {
   od files delete <projectId> <name>           Delete a project file.
   od files diff   <projectId> <relpathA> [<relpathB> | --against -]
                                                Print a unified diff.
-  od files versions <projectId> <relpath>      List saved HTML versions.
+  od files versions <projectId> <relpath> [--read-only]  List saved HTML versions; read-only never creates a baseline.
   od files version-read <projectId> <relpath> <versionId>
                                                Stream one saved HTML version.
   od files version-create <projectId> <relpath>
@@ -8363,7 +8363,7 @@ Common options:
   const rest = args.slice(1);
   const flags = parseFlags(rest, {
     string: PROJECT_RESOURCE_STRING_FLAGS,
-    boolean: PROJECT_BOOLEAN_FLAGS,
+    boolean: new Set([...PROJECT_BOOLEAN_FLAGS, 'read-only']),
   });
   const base = (await projectDaemonUrl(flags)).replace(/\/$/, '');
   const workspaceHeaders =
@@ -8498,11 +8498,11 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, rel] = positional;
       if (!id || !rel) {
-        console.error('Usage: od files versions <projectId> <relpath>');
+        console.error('Usage: od files versions <projectId> <relpath> [--read-only]');
         process.exit(2);
       }
       const resp = await fetch(
-        `${base}/api/projects/${encodeURIComponent(id)}/files/${encodeProjectRelpath(rel)}/versions`,
+        `${base}/api/projects/${encodeURIComponent(id)}/files/${encodeProjectRelpath(rel)}/versions${rest.includes('--read-only') ? '?readOnly=true' : ''}`,
         { headers: workspaceHeaders },
       );
       if (!resp.ok) return structuredHttpFailure(resp, 'project-not-found');

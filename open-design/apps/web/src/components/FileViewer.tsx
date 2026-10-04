@@ -103,6 +103,7 @@ import { useT, useI18n } from '../i18n';
 import { randomUUID as newClientOperationId } from '../utils/uuid';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
 import { notifyMokinaEntriesChanged } from '../runtime/mokina-entry-events';
+import { enqueueMokinaMetadataRead } from '../hooks/useMokinaProjectSummaries';
 import {
   notifyTeamProjectsChanged,
   TEAM_PROJECTS_CHANGED_EVENT,
@@ -1747,6 +1748,7 @@ interface Props {
   // Bumped nonce asking this viewer to open its Download/Export menu (chat-side
   // "Download" next-step action).
   downloadRequest?: { nonce: number; anchorId?: string } | null;
+  versionOpenRequest?: { id: string; nonce: number } | null;
   // Bumped nonce asking a deck preview to flip to `slideIndex` (a queued chat
   // send for this file just started processing).
   slideNavRequest?: { slideIndex: number; nonce: number } | null;
@@ -1836,6 +1838,7 @@ export const FileViewer = memo(function FileViewer({
   onCommentModeChange,
   shareRequest,
   downloadRequest,
+  versionOpenRequest,
   slideNavRequest,
   viewerOnly = false,
   projectName,
@@ -1925,6 +1928,7 @@ export const FileViewer = memo(function FileViewer({
         onCommentModeChange={onCommentModeChange}
         shareRequest={shareRequest}
         downloadRequest={downloadRequest}
+        versionOpenRequest={versionOpenRequest}
         slideNavRequest={slideNavRequest}
         viewerOnly={viewerOnly}
         projectName={projectName}
@@ -3428,6 +3432,7 @@ function FileVersionManagerModal({
   file,
   currentSource,
   entryFrom,
+  initialVersionId,
   actionRequest,
   onActionRequest,
   onExportPdf,
@@ -3445,6 +3450,7 @@ function FileVersionManagerModal({
   file: ProjectFile;
   currentSource: string | null;
   entryFrom: 'toolbar' | 'more_menu';
+  initialVersionId?: string;
   actionRequest?: MokinaActionRequest | null;
   onActionRequest: (request: MokinaActionRequest) => void;
   onExportPdf?: (context: HtmlVersionExportContext) => void;
@@ -3757,6 +3763,9 @@ function FileVersionManagerModal({
     if (currentVersion && currentSource != null && !contentCacheRef.current.has(currentVersion.id)) {
       contentCacheRef.current.set(currentVersion.id, currentSource);
     }
+    if (preferredId && !nextVersions.some(version => version.id === preferredId)) {
+      setSelectedId(null); setError(tRef.current('fileViewer.versions.loadFailed')); setLoading(false); return;
+    }
     const nextSelected =
       (preferredId ? nextVersions.find((version) => version.id === preferredId) : null) ??
       currentVersion ??
@@ -3767,8 +3776,8 @@ function FileVersionManagerModal({
   }, [currentSource, file.name, projectId, workspaceContext]);
 
   useEffect(() => {
-    void loadVersions();
-  }, [loadVersions]);
+    void loadVersions(initialVersionId);
+  }, [loadVersions, initialVersionId]);
 
   useEffect(() => {
     setConfirmRestore(false);
@@ -7967,6 +7976,7 @@ function HtmlViewer({
   onCommentModeChange,
   shareRequest,
   downloadRequest,
+  versionOpenRequest,
   slideNavRequest,
   viewerOnly = false,
   projectName,
@@ -8002,6 +8012,7 @@ function HtmlViewer({
   onCommentModeChange?: (active: boolean) => void;
   shareRequest?: { nonce: number; anchorId?: string } | null;
   downloadRequest?: { nonce: number; anchorId?: string } | null;
+  versionOpenRequest?: { id: string; nonce: number } | null;
   slideNavRequest?: { slideIndex: number; nonce: number } | null;
   // Read-only viewer of a team-shared project: comment-only, no edit/export.
   viewerOnly?: boolean;
@@ -8518,6 +8529,24 @@ function HtmlViewer({
   const toolbarMoreTriggerRef = useRef<HTMLButtonElement | null>(null);
   useDismissOnOutsideInteraction(toolbarMoreOpen, toolbarMoreRef, () => setToolbarMoreOpen(false));
   const [versionModalOpen, setVersionModalOpen] = useState<false | 'toolbar' | 'more_menu'>(false);
+  const [pinnedOpenVersionId, setPinnedOpenVersionId] = useState<string | undefined>();
+  useEffect(() => {
+    if (!versionOpenRequest || !workspaceActive) return;
+    const controller = new AbortController();
+    const pinTarget = () => { setPinnedOpenVersionId(versionOpenRequest.id); setVersionModalOpen('toolbar'); };
+    void enqueueMokinaMetadataRead(readSignal => fetchProjectFileVersions(projectId, file.name, workspaceContext,
+      { readOnly: true, requireAuthoritative: true, signal: readSignal }), controller.signal, true).then(result => {
+      if (controller.signal.aborted) return;
+      // A still-current target uses the normal viewer. If it changed while opening,
+      // the existing version panel pins the exact version rather than substituting.
+      const current = result?.versions.find(version => version.current && !version.candidate);
+      if (current?.id !== versionOpenRequest.id) pinTarget();
+    }).catch(() => {
+      // The native panel owns retry/error UI and must still retain the requested id.
+      if (!controller.signal.aborted) pinTarget();
+    });
+    return () => { controller.abort(); };
+  }, [versionOpenRequest?.id, versionOpenRequest?.nonce, workspaceActive, projectId, file.name, workspaceContext]);
   const [mokinaActionRequest, setMokinaActionRequest] = useState<MokinaActionRequest | null>(null);
   useEffect(() => { if (!versionModalOpen) setMokinaActionRequest(null); }, [versionModalOpen]);
   const [exportReadyNudge, setExportReadyNudge] = useState(false);
@@ -18628,6 +18657,7 @@ function HtmlViewer({
           file={file}
           currentSource={source}
           entryFrom={versionModalOpen}
+          initialVersionId={pinnedOpenVersionId}
           actionRequest={mokinaActionRequest}
           onActionRequest={setMokinaActionRequest}
           onExportPdf={triggerPdfExport}
@@ -18636,7 +18666,7 @@ function HtmlViewer({
           onExportHtml={triggerHtmlExport}
           exportToast={exportToast}
           onExportToastDismiss={() => setExportToast(null)}
-          onClose={() => setVersionModalOpen(false)}
+          onClose={() => { setVersionModalOpen(false); setPinnedOpenVersionId(undefined); }}
           onRestored={handleVersionRestored}
           viewerOnly={viewerOnly}
         />

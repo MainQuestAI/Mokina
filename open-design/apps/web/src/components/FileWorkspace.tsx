@@ -249,7 +249,7 @@ interface Props {
   // tabs in one commit — a finished turn's artifacts (OPEND-2588). `name` is
   // still the one that ends up active, and is opened whether or not the batch
   // names it.
-  openRequest?: { name: string; nonce: number; openBatch?: readonly string[] } | null;
+  openRequest?: { name: string; nonce: number; versionId?: string; openBatch?: readonly string[] } | null;
   browserOpenRequest?: BrowserOpenRequest | null;
   // Browser tab whose <webview> must stay mounted even while another workspace
   // tab is active. Set for programmatic brand extraction: the chat "Continue
@@ -3630,6 +3630,7 @@ export function FileWorkspace({
       projectId={projectId}
       projectKind={projectKind}
       file={file}
+      versionOpenRequest={openRequest?.name === file.name && openRequest.versionId ? { id: openRequest.versionId, nonce: openRequest.nonce } : null}
       filesRefreshKey={filesRefreshKey}
       isDeck={isDeck}
       streaming={streaming}

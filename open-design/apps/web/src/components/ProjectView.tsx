@@ -369,7 +369,7 @@ import {
   resolveMokinaProjectEntry,
   type MokinaFormalEntry,
 } from '../artifacts/mokina-project-entry';
-import { useMokinaProjectSummary } from '../hooks/useMokinaProjectSummaries';
+import { useMokinaProjectSummary, evictMokinaEntrySummary } from '../hooks/useMokinaProjectSummaries';
 import {
   clearSendRequestRecord,
   loadSendRequestRecords,
@@ -3305,7 +3305,7 @@ export function ProjectView({
   // request. It has to be one request: this is a single state slot, so N
   // synchronous `requestOpenFile` calls would collapse into the last one.
   const [openRequest, setOpenRequest] = useState<
-    { name: string; nonce: number; openBatch?: readonly string[] } | null
+    { name: string; nonce: number; versionId?: string; openBatch?: readonly string[] } | null
   >(null);
   const [browserOpenRequest, setBrowserOpenRequest] = useState<BrowserOpenRequest | null>(null);
   // Like `openRequest`, but additionally asks the preview workspace to open the
@@ -4735,6 +4735,7 @@ export function ProjectView({
   const mokinaFallbackNeeded = !routeFileName && !openTabsState.active && openTabsState.tabs.length === 0;
   const mokinaEntryRecord = useMokinaProjectSummary(
     MOKINA_LOCAL_EDITION && mokinaFallbackNeeded ? project.id : null,
+    { complete: true, workspaceContext: projectRunWorkspaceContext },
   );
   const [mokinaEntryChooser, setMokinaEntryChooser] = useState<{ formals: MokinaFormalEntry[] } | null>(null);
   useEffect(() => {
@@ -4763,7 +4764,7 @@ export function ProjectView({
       return;
     }
     const record = mokinaEntryRecord;
-    if (!record || record.status === 'loading' || !record.summary) return;
+    if (!record || record.status === 'loading') return;
     const intent = resolveMokinaProjectEntry({
       projectId: project.id,
       entries: record.entries,
@@ -4773,16 +4774,14 @@ export function ProjectView({
       legacyEntryHint: project.metadata?.entryFile ?? null,
     });
     if (intent.kind === 'unresolvable') {
-      // 读取失败/无权限：不猜零也不误开，停在项目真实状态。
-      if (intent.reason !== 'entries-loading') {
-        hasAppliedInitialPrimaryOpenRef.current = true;
-      }
+      // A retry must be able to revisit this decision after a failed read.
       return;
     }
     hasAppliedInitialPrimaryOpenRef.current = true;
     if (intent.kind === 'open') {
       lastHostRequestedOpenRef.current = intent.entry;
       persistTabsState({ tabs: [intent.entry], active: intent.entry });
+      if (intent.versionId) setOpenRequest({ name: intent.entry, versionId: intent.versionId, nonce: Date.now() });
       return;
     }
     if (intent.kind === 'chooser') {
@@ -5428,8 +5427,12 @@ export function ProjectView({
   // (the parsed segment) so back/forward navigation triggers the same path.
   useEffect(() => {
     if (!routeFileName) return;
-    requestOpenFile(routeFileName);
-  }, [routeFileName, requestOpenFile]);
+    lastHostRequestedOpenRef.current = routeFileName;
+    // URL synchronization acknowledges the selected file; it must not erase
+    // the version captured by a chooser/default-open request for that same file.
+    setOpenRequest(previous => previous?.name === routeFileName && previous.versionId
+      ? previous : { name: routeFileName, nonce: Date.now() });
+  }, [routeFileName]);
 
   // Sync the URL when the active tab changes, so reload + share-link both
   // land back on the same view. Replace (not push) on tab activation so the
@@ -14250,6 +14253,13 @@ export function ProjectView({
             onBlur={handleChatResizeBlur}
           />
         ) : null}
+        {MOKINA_LOCAL_EDITION && mokinaFallbackNeeded && (mokinaEntryRecord?.status === 'failed' || mokinaEntryRecord?.status === 'unauthorized') ? (
+          <div role="status" data-testid="mokina-entry-read-error">
+            {t(mokinaEntryRecord.status === 'unauthorized' ? 'mokina.entrySummary.unauthorized'
+              : mokinaEntryRecord.completeness === 'partial' || mokinaEntryRecord.completeness === 'truncated' ? 'mokina.entrySummary.incomplete' : 'mokina.entrySummary.failed')}
+            <button type="button" className="mokina-pending-send__verify" onClick={() => evictMokinaEntrySummary(project.id)}>{t('mokina.pendingSend.verify')}</button>
+          </div>
+        ) : null}
         <FileWorkspace
           projectId={project.id}
           projectName={currentProject.name}
@@ -14420,6 +14430,7 @@ export function ProjectView({
             setMokinaEntryChooser(null);
             lastHostRequestedOpenRef.current = formal.entry;
             persistTabsState({ tabs: [formal.entry], active: formal.entry });
+            setOpenRequest({ name: formal.entry, versionId: formal.versionId, nonce: Date.now() });
           }}
           onClose={() => setMokinaEntryChooser(null)}
         />

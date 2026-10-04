@@ -259,6 +259,7 @@ import type {
   AppliedPluginSnapshot,
   BrandStatus,
   ChatAnalyticsEntryFrom,
+  ChatRunStatusResponse,
   ChatSessionMode,
   InstalledPluginRecord,
   RunContextSelection,
@@ -465,6 +466,10 @@ type ProjectChatSendMeta = ChatSendMeta & {
   queueOnly?: boolean;
   retryOfAssistantId?: string;
   sessionMode?: ChatSessionMode;
+  /** 显式重发（Spec FR-08 修订）：来自「结果待确认」上的人工重发按钮。只对
+   * 这一次发送放行原请求身份守卫，并让快照保存以 allowExisting 重写同 ID
+   * 记录；普通重试与换模型不得携带。 */
+  explicitResend?: boolean;
   /** Overrides the run_created / run_finished `entry_from` analytics prop for
    *  this send (e.g. 'resume_continue' from the resumable-failure Continue
    *  action). Behavior never depends on it; it only shapes PostHog props. */
@@ -8462,6 +8467,26 @@ export function ProjectView({
   const [pendingSendRecords, setPendingSendRecords] = useState<SendRequestRecord[]>([]);
   const [pendingSendVerifyNonce, setPendingSendVerifyNonce] = useState(0);
   const [sendRecoveryRequest, setSendRecoveryRequest] = useState<{ id: string; snapshot: SendRequestSnapshot } | null>(null);
+  /** 查明受理后的统一恢复（Spec FR-08）：按快照 user/assistant 身份回接原 run、
+   * 清除本机待确认记录。挂载对账与显式重发前的核对共用这一段。 */
+  const reconcileAcceptedSendRun = useCallback((record: SendRequestRecord, run: ChatRunStatusResponse) => {
+    const snapshot = record.snapshot;
+    setMessages(current => {
+      if (messagesConversationIdRef.current !== record.conversationId) return current;
+      const next = current.map(message => message.clientRequestId === record.clientRequestId || message.id === snapshot?.userMessageId
+        ? { ...message, sendFailed: undefined, error: undefined, errorCode: undefined, resumable: undefined } : message);
+      const assistantId = run.assistantMessageId ?? snapshot?.assistantMessageId;
+      if (!assistantId) return next;
+      const recovered: ChatMessage = { id: assistantId, role: 'assistant', content: '',
+        createdAt: run.createdAt, runId: run.id, runStatus: run.status, clientRequestId: record.clientRequestId };
+      const index = next.findIndex(message => message.id === assistantId);
+      if (index >= 0) next[index] = { ...next[index]!, ...recovered, content: next[index]!.content };
+      else next.push(recovered);
+      return next;
+    });
+    clearSendRequestRecord(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey);
+    scheduleConversationMessageRefresh(record.conversationId);
+  }, [scheduleConversationMessageRefresh]);
   useEffect(() => {
     if (!MOKINA_LOCAL_EDITION || !activeConversationId) return undefined;
     const read = () => loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
@@ -8479,27 +8504,12 @@ export function ProjectView({
         if (controller.signal.aborted) return;
         if (!run) continue;
         // Reconcile original message identity; then existing reattach owns the run.
-        const snapshot = record.snapshot;
-        setMessages(current => {
-          if (messagesConversationIdRef.current !== activeConversationId) return current;
-          const next = current.map(message => message.clientRequestId === record.clientRequestId || message.id === snapshot?.userMessageId
-            ? { ...message, sendFailed: undefined, error: undefined, errorCode: undefined, resumable: undefined } : message);
-          const assistantId = run.assistantMessageId ?? snapshot?.assistantMessageId;
-          if (!assistantId) return next;
-          const recovered: ChatMessage = { id: assistantId, role: 'assistant', content: '',
-            createdAt: run.createdAt, runId: run.id, runStatus: run.status, clientRequestId: record.clientRequestId };
-          const index = next.findIndex(message => message.id === assistantId);
-          if (index >= 0) next[index] = { ...next[index]!, ...recovered, content: next[index]!.content };
-          else next.push(recovered);
-          return next;
-        });
-        clearSendRequestRecord(project.id, activeConversationId, record.clientRequestId, projectRunAuthorityKey);
-        scheduleConversationMessageRefresh(activeConversationId);
+        reconcileAcceptedSendRun(record, run);
         update();
       }
     })();
     return () => { controller.abort(); window.removeEventListener(SEND_REQUESTS_CHANGED, update); window.removeEventListener('storage', update); };
-  }, [activeConversationId, pendingSendVerifyNonce, project.id, projectRunAuthorityKey, projectRunWorkspaceContext, scheduleConversationMessageRefresh]);
+  }, [activeConversationId, pendingSendVerifyNonce, project.id, projectRunAuthorityKey, projectRunWorkspaceContext, reconcileAcceptedSendRun, scheduleConversationMessageRefresh]);
 
 
   const handleSend = useCallback(
@@ -8527,7 +8537,7 @@ export function ProjectView({
         ? resolveRetryTarget(messages, meta.retryOfAssistantId)
         : null;
       if (meta?.retryOfAssistantId && !retryTarget) return retainComposerDraft();
-      if (MOKINA_LOCAL_EDITION) {
+      if (MOKINA_LOCAL_EDITION && !meta?.explicitResend) {
         const originalId = retryTarget?.failedAssistant.clientRequestId ?? retryTarget?.userMsg.clientRequestId
           ?? messages.find(message => message.id === meta?.userMessageId)?.clientRequestId
           ?? meta?.clientRequestId;
@@ -8702,12 +8712,18 @@ export function ProjectView({
       const runConversationId = activeConversationId;
       // This is the accepted retry boundary: all synchronous refusal paths are
       // above it. A later preflight/POST failure supplies its own current surface.
-      let mokinaSendRecord = false;
+      let mokinaSendRecord: 'saved' | 'skipped' | 'failed' | false = false;
       let resolveAdmission: (started: boolean) => void = () => {};
       const admission = new Promise<boolean>(resolve => { resolveAdmission = resolve; });
       const settleMokinaSend = MOKINA_LOCAL_EDITION ? {
         runCreateTimeoutMs: 30_000,
         onBeforeRunCreate: () => {
+          if (mokinaSendRecord === 'skipped') {
+            // 无可恢复快照的发送照常进行（P1-2）：有预览凭据就推进阶段，
+            // 没有也不拦——这里只拦截真正的存储失败。
+            markSendRequestDispatched(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+            return true;
+          }
           const dispatched = markSendRequestDispatched(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
           if (!dispatched) {
             retractPaintedTurn();
@@ -9143,16 +9159,21 @@ export function ProjectView({
         mokinaSendRecord = await persistPendingSendRequest({ projectId: project.id,
           conversationId: runConversationId, clientRequestId, authorityKey: projectRunAuthorityKey,
           prompt: userMsg.content,
+          allowExisting: Boolean(meta?.explicitResend),
           snapshot: { prompt: userMsg.content, extras, requiresContextReselection: Boolean(meta?.appliedPluginSnapshot || runContext?.pluginIds?.length), userMessageId: userMsg.id, assistantMessageId: assistantId } });
-        if (mokinaSendRecord && streamingConversationIdRef.current !== runConversationId) {
+        if (mokinaSendRecord && mokinaSendRecord !== 'failed' && streamingConversationIdRef.current !== runConversationId) {
           markSendRequestDraft(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
           return retainComposerDraft();
         }
-        if (!mokinaSendRecord) {
+        if (!mokinaSendRecord || mokinaSendRecord === 'failed') {
           retractPaintedTurn();
           sendAdmissionRef.current.set(clientRequestId, 'restore-draft');
           setError(t('mokina.pendingSend.saveFailed'));
           return false;
+        }
+        if (mokinaSendRecord === 'skipped') {
+          // 超出可保存上限（P1-2）：照常发送，只是没有可恢复快照。
+          setError(t('mokina.pendingSend.notRecoverable'));
         }
       }
       if (resumesBlockedTask) blockedRunTaskRef.current = null;
@@ -11219,6 +11240,39 @@ export function ProjectView({
    * 记 message 而不是只记一个布尔:用户可能在选模型之前又翻了别的会话,
    * 到时候重跑的必须仍是当初按下那颗按钮的那一轮。
    */
+  /*
+   * 「结果待确认」的两条人工出口（Spec FR-08 修订）。重新发送：先只读核对
+   * （查到受理直接恢复原 run，不发 POST），查不到才以**原 clientRequestId +
+   * 已存完整快照**走正常发送管线——服务端按既有幂等裁决 reused/409，不会产生
+   * 第二个任务。放弃：只清除本机待确认记录并解除重试拦截。
+   */
+  const discardPendingSendRecord = useCallback((record: SendRequestRecord) => {
+    clearSendRequestRecord(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey);
+  }, []);
+  const resendPendingSendRecord = useCallback(async (record: SendRequestRecord) => {
+    const snapshot = record.snapshot;
+    if (!snapshot || snapshot.requiresContextReselection) return;
+    const run = await queryRunAccepted(record.projectId, record.conversationId, record.clientRequestId,
+      10_000, projectRunWorkspaceContext);
+    if (run) {
+      reconcileAcceptedSendRun(record, run);
+      return;
+    }
+    // 重发前把本地那轮「从未属于真实 run」的不确定占位撤下，再让发送管线把
+    // 同一请求身份重画一次；baseMessages 不含旧行，避免画出重复的用户消息。
+    const staleIds = new Set([snapshot.userMessageId, snapshot.assistantMessageId].filter(Boolean));
+    const baseMessages = messages.filter(message => !staleIds.has(message.id));
+    await handleSend(snapshot.prompt, snapshot.extras.attachments, snapshot.extras.commentAttachments, {
+      clientRequestId: record.clientRequestId,
+      userMessageId: snapshot.userMessageId,
+      assistantMessageId: snapshot.assistantMessageId,
+      quotes: snapshot.extras.quotes,
+      skillIds: snapshot.extras.context.skillIds,
+      context: snapshot.extras.context,
+      explicitResend: true,
+    }, baseMessages);
+  }, [handleSend, messages, projectRunWorkspaceContext, reconcileAcceptedSendRun]);
+
   const [modelPickerOpenSignal, setModelPickerOpenSignal] = useState(0);
   const rerunAfterModelChangeRef = useRef<ChatMessage | null>(null);
   const handleSwitchModel = useCallback((assistantMessage: ChatMessage) => {
@@ -13777,17 +13831,30 @@ export function ProjectView({
     && record.conversationId === activeConversationId && (record.authorityKey ?? 'none') === projectRunAuthorityKey);
   const pendingSendNotice: ReactNode = visibleSendRecords.length > 0 ? (
     <div className="mokina-pending-send" role="status" aria-live="polite" data-testid="mokina-pending-send">
-      {visibleSendRecords.map(record => (
-        <div key={record.clientRequestId}>
-          <span className="mokina-pending-send__text">{t(record.status === 'draft' ? 'mokina.pendingSend.restore' : 'mokina.pendingSend.title')}：{record.promptPreview}</span>
-          {record.snapshot?.requiresContextReselection ? <span>{t('mokina.pendingSend.reselect')}</span> : null}
-          {record.status === 'draft' && record.snapshot ? (
-            <button type="button" className="mokina-pending-send__verify" onClick={() => setSendRecoveryRequest({ id: record.clientRequestId, snapshot: record.snapshot! })}>{t('mokina.pendingSend.restore')}</button>
-          ) : (
-            <button type="button" className="mokina-pending-send__verify" onClick={() => setPendingSendVerifyNonce(nonce => nonce + 1)}>{t('mokina.pendingSend.verify')}</button>
-          )}
-        </div>
-      ))}
+      {visibleSendRecords.map(record => {
+        // FR-08 修订：有完整快照且无需重选上下文的 unknown 才能显式重发；
+        // 其余 unknown 保留只读核对。放弃对非 pending 记录一律可用。
+        const canResend = record.status === 'unknown'
+          && !!record.snapshot && !record.snapshot.requiresContextReselection;
+        return (
+          <div key={record.clientRequestId}>
+            <span className="mokina-pending-send__text">{t(record.status === 'draft' ? 'mokina.pendingSend.restore' : 'mokina.pendingSend.title')}：{record.promptPreview}</span>
+            {record.snapshot?.requiresContextReselection ? <span>{t('mokina.pendingSend.reselect')}</span> : null}
+            {record.status === 'unknown' ? <span className="mokina-pending-send__text">{t('mokina.pendingSend.discardNotice')}</span> : null}
+            {record.status === 'draft' && record.snapshot ? (
+              <button type="button" className="mokina-pending-send__verify" data-testid="mokina-pending-send-restore" onClick={() => setSendRecoveryRequest({ id: record.clientRequestId, snapshot: record.snapshot! })}>{t('mokina.pendingSend.restore')}</button>
+            ) : null}
+            {canResend ? (
+              <button type="button" className="mokina-pending-send__verify" data-testid="mokina-pending-send-resend" onClick={() => void resendPendingSendRecord(record)}>{t('mokina.pendingSend.resend')}</button>
+            ) : record.status === 'unknown' ? (
+              <button type="button" className="mokina-pending-send__verify" data-testid="mokina-pending-send-verify" onClick={() => setPendingSendVerifyNonce(nonce => nonce + 1)}>{t('mokina.pendingSend.verify')}</button>
+            ) : null}
+            {record.status !== 'pending' ? (
+              <button type="button" className="mokina-pending-send__verify" data-testid="mokina-pending-send-discard" onClick={() => discardPendingSendRecord(record)}>{t('mokina.pendingSend.discard')}</button>
+            ) : null}
+          </div>
+        );
+      })}
     </div>
   ) : null;
 

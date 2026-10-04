@@ -24,7 +24,7 @@ beforeEach(() => {
 
 describe('send-request-state 三态持久化', () => {
   it('pending 落盘可读回；clear 移除指定请求', () => {
-    expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', prompt: '你好' })).toBe(true);
+    expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', prompt: '你好', snapshot: { prompt: '你好', extras: { attachments: [], commentAttachments: [], quotes: [], context: { skillIds: [], mcpServerIds: [], connectorIds: [], workspaceItems: [] } } } })).toBe('saved');
     expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId)).toMatchObject([
       {
         clientRequestId: 'req-1',
@@ -69,12 +69,12 @@ describe('send-request-state 三态持久化', () => {
     expect(loadSendRequestRecords('p2', 'c1').map((r) => r.clientRequestId)).toEqual(['b']);
   });
 
-  it('写入失败（配额满）时 savePendingSendRequest 返回 false——调用方须停在草稿不 POST', () => {
+  it('写入失败（配额满）时 savePendingSendRequest 返回 failed——调用方须停在草稿不 POST', () => {
     const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new DOMException('quota', 'QuotaExceededError');
     });
     try {
-      expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', prompt: 'x' })).toBe(false);
+      expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', prompt: 'x' })).toBe('failed');
     } finally {
       spy.mockRestore();
     }
@@ -97,11 +97,14 @@ const extras = () => ({ attachments: [{ name: 'a.csv', kind: 'file' as const, pa
   quotes: [{ id: 'q', messageId: 'm', text: 'quoted' }], context: { skillIds: ['skill'], mcpServerIds: ['mcp'], connectorIds: [], workspaceItems: [] } });
 it('saves complete bounded prompt and extras regardless of object property order', () => {
   const prompt = 'a'.repeat(64 * 1024);
-  expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'full', prompt, snapshot: { prompt, extras: extras() } })).toBe(true);
+  expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'full', prompt, snapshot: { prompt, extras: extras() } })).toBe('saved');
   expect(loadSendRequestRecords('p1', 'c1')[0]?.snapshot).toEqual({ prompt, extras: extras() });
-  expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'oversize', prompt: prompt + 'x' })).toBe(false);
+  // 超上限不再拒发：只降级为「无可恢复快照」的预览记录。
+  expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'oversize', prompt: prompt + 'x' })).toBe('skipped');
+  const oversize = loadSendRequestRecords('p1', 'c1').find((r) => r.clientRequestId === 'oversize');
+  expect(oversize?.snapshot).toBeUndefined();
   const tooMany = extras(); tooMany.quotes = Array.from({ length: 21 }, (_, i) => ({ id: String(i), messageId: 'm', text: 'x' }));
-  expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'shed', prompt: 'x', snapshot: { prompt: 'x', extras: tooMany } })).toBe(false);
+  expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'shed', prompt: 'x', snapshot: { prompt: 'x', extras: tooMany } })).toBe('skipped');
 });
 it('live prepared and dispatched sends remain pending; orphan phases recover conservatively without age guesses', () => {
   savePendingSendRequest({ ...SCOPE, clientRequestId: 'prepared', prompt: 'x' });
@@ -130,8 +133,9 @@ it('native scope lock serializes simultaneous preparations and keeps all eight o
     names.push(name); const result = tail.then(callback); tail = result.then(() => {}); return result;
   } } });
   try {
-    const saved = await Promise.all(Array.from({ length: 10 }, (_, index) => persistPendingSendRequest({ ...SCOPE, clientRequestId: `tab-${index}`, prompt: 'x' })));
-    expect(saved.filter(Boolean)).toHaveLength(8); expect(loadSendRequestRecords('p1', 'c1')).toHaveLength(8);
+    const saved = await Promise.all(Array.from({ length: 10 }, (_, index) => persistPendingSendRequest({ ...SCOPE, clientRequestId: `tab-${index}`, prompt: 'x', snapshot: { prompt: 'x', extras: extras() } })));
+    expect(saved.filter((r) => r === 'saved')).toHaveLength(8); expect(loadSendRequestRecords('p1', 'c1')).toHaveLength(8);
+    expect(saved.filter((r) => r === 'skipped')).toHaveLength(2);
     expect(new Set(names).size).toBe(1);
   } finally { if (original) Object.defineProperty(navigator, 'locks', original); else Reflect.deleteProperty(navigator, 'locks'); }
 });
@@ -190,10 +194,10 @@ describe('R2 保存三态与在途容量（红测：期望 saved/skipped/failed 
   });
 
   it('allowExisting 不受在途容量限制：8 条 pending + 自身 unknown 仍可重写', () => {
-    savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-me', prompt: 'me' });
+    savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-me', prompt: 'me', snapshot: { prompt: 'me', extras: extras() } });
     markSendRequestUnknown(SCOPE.projectId, SCOPE.conversationId, 'req-me');
     for (let i = 0; i < 8; i += 1) savePendingSendRequest({ ...SCOPE, clientRequestId: `q-${i}`, prompt: 'x' });
-    const result = savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-me', prompt: 'me', allowExisting: true });
+    const result = savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-me', prompt: 'me', snapshot: { prompt: 'me', extras: extras() }, allowExisting: true });
     expect(result).toBe('saved');
     expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationId)).toHaveLength(9);
   });

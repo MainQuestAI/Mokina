@@ -25,7 +25,15 @@ export interface SendRequestRecord {
 }
 export const SEND_REQUESTS_CHANGED = 'mokina:send-requests-changed';
 const MAX_RECORDS = 8;
+/** Per-scope soft ceiling across ALL statuses (pending + unknown + draft).
+ * Reached → the send proceeds without a recoverable snapshot instead of being
+ * refused; old records are never evicted. */
+const SOFT_MAX_RECORDS = 24;
 const MAX_PROMPT_CHARS = 64 * 1024;
+/** Outcome of a save attempt. `failed` is ONLY a storage write error — that is
+ * the single branch where the caller must refuse to POST (Spec §10). Everything
+ * else sends; `skipped` just means no recoverable snapshot was kept. */
+export type SavePendingSendResult = 'saved' | 'skipped' | 'failed';
 const owners = new Set<string>();
 const canonical = (value: unknown): string => JSON.stringify(value, (_key, item) => item && typeof item === 'object' && !Array.isArray(item)
   ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item);
@@ -69,39 +77,63 @@ function write(r: SendRequestRecord): boolean {
 export function savePendingSendRequest(input: {
   clientRequestId: string; projectId: string; conversationId: string; prompt: string;
   authorityKey?: string; snapshot?: SendRequestSnapshot;
-}): boolean {
-  if (typeof window === 'undefined' || input.prompt.length > MAX_PROMPT_CHARS) return false;
+  /** Explicit resend of the SAME request identity: rewrite the record back to
+   * pending/prepared (owner re-claimed) instead of refusing. Never counts
+   * against capacity — it adds no record, and an in-flight cap must not block
+   * the resend that drains it. */
+  allowExisting?: boolean;
+}): SavePendingSendResult {
+  if (typeof window === 'undefined') return 'failed';
   try {
     const records = loadSendRequestRecords(input.projectId, input.conversationId, input.authorityKey);
-    if (records.some(r => r.clientRequestId === input.clientRequestId) || records.length >= MAX_RECORDS) return false;
-    let snapshot: SendRequestSnapshot | undefined;
+    const existing = records.find(r => r.clientRequestId === input.clientRequestId);
+    if (existing && !input.allowExisting) {
+      // A receipt already covers this request identity; the send must proceed
+      // (the server settles duplicate IDs idempotently) and the stored record
+      // is left untouched.
+      return 'skipped';
+    }
+    if (!existing) {
+      // Only in-flight requests hold capacity: unknown/draft records are
+      // settled outcomes and must never block a new send (P1-1).
+      const inFlight = records.filter(r => r.status === 'pending').length;
+      if (inFlight >= MAX_RECORDS || records.length >= SOFT_MAX_RECORDS) return 'skipped';
+    }
+    let snapshot: SendRequestSnapshot | undefined = existing?.snapshot;
     if (input.snapshot) {
       const extras = sanitizeComposerDraftExtras(input.snapshot.extras);
       // Unlike ordinary convenience drafts, a send receipt cannot silently shed payload.
-      if (JSON.stringify(extras).length > DRAFT_MAX_EXTRAS_CHARS
-        || canonical(extras) !== canonical(input.snapshot.extras)) return false;
-      snapshot = { ...input.snapshot, extras, prompt: input.prompt };
+      if (JSON.stringify(extras).length <= DRAFT_MAX_EXTRAS_CHARS
+        && canonical(extras) === canonical(input.snapshot.extras)) {
+        snapshot = { ...input.snapshot, extras, prompt: input.prompt };
+      } else if (!existing) {
+        // Oversized payload: keep the receipt identity (preview only) so a
+        // lost response can still be reconciled by clientRequestId, but send
+        // without a recoverable snapshot.
+        snapshot = undefined;
+      }
     }
+    if (input.prompt.length > MAX_PROMPT_CHARS) snapshot = undefined;
     const record: SendRequestRecord = { clientRequestId: input.clientRequestId, projectId: input.projectId,
       conversationId: input.conversationId, authorityKey: input.authorityKey,
       promptPreview: input.prompt.slice(0, 120), status: 'pending', phase: 'prepared',
       ...(snapshot ? { snapshot } : {}), createdAt: Date.now() };
     // Claim preparation too: rerenders while BYOK resolves must not recover this live send.
     owners.add(recordKey(record));
-    if (write(record)) return true;
-    owners.delete(recordKey(record)); return false;
-  } catch { return false; }
+    if (write(record)) return snapshot ? 'saved' : 'skipped';
+    owners.delete(recordKey(record)); return 'failed';
+  } catch { return 'failed'; }
 }
 /** Native cross-tab exclusion keeps the eight-receipt cap without a shared
  * read/modify/write array. Local secure browser/Electron carriers expose Web Locks. */
-export async function persistPendingSendRequest(input: Parameters<typeof savePendingSendRequest>[0]): Promise<boolean> {
+export async function persistPendingSendRequest(input: Parameters<typeof savePendingSendRequest>[0]): Promise<SavePendingSendResult> {
   try {
     if (typeof navigator !== 'undefined' && navigator.locks) {
       return await navigator.locks.request(prefix(input.projectId, input.conversationId, input.authorityKey),
         { mode: 'exclusive' }, () => savePendingSendRequest(input));
     }
     return savePendingSendRequest(input);
-  } catch { return false; }
+  } catch { return 'failed'; }
 }
 function find(p: string, c: string, id: string, authorityKey?: string): SendRequestRecord | undefined {
   return loadSendRequestRecords(p, c, authorityKey).find(r => r.clientRequestId === id);

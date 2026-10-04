@@ -21,7 +21,7 @@ import type {
 } from '../../src/types';
 
 /** 记录按 workspace authorityKey 分桶存储；测试直接扫 v2 前缀拿全量。 */
-function storedRecords(): Array<{ clientRequestId: string; status: string; snapshot?: { prompt: string } }> {
+function storedRecords(): Array<{ clientRequestId: string; status: string; snapshot?: { prompt: string; userMessageId?: string; assistantMessageId?: string } }> {
   return Object.keys(window.localStorage)
     .filter((key) => key.startsWith('od:send-request:v2:'))
     .map((key) => JSON.parse(window.localStorage.getItem(key) ?? 'null'))
@@ -248,6 +248,7 @@ vi.mock('../../src/components/ChatPane', async (importOriginal) => {
       recoveryActionsBlockedReason?: string | null;
       retryPendingAssistantId?: string | null;
       onRetry?: (message: ChatMessage, actionType?: string) => void;
+      onResendUserMessage?: (message: ChatMessage) => void;
       onSend?: (
         prompt: string,
         attachments: unknown[],
@@ -277,6 +278,16 @@ vi.mock('../../src/components/ChatPane', async (importOriginal) => {
               .map((message) => message.id)
               .join('\n')}
           </output>
+          <button
+            type="button"
+            data-testid="resend-user"
+            onClick={() => {
+              const failedUser = (props.messages ?? []).find((m) => m.role === 'user' && m.sendFailed);
+              if (failedUser) props.onResendUserMessage?.(failedUser);
+            }}
+          >
+            resend user
+          </button>
           <button
             type="button"
             data-testid="chat-retry"
@@ -356,6 +367,13 @@ beforeEach(() => {
   listConversations.mockResolvedValue([conversation]);
   createConversation.mockResolvedValue(conversation);
   listMessages.mockImplementation(async () => conversationMessages);
+  // 让「服务端消息库」与 listMessages 同源：会话刷新（150ms）按服务端视图
+  // 覆盖本地 painted 行，mock 的落库必须真实记账，否则刷新会清空会话。
+  saveMessage.mockImplementation(async (_projectId: string, conversationId: string, message: ChatMessage) => {
+    if (conversationId !== conversation.id || !message?.id) return null;
+    conversationMessages = [...conversationMessages.filter((m) => m.id !== message.id), message];
+    return message;
+  });
   fetchPreviewComments.mockResolvedValue([]);
   fetchProjectFiles.mockResolvedValue([]);
   fetchLiveArtifacts.mockResolvedValue([]);
@@ -472,12 +490,18 @@ describe('R2 「结果待确认」的显式出口', () => {
 
   it('服务端已受理时：重新发送先只读核对，恢复原 run，不再 POST', async () => {
     await sendAndLoseResponse();
-    const assistantId = screen.getByTestId('assistant-summary').textContent.split('|')[0];
+    const snapshot = storedRecords()[0]?.snapshot;
+    expect(snapshot?.assistantMessageId).toBeTruthy();
+    // daemon 受理时会把 assistant 行 pin 在服务端（响应丢失但 run 已创建）。
+    conversationMessages = [...conversationMessages, {
+      id: snapshot!.assistantMessageId!, role: 'assistant', content: '',
+      createdAt: 9, runId: 'run-original', runStatus: 'running',
+    } as ChatMessage];
     daemonMocks.queryRunByClientRequest.mockResolvedValue({
       id: 'run-original',
       status: 'running',
       createdAt: 9,
-      assistantMessageId: assistantId,
+      assistantMessageId: snapshot!.assistantMessageId!,
     });
     const callsBefore = streamViaDaemon.mock.calls.length;
     fireEvent.click(screen.getByTestId('mokina-pending-send-resend'));
@@ -511,11 +535,14 @@ describe('R2 「结果待确认」的显式出口', () => {
     });
     expect(document.querySelector('[data-testid="mokina-pending-send"]')).toBeNull();
     streamMode.mode = 'accepted';
-    // 重试不再被 unknown 记录拦下：retry 管线发起了第二次 provider 调用。
-    fireEvent.click(screen.getByTestId('chat-retry'));
+    // 重试不再被 unknown 记录拦下：send-failed 卡用原请求身份重发。
+    fireEvent.click(screen.getByTestId('resend-user'));
     await waitFor(() => {
-      expect(streamViaDaemon.mock.calls.length).toBeGreaterThanOrEqual(2);
+      expect(streamViaDaemon.mock.calls.length).toBe(2);
     });
+    const first = streamViaDaemon.mock.calls[0]![0] as unknown as { clientRequestId: string };
+    const second = streamViaDaemon.mock.calls[1]![0] as unknown as { clientRequestId: string };
+    expect(second.clientRequestId).toBe(first.clientRequestId);
   });
 });
 

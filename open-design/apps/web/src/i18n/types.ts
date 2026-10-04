@@ -47,6 +47,10 @@ export interface Dict {
   "mokina.pendingSend.draftOccupied": string;
   'mokina.pendingSend.title': string;
   'mokina.pendingSend.verify': string;
+  'mokina.pendingSend.resend': string;
+  'mokina.pendingSend.discard': string;
+  'mokina.pendingSend.discardNotice': string;
+  'mokina.pendingSend.notRecoverable': string;
   'homeHero.materialsEntry': string;
   // Workspace invite acceptance (C lane)
   'invite.header.eyebrow': string;

@@ -102,6 +102,15 @@
 | guard | `pnpm guard` 通过 |
 | 提交 | 见下 |
 
+## 打包构建记录（T01/T02/T18）
+
+| 项 | 结果 |
+|---|---|
+| 构建命令 | `pnpm --filter @open-design/web build`（`OD_WEB_OUTPUT_MODE=standalone`）→ `pnpm --filter @open-design/tools-pack build` → `pnpm tools-pack mac build --dir .tmp/mokina-pack --namespace mokina-local --app-version 0.0.2-local.1 --portable --to app --json` |
+| 结果 | exit 0；`Mokina.app`（949MB，mac-arm64） |
+| 过程中修复 | tools-pack dist 需重建（metatool freshness）；`--to dir` 在 mac 不受支持（改 `--to app`）；bundle 后产品 profile 路径解析改为向上查找包根（`toolsPackRootFromModule`，修复 dist 扁平化下的 ENOENT）——均为本分支新代码问题，已修复并有测试 |
+| 运行冒烟 | 见 `evidence/t02-t18-packaged-smoke.md`（start/inspect/stop 全链路，实例隔离验证） |
+
 ## 回归状态（已完成归因）
 
 - daemon 全量（本分支，JSON 重跑）：11930 passed / 18-19 failed / 15 skipped（899 文件，其中 1 例为全量并行负载下的 flake，单独复跑通过）。
@@ -114,8 +123,8 @@
 | 任务 | 状态 | 说明 |
 |---|---|---|
 | T00 基线与实现映射 | ✅ 完成 | baseline.md / implementation-map.md / 提交 a6cc708 |
-| T01 独立产品 profile | ✅ 完成（打包实测见 T18 段） | release/tools-pack/packaged/desktop 接线；单测全绿 |
-| T02 打包依赖闭包 | 🟡 进行中 | 代码侧无阻断（sidecar/数据根沿用既有实现，未改）；真实 `tools-pack mac build` 验证见下方打包段 |
+| T01 独立产品 profile | ✅ 完成（含打包实测） | Info.plist bundleId=ai.mainquest.mokina.preview / 名称 Mokina / 版本 0.0.2-local.1；无 od scheme；包内配置 product 段正确且上游更新/遥测/云键全部缺省；证据同上 |
+| T02 打包依赖闭包 | ✅ 完成（本机 smoke） | 真机 `tools-pack mac start/inspect/stop`：清洁启动、web 200、daemon health 200、独立数据根、只停本实例；证据 `evidence/t02-t18-packaged-smoke.md` |
 | T03 稳定桌面存储 | ✅ 完成 | IPC store + facade + 镜像/hydration；desktop 498/web 相关测试通过 |
 | T04 Codex 连接诊断 | ⬜ 未完成 | 既有 AgentDiagnostic 机制可复用；auth 探测（系统凭据 vs auth.json）与「检查连接」流程未实现；本会话未动 |
 | T05 资料解析与 PDF 依赖 | 🟡 部分 | 服务端完成（parserVersion + OD_PDFTOTEXT_PATH）；打包 pdftotext 闭包未做（依赖 T18 构建） |
@@ -131,5 +140,5 @@
 | T15 诊断与安全边界 | ⬜ 未完成 | — |
 | T16 八视图与 i18n | ⬜ 未完成 | — |
 | T17 回归与 CI | 🟡 部分 | 本地全量归因完成；CI workflow 未建（账户/远端条件下未跑） |
-| T18 候选发行包 | 🟡 进行中 | 见下方打包段 |
+| T18 候选发行包 | 🟡 部分 | `.app` 已真实构建并冒烟（上述证据）；未做 dmg/zip 封装、SHA256 清单、用户 Runbook 定稿与签名状态说明 |
 | T19 本机三任务与签收 | ⬜ not_run | 依赖 T18 包与用户本人签收；本会话未运行真实模型任务 |

@@ -46,6 +46,7 @@
 | pnpm | 10.33.2（Corepack，与 packageManager 一致） |
 | Codex CLI | codex-cli 0.160.0（`~/.npm-global/bin/codex`，`~/.codex/auth.json` 存在） |
 | 依赖安装 | `corepack pnpm install --frozen-lockfile` 成功（exit 0） |
+| pnpm 嵌套调用 | 全局 `pnpm`（Homebrew 10.30.1）不满足 engines；已用 `corepack enable --install-directory ~/.local/share/corepack-shims` 安装 10.33.2 shim。后续命令 PATH：`/usr/local/bin:~/.local/share/corepack-shims:$PATH`（嵌套 `pnpm` 才能命中 10.33.2，Spec S03 要求） |
 
 ## 3. 隔离与保护
 

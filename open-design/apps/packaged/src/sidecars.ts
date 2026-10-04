@@ -30,7 +30,12 @@ import {
   resolveSystemProxyEnv,
   wellKnownUserToolchainBins,
 } from "@open-design/platform";
-import { releaseChannelFromNamespace, releaseChannelFromVersion } from "@open-design/release";
+import {
+  mokinaProductEnv,
+  releaseChannelFromNamespace,
+  releaseChannelFromVersion,
+  type MokinaPackagedProduct,
+} from "@open-design/release";
 
 import type { PackagedWebOutputMode } from "./config.js";
 import type { PackagedNamespacePaths } from "./paths.js";
@@ -619,6 +624,7 @@ function createPackagedDaemonManagedPathEnv(
 
 export type PackagedDaemonSpawnEnvOptions = {
   appVersion: string | null;
+  product?: MokinaPackagedProduct | null;
   amrProfile?: string | null;
   daemonCliEntry: string | null;
   desktopHandoffEnv?: NodeJS.ProcessEnv;
@@ -684,6 +690,8 @@ export function buildPackagedDaemonSpawnEnv(
       ? {}
       : { OD_VELA_WEB_URLS: JSON.stringify(options.velaWebUrls) }),
     ...(options.appVersion == null ? {} : { OD_APP_VERSION: options.appVersion }),
+    // Read-only Mokina identity for the daemon; absent for upstream builds.
+    ...(options.product == null ? {} : mokinaProductEnv(options.product)),
     ...(options.mcpBootstrapCommand == null
       || options.mcpBootstrapCommand.length === 0
       ? {}
@@ -857,6 +865,8 @@ export async function startPackagedSidecars(
   options: {
     appVersion: string | null;
     amrProfile: string | null;
+    /** Baked Mokina product identity; null for upstream builds. */
+    product?: MokinaPackagedProduct | null;
     daemonCliEntry: string | null;
     daemonSidecarEntry: string | null;
     electronNodeCommand: string | null;
@@ -940,6 +950,7 @@ export async function startPackagedSidecars(
       entryPath: daemonSidecarEntry,
       env: buildPackagedDaemonSpawnEnv(paths, {
         appVersion: options.appVersion,
+        product: options.product,
         amrProfile: options.amrProfile,
         daemonCliEntry: options.daemonCliEntry,
         desktopHandoffEnv: process.env,

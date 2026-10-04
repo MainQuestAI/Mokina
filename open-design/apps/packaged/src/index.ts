@@ -92,7 +92,14 @@ let startupTelemetryContext:
     }
   | null = null;
 
-function applyPackagedUpdaterEnv(updateMetadataUrl: string | null): void {
+function applyPackagedUpdaterEnv(
+  updateMetadataUrl: string | null,
+  product: { automaticUpdates: false } | null,
+): void {
+  // The Mokina local preview never carries an update destination; the
+  // profile says automaticUpdates: false and tools-pack bakes no URL. The
+  // guard keeps a stale environment from re-introducing one at launch.
+  if (product != null && product.automaticUpdates === false) return;
   if (updateMetadataUrl == null) return;
   if (process.env.OD_UPDATE_METADATA_URL != null && process.env.OD_UPDATE_METADATA_URL.length > 0) return;
   process.env.OD_UPDATE_METADATA_URL = updateMetadataUrl;
@@ -296,7 +303,7 @@ async function main(): Promise<void> {
     platform: process.platform,
   });
   applyPackagedElectronPathOverrides(paths);
-  applyPackagedUpdaterEnv(activeConfig.updateMetadataUrl);
+  applyPackagedUpdaterEnv(activeConfig.updateMetadataUrl, activeConfig.product);
   if (!claimPackagedSingleInstanceLock(app, (argv) => {
     secondInstanceHandoff.handle(findPackagedDeeplinkArg(argv));
   })) {
@@ -324,6 +331,7 @@ async function main(): Promise<void> {
   const sidecars = await startPackagedSidecars(runtime, paths, {
     appVersion: activeConfig.appVersion,
     amrProfile: activeConfig.amrProfile,
+    product: activeConfig.product,
     daemonCliEntry: activeConfig.daemonCliEntry,
     daemonSidecarEntry: activeConfig.daemonSidecarEntry,
     electronNodeCommand: launcherRuntime.electronNodeCommand,

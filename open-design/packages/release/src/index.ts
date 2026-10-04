@@ -214,3 +214,21 @@ export function releaseMetadataVersionFields(channel: ReleaseChannel, releaseVer
     releaseVersion,
   };
 }
+
+export {
+  MOKINA_LOCAL_PREVIEW_NAMESPACE,
+  MOKINA_PRODUCT_ENV_KEYS,
+  MOKINA_PRODUCT_ID,
+  MOKINA_PRODUCT_NAME,
+  MOKINA_PRODUCT_PROFILE_FILE_NAME,
+  MOKINA_RELEASE_KIND,
+  isMokinaLocalNamespace,
+  mokinaProductEnv,
+  parseMokinaPackagedProduct,
+  parseMokinaProductProfile,
+} from "./mokina-product.js";
+export type {
+  MokinaPackagedProduct,
+  MokinaProductProfile,
+  MokinaReleaseKind,
+} from "./mokina-product.js";

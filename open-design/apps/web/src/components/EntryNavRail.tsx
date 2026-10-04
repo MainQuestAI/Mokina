@@ -538,10 +538,17 @@ function RailRecentSection({
   // 成果摘要（Spec B1 FR-04）：与 runs 同一个可见行窗口，只读可见行的
   // 小元数据（files + 每 HTML 条目 versions，全局并发 ≤2，见
   // useMokinaProjectSummaries）。行外/折叠时不订阅，不预读全列表。
+  // legacy 入口提示取自行项目自带的 metadata（daemon 列表已返回），
+  // 让旧项目行显示「未确认采用」（P2-2）。
   const { t: recentT } = useI18n();
+  const entryHints = useMemo(
+    () => new Map(projects.map((projectItem) => [projectItem.id, projectItem.metadata?.entryFile ?? null])),
+    [projects],
+  );
   const summariesByProjectId = useMokinaProjectSummaries(runStatusProjectIds, {
     enabled: MOKINA_LOCAL_EDITION && open,
     workspaceContext,
+    entryHints,
   });
 
   // Opening a project is what spends its ✓ (per product): the finished run on

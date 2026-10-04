@@ -14,9 +14,15 @@ export interface MokinaEntrySummaryRecord {
   readonly refreshing?: boolean;
   readonly summary: MokinaProjectSummary | null;
   readonly entries: readonly MokinaEntryMetadata[];
+  /** 目录里 HTML 条目总数（含未读取细节的截断部分）；仅 status==='ok' 时有意义。 */
+  readonly htmlCount?: number;
+  /** 生成当前摘要所用的 legacy 入口提示；检测提示变化用。 */
+  readonly legacyEntryHint?: string | null;
 }
 interface Subscription {
   ids: readonly string[]; authority: string; context: WorkspaceCollabContext | null; complete: boolean;
+  /** 每项目的 legacy manifest.primary / metadata.entryFile 提示（Spec §5.1）。 */
+  entryHints?: ReadonlyMap<string, string | null>;
 }
 interface ReadOwner { controller: AbortController; complete: boolean; }
 interface QueuedRead { signal: AbortSignal; priority: boolean; start: () => void; cancel: () => void; }
@@ -82,12 +88,14 @@ function requestRead(projectId: string, subscription: Subscription, fresh = fals
   const covered = subscribers(key);
   if (!covered.length) return;
   const complete = covered.some(item => item.complete);
+  const hint = subscription.entryHints?.get(projectId) ?? null;
+  const previous = records.get(key);
+  const hintChanged = previous !== undefined && (previous.legacyEntryHint ?? null) !== hint;
   const previousOwner = readers.get(key);
-  if (previousOwner && !fresh && (!complete || previousOwner.complete)) return;
+  if (previousOwner && !fresh && !hintChanged && (!complete || previousOwner.complete)) return;
   cancel(key);
   const owner: ReadOwner = { controller: new AbortController(), complete };
   readers.set(key, owner);
-  const previous = records.get(key);
   records.set(key, previous ? { ...previous, refreshing: true } : {
     status: 'loading', completeness: 'partial', summary: null, entries: [],
   });
@@ -120,9 +128,11 @@ function requestRead(projectId: string, subscription: Subscription, fresh = fals
         : failed ? (entries.every(entry => entry.readState === 'failed') ? 'failed' : 'partial')
         : truncated ? 'truncated' : 'complete';
       const status: MokinaEntrySummaryStatus = completeness === 'complete' ? 'ok' : unauthorized ? 'unauthorized' : 'failed';
-      write(key, owner, { status, completeness, entries, summary: summarizeMokinaProjectEntries({
-        projectId, entries, entriesReadState: status,
-      }) });
+      write(key, owner, { status, completeness, entries, htmlCount: all.length,
+        legacyEntryHint: hint,
+        summary: summarizeMokinaProjectEntries({
+          projectId, entries, entriesReadState: status, legacyEntryHint: hint,
+        }) });
     } catch (error) {
       if (signal.aborted) return;
       const unauthorized = /failed \((401|403)\)/.test(String(error));
@@ -172,16 +182,22 @@ export interface UseMokinaProjectSummariesOptions {
   enabled?: boolean; workspaceContext?: WorkspaceCollabContext | null;
   /** Full metadata only for the foreground project's default-entry decision. */
   complete?: boolean;
+  /** 每项目的 legacy manifest.primary / metadata.entryFile 提示；来自项目
+   *  列表的 metadata，不需要额外请求。变化触发一次复核（走既有队列）。 */
+  entryHints?: ReadonlyMap<string, string | null>;
 }
 function useSummaryMap(idsKey: string, options?: UseMokinaProjectSummariesOptions): ReadonlyMap<string, MokinaEntrySummaryRecord> {
   const enabled = options?.enabled !== false;
   const context = options?.workspaceContext ?? null;
   const authority = workspaceAccountScopedCacheKey(context);
   const complete = options?.complete === true;
+  const entryHints = options?.entryHints;
+  const hintsKey = entryHints ? JSON.stringify([...entryHints]) : '';
   const storeVersion = useSyncExternalStore(subscribe, getVersion, getVersion);
   useEffect(() => {
     if (!enabled || !idsKey) return undefined;
-    const subscription: Subscription = { ids: idsKey.split('\u0000'), authority, context, complete };
+    const subscription: Subscription = { ids: idsKey.split('\u0000'), authority, context, complete,
+      ...(entryHints ? { entryHints } : {}) };
     if (!subscriptions.size) listen();
     subscriptions.add(subscription);
     for (const id of subscription.ids) requestRead(id, subscription);
@@ -194,9 +210,10 @@ function useSummaryMap(idsKey: string, options?: UseMokinaProjectSummariesOption
       if (!subscriptions.size) unlisten();
       emit();
     };
-    // Authority includes all context fields carried on the wire.
+    // Authority includes all context fields carried on the wire; hintsKey
+    // covers the per-project legacy-entry hints.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idsKey, enabled, authority, complete]);
+  }, [idsKey, enabled, authority, complete, hintsKey]);
   return useMemo(() => {
     if (!enabled || !idsKey) return EMPTY;
     const map = new Map<string, MokinaEntrySummaryRecord>();
@@ -216,11 +233,16 @@ export function useMokinaProjectSummary(id: string | null | undefined, options?:
   const map = useSummaryMap(id ?? '', { ...options, enabled: !!id && options?.enabled !== false });
   return id ? map.get(id) : undefined;
 }
-export type MokinaArtifactLineState = 'loading' | 'failed' | 'unauthorized' | 'empty' | 'artifacts';
-type SummaryKey = 'mokina.entrySummary.loading' | 'mokina.entrySummary.failed' | 'mokina.entrySummary.unauthorized' | 'mokina.entrySummary.empty' | 'mokina.entrySummary.legacy' | 'mokina.entrySummary.incomplete';
-export function mokinaArtifactLineFromRecord(record: MokinaEntrySummaryRecord | undefined, translate: (key: SummaryKey) => string): { text: string; state: MokinaArtifactLineState } | null {
+export type MokinaArtifactLineState = 'loading' | 'failed' | 'unauthorized' | 'empty' | 'artifacts' | 'truncated';
+type SummaryKey = 'mokina.entrySummary.loading' | 'mokina.entrySummary.failed' | 'mokina.entrySummary.unauthorized' | 'mokina.entrySummary.empty' | 'mokina.entrySummary.legacy' | 'mokina.entrySummary.incomplete' | 'mokina.entrySummary.htmlCount';
+type TranslateFn = (key: SummaryKey, vars?: Record<string, string | number>) => string;
+export function mokinaArtifactLineFromRecord(record: MokinaEntrySummaryRecord | undefined, translate: TranslateFn): { text: string; state: MokinaArtifactLineState } | null {
   if (!record) return null;
-  if (record.completeness === 'truncated' || record.completeness === 'partial' && record.status !== 'loading') return { text: translate('mokina.entrySummary.incomplete'), state: 'failed' };
+  if (record.completeness === 'truncated') {
+    // 超过可见读取上限的正常大项目：中性计数，不用失败样式（P2-3）。
+    return { text: translate('mokina.entrySummary.htmlCount', { count: record.htmlCount ?? record.entries.length }), state: 'truncated' };
+  }
+  if (record.completeness === 'partial' && record.status !== 'loading') return { text: translate('mokina.entrySummary.incomplete'), state: 'failed' };
   if (record.status === 'failed') return { text: translate('mokina.entrySummary.failed'), state: 'failed' };
   if (record.status === 'unauthorized') return { text: translate('mokina.entrySummary.unauthorized'), state: 'unauthorized' };
   if (record.status === 'loading' || !record.summary) return { text: translate('mokina.entrySummary.loading'), state: 'loading' };

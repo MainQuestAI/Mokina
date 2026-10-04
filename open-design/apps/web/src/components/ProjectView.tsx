@@ -4795,6 +4795,8 @@ export function ProjectView({
     }
     // workspace（0 个正式成果）：成果读取已确认；仍给文件入口（含 legacy
     // 主文件，其「未确认采用」身份由行摘要与工作区标注，不在此虚构正式稿）。
+    // 「已处理过首次打开」只在真正找到主文件后置位：元数据先判成 workspace、
+    // 文件列表后到（或为空）时，首个生成的文件仍要自动打开（P2-1）。
     const primaryFile = selectPrimaryProjectFile(
       projectFiles,
       refreshInitialHomeAttachmentFileNames(),
@@ -4802,6 +4804,7 @@ export function ProjectView({
     if (!primaryFile) return;
     lastHostRequestedOpenRef.current = primaryFile.name;
     persistTabsState({ tabs: [primaryFile.name], active: primaryFile.name });
+    hasAppliedInitialPrimaryOpenRef.current = true;
   }, [
     mokinaEntryRecord,
     openTabsState.active,

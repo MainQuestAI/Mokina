@@ -39,6 +39,7 @@ export interface Dict {
   'mokina.entryChooser.title': string;
   'mokina.entryChooser.cancel': string;
   "mokina.entrySummary.incomplete": string;
+  'mokina.entrySummary.htmlCount': string;
   "mokina.entryChooser.formal": string;
   "mokina.entryChooser.versionTime": string;
   "mokina.pendingSend.reselect": string;

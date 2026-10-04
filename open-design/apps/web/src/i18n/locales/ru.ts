@@ -4,6 +4,7 @@ export const ru: Dict = {
   'mokina.pendingSend.reselect': "Plugin settings and temporary files cannot be restored after reload. Select them again.",
   'homeHero.materialsEntry': "Материалы и контекст",
   "mokina.entrySummary.incomplete": "Artifacts not fully read",
+  'mokina.entrySummary.htmlCount': "{count} HTML files · not fully read",
   "mokina.entryChooser.formal": "Formal artifact",
   "mokina.entryChooser.versionTime": "Version time",
   "mokina.pendingSend.saveFailed": "Cannot safely save this request. Keep your draft and check local storage or request size.",

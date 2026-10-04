@@ -4,6 +4,7 @@ export const zhCN: Dict = {
   'mokina.pendingSend.reselect': "插件设置和未上传的临时文件不能跨刷新恢复，请重新选择。",
   'homeHero.materialsEntry': "资料与背景",
   "mokina.entrySummary.incomplete": "成果尚未完整读取",
+  'mokina.entrySummary.htmlCount': "共 {count} 个 HTML · 未完整读取",
   "mokina.entryChooser.formal": "正式成果",
   "mokina.entryChooser.versionTime": "版本时间",
   "mokina.pendingSend.saveFailed": "无法安全保存本次请求。草稿已保留，请检查本地存储空间或缩短输入。",

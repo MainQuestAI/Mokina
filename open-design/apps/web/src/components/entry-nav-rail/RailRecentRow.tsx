@@ -160,7 +160,7 @@ export function RailRecentRow({
    *  Section 从共享元数据 store 组好传入；undefined 表示该行尚未订阅
    *  元数据读取（不可见行），保持单行渲染。 */
   allowNameWrap?: boolean;
-  artifactLine?: { text: string; state: 'loading' | 'failed' | 'unauthorized' | 'empty' | 'artifacts' } | null;
+  artifactLine?: { text: string; state: 'loading' | 'failed' | 'unauthorized' | 'empty' | 'artifacts' | 'truncated' } | null;
   /** The daemon's canMutate is privileged-or-self-created and 403s the rest,
    *  so a row someone else shared keeps its mutations disabled with the same
    *  explanation the project cards give (`recentProjects.ownOnlyMutation`). */

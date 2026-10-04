@@ -4,6 +4,7 @@ import { MOKINA_CONTEXT_BUDGETS, type ProjectMaterialExtraction } from '@open-de
 
 import type { ProjectFile } from '../../types';
 import { randomUUID } from '../../utils/uuid';
+import { useT } from '../../i18n';
 import { useProjectCollabContext } from '../../collab/collab-context';
 import { workspaceProjectHeaders } from '../../collab/workspace-identity';
 import { fetchProjectMaterial } from '../../providers/registry';
@@ -36,6 +37,7 @@ export function MokinaContextPanel({ projectId, files }: {
   projectId: string;
   files: ProjectFile[];
 }) {
+  const t = useT();
   const { workspaceContext } = useProjectCollabContext();
   const candidates = useMemo(
     () => files.filter((file) => file.name !== 'MOKINA-CONTINUATION.json' && MOKINA_MATERIAL_EXTENSIONS.test(file.name)),
@@ -62,7 +64,7 @@ export function MokinaContextPanel({ projectId, files }: {
   async function previewSelected() {
     if (busy) return;
     if (!selected.length) {
-      setError('请至少选择一份资料。');
+      setError(t('mokina.contextPanel.selectFile'));
       return;
     }
     setBusy(true);
@@ -91,7 +93,7 @@ export function MokinaContextPanel({ projectId, files }: {
       setResults(next);
       setSelectedGroups([]);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : '资料读取失败');
+      setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.readFailed'));
     } finally {
       setBusy(false);
     }
@@ -100,7 +102,7 @@ export function MokinaContextPanel({ projectId, files }: {
   async function freezeSnapshot() {
     if (busy || !results) return;
     if (chosenGroups.length === 0) {
-      setError('请至少勾选一个资料段落。');
+      setError(t('mokina.contextPanel.selectGroup'));
       return;
     }
     const snapshotId = randomUUID();
@@ -125,7 +127,7 @@ export function MokinaContextPanel({ projectId, files }: {
       groupIds: [...entry.groupIds],
     }));
     if (selections.length === 0) {
-      setError('所选段落没有稳定的分组标识，无法冻结；请重新预览资料。');
+      setError(t('mokina.contextPanel.noStableGroup'));
       return;
     }
     const excluded = (results ?? [])
@@ -154,12 +156,12 @@ export function MokinaContextPanel({ projectId, files }: {
         if (code === 'MOKINA_SOURCE_CHANGED') {
           setResults(null);
           setSelectedGroups([]);
-          throw new Error('资料在预览后发生变化；请重新预览并选择。');
+          throw new Error(t('mokina.contextPanel.sourceChanged'));
         }
         if (code === 'MOKINA_CONTEXT_LIMIT') {
-          throw new Error(body?.error?.message ?? '所选内容超过本次任务的字数预算；请减少勾选。');
+          throw new Error(body?.error?.message ?? t('mokina.contextPanel.budgetExceeded'));
         }
-        throw new Error(body?.error?.message ?? `资料冻结失败（${response.status}）`);
+        throw new Error(body?.error?.message ?? t('mokina.contextPanel.freezeFailedStatus', { status: response.status }));
       }
       const items = body.snapshot.items ?? [];
       const record: PendingMokinaContextSnapshot = {
@@ -174,7 +176,7 @@ export function MokinaContextPanel({ projectId, files }: {
       writePendingMokinaSnapshot(record);
       setFrozen(record);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : '资料冻结失败');
+      setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.freezeFailed'));
     } finally {
       setBusy(false);
     }
@@ -184,26 +186,27 @@ export function MokinaContextPanel({ projectId, files }: {
 
   return (
     <details className="mokina-material-picker mokina-context-panel">
-      <summary>资料与背景（交给本轮对话的下一发）</summary>
-      <p>
-        选择资料段落并冻结成任务快照后，下一次发送会自动带上它；服务端会重新读取原件并校验摘要与字数预算。
-        未勾选内容不会进入请求；已冻结的来源变化不影响这份快照。
-      </p>
+      <summary>{t('mokina.contextPanel.summary')}</summary>
+      <p>{t('mokina.contextPanel.intro')}</p>
       {frozen ? (
         <div role="status" className="mokina-context-panel__frozen">
           <p>
-            已加入任务快照：{frozen.itemCount} 项、约 {frozen.charCount.toLocaleString()} 字；
-            {frozen.frozenAt ? `冻结于 ${new Date(frozen.frozenAt).toLocaleString()}` : ''}。
-            下一发发送时随请求提交；此前的运行不受影响。
+            {t('mokina.contextPanel.frozenTitle')}：
+            {t('mokina.contextPanel.frozenDetail', {
+              count: frozen.itemCount,
+              chars: frozen.charCount.toLocaleString(),
+              time: frozen.frozenAt ? t('mokina.contextPanel.frozenTime', { time: new Date(frozen.frozenAt).toLocaleString() }) : '',
+            })}
+            {t('mokina.contextPanel.frozenNextSend')}
           </p>
           <ul>
-            {frozen.itemLabels.map((label) => <li key={label}>已选择：{label}</li>)}
+            {frozen.itemLabels.map((label) => <li key={label}>{t('mokina.contextPanel.selectedItem', { name: label })}</li>)}
             {frozen.excluded.map((entry) => (
-              <li key={`excluded:${entry.displayName}`}>未纳入（{entry.reason}）：{entry.displayName}</li>
+              <li key={`excluded:${entry.displayName}`}>{t('mokina.contextPanel.excludedItem', { reason: entry.reason, name: entry.displayName })}</li>
             ))}
           </ul>
           <button type="button" onClick={() => { clearPendingMokinaSnapshot(projectId); setFrozen(null); }}>
-            不再使用这份快照
+            {t('mokina.contextPanel.clearSnapshot')}
           </button>
         </div>
       ) : null}
@@ -223,7 +226,7 @@ export function MokinaContextPanel({ projectId, files }: {
               }}
             />
             <span>{file.name}</span>
-            <small>已上传 · {(file.size / 1024).toFixed(1)} KB</small>
+            <small>{t('mokina.contextPanel.uploaded')} · {(file.size / 1024).toFixed(1)} KB</small>
           </label>
         ))}
       </div>
@@ -233,7 +236,11 @@ export function MokinaContextPanel({ projectId, files }: {
             <div key={item.material.name}>
               <p>
                 {item.material.name}：
-                {item.unreadable ? '无法读取（保留原件，不作为依据）' : item.material.status === 'partial' ? '部分可读取' : '可读取'}。
+                {item.unreadable
+                  ? t('mokina.contextPanel.unreadable')
+                  : item.material.status === 'partial'
+                    ? t('mokina.contextPanel.partialRead')
+                    : t('mokina.contextPanel.readable')}。
                 {' '}{item.material.limitations.join(' ')}
               </p>
               {(item.material.groupLimitations ?? []).map((limitation) => (
@@ -244,8 +251,7 @@ export function MokinaContextPanel({ projectId, files }: {
             </div>
           ))}
           <p role="status">
-            已选 {chosenChars.toLocaleString()} / {budget.toLocaleString()} 字；
-            超过预算会明确拒绝，不会静默截断。
+            {t('mokina.contextPanel.budgetStatus', { chars: chosenChars.toLocaleString(), budget: budget.toLocaleString() })}
           </p>
           {groups.map((group) => (
             <label key={group.key}>
@@ -270,14 +276,14 @@ export function MokinaContextPanel({ projectId, files }: {
           disabled={busy || !selected.length}
           onClick={() => void previewSelected()}
         >
-          {busy ? '正在处理资料…' : '预览可读范围'}
+          {busy ? t('mokina.contextPanel.busy') : t('mokina.contextPanel.previewAction')}
         </button>
         <button
           type="button"
           disabled={busy || !results || chosenGroups.length === 0}
           onClick={() => void freezeSnapshot()}
         >
-          {busy ? '正在处理资料…' : `冻结为任务快照（${chosenGroups.length} 个段落）`}
+          {busy ? t('mokina.contextPanel.busy') : t('mokina.contextPanel.freezeAction', { count: chosenGroups.length })}
         </button>
       </div>
     </details>

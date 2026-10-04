@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 
+import { useT } from '../../i18n';
+
 import type { ProjectFileVersion } from '@open-design/contracts';
 
 import {
@@ -22,6 +24,7 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
   onClose: () => void;
   onAdopt: () => void;
 }) {
+  const t = useT();
   const changedSections = useMemo(
     () => detectChangedSections(baseHtml, candidateHtml),
     [baseHtml, candidateHtml],
@@ -44,41 +47,44 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
         className={styles.dialog}
         role="dialog"
         aria-modal="true"
-        aria-label="候选比较"
+        aria-label={t('mokina.compare.dialogLabel')}
       >
         <div className={styles.head}>
           <div>
-            <strong>候选比较</strong>
+            <strong>{t('mokina.compare.dialogLabel')}</strong>
             <p>
-              基础版本 v{baseVersion.version}（{baseVersion.current ? '当前稿' : '历史稿'}）
-              {' → '}候选 v{candidateVersion.version}；采用前当前稿不会变化。
+              {t('mokina.compare.subtitle', {
+                base: baseVersion.version,
+                baseState: baseVersion.current ? t('mokina.compare.currentDraft') : t('mokina.compare.historicalDraft'),
+                candidate: candidateVersion.version,
+              })}
             </p>
           </div>
-          <button type="button" onClick={onClose}>关闭</button>
+          <button type="button" onClick={onClose}>{t('mokina.compare.close')}</button>
         </div>
 
         <div className={styles.meta}>
           <div className={styles.metaItem}>
-            <em>用户要求</em>
-            {candidateVersion.prompt?.trim() || '（未记录修改要求）'}
+            <em>{t('mokina.compare.requirement')}</em>
+            {candidateVersion.prompt?.trim() || t('mokina.compare.noRequirement')}
           </div>
           <div className={styles.metaItem}>
-            <em>变化章节</em>
+            <em>{t('mokina.compare.changedSections')}</em>
             {changedSections.length === 0
-              ? '未检测到章节变化（请人工核对）'
+              ? t('mokina.compare.noSectionChange')
               : changedSections.length === 1
                 ? changedSections[0]
-                : `${changedSections.length} 个章节发生变化：${changedSections.join('、')}`}
+                : t('mokina.compare.multiSectionChange', { count: changedSections.length, names: changedSections.join('、') })}
           </div>
           <div className={styles.metaItem}>
-            <em>其余章节</em>
+            <em>{t('mokina.compare.restSection')}</em>
             {comparison.restIdentical
-              ? `字节完全一致（${comparison.baseRestLength} 字符）`
-              : `检测到所选章节之外的变化（${comparison.baseRestLength} → ${comparison.candidateRestLength} 字符），采用前请核对`}
+              ? t('mokina.compare.restIdentical', { chars: comparison.baseRestLength })
+              : t('mokina.compare.restChanged', { before: comparison.baseRestLength, after: comparison.candidateRestLength })}
           </div>
         </div>
 
-        <div className={styles.wideToggle} role="tablist" aria-label="切换原文与候选">
+        <div className={styles.wideToggle} role="tablist" aria-label={t('mokina.compare.togglePanes')}>
           <label>
             <input
               type="radio"
@@ -86,7 +92,7 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
               checked={narrowPane === 'base'}
               onChange={() => setNarrowPane('base')}
             />
-            <span>原文</span>
+            <span>{t('mokina.compare.basePane')}</span>
           </label>
           <label>
             <input
@@ -95,51 +101,50 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
               checked={narrowPane === 'candidate'}
               onChange={() => setNarrowPane('candidate')}
             />
-            <span>候选</span>
+            <span>{t('mokina.compare.candidatePane')}</span>
           </label>
         </div>
 
         <div className={styles.wide}>
           <div className={`${styles.pane} ${styles.narrowPane} ${narrowPane === 'base' ? styles.narrowPaneActive : ''}`}>
-            <h4>基础版本 · {primarySection || '（未识别章节）'}</h4>
-            <pre>{comparison.baseHtml ?? '（基础版本中未找到该章节）'}</pre>
+            <h4>{t('mokina.compare.basePane')} · {primarySection || t('mokina.compare.sectionUnknown')}</h4>
+            <pre>{comparison.baseHtml ?? t('mokina.compare.baseSectionMissing')}</pre>
           </div>
           <div className={`${styles.pane} ${styles.narrowPane} ${narrowPane === 'candidate' ? styles.narrowPaneActive : ''}`}>
-            <h4>候选 · {primarySection || '（未识别章节）'}</h4>
-            <pre>{comparison.candidateHtml ?? '（候选中未找到该章节）'}</pre>
+            <h4>{t('mokina.compare.candidatePane')} · {primarySection || t('mokina.compare.sectionUnknown')}</h4>
+            <pre>{comparison.candidateHtml ?? t('mokina.compare.candidateSectionMissing')}</pre>
           </div>
         </div>
 
         <div className={styles.findings}>
-          <strong>数值变化提示（需人工核对口径）</strong>
+          <strong>{t('mokina.compare.numbersTitle')}</strong>
           <ul>
             {comparison.numbersOnlyInBase.length > 0
-              ? <li>原文出现、候选未出现：{comparison.numbersOnlyInBase.join('、')}</li>
+              ? <li>{t('mokina.compare.numberOnlyBase', { values: comparison.numbersOnlyInBase.join('、') })}</li>
               : null}
             {comparison.numbersOnlyInCandidate.length > 0
-              ? <li>候选出现、原文未出现：{comparison.numbersOnlyInCandidate.join('、')}</li>
+              ? <li>{t('mokina.compare.numberOnlyCandidate', { values: comparison.numbersOnlyInCandidate.join('、') })}</li>
               : null}
             {comparison.numbersOnlyInBase.length === 0 && comparison.numbersOnlyInCandidate.length === 0
-              ? <li>所选章节内未检测到数值字面量的增减。</li>
+              ? <li>{t('mokina.compare.noNumberChange')}</li>
               : null}
             <li>
-              章节内数值总数：原文 {baseNumbers.length} 项 → 候选 {candidateNumbers.length} 项；
-              提示只指出字面量差异，不是数值正确性的结论。
+              {t('mokina.compare.numberCount', { base: baseNumbers.length, candidate: candidateNumbers.length })}
             </li>
           </ul>
         </div>
 
         <div className={styles.foot}>
           <button type="button" disabled={adopting} onClick={onClose}>
-            取消
+            {t('mokina.compare.cancel')}
           </button>
           <button
             type="button"
             disabled={adopting || baseVersion.current === false}
-            title={baseVersion.current === false ? '当前稿已变化：请先重新比较或重新生成候选' : undefined}
+            title={baseVersion.current === false ? t('mokina.compare.adoptConflict') : undefined}
             onClick={onAdopt}
           >
-            {adopting ? '正在采用…' : '采用候选'}
+            {adopting ? t('mokina.compare.adopting') : t('mokina.compare.adopt')}
           </button>
         </div>
       </div>

@@ -87,15 +87,15 @@ describe('MokinaContextPanel', () => {
     render(<MokinaContextPanel projectId="p1" files={[materialFile('brief.md'), materialFile('logo.png')]} />);
 
     fireEvent.click(screen.getByRole('checkbox', { name: /brief\.md/ }));
-    fireEvent.click(screen.getByRole('button', { name: '预览可读范围' }));
-    await screen.findByText(/可读取/);
+    fireEvent.click(screen.getByRole('button', { name: 'Preview readable range' }));
+    await screen.findByText(/Readable/);
     expect(screen.getByText(/保留 CSV 原始字段/)).toBeTruthy();
 
     const groupBoxes = screen.getAllByRole('checkbox', { name: /品牌/ });
     fireEvent.click(groupBoxes[0]!);
-    fireEvent.click(screen.getByRole('button', { name: /冻结为任务快照/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Freeze as task snapshot/ }));
 
-    await screen.findByText(/已加入任务快照/);
+    await screen.findByText(/Added to the task snapshot/);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const pending = readPendingMokinaSnapshot('p1');
     expect(pending?.snapshotId).toBeTruthy();
@@ -113,12 +113,12 @@ describe('MokinaContextPanel', () => {
 
     render(<MokinaContextPanel projectId="p1" files={[materialFile('scan.pdf')]} />);
     fireEvent.click(screen.getByRole('checkbox', { name: /scan\.pdf/ }));
-    fireEvent.click(screen.getByRole('button', { name: '预览可读范围' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Preview readable range' }));
 
-    await screen.findByText(/无法读取（保留原件，不作为依据）/);
+    await screen.findByText(/Unreadable \(original kept, not used as evidence\)/);
     expect(screen.getByText(/PDF 文本提取失败/)).toBeTruthy();
     // No readable group exists: freezing stays disabled and nothing is frozen.
-    expect(screen.getByRole('button', { name: /冻结为任务快照/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Freeze as task snapshot/ })).toBeDisabled();
     expect(readPendingMokinaSnapshot('p1')).toBeNull();
   });
 
@@ -130,12 +130,12 @@ describe('MokinaContextPanel', () => {
 
     render(<MokinaContextPanel projectId="p1" files={[materialFile('brief.md')]} />);
     fireEvent.click(screen.getByRole('checkbox', { name: /brief\.md/ }));
-    fireEvent.click(screen.getByRole('button', { name: '预览可读范围' }));
-    await screen.findByText(/可读取/);
+    fireEvent.click(screen.getByRole('button', { name: 'Preview readable range' }));
+    await screen.findByText(/Readable/);
     fireEvent.click(screen.getAllByRole('checkbox', { name: /品牌/ })[0]!);
-    fireEvent.click(screen.getByRole('button', { name: /冻结为任务快照/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Freeze as task snapshot/ }));
 
-    await screen.findByText(/资料在预览后发生变化；请重新预览并选择/);
+    await screen.findByText(/The material changed after the preview/);
     await waitFor(() => {
       expect(screen.queryByRole('checkbox', { name: /预算/ })).toBeNull();
     });
@@ -150,10 +150,10 @@ describe('MokinaContextPanel', () => {
 
     render(<MokinaContextPanel projectId="p1" files={[materialFile('brief.md')]} />);
     fireEvent.click(screen.getByRole('checkbox', { name: /brief\.md/ }));
-    fireEvent.click(screen.getByRole('button', { name: '预览可读范围' }));
-    await screen.findByText(/可读取/);
+    fireEvent.click(screen.getByRole('button', { name: 'Preview readable range' }));
+    await screen.findByText(/Readable/);
     fireEvent.click(screen.getAllByRole('checkbox', { name: /品牌/ })[0]!);
-    fireEvent.click(screen.getByRole('button', { name: /冻结为任务快照/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Freeze as task snapshot/ }));
 
     await screen.findByText(/超过 24,000 字符上限/);
     expect(readPendingMokinaSnapshot('p1')).toBeNull();

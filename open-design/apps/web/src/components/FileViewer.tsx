@@ -4207,15 +4207,15 @@ function FileVersionManagerModal({
   async function openCandidateCompare() {
     if (!selectedVersion?.candidate || !selectedVersion.baseVersionId || !selectedContent) return;
     const base = versions.find((version) => version.id === selectedVersion.baseVersionId);
-    if (!base) { setError('找不到候选的基础版本；请刷新版本列表。'); return; }
+    if (!base) { setError(t('fileViewer.mokina.baseNotFound')); return; }
     setCandidateCompareBusy(true);
     setError(null);
     try {
       const response = await fetchProjectFileVersion(projectId, file.name, base.id, workspaceContext);
-      if (!response) throw new Error('基础版本内容读取失败。');
+      if (!response) throw new Error(t('fileViewer.mokina.baseReadFailed'));
       setCandidateCompare({ base, baseHtml: response.content });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : '比较打开失败');
+      setError(cause instanceof Error ? cause.message : t('fileViewer.mokina.compareOpenFailed'));
     } finally {
       setCandidateCompareBusy(false);
     }
@@ -4372,7 +4372,7 @@ function FileVersionManagerModal({
         undefined,
         workspaceContext,
       );
-      if (!saved) throw new Error('接续项目已创建，但固定摘录未保存；再次点击继续制作会复用同一项目。');
+      if (!saved) throw new Error(t('fileViewer.mokina.continuationDraftKept'));
       storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'snapshot-saved', updatedAt: new Date().toISOString() });
       clearJournal();
       onClose();
@@ -4938,7 +4938,7 @@ function FileVersionManagerModal({
               </label>
             ))}
             <fieldset className="artifact-version-panel__continuation-intent">
-              <legend>目标任务</legend>
+              <legend>{t('fileViewer.mokina.targetTask')}</legend>
               <label>
                 <input
                   type="radio"
@@ -4946,7 +4946,7 @@ function FileVersionManagerModal({
                   checked={continuationIntent === 'discuss'}
                   onChange={() => setContinuationIntent('discuss')}
                 />
-                <span>讨论方向（默认）</span>
+                <span>{t('fileViewer.mokina.intentDiscuss')}</span>
               </label>
               <label>
                 <input
@@ -4955,7 +4955,7 @@ function FileVersionManagerModal({
                   checked={continuationIntent === 'landing-page'}
                   onChange={() => setContinuationIntent('landing-page')}
                 />
-                <span>制作活动页（只创建草稿，不自动生成）</span>
+                <span>{t('fileViewer.mokina.intentLanding')}</span>
               </label>
             </fieldset>
             <textarea
@@ -4979,7 +4979,7 @@ function FileVersionManagerModal({
               disabled={candidateCompareBusy}
               onClick={() => { void openCandidateCompare(); }}
             >
-              {candidateCompareBusy ? '正在读取基础版本…' : '比较'}
+              {candidateCompareBusy ? t('fileViewer.mokina.compareLoadingBase') : t('fileViewer.mokina.compare')}
             </button>
           ) : null}
           <button

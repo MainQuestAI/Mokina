@@ -50,12 +50,12 @@ describe('MokinaCandidateCompare', () => {
       />,
     );
     expect(screen.getByText('budget')).toBeTruthy();
-    expect(screen.getByText(/字节完全一致/)).toBeTruthy();
+    expect(screen.getByText(/byte-identical/)).toBeTruthy();
     expect(screen.getByText(/只改渠道章节/)).toBeTruthy();
-    expect(screen.getByText(/原文出现、候选未出现：50/)).toBeTruthy();
-    expect(screen.getByText(/候选出现、原文未出现：30/)).toBeTruthy();
-    expect(screen.getByRole('button', { name: '采用候选' })).not.toBeDisabled();
-    expect(screen.getByRole('button', { name: '取消' })).toBeTruthy();
+    expect(screen.getByText(/In base only: 50/)).toBeTruthy();
+    expect(screen.getByText(/In candidate only: 30/)).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Adopt candidate' })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeTruthy();
   });
 
   it('disables adopt once the base is no longer the current version', () => {
@@ -70,7 +70,7 @@ describe('MokinaCandidateCompare', () => {
         onAdopt={() => undefined}
       />,
     );
-    expect(screen.getByRole('button', { name: '采用候选' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Adopt candidate' })).toBeDisabled();
   });
 
   it('toggles the narrow-screen pane selection and reports a foreign change', () => {
@@ -86,8 +86,8 @@ describe('MokinaCandidateCompare', () => {
         onAdopt={() => undefined}
       />,
     );
-    expect(screen.getByText(/检测到所选章节之外的变化/)).toBeTruthy();
-    const basePaneRadio = screen.getAllByRole('radio', { name: '原文' })[0]!;
+    expect(screen.getByText(/Changes outside the selected section were detected/)).toBeTruthy();
+    const basePaneRadio = screen.getAllByRole('radio', { name: 'Base version' })[0]!;
     fireEvent.click(basePaneRadio);
     expect((basePaneRadio as HTMLInputElement).checked).toBe(true);
   });
@@ -106,9 +106,9 @@ describe('MokinaCandidateCompare', () => {
         onAdopt={onAdopt}
       />,
     );
-    fireEvent.click(screen.getByRole('button', { name: '采用候选' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Adopt candidate' }));
     expect(onAdopt).toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: '关闭' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(onClose).toHaveBeenCalled();
   });
 });

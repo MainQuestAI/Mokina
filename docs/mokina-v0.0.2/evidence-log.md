@@ -154,7 +154,7 @@
 | T13 指定版本导出 | 🟡 部分 | Web 菜单与文件名完成；桌面原生 PDF 实测未跑 |
 | T14 恢复包 | 🟡 部分 | 服务端+CLI+HTTP 往返测试完成；Web 入口未做 |
 | T15 诊断与隐私 | 🟡 主体完成 | daemon `GET /api/mokina/diagnostics`：产品/构建/运行时/隐私/网络依赖声明（每项带 nextAction）、codex CLI 探测（60s 缓存）；`assertMokinaDiagnosticsSanitized` 值特征+键名双层扫描；测试 4/4（含 HTTP）。未跑：AC45 的恶意 HTML/IPC 安全测试（既有隔离未改动，T16 视觉/安全收口时统一验证） |
-| T16 八视图与 i18n | ⬜ 未完成 | 冻结设计包迁移、P01–P08 视觉对照与 19 locale 键完整性均未做（新面板文案沿用了本区域既有的中文硬编码先例，属 T16 待收口项） |
+| T16 八视图与 i18n | 🟡 i18n 部分完成 | 本轮新增文案全部走字典：`types.ts` +62 键，19 个 locale 文件同步补齐（zh-CN 源文、en 翻译、其余 17 locale 先以英文回退待译），`MokinaContextPanel`/`MokinaCandidateCompare`/FileViewer 新增控件均改 `t()`；测试改为跟随默认 en 字典并通过。**未完成**：冻结设计包 21 文件迁移、P01–P08 视觉对照、其余 17 locale 的正式翻译与语言质量 |
 | T17 回归与 CI | 🟡 主体完成 | 本地：daemon 全量 + 归属对照、7 包 typecheck、guard 全绿；CI：复用仓库既有 ci.yml + 规划器（未另建平台），以本分支真实 diff 运行 `scopes.py plan` 得到门禁选择 = daemon_unit_tests / e2e_vitest / ui_p0 / workspace_unit_tests / preflight / static_gate（保守推导）。边界：未推送远端、未实际触发 GitHub Actions 运行 |
 | T18 候选发行包 | ✅ 完成 | `.app` + **dmg 均真实构建**：`Mokina-mokina-local.dmg`（397MB，SHA-256 `d71bbbe…d19ee7`）；修复 tools-pack 产物搬运器硬编码名（electron-builder 产出 Mokina 名而 mover 找 Open Design 名）；`docs/mokina-v0.0.2/runbook.md` 完成；**zip 也已构建**（`Mokina-mokina-local.zip`，SHA-256 `42f52edb…86d72`）。未做：公证与公开分发（按 Spec 不在本轮门槛）。真实活动页运行证据见 `evidence/e2e-real-run.md` 追加段 |
 | T19 本机三任务与签收 | ⬜ not_run | 依赖 T18 包与用户本人签收；本会话未运行真实模型任务 |

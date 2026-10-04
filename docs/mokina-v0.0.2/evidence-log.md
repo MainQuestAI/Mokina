@@ -100,3 +100,28 @@
 - **归因对照（同一批存疑文件在两棵 worktree 复跑）**：本分支干净复跑 7 文件 = 12 failed / 4 文件；基线 worktree（PR3 head，无本分支改动）同 7 文件 = 13 failed / 5 文件。失败集合为基线同样存在的环境性失败（brand 网络 20s 超时、codex CLI 环境探测、vela AMR、od-next 计时），另有基线已存在的 `export-inline-route`、`plugins-bundled-scenarios-roster` 失败。**无归因于本分支改动的失败**；全量中 `run-create-workspace-gate` 单例 404≠409 为并行负载 flake（单独复跑 74/74 通过，基线同文件亦如此）。
 - 各包 typecheck：release / contracts / tools-pack / packaged / desktop / web / daemon 全部 0 error；`pnpm guard` 通过。
 - 已确认各包 typecheck：release / contracts / tools-pack / packaged / desktop / web / daemon 均 0 error（截至本记录）。
+
+## 任务状态总表（截至本记录，诚实口径）
+
+| 任务 | 状态 | 说明 |
+|---|---|---|
+| T00 基线与实现映射 | ✅ 完成 | baseline.md / implementation-map.md / 提交 a6cc708 |
+| T01 独立产品 profile | ✅ 完成（打包实测见 T18 段） | release/tools-pack/packaged/desktop 接线；单测全绿 |
+| T02 打包依赖闭包 | 🟡 进行中 | 代码侧无阻断（sidecar/数据根沿用既有实现，未改）；真实 `tools-pack mac build` 验证见下方打包段 |
+| T03 稳定桌面存储 | ✅ 完成 | IPC store + facade + 镜像/hydration；desktop 498/web 相关测试通过 |
+| T04 Codex 连接诊断 | ⬜ 未完成 | 既有 AgentDiagnostic 机制可复用；auth 探测（系统凭据 vs auth.json）与「检查连接」流程未实现；本会话未动 |
+| T05 资料解析与 PDF 依赖 | 🟡 部分 | 服务端完成（parserVersion + OD_PDFTOTEXT_PATH）；打包 pdftotext 闭包未做（依赖 T18 构建） |
+| T06 上下文快照 | 🟡 部分 | 服务端+CLI+真实 HTTP 测试完成；Web 选择面板（T07）未做；真实模型端到端回执未跑 |
+| T07 资料选择 UI | ⬜ 未完成 | — |
+| T08 场景与产物校验 | 🟡 部分 | 场景包为既有资产（已核对满足最小标准）；structure_invalid 结构校验已接入；双路径 prompt 未改动（既有文本已达标）；专业评分属 T19 |
+| T09 接续 v2 与可靠创建 | ⬜ 未完成 | 既有 v1 基础保留；v2 schema/ journal 未实现 |
+| T10 活动页接续制作 | ⬜ 未完成 | 场景包 mokina-landing-page 未创建 |
+| T11 修订发送身份 | 🟡 部分 | Web 修复落地（持久化→派发→CAS 标记）；真实丢响应注入未跑 |
+| T12 候选比较 UI | ⬜ 未完成 | 采用 CAS 服务端既有；比较 UI 未做 |
+| T13 指定版本导出 | 🟡 部分 | Web 菜单与文件名完成；桌面原生 PDF 实测未跑 |
+| T14 恢复包 | 🟡 部分 | 服务端+CLI+HTTP 往返测试完成；Web 入口未做 |
+| T15 诊断与安全边界 | ⬜ 未完成 | — |
+| T16 八视图与 i18n | ⬜ 未完成 | — |
+| T17 回归与 CI | 🟡 部分 | 本地全量归因完成；CI workflow 未建（账户/远端条件下未跑） |
+| T18 候选发行包 | 🟡 进行中 | 见下方打包段 |
+| T19 本机三任务与签收 | ⬜ not_run | 依赖 T18 包与用户本人签收；本会话未运行真实模型任务 |

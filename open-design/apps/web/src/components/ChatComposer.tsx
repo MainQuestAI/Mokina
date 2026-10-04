@@ -439,6 +439,7 @@ export interface ChatComposerDraftOptions {
 export type ComposerStandalonePanel = 'plugins' | 'toolbox' | null;
 
 export interface ChatComposerHandle {
+  hasDraft: () => boolean;
   setDraft: (text: string, options?: ChatComposerDraftOptions) => void;
   restoreDraft: (draft: {
     /**
@@ -1425,6 +1426,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
     useImperativeHandle(
       ref,
       () => ({
+        hasDraft: () => Boolean(draftRef.current.trim() || staged.length || stagedVisualComments.length || commentAttachments.length || quotes?.length || pendingUploads.length || stagedSkills.length || stagedMcpServers.length || stagedConnectors.length || stagedWorkspaceContexts.length || activeAppliedPlugin),
         setDraft: (text: string, options?: ChatComposerDraftOptions) => {
           pendingEntryFromRef.current = options?.entryFrom ?? null;
           pendingSessionModeRef.current = options?.sessionMode ?? null;

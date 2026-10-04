@@ -2136,3 +2136,57 @@ function currentProject(page: Page): { projectId: string } {
   }
   return { projectId };
 }
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720 }]) {
+  test(`[P1] Mokina PR3 lost creation receipt recovers original daemon run at ${viewport.width}`, async ({ page }, testInfo) => {
+    await page.setViewportSize(viewport);
+    await createProject(page, `Mokina PR3 receipt loss ${viewport.width}`);
+    await expectWorkspaceReady(page);
+    const { projectId, conversationId } = await currentProjectContext(page);
+    let postCount = 0;
+    let runId = '';
+    let requestId = '';
+    // Delay acceptance lookup until the user explicitly verifies. Empty GETs
+    // here represent a lookup racing an independently arriving POST.
+    await page.route('**/api/runs?*', async route => {
+      await route.fulfill({ json: { runs: [] } });
+    });
+    await page.route('**/api/runs', async route => {
+      if (route.request().method() !== 'POST') return route.continue();
+      postCount += 1;
+      requestId = route.request().postDataJSON().clientRequestId;
+      const response = await route.fetch();
+      expect(response.ok()).toBe(true);
+      runId = (await response.json()).runId;
+      // The real daemon accepted the original request. Only its receipt is lost.
+      await route.abort('failed');
+    });
+    const composer = page.getByTestId('chat-composer-input');
+    await composer.fill('Create a slow reload deterministic smoke artifact');
+    await page.getByTestId('chat-send').click();
+    await expect(page.getByTestId('mokina-pending-send')).toBeVisible({ timeout: T.long });
+    await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
+    await page.getByRole('button', { name: 'Send failed — retry' }).click();
+    await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
+    expect(postCount).toBe(1);
+    // Query the real daemon, bypassing browser route doubles.
+    const receipt = await page.request.get(`/api/runs/${runId}`);
+    expect(receipt.ok()).toBe(true);
+    expect(await receipt.json()).toMatchObject({ id: runId, projectId, conversationId, clientRequestId: requestId });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('mokina-pending-send')).toBeVisible({ timeout: T.long });
+    // A lookup must not overwrite a new draft or submit it.
+    await page.getByTestId('chat-composer-input').fill('Unrelated new draft');
+    await page.unroute('**/api/runs?*');
+    await page.getByTestId('mokina-pending-send').getByRole('button').click();
+    await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
+    await expect(page.getByTestId('chat-composer-input')).toHaveText('Unrelated new draft');
+    expect(postCount).toBe(1);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto(`/projects/${projectId}/conversations/${conversationId}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('chat-composer-input')).toHaveText('Unrelated new draft');
+    expect(postCount).toBe(1);
+    await testInfo.attach(`pr3-original-run-${viewport.width}`, { body: JSON.stringify({ runId, requestId, projectId, conversationId, postCount }), contentType: 'application/json' });
+    await testInfo.attach(`pr3-recovered-${viewport.width}`, { body: await page.screenshot(), contentType: 'image/png' });
+  });
+}

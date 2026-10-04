@@ -553,9 +553,11 @@ export interface DaemonStreamOptions {
   assistantMessageId?: string | null;
   clientRequestId?: string | null;
   /** POST /api/runs 受理（2xx）后回调：发送三态清 pending 记录的锚点。 */
+  onBeforeRunCreate?: () => boolean;
+  runCreateTimeoutMs?: number;
   onRunCreateAccepted?: () => void;
   /** POST /api/runs 未受理回调。definitive=true 是 daemon 的明确拒绝
-   * （4xx/最终 5xx）；false 是响应丢失/中止（unknown → 只读核对）。 */
+   * （4xx/结构化拒绝）；false 是响应丢失/中止（unknown → 只读核对）。 */
   onRunCreateFailed?: (info: { definitive: boolean }) => void;
   skillId?: string | null;
   // Per-turn skill ids picked via the composer's @-mention popover. These
@@ -1048,6 +1050,8 @@ export async function streamViaDaemon({
   userMessageId,
   assistantMessageId,
   clientRequestId,
+  onBeforeRunCreate,
+  runCreateTimeoutMs,
   onRunCreateAccepted,
   onRunCreateFailed,
   skillId,
@@ -1117,11 +1121,29 @@ export async function streamViaDaemon({
   };
   const body = JSON.stringify(request);
 
+  let accepted = false;
+  const createController = new AbortController();
+  const cancelCreate = () => createController.abort();
+  const createTimeout = runCreateTimeoutMs ? setTimeout(cancelCreate, runCreateTimeoutMs) : undefined;
+  signal?.addEventListener('abort', cancelCreate, { once: true });
+  cancelSignal?.addEventListener('abort', cancelCreate, { once: true });
+  const finishCreate = () => {
+    if (createTimeout !== undefined) clearTimeout(createTimeout);
+    signal?.removeEventListener('abort', cancelCreate);
+    cancelSignal?.removeEventListener('abort', cancelCreate);
+  };
   try {
+    if (signal?.aborted || cancelSignal?.aborted || onBeforeRunCreate?.() === false) {
+      onRunCreateFailed?.({ definitive: true });
+      emitRunStatus('failed');
+      handlers.onError(new Error('Run was not sent'));
+      return;
+    }
     let createResp: Response;
     for (let attempt = 0; ; attempt += 1) {
       createResp = await fetch('/api/runs', {
         method: 'POST',
+        ...(runCreateTimeoutMs ? { signal: createController.signal } : {}),
         headers: {
           'Content-Type': 'application/json',
           // Tells the daemon which front-end carrier started the run so the
@@ -1148,18 +1170,23 @@ export async function streamViaDaemon({
         && error?.code === 'WORKSPACE_AUTHORITY_UNAVAILABLE'
         && error.retryable === true;
       const delayMs = RUN_CREATE_AUTHORITY_RETRY_DELAYS_MS[attempt];
-      if (!retryableAuthorityOutage || delayMs === undefined || cancelSignal?.aborted) break;
+      if (!retryableAuthorityOutage || delayMs === undefined || cancelSignal?.aborted || createController.signal.aborted) break;
       await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
-      if (cancelSignal?.aborted) {
+      if (cancelSignal?.aborted || createController.signal.aborted) {
         // 受理前被取消：无法证明 daemon 是否已受理 → unknown，由只读核对收口。
         onRunCreateFailed?.({ definitive: false });
+        emitRunStatus('failed');
+        handlers.onError(new Error('Run creation interrupted; acceptance is unknown'));
         return;
       }
     }
 
     if (!createResp.ok) {
       const text = await createResp.text().catch(() => '');
-      onRunCreateFailed?.({ definitive: true });
+      // Structured daemon errors prove refusal. An unstructured gateway/server
+      // failure may have lost a receipt after forwarding the POST.
+      const body = (() => { try { return JSON.parse(text) as ApiErrorResponse; } catch { return null; } })();
+      onRunCreateFailed?.({ definitive: createResp.status < 500 || !!body?.error?.code });
       emitRunStatus('failed');
       handlers.onError(daemonCreateRunError(createResp, text));
       return;
@@ -1167,6 +1194,9 @@ export async function streamViaDaemon({
 
     const created = (await createResp.json()) as ChatRunCreateResponse;
     const runId = created.runId;
+    if (typeof runId !== 'string' || !runId) throw new Error('Invalid run creation receipt');
+    accepted = true;
+    finishCreate();
     onRunCreateAccepted?.();
     if (created.strategyTask) onRunCreated?.(runId, created.strategyTask);
     else onRunCreated?.(runId);
@@ -1213,13 +1243,19 @@ export async function streamViaDaemon({
   } catch (err) {
     if ((err as Error).name === 'AbortError') {
       // 受理前中止（含网络层 abort）：与响应丢失同义 → unknown。
-      onRunCreateFailed?.({ definitive: false });
+      if (!accepted) {
+        onRunCreateFailed?.({ definitive: false });
+        emitRunStatus('failed');
+        handlers.onError(new Error('Run creation interrupted; acceptance is unknown'));
+      }
       return;
     }
     // fetch 本身抛错（断网/超时）：不是 daemon 的明确拒绝 → unknown。
-    onRunCreateFailed?.({ definitive: false });
+    if (!accepted) onRunCreateFailed?.({ definitive: false });
     emitRunStatus('failed');
     handlers.onError(err instanceof Error ? err : new Error(String(err)));
+  } finally {
+    finishCreate();
   }
 }
 
@@ -1680,6 +1716,30 @@ export async function steerChatRun(
     };
   }
   return { ok: true, messageId: body?.messageId ?? '' };
+}
+
+/** A scoped, authoritative lookup. Empty/malformed/denied reads are unknown,
+ * never evidence that an in-flight POST cannot still be accepted. */
+export async function queryRunByClientRequest(
+  projectId: string, conversationId: string, clientRequestId: string,
+  options: { timeoutMs?: number; workspaceContext?: WorkspaceCollabContext | null; signal?: AbortSignal } = {},
+): Promise<ChatRunStatusResponse | null> {
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  const timer = setTimeout(abort, options.timeoutMs ?? 10_000);
+  options.signal?.addEventListener('abort', abort, { once: true });
+  try {
+    if (options.signal?.aborted) return null;
+    const qs = new URLSearchParams({ projectId, conversationId });
+    const response = await fetch(`/api/runs?${qs}`, { cache: 'no-store', signal: controller.signal,
+      ...(options.workspaceContext ? { headers: workspaceProjectHeaders(options.workspaceContext) } : {}) });
+    if (!response.ok) return null;
+    const body = await response.json() as ChatRunListResponse;
+    if (!Array.isArray(body.runs)) return null;
+    return body.runs.find(run => run.clientRequestId === clientRequestId
+      && run.projectId === projectId && run.conversationId === conversationId && typeof run.id === 'string') ?? null;
+  } catch { return null; }
+  finally { clearTimeout(timer); options.signal?.removeEventListener('abort', abort); }
 }
 
 export async function listActiveChatRuns(

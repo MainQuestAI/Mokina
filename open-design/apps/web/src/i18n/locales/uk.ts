@@ -1,7 +1,14 @@
 import type { Dict } from '../types';
 
 export const uk: Dict = {
+  'mokina.pendingSend.reselect': "Plugin settings and temporary files cannot be restored after reload. Select them again.",
   'homeHero.materialsEntry': "Матеріали та контекст",
+  "mokina.entrySummary.incomplete": "Artifacts not fully read",
+  "mokina.entryChooser.formal": "Formal artifact",
+  "mokina.entryChooser.versionTime": "Version time",
+  "mokina.pendingSend.saveFailed": "Cannot safely save this request. Keep your draft and check local storage or request size.",
+  "mokina.pendingSend.restore": "Restore unsent draft",
+  "mokina.pendingSend.draftOccupied": "Your current draft is kept. Clear or save it before restoring the earlier request.",
   'mokina.pendingSend.title': "Результат надсилання очікує підтвердження",
   'mokina.pendingSend.verify': "Перевірити статус",
   'mokina.entryChooser.title': "Виберіть результат для відкриття",

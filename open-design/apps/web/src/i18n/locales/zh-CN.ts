@@ -1,7 +1,14 @@
 import type { Dict } from "../types";
 
 export const zhCN: Dict = {
+  'mokina.pendingSend.reselect': "插件设置和未上传的临时文件不能跨刷新恢复，请重新选择。",
   'homeHero.materialsEntry': "资料与背景",
+  "mokina.entrySummary.incomplete": "成果尚未完整读取",
+  "mokina.entryChooser.formal": "正式成果",
+  "mokina.entryChooser.versionTime": "版本时间",
+  "mokina.pendingSend.saveFailed": "无法安全保存本次请求。草稿已保留，请检查本地存储空间或缩短输入。",
+  "mokina.pendingSend.restore": "恢复未发送草稿",
+  "mokina.pendingSend.draftOccupied": "当前草稿已保留。请先保存或清空它，再恢复之前的请求。",
   'mokina.pendingSend.title': "结果待确认",
   'mokina.pendingSend.verify': "核对发送结果",
   'mokina.entryChooser.title': "选择要打开的成果",

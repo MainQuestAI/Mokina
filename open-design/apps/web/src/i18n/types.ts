@@ -38,6 +38,13 @@ export interface Dict {
   'mokina.entrySummary.legacy': string;
   'mokina.entryChooser.title': string;
   'mokina.entryChooser.cancel': string;
+  "mokina.entrySummary.incomplete": string;
+  "mokina.entryChooser.formal": string;
+  "mokina.entryChooser.versionTime": string;
+  "mokina.pendingSend.reselect": string;
+  "mokina.pendingSend.saveFailed": string;
+  "mokina.pendingSend.restore": string;
+  "mokina.pendingSend.draftOccupied": string;
   'mokina.pendingSend.title': string;
   'mokina.pendingSend.verify': string;
   'homeHero.materialsEntry': string;

@@ -374,8 +374,13 @@ import {
   clearSendRequestRecord,
   loadSendRequestRecords,
   markSendRequestUnknown,
+  markSendRequestDraft,
+  markSendRequestDispatched,
+  recoverSendRequestRecords,
+  SEND_REQUESTS_CHANGED,
+  type SendRequestSnapshot,
   queryRunAccepted,
-  savePendingSendRequest,
+  persistPendingSendRequest,
   type SendRequestRecord,
 } from '../runtime/chat/send-request-state';
 import { MokinaEntryChooserDialog } from './MokinaEntryChooserDialog';
@@ -8450,34 +8455,49 @@ export function ProjectView({
     }
   }, [commitPreviewComments, enqueueChatSend, project.id, projectRunWorkspaceContext]);
 
-  // 发送三态（Spec B1 §6.3/FR-08）：当前会话的「结果待确认」记录与只读核对。
+  const sendAdmissionRef = useRef(new Map<string, 'queued' | 'accepted' | 'restore-draft' | 'unknown'>());
   const [pendingSendRecords, setPendingSendRecords] = useState<SendRequestRecord[]>([]);
   const [pendingSendVerifyNonce, setPendingSendVerifyNonce] = useState(0);
+  const [sendRecoveryRequest, setSendRecoveryRequest] = useState<{ id: string; snapshot: SendRequestSnapshot } | null>(null);
   useEffect(() => {
     if (!MOKINA_LOCAL_EDITION || !activeConversationId) return undefined;
-    const readUnknowns = () => loadSendRequestRecords(project.id, activeConversationId)
-      .filter((record) => record.status === 'unknown');
-    setPendingSendRecords(readUnknowns());
-    const unknowns = readUnknowns();
-    if (unknowns.length === 0) return undefined;
-    let cancelled = false;
+    const read = () => loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
+      .filter(record => record.status !== 'pending');
+    const update = () => setPendingSendRecords(read());
+    recoverSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey);
+    update();
+    window.addEventListener(SEND_REQUESTS_CHANGED, update);
+    window.addEventListener('storage', update);
+    const controller = new AbortController();
     void (async () => {
-      for (const record of unknowns) {
-        const accepted = await queryRunAccepted(project.id, activeConversationId, record.clientRequestId);
-        if (cancelled) return;
-        if (accepted !== null) {
-          // true：已受理 → 清记录（原 run 由既有 reattach 恢复显示，不重新 POST）。
-          // false：daemon 按 clientRequestId 证明从未受理 → 回可发送草稿。
-          clearSendRequestRecord(project.id, activeConversationId, record.clientRequestId);
-        }
-        // null：查询失败 → 保留 unknown，同请求不自动重发。
-        setPendingSendRecords(readUnknowns());
+      for (const record of read().filter(record => record.status === 'unknown')) {
+        const run = await queryRunAccepted(project.id, activeConversationId, record.clientRequestId,
+          10_000, projectRunWorkspaceContext, controller.signal);
+        if (controller.signal.aborted) return;
+        if (!run) continue;
+        // Reconcile original message identity; then existing reattach owns the run.
+        const snapshot = record.snapshot;
+        setMessages(current => {
+          if (messagesConversationIdRef.current !== activeConversationId) return current;
+          const next = current.map(message => message.clientRequestId === record.clientRequestId
+            ? { ...message, error: undefined, errorCode: undefined, resumable: undefined } : message);
+          const assistantId = run.assistantMessageId ?? snapshot?.assistantMessageId;
+          if (!assistantId) return next;
+          const recovered: ChatMessage = { id: assistantId, role: 'assistant', content: '',
+            createdAt: run.createdAt, runId: run.id, runStatus: run.status, clientRequestId: record.clientRequestId };
+          const index = next.findIndex(message => message.id === assistantId);
+          if (index >= 0) next[index] = { ...next[index]!, ...recovered, content: next[index]!.content };
+          else next.push(recovered);
+          return next;
+        });
+        clearSendRequestRecord(project.id, activeConversationId, record.clientRequestId, projectRunAuthorityKey);
+        scheduleConversationMessageRefresh(activeConversationId);
+        update();
       }
     })();
-    return () => {
-      cancelled = true;
-    };
-  }, [activeConversationId, pendingSendVerifyNonce, project.id]);
+    return () => { controller.abort(); window.removeEventListener(SEND_REQUESTS_CHANGED, update); window.removeEventListener('storage', update); };
+  }, [activeConversationId, pendingSendVerifyNonce, project.id, projectRunAuthorityKey, projectRunWorkspaceContext, scheduleConversationMessageRefresh]);
+
 
   const handleSend = useCallback(
     async (
@@ -8488,9 +8508,13 @@ export function ProjectView({
       baseMessages?: ChatMessage[],
     ) => {
       if (projectMutationReadOnly) return false;
-      if (!activeConversationId) return false;
-      if (messagesConversationIdRef.current !== activeConversationId) return false;
       const clientRequestId = meta?.clientRequestId ?? randomUUID();
+      const retainComposerDraft = (): false => {
+        if (MOKINA_LOCAL_EDITION && meta?.composerOwnedDraft) sendAdmissionRef.current.set(clientRequestId, 'restore-draft');
+        return false;
+      };
+      if (!activeConversationId) return retainComposerDraft();
+      if (messagesConversationIdRef.current !== activeConversationId) return retainComposerDraft();
       meta = {
         ...(meta ?? {}),
         clientRequestId,
@@ -8499,7 +8523,18 @@ export function ProjectView({
       const retryTarget = meta?.retryOfAssistantId
         ? resolveRetryTarget(messages, meta.retryOfAssistantId)
         : null;
-      if (meta?.retryOfAssistantId && !retryTarget) return false;
+      if (meta?.retryOfAssistantId && !retryTarget) return retainComposerDraft();
+      if (MOKINA_LOCAL_EDITION) {
+        const originalId = retryTarget?.userMsg.clientRequestId
+          ?? messages.find(message => message.id === meta?.userMessageId)?.clientRequestId
+          ?? meta?.clientRequestId;
+        if (originalId && loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
+          .some(record => record.clientRequestId === originalId && record.status !== 'draft')) {
+          setPendingSendVerifyNonce(nonce => nonce + 1);
+          sendAdmissionRef.current.set(clientRequestId, 'restore-draft');
+          return false;
+        }
+      }
       const blockedRequestKey = JSON.stringify([
         prompt,
         attachments.map((attachment) => [attachment.path, attachment.name]),
@@ -8546,7 +8581,7 @@ export function ProjectView({
       // run can start. Local CLI and BYOK runtimes do not consume the Vela
       // wallet, so old daemons without this endpoint and directory outages
       // must not disable those runtimes.
-      if (!projectRunHasBillableAmrPrincipal) return false;
+      if (!projectRunHasBillableAmrPrincipal) return retainComposerDraft();
       const effectiveAttachments = mergeChatAttachments(
         attachments,
         ...commentAttachments.map((attachment) =>
@@ -8594,7 +8629,7 @@ export function ProjectView({
         });
         setError(BYOK_PROVIDER_REQUIRED_MESSAGE);
         onOpenSettings('execution');
-        return false;
+        return retainComposerDraft();
       }
       if (!retryTarget && meta?.queueOnly) {
         queueChatSendForCurrentConversation({
@@ -8661,42 +8696,33 @@ export function ProjectView({
       const runConversationId = activeConversationId;
       // This is the accepted retry boundary: all synchronous refusal paths are
       // above it. A later preflight/POST failure supplies its own current surface.
-      // 发送三态（Spec B1 §6.3）：POST 前落 pending；写入失败 → 停在草稿
-      // （返回 false 会让输入框还回正文），绝不无记录地发出请求。
-      const mokinaSendRecord: SendRequestRecord | null = MOKINA_LOCAL_EDITION && !meta?.queueOnly
-        ? (() => {
-            const record: SendRequestRecord = {
-              clientRequestId,
-              projectId: project.id,
-              conversationId: runConversationId,
-              promptPreview: prompt.slice(0, 120),
-              status: 'pending',
-              createdAt: Date.now(),
-            };
-            return savePendingSendRequest({
-              clientRequestId,
-              projectId: project.id,
-              conversationId: runConversationId,
-              prompt,
-            }) ? record : null;
-          })()
-        : null;
-      if (MOKINA_LOCAL_EDITION && !meta?.queueOnly && !mokinaSendRecord) return false;
-      const settleMokinaSend = {
-        onRunCreateAccepted: () => {
-          if (mokinaSendRecord) {
-            clearSendRequestRecord(project.id, runConversationId, clientRequestId);
+      let mokinaSendRecord = false;
+      let resolveAdmission: (started: boolean) => void = () => {};
+      const admission = new Promise<boolean>(resolve => { resolveAdmission = resolve; });
+      const settleMokinaSend = MOKINA_LOCAL_EDITION ? {
+        runCreateTimeoutMs: 30_000,
+        onBeforeRunCreate: () => {
+          const dispatched = markSendRequestDispatched(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+          if (!dispatched) {
+            retractPaintedTurn();
+            sendAdmissionRef.current.set(clientRequestId, 'restore-draft');
+            setError(t('mokina.pendingSend.saveFailed'));
           }
+          return dispatched;
+        },
+        onRunCreateAccepted: () => {
+          sendAdmissionRef.current.set(clientRequestId, 'accepted');
+          clearSendRequestRecord(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+          resolveAdmission(true);
         },
         onRunCreateFailed: ({ definitive }: { definitive: boolean }) => {
           if (!mokinaSendRecord) return;
-          if (definitive) clearSendRequestRecord(project.id, runConversationId, clientRequestId);
-          else {
-            markSendRequestUnknown(project.id, runConversationId, clientRequestId);
-            setPendingSendRecords(loadSendRequestRecords(project.id, runConversationId));
-          }
+          sendAdmissionRef.current.set(clientRequestId, definitive ? 'restore-draft' : 'unknown');
+          if (definitive) markSendRequestDraft(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+          else markSendRequestUnknown(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+          resolveAdmission(!definitive);
         },
-      };
+      } : {};
       if (retryTarget && meta?.retryOfAssistantId) {
         supersedeRetriedError(runConversationId, meta.retryOfAssistantId, retryTarget.failedAssistant.id);
       }
@@ -8836,12 +8862,11 @@ export function ProjectView({
        * 进行中标记仍要清 —— 它是按会话 id 认领的,清的就是这一条。
        */
       const retractPaintedTurn = () => {
-        const restore = paintedFrom.messages;
-        paintedFrom.messages = null;
         clearStreamingMarker(runConversationId);
-        if (restore === null) return;
         if (messagesConversationIdRef.current !== runConversationId) return;
-        setMessages(restore);
+        // The initial paint updater may still be batched when synchronous
+        // persistence fails. Read its captured state from the ordered updater.
+        setMessages(current => paintedFrom.messages ?? current);
       };
       // OpenDesign Cloud pre-run balance gate: a definitively insufficient
       // wallet blocks the run BEFORE any message is persisted or a daemon run
@@ -9095,7 +9120,34 @@ export function ProjectView({
        * assistant 标成已停止),这里再按预检那套原样放回去,会把用户刚发的
        * 那条消息一起抹掉。
        */
-      if (streamingConversationIdRef.current !== runConversationId) return false;
+      if (streamingConversationIdRef.current !== runConversationId) return retainComposerDraft();
+      if (MOKINA_LOCAL_EDITION) {
+        const extras = {
+          attachments: effectiveAttachments,
+          commentAttachments,
+          quotes: meta?.quotes ?? [],
+          context: {
+            skillIds: meta?.skillIds ?? runContext?.skillIds ?? [],
+            mcpServerIds: runContext?.mcpServerIds ?? [],
+            connectorIds: runContext?.connectorIds ?? [],
+            workspaceItems: runContext?.workspaceItems ?? [],
+          },
+        };
+        mokinaSendRecord = await persistPendingSendRequest({ projectId: project.id,
+          conversationId: runConversationId, clientRequestId, authorityKey: projectRunAuthorityKey,
+          prompt: userMsg.content,
+          snapshot: { prompt: userMsg.content, extras, requiresContextReselection: Boolean(meta?.appliedPluginSnapshot || runContext?.pluginIds?.length), userMessageId: userMsg.id, assistantMessageId: assistantId } });
+        if (mokinaSendRecord && streamingConversationIdRef.current !== runConversationId) {
+          markSendRequestDraft(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+          return retainComposerDraft();
+        }
+        if (!mokinaSendRecord) {
+          retractPaintedTurn();
+          sendAdmissionRef.current.set(clientRequestId, 'restore-draft');
+          setError(t('mokina.pendingSend.saveFailed'));
+          return false;
+        }
+      }
       if (resumesBlockedTask) blockedRunTaskRef.current = null;
       // First genuine send in a recommendation-started project — the
       // send-through half of the onboarding funnel. Fires once per project (the
@@ -10282,14 +10334,16 @@ export function ProjectView({
 
       if (config.mode === 'daemon') {
         if (!config.agentId) {
+          settleMokinaSend.onRunCreateFailed?.({ definitive: true });
           handlers.onError(new Error('Pick a local agent first (top bar).'));
-          return true;
+          return !MOKINA_LOCAL_EDITION;
         }
         const choice = effectiveSelectedAgentChoice;
         const daemonByokOpenCode = config.agentId === 'byok-opencode';
         if (daemonByokOpenCode && !agentsById.get('byok-opencode')?.available) {
+          settleMokinaSend.onRunCreateFailed?.({ definitive: true });
           handlers.onError(new Error(BYOK_OPENCODE_UNAVAILABLE_MESSAGE));
-          return true;
+          return !MOKINA_LOCAL_EDITION;
         }
         // v2 analytics: when the active project is a DS workspace
         // (created by `prepareCreatedDesignSystemProject`, identifiable
@@ -10531,15 +10585,17 @@ export function ProjectView({
             persistAssistantSoon();
           },
         });
-        return true;
+        return MOKINA_LOCAL_EDITION ? await admission : true;
       } else {
         if (config.apiProtocol === 'bedrock') {
+          settleMokinaSend.onRunCreateFailed?.({ definitive: true });
           handlers.onError(new Error(BEDROCK_BYOK_UNSUPPORTED_MESSAGE));
-          return true;
+          return !MOKINA_LOCAL_EDITION;
         }
         if (!agentsById.get('byok-opencode')?.available) {
+          settleMokinaSend.onRunCreateFailed?.({ definitive: true });
           handlers.onError(new Error(BYOK_OPENCODE_UNAVAILABLE_MESSAGE));
-          return true;
+          return !MOKINA_LOCAL_EDITION;
         }
         // Mirror the daemon chat-route memory hook for BYOK chats. The
         // CLI path runs `extractFromMessage` BEFORE composing the prompt
@@ -10754,7 +10810,7 @@ export function ProjectView({
             persistAssistantSoon();
           },
         });
-        return true;
+        return MOKINA_LOCAL_EDITION ? await admission : true;
       }
     },
     [
@@ -10896,13 +10952,21 @@ export function ProjectView({
         // `ProjectChatSendMeta.composerOwnedDraft`。
         composerOwnedDraft: true,
       });
+      const outcome = sendAdmissionRef.current.get(clientRequestId);
+      sendAdmissionRef.current.delete(clientRequestId);
+      if (outcome === 'restore-draft') {
+        const record = loadSendRequestRecords(project.id, activeConversationId ?? '', projectRunAuthorityKey)
+          .find(record => record.clientRequestId === clientRequestId);
+        if (record?.status === 'draft') clearSendRequestRecord(project.id, activeConversationId!, clientRequestId, projectRunAuthorityKey);
+        return 'restore-draft';
+      }
       if (started) return;
       // 认领必须按请求 id:同一条会话里可能有别的发送也在这段时间被拒。
       if (amrGateBlockedRequestRef.current !== clientRequestId) return;
       amrGateBlockedRequestRef.current = null;
       return 'restore-draft';
     },
-    [activeConversationId, cloudModelSelected, handleSend, project.id],
+    [activeConversationId, cloudModelSelected, handleSend, project.id, projectRunAuthorityKey],
   );
 
   // Cancel every in-flight run for the current conversation (the user's own
@@ -11151,9 +11215,16 @@ export function ProjectView({
   const [modelPickerOpenSignal, setModelPickerOpenSignal] = useState(0);
   const rerunAfterModelChangeRef = useRef<ChatMessage | null>(null);
   const handleSwitchModel = useCallback((assistantMessage: ChatMessage) => {
+    const originalId = resolveRetryTarget(messages, assistantMessage.id)?.userMsg.clientRequestId;
+    if (MOKINA_LOCAL_EDITION && activeConversationId && originalId
+      && loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
+        .some(record => record.clientRequestId === originalId && record.status !== 'draft')) {
+      setPendingSendVerifyNonce(nonce => nonce + 1);
+      return;
+    }
     rerunAfterModelChangeRef.current = assistantMessage;
     setModelPickerOpenSignal((n) => n + 1);
-  }, []);
+  }, [activeConversationId, messages, project.id, projectRunAuthorityKey]);
 
   /** A retry consumes the current error surface, but never the failed history. */
   const handleRetry = useCallback(
@@ -11169,6 +11240,12 @@ export function ProjectView({
         || retryLocksRef.current.has(retryConversationId)
         || !resolveRetryTarget(messages, assistantMessage.id)
       ) return;
+      const originalRequestId = resolveRetryTarget(messages, assistantMessage.id)?.userMsg.clientRequestId;
+      if (MOKINA_LOCAL_EDITION && originalRequestId && loadSendRequestRecords(project.id, retryConversationId, projectRunAuthorityKey)
+        .some(record => record.clientRequestId === originalRequestId && record.status !== 'draft')) {
+        setPendingSendVerifyNonce(nonce => nonce + 1);
+        return;
+      }
       const replacementAssistantId = randomUUID();
       retryLocksRef.current.set(retryConversationId, replacementAssistantId);
       setRetryPending({
@@ -11196,7 +11273,7 @@ export function ProjectView({
         }
       })();
     },
-    [activeConversationId, handleSend, messages],
+    [activeConversationId, handleSend, messages, project.id, projectRunAuthorityKey],
   );
 
   // Release only the request we witnessed. Old responses must not unlock a
@@ -13681,24 +13758,21 @@ export function ProjectView({
   // not in the top-right header.
   // 「结果待确认」（Spec B1 FR-08）：unknown 记录的非打断提示 + 只读核对。
   // 不自动重发、不换 ID；核对是纯 GET，受理与否都只更新本会话状态。
-  const pendingSendNotice: ReactNode = pendingSendRecords.length > 0 ? (
-    <div
-      className="mokina-pending-send"
-      role="status"
-      aria-live="polite"
-      data-testid="mokina-pending-send"
-    >
-      <span className="mokina-pending-send__text">
-        {t('mokina.pendingSend.title')}
-        {pendingSendRecords[0]?.promptPreview ? `：${pendingSendRecords[0].promptPreview}` : ''}
-      </span>
-      <button
-        type="button"
-        className="mokina-pending-send__verify"
-        onClick={() => setPendingSendVerifyNonce((nonce) => nonce + 1)}
-      >
-        {t('mokina.pendingSend.verify')}
-      </button>
+  const visibleSendRecords = pendingSendRecords.filter(record => record.projectId === project.id
+    && record.conversationId === activeConversationId && (record.authorityKey ?? 'none') === projectRunAuthorityKey);
+  const pendingSendNotice: ReactNode = visibleSendRecords.length > 0 ? (
+    <div className="mokina-pending-send" role="status" aria-live="polite" data-testid="mokina-pending-send">
+      {visibleSendRecords.map(record => (
+        <div key={record.clientRequestId}>
+          <span className="mokina-pending-send__text">{t(record.status === 'draft' ? 'mokina.pendingSend.restore' : 'mokina.pendingSend.title')}：{record.promptPreview}</span>
+          {record.snapshot?.requiresContextReselection ? <span>{t('mokina.pendingSend.reselect')}</span> : null}
+          {record.status === 'draft' && record.snapshot ? (
+            <button type="button" className="mokina-pending-send__verify" onClick={() => setSendRecoveryRequest({ id: record.clientRequestId, snapshot: record.snapshot! })}>{t('mokina.pendingSend.restore')}</button>
+          ) : (
+            <button type="button" className="mokina-pending-send__verify" onClick={() => setPendingSendVerifyNonce(nonce => nonce + 1)}>{t('mokina.pendingSend.verify')}</button>
+          )}
+        </div>
+      ))}
     </div>
   ) : null;
 
@@ -13933,6 +14007,13 @@ export function ProjectView({
               shareToOpenDesignBusyMessageId={shareToOpenDesignBusyMessageId}
               forceStreamingMessageIds={forceStreamingPluginMessageIds}
               initialDraft={chatInitialDraft}
+              sendRecoveryRequest={sendRecoveryRequest}
+              onSendRecoveryBlocked={() => { setError(t('mokina.pendingSend.draftOccupied')); setSendRecoveryRequest(null); }}
+              onSendRecoveryRestored={(id) => {
+                if (sendRecoveryRequest?.snapshot.requiresContextReselection) setError(t('mokina.pendingSend.reselect'));
+                if (activeConversationId) clearSendRequestRecord(project.id, activeConversationId, id, projectRunAuthorityKey);
+                setSendRecoveryRequest(null);
+              }}
               onboardingStarterPath={onboardingEntryRef.current?.productType ?? null}
               questionFormSubmitDisabled={currentConversationActionDisabled}
               onSubmitQuestionForm={async (text, attachments = [], context, sourceAssistantMessageId, formId) => {

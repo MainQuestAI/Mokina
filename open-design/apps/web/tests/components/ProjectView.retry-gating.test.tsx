@@ -19,6 +19,9 @@ import type {
   Project,
 } from '../../src/types';
 
+const mokinaEdition = vi.hoisted(() => ({ on: false }));
+vi.mock('../../src/mokina-edition', () => ({ get MOKINA_LOCAL_EDITION() { return mokinaEdition.on; } }));
+
 const listConversations = vi.fn();
 const listMessages = vi.fn();
 const fetchPreviewComments = vi.fn();
@@ -144,6 +147,7 @@ vi.mock('../../src/collab/useProjectCollab', async (importOriginal) => ({
 vi.mock('../../src/providers/daemon', () => ({
   GENERIC_DAEMON_DISCONNECT_CODE: 'GENERIC_DAEMON_DISCONNECT',
   GENERIC_DAEMON_DISCONNECT_MESSAGE: 'daemon stream disconnected before run completed',
+  queryRunByClientRequest: vi.fn().mockResolvedValue(null),
   fetchChatRunStatus: (...args: unknown[]) => fetchChatRunStatus(...args),
   listActiveChatRuns: (...args: unknown[]) => listActiveChatRuns(...args),
   listProjectRuns: (...args: unknown[]) => listProjectRuns(...args),
@@ -267,6 +271,7 @@ vi.mock('../../src/components/ChatPane', async (importOriginal) => {
       .find((message) => message.role === 'assistant' && message.runStatus === 'failed');
     return (
       <section>
+        {chatSurface.props?.composerFooterAccessory}
         <output data-testid="active-conversation">{props.activeConversationId ?? ''}</output>
         <output data-testid="queued-count">{props.queuedItems?.length ?? 0}</output>
         <output data-testid="queued-prompts">
@@ -473,6 +478,7 @@ async function waitForConversation() {
 let conversationMessages: ChatMessage[] = [];
 
 beforeEach(() => {
+  mokinaEdition.on = false;
   chatSurface.real = false;
   chatSurface.props = null;
   sendOutcomes.length = 0;
@@ -1301,5 +1307,60 @@ describe('2026-09-14 retry replaces the old error surface without erasing histor
     expect(screen.queryByTestId('chat-run-error-card')).toBeNull();
     expect(screen.queryByTestId('chat-upgrade-card')).toBeNull();
     expect(streamViaDaemon).not.toHaveBeenCalled();
+  });
+});
+
+describe('Mokina request admission and recovery join the actual host callbacks', () => {
+  beforeEach(() => { mokinaEdition.on = true; });
+  it('storage failure retracts the painted turn and tells the real composer contract to retain input', async () => {
+    conversationMessages = [];
+    renderProjectView(localConfig); await waitForConversation();
+    await waitFor(() => expect((screen.getByTestId('send-message') as HTMLButtonElement).disabled).toBe(false));
+    const original = Storage.prototype.setItem;
+    const fail = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key, value) {
+      if (key.startsWith('od:send-request:')) throw new DOMException('quota', 'QuotaExceededError');
+      return original.call(this, key, value);
+    });
+    try {
+      fireEvent.click(screen.getByTestId('send-message'));
+      await waitFor(() => expect(sendOutcomes).toEqual(['restore-draft']));
+      expect(streamViaDaemon).not.toHaveBeenCalled();
+      expect(screen.getByTestId('assistant-summary').textContent).toBe('');
+    } finally { fail.mockRestore(); }
+  });
+  it('failure to persist dispatch after preparation still performs no POST, retracts the turn and retains the draft', async () => {
+    conversationMessages = [];
+    streamViaDaemon.mockImplementation(async options => {
+      expect(options.onBeforeRunCreate()).toBe(false);
+      options.onRunCreateFailed({ definitive: true });
+      options.handlers.onError(new Error('Run was not sent'));
+    });
+    renderProjectView(localConfig); await waitForConversation();
+    const original = Storage.prototype.setItem;
+    const fail = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key, value) {
+      if (key.startsWith('od:send-request:') && JSON.parse(value).phase === 'dispatched') throw new DOMException('quota', 'QuotaExceededError');
+      return original.call(this, key, value);
+    });
+    try {
+      fireEvent.click(screen.getByTestId('send-message'));
+      await waitFor(() => expect(sendOutcomes).toEqual(['restore-draft']));
+      expect(screen.getByTestId('assistant-summary').textContent).toBe('');
+    } finally { fail.mockRestore(); }
+  });
+  it('response loss stops local busy state; ordinary retry checks the same request instead of creating a new ID', async () => {
+    conversationMessages = [];
+    streamViaDaemon.mockImplementation(async options => {
+      expect(options.onBeforeRunCreate()).toBe(true);
+      options.onRunCreateFailed({ definitive: false });
+      options.handlers.onError(new Error('receipt lost'));
+    });
+    renderProjectView(localConfig); await waitForConversation();
+    fireEvent.click(screen.getByTestId('send-message'));
+    await waitFor(() => expect(sendOutcomes).toEqual([undefined]));
+    await waitFor(() => expect(screen.getByTestId('mokina-pending-send')).toBeTruthy());
+    fireEvent.click(screen.getByTestId('chat-retry'));
+    await act(async () => {});
+    expect(streamViaDaemon).toHaveBeenCalledTimes(1);
+    expect(Object.keys(window.localStorage).filter(key => key.startsWith('od:send-request:v2:'))).toHaveLength(1);
   });
 });

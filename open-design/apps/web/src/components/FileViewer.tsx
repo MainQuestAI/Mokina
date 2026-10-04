@@ -4374,6 +4374,12 @@ function FileVersionManagerModal({
       );
       if (!saved) throw new Error(t('fileViewer.mokina.continuationDraftKept'));
       storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'snapshot-saved', updatedAt: new Date().toISOString() });
+      if (!continuationSectionRef.current?.isConnected) {
+        // The user moved on while the creation was in flight: the project and
+        // the journal stay ready (a retry reuses the same target), but a late
+        // result must not yank navigation or quietly clear the record.
+        return;
+      }
       clearJournal();
       onClose();
       navigate({ kind: 'project', projectId: project.project.id, conversationId: project.conversationId, fileName: null });

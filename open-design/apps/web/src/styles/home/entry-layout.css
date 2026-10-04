@@ -9327,7 +9327,7 @@ button.entry-nav-rail__menu-credits-row:active:not(:disabled) {
 
 .mokina-pending-send__verify {
   flex: 0 0 auto;
-  min-height: 32px;
+  min-height: 44px;
   padding: 4px 12px;
   border: 1px solid var(--border, #dbdbdb);
   border-radius: 8px;
@@ -9346,7 +9346,7 @@ button.entry-nav-rail__menu-credits-row:active:not(:disabled) {
    与工作目录选择器同一行高；入口只做真实导航，不承载选择状态。 */
 .home-hero__materials-entry {
   flex: 0 0 auto;
-  min-height: 32px;
+  min-height: 44px;
   padding: 5px 12px;
   border: 1px solid var(--border, #dbdbdb);
   border-radius: 8px;
@@ -9361,3 +9361,9 @@ button.entry-nav-rail__menu-credits-row:active:not(:disabled) {
   background: color-mix(in srgb, var(--text, #333) 8%, transparent);
   color: var(--text, #333);
 }
+
+.mokina-pending-send__verify:focus-visible,
+.home-hero__materials-entry:focus-visible { outline: 2px solid var(--text, #333); outline-offset: 2px; }
+.mokina-pending-send { flex-direction: column; align-items: stretch; }
+.mokina-pending-send > div { display: flex; align-items: center; gap: 12px; }
+.entry-nav-rail__recent-name.is-mokina-name { white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }

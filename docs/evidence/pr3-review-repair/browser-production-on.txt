@@ -1,0 +1,89 @@
+
+Running 7 tests using 1 worker
+
+(node:93287) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:93287) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 (33.4s)
+(node:94159) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:94159) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 (33.3s)
+(node:95038) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:95038) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 (2.1s)
+  ✓  4 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1440x900 (1.6s)
+  ✓  5 [chromium] › ui/mokina-workspace-actions.test.ts:71:1 › [P1] Mokina panel explains historical and chapterless action restrictions (1.9s)
+  ✓  6 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 (3.5s)
+  ✓  7 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 (4.4s)
+
+
+  1) [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.artifact-version-panel')
+    Expected: visible
+    Timeout: 30000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 30000ms[22m
+    [2m  - waiting for locator('.artifact-version-panel')[22m
+
+
+      58 |     await expect(chooser).toHaveCount(0);
+      59 |     const pinnedPanel = page.locator('.artifact-version-panel');
+    > 60 |     await expect(pinnedPanel).toBeVisible({ timeout: T.long });
+         |                               ^
+      61 |     await expect(pinnedPanel.getByRole('listbox').getByRole('option', { selected: true })).toContainText('v1');
+      62 |     await expect(pinnedPanel.getByText('所选：v1 · 历史稿')).toBeVisible();
+      63 |
+        at /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/ui/mokina-navigation.test.ts:60:31
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../.tmp/pr3-production-on-artifacts/mokina-navigation--P1-Moki-5b0af-ecent-summaries-at-1280x720-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../.tmp/pr3-production-on-artifacts/mokina-navigation--P1-Moki-5b0af-ecent-summaries-at-1280x720-chromium/error-context.md
+
+  2) [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.artifact-version-panel')
+    Expected: visible
+    Timeout: 30000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 30000ms[22m
+    [2m  - waiting for locator('.artifact-version-panel')[22m
+
+
+      58 |     await expect(chooser).toHaveCount(0);
+      59 |     const pinnedPanel = page.locator('.artifact-version-panel');
+    > 60 |     await expect(pinnedPanel).toBeVisible({ timeout: T.long });
+         |                               ^
+      61 |     await expect(pinnedPanel.getByRole('listbox').getByRole('option', { selected: true })).toContainText('v1');
+      62 |     await expect(pinnedPanel.getByText('所选：v1 · 历史稿')).toBeVisible();
+      63 |
+        at /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/ui/mokina-navigation.test.ts:60:31
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../.tmp/pr3-production-on-artifacts/mokina-navigation--P1-Moki-2e89a-ecent-summaries-at-1440x900-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../.tmp/pr3-production-on-artifacts/mokina-navigation--P1-Moki-2e89a-ecent-summaries-at-1440x900-chromium/error-context.md
+
+  2 failed
+    [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 
+    [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 
+  5 passed (1.6m)
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test -c playwright.config.ts ui/real-daemon-run.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts --grep Mokina PR3|Mokina open-resolution|Mokina panel --workers=1 --reporter=list,json --output=/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/.tmp/pr3-production-on-artifacts

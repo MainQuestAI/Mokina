@@ -137,6 +137,7 @@ export function RailRecentRow({
   workspaceContext,
   runStatus,
   artifactLine,
+  allowNameWrap = false,
   ownedBySelf = true,
   shared = false,
   moveToTeamAvailable = false,
@@ -158,6 +159,7 @@ export function RailRecentRow({
   /** 成果摘要行（Spec B1 FR-04）：正式稿名+版本，或五态占位文案。由
    *  Section 从共享元数据 store 组好传入；undefined 表示该行尚未订阅
    *  元数据读取（不可见行），保持单行渲染。 */
+  allowNameWrap?: boolean;
   artifactLine?: { text: string; state: 'loading' | 'failed' | 'unauthorized' | 'empty' | 'artifacts' } | null;
   /** The daemon's canMutate is privileged-or-self-created and 403s the rest,
    *  so a row someone else shared keeps its mutations disabled with the same
@@ -349,7 +351,7 @@ export function RailRecentRow({
               __recent-name，成果摘要固定一行截断；两段都是按钮的可读名称，
               摘要被 CSS 省略也不影响可访问名。 */}
           <span className="entry-nav-rail__recent-text">
-            <span className="entry-nav-rail__recent-name">{project.name}</span>
+            <span className={`entry-nav-rail__recent-name${allowNameWrap ? " is-mokina-name" : ""}`}>{project.name}</span>
             {artifactLine ? (
               <span
                 className={`entry-nav-rail__recent-artifact${artifactLine.state === 'failed' || artifactLine.state === 'unauthorized' ? ' is-unreadable' : ''}`}

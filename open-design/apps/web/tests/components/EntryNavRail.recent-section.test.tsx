@@ -13,6 +13,9 @@ import { resetMokinaEntrySummaryStore } from '../../src/hooks/useMokinaProjectSu
 import { I18nProvider } from '../../src/i18n';
 import type { Project } from '../../src/types';
 
+const edition = vi.hoisted(() => ({ on: false }));
+vi.mock('../../src/mokina-edition', () => ({ get MOKINA_LOCAL_EDITION() { return edition.on; } }));
+
 const signedInContext = {
   workspaceId: 'ws-personal',
   workspaceType: 'personal',
@@ -96,7 +99,7 @@ function stubFetch() {
       }
       return new Response(JSON.stringify({ files: fixture.files }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
-    const versionsMatch = /^\/api\/projects\/([^/]+)\/files\/(.+)\/versions$/.exec(url);
+    const versionsMatch = /^\/api\/projects\/([^/]+)\/files\/(.+)\/versions(?:\?readOnly=true)?$/.exec(url);
     if (versionsMatch) {
       const id = decodeURIComponent(versionsMatch[1]!);
       const name = decodeURIComponent(versionsMatch[2]!);
@@ -529,6 +532,8 @@ function artifactLineFor(id: string): HTMLElement | null {
 }
 
 describe('EntryNavRail 最近行成果摘要（G4）', () => {
+  beforeEach(() => { edition.on = true; });
+  afterEach(() => { edition.on = false; });
   // 独立项目 id（q*）：registry 的 files 读取有一秒合流缓存，与默认 p*
   // 夹具隔开，避免跨用例命中旧响应。
   function qProjects(count: number): Project[] {
@@ -579,4 +584,13 @@ describe('EntryNavRail 最近行成果摘要（G4）', () => {
       expect(artifactLineFor('q1')?.textContent).toBe('a.html · v4');
     });
   });
+});
+
+it('off edition does not subscribe or render Mokina artifact rows with existing projects', async () => {
+  edition.on = false;
+  renderRail({ recentProjects: [project('off-p', 1)] });
+  expect(screen.getByTestId('entry-nav-recent-item')).toBeTruthy();
+  expect(screen.queryByTestId('entry-nav-recent-artifact')).toBeNull();
+  await act(async () => {});
+  expect(vi.mocked(fetch).mock.calls.some(([url]) => /off-p.*(?:files|versions)/.test(String(url)))).toBe(false);
 });

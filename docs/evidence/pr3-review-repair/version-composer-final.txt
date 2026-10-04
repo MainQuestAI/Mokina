@@ -1,0 +1,16 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/components/MokinaEntryChooserDialog.test.tsx tests/components/FileViewer.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/composer/draft-persistence.test.tsx tests/components/ChatPane.send-failed.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+Not implemented: Window's open() method
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+
+ Test Files  5 passed (5)
+      Tests  345 passed (345)
+   Start at  09:52:04
+   Duration  31.39s (transform 4.71s, setup 1.53s, import 5.98s, tests 35.81s, environment 1.90s)
+

@@ -1,0 +1,12 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+Not implemented: Window's open() method
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+
+ Test Files  2 passed (2)
+      Tests  328 passed (328)
+   Start at  10:34:20
+   Duration  28.60s (transform 1.99s, setup 873ms, import 1.81s, tests 26.88s, environment 879ms)
+

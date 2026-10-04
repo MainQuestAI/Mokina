@@ -1,0 +1,4 @@
+
+> @open-design/web@0.22.1 typecheck /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> tsc -b --noEmit
+

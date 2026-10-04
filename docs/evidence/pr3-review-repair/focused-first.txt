@@ -1,0 +1,506 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/hooks/mokina-summaries.test.tsx tests/artifacts/mokina-project-entry.test.ts tests/components/EntryNavRail.recent-section.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+ ❯ tests/components/EntryNavRail.recent-section.test.tsx (20 tests | 3 failed) 9826ms
+     × 读取可见行的 files+versions 元数据并渲染正式稿摘要 3014ms
+     × 空项目行显示「无正式成果」，读取失败行显示「无法读取」（不当作零） 3010ms
+     × 采用事件后行摘要失效并立即复核，不继续展示旧正式稿 3011ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/EntryNavRail.recent-section.test.tsx > EntryNavRail 最近行成果摘要（G4） > 读取可见行的 files+versions 元数据并渲染正式稿摘要
+AssertionError: expected undefined to be '预算分配与渠道优先级.html · v3' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html[39m
+  [33mdir[39m=[32m"ltr"[39m
+  [33mlang[39m=[32m"en"[39m
+[36m>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<nav[39m
+        [33maria-label[39m=[32m"Primary"[39m
+        [33mclass[39m=[32m"entry-nav-rail is-open"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"entry-nav-rail__panel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"entry-nav-rail__group"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"entry-nav-rail__team-wrap"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33mclass[39m=[32m"entry-nav-rail__team"[39m
+                [33mdata-testid[39m=[32m"workspace-switcher"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__team-avatar"[39m
+                [36m>[39m
+                  [0mP[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"od-marquee entry-nav-rail__team-name"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"od-marquee__text"[39m
+                  [36m>[39m
+                    [0mPersonal workspace[0m
+                  [36m</span>[39m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__team-chevron"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"od-icon"[39m
+                    [33mfill[39m=[32m"currentColor"[39m
+                    [33mfocusable[39m=[32m"false"[39m
+                    [33mheight[39m=[32m"14"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"14"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33maria-current[39m=[32m"page"[39m
+              [33maria-label[39m=[32m"Home"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn is-active"[39m
+              [33mdata-testid[39m=[32m"entry-nav-home"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M13 19H19V9.97815L12 4.53371L5 9.97815V19H11V13H13V19ZM21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V9.48907C3 9.18048 3.14247 8.88917 3.38606 8.69972L11.3861 2.47749C11.7472 2.19663 12.2528 2.19663 12.6139 2.47749L20.6139 8.69972C20.8575 8.88917 21 9.18048 21 9.48907V20Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+              [36m>[39m
+                [0mHome[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Community"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+              [33mdata-testid[39m=[32m"entry-nav-community"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM9.71002 19.6674C8.74743 17.6259 8.15732 15.3742 8.02731 13H4.06189C4.458 16.1765 6.71639 18.7747 9.71002 19.6674ZM10.0307 13C10.1811 15.4388 10.8778 17.7297 12 19.752C13.1222 17.7297 13.8189 15.4388 13.9693 13H10.0307ZM19.9381 13H15.9727C15.8427 15.3742 15.2526 17.6259 14.29 19.6674C17.2836 18.7747 19.542 16.1765 19.9381 13ZM4.06189 11H8.02731C8.15732 8.62577 8.74743 6.37407 9.71002 4.33256C6.71639 5.22533 4.458 7.8235 4.06189 11ZM10.0307 11H13.9693C13.8189 8.56122 13.1222 6.27025 12 4.24799C10.8778 6.27025 10.1811 8.56122 10.0307 11ZM14.29 4.33256C15.2526 6.37407 15.8427 8.62577 15.9727 11H19.9381C19.542 7.8235 17.2836 5.22533 14.29 4.33256Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+              [36m>[39m
+                [0mCommunity[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"entry-nav-rail__team-section"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"All projects"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+                [33mdata-testid[39m=[32m"entry-nav-drafts"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"...
+
+- Expected:
+"预算分配与渠道优先级.html · v3"
+
++ Received:
+undefined
+
+ ❯ tests/components/EntryNavRail.recent-section.test.tsx:543:50
+    541|     renderRail({ recentProjects: qProjects(10) });
+    542|     await waitFor(() => {
+    543|       expect(artifactLineFor('q1')?.textContent).toBe('预算分配与渠道优先级.html…
+       |                                                  ^
+    544|     });
+    545|     // 元数据读取只落在可见行窗口（首屏 10 行），不预读全列表。
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/components/EntryNavRail.recent-section.test.tsx > EntryNavRail 最近行成果摘要（G4） > 空项目行显示「无正式成果」，读取失败行显示「无法读取」（不当作零）
+AssertionError: expected undefined to be 'No formal artifacts yet' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html[39m
+  [33mdir[39m=[32m"ltr"[39m
+  [33mlang[39m=[32m"en"[39m
+[36m>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<nav[39m
+        [33maria-label[39m=[32m"Primary"[39m
+        [33mclass[39m=[32m"entry-nav-rail is-open"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"entry-nav-rail__panel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"entry-nav-rail__group"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"entry-nav-rail__team-wrap"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33mclass[39m=[32m"entry-nav-rail__team"[39m
+                [33mdata-testid[39m=[32m"workspace-switcher"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__team-avatar"[39m
+                [36m>[39m
+                  [0mP[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"od-marquee entry-nav-rail__team-name"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"od-marquee__text"[39m
+                  [36m>[39m
+                    [0mPersonal workspace[0m
+                  [36m</span>[39m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__team-chevron"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"od-icon"[39m
+                    [33mfill[39m=[32m"currentColor"[39m
+                    [33mfocusable[39m=[32m"false"[39m
+                    [33mheight[39m=[32m"14"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"14"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33maria-current[39m=[32m"page"[39m
+              [33maria-label[39m=[32m"Home"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn is-active"[39m
+              [33mdata-testid[39m=[32m"entry-nav-home"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M13 19H19V9.97815L12 4.53371L5 9.97815V19H11V13H13V19ZM21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V9.48907C3 9.18048 3.14247 8.88917 3.38606 8.69972L11.3861 2.47749C11.7472 2.19663 12.2528 2.19663 12.6139 2.47749L20.6139 8.69972C20.8575 8.88917 21 9.18048 21 9.48907V20Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+              [36m>[39m
+                [0mHome[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Community"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+              [33mdata-testid[39m=[32m"entry-nav-community"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM9.71002 19.6674C8.74743 17.6259 8.15732 15.3742 8.02731 13H4.06189C4.458 16.1765 6.71639 18.7747 9.71002 19.6674ZM10.0307 13C10.1811 15.4388 10.8778 17.7297 12 19.752C13.1222 17.7297 13.8189 15.4388 13.9693 13H10.0307ZM19.9381 13H15.9727C15.8427 15.3742 15.2526 17.6259 14.29 19.6674C17.2836 18.7747 19.542 16.1765 19.9381 13ZM4.06189 11H8.02731C8.15732 8.62577 8.74743 6.37407 9.71002 4.33256C6.71639 5.22533 4.458 7.8235 4.06189 11ZM10.0307 11H13.9693C13.8189 8.56122 13.1222 6.27025 12 4.24799C10.8778 6.27025 10.1811 8.56122 10.0307 11ZM14.29 4.33256C15.2526 6.37407 15.8427 8.62577 15.9727 11H19.9381C19.542 7.8235 17.2836 5.22533 14.29 4.33256Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+              [36m>[39m
+                [0mCommunity[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"entry-nav-rail__team-section"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"All projects"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+                [33mdata-testid[39m=[32m"entry-nav-drafts"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"...
+
+- Expected:
+"No formal artifacts yet"
+
++ Received:
+undefined
+
+ ❯ tests/components/EntryNavRail.recent-section.test.tsx:561:50
+    559|     renderRail({ recentProjects: qProjects(10) });
+    560|     await waitFor(() => {
+    561|       expect(artifactLineFor('q1')?.textContent).toBe('No formal artif…
+       |                                                  ^
+    562|     });
+    563|     await waitFor(() => {
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/components/EntryNavRail.recent-section.test.tsx > EntryNavRail 最近行成果摘要（G4） > 采用事件后行摘要失效并立即复核，不继续展示旧正式稿
+AssertionError: expected undefined to be 'a.html · v3' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html[39m
+  [33mdir[39m=[32m"ltr"[39m
+  [33mlang[39m=[32m"en"[39m
+[36m>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<nav[39m
+        [33maria-label[39m=[32m"Primary"[39m
+        [33mclass[39m=[32m"entry-nav-rail is-open"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"entry-nav-rail__panel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"entry-nav-rail__group"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"entry-nav-rail__team-wrap"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33mclass[39m=[32m"entry-nav-rail__team"[39m
+                [33mdata-testid[39m=[32m"workspace-switcher"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__team-avatar"[39m
+                [36m>[39m
+                  [0mP[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"od-marquee entry-nav-rail__team-name"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"od-marquee__text"[39m
+                  [36m>[39m
+                    [0mPersonal workspace[0m
+                  [36m</span>[39m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__team-chevron"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"od-icon"[39m
+                    [33mfill[39m=[32m"currentColor"[39m
+                    [33mfocusable[39m=[32m"false"[39m
+                    [33mheight[39m=[32m"14"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"14"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33maria-current[39m=[32m"page"[39m
+              [33maria-label[39m=[32m"Home"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn is-active"[39m
+              [33mdata-testid[39m=[32m"entry-nav-home"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M13 19H19V9.97815L12 4.53371L5 9.97815V19H11V13H13V19ZM21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V9.48907C3 9.18048 3.14247 8.88917 3.38606 8.69972L11.3861 2.47749C11.7472 2.19663 12.2528 2.19663 12.6139 2.47749L20.6139 8.69972C20.8575 8.88917 21 9.18048 21 9.48907V20Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+              [36m>[39m
+                [0mHome[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Community"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+              [33mdata-testid[39m=[32m"entry-nav-community"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM9.71002 19.6674C8.74743 17.6259 8.15732 15.3742 8.02731 13H4.06189C4.458 16.1765 6.71639 18.7747 9.71002 19.6674ZM10.0307 13C10.1811 15.4388 10.8778 17.7297 12 19.752C13.1222 17.7297 13.8189 15.4388 13.9693 13H10.0307ZM19.9381 13H15.9727C15.8427 15.3742 15.2526 17.6259 14.29 19.6674C17.2836 18.7747 19.542 16.1765 19.9381 13ZM4.06189 11H8.02731C8.15732 8.62577 8.74743 6.37407 9.71002 4.33256C6.71639 5.22533 4.458 7.8235 4.06189 11ZM10.0307 11H13.9693C13.8189 8.56122 13.1222 6.27025 12 4.24799C10.8778 6.27025 10.1811 8.56122 10.0307 11ZM14.29 4.33256C15.2526 6.37407 15.8427 8.62577 15.9727 11H19.9381C19.542 7.8235 17.2836 5.22533 14.29 4.33256Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+              [36m>[39m
+                [0mCommunity[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"entry-nav-rail__team-section"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"All projects"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+                [33mdata-testid[39m=[32m"entry-nav-drafts"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"...
+
+- Expected:
+"a.html · v3"
+
++ Received:
+undefined
+
+ ❯ tests/components/EntryNavRail.recent-section.test.tsx:573:50
+    571|     renderRail({ recentProjects: qProjects(10) });
+    572|     await waitFor(() => {
+    573|       expect(artifactLineFor('q1')?.textContent).toBe('a.html · v3');
+       |                                                  ^
+    574|     });
+    575|     // FileViewer 采用成功后派发的事件：v4 成为 current。
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  3 failed | 45 passed (48)
+   Start at  09:14:29
+   Duration  12.88s (transform 2.11s, setup 1.57s, import 1.48s, tests 9.95s, environment 1.22s)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 test: `vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/hooks/mokina-summaries.test.tsx tests/artifacts/mokina-project-entry.test.ts tests/components/EntryNavRail.recent-section.test.tsx`
+Exit status 1

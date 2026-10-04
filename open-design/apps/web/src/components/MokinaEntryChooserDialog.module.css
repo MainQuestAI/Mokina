@@ -95,3 +95,6 @@
 .cancel:hover {
   background: color-mix(in srgb, var(--text, #333) 8%, transparent);
 }
+
+.itemTime { display: block; font-size: 13px; }
+.cancel:focus-visible { outline: 2px solid var(--text, #333); outline-offset: 2px; }

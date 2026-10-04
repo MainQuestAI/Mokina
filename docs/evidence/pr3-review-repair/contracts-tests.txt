@@ -1,0 +1,13 @@
+
+> @open-design/contracts@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/packages/contracts
+> vitest run
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/packages/contracts
+
+
+ Test Files  70 passed (70)
+      Tests  719 passed (719)
+   Start at  09:49:48
+   Duration  1.28s (transform 8.57s, setup 0ms, import 13.11s, tests 584ms, environment 3ms)
+

@@ -1,0 +1,81 @@
+
+> @open-design/daemon@0.22.1 pretest /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> pnpm --filter '@open-design/daemon^...' --workspace-concurrency=4 --if-present run build
+
+Scope: 10 of 28 workspace projects
+../../packages/diagnostics build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/release build$ tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/platform build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/registry-protocol build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/diagnostics build: Done
+../../packages/release build: Done
+../../packages/platform build: Done
+../../packages/registry-protocol build: Done
+../../packages/sidecar build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/contracts build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar-proto build: Done
+../../packages/sidecar build: Done
+../../packages/contracts build: Done
+../../packages/launcher-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/plugin-runtime build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/agui-adapter build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/launcher-proto build: Done
+../../packages/agui-adapter build: Done
+../../packages/plugin-runtime build: Done
+
+> @open-design/daemon@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> vitest run -c vitest.config.ts tests/cli-files-write.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+
+ ❯ tests/cli-files-write.test.ts (7 tests | 1 failed) 2747ms
+     × `files versions --read-only` forwards the existing GET query without any mutation 418ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/cli-files-write.test.ts > od files write / upload (ESM require regression) > `files versions --read-only` forwards the existing GET query without any mutation
+AssertionError: /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon/src/cli.ts:2169
+      throw new Error(
+            ^
+
+Error: unknown flag: --read-only. Run with --help for the list of accepted flags.
+    at parseFlags (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon/src/cli.ts:2169:13)
+    at Object.runFiles (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon/src/cli.ts:8364:17)
+    at <anonymous> (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon/src/cli.ts:842:29)
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    at async node:internal/modules/esm/loader:639:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.15.0
+: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ parseFlags src/cli.ts:2169:13
+ ❯ Object.runFiles src/cli.ts:8364:17
+ ❯ <anonymous> src/cli.ts:842:29
+ ❯ tests/cli-files-write.test.ts:116:40
+    114|   it('`files versions --read-only` forwards the existing GET query wit…
+    115|     const result = await runCli(['files', 'versions', 'proj-1', 'legac…
+    116|     expect(result.code, result.stderr).toBe(0);
+       |                                        ^
+    117|     expect(stub.requests).toEqual([{ method: 'GET', url: '/api/project…
+    118|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  09:26:42
+   Duration  2.91s (transform 30ms, setup 25ms, import 31ms, tests 2.75s, environment 0ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/daemon@0.22.1 test: `vitest run -c vitest.config.ts tests/cli-files-write.test.ts`
+Exit status 1

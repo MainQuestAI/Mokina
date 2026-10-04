@@ -1,0 +1,10 @@
+
+> @open-design/web@0.22.1 typecheck /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> tsc -b --noEmit
+
+src/components/FileViewer.tsx(3766,50): error TS2345: Argument of type '"fileViewer.fileNotFound"' is not assignable to parameter of type 'keyof Dict'.
+src/hooks/useMokinaProjectSummaries.ts(224,29): error TS2339: Property 'refreshing' does not exist on type 'MokinaProjectSummary'.
+src/providers/registry.ts(2820,46): error TS2694: Namespace '"/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/packages/contracts/dist/index"' has no exported member 'ProjectFileVersionsQuery'.
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 typecheck: `tsc -b --noEmit`
+Exit status 1

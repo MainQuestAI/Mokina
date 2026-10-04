@@ -1,0 +1,77 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/hooks/mokina-summaries.test.tsx tests/artifacts/mokina-project-entry.test.ts tests/components/EntryNavRail.recent-section.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+ ❯ tests/hooks/mokina-summaries.test.tsx (10 tests | 6 failed) 897ms
+   × foreground resolves all 0 entries; lightweight rows never infer uniqueness from truncation 58ms
+   × foreground resolves all 1 entries; lightweight rows never infer uniqueness from truncation 55ms
+   × foreground resolves all 2 entries; lightweight rows never infer uniqueness from truncation 56ms
+   × foreground resolves all 9 entries; lightweight rows never infer uniqueness from truncation 118ms
+   × foreground resolves all 12 entries; lightweight rows never infer uniqueness from truncation 108ms
+   × foreground resolves all 120 entries; lightweight rows never infer uniqueness from truncation 109ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/hooks/mokina-summaries.test.tsx > foreground resolves all 0 entries; lightweight rows never infer uniqueness from truncation
+AssertionError: expected 'workspace' to be 'empty' // Object.is equality
+
+Expected: "empty"
+Received: "workspace"
+
+ ❯ tests/hooks/mokina-summaries.test.tsx:46:6
+     44|   const record = full.result.current!;
+     45|   expect(resolveMokinaProjectEntry({ projectId: 'p1', entries: record.…
+     46|     .toBe(count === 0 ? 'empty' : count === 1 ? 'single-formal' : 'mul…
+       |      ^
+     47| });
+     48| it('all failures retry, secondary entries update, and focus revalidate…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/hooks/mokina-summaries.test.tsx > foreground resolves all 1 entries; lightweight rows never infer uniqueness from truncation
+AssertionError: expected 'open' to be 'single-formal' // Object.is equality
+
+Expected: "single-formal"
+Received: "open"
+
+ ❯ tests/hooks/mokina-summaries.test.tsx:46:6
+     44|   const record = full.result.current!;
+     45|   expect(resolveMokinaProjectEntry({ projectId: 'p1', entries: record.…
+     46|     .toBe(count === 0 ? 'empty' : count === 1 ? 'single-formal' : 'mul…
+       |      ^
+     47| });
+     48| it('all failures retry, secondary entries update, and focus revalidate…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/hooks/mokina-summaries.test.tsx > foreground resolves all 2 entries; lightweight rows never infer uniqueness from truncation
+ FAIL  tests/hooks/mokina-summaries.test.tsx > foreground resolves all 9 entries; lightweight rows never infer uniqueness from truncation
+ FAIL  tests/hooks/mokina-summaries.test.tsx > foreground resolves all 12 entries; lightweight rows never infer uniqueness from truncation
+ FAIL  tests/hooks/mokina-summaries.test.tsx > foreground resolves all 120 entries; lightweight rows never infer uniqueness from truncation
+AssertionError: expected 'chooser' to be 'multiple-formal' // Object.is equality
+
+Expected: "multiple-formal"
+Received: "chooser"
+
+ ❯ tests/hooks/mokina-summaries.test.tsx:46:6
+     44|   const record = full.result.current!;
+     45|   expect(resolveMokinaProjectEntry({ projectId: 'p1', entries: record.…
+     46|     .toBe(count === 0 ? 'empty' : count === 1 ? 'single-formal' : 'mul…
+       |      ^
+     47| });
+     48| it('all failures retry, secondary entries update, and focus revalidate…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  6 failed | 55 passed (61)
+   Start at  09:22:01
+   Duration  3.82s (transform 2.48s, setup 1.75s, import 1.85s, tests 1.91s, environment 1.36s)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 test: `vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/hooks/mokina-summaries.test.tsx tests/artifacts/mokina-project-entry.test.ts tests/components/EntryNavRail.recent-section.test.tsx`
+Exit status 1

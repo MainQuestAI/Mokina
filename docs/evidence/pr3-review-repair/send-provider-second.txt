@@ -1,0 +1,13 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/providers/daemon-run-create-recovery.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  09:27:48
+   Duration  1.38s (transform 458ms, setup 715ms, import 5ms, tests 15ms, environment 449ms)
+

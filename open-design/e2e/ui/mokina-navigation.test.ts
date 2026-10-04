@@ -36,9 +36,30 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
     await expect(chooser).toBeVisible({ timeout: T.long });
     // 初始焦点在首个可选成果（Spec B1 §8）。
     await expect(chooser.getByRole('button').first()).toBeFocused();
-    await chooser.getByRole('button', { name: /排期\.html/ }).click();
+    await page.keyboard.press('Shift+Tab');
+    await expect(chooser.getByRole('button').last()).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(chooser.getByRole('button').first()).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(chooser).toHaveCount(0);
+    await expect(page.locator(':focus')).not.toHaveJSProperty('tagName', 'BODY');
+    // Reopen without tabs to verify the keyboard selection path too.
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(chooser).toBeVisible({ timeout: T.long });
+    // A new current version arrives after the chooser captured v1. Selection
+    // must retain the exact known version through the native history panel.
+    expect((await page.request.post(`/api/projects/${multi.projectId}/files`, { data: {
+      name: '排期.html', content: '<!doctype html><html><body><h1>新版排期</h1></body></html>',
+      versionSource: 'manual', versionLabel: '选择后更新',
+    } })).ok()).toBe(true);
+    await chooser.getByRole('button', { name: /排期\.html/ }).focus();
+    await page.keyboard.press('Enter');
     await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long });
     await expect(chooser).toHaveCount(0);
+    const pinnedPanel = page.locator('.artifact-version-panel');
+    await expect(pinnedPanel).toBeVisible({ timeout: T.long });
+    await expect(pinnedPanel.getByRole('listbox').getByRole('option', { selected: true })).toContainText('v1');
+    await expect(pinnedPanel.getByText('所选：v1 · 历史稿')).toBeVisible();
 
     // 深链失效：不静默打开别的成果。
     await page.goto(`/projects/${multi.projectId}/files/ghost.html`, { waitUntil: 'domcontentloaded' });

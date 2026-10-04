@@ -1,0 +1,38 @@
+
+> @open-design/daemon@0.22.1 pretest /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> pnpm --filter '@open-design/daemon^...' --workspace-concurrency=4 --if-present run build
+
+Scope: 10 of 28 workspace projects
+../../packages/release build$ tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/platform build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/registry-protocol build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/diagnostics build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/release build: Done
+../../packages/diagnostics build: Done
+../../packages/platform build: Done
+../../packages/registry-protocol build: Done
+../../packages/contracts build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar-proto build: Done
+../../packages/sidecar build: Done
+../../packages/contracts build: Done
+../../packages/plugin-runtime build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/launcher-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/agui-adapter build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/launcher-proto build: Done
+../../packages/agui-adapter build: Done
+../../packages/plugin-runtime build: Done
+
+> @open-design/daemon@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> vitest run -c vitest.config.ts tests/cli-files-write.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  09:29:00
+   Duration  3.74s (transform 45ms, setup 32ms, import 42ms, tests 3.54s, environment 0ms)
+

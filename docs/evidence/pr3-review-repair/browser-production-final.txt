@@ -1,0 +1,18 @@
+
+Running 9 tests using 1 worker
+
+(node:17274) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17274) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 (4.0s)
+  ✓  2 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 (3.5s)
+  ✓  3 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 (1.5s)
+  ✓  4 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1440x900 (1.5s)
+  ✓  5 [chromium] › ui/mokina-workspace-actions.test.ts:71:1 › [P1] Mokina panel explains historical and chapterless action restrictions (2.2s)
+  ✓  6 [chromium] › ui/mokina-workspace-actions.test.ts:96:1 › [P1] Mokina continuation creates an editable fixed-excerpt draft without a run (2.3s)
+  ✓  7 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 (3.5s)
+  ✓  8 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 (3.6s)
+  ✓  9 [chromium] › ui/real-daemon-run.test.ts:2195:1 › [P1] Mokina PR3 Home first send creates one real daemon run (2.7s)
+
+  9 passed (33.3s)

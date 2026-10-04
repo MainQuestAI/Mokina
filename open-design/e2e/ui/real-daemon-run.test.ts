@@ -2190,3 +2190,24 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     await testInfo.attach(`pr3-recovered-${viewport.width}`, { body: await page.screenshot(), contentType: 'image/png' });
   });
 }
+
+
+test('[P1] Mokina PR3 Home first send creates one real daemon run', async ({ page }, testInfo) => {
+  await configureFakeAgent(page, 'codex');
+  await installBrowserAgentConfig(page, 'codex');
+  await gotoEntryHome(page);
+  await expectBrowserAgentConfig(page, 'codex');
+  await dismissPrivacyDialog(page);
+  let postCount = 0;
+  page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/runs') postCount += 1; });
+  await page.getByTestId('home-hero-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('home-hero-submit').click();
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  await expect(artifactPreviewFrame(page).getByRole('heading', { name: GENERATED_HEADING })).toBeVisible();
+  const response = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+  const body = await response.json() as { runs: Array<{ id: string; clientRequestId?: string }> };
+  expect(body.runs).toHaveLength(1); expect(body.runs[0]?.clientRequestId).toBeTruthy(); expect(postCount).toBe(1);
+  await testInfo.attach('home-first-send-receipt', { body: JSON.stringify({ projectId, conversationId, run: body.runs[0], postCount }), contentType: 'application/json' });
+});

@@ -540,7 +540,7 @@ function RailRecentSection({
   // useMokinaProjectSummaries）。行外/折叠时不订阅，不预读全列表。
   const { t: recentT } = useI18n();
   const summariesByProjectId = useMokinaProjectSummaries(runStatusProjectIds, {
-    enabled: open,
+    enabled: MOKINA_LOCAL_EDITION && open,
     workspaceContext,
   });
 
@@ -602,7 +602,8 @@ function RailRecentSection({
                     project={project}
                     workspaceContext={workspaceContext}
                     runStatus={runStatusByProjectId.get(project.id)}
-                    artifactLine={mokinaArtifactLineFromRecord(summariesByProjectId.get(project.id), recentT)}
+                    allowNameWrap={MOKINA_LOCAL_EDITION}
+                    artifactLine={MOKINA_LOCAL_EDITION ? mokinaArtifactLineFromRecord(summariesByProjectId.get(project.id), recentT) : null}
                     ownedBySelf={ownedBySelf(project.id)}
                     shared={isSharedProject(project.id)}
                     moveToTeamAvailable={moveToTeamAvailable}

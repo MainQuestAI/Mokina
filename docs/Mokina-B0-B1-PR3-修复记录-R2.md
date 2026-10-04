@@ -3,6 +3,7 @@
 日期：2026-10-04。范围：B0+B1，保持 Draft。方案见[修复方案 R2](Mokina-B0-B1-PR3-修复方案-R2-2026-10-04.md)，对应第二轮审查（对 head `53da96c`）的 P1-1、P1-2 与 P2-1～P2-3。
 
 固定边界：base `33fa8434d14869ab4310d8b0f570116781d34c8d`；本轮起点 `53da96c`（第一轮修复后 head）。本轮提交（按序）：
+后续追加：`4812a62` test(mokina): 浏览器轮（dev 10 passed；生产 16 passed，含双尺寸导航；round-1 用例对准 R2 提示条动作）。
 
 | 提交 | 内容 |
 |---|---|
@@ -56,7 +57,8 @@ store 记录保留 `htmlCount`（HTML 总数）；`truncated` 与 `partial` 拆�
 | i18n:check | 通过（F1、F2 各一次） | f1/f2-i18n.txt |
 | guard | 通过（61b1c4e 与最终 head 各一次） | f1-guard.txt、r2-guard-final.txt |
 | Web 全套（v24.15.0） | 1,249 文件：**12,747 passed / 8 failed**（名单与第一轮 [baseline-failures.json](evidence/pr3-review-repair/baseline-failures.json) 的 8 项既有基线失败完全一致，零新增）/ 1 expected fail / 11 skipped | r2-web-full.txt |
-| 浏览器（开发/生产、故障注入、双尺寸） | **未执行** | — |
+| 浏览器 · 开发构建故障注入 | 10 passed / 0 failed（R2 六项 + round-1 恢复用例） | r2-e2e-dev.txt |
+| 浏览器 · 生产构建（OD_WEB_PROD=1, server output） | **16 passed / 0 failed**，含 1440x900 / 1280x720 双尺寸导航与 R2 六项 | r2-browser-production.txt、[汇总](evidence/pr3-review-repair-r2/r2-browser-summary.json)、附件（JSON+截图）browser-attachments/ |
 
 环境备注：首次全套在 Node v22.22.3 下跑出第 9 项失败（FileWorkspace design-system 下载，undici `Response.stream` 行为差异）；该失败在 53da96c（本轮改动前）同样复现，且在 v24.15.0 下消失（21/21），确认为环境差异而非本批回归，证据见 r2-web-full.txt（v24 终版）。
 
@@ -64,15 +66,15 @@ store 记录保留 `htmlCount`（HTML 总数）；`truncated` 与 `partial` 拆�
 
 | 验收项 | 本轮状态 |
 |---|---|
-| 服务端没收到请求时，从待确认走到重发成功 | 组件测试 ✅（重发复用原 ID 与快照全文，记录清除） |
-| 服务端已收到时重发，不会多出第二个任务 | 组件测试 ✅（核对先行的恢复路径；streamViaDaemon 调用数不变）+ 服务端幂等（第一轮 daemon 幂等测试未动） |
-| 409 转可编辑草稿、保留完整正文 | 组件测试 ✅ |
-| 连续 9 次断网后仍能发新消息 | store 层 ✅（unknown 不占 in-flight 容量）；端到端次数实测留浏览器轮 |
-| 100K 正文、25 条批注发送成功 | 组件测试 ✅（照常 POST，提示不可自动恢复，无 saveFailed） |
-| 空项目首个生成文件自动打开 | **留浏览器轮**（P2-1 验证分层见上） |
+| 服务端没收到请求时，从待确认走到重发成功 | 组件测试 ✅ + **浏览器 ✅**（真实 daemon：两次 POST 同一 clientRequestId、唯一 run、无重复用户消息；r2-resend-never-received.json） |
+| 服务端已收到时重发，不会多出第二个任务 | 组件测试 ✅ + **浏览器 ✅**（查询先行恢复，postCount 恒为 1、单 run；r2-resend-after-terminal.json） |
+| 409 转可编辑草稿、保留完整正文 | 组件测试 ✅（重发路径） |
+| 连续 9 次断网后仍能发新消息 | store 层 ✅（unknown 不占 in-flight 容量）+ **浏览器 ✅**（放弃/恢复路径解除拦截后照常发送；r2-discard-recovery.json） |
+| 100K 正文、25 条批注发送成功 | 组件测试 ✅ + **浏览器 ✅**（100Ki 照常 POST、全文落库、无 saveFailed；r2-oversize-send.json；25 条批注为组件层覆盖） |
+| 空项目首个生成文件自动打开 | **浏览器 ✅**（生产构建；r2-empty-first-open.json） |
 | 旧项目显示「未确认采用」 | 组件测试 ✅ |
 | 12 个 HTML 项目侧栏不显示失败 | 组件测试 ✅（中性计数、无 is-unreadable） |
 
 ## 保持 Draft 的复审入口
 
-以最终提交（92b7033 或更新）为准重读 base/head 差异。PR 上没有 CI 检查——结论只能写「已执行本地命令」，不能写「CI 全绿」。八项既有基线失败不在本批范围。证据文件（截图/PDF）此后单独存放或只提交摘要加哈希，避免 PR 体积继续膨胀（方案 §6 第 5 条）。
+以最终提交（4812a62 或更新）为准重读 base/head 差异。PR 上没有 CI 检查——结论只能写「已执行本地命令」，不能写「CI 全绿」。八项既有基线失败不在本批范围。证据文件（截图/PDF）此后单独存放或只提交摘要加哈希，避免 PR 体积继续膨胀（方案 §6 第 5 条）。

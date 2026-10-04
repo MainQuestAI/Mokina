@@ -111,6 +111,13 @@
 | 过程中修复 | tools-pack dist 需重建（metatool freshness）；`--to dir` 在 mac 不受支持（改 `--to app`）；bundle 后产品 profile 路径解析改为向上查找包根（`toolsPackRootFromModule`，修复 dist 扁平化下的 ENOENT）——均为本分支新代码问题，已修复并有测试 |
 | 运行冒烟 | 见 `evidence/t02-t18-packaged-smoke.md`（start/inspect/stop 全链路，实例隔离验证） |
 
+## T17 CI 规划器核对（证据）
+
+- `python3 .github/config/scopes.json validate` → 有效。
+- `python3 .github/scripts/scopes.py plan --context pr --files <本分支 open-design/ 相对路径 83 项>` →
+  enabled: `daemon_unit_tests, e2e_vitest, preflight, static_gate, ui_p0, workspace_unit_tests`（保守推导，覆盖 contracts 改动对 daemon/workspace 消费者的扇出）。
+- 未推送远端；实际 GitHub Actions 运行不在本机可执行范围内。
+
 ## 真实端到端运行（T19 前哨）
 
 | 项 | 结果 |
@@ -147,7 +154,7 @@
 | T13 指定版本导出 | 🟡 部分 | Web 菜单与文件名完成；桌面原生 PDF 实测未跑 |
 | T14 恢复包 | 🟡 部分 | 服务端+CLI+HTTP 往返测试完成；Web 入口未做 |
 | T15 诊断与隐私 | 🟡 主体完成 | daemon `GET /api/mokina/diagnostics`：产品/构建/运行时/隐私/网络依赖声明（每项带 nextAction）、codex CLI 探测（60s 缓存）；`assertMokinaDiagnosticsSanitized` 值特征+键名双层扫描；测试 4/4（含 HTTP）。未跑：AC45 的恶意 HTML/IPC 安全测试（既有隔离未改动，T16 视觉/安全收口时统一验证） |
-| T16 八视图与 i18n | ⬜ 未完成 | — |
-| T17 回归与 CI | 🟡 部分 | 本地全量归因完成；CI workflow 未建（账户/远端条件下未跑） |
+| T16 八视图与 i18n | ⬜ 未完成 | 冻结设计包迁移、P01–P08 视觉对照与 19 locale 键完整性均未做（新面板文案沿用了本区域既有的中文硬编码先例，属 T16 待收口项） |
+| T17 回归与 CI | 🟡 主体完成 | 本地：daemon 全量 + 归属对照、7 包 typecheck、guard 全绿；CI：复用仓库既有 ci.yml + 规划器（未另建平台），以本分支真实 diff 运行 `scopes.py plan` 得到门禁选择 = daemon_unit_tests / e2e_vitest / ui_p0 / workspace_unit_tests / preflight / static_gate（保守推导）。边界：未推送远端、未实际触发 GitHub Actions 运行 |
 | T18 候选发行包 | 🟡 主体完成 | `.app` + **dmg 均真实构建**：`Mokina-mokina-local.dmg`（397MB，SHA-256 `d71bbbe…d19ee7`）；修复 tools-pack 产物搬运器硬编码名（electron-builder 产出 Mokina 名而 mover 找 Open Design 名）；`docs/mokina-v0.0.2/runbook.md` 完成（安装/依赖/诊断/工作路径/已知限制/未签名说明）。未做：zip 目标、公证、公开分发（按 Spec 不在本轮门槛） |
 | T19 本机三任务与签收 | ⬜ not_run | 依赖 T18 包与用户本人签收；本会话未运行真实模型任务 |

@@ -5773,4 +5773,15 @@ export interface Dict {
   'newproj.importingRecoveryZip': string;
   'newproj.recoveryImportFailed': string;
   'newproj.recoveryImportDone': string;
+  'settings.mokinaConnection.check': string;
+  'settings.mokinaConnection.checking': string;
+  'settings.mokinaConnection.failed': string;
+  'settings.mokinaConnection.state.ready': string;
+  'settings.mokinaConnection.state.cliMissing': string;
+  'settings.mokinaConnection.state.loginRequired': string;
+  'settings.mokinaConnection.state.permissionDenied': string;
+  'settings.mokinaConnection.state.quotaOrBilling': string;
+  'settings.mokinaConnection.state.networkUnavailable': string;
+  'settings.mokinaConnection.state.modelUnavailable': string;
+  'settings.mokinaConnection.state.unknown': string;
 }

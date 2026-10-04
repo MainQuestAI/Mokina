@@ -43,6 +43,7 @@ import type { Locale } from '../i18n';
 import type { Dict } from '../i18n/types';
 import { AgentIcon } from './AgentIcon';
 import { AgentDiagnosticRow } from './AgentDiagnosticRow';
+import { MokinaCodexConnectionRow } from './mokina/MokinaCodexConnectionRow';
 import { DeepSeekHarnessSetupDialog } from './DeepSeekHarnessSetupDialog';
 import { AmrLoginPill } from './AmrLoginPill';
 import { PlanBadge } from './PlanBadge';
@@ -5101,6 +5102,10 @@ export function SettingsDialog({
                                     />
                                   ))
                                 : null}
+                              {/* T04: the pre-test diagnosis (CLI / login /
+                                  configured model) with a concrete next action;
+                                  inert until the user clicks. */}
+                              {active && a.id === 'codex' ? <MokinaCodexConnectionRow /> : null}
                               {active ? renderAgentModelConfig(a) : null}
                             </div>
                           );

@@ -594,3 +594,33 @@ it('off edition does not subscribe or render Mokina artifact rows with existing 
   await act(async () => {});
   expect(vi.mocked(fetch).mock.calls.some(([url]) => /off-p.*(?:files|versions)/.test(String(url)))).toBe(false);
 });
+
+// ── R2 修复（P2-2 / P2-3）红测先行 ──
+describe('R2 侧栏行摘要：legacy 入口提示与截断中性文案', () => {
+  beforeEach(() => { edition.on = true; });
+  afterEach(() => { edition.on = false; });
+
+  it('旧项目（0 个正式成果 + metadata.entryFile）行显示「未确认采用」入口', async () => {
+    const legacyProject = {
+      ...project('q1', 2_000),
+      metadata: { entryFile: 'legacy-main.html' },
+    } as Project;
+    FILES = { q1: { kind: 'ok', files: [htmlFile('other.html')] } };
+    VERSIONS = {};
+    renderRail({ recentProjects: [legacyProject, ...Array.from({ length: 9 }, (_, i) => project(`q${i + 2}`, 1_900 - i))] });
+    await waitFor(() => {
+      expect(artifactLineFor('q1')?.textContent).toBe('legacy-main.html · Legacy entry (adoption unconfirmed)');
+    });
+  });
+
+  it('超过 8 个 HTML 的正常项目显示中性计数，不再使用失败样式', async () => {
+    FILES = { q1: { kind: 'ok', files: Array.from({ length: 12 }, (_, i) => htmlFile(`doc-${i + 1}.html`)) } };
+    VERSIONS = {};
+    renderRail({ recentProjects: [project('q1', 2_000), ...Array.from({ length: 9 }, (_, i) => project(`q${i + 2}`, 1_900 - i))] });
+    await waitFor(() => {
+      const line = artifactLineFor('q1');
+      expect(line?.textContent).toContain('12');
+    });
+    expect(artifactLineFor('q1')?.classList.contains('is-unreadable')).toBe(false);
+  });
+});

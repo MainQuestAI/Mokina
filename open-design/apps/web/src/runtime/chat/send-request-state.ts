@@ -3,6 +3,7 @@
 import type { ChatRunStatusResponse, WorkspaceCollabContext } from '@open-design/contracts';
 import { queryRunByClientRequest } from '../../providers/daemon';
 import { sanitizeComposerDraftExtras, type ComposerDraftExtras, DRAFT_MAX_EXTRAS_CHARS } from './composer-draft';
+import { mirrorDurableRecord, removeDurableRecord } from '../persistence/mokina-recovery-store';
 
 export interface SendRequestSnapshot {
   readonly prompt: string;
@@ -71,7 +72,14 @@ export function loadSendRequestRecords(p: string, c: string, authorityKey = 'non
   return [...records.values()].sort((a, b) => a.createdAt - b.createdAt);
 }
 function write(r: SendRequestRecord): boolean {
-  try { window.localStorage.setItem(recordKey(r), JSON.stringify(r)); changed(); return true; }
+  try {
+    const encoded = JSON.stringify(r);
+    window.localStorage.setItem(recordKey(r), encoded);
+    // Durable mirror under the desktop profile: a port/origin change must not
+    // orphan a prepared or unknown send intent (T03).
+    mirrorDurableRecord(recordKey(r), encoded);
+    changed(); return true;
+  }
   catch { return false; }
 }
 export function savePendingSendRequest(input: {
@@ -171,14 +179,21 @@ export function clearSendRequestRecord(p: string, c: string, id: string, authori
   if (!r) return true;
   try {
     window.localStorage.removeItem(recordKey(r));
+    removeDurableRecord(recordKey(r));
     if ((authorityKey ?? 'none') === 'none') {
       const raw = window.localStorage.getItem(legacyKey(p, c));
       if (raw) {
         const old: unknown = JSON.parse(raw);
         if (Array.isArray(old)) {
           const next = old.filter(row => !valid(row, p, c) || row.clientRequestId !== id);
-          if (next.length) window.localStorage.setItem(legacyKey(p, c), JSON.stringify(next));
-          else window.localStorage.removeItem(legacyKey(p, c));
+          if (next.length) {
+            const encodedNext = JSON.stringify(next);
+            window.localStorage.setItem(legacyKey(p, c), encodedNext);
+            mirrorDurableRecord(legacyKey(p, c), encodedNext);
+          } else {
+            window.localStorage.removeItem(legacyKey(p, c));
+            removeDurableRecord(legacyKey(p, c));
+          }
         }
       }
     }

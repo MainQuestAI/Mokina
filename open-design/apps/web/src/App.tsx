@@ -204,6 +204,7 @@ import {
   type AmrAuthRetryContinuation,
 } from './runtime/amr-auth-retry-continuation';
 import { installFontRecovery } from './runtime/font-recovery';
+import { hydrateDurableRecoveryIntoLocalStorage } from './runtime/persistence/mokina-recovery-store';
 import {
   runWithConcurrency,
   STAGED_UPLOAD_CONCURRENCY,
@@ -992,6 +993,12 @@ function AppInner() {
   // Icon fonts whose startup fetch lost a race stay tofu forever without
   // this — see runtime/font-recovery.ts.
   useEffect(() => installFontRecovery(), []);
+  // T03: restore drafts / send intents that only the durable desktop-profile
+  // store still has (new port, replaced app, cleared origin). Never
+  // overwrites an existing localStorage value; a no-op in web-only builds.
+  useEffect(() => {
+    void hydrateDurableRecoveryIntoLocalStorage();
+  }, []);
   // Observability marker. `apps/web/src/observability/white-screen.ts`
   // keys its "app actually mounted" success condition on this attribute
   // because the dynamic-import loading shell (`<div class="od-loading-shell">

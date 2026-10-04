@@ -27,11 +27,16 @@ import type {
   OpenDesignHostCaptureResult,
   OpenDesignHostPreviewNavigationFailure,
   OpenDesignHostProjectImportInit,
+  OpenDesignHostRecoveryStoreDeleteResult,
+  OpenDesignHostRecoveryStoreGetResult,
+  OpenDesignHostRecoveryStoreListResult,
+  OpenDesignHostRecoveryStorePutResult,
   OpenDesignHostUpdaterActionOptions,
   OpenDesignHostUpdaterMenuLabels,
   OpenDesignHostUpdaterOpenDialogRequest,
 } from "@open-design/host";
 
+import { createMokinaRecoveryStore } from "./mokina-recovery-store.js";
 import { renderDeckSlides } from "./deck-capture.js";
 import { renderDeterministicFrames } from "./frame-capture.js";
 import { openFirstPartyMailto } from "./mailto-open.js";
@@ -2667,6 +2672,68 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
       return { ok: false, reason: error instanceof Error ? error.message : String(error) };
     }
   });
+
+  // Mokina local preview: durable recovery state (composer drafts, PR3 send
+  // intents, revision/continuation journals) lives under the desktop profile
+  // so a web-origin change (port, dev vs packaged) or an app replacement
+  // cannot orphan an unknown in-flight request. Only the trusted app renderer
+  // may call these; the store enforces key namespaces, size bounds and
+  // compare-and-swap semantics itself.
+  const mokinaRecoveryStore = createMokinaRecoveryStore(join(app.getPath("userData"), "mokina-recovery"));
+  ipcMain.removeHandler("mokina:recovery-store:get");
+  ipcMain.handle(
+    "mokina:recovery-store:get",
+    async (event, rawKey: unknown): Promise<OpenDesignHostRecoveryStoreGetResult> => {
+      if (event.sender !== window.webContents) return { ok: false, reason: "recovery store sender not allowed" };
+      if (typeof rawKey !== "string") return { ok: false, reason: "invalid-key" };
+      const result = await mokinaRecoveryStore.get(rawKey);
+      if (!result.ok) return { ok: false, reason: result.reason };
+      if (!result.result.found) return { ok: true, found: false };
+      return { ok: true, found: true, record: result.result.record };
+    },
+  );
+  ipcMain.removeHandler("mokina:recovery-store:list");
+  ipcMain.handle(
+    "mokina:recovery-store:list",
+    async (event, rawPrefix: unknown): Promise<OpenDesignHostRecoveryStoreListResult> => {
+      if (event.sender !== window.webContents) return { ok: false, reason: "recovery store sender not allowed" };
+      if (rawPrefix != null && typeof rawPrefix !== "string") return { ok: false, reason: "invalid-key" };
+      const result = await mokinaRecoveryStore.list(rawPrefix ?? undefined);
+      return result.ok ? { ok: true, keys: result.result } : { ok: false, reason: result.reason };
+    },
+  );
+  ipcMain.removeHandler("mokina:recovery-store:put");
+  ipcMain.handle(
+    "mokina:recovery-store:put",
+    async (event, rawKey: unknown, rawRecord: unknown, rawExpected: unknown): Promise<OpenDesignHostRecoveryStorePutResult> => {
+      if (event.sender !== window.webContents) return { ok: false, reason: "recovery store sender not allowed" };
+      if (typeof rawKey !== "string") return { ok: false, reason: "invalid-key" };
+      if (typeof rawRecord !== "object" || rawRecord == null || Array.isArray(rawRecord)) {
+        return { ok: false, reason: "invalid-record" };
+      }
+      const record = rawRecord as { recordId?: unknown; value?: unknown };
+      if (typeof record.recordId !== "string") return { ok: false, reason: "invalid-record" };
+      if (rawExpected != null && typeof rawExpected !== "string") return { ok: false, reason: "invalid-record" };
+      const result = await mokinaRecoveryStore.put(
+        rawKey,
+        { recordId: record.recordId, value: record.value },
+        typeof rawExpected === "string" ? rawExpected : undefined,
+      );
+      return result.ok ? { ok: true, result: result.result } : { ok: false, reason: result.reason };
+    },
+  );
+  ipcMain.removeHandler("mokina:recovery-store:delete");
+  ipcMain.handle(
+    "mokina:recovery-store:delete",
+    async (event, rawKey: unknown, rawExpected: unknown): Promise<OpenDesignHostRecoveryStoreDeleteResult> => {
+      if (event.sender !== window.webContents) return { ok: false, reason: "recovery store sender not allowed" };
+      if (typeof rawKey !== "string" || typeof rawExpected !== "string") {
+        return { ok: false, reason: "invalid-record" };
+      }
+      const result = await mokinaRecoveryStore.delete(rawKey, rawExpected);
+      return result.ok ? { ok: true, result: result.result } : { ok: false, reason: result.reason };
+    },
+  );
 
   window.on("focus", () => showWindowButtons(window));
   window.on("blur", () => showWindowButtons(window));

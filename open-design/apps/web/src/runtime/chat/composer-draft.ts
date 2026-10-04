@@ -35,6 +35,7 @@
  * 草稿是便利设施,不是数据源;宁可少回来几个芯片,也不能让输入框打不开。
  */
 import type { ChatAttachment, ChatCommentAttachment, WorkspaceContextItem } from '@open-design/contracts';
+import { mirrorDurableRecord, removeDurableRecord } from '../persistence/mokina-recovery-store';
 import type { ChatQuote } from './quote-selection';
 
 /** 一次待发送负载里除正文以外的部分。 */
@@ -246,8 +247,14 @@ export function saveComposerDraftExtras(key: string | undefined, extras: Compose
   const storageKey = composerDraftExtrasKey(key);
   const encoded = serializeComposerDraftExtras(sanitizeComposerDraftExtras(extras));
   try {
-    if (encoded) window.localStorage.setItem(storageKey, encoded);
-    else window.localStorage.removeItem(storageKey);
+    if (encoded) {
+      window.localStorage.setItem(storageKey, encoded);
+      // 桌面 profile 下的持久镜像:换端口/换 origin 之后草稿不丢(T03)。
+      mirrorDurableRecord(storageKey, encoded);
+    } else {
+      window.localStorage.removeItem(storageKey);
+      removeDurableRecord(storageKey);
+    }
   } catch {
     // 隐私模式 / 配额满 —— 存不下不影响输入框继续用。
   }
@@ -257,6 +264,7 @@ export function clearComposerDraftExtras(key?: string): void {
   if (!key || typeof window === 'undefined') return;
   try {
     window.localStorage.removeItem(composerDraftExtrasKey(key));
+    removeDurableRecord(composerDraftExtrasKey(key));
   } catch {
     // 同上。
   }

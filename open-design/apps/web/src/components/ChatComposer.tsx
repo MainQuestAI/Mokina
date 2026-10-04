@@ -149,6 +149,7 @@ import {
   saveComposerDraftExtras,
   type ComposerDraftContext,
 } from '../runtime/chat/composer-draft';
+import { mirrorDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
 import { QuotedRefs } from './chat/QuotedRefs';
 
 type TranslateFn = (key: keyof Dict, vars?: Record<string, string | number>) => string;
@@ -6717,8 +6718,10 @@ function saveComposerDraft(key: string | undefined, draft: string) {
   try {
     if (draft) {
       window.localStorage.setItem(key, draft);
+      mirrorDurableRecord(key, draft);
     } else {
       window.localStorage.removeItem(key);
+      removeDurableRecord(key);
     }
   } catch {
     // Storage can be unavailable in privacy modes; the composer should still work.

@@ -53,6 +53,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { composerDraftExtrasKey } from '../runtime/chat/composer-draft';
+import { mirrorDurableRecord } from '../runtime/persistence/mokina-recovery-store';
 import historyStyles from './chat/ConversationHistoryDock.module.css';
 import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask } from '@open-design/contracts';
 import { useAnalytics } from '../analytics/provider';
@@ -2750,7 +2751,10 @@ export function ChatPane({
     if (!composerDraftStorageKey) { onSendRecoveryBlocked?.(); return; }
     try {
       window.localStorage.setItem(composerDraftStorageKey, snapshot.prompt);
-      window.localStorage.setItem(composerDraftExtrasKey(composerDraftStorageKey), JSON.stringify(snapshot.extras));
+      mirrorDurableRecord(composerDraftStorageKey, snapshot.prompt);
+      const extrasEncoded = JSON.stringify(snapshot.extras);
+      window.localStorage.setItem(composerDraftExtrasKey(composerDraftStorageKey), extrasEncoded);
+      mirrorDurableRecord(composerDraftExtrasKey(composerDraftStorageKey), extrasEncoded);
     } catch { onSendRecoveryBlocked?.(); return; }
     composerRef.current.restoreDraft({ text: snapshot.prompt,
       attachments: snapshot.extras.attachments, commentAttachments: snapshot.extras.commentAttachments,

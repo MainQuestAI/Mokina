@@ -83,6 +83,14 @@
 | 测试 | `file-viewer-version-download` 14/14（含新增历史版本 standalone HTML 导出用例；原"隐藏历史 HTML"用例改写为"提供历史 HTML 导出"） |
 | 未跑 | 桌面原生 PDF 实测（真实 desktop exporter + 中文/分页检查，AC40）→ T18/T19；候选版本导出截图（AC38 的候选分支）待 UI 状态补充 |
 
+## T09 接续 v2（有界切片）
+
+| 证据 | 结果 |
+|---|---|
+| 改动 | contracts `MokinaContinuationV2`；FileViewer：`buildMokinaContinuationV2`（纯函数）+ `readMokinaContinuationJournal`；`continueFromSelectedSections` 先铸 operationId/targetProjectId 并写 journal，createProject 带显式 id（重试复用同一项目），成功后清 journal；v1 文件保持可读 |
+| 测试 | `file-viewer-continuation-v2` 2/2（载荷/ journal 解析）+ `FileViewer.mokina-revision-recovery` 13/13 回归 |
+| 未跑 | 真实"创建一半失败→恢复同一项目"故障注入（AC30 的 UI 级）；草稿入口迁移（pendingPrompt 沿用，未改为 Composer draft 通道） |
+
 ## T14 项目恢复包（服务端 + CLI）
 
 | 证据 | 结果 |
@@ -114,7 +122,7 @@
 | T06 上下文快照 | 🟡 部分 | 服务端+CLI+真实 HTTP 测试完成；Web 选择面板（T07）未做；真实模型端到端回执未跑 |
 | T07 资料选择 UI | ⬜ 未完成 | — |
 | T08 场景与产物校验 | 🟡 部分 | 场景包为既有资产（已核对满足最小标准）；structure_invalid 结构校验已接入；双路径 prompt 未改动（既有文本已达标）；专业评分属 T19 |
-| T09 接续 v2 与可靠创建 | ⬜ 未完成 | 既有 v1 基础保留；v2 schema/ journal 未实现 |
+| T09 接续 v2 与可靠创建 | 🟡 部分 | v2 载荷（operationId/sourceDigest/versionState/productionIntent）+ 稳定 targetProjectId 复用 + prepared→project-created→snapshot-saved 检查点 journal（镜像到桌面持久存储）已落地并有单测；draft-ready 后的草稿入口与 UI 恢复提示沿用既有 pendingPrompt/navigate 路径 |
 | T10 活动页接续制作 | ⬜ 未完成 | 场景包 mokina-landing-page 未创建 |
 | T11 修订发送身份 | 🟡 部分 | Web 修复落地（持久化→派发→CAS 标记）；真实丢响应注入未跑 |
 | T12 候选比较 UI | ⬜ 未完成 | 采用 CAS 服务端既有；比较 UI 未做 |

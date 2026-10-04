@@ -108,6 +108,8 @@ import {
   markSendRequestUnknown,
   persistPendingSendRequest,
 } from '../runtime/chat/send-request-state';
+import { mirrorDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
+import type { MokinaContinuationV2 } from '@open-design/contracts';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
 import { notifyMokinaEntriesChanged } from '../runtime/mokina-entry-events';
 import { enqueueMokinaMetadataRead } from '../hooks/useMokinaProjectSummaries';
@@ -3361,6 +3363,68 @@ type ExportToastState = {
   tone: 'default' | 'success' | 'error' | 'loading';
 };
 
+/**
+ * Narrow creation journal for the selective-continuation helper (T09):
+ * `prepared → project-created → draft-ready` checkpoints keyed to one stable
+ * operation/target project, mirrored into the durable desktop store so a reload
+ * resumes the SAME target instead of minting a second project.
+ */
+export type MokinaContinuationJournal = {
+  schemaVersion: 2;
+  operationId: string;
+  targetProjectId: string;
+  checkpoint: 'prepared' | 'project-created' | 'snapshot-saved' | 'draft-ready';
+  updatedAt: string;
+};
+
+export function readMokinaContinuationJournal(raw: string | null): MokinaContinuationJournal | null {
+  if (!raw) return null;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    const row = parsed as Record<string, unknown>;
+    if (
+      row.schemaVersion !== 2
+      || typeof row.operationId !== 'string' || row.operationId.length === 0
+      || typeof row.targetProjectId !== 'string' || row.targetProjectId.length === 0
+      || typeof row.checkpoint !== 'string'
+    ) {
+      return null;
+    }
+    return parsed as MokinaContinuationJournal;
+  } catch {
+    return null;
+  }
+}
+
+export function buildMokinaContinuationV2(input: {
+  projectId: string;
+  fileName: string;
+  versionId: string;
+  versionState: 'current' | 'historical' | 'candidate';
+  contentDigest?: string;
+  operationId: string;
+  targetProjectId: string;
+  sections: Array<{ id: string; text: string }>;
+  background: string;
+}): MokinaContinuationV2 {
+  return {
+    schemaVersion: 2,
+    operationId: input.operationId,
+    targetProjectId: input.targetProjectId,
+    source: {
+      projectId: input.projectId,
+      fileName: input.fileName,
+      versionId: input.versionId,
+      ...(input.contentDigest ? { contentDigest: input.contentDigest } : {}),
+      versionState: input.versionState,
+    },
+    sections: input.sections.map((section) => ({ id: section.id, text: section.text })),
+    background: input.background,
+    productionIntent: 'custom',
+  };
+}
+
 export type MokinaRevisionJob = {
   runId: string;
   revisionProjectId: string;
@@ -4214,13 +4278,34 @@ function FileVersionManagerModal({
     if (total > 24_000) { setError('选定章节超过 24,000 字符；请缩小选择。'); return; }
     setContinuationBusy(true);
     setError(null);
+    const journalKey = `od:continuation:${projectId}:${file.name}:${selectedVersion.id}`;
+    const storeJournal = (journal: MokinaContinuationJournal) => {
+      const encoded = JSON.stringify(journal);
+      try { window.localStorage.setItem(journalKey, encoded); } catch { /* quota/private mode */ }
+      mirrorDurableRecord(journalKey, encoded);
+    };
+    const clearJournal = () => {
+      try { window.localStorage.removeItem(journalKey); } catch { /* ignore */ }
+      removeDurableRecord(journalKey);
+    };
     try {
-      const fixed = {
-        schemaVersion: 1,
-        source: { projectId, fileName: file.name, versionId: selectedVersion.id },
-        sections: chosen,
+      const existingJournal = readMokinaContinuationJournal(
+        (() => { try { return window.localStorage.getItem(journalKey); } catch { return null; } })(),
+      );
+      const operationId = existingJournal?.operationId ?? newClientOperationId();
+      const targetProjectId = existingJournal?.targetProjectId ?? newClientOperationId();
+      storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'prepared', updatedAt: new Date().toISOString() });
+      const fixed = buildMokinaContinuationV2({
+        projectId,
+        fileName: file.name,
+        versionId: selectedVersion.id,
+        versionState: selectedVersion.candidate ? 'candidate' : selectedVersion.current ? 'current' : 'historical',
+        ...(selectedVersion.contentDigest ? { contentDigest: selectedVersion.contentDigest } : {}),
+        operationId,
+        targetProjectId,
+        sections: chosen.map((section) => ({ id: section.id, text: section.text })),
         background: continuationBackground.trim(),
-      };
+      });
       const prompt = [
         '请基于以下固定结论继续工作。先讨论方向；我明确要求交付时再生成方案。',
         '只使用下列摘录和我补充的背景；不要读取或推断原项目的其他资料。',
@@ -4228,6 +4313,7 @@ function FileVersionManagerModal({
         continuationBackground.trim() ? `【补充背景】\n${continuationBackground.trim()}` : '',
       ].filter(Boolean).join('\n\n');
       const project = await createProject({
+        id: targetProjectId,
         name: `${file.name.replace(/\.html?$/iu, '')} · 接续`,
         skillId: null,
         designSystemId: null,
@@ -4236,6 +4322,7 @@ function FileVersionManagerModal({
         pendingPrompt: prompt,
         workspaceContext,
       });
+      storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'project-created', updatedAt: new Date().toISOString() });
       const saved = await writeProjectTextFile(
         project.project.id,
         'MOKINA-CONTINUATION.json',
@@ -4243,7 +4330,9 @@ function FileVersionManagerModal({
         undefined,
         workspaceContext,
       );
-      if (!saved) throw new Error('接续项目已创建，但固定摘录未保存；请重试前检查该项目。');
+      if (!saved) throw new Error('接续项目已创建，但固定摘录未保存；再次点击继续制作会复用同一项目。');
+      storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'snapshot-saved', updatedAt: new Date().toISOString() });
+      clearJournal();
       onClose();
       navigate({ kind: 'project', projectId: project.project.id, conversationId: project.conversationId, fileName: null });
     } catch (err) {

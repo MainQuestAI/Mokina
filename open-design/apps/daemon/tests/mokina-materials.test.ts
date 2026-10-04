@@ -45,10 +45,15 @@ describe('Mokina material extraction', () => {
     expect(material.contentDigest).toMatch(/^[0-9a-f]{64}$/);
   });
 
-  it('prefers the packaged pdftotext path and falls back to PATH in development', () => {
+  it('prefers the packaged pdftotext path and falls back to known absolute locations before PATH', () => {
     expect(resolvePdftotextBinary({ OD_PDFTOTEXT_PATH: ' /opt/mokina/bin/pdftotext ' })).toBe('/opt/mokina/bin/pdftotext');
-    expect(resolvePdftotextBinary({})).toBe('pdftotext');
-    expect(resolvePdftotextBinary({ OD_PDFTOTEXT_PATH: '   ' })).toBe('pdftotext');
+    // No configured path: a Finder-launched process finds Homebrew/local installs
+    // by absolute path even without an interactive shell PATH.
+    expect(resolvePdftotextBinary({}, { exists: (c) => c === '/opt/homebrew/bin/pdftotext' })).toBe('/opt/homebrew/bin/pdftotext');
+    expect(resolvePdftotextBinary({}, { exists: (c) => c === '/usr/local/bin/pdftotext' })).toBe('/usr/local/bin/pdftotext');
+    // Nothing found: keep the bare command name so PATH lookup still applies.
+    expect(resolvePdftotextBinary({}, { exists: () => false })).toBe('pdftotext');
+    expect(resolvePdftotextBinary({ OD_PDFTOTEXT_PATH: '   ' }, { exists: () => false })).toBe('pdftotext');
   });
 
   it('reports an unreadable PDF with a clear limitation instead of treating the failure text as content', async () => {

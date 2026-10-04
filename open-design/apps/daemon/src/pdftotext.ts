@@ -1,16 +1,34 @@
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
 import { promisify } from "node:util";
 
 /**
- * Locate the pdftotext binary.
- *
- * The packaged Mokina build ships a controlled copy and points
- * `OD_PDFTOTEXT_PATH` at it, because a Finder-launched child process does not
- * inherit Homebrew's PATH. Development keeps the historical PATH lookup.
+ * Well-known absolute locations a Finder-launched process can still read even
+ * though it does not inherit an interactive shell PATH (T05). A controlled
+ * resource path supplied by packaging via `OD_PDFTOTEXT_PATH` wins; the bare
+ * command name is the last resort so development keeps the historical lookup.
  */
-export function resolvePdftotextBinary(env: NodeJS.ProcessEnv = process.env): string {
+export const PDFTOTEXT_FALLBACK_PATHS = [
+  "/opt/homebrew/bin/pdftotext",
+  "/usr/local/bin/pdftotext",
+] as const;
+
+export type PdftotextResolveOptions = {
+  /** Injectable for tests; defaults to fs.existsSync. */
+  exists?: (candidate: string) => boolean;
+};
+
+export function resolvePdftotextBinary(
+  env: NodeJS.ProcessEnv = process.env,
+  options: PdftotextResolveOptions = {},
+): string {
   const configured = env.OD_PDFTOTEXT_PATH?.trim();
-  return configured != null && configured.length > 0 ? configured : "pdftotext";
+  if (configured != null && configured.length > 0) return configured;
+  const exists = options.exists ?? ((candidate: string) => existsSync(candidate));
+  for (const candidate of PDFTOTEXT_FALLBACK_PATHS) {
+    if (exists(candidate)) return candidate;
+  }
+  return "pdftotext";
 }
 
 export type PdftotextResult = { ok: true; stdout: string } | { ok: false; reason: string };

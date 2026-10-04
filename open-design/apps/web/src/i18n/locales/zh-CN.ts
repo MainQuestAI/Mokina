@@ -5922,4 +5922,11 @@ export const zhCN: Dict = {
   'fileViewer.mokina.intentDiscuss': "讨论方向（默认）",
   'fileViewer.mokina.intentLanding': "制作活动页（只创建草稿，不自动生成）",
   'fileViewer.mokina.continuationDraftKept': "接续项目已创建，但固定摘录未保存；再次点击继续制作会复用同一项目。",
+  'recentProjects.exportRecovery': "导出恢复包",
+  'recentProjects.exportRecoveryDone': "恢复包已开始下载",
+  'recentProjects.exportRecoveryFailed': "恢复包导出失败",
+  'newproj.importRecoveryZip': "导入恢复包（zip）",
+  'newproj.importingRecoveryZip': "正在导入恢复包…",
+  'newproj.recoveryImportFailed': "恢复包导入失败",
+  'newproj.recoveryImportDone': "恢复包已导入为新项目",
 };

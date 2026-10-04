@@ -5929,4 +5929,11 @@ export const zhTW: Dict = {
   'fileViewer.mokina.intentDiscuss': "Discuss direction (default)",
   'fileViewer.mokina.intentLanding': "Build a landing page (draft only, nothing generated automatically)",
   'fileViewer.mokina.continuationDraftKept': "The continuation project was created but the frozen excerpts were not saved; clicking again reuses the same project.",
+  'recentProjects.exportRecovery': "Export recovery package",
+  'recentProjects.exportRecoveryDone': "Recovery package download started",
+  'recentProjects.exportRecoveryFailed': "Recovery package export failed",
+  'newproj.importRecoveryZip': "Import recovery package (zip)",
+  'newproj.importingRecoveryZip': "Importing recovery package…",
+  'newproj.recoveryImportFailed': "Recovery package import failed",
+  'newproj.recoveryImportDone': "Recovery package imported as a new project",
 };

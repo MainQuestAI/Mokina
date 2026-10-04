@@ -152,6 +152,9 @@ interface Props {
   onDeleteTemplate?: (id: string) => Promise<boolean>;
   promptTemplates: PromptTemplateSummary[];
   onCreate: (input: CreateInput & { requestId?: string }) => void;
+  onImportMokinaRecovery?: (
+    file: File,
+  ) => Promise<{ ok: boolean; message?: string } | void> | { ok: boolean; message?: string } | void;
   onImportClaudeDesign?: (
     file: File,
   ) => Promise<ImportClaudeDesignOutcome | void> | ImportClaudeDesignOutcome | void;
@@ -283,6 +286,7 @@ export function NewProjectPanel({
   promptTemplates,
   onCreate,
   onImportClaudeDesign,
+  onImportMokinaRecovery,
   onImportFolder,
   onImportFolderResponse,
   mediaProviders,
@@ -296,6 +300,8 @@ export function NewProjectPanel({
   const { locale } = useI18n();
   const analytics = useAnalytics();
   const importInputRef = useRef<HTMLInputElement | null>(null);
+  const recoveryInputRef = useRef<HTMLInputElement | null>(null);
+  const [importingRecovery, setImportingRecovery] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importZipError, setImportZipError] = useState<
     { message: string; details?: string } | null
@@ -824,6 +830,30 @@ export function NewProjectPanel({
     }
   }
 
+  async function handleImportRecoveryPicked(ev: React.ChangeEvent<HTMLInputElement>) {
+    const file = ev.target.files?.[0];
+    ev.target.value = '';
+    if (!file || !onImportMokinaRecovery) return;
+    setImportingRecovery(true);
+    setImportZipError(null);
+    try {
+      const result = await onImportMokinaRecovery(file);
+      if (result?.ok === false) {
+        setImportZipError({
+          message: result.message
+            ? `${t('newproj.recoveryImportFailed')}：${result.message}`
+            : t('newproj.recoveryImportFailed'),
+        });
+      }
+    } catch (err) {
+      setImportZipError({
+        message: `${t('newproj.recoveryImportFailed')}：${err instanceof Error ? err.message : ''}`,
+      });
+    } finally {
+      setImportingRecovery(false);
+    }
+  }
+
   async function handleImportPicked(ev: React.ChangeEvent<HTMLInputElement>) {
     const file = ev.target.files?.[0];
     ev.target.value = '';
@@ -1155,6 +1185,31 @@ export function NewProjectPanel({
               </span>
             </button>
           </>
+        ) : null}
+        {onImportMokinaRecovery ? (
+          <div className="newproj-open-folder">
+            <input
+              ref={recoveryInputRef}
+              type="file"
+              accept=".zip,application/zip"
+              hidden
+              data-testid="newproj-recovery-input"
+              onChange={(ev) => { void handleImportRecoveryPicked(ev); }}
+            />
+            <button
+              type="button"
+              className="ghost newproj-import"
+              disabled={importingRecovery}
+              onClick={() => recoveryInputRef.current?.click()}
+            >
+              <Icon name="import" size={14} />
+              <span>
+                {importingRecovery
+                  ? t('newproj.importingRecoveryZip')
+                  : t('newproj.importRecoveryZip')}
+              </span>
+            </button>
+          </div>
         ) : null}
         {folderImport.available ? (
           <div className="newproj-open-folder">

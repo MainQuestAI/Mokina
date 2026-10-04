@@ -206,6 +206,12 @@ import {
 import { installFontRecovery } from './runtime/font-recovery';
 import { hydrateDurableRecoveryIntoLocalStorage } from './runtime/persistence/mokina-recovery-store';
 import {
+  exportProjectRecoveryZip,
+  importProjectRecoveryZip,
+  mintRecoveryIdentity,
+  saveRecoveryFile,
+} from './runtime/mokina/recovery-package-client';
+import {
   runWithConcurrency,
   STAGED_UPLOAD_CONCURRENCY,
 } from './runtime/chat/staged-attachment';
@@ -1082,6 +1088,7 @@ function AppInner() {
   const [workingDirError, setWorkingDirError] = useState<string | null>(null);
   const [projectCreateError, setProjectCreateError] = useState<string | null>(null);
   const [projectOpenError, setProjectOpenError] = useState<string | null>(null);
+  const [recoveryNotice, setRecoveryNotice] = useState<{ message: string; tone: 'success' | 'error' } | null>(null);
   const [deepLinkResolutionFailure, setDeepLinkResolutionFailure] = useState<{
     projectId: string;
     failure: 'missing' | 'materialization-failed';
@@ -3651,6 +3658,47 @@ function AppInner() {
     [rememberLocalProject, resolveSourceProjectWorkspaceContext],
   );
 
+  const handleExportRecoveryProject = useCallback(
+    async (projectId: string) => {
+      try {
+        const { blob, filename } = await exportProjectRecoveryZip(projectId, {
+          workspaceContext: resolvedWorkspaceContextForWrite(workspaceContextStateRef.current),
+        });
+        saveRecoveryFile(blob, filename);
+        setRecoveryNotice({ message: t('recentProjects.exportRecoveryDone'), tone: 'success' });
+      } catch (err) {
+        setRecoveryNotice({
+          message: `${t('recentProjects.exportRecoveryFailed')}：${err instanceof Error ? err.message : ''}`,
+          tone: 'error',
+        });
+      }
+    },
+    [t],
+  );
+
+  const handleImportMokinaRecovery = useCallback(
+    async (file: File): Promise<{ ok: boolean; message?: string }> => {
+      const { operationId, targetProjectId } = mintRecoveryIdentity();
+      try {
+        const result = await importProjectRecoveryZip(file, {
+          operationId,
+          targetProjectId,
+          workspaceContext: resolvedWorkspaceContextForWrite(workspaceContextStateRef.current),
+        });
+        rememberLocalProject(result.projectId);
+        await refreshProjectsStrict();
+        if (result.warnings.length > 0) {
+          setRecoveryNotice({ message: result.warnings.join('；'), tone: 'success' });
+        }
+        navigate({ kind: 'project', projectId: result.projectId, fileName: null });
+        return { ok: true };
+      } catch (err) {
+        return { ok: false, message: err instanceof Error ? err.message : undefined };
+      }
+    },
+    [navigate, refreshProjectsStrict, rememberLocalProject],
+  );
+
   const handleCreatePluginShareProject = useCallback(
     async (
       pluginId: string,
@@ -5651,12 +5699,14 @@ function AppInner() {
         onCreateProject={handleCreateProject}
         onCreatePluginShareProject={handleCreatePluginShareProject}
         onImportClaudeDesign={handleImportClaudeDesign}
+        onImportMokinaRecovery={handleImportMokinaRecovery}
         onImportFolder={handleImportFolder}
         onImportFolderResponse={handleImportFolderResponse}
         onOpenProject={handleOpenProject}
         onOpenLiveArtifact={handleOpenLiveArtifact}
         onDeleteProject={handleDeleteProject}
         onDuplicateProject={handleDuplicateProject}
+        onExportRecoveryProject={handleExportRecoveryProject}
         onRenameProject={handleRenameProject}
         onProjectsRefresh={refreshProjectsStrict}
         onTeamProjectContentReady={handleTeamProjectContentReady}
@@ -5884,6 +5934,14 @@ function AppInner() {
           role="alert"
           tone="error"
           onDismiss={() => setProjectOpenError(null)}
+        />
+      ) : null}
+      {recoveryNotice ? (
+        <Toast
+          message={recoveryNotice.message}
+          role={recoveryNotice.tone === 'error' ? 'alert' : 'status'}
+          tone={recoveryNotice.tone}
+          onDismiss={() => setRecoveryNotice(null)}
         />
       ) : null}
       {/* First-run privacy consent banner. It waits for daemon config

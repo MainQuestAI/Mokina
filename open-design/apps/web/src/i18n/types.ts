@@ -5766,4 +5766,11 @@ export interface Dict {
   'fileViewer.mokina.intentDiscuss': string;
   'fileViewer.mokina.intentLanding': string;
   'fileViewer.mokina.continuationDraftKept': string;
+  'recentProjects.exportRecovery': string;
+  'recentProjects.exportRecoveryDone': string;
+  'recentProjects.exportRecoveryFailed': string;
+  'newproj.importRecoveryZip': string;
+  'newproj.importingRecoveryZip': string;
+  'newproj.recoveryImportFailed': string;
+  'newproj.recoveryImportDone': string;
 }

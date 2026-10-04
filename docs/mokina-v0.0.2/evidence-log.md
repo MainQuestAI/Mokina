@@ -152,7 +152,7 @@
 | T11 修订发送身份 | 🟡 部分 | Web 修复落地（持久化→派发→CAS 标记）；真实丢响应注入未跑 |
 | T12 候选比较 UI | 🟡 主体完成 | `MokinaCandidateCompare` 模态（基础/候选章节并排，窄屏切换；非所选区域**字节一致性**判定而非"看起来一样"；数值字面量差异提示；采用/取消入口常显，基稿已非当前时禁用并提示冲突）；纯函数 `candidate-compare`（章节识别/空白化/数值提取）；FileViewer 候选行新增「比较」。测试：helper 4/4、组件 4/4、FileViewer 回归 42/42 |
 | T13 指定版本导出 | 🟡 部分 | Web 菜单与文件名完成；桌面原生 PDF 实测未跑 |
-| T14 恢复包 | 🟡 部分 | 服务端+CLI+HTTP 往返测试完成；Web 入口未做 |
+| T14 恢复包 | ✅ 完成 | 服务端+CLI+HTTP 往返；**Web 入口完成**：最近项目行菜单「导出恢复包」（下载 ZIP，服务端文件名解析+回退）、新建项目面板「导入恢复包（zip）」（multipart、operationId+targetProjectId 幂等、成功导航到新项目、失败 toast 可重试）；客户端模块 + 三层接线（App→EntryView→EntryShell→Rail/Modal→Panel）。测试：client 6/6、rail row 2/2、panel 2/2、既有 Panel/Modal 回归 51/51；web typecheck 0 error |
 | T15 诊断与隐私 | 🟡 主体完成 | daemon `GET /api/mokina/diagnostics`：产品/构建/运行时/隐私/网络依赖声明（每项带 nextAction）、codex CLI 探测（60s 缓存）；`assertMokinaDiagnosticsSanitized` 值特征+键名双层扫描；测试 4/4（含 HTTP）。未跑：AC45 的恶意 HTML/IPC 安全测试（既有隔离未改动，T16 视觉/安全收口时统一验证） |
 | T16 八视图与 i18n | 🟡 i18n 部分完成 | 本轮新增文案全部走字典：`types.ts` +62 键，19 个 locale 文件同步补齐（zh-CN 源文、en 翻译、其余 17 locale 先以英文回退待译），`MokinaContextPanel`/`MokinaCandidateCompare`/FileViewer 新增控件均改 `t()`；测试改为跟随默认 en 字典并通过。**未完成**：冻结设计包 21 文件迁移、P01–P08 视觉对照、其余 17 locale 的正式翻译与语言质量 |
 | T17 回归与 CI | 🟡 主体完成 | 本地：daemon 全量 + 归属对照、7 包 typecheck、guard 全绿；CI：复用仓库既有 ci.yml + 规划器（未另建平台），以本分支真实 diff 运行 `scopes.py plan` 得到门禁选择 = daemon_unit_tests / e2e_vitest / ui_p0 / workspace_unit_tests / preflight / static_gate（保守推导）。边界：未推送远端、未实际触发 GitHub Actions 运行 |

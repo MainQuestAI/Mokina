@@ -2556,3 +2556,52 @@ test('[P1] Mokina historical version export locks the clicked version and export
     contentType: 'application/json',
   });
 });
+
+test('[P1] Mokina reduced transparency degrades materials live and restores', async ({ page }, testInfo) => {
+  await gotoEntryHome(page);
+  await dismissPrivacyDialog(page);
+  await page.waitForTimeout(1200);
+
+  const sample = () => page.evaluate(() => {
+    const surfaces = [...document.querySelectorAll('body *')].filter((el) => {
+      const style = getComputedStyle(el);
+      return (style.backdropFilter && style.backdropFilter !== 'none')
+        || (style.webkitBackdropFilter && style.webkitBackdropFilter !== 'none');
+    });
+    const root = getComputedStyle(document.documentElement);
+    return {
+      glassSurfaceCount: surfaces.length,
+      materialRegular: root.getPropertyValue('--material-regular').trim(),
+      bgElevated: root.getPropertyValue('--bg-elevated').trim(),
+      reducedMatches: matchMedia('(prefers-reduced-transparency: reduce)').matches,
+      headingVisible: Boolean([...document.querySelectorAll('h1, h2')].find((el) => (el.textContent || '').trim().length > 0)),
+    };
+  });
+
+  const before = await sample();
+  expect(before.reducedMatches).toBe(false);
+
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }],
+  });
+  await page.waitForTimeout(800);
+  const reduced = await sample();
+
+  expect(reduced.reducedMatches).toBe(true);
+  // Tokens collapse to the solid elevated surface: same value, no blur left.
+  expect(reduced.materialRegular).toBe(reduced.bgElevated);
+  expect(reduced.glassSurfaceCount).toBe(0);
+  expect(reduced.headingVisible).toBe(true);
+
+  await cdp.send('Emulation.setEmulatedMedia', { features: [] });
+  await page.waitForTimeout(800);
+  const restored = await sample();
+  expect(restored.reducedMatches).toBe(false);
+  expect(restored.glassSurfaceCount).toBe(before.glassSurfaceCount);
+
+  await testInfo.attach('reduced-transparency', {
+    body: JSON.stringify({ before, reduced, restored }),
+    contentType: 'application/json',
+  });
+});

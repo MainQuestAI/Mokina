@@ -7,8 +7,8 @@
 
 | 项 | 值 |
 |---|---|
-| 安装包 | `Mokina-mokina-local.dmg`（397 MB） |
-| SHA-256 | `d71bbbe60b8afe4da59c7fa570d49396d00699994c1e29e32811864414d19ee7` |
+| 安装包 | `Mokina-mokina-local.dmg`（397 MB）与 `Mokina-mokina-local.zip`（395 MB） |
+| SHA-256 | dmg `f8399b5f6c14a4b748ab1c958d982804837fbf12f630ff49669a53519af319c2`；zip `00503386eae64646b48a45d29eed0d4876abdb3d674b51f75e954bda83cdfcf2`（最终构建，含 T05 解析链修复） |
 | 应用 | `Mokina.app`，bundle id `ai.mainquest.mokina.preview`，版本 `0.0.2-local.1` |
 | 架构 | arm64（仅本机实测架构） |
 | 签名/公证 | **未签名、未公证**（本地预览；首次打开如被 Gatekeeper 拦截，请用右键→打开，不要把关闭系统保护当作安装步骤） |
@@ -44,4 +44,5 @@
 - 八视图视觉收口（T16）与部分入口整合（T07/T10 的首页入口）尚未完成；资料与背景面板目前在项目工作区内。
 - 活动页场景已注册，但"真实管线验收"前不提供首页可点击生产入口。
 - 桌面原生 PDF 导出尚未做最终目视验收（HTML/ZIP 已通过测试；PDF 沿用原生桌面导出器）。
-- dmg 未签名/未公证；跨平台与自动更新不在本轮范围。
+- dmg/zip 未签名/未公证；跨平台与自动更新不在本轮范围。
+- PDF 文本解析：优先 `OD_PDFTOTEXT_PATH` → `/opt/homebrew/bin`、`/usr/local/bin` → PATH；本机实测可解析到 Homebrew poppler。未随包分发 pdftotext（Homebrew poppler 依赖闭包含 nss/gpgmepp 等 11+ dylib，按 Spec 的"依赖无法满足"路径如实记录）；缺失时界面明确提示无法读取并给出替代动作，不会静默降级。

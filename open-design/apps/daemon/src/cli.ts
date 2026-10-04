@@ -2150,7 +2150,9 @@ function surfaceFetchError(err, daemonUrl) {
 
 function printMokinaHelp() {
   console.log(`od mokina context prepare --project <id> --snapshot <id> (--selections <json|file|->) [--excluded <json|file>] [--json]
-od mokina context get     --project <id> --snapshot <id> [--json]`);
+od mokina context get     --project <id> --snapshot <id> [--json]
+od mokina recovery export --project <id> --out <path.zip> [--operation-id <id>] [--json]
+od mokina recovery import --file <path.zip> --target-project <new-id> [--name <项目名>] [--operation-id <id>] [--json]`);
 }
 
 async function runMokina(args) {
@@ -2162,28 +2164,100 @@ async function runMokina(args) {
   const [action, ...actionArgs] = rest;
   if (action === 'prepare') return runMokinaContextPrepare(actionArgs);
   if (action === 'get') return runMokinaContextGet(actionArgs);
+  if (action === 'export') return runMokinaRecoveryExport(actionArgs);
+  if (action === 'import') return runMokinaRecoveryImport(actionArgs);
   console.error(`unknown subcommand: od mokina context ${action ?? ''}`);
   printMokinaHelp();
   process.exit(2);
 }
 
-function parseMokinaContextFlags(rawArgs, { requireSelections }) {
+async function runMokinaRecoveryExport(rawArgs) {
+  const { flags, projectId } = parseMokinaContextFlags(rawArgs, {
+    requireSelections: false,
+    required: ['project', 'out'],
+  });
+  const outPath = typeof flags.out === 'string' ? flags.out.trim() : '';
+  const operationId = typeof flags['operation-id'] === 'string' && flags['operation-id'].trim()
+    ? flags['operation-id'].trim()
+    : randomUUID();
+  const daemonUrl = await cliDaemonUrl(flags);
+  const url = `${daemonUrl.replace(/\/$/, '')}/api/projects/${encodeURIComponent(projectId)}/mokina/recovery-export`;
+  let resp;
+  try {
+    resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ operationId }),
+    });
+  } catch (err) {
+    console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  if (!resp.ok) {
+    console.error(`[mokina] ${resp.status} ${resp.statusText}`);
+    process.exit(1);
+  }
+  const buffer = Buffer.from(await resp.arrayBuffer());
+  await fs.promises.writeFile(outPath, buffer);
+  if (flags.json) {
+    process.stdout.write(JSON.stringify({ ok: true, out: outPath, bytes: buffer.length, operationId }, null, 2) + '\n');
+    return;
+  }
+  console.log(`[mokina] recovery package written: ${outPath} (${buffer.length} bytes, operationId=${operationId})`);
+}
+
+async function runMokinaRecoveryImport(rawArgs) {
+  const { flags } = parseMokinaContextFlags(rawArgs, {
+    requireSelections: false,
+    required: ['file', 'target-project'],
+  });
+  const filePath = typeof flags.file === 'string' ? flags.file.trim() : '';
+  const targetProjectId = typeof flags['target-project'] === 'string' ? flags['target-project'].trim() : '';
+  const operationId = typeof flags['operation-id'] === 'string' && flags['operation-id'].trim()
+    ? flags['operation-id'].trim()
+    : randomUUID();
+  const daemonUrl = await cliDaemonUrl(flags);
+  const url = `${daemonUrl.replace(/\/$/, '')}/api/mokina/recovery-import`;
+  const form = new FormData();
+  form.append('operationId', operationId);
+  form.append('targetProjectId', targetProjectId);
+  if (typeof flags.name === 'string' && flags.name.trim()) form.append('projectName', flags.name.trim());
+  form.append('file', new Blob([await fs.promises.readFile(filePath)], { type: 'application/zip' }), 'recovery.zip');
+  let resp;
+  try {
+    resp = await fetch(url, { method: 'POST', body: form });
+  } catch (err) {
+    console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  const data = await resp.json().catch(() => null);
+  if (!resp.ok) {
+    console.error(`[mokina] ${resp.status} ${JSON.stringify(data)}`);
+    process.exit(1);
+  }
+  process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+}
+
+function parseMokinaContextFlags(rawArgs, { requireSelections, required = ['project', 'snapshot'] }) {
   let flags;
   try {
     flags = parseFlags(rawArgs, {
-      string: ['project', 'snapshot', 'selections', 'excluded', 'daemon-url', 'namespace'],
+      string: ['project', 'snapshot', 'selections', 'excluded', 'daemon-url', 'namespace', 'out', 'file', 'target-project', 'name', 'operation-id'],
       boolean: ['json'],
     });
   } catch (err) {
     console.error(err instanceof Error ? err.message : String(err));
     process.exit(2);
   }
+  for (const name of required) {
+    const value = flags[name];
+    if (typeof value !== 'string' || !value.trim()) {
+      console.error(`--${name} is required`);
+      process.exit(2);
+    }
+  }
   const projectId = typeof flags.project === 'string' ? flags.project.trim() : '';
   const snapshotId = typeof flags.snapshot === 'string' ? flags.snapshot.trim() : '';
-  if (!projectId || !snapshotId) {
-    console.error('--project and --snapshot are required');
-    process.exit(2);
-  }
   if (requireSelections) {
     if (typeof flags.selections !== 'string' || !flags.selections.trim()) {
       console.error('--selections is required (inline JSON, file path, or - for stdin)');

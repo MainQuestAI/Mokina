@@ -83,6 +83,17 @@
 | 测试 | `file-viewer-version-download` 14/14（含新增历史版本 standalone HTML 导出用例；原"隐藏历史 HTML"用例改写为"提供历史 HTML 导出"） |
 | 未跑 | 桌面原生 PDF 实测（真实 desktop exporter + 中文/分页检查，AC40）→ T18/T19；候选版本导出截图（AC38 的候选分支）待 UI 状态补充 |
 
+## T14 项目恢复包（服务端 + CLI）
+
+| 证据 | 结果 |
+|---|---|
+| 改动 | contracts `api/mokina-recovery.ts`（`mokina.project-recovery.v1` 清单、限制常量）；daemon `mokina/recovery-package.ts`（导出：原件+版本含冻结内容+快照+素材，跳过忽略目录/符号链接，捕获期变化即失败；导入：清单/路径/摘要/容量/符号链接/版本图/快照指纹全量校验后写入新项目，候选保持候选、current 唯一，失败回滚目录）；路由 `POST /api/projects/:id/mokina/recovery-export`（zip 下载，文件名净化）与 `POST /api/mokina/recovery-import`（multipart + operationId 幂等 + 归属冲突 409）；CLI `od mokina recovery export|import` |
+| 单测 | `mokina-recovery-package` 6/6（路径安全、指纹/篡改、版本图、归属冲突、往返） |
+| 集成 | `mokina-recovery-routes` 3/3（真实 HTTP：导出→导入新项目后原件可读、版本 ≥2 且 current 唯一、重复导入 409 幂等、他人占用 409、坏包 400） |
+| 未跑 | UI 导出/导入入口（Web 按钮）、真机大项目容量压测 |
+| guard | `pnpm guard` 通过 |
+| 提交 | 见下 |
+
 ## 回归状态（诚实记录）
 
 - daemon 全量套件：后台运行中（>40 分钟，未结束），完成后补记结果。

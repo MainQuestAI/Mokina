@@ -1,0 +1,101 @@
+{
+  "schema": "mokina.project-recovery.v1",
+  "exportId": "66666666-6666-4666-8666-666666666666",
+  "createdAt": "2026-10-04T00:00:00Z",
+  "sourceProject": {
+    "id": "22222222-2222-4222-8222-222222222222",
+    "name": "合成恢复测试项目"
+  },
+  "files": [
+    {
+      "path": "originals/brand-rules.md",
+      "kind": "original",
+      "byteLength": 326,
+      "sha256": "faba0e73086103f065c3ae45eccd865bc4e60c9b3e7128f2a1b30af3ca346f6a"
+    },
+    {
+      "path": "originals/plan.html",
+      "kind": "original",
+      "byteLength": 580,
+      "sha256": "8c3f82fe885e4aaf311ab568ee67f7946072fdfc29ea29ae24eb08df71da5b9d"
+    },
+    {
+      "path": "assets/brand-mark.svg",
+      "kind": "asset",
+      "byteLength": 374,
+      "sha256": "0bc122890cfad0402ebe15b57cc568030a0504be83497d05c97f07acf9b280c9"
+    },
+    {
+      "path": "contexts/context.json",
+      "kind": "context-snapshot",
+      "byteLength": 4196,
+      "sha256": "4d48f34fd1718b7377a4a31c2b847362a8b59e995676e34406e97536a9397297"
+    },
+    {
+      "path": "continuations/MOKINA-CONTINUATION.json",
+      "kind": "continuation",
+      "byteLength": 1111,
+      "sha256": "3665908091357643b80c4e0fb06c9c814cc054b1e48d9fa0e6b9357d76772687"
+    },
+    {
+      "path": "versions/plan-v1.html",
+      "kind": "version",
+      "byteLength": 592,
+      "sha256": "bdff1bf3ba29297228b6ab08c578192e2027274f673937128cd5b258972f36b2"
+    },
+    {
+      "path": "versions/plan-v2.html",
+      "kind": "version",
+      "byteLength": 580,
+      "sha256": "8c3f82fe885e4aaf311ab568ee67f7946072fdfc29ea29ae24eb08df71da5b9d"
+    },
+    {
+      "path": "versions/plan-v3.html",
+      "kind": "version",
+      "byteLength": 595,
+      "sha256": "b95ef51da4006e1de9d2e1959b876e25664c5e6dac3d49e7af8d9b4f9f4c5f98"
+    }
+  ],
+  "versions": [
+    {
+      "entry": "plan.html",
+      "originalVersionId": "55555555-5555-4555-8555-555555555551",
+      "versionNumber": 1,
+      "current": false,
+      "candidate": false,
+      "contentPath": "versions/plan-v1.html",
+      "contentDigest": "bdff1bf3ba29297228b6ab08c578192e2027274f673937128cd5b258972f36b2",
+      "frozenContentPath": "versions/plan-v1.html"
+    },
+    {
+      "entry": "plan.html",
+      "originalVersionId": "55555555-5555-4555-8555-555555555552",
+      "versionNumber": 2,
+      "current": true,
+      "candidate": false,
+      "contentPath": "versions/plan-v2.html",
+      "contentDigest": "8c3f82fe885e4aaf311ab568ee67f7946072fdfc29ea29ae24eb08df71da5b9d",
+      "frozenContentPath": "versions/plan-v2.html",
+      "parentOriginalVersionId": "55555555-5555-4555-8555-555555555551"
+    },
+    {
+      "entry": "plan.html",
+      "originalVersionId": "55555555-5555-4555-8555-555555555553",
+      "versionNumber": 3,
+      "current": false,
+      "candidate": true,
+      "contentPath": "versions/plan-v3.html",
+      "contentDigest": "b95ef51da4006e1de9d2e1959b876e25664c5e6dac3d49e7af8d9b4f9f4c5f98",
+      "frozenContentPath": "versions/plan-v3.html",
+      "parentOriginalVersionId": "55555555-5555-4555-8555-555555555552",
+      "baseOriginalVersionId": "55555555-5555-4555-8555-555555555552"
+    }
+  ],
+  "contexts": [
+    {
+      "originalSnapshotId": "33333333-3333-4333-8333-333333333333",
+      "payloadPath": "contexts/context.json",
+      "fingerprint": "2fa9819ebd4f26300d6017db791e1f5b15240afa33a60bedb181968a2539e936"
+    }
+  ]
+}

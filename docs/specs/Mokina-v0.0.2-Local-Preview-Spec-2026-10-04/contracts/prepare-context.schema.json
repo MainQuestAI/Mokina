@@ -1,0 +1,362 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PrepareMokinaContextRequest",
+  "type": "object",
+  "properties": {
+    "snapshotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "selections": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "itemId": {
+                "type": "string",
+                "pattern": "^S[1-9][0-9]*$"
+              },
+              "sourceRef": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "project-file"
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "fileName": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionState": {
+                        "enum": [
+                          "current",
+                          "historical",
+                          "candidate"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "projectId",
+                      "fileName"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "design-system"
+                      },
+                      "designSystemId": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "designSystemId"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "expectedSourceDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "mode": {
+                "const": "groups"
+              },
+              "textKind": {
+                "enum": [
+                  "material-excerpt",
+                  "brand-rule"
+                ]
+              },
+              "groupIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "itemId",
+              "sourceRef",
+              "expectedSourceDigest",
+              "mode",
+              "textKind",
+              "groupIds"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "itemId": {
+                "type": "string",
+                "pattern": "^S[1-9][0-9]*$"
+              },
+              "sourceRef": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "project-file"
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "fileName": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionState": {
+                        "enum": [
+                          "current",
+                          "historical",
+                          "candidate"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "projectId",
+                      "fileName"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "design-system"
+                      },
+                      "designSystemId": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "designSystemId"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "expectedSourceDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "mode": {
+                "const": "sections"
+              },
+              "sectionIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "itemId",
+              "sourceRef",
+              "expectedSourceDigest",
+              "mode",
+              "sectionIds"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "itemId": {
+                "type": "string",
+                "pattern": "^S[1-9][0-9]*$"
+              },
+              "sourceRef": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "project-file"
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "fileName": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionState": {
+                        "enum": [
+                          "current",
+                          "historical",
+                          "candidate"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "projectId",
+                      "fileName"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "design-system"
+                      },
+                      "designSystemId": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "designSystemId"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "expectedSourceDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "mode": {
+                "const": "asset"
+              },
+              "role": {
+                "enum": [
+                  "logo",
+                  "hero",
+                  "supporting"
+                ]
+              },
+              "usageNote": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "itemId",
+              "sourceRef",
+              "expectedSourceDigest",
+              "mode",
+              "role",
+              "usageNote"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "itemId": {
+                "type": "string",
+                "pattern": "^S[1-9][0-9]*$"
+              },
+              "mode": {
+                "const": "note"
+              },
+              "sourceRef": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "user-note"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "itemId",
+              "mode",
+              "sourceRef",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 20
+    },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "enum": [
+              "user-excluded",
+              "unreadable",
+              "unsupported",
+              "budget",
+              "permission",
+              "unavailable"
+            ]
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "displayName",
+          "reason",
+          "explanation"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "snapshotId",
+    "selections",
+    "excluded"
+  ],
+  "additionalProperties": false
+}

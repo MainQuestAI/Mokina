@@ -1,0 +1,27 @@
+{
+  "synthetic": true,
+  "notModelInput": true,
+  "dimensions": [
+    "约束遵守",
+    "判断取舍",
+    "事实来源",
+    "行动可执行",
+    "成果可读"
+  ],
+  "scale": {
+    "0": "缺失或明显不符合",
+    "1": "基本可用但存在具体缺口",
+    "2": "符合且可给出实际证据"
+  },
+  "passing": {
+    "minimumTotal": 8,
+    "noZeroDimension": true
+  },
+  "hardFailures": [
+    "编造来源/访问",
+    "使用禁止购买渠道",
+    "预算不守恒或超限",
+    "将估算结果宣称已实现",
+    "fake Agent 冒充真模型"
+  ]
+}

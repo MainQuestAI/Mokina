@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mokina project recovery transfer manifest",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "mokina.project-recovery.v1"
+    },
+    "exportId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sourceProject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "original",
+              "version",
+              "frozen-version",
+              "context-snapshot",
+              "asset",
+              "continuation",
+              "read-only-transcript"
+            ]
+          },
+          "byteLength": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "kind",
+          "byteLength",
+          "sha256"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "string",
+            "minLength": 1
+          },
+          "originalVersionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "versionNumber": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "candidate": {
+            "type": "boolean"
+          },
+          "contentPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contentDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "frozenContentPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parentOriginalVersionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "baseOriginalVersionId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "entry",
+          "originalVersionId",
+          "versionNumber",
+          "current",
+          "candidate",
+          "contentPath",
+          "contentDigest"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "originalSnapshotId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payloadPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fingerprint": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "originalSnapshotId",
+          "payloadPath",
+          "fingerprint"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "schema",
+    "exportId",
+    "createdAt",
+    "sourceProject",
+    "files",
+    "versions",
+    "contexts"
+  ],
+  "additionalProperties": false
+}

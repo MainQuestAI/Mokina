@@ -1,0 +1,449 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MokinaContextSnapshot v1",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "snapshotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "projectId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "parserVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "selectionFingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "itemId": {
+                "type": "string",
+                "pattern": "^S[1-9][0-9]*$"
+              },
+              "displayName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sourceRef": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "project-file"
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "fileName": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionState": {
+                        "enum": [
+                          "current",
+                          "historical",
+                          "candidate"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "projectId",
+                      "fileName"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "design-system"
+                      },
+                      "designSystemId": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "designSystemId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "user-note"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "sourceDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 0
+              },
+              "kind": {
+                "enum": [
+                  "material-excerpt",
+                  "brand-rule",
+                  "artifact-section",
+                  "user-note"
+                ]
+              },
+              "locators": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "textDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "itemId",
+              "displayName",
+              "sourceRef",
+              "sourceDigest",
+              "limitations",
+              "kind",
+              "locators",
+              "text",
+              "textDigest"
+            ],
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "kind": {
+                      "const": "artifact-section"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "sourceRef": {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "const": "project-file"
+                            },
+                            "projectId": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "fileName": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "versionId": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "versionState": {
+                              "enum": [
+                                "current",
+                                "historical",
+                                "candidate"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "projectId",
+                            "fileName"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "required": [
+                            "versionId",
+                            "versionState"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "kind": {
+                      "const": "user-note"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "sourceRef": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "const": "user-note"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "itemId": {
+                "type": "string",
+                "pattern": "^S[1-9][0-9]*$"
+              },
+              "displayName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sourceRef": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "project-file"
+                      },
+                      "projectId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "fileName": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "versionState": {
+                        "enum": [
+                          "current",
+                          "historical",
+                          "candidate"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "projectId",
+                      "fileName"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "design-system"
+                      },
+                      "designSystemId": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "designSystemId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "user-note"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "sourceDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 0
+              },
+              "kind": {
+                "const": "asset"
+              },
+              "blobId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "mimeType": {
+                "type": "string",
+                "minLength": 1
+              },
+              "byteLength": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "role": {
+                "enum": [
+                  "logo",
+                  "hero",
+                  "supporting"
+                ]
+              },
+              "usageNote": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "itemId",
+              "displayName",
+              "sourceRef",
+              "sourceDigest",
+              "limitations",
+              "kind",
+              "blobId",
+              "mimeType",
+              "byteLength",
+              "role",
+              "usageNote"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 20
+    },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "enum": [
+              "user-excluded",
+              "unreadable",
+              "unsupported",
+              "budget",
+              "permission",
+              "unavailable"
+            ]
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "displayName",
+          "reason",
+          "explanation"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "restoredFrom": {
+      "type": "object",
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "projectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "projectId",
+        "fingerprint"
+      ],
+      "additionalProperties": false
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "snapshotId",
+    "projectId",
+    "createdAt",
+    "parserVersion",
+    "selectionFingerprint",
+    "items",
+    "excluded",
+    "fingerprint"
+  ],
+  "additionalProperties": false
+}

@@ -2425,3 +2425,88 @@ test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface a
   await testInfo.attach('r2-definitive-rejection', { body: JSON.stringify({ projectId, conversationId }), contentType: 'application/json' });
   await testInfo.attach('r2-definitive-rejection-shot', { body: await page.screenshot(), contentType: 'image/png' });
 });
+
+test('[P1] Mokina revision lost POST response keeps one run and marks the intent unknown', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina revision receipt loss');
+  const { projectId, conversationId } = await currentProjectContext(page);
+  const baseHtml = [
+    '<!doctype html><html><body>',
+    '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>原始策略：门店联合活动</p></section>',
+    '<section id="budget" data-mokina-id="budget"><h2>预算</h2><p>原始预算 50 万</p></section>',
+    '</body></html>',
+  ].join('');
+  const written = await page.request.post(`/api/projects/${projectId}/files`, {
+    data: { name: 'plan.html', content: baseHtml },
+  });
+  expect(written.ok()).toBe(true);
+
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+
+  let postCount = 0;
+  let clientRequestId = '';
+  let revisionProjectId = '';
+  let revisionRunId = '';
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    postCount += 1;
+    const body = route.request().postDataJSON() as { clientRequestId?: string; projectId?: string };
+    clientRequestId = body.clientRequestId ?? '';
+    revisionProjectId = body.projectId ?? '';
+    // The real daemon accepts the request first; only the receipt is lost.
+    const response = await route.fetch();
+    expect(response.ok()).toBe(true);
+    revisionRunId = ((await response.json()) as { runId: string }).runId;
+    await route.abort('failed');
+  });
+
+  const versionsButton = page.getByRole('button', { name: 'Versions' });
+  await versionsButton.click();
+  const dialog = page.getByRole('dialog', { name: 'Versions' });
+  await expect(dialog).toBeVisible({ timeout: T.long });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await dialog.getByRole('combobox', { name: '要修订的章节' }).selectOption('strategy');
+  await dialog.getByRole('textbox', { name: '章节修改要求' }).fill('把渠道改为社群为主');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+
+  await expect.poll(() => postCount, { timeout: T.long }).toBe(1);
+  // T11: the POST carries a stable client identity minted before any side effect.
+  expect(clientRequestId.length).toBeGreaterThan(0);
+  expect(revisionProjectId.length).toBeGreaterThan(0);
+  expect(revisionRunId.length).toBeGreaterThan(0);
+
+  // The daemon accepted exactly one run for the revision project.
+  const runsResponse = await page.request.get(`/api/runs?projectId=${encodeURIComponent(revisionProjectId)}`);
+  expect(runsResponse.ok()).toBe(true);
+  const runsBody = (await runsResponse.json()) as { runs: Array<{ id: string; clientRequestId?: string | null }> };
+  expect(runsBody.runs).toHaveLength(1);
+  expect(runsBody.runs[0]?.clientRequestId).toBe(clientRequestId);
+
+  // The send intent is preserved as unknown instead of being dropped or resent.
+  const intent = await page.evaluate(() => {
+    const keys: string[] = [];
+    for (let index = 0; index < window.localStorage.length; index += 1) {
+      const key = window.localStorage.key(index);
+      if (key && key.startsWith('od:send-request:')) keys.push(window.localStorage.getItem(key) ?? '');
+    }
+    return keys.join('\n');
+  });
+  expect(intent).toContain(clientRequestId);
+  expect(intent).toContain('"unknown"');
+
+  // The current draft is byte-identical: a lost candidate never touches it.
+  const current = await page.request.get(`/api/projects/${projectId}/files/plan.html`);
+  expect(await current.text()).toContain('原始预算 50 万');
+
+  // No automatic resend: waits and a reload keep the single POST.
+  await page.waitForTimeout(2_500);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+  await page.waitForTimeout(2_500);
+  expect(postCount).toBe(1);
+
+  await testInfo.attach('revision-receipt-loss', {
+    body: JSON.stringify({ projectId, conversationId, revisionProjectId, revisionRunId, clientRequestId, postCount }),
+    contentType: 'application/json',
+  });
+});

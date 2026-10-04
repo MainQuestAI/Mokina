@@ -1,0 +1,22 @@
+
+Running 16 tests using 1 worker
+
+  ✓   1 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 (4.6s)
+  ✓   2 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 (4.4s)
+  ✓   3 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 (1.5s)
+  ✓   4 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1440x900 (1.6s)
+  ✓   5 [chromium] › ui/mokina-workspace-actions.test.ts:71:1 › [P1] Mokina panel explains historical and chapterless action restrictions (1.8s)
+  ✓   6 [chromium] › ui/mokina-workspace-actions.test.ts:96:1 › [P1] Mokina continuation creates an editable fixed-excerpt draft without a run (2.3s)
+  ✓   7 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 (3.7s)
+  ✓   8 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 (3.9s)
+  ✓   9 [chromium] › ui/real-daemon-run.test.ts:2199:1 › [P1] Mokina PR3 Home first send creates one real daemon run (2.7s)
+  ✓  10 [chromium] › ui/real-daemon-run.test.ts:2220:1 › [P1] Mokina R2 resend after an empty lookup preserves the original request identity (1.7s)
+  ✓  11 [chromium] › ui/real-daemon-run.test.ts:2264:1 › [P1] Mokina R2 explicit resend reuses the original request identity when the server never received it (2.3s)
+  ✓  12 [chromium] › ui/real-daemon-run.test.ts:2300:1 › [P1] Mokina R2 resend after the original run already finished creates no second run (1.8s)
+  ✓  13 [chromium] › ui/real-daemon-run.test.ts:2342:1 › [P1] Mokina R2 discard clears the receipt and unblocks sending (1.9s)
+  ✓  14 [chromium] › ui/real-daemon-run.test.ts:2370:1 › [P1] Mokina R2 oversize prompt still sends without a recoverable snapshot (2.4s)
+  ✓  15 [chromium] › ui/real-daemon-run.test.ts:2390:1 › [P1] Mokina R2 first generated file auto-opens in an empty project (2.1s)
+  ✓  16 [chromium] › ui/real-daemon-run.test.ts:2405:1 › [P1] Mokina R2 definitive rejection keeps the draft, the failure surface and a restorable receipt (1.9s)
+
+  16 passed (47.2s)
+exit=0

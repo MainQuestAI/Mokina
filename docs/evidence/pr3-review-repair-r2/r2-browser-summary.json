@@ -1,0 +1,53 @@
+{
+ "date": "2026-10-04",
+ "base": "33fa8434d14869ab4310d8b0f570116781d34c8d",
+ "head": "57cab5e (R2 commits bfe85b1..57cab5e; e2e specs updated post-57cab5e in this round)",
+ "environment": {
+  "node": "v24.15.0",
+  "pnpm": "10.33.2 (corepack, via OD_E2E_PNPM_COMMAND)",
+  "playwrightWorkers": 1
+ },
+ "dev": {
+  "command": "playwright test ui/real-daemon-run.test.ts -g 'Mokina' --workers=1",
+  "result": "10 passed / 0 failed",
+  "log": "r2-e2e-dev.txt"
+ },
+ "production": {
+  "build": "pnpm --filter @open-design/web build (exit 0; r2-web-build-prod.txt)",
+  "env": {
+   "OD_WEB_PROD": "1",
+   "OD_WEB_OUTPUT_MODE": "server"
+  },
+  "command": "playwright test ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts ui/real-daemon-run.test.ts -g 'Mokina' --workers=1",
+  "result": "16 passed / 0 failed (incl. two-size navigation at 1440x900 and 1280x720)",
+  "log": "r2-browser-production.txt"
+ },
+ "r2Acceptance": {
+  "resendWhenServerNeverReceived": {
+   "attachment": "r2-resend-never-received.json",
+   "assert": "both POSTs share one clientRequestId; exactly 1 daemon run; no duplicate user message"
+  },
+  "resendAfterTerminalRun": {
+   "attachment": "r2-resend-after-terminal.json",
+   "assert": "query-first reconcile; postCount stays 1; exactly 1 run"
+  },
+  "discardUnblocksSending": {
+   "attachment": "r2-discard-recovery.json",
+   "assert": "receipt cleared; fresh send completes with 1 run"
+  },
+  "oversizeSends": {
+   "attachment": "r2-oversize-send.json",
+   "assert": "100Ki prompt POSTed once, no saveFailed banner, full content persisted"
+  },
+  "emptyProjectFirstOpen": {
+   "attachment": "r2-empty-first-open.json",
+   "assert": "first generated artifact auto-opens"
+  },
+  "definitiveRejectionP3_2": {
+   "attachment": "r2-definitive-rejection.json",
+   "assert": "composer draft kept, failure card visible, receipt cleared (existing semantics); retry succeeds"
+  }
+ },
+ "specUpdates": "round-1 specs re-pointed at the R2 notice actions (lost-receipt verify click -> explicit resend; delayed-delivery rewritten as resend-after-empty-lookup)",
+ "notes": "No CI on the PR; all results are local command executions. The off-edition production build was not re-run this round: every R2 change is MOKINA_LOCAL_EDITION-gated, so the off build has no R2 surface (recorded as known scope, not a pass)."
+}

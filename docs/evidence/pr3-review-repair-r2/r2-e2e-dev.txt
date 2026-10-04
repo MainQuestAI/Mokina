@@ -1,0 +1,16 @@
+
+Running 10 tests using 1 worker
+
+  ✓   1 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 (11.4s)
+  ✓   2 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 (9.8s)
+  ✓   3 [chromium] › ui/real-daemon-run.test.ts:2199:1 › [P1] Mokina PR3 Home first send creates one real daemon run (5.1s)
+  ✓   4 [chromium] › ui/real-daemon-run.test.ts:2220:1 › [P1] Mokina R2 resend after an empty lookup preserves the original request identity (3.6s)
+  ✓   5 [chromium] › ui/real-daemon-run.test.ts:2264:1 › [P1] Mokina R2 explicit resend reuses the original request identity when the server never received it (4.3s)
+  ✓   6 [chromium] › ui/real-daemon-run.test.ts:2300:1 › [P1] Mokina R2 resend after the original run already finished creates no second run (3.9s)
+  ✓   7 [chromium] › ui/real-daemon-run.test.ts:2342:1 › [P1] Mokina R2 discard clears the receipt and unblocks sending (4.0s)
+  ✓   8 [chromium] › ui/real-daemon-run.test.ts:2370:1 › [P1] Mokina R2 oversize prompt still sends without a recoverable snapshot (4.3s)
+  ✓   9 [chromium] › ui/real-daemon-run.test.ts:2390:1 › [P1] Mokina R2 first generated file auto-opens in an empty project (4.1s)
+  ✓  10 [chromium] › ui/real-daemon-run.test.ts:2405:1 › [P1] Mokina R2 definitive rejection keeps the draft, the failure surface and a restorable receipt (4.1s)
+
+  10 passed (1.3m)
+exit=0

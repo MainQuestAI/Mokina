@@ -2182,7 +2182,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     // A lookup must not overwrite a new draft or submit it.
     await page.getByTestId('chat-composer-input').fill('Unrelated new draft');
     await page.unroute('**/api/runs?*');
-    await page.getByTestId('mokina-pending-send').getByRole('button').click();
+    await page.getByTestId('mokina-pending-send').getByRole('button', { name: 'Resend this request' }).click();
     await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
     await expect(page.getByTestId('chat-composer-input')).toHaveText('Unrelated new draft');
     expect(postCount).toBe(1);
@@ -2217,7 +2217,7 @@ test('[P1] Mokina PR3 Home first send creates one real daemon run', async ({ pag
 });
 
 
-test('[P1] Mokina PR3 empty lookup before delayed original delivery preserves request identity', async ({ page }, testInfo) => {
+test('[P1] Mokina R2 resend after an empty lookup preserves the original request identity', async ({ page }, testInfo) => {
   await createProject(page, 'Mokina delayed original delivery');
   await expectWorkspaceReady(page);
   const { projectId, conversationId } = await currentProjectContext(page);
@@ -2233,26 +2233,195 @@ test('[P1] Mokina PR3 empty lookup before delayed original delivery preserves re
   await expect(pending).toBeVisible({ timeout: T.long });
   const before = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
   expect((await before.json() as { runs: unknown[] }).runs).toEqual([]);
-  const [emptyLookup] = await Promise.all([
-    page.waitForResponse(response => response.request().method() === 'GET' && response.url().includes('/api/runs?')),
-    pending.getByRole('button').click(),
-  ]);
-  expect((await emptyLookup.json() as { runs: unknown[] }).runs).toEqual([]);
-  await expect(pending).toBeVisible();
-  await expect(pending).not.toContainText('Restore unsent draft');
-  await page.getByRole('button', { name: 'Send failed — retry', exact: true }).click();
-  expect(browserPosts).toBe(1); expect(originalBody).not.toBeNull();
-  // Deliver the exact original request to the real daemon only after the empty
-  // GET. This models late network delivery without changing ids or payload.
-  const delivered = await page.request.post('/api/runs', { data: originalBody });
-  expect(delivered.ok(), await delivered.text()).toBe(true);
-  const receipt = await delivered.json() as { runId: string };
-  await pending.getByRole('button').click();
-  await expect(pending).toHaveCount(0);
+  // R2: the explicit resend performs the empty lookup itself and re-POSTs the
+  // exact original identity and payload; the daemon settles it idempotently.
+  const bodies: Array<Record<string, unknown>> = [];
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    browserPosts += 1;
+    bodies.push(route.request().postDataJSON() as Record<string, unknown>);
+    await route.fulfill({ response: await route.fetch() });
+  });
+  await pending.getByRole('button', { name: 'Resend this request' }).click();
+  // The receipt flips to pending (notice hides) before the resend POST lands.
+  const resendResponse = await page.waitForResponse(
+    response => response.request().method() === 'POST' && response.url().includes('/api/runs'),
+    { timeout: T.long },
+  );
+  expect(resendResponse.status()).toBe(202);
+  await expect(pending).toHaveCount(0, { timeout: T.long });
+  expect(browserPosts).toBe(2);
+  expect(bodies[0]!.clientRequestId).toBe((originalBody as Record<string, unknown> | null)?.clientRequestId);
   const after = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
   const runs = (await after.json() as { runs: Array<{ id: string; clientRequestId: string }> }).runs;
-  expect(runs).toHaveLength(1); expect(runs[0]?.id).toBe(receipt.runId);
+  expect(runs).toHaveLength(1);
   expect(runs[0]?.clientRequestId).toBe((originalBody as Record<string, unknown> | null)?.clientRequestId);
-  expect(browserPosts).toBe(1);
-  await testInfo.attach('empty-get-before-original-post-receipt', { body: JSON.stringify({ projectId, conversationId, run: runs[0], browserPosts }), contentType: 'application/json' });
+  await testInfo.attach('r2-resend-after-empty-lookup', { body: JSON.stringify({ projectId, conversationId, run: runs[0], browserPosts, requestIds: bodies.map(b => b.clientRequestId) }), contentType: 'application/json' });
+});
+
+// ── R2（PR3 第二轮修复）：「待确认」的显式出口与大小上限 ──
+
+test('[P1] Mokina R2 explicit resend reuses the original request identity when the server never received it', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 resend never received');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  const bodies: Array<Record<string, unknown>> = [];
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    const body = route.request().postDataJSON() as Record<string, unknown>;
+    bodies.push(body);
+    if (bodies.length === 1) {
+      await route.abort('failed'); // The original request is deliberately never delivered.
+      return;
+    }
+    await route.fulfill({ response: await route.fetch() });
+  });
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  const pending = page.getByTestId('mokina-pending-send');
+  await expect(pending).toBeVisible({ timeout: T.long });
+  const before = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+  expect((await before.json() as { runs: unknown[] }).runs).toEqual([]);
+
+  await pending.getByRole('button', { name: 'Resend this request' }).click();
+  await expect(pending).toHaveCount(0, { timeout: T.long });
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  expect(bodies).toHaveLength(2);
+  expect(bodies[1]!.clientRequestId).toBe(bodies[0]!.clientRequestId);
+  const runs = await (await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`)).json() as { runs: Array<{ id: string; clientRequestId?: string }> };
+  expect(runs.runs).toHaveLength(1);
+  expect(runs.runs[0]!.clientRequestId).toBe(bodies[0]!.clientRequestId);
+  const messages = await (await page.request.get(`/api/projects/${projectId}/conversations/${conversationId}/messages`)).json() as { messages: Array<{ role: string; content: string }> };
+  expect(messages.messages.filter(m => m.role === 'user' && m.content === 'Create a deterministic smoke artifact')).toHaveLength(1);
+  await testInfo.attach('r2-resend-never-received', { body: JSON.stringify({ projectId, conversationId, requestIds: bodies.map(b => b.clientRequestId), runIds: runs.runs.map(r => r.id), postCount: bodies.length }), contentType: 'application/json' });
+  await testInfo.attach('r2-resend-never-received-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina R2 resend after the original run already finished creates no second run', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 resend after terminal');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  let postCount = 0;
+  let requestId = '';
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    postCount += 1;
+    if (postCount === 1) {
+      requestId = (route.request().postDataJSON() as Record<string, unknown>).clientRequestId as string;
+      // The real daemon accepts the original request; only the receipt is lost.
+      const response = await route.fetch();
+      expect(response.status()).toBe(202);
+      await route.abort('failed');
+      return;
+    }
+    const response = await route.fetch();
+    expect(response.status()).toBe(202);
+    expect((await response.json() as { reused?: boolean }).reused).toBe(true);
+    await route.fulfill({ response });
+  });
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  const pending = page.getByTestId('mokina-pending-send');
+  await expect(pending).toBeVisible({ timeout: T.long });
+  // The daemon accepted the original request even though the receipt was lost.
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+    return ((await response.json()) as { runs: Array<{ id?: string }> }).runs.length;
+  }, { timeout: T.long }).toBe(1);
+
+  await pending.getByRole('button', { name: 'Resend this request' }).click();
+  await expect(pending).toHaveCount(0, { timeout: T.long });
+  expect(postCount).toBe(1); // The query-first reconcile never re-POSTed.
+  const runs = await (await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`)).json() as { runs: Array<{ id: string; clientRequestId?: string }> };
+  expect(runs.runs).toHaveLength(1);
+  expect(runs.runs[0]!.clientRequestId).toBe(requestId);
+  await testInfo.attach('r2-resend-after-terminal', { body: JSON.stringify({ projectId, conversationId, requestId, runIds: runs.runs.map(r => r.id), postCount }), contentType: 'application/json' });
+  await testInfo.attach('r2-resend-after-terminal-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina R2 discard clears the receipt and unblocks sending', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 discard');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    await route.fulfill({ response: await route.fetch() });
+  });
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    await route.abort('failed'); // First POST never delivered.
+  }, { times: 1 });
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  const pending = page.getByTestId('mokina-pending-send');
+  await expect(pending).toBeVisible({ timeout: T.long });
+
+  await pending.getByRole('button', { name: 'Discard this receipt' }).click();
+  await expect(pending).toHaveCount(0);
+  // A fresh send goes through on the real daemon.
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  const runs = await (await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`)).json() as { runs: unknown[] };
+  expect(runs.runs).toHaveLength(1);
+  await testInfo.attach('r2-discard-recovery', { body: JSON.stringify({ projectId, conversationId, runCount: runs.runs.length }), contentType: 'application/json' });
+});
+
+test('[P1] Mokina R2 oversize prompt still sends without a recoverable snapshot', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 oversize');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  let postCount = 0;
+  page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/runs') postCount += 1; });
+  const oversize = 'y'.repeat(100 * 1024);
+  await page.getByTestId('chat-composer-input').fill(oversize);
+  await page.getByTestId('chat-send').click();
+  await expectProjectFilesToContain(page, projectId, ['fake-agent-runtime-codex.html']);
+  expect(postCount).toBe(1);
+  // The run was accepted: no refusal banner, no pending receipt to verify.
+  await expect(page.getByText('Cannot safely save this request')).toHaveCount(0);
+  await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
+  const messages = await (await page.request.get(`/api/projects/${projectId}/conversations/${conversationId}/messages`)).json() as { messages: Array<{ role: string; content: string }> };
+  expect(messages.messages.some(m => m.role === 'user' && m.content.length >= 100 * 1024)).toBe(true);
+  await testInfo.attach('r2-oversize-send', { body: JSON.stringify({ projectId, conversationId, postCount, userContentLength: oversize.length }), contentType: 'application/json' });
+  await testInfo.attach('r2-oversize-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina R2 first generated file auto-opens in an empty project', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 empty first open');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  // Empty project: metadata reads zero formals and zero files; no tab opens.
+  await expect(artifactPreview(page)).toHaveCount(0);
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  // The first generated artifact opens by itself.
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  await expect(artifactPreviewFrame(page).getByRole('heading', { name: GENERATED_HEADING })).toBeVisible({ timeout: T.long });
+  await testInfo.attach('r2-empty-first-open', { body: JSON.stringify({ projectId, conversationId, file: GENERATED_FILE }), contentType: 'application/json' });
+  await testInfo.attach('r2-empty-first-open-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface and a restorable receipt', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 definitive rejection');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    await route.fulfill({ status: 409, json: { error: { code: 'IDEMPOTENCY_CONFLICT', message: 'clientRequestId is already associated with a different logical run request' } } });
+  });
+  await page.getByTestId('chat-composer-input').fill('Observation draft for definitive rejection');
+  await page.getByTestId('chat-send').click();
+  // P3-2 observation: a definitive rejection clears the local receipt (the
+  // composer draft is the recovery), keeps the composer text and the failure
+  // card, and a retry with a fresh request identity goes through.
+  await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
+  await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
+  await page.unroute('**/api/runs');
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  await testInfo.attach('r2-definitive-rejection', { body: JSON.stringify({ projectId, conversationId }), contentType: 'application/json' });
+  await testInfo.attach('r2-definitive-rejection-shot', { body: await page.screenshot(), contentType: 'image/png' });
 });

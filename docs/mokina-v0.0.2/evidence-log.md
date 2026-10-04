@@ -94,7 +94,9 @@
 | guard | `pnpm guard` 通过 |
 | 提交 | 见下 |
 
-## 回归状态（诚实记录）
+## 回归状态（已完成归因）
 
-- daemon 全量套件：后台运行中（>40 分钟，未结束），完成后补记结果。
+- daemon 全量（本分支，JSON 重跑）：11930 passed / 18-19 failed / 15 skipped（899 文件，其中 1 例为全量并行负载下的 flake，单独复跑通过）。
+- **归因对照（同一批存疑文件在两棵 worktree 复跑）**：本分支干净复跑 7 文件 = 12 failed / 4 文件；基线 worktree（PR3 head，无本分支改动）同 7 文件 = 13 failed / 5 文件。失败集合为基线同样存在的环境性失败（brand 网络 20s 超时、codex CLI 环境探测、vela AMR、od-next 计时），另有基线已存在的 `export-inline-route`、`plugins-bundled-scenarios-roster` 失败。**无归因于本分支改动的失败**；全量中 `run-create-workspace-gate` 单例 404≠409 为并行负载 flake（单独复跑 74/74 通过，基线同文件亦如此）。
+- 各包 typecheck：release / contracts / tools-pack / packaged / desktop / web / daemon 全部 0 error；`pnpm guard` 通过。
 - 已确认各包 typecheck：release / contracts / tools-pack / packaged / desktop / web / daemon 均 0 error（截至本记录）。

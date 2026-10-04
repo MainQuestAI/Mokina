@@ -137,7 +137,7 @@
 | T12 候选比较 UI | ⬜ 未完成 | 采用 CAS 服务端既有；比较 UI 未做 |
 | T13 指定版本导出 | 🟡 部分 | Web 菜单与文件名完成；桌面原生 PDF 实测未跑 |
 | T14 恢复包 | 🟡 部分 | 服务端+CLI+HTTP 往返测试完成；Web 入口未做 |
-| T15 诊断与安全边界 | ⬜ 未完成 | — |
+| T15 诊断与隐私 | 🟡 主体完成 | daemon `GET /api/mokina/diagnostics`：产品/构建/运行时/隐私/网络依赖声明（每项带 nextAction）、codex CLI 探测（60s 缓存）；`assertMokinaDiagnosticsSanitized` 值特征+键名双层扫描；测试 4/4（含 HTTP）。未跑：AC45 的恶意 HTML/IPC 安全测试（既有隔离未改动，T16 视觉/安全收口时统一验证） |
 | T16 八视图与 i18n | ⬜ 未完成 | — |
 | T17 回归与 CI | 🟡 部分 | 本地全量归因完成；CI workflow 未建（账户/远端条件下未跑） |
 | T18 候选发行包 | 🟡 部分 | `.app` 已真实构建并冒烟（上述证据）；未做 dmg/zip 封装、SHA256 清单、用户 Runbook 定稿与签名状态说明 |

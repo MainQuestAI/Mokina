@@ -78,6 +78,14 @@ import {
   readMokinaContextSnapshot,
   type MokinaContextStoreSource,
 } from '../../mokina/context-store.js';
+import {
+  assertMokinaDiagnosticsSanitized,
+  buildMokinaDiagnostics,
+} from '../../mokina/diagnostics.js';
+import { isMokinaLocalEdition } from '../../mokina/edition.js';
+
+// Router registration happens at daemon boot; close enough for uptime reporting.
+const MOKINA_DIAGNOSTICS_STARTED_AT = Date.now();
 import type { PrepareMokinaContextRequest } from '@open-design/contracts';
 import {
   createUserDesignSystem,
@@ -7303,6 +7311,40 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
       res.status(result.reused ? 200 : 201).json({ snapshot: result.snapshot, reused: result.reused });
     } catch (error: any) {
       sendApiError(res, 400, 'BAD_REQUEST', error?.message || 'context snapshot failed');
+    }
+  });
+
+  // T15: minimum local diagnostics. Sanitized by construction; the test suite
+  // scans the response for credential/path/subject leakage.
+  let mokinaCodexProbe: { at: number; state: 'detected' | 'missing' } | null = null;
+  app.get('/api/mokina/diagnostics', async (_req, res) => {
+    try {
+      if (mokinaCodexProbe == null || Date.now() - mokinaCodexProbe.at > 60_000) {
+        try {
+          const { execFile } = await import('node:child_process');
+          const { promisify } = await import('node:util');
+          await promisify(execFile)('codex', ['--version'], { timeout: 3000 });
+          mokinaCodexProbe = { at: Date.now(), state: 'detected' };
+        } catch {
+          mokinaCodexProbe = { at: Date.now(), state: 'missing' };
+        }
+      }
+      const report = buildMokinaDiagnostics({
+        productId: process.env.MOKINA_PRODUCT_ID ?? 'mokina',
+        productName: process.env.MOKINA_PRODUCT_NAME ?? 'Mokina',
+        productVersion: process.env.MOKINA_PRODUCT_VERSION ?? process.env.OD_APP_VERSION ?? null,
+        releaseKind: process.env.MOKINA_RELEASE_KIND ?? null,
+        edition: isMokinaLocalEdition() ? 'local' : 'off',
+        startedAt: MOKINA_DIAGNOSTICS_STARTED_AT,
+        checks: {
+          daemon: 'ok',
+          codexCli: mokinaCodexProbe.state,
+        },
+      });
+      assertMokinaDiagnosticsSanitized(report);
+      res.json(report);
+    } catch (error: any) {
+      sendApiError(res, 500, 'DIAGNOSTICS_FAILED', error?.message || 'diagnostics failed');
     }
   });
 

@@ -30,9 +30,9 @@ jobs:
       - run: pnpm i18n:check
       - name: Recovery and input regression
         run: |
-          pnpm --filter @open-design/web exec vitest run tests/runtime/mokina-recovery-store.test.ts tests/runtime/send-request-state.test.ts tests/runtime/mokina-pending-context-snapshot.test.ts tests/runtime/mokina-recovery-import-journal.test.ts tests/runtime/mokina-recovery-package-client.test.ts tests/components/MokinaContextPanel.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/ProjectView.retry-gating.test.tsx
+          pnpm --filter @open-design/web exec vitest run tests/runtime/mokina-recovery-store.test.ts tests/runtime/send-request-state.test.ts tests/runtime/mokina-pending-context-snapshot.test.ts tests/runtime/mokina-recovery-import-journal.test.ts tests/runtime/mokina-recovery-package-client.test.ts tests/components/MokinaContextPanel.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/ProjectView.retry-gating.test.tsx tests/components/EntryNavRail.recent-section.test.tsx
           pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-recovery-store.test.ts
-          pnpm --filter @open-design/daemon exec vitest run tests/mokina-context-store.test.ts tests/mokina-context-routes.test.ts tests/mokina-recovery-package.test.ts tests/mokina-materials.test.ts tests/mokina-recovery-routes.test.ts tests/export-inline-route.test.ts
+          pnpm --filter @open-design/daemon exec vitest run tests/mokina-context-store.test.ts tests/mokina-context-routes.test.ts tests/mokina-recovery-package.test.ts tests/mokina-materials.test.ts tests/mokina-recovery-routes.test.ts tests/export-inline-route.test.ts tests/mokina-cli-recovery.test.ts
           pnpm --filter @open-design/tools-pack exec vitest run tests/resources/pdf-runtime.test.ts
       - name: Browser prerequisites
         run: |

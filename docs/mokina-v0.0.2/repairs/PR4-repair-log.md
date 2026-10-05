@@ -78,3 +78,12 @@ BASE comparison uses a git archive of the exact BASE into an isolated temporary 
 最终包 PDF 正式 reader：中文/英文/多页成功，扫描件明确无 OCR、损坏 unreadable、10 MB+1 返回 400。25 个已安装工具二进制无 Homebrew/开发目录引用，受限 sandbox 仍成功。主实例停止/重启期间另一个实例存活；恢复记录完全一致，reader 200，全局 Codex 配置摘要不变。
 
 历史/当前/未采用候选的 HTML/ZIP 来自最终 app 实际选版导出，在原生 Save As 前截取内容。三组 HTML/解压 ZIP 与活动页通过外部 headless Chromium 打开检查。此证据不覆盖原生保存/取消或 PDF 导出。Finder 启动、原生 HTML/ZIP/PDF 保存/取消和 PDF 目视验收受 Mac 锁屏阻止，保持未完成；用户专业签收未执行，工程收口未宣告，PR 未合并。详见 [验收矩阵](PR4-acceptance-matrix.md)、[Runbook](../runbook.md) 与 [证据索引](evidence/README.md)。
+
+
+## 原生收口发现并修复：R6 正常入口与 CLI
+
+2026-10-05 Mac 解锁后，从 Finder 启动 local.3 成功。正常首页/全部项目不能打开 NewProjectModal：导入控制虽已接通，但唯一新建按钮位于未激活的旧 projects 视图。新增两项正常 rail 组件测试均先失败，再将 Mokina 本地侧栏的 New project 接到已有 onNewProject，并保留调用方 disabled 门槛；不新增工作台。相关 28 文件 199 项通过。
+
+同时实际 Node 子进程执行帮助中声明的 `od mokina recovery import/export` 均 exit 2；修复分发后又暴露未导入 fs 及默认 operationId 的 randomUUID。已使用 node:fs/promises 与 node:crypto 的正式导入。四个 CLI 子进程测试核对 multipart 输入、原 operation/target、写出的服务端字节和省略可选 operation 的 UUID，连同恢复 routes 共 7 项通过。红/绿证据在 evidence/native-*。测试的 ZIP 字节为 CLI 传输夹具，生产恢复包校验仍由现有真实 prepare/route 用例验证。
+
+上述两类回归加入根 CI。产品候选将重新构建为 local.4；local.3 保留为阶段证据，不代表新候选已通过原生验收。专业签收仍单独进行。

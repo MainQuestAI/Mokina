@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // @ts-nocheck
 import { readFileSync, writeFileSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import { basename } from 'node:path';
 import { runDaemonCliStartup, startDaemonRuntime } from './daemon-startup.js';
 import { runLiveArtifactsMcpServer } from './mcp-live-artifacts-server.js';
@@ -2157,21 +2158,22 @@ od mokina recovery import --file <path.zip> --target-project <new-id> [--name <é
 
 async function runMokina(args) {
   const [sub, ...rest] = args;
-  if (sub !== 'context' || args.includes('--help') || args.includes('-h') || sub == null) {
+  if ((sub !== 'context' && sub !== 'recovery') || args.includes('--help') || args.includes('-h') || sub == null) {
     printMokinaHelp();
     process.exit(sub == null || sub === 'help' || args.includes('--help') || args.includes('-h') ? 0 : 2);
   }
   const [action, ...actionArgs] = rest;
-  if (action === 'prepare') return runMokinaContextPrepare(actionArgs);
-  if (action === 'get') return runMokinaContextGet(actionArgs);
+  if (sub === 'context' && action === 'prepare') return runMokinaContextPrepare(actionArgs);
+  if (sub === 'context' && action === 'get') return runMokinaContextGet(actionArgs);
   if (action === 'export') return runMokinaRecoveryExport(actionArgs);
   if (action === 'import') return runMokinaRecoveryImport(actionArgs);
-  console.error(`unknown subcommand: od mokina context ${action ?? ''}`);
+  console.error(`unknown subcommand: od mokina ${sub} ${action ?? ''}`);
   printMokinaHelp();
   process.exit(2);
 }
 
 async function runMokinaRecoveryExport(rawArgs) {
+  const { writeFile } = await import('node:fs/promises');
   const { flags, projectId } = parseMokinaContextFlags(rawArgs, {
     requireSelections: false,
     required: ['project', 'out'],
@@ -2198,7 +2200,7 @@ async function runMokinaRecoveryExport(rawArgs) {
     process.exit(1);
   }
   const buffer = Buffer.from(await resp.arrayBuffer());
-  await fs.promises.writeFile(outPath, buffer);
+  await writeFile(outPath, buffer);
   if (flags.json) {
     process.stdout.write(JSON.stringify({ ok: true, out: outPath, bytes: buffer.length, operationId }, null, 2) + '\n');
     return;
@@ -2207,6 +2209,7 @@ async function runMokinaRecoveryExport(rawArgs) {
 }
 
 async function runMokinaRecoveryImport(rawArgs) {
+  const { readFile } = await import('node:fs/promises');
   const { flags } = parseMokinaContextFlags(rawArgs, {
     requireSelections: false,
     required: ['file', 'target-project'],
@@ -2222,7 +2225,7 @@ async function runMokinaRecoveryImport(rawArgs) {
   form.append('operationId', operationId);
   form.append('targetProjectId', targetProjectId);
   if (typeof flags.name === 'string' && flags.name.trim()) form.append('projectName', flags.name.trim());
-  form.append('file', new Blob([await fs.promises.readFile(filePath)], { type: 'application/zip' }), 'recovery.zip');
+  form.append('file', new Blob([await readFile(filePath)], { type: 'application/zip' }), 'recovery.zip');
   let resp;
   try {
     resp = await fetch(url, { method: 'POST', body: form });

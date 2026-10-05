@@ -1,0 +1,8 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon
+
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  21:14:21
+   Duration  7.69s (transform 3.78s, setup 26ms, import 4.96s, tests 2.55s, environment 0ms)

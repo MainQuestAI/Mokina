@@ -624,3 +624,26 @@ describe('R2 侧栏行摘要：legacy 入口提示与截断中性文案', () => 
     expect(artifactLineFor('q1')?.classList.contains('is-unreadable')).toBe(false);
   });
 });
+
+describe('R6 Mokina normal navigation recovery entry', () => {
+  beforeEach(() => { edition.on = true; });
+  afterEach(() => { edition.on = false; });
+
+  it('opens the existing project panel from the local catalog without a hidden view', () => {
+    const onNewProject = vi.fn();
+    renderRail({ context: null, view: 'drafts', onNewProject });
+    const entry = screen.getByRole('button', { name: 'New project' });
+    expect(entry.hidden).toBe(false);
+    fireEvent.click(entry);
+    expect(onNewProject).toHaveBeenCalledTimes(1);
+  });
+
+  it('honors the caller gate before opening a recovery import', () => {
+    const onNewProject = vi.fn();
+    renderRail({ context: null, onNewProject, newProjectDisabled: true });
+    const entry = screen.getByRole('button', { name: 'New project' });
+    expect(entry.hasAttribute('disabled')).toBe(true);
+    fireEvent.click(entry);
+    expect(onNewProject).not.toHaveBeenCalled();
+  });
+});

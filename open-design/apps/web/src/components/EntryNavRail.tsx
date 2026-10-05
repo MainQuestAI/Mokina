@@ -2548,6 +2548,17 @@ export function EntryNavRail({
              the two destination lists read the same. The name is historical —
              nothing in it is team-specific. */
           <div className="entry-nav-rail__team-section">
+            {MOKINA_LOCAL_EDITION ? (
+              <NavButton
+                ariaLabel={t('entry.navNewProject')}
+                label={t('entry.navNewProject')}
+                onClick={onNewProject}
+                disabled={newProjectDisabled}
+                testId="entry-nav-new-project"
+              >
+                <Icon name="plus" size={16} />
+              </NavButton>
+            ) : null}
             {/* 项目 is a destination on BOTH branches (OPEND-3140): the local
                 shell's project list is the same page the signed-in 项目 item
                 opens — 草稿 folds to the whole local catalog without a

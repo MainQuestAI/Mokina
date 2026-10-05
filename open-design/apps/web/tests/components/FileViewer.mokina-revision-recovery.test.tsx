@@ -4,6 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import { afterEach, describe, expect, it, vi } from 'vitest';
 vi.mock('../../src/mokina-edition', () => ({ MOKINA_LOCAL_EDITION: true }));
 
+import * as recoveryStore from '../../src/runtime/persistence/mokina-recovery-store';
 import type { ProjectFile } from '../../src/types';
 import { FileViewer } from '../../src/components/FileViewer';
 import {
@@ -167,6 +168,27 @@ describe('Mokina revision recovery UI', () => {
     cleanup();
     localStorage.clear();
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('waits for the continuation identity before creating its project and keeps selections after IPC failure', async () => {
+    const { fetchMock } = setupRecoveryFetch('running');
+    let finish!: (ok: boolean) => void;
+    vi.spyOn(recoveryStore, 'mirrorDurableRecord').mockImplementation(() => new Promise(resolve => { finish = resolve; }));
+    const panel = await openRecoveryPanel();
+    fireEvent.click(within(panel).getByRole('button', { name: '继续制作' }));
+    const continuation = screen.getByRole('region', { name: '选择性接续' });
+    const selected = within(continuation).getByRole('checkbox') as HTMLInputElement;
+    fireEvent.click(selected);
+    fireEvent.change(within(continuation).getByRole('textbox', { name: '接续背景' }), { target: { value: '保留我的背景' } });
+    fireEvent.click(within(continuation).getByRole('button', { name: '创建接续项目（不发送）' }));
+    await waitFor(() => expect(finish).toBeTypeOf('function'));
+    expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);
+    await act(async () => finish(false));
+    await waitFor(() => expect(screen.getByText(/接续身份未能安全保存/)).toBeTruthy());
+    expect(selected.checked).toBe(true);
+    expect((within(continuation).getByRole('textbox', { name: '接续背景' }) as HTMLTextAreaElement).value).toBe('保留我的背景');
+    expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);
   });
 
   it('opens chapter revision directly and moves focus without starting a run', async () => {

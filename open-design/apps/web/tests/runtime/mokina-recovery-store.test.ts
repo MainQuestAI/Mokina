@@ -21,7 +21,9 @@ import {
   resetDurableRecoveryForTests,
 } from '../../src/runtime/persistence/mokina-recovery-store';
 
-import { persistPendingSendRequest } from '../../src/runtime/chat/send-request-state';
+import { persistRecoveredComposerDraft } from '../../src/runtime/chat/composer-draft';
+import { clearPendingMokinaSnapshot, writePendingMokinaSnapshot, readPendingMokinaSnapshot } from '../../src/runtime/mokina/pending-context-snapshot';
+import { persistPendingSendRequest, persistClearSendRequest, loadSendRequestRecords } from '../../src/runtime/chat/send-request-state';
 
 type FakeRecord = { recordId: string; value: string };
 
@@ -78,6 +80,43 @@ describe('mokina durable recovery facade (web)', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('keeps the receipt transfer incomplete until both draft writes are durable', async () => {
+    const store = makeFakeStore(); installHost(store);
+    let finish!: () => void;
+    const realPut = store.put.getMockImplementation()!;
+    store.put.mockImplementationOnce(async (...args) => { await new Promise<void>(resolve => { finish = resolve; }); return realPut(...args); });
+    const extras = { attachments: [], commentAttachments: [], quotes: [], context: { skillIds: [], mcpServerIds: [], connectorIds: [], workspaceItems: [], mokinaSnapshotId: 'snap' } };
+    const done = vi.fn();
+    const task = persistRecoveredComposerDraft('od:chat-composer:receipt', '原输入', extras).then(done);
+    await flush(); expect(done).not.toHaveBeenCalled();
+    expect(localStorage.getItem('od:chat-composer:receipt')).toBeNull();
+    finish(); await task; expect(done).toHaveBeenCalledWith(true);
+    expect(store.records.get('od:chat-composer:receipt:extras')?.value).toContain('snap');
+    store.put.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    await expect(persistRecoveredComposerDraft('od:chat-composer:failed', '保留凭据', extras)).resolves.toBe(false);
+    expect(localStorage.getItem('od:chat-composer:failed')).toBeNull();
+  });
+
+  it('keeps a send receipt visible when its durable cleanup fails', async () => {
+    const store = makeFakeStore(); installHost(store);
+    await persistPendingSendRequest({ projectId: 'p', conversationId: 'c', clientRequestId: 'receipt', prompt: '原请求' });
+    store.delete.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    await expect(persistClearSendRequest('p', 'c', 'receipt')).resolves.toBe(false);
+    expect(loadSendRequestRecords('p', 'c')).toHaveLength(1);
+    await expect(persistClearSendRequest('p', 'c', 'receipt')).resolves.toBe(true);
+    expect(loadSendRequestRecords('p', 'c')).toHaveLength(0);
+  });
+
+  it('retains a snapshot binding when its durable delete fails', async () => {
+    const store = makeFakeStore(); installHost(store);
+    await writePendingMokinaSnapshot({ projectId: 'p', snapshotId: 's', itemCount: 1, charCount: 1, frozenAt: '', itemLabels: [], excluded: [] });
+    store.delete.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    await expect(clearPendingMokinaSnapshot('p')).resolves.toBe(false);
+    expect(readPendingMokinaSnapshot('p')?.snapshotId).toBe('s');
+    await expect(clearPendingMokinaSnapshot('p')).resolves.toBe(true);
+    expect(readPendingMokinaSnapshot('p')).toBeNull();
   });
 
   it("no-ops without the desktop host bridge", async () => {

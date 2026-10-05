@@ -34,7 +34,7 @@ describe('pending mokina context snapshot', () => {
     const read = readPendingMokinaSnapshot('p1');
     expect(read).toMatchObject({ snapshotId: 'snap-1', itemCount: 2, charCount: 1234 });
     expect(readPendingMokinaSnapshot('p2')).toBeNull();
-    clearPendingMokinaSnapshot('p1');
+    await clearPendingMokinaSnapshot('p1');
     expect(readPendingMokinaSnapshot('p1')).toBeNull();
   });
 

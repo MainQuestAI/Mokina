@@ -46,3 +46,12 @@
 |chips.automatic-default: binds exactly the plugin the daemon re-derives from the chip metadata|mokina-market-analysis expected example-web-prototype mapping|
 
 BASE comparison uses a git archive of the exact BASE into an isolated temporary checkout; node_modules reuse does not change baseline src or tests. Evidence logs retain the full failures.
+
+
+## 联合验收追加：R1 持久化完成门槛
+
+- 原失败：接续 journal 在 IPC 未完成时已创建项目；发送恢复转存后立即消费 receipt；清理快照/发送记录先移除 localStorage，IPC 失败后恢复入口消失。
+- 红测 `/tmp/mokina-transfer-red.log`：3 个失败，包括延迟 IPC 时已观察到创建项目 POST。
+- 修复：接续 prepared/checkpoint/clear 全部等待桌面结果；发送 receipt 的正文和完整 extras 转存成功后才恢复并消费；异步清理失败保留原卡片与绑定；发送容量已满且没有请求身份时禁止受理。新输入或路由切换发生于异步转存期间，保留原 receipt。
+- 全 daemon 904 文件：894 通过、7 失败、3 跳过；11960 通过、18 失败、15 跳过。导出旧断言及恢复包旧非幂等断言属于关联行为，已更新为 VERSION_NOT_FOUND 和同身份重试成功。其他失败正按精确 BASE 逐项对照，未将全量描述为通过。
+- CI 0b3042aaa31dd4852dbeeba54cb704d056437289 已成功：https://github.com/MainQuestAI/Mokina/actions/runs/37298777628 。追加修复后的 HEAD 及安装包需重新验证。

@@ -220,7 +220,13 @@ export function MokinaContextPanel({ projectId, files }: {
               <li key={`excluded:${entry.displayName}`}>{t('mokina.contextPanel.excludedItem', { reason: entry.reason, name: entry.displayName })}</li>
             ))}
           </ul>
-          <button type="button" onClick={() => { clearPendingMokinaSnapshot(projectId); setFrozen(null); }}>
+          <button type="button" disabled={busy} onClick={async () => {
+            setBusy(true);
+            try {
+              if (await clearPendingMokinaSnapshot(projectId)) setFrozen(null);
+              else setError('资料绑定清理失败，请重试；原绑定仍然保留。');
+            } finally { setBusy(false); }
+          }}>
             {t('mokina.contextPanel.clearSnapshot')}
           </button>
         </div>

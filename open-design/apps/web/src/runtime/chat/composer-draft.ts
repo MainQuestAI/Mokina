@@ -273,3 +273,16 @@ export function clearComposerDraftExtras(key?: string): void {
     // 同上。
   }
 }
+
+/** Transfer a send receipt without consuming its only durable copy on failure. */
+export async function persistRecoveredComposerDraft(key: string, prompt: string, extras: ComposerDraftExtras, canApply: () => boolean = () => true): Promise<boolean> {
+  try {
+    const encoded = JSON.stringify(extras);
+    if (!await mirrorDurableRecord(key, prompt)) return false;
+    if (!await mirrorDurableRecord(composerDraftExtrasKey(key), encoded)) return false;
+    if (!canApply()) return false;
+    window.localStorage.setItem(key, prompt);
+    window.localStorage.setItem(composerDraftExtrasKey(key), encoded);
+    return true;
+  } catch { return false; }
+}

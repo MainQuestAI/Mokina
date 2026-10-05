@@ -4367,14 +4367,14 @@ function FileVersionManagerModal({
     setContinuationBusy(true);
     setError(null);
     const journalKey = `od:continuation:${projectId}:${file.name}:${selectedVersion.id}`;
-    const storeJournal = (journal: MokinaContinuationJournal) => {
+    const storeJournal = async (journal: MokinaContinuationJournal) => {
       const encoded = JSON.stringify(journal);
-      try { window.localStorage.setItem(journalKey, encoded); } catch { /* quota/private mode */ }
-      mirrorDurableRecord(journalKey, encoded);
+      if (!await mirrorDurableRecord(journalKey, encoded)) throw new Error('接续身份未能安全保存，请重试。');
+      window.localStorage.setItem(journalKey, encoded);
     };
-    const clearJournal = () => {
-      try { window.localStorage.removeItem(journalKey); } catch { /* ignore */ }
-      removeDurableRecord(journalKey);
+    const clearJournal = async () => {
+      if (!await removeDurableRecord(journalKey)) throw new Error('接续项目已保存，恢复记录清理失败；重试将沿用同一项目。');
+      window.localStorage.removeItem(journalKey);
     };
     try {
       const existingJournal = readMokinaContinuationJournal(
@@ -4382,7 +4382,7 @@ function FileVersionManagerModal({
       );
       const operationId = existingJournal?.operationId ?? newClientOperationId();
       const targetProjectId = existingJournal?.targetProjectId ?? newClientOperationId();
-      storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'prepared', updatedAt: new Date().toISOString() });
+      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'prepared', updatedAt: new Date().toISOString() });
       const target = resolveMokinaContinuationTarget(continuationIntent);
       const fixed = buildMokinaContinuationV2({
         projectId,
@@ -4412,7 +4412,7 @@ function FileVersionManagerModal({
         pendingPrompt: prompt,
         workspaceContext,
       });
-      storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'project-created', updatedAt: new Date().toISOString() });
+      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'project-created', updatedAt: new Date().toISOString() });
       const saved = await writeProjectTextFile(
         project.project.id,
         'MOKINA-CONTINUATION.json',
@@ -4421,14 +4421,14 @@ function FileVersionManagerModal({
         workspaceContext,
       );
       if (!saved) throw new Error(t('fileViewer.mokina.continuationDraftKept'));
-      storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'snapshot-saved', updatedAt: new Date().toISOString() });
+      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'snapshot-saved', updatedAt: new Date().toISOString() });
       if (!continuationSectionRef.current?.isConnected) {
         // The user moved on while the creation was in flight: the project and
         // the journal stay ready (a retry reuses the same target), but a late
         // result must not yank navigation or quietly clear the record.
         return;
       }
-      clearJournal();
+      await clearJournal();
       onClose();
       navigate({ kind: 'project', projectId: project.project.id, conversationId: project.conversationId, fileName: null });
     } catch (err) {

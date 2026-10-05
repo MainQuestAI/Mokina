@@ -114,7 +114,7 @@ describe('mokina recovery recovery routes', () => {
     expect(projectBody.project.name).toBe('恢复后的项目');
   });
 
-  it('rejects a re-import of the same target and a corrupted archive', async () => {
+  it('reuses the completed import identity and rejects another owner or corrupted archive', async () => {
     const projectId = await createProject();
     await writeFile(projectId, 'plan.html', '<section id="a" data-mokina-id="a">x</section>');
     const exported = await exportRecovery(projectId, randomUUID());
@@ -127,8 +127,8 @@ describe('mokina recovery recovery routes', () => {
     expect(first.status).toBe(200);
 
     const again = await importRecovery(archive, { operationId, targetProjectId });
-    expect(again.status).toBe(409);
-    expect(again.body?.error?.code).toBe('MOKINA_RECOVERY_ALREADY_IMPORTED');
+    expect(again.status).toBe(200);
+    expect(again.body.projectId).toBe(targetProjectId);
 
     const otherOwner = await importRecovery(archive, { operationId: randomUUID(), targetProjectId });
     expect(otherOwner.status).toBe(409);

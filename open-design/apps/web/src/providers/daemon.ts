@@ -555,10 +555,10 @@ export interface DaemonStreamOptions {
   /** POST /api/runs 受理（2xx）后回调：发送三态清 pending 记录的锚点。 */
   onBeforeRunCreate?: () => boolean | Promise<boolean>;
   runCreateTimeoutMs?: number;
-  onRunCreateAccepted?: () => void;
+  onRunCreateAccepted?: () => void | Promise<void>;
   /** POST /api/runs 未受理回调。definitive=true 是 daemon 的明确拒绝
    * （4xx/明确受理前拒绝）；false 是响应丢失/中止（unknown → 只读核对）。 */
-  onRunCreateFailed?: (info: { definitive: boolean }) => void;
+  onRunCreateFailed?: (info: { definitive: boolean }) => void | Promise<void>;
   skillId?: string | null;
   // Per-turn skill ids picked via the composer's @-mention popover. These
   // are layered onto the system prompt for this run only and do not
@@ -1134,7 +1134,7 @@ export async function streamViaDaemon({
   };
   try {
     if (signal?.aborted || cancelSignal?.aborted || await onBeforeRunCreate?.() === false) {
-      onRunCreateFailed?.({ definitive: true });
+      await onRunCreateFailed?.({ definitive: true });
       emitRunStatus('failed');
       handlers.onError(new Error('Run was not sent'));
       return;
@@ -1174,7 +1174,7 @@ export async function streamViaDaemon({
       await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
       if (cancelSignal?.aborted || createController.signal.aborted) {
         // 受理前被取消：无法证明 daemon 是否已受理 → unknown，由只读核对收口。
-        onRunCreateFailed?.({ definitive: false });
+        await onRunCreateFailed?.({ definitive: false });
         emitRunStatus('failed');
         handlers.onError(new Error('Run creation interrupted; acceptance is unknown'));
         return;
@@ -1188,7 +1188,7 @@ export async function streamViaDaemon({
       const body = (() => { try { return JSON.parse(text) as ApiErrorResponse; } catch { return null; } })();
       const refusedBeforeAdmission = createResp.status === 503
         && (body?.error?.code === 'WORKSPACE_AUTHORITY_UNAVAILABLE' || body?.error?.code === 'UPSTREAM_UNAVAILABLE');
-      onRunCreateFailed?.({ definitive: createResp.status < 500 || refusedBeforeAdmission });
+      await onRunCreateFailed?.({ definitive: createResp.status < 500 || refusedBeforeAdmission });
       emitRunStatus('failed');
       handlers.onError(daemonCreateRunError(createResp, text));
       return;
@@ -1199,7 +1199,7 @@ export async function streamViaDaemon({
     if (typeof runId !== 'string' || !runId) throw new Error('Invalid run creation receipt');
     accepted = true;
     finishCreate();
-    onRunCreateAccepted?.();
+    await onRunCreateAccepted?.();
     if (created.strategyTask) onRunCreated?.(runId, created.strategyTask);
     else onRunCreated?.(runId);
     // Start the stuck-run watchdog. trackRunProgress is called inside the
@@ -1246,14 +1246,14 @@ export async function streamViaDaemon({
     if ((err as Error).name === 'AbortError') {
       // 受理前中止（含网络层 abort）：与响应丢失同义 → unknown。
       if (!accepted) {
-        onRunCreateFailed?.({ definitive: false });
+        await onRunCreateFailed?.({ definitive: false });
         emitRunStatus('failed');
         handlers.onError(new Error('Run creation interrupted; acceptance is unknown'));
       }
       return;
     }
     // fetch 本身抛错（断网/超时）：不是 daemon 的明确拒绝 → unknown。
-    if (!accepted) onRunCreateFailed?.({ definitive: false });
+    if (!accepted) await onRunCreateFailed?.({ definitive: false });
     emitRunStatus('failed');
     handlers.onError(err instanceof Error ? err : new Error(String(err)));
   } finally {

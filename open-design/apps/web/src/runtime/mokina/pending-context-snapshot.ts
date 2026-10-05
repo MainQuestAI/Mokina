@@ -72,15 +72,11 @@ export async function writePendingMokinaSnapshot(value: PendingMokinaContextSnap
   window.localStorage.setItem(key, encoded);
 }
 
-export function clearPendingMokinaSnapshot(projectId: string | null | undefined): void {
-  if (!projectId || typeof window === 'undefined') return;
+export async function clearPendingMokinaSnapshot(projectId: string | null | undefined): Promise<boolean> {
+  if (!projectId || typeof window === 'undefined') return false;
   const key = pendingMokinaSnapshotKey(projectId);
-  try {
-    window.localStorage.removeItem(key);
-  } catch {
-    // ignore
-  }
-  removeDurableRecord(key);
+  if (!await removeDurableRecord(key)) return false;
+  try { window.localStorage.removeItem(key); return true; } catch { return false; }
 }
 
 /**

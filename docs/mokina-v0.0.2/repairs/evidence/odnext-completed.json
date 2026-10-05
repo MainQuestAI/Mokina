@@ -1,0 +1,45 @@
+{
+  "http": 200,
+  "runStatus": "succeeded",
+  "task": {
+    "taskExecutionId": "odnext_d1d65e6b27aa4d28814e1f13301a5599",
+    "strategy": {
+      "id": "od-next-strategy",
+      "version": "2.0.4",
+      "packageHash": "dafe6762cb471c862f62eefda0c1905e8a9d2b5799c4b5995a8c022f24f68943",
+      "snapshotId": "35eb88db-f9a5-4ea8-a8c0-eb63663763b4"
+    },
+    "inputStage": "production",
+    "outcome": "completed",
+    "route": "full_plan",
+    "executionMode": "simple",
+    "activeRunId": "a2b7d7e8-1511-4b1f-a524-827182e0b81b",
+    "runMappings": [
+      {
+        "runId": "e75b1276-13cb-4717-bd7d-612b8785244f",
+        "taskRunIndex": 0
+      },
+      {
+        "runId": "a2b7d7e8-1511-4b1f-a524-827182e0b81b",
+        "taskRunIndex": 1
+      }
+    ],
+    "terminal": true
+  },
+  "receipt": {
+    "runId": "e75b1276-13cb-4717-bd7d-612b8785244f",
+    "snapshotId": "a446fa80-1bf3-48d2-877b-189da2d7b6f1",
+    "fingerprint": "50f50e3590ba04ceec355f383a1bb3649fdab5b77dfbe5b9d333173d651f2ebe",
+    "includedItemIds": [
+      "A1"
+    ],
+    "itemDelivery": [
+      {
+        "itemId": "A1",
+        "mode": "staged-file"
+      }
+    ],
+    "status": "submitted",
+    "submittedAt": "2026-10-05T12:05:30.531Z"
+  }
+}

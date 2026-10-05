@@ -1,0 +1,32 @@
+h the production reader after source deletion and re-exports them 23ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > reads imported snapshots with the production reader after source deletion and re-exports them
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/mokina-recovery-package.test.ts:77:26
+     75|     await rm(path.join(root, 'p1'), { recursive: true });
+     76|     const recovered = await readMokinaContextSnapshot(root, 'p2', 'sna…
+     77|     expect(recovered.ok).toBe(true);
+       |                          ^
+     78|     if (original.ok && recovered.ok) expect(recovered.snapshot.fingerp…
+     79|     const second = await buildProjectRecoveryPackage({ projectsRoot: r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  18:07:49
+   Duration  420ms (transform 127ms, setup 14ms, import 272ms, tests 63ms, environment 0ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/mokina-recovery-package.test.ts

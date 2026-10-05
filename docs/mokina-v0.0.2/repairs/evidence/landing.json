@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "projectId": "6cff422e-cccf-4ada-952e-6f8162737138",
+  "fileName": "community-teahouse-opening.html",
+  "sections": [
+    "strategy",
+    "budget"
+  ],
+  "booking": true,
+  "checkin": true,
+  "budget": true
+}

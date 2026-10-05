@@ -1,0 +1,33 @@
+{
+  "projectId": "pr4-final-missing-95e5d582-2000-463d-ae0a-cab5ce07dca9",
+  "conversationId": "64207390-d561-4c33-9ea8-9e317f6a88bd",
+  "snapshotId": "6234d54e-7212-43b0-a8a0-173ecf38c6f6",
+  "preparedStatus": 201,
+  "run": {
+    "status": 202,
+    "run": {
+      "runId": "bfe60f32-626a-4348-b8e3-30d9fadc3666",
+      "conversationId": "64207390-d561-4c33-9ea8-9e317f6a88bd",
+      "assistantMessageId": "64ee7cb1-9049-4934-8215-259fa7901e87",
+      "clientRequestId": "7f6b90d3-5e2a-4070-9912-f3d72bce225d",
+      "reused": false,
+      "resumed": false
+    }
+  },
+  "terminal": {
+    "status": "failed",
+    "errorCode": "MOKINA_SNAPSHOT_UNAVAILABLE",
+    "error": "ENOENT: no such file or directory, open '/Users/dingcheng/Mokina-PR4-QA/runtime/mac/namespaces/mokina-local/data/projects/pr4-final-missing-95e5d582-2000-463d-ae0a-cab5ce07dca9/.mokina/blobs/41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857'",
+    "receipt": {
+      "runId": "bfe60f32-626a-4348-b8e3-30d9fadc3666",
+      "snapshotId": "6234d54e-7212-43b0-a8a0-173ecf38c6f6",
+      "fingerprint": "7632a0d615b43c335e43734abd4e91f7b0a556a28169c7d0c5ad069131cf6d61",
+      "includedItemIds": [],
+      "itemDelivery": [],
+      "status": "not-submitted",
+      "reason": "ENOENT: no such file or directory, open '/Users/dingcheng/Mokina-PR4-QA/runtime/mac/namespaces/mokina-local/data/projects/pr4-final-missing-95e5d582-2000-463d-ae0a-cab5ce07dca9/.mokina/blobs/41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857'"
+    },
+    "artifactCount": 0,
+    "runtimeGenerationId": null
+  }
+}

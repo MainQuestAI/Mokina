@@ -1,0 +1,54 @@
+ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/runtime/mokina-recovery-store.test.ts > mokina durable recovery facade (web) > keeps the receipt transfer incomplete until both draft writes are durable
+TypeError: persistRecoveredComposerDraft is not a function
+ ❯ tests/runtime/mokina-recovery-store.test.ts:92:18
+     90|     const extras = { attachments: [], commentAttachments: [], quotes: …
+     91|     const done = vi.fn();
+     92|     const task = persistRecoveredComposerDraft('od:chat-composer:recei…
+       |                  ^
+     93|     await flush(); expect(done).not.toHaveBeenCalled();
+     94|     expect(localStorage.getItem('od:chat-composer:receipt')).toBeNull(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/runtime/mokina-recovery-store.test.ts > mokina durable recovery facade (web) > retains a snapshot binding when its durable delete fails
+TypeError: You must provide a Promise to expect() when using .resolves, not 'undefined'.
+ ❯ tests/runtime/mokina-recovery-store.test.ts:106:49
+    104|     await writePendingMokinaSnapshot({ projectId: 'p', snapshotId: 's'…
+    105|     store.delete.mockResolvedValueOnce({ ok: true, result: 'conflict' …
+    106|     await expect(clearPendingMokinaSnapshot('p')).resolves.toBe(false);
+       |                                                 ^
+    107|     expect(readPendingMokinaSnapshot('p')?.snapshotId).toBe('s');
+    108|     await expect(clearPendingMokinaSnapshot('p')).resolves.toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/components/FileViewer.mokina-revision-recovery.test.tsx > Mokina revision recovery UI > waits for the continuation identity before creating its project and keeps selections after IPC failure
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx:186:116
+    184|     fireEvent.click(within(continuation).getByRole('button', { name: '…
+    185|     await waitFor(() => expect(finish).toBeTypeOf('function'));
+    186|     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === …
+       |                                                                                                                    ^
+    187|     await act(async () => finish(false));
+    188|     await waitFor(() => expect(screen.getByText(/接续身份未能安全保存/)).toBeTru…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 23 passed (26)
+   Start at  19:23:13
+   Duration  9.31s (transform 1.88s, setup 805ms, import 1.68s, tests 6.95s, environment 529ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/runtime/mokina-recovery-store.test.ts tests/components/FileViewer.mokina-revision-recovery.test.tsx

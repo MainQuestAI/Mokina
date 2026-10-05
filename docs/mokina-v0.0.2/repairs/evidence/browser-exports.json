@@ -1,0 +1,79 @@
+[
+  {
+    "name": "v1.html",
+    "title": "小山茶馆｜社区开业营销方案",
+    "textChars": 2884,
+    "scrollWidth": 1440,
+    "viewport": 1440,
+    "brokenImages": 0,
+    "candidate": false,
+    "errors": [],
+    "remote": []
+  },
+  {
+    "name": "v3.html",
+    "title": "小山茶馆｜社区开业营销方案",
+    "textChars": 3414,
+    "scrollWidth": 1440,
+    "viewport": 1440,
+    "brokenImages": 0,
+    "candidate": false,
+    "errors": [],
+    "remote": []
+  },
+  {
+    "name": "v4.html",
+    "title": "小山茶馆｜社区开业营销方案",
+    "textChars": 3430,
+    "scrollWidth": 1440,
+    "viewport": 1440,
+    "brokenImages": 0,
+    "candidate": true,
+    "errors": [],
+    "remote": []
+  },
+  {
+    "name": "unpacked-v1/plan-v1-historical/index.html",
+    "title": "小山茶馆｜社区开业营销方案",
+    "textChars": 2884,
+    "scrollWidth": 1440,
+    "viewport": 1440,
+    "brokenImages": 0,
+    "candidate": false,
+    "errors": [],
+    "remote": []
+  },
+  {
+    "name": "unpacked-v3/plan/index.html",
+    "title": "小山茶馆｜社区开业营销方案",
+    "textChars": 3414,
+    "scrollWidth": 1440,
+    "viewport": 1440,
+    "brokenImages": 0,
+    "candidate": false,
+    "errors": [],
+    "remote": []
+  },
+  {
+    "name": "unpacked-v4/plan-v4-candidate/index.html",
+    "title": "小山茶馆｜社区开业营销方案",
+    "textChars": 3430,
+    "scrollWidth": 1440,
+    "viewport": 1440,
+    "brokenImages": 0,
+    "candidate": true,
+    "errors": [],
+    "remote": []
+  },
+  {
+    "name": "activity-page.html",
+    "title": "社区茶馆 · 家庭开业体验预约",
+    "textChars": 1226,
+    "scrollWidth": 1440,
+    "viewport": 1440,
+    "brokenImages": 0,
+    "candidate": false,
+    "errors": [],
+    "remote": []
+  }
+]

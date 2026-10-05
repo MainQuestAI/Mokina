@@ -1,0 +1,77 @@
+ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/export-inline-route.test.ts > POST /api/projects/:id/export/html route > rejects historical entries until their dependency graph is versioned
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/export-inline-route.test.ts:902:29
+    900|   it('rejects historical entries until their dependency graph is versi…
+    901|     const response = await postExport({ fileName: 'pages/index.html', …
+    902|     expect(response.status).toBe(409);
+       |                             ^
+    903|     const body = (await response.json()) as { error: { code: string; d…
+    904|     expect(body.error.code).toBe('CONFLICT');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/runtimes/codex-model-preflight.test.ts > Codex model capability preflight > blocks the known-old stable CLI only with confirmed ChatGPT auth
+AssertionError: expected { status: 'unknown', …(1) } to deeply equal { status: 'incompatible', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "cliVersion": "codex-cli 0.142.5",
+-   "model": "gpt-5.6-terra",
+-   "requiredCliVersion": "0.143.0",
+-   "status": "incompatible",
++   "reason": "managed_config",
++   "status": "unknown",
+  }
+
+ ❯ tests/runtimes/codex-model-preflight.test.ts:110:7
+    108|       requestedModel: 'default',
+    109|       projectRoot: fixture.projectRoot,
+    110|     })).resolves.toEqual({
+       |       ^
+    111|       status: 'incompatible',
+    112|       model: 'gpt-5.6-terra',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/runtimes/codex-model-preflight.test.ts > Codex model capability preflight > fails open for config overlays, API auth, and unconfirmed ChatGPT auth
+AssertionError: expected { status: 'unknown', …(1) } to deeply equal { status: 'unknown', …(1) }
+
+- Expected
++ Received
+
+  {
+-   "reason": "auth_unconfirmed",
++   "reason": "managed_config",
+    "status": "unknown",
+  }
+
+ ❯ tests/runtimes/codex-model-preflight.test.ts:308:7
+    306|       requestedModel: 'default',
+    307|       projectRoot: noChatGpt.projectRoot,
+    308|     })).resolves.toEqual({
+       |       ^
+    309|       status: 'unknown',
+    310|       reason: 'auth_unconfirmed',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 53 passed (56)
+   Start at  18:55:42
+   Duration  13.53s (transform 2.43s, setup 7.84s, import 3.18s, tests 2.34s, environment 0ms)
+
+undefined
+/private/tmp/mokina-pr4-base-comparison/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/export-inline-route.test.ts tests/runtimes/codex-model-preflight.test.ts

@@ -1,5 +1,7 @@
 # PR4 修复记录
 
+本记录保留各实施阶段的证据边界；最新状态以末尾「最终候选」及验收矩阵为准。
+
 固定输入：HEAD 7135b52fe5c03537fbc000ec0686df01692a26f4；BASE df4a0b2699cd2b37df2099b38da8fe8375d14b41。
 
 ## A：R1 / R2
@@ -55,3 +57,24 @@ BASE comparison uses a git archive of the exact BASE into an isolated temporary 
 - 修复：接续 prepared/checkpoint/clear 全部等待桌面结果；发送 receipt 的正文和完整 extras 转存成功后才恢复并消费；异步清理失败保留原卡片与绑定；发送容量已满且没有请求身份时禁止受理。新输入或路由切换发生于异步转存期间，保留原 receipt。
 - 全 daemon 904 文件：894 通过、7 失败、3 跳过；11960 通过、18 失败、15 跳过。导出旧断言及恢复包旧非幂等断言属于关联行为，已更新为 VERSION_NOT_FOUND 和同身份重试成功。其他失败正按精确 BASE 逐项对照，未将全量描述为通过。
 - CI 0b3042aaa31dd4852dbeeba54cb704d056437289 已成功：https://github.com/MainQuestAI/Mokina/actions/runs/37298777628 。追加修复后的 HEAD 及安装包需重新验证。
+
+
+## 最终候选与交付（R1–R7）
+
+| 提交 | Review ID / 修改入口 | 原失败及修复结果 | 证据类型 |
+|---|---|---|---|
+| e951cd8 | R1/R2：renderer/desktop recovery、send identity、FileViewer intent | 队列/CAS、桌面权威恢复、POST 前持久保存、未知 run 身份核对通过 | Vitest、typecheck |
+| 2d5c6bb | R3/R4/R6：素材投影、两条 prompt、恢复封装/reader、import journal | 正式 reader 拒绝恢复快照的红测修复；真实 prepare 夹具，素材字节/摘要与幂等导入通过 | helper、route、组件 |
+| 0b3042 | R5/R7 及关联回归：包内 PDF、缓存、根 CI | 递归 arm64 工具不再依赖 Homebrew；实际资源验证、远端 CI 通过 | sandbox、二进制校验、CI |
+| 6fe5d5 | R1 联合修正：接续、发送 receipt/extras、快照清理 | 延迟 IPC 原失败三项；修复后保存前置、失败身份保留、竞态检查通过 | 定向回归、全量对照、最终 CI |
+| 后续文档提交 | R1–R7：实施记录、矩阵、Runbook、证据 | 只整理已验证结果和未完成项，不改变 final candidate 的产品代码 | 实施记录及安装包/真实模型证据 |
+
+产品代码 SHA：6fe5d5346a0031a2459d04925a53be8e428f4ad9。远端 CI [37303305689](https://github.com/MainQuestAI/Mokina/actions/runs/37303305689) 成功：guard、全仓 typecheck、i18n、关联包测试、13 项真实 daemon + fake Agent 浏览器测试全部通过。旧 CI 0b3042 另存为阶段结果，不替代最终 SHA。
+
+最终定向：Web 7 文件 185 项、另 4 文件 64 项；关联 daemon 2 文件 50 项；desktop 2 文件 32 项通过。最终 Web 全量 12818 项：12798 通过、8 失败、1 expected failure、11 skipped；八项与精确 BASE 名称/错误签名一致。daemon 全量 0b3042 的 18 失败中，关联旧断言两项在最终 SHA 更新并定向通过；其他 14 项在精确 BASE 重现，两个 brand 用例全量失败但 BASE/HEAD 单独运行通过，仍保留环境/时序疑点。详细名称、签名和分类见 evidence；未声称全量通过。
+
+同 SHA 构建 local.3 app/DMG/ZIP，重新安装核对版本并在源码之外实际目录运行。实际 IPC/模型已验证：丢失 202 后同一修订 run 恢复并显式采用，只有一次执行；资料面板选入 SVG 和摘录后冻结，替换/删除源资料，legacy 与完整 OD Next task 都使用冻结 A 的真实字节；恢复 reader、删除源项目后继续运行及再次导出导入；导入成功响应丢失、重启和列表刷新失败仍复用同项目，明确副本才新增；真实营销方案及活动页文件生成。多 HTML 的额外文件先未成为正式入口，显式补写 index.html 后 deliverableValid=true，此失败与修正一并保留。
+
+最终包 PDF 正式 reader：中文/英文/多页成功，扫描件明确无 OCR、损坏 unreadable、10 MB+1 返回 400。25 个已安装工具二进制无 Homebrew/开发目录引用，受限 sandbox 仍成功。主实例停止/重启期间另一个实例存活；恢复记录完全一致，reader 200，全局 Codex 配置摘要不变。
+
+历史/当前/未采用候选的 HTML/ZIP 来自最终 app 实际选版导出，在原生 Save As 前截取内容。三组 HTML/解压 ZIP 与活动页通过外部 headless Chromium 打开检查。此证据不覆盖原生保存/取消或 PDF 导出。Finder 启动、原生 HTML/ZIP/PDF 保存/取消和 PDF 目视验收受 Mac 锁屏阻止，保持未完成；用户专业签收未执行，工程收口未宣告，PR 未合并。详见 [验收矩阵](PR4-acceptance-matrix.md)、[Runbook](../runbook.md) 与 [证据索引](evidence/README.md)。

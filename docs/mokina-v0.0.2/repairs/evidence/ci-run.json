@@ -1,0 +1,11 @@
+{
+  "id": 37303305689,
+  "name": "Mokina PR checks",
+  "event": "pull_request",
+  "head_sha": "6fe5d5346a0031a2459d04925a53be8e428f4ad9",
+  "status": "completed",
+  "conclusion": "success",
+  "html_url": "https://github.com/MainQuestAI/Mokina/actions/runs/37303305689",
+  "created_at": "2026-10-05T11:29:54Z",
+  "updated_at": "2026-10-05T11:37:20Z"
+}

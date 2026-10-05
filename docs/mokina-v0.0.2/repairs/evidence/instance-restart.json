@@ -1,0 +1,140 @@
+{
+  "sourceSHA": "6fe5d5346a0031a2459d04925a53be8e428f4ad9",
+  "appVersion": "0.0.2-local.3",
+  "stop": {
+    "gracefulRequested": true,
+    "namespace": "mokina-local",
+    "remainingPids": [],
+    "status": "stopped",
+    "stoppedPids": [
+      89395,
+      88894,
+      88820,
+      88453,
+      88452,
+      88451,
+      88449,
+      88786,
+      88785,
+      88524,
+      88522
+    ]
+  },
+  "start": {
+    "pid": 97309,
+    "version": "0.0.2-local.3"
+  },
+  "peerPid": 96025,
+  "peerAliveAfterPrimaryStopAndRestart": true,
+  "peerCleanup": {
+    "gracefulRequested": true,
+    "namespace": "mokina-local-peer",
+    "remainingPids": [],
+    "status": "stopped",
+    "stoppedPids": [
+      96457,
+      96399,
+      96027,
+      96026,
+      96025,
+      96024,
+      96366,
+      96365,
+      96101,
+      96100
+    ]
+  },
+  "before": {
+    "url": "od://app/projects/b6d7aae0-cec6-40bd-b70e-120d115367b1/conversations/256747af-fdcd-42de-b38a-328089cc7ae9/files/plan.html",
+    "records": [
+      {
+        "key": "mokina:recovery-import:25bf8e1a2393f1108d37029b3df5593236c755742ec93465bbafa9b290bddcf6:1f43b9b5e479c34c75cf1ff505df79c7b6ff3047bbdc7281944c288abd5af417",
+        "value": "{\"operationId\":\"b32ad8b2-0e63-4e27-8933-df5e8dc2d1c8\",\"targetProjectId\":\"b6d7aae0-cec6-40bd-b70e-120d115367b1\",\"archiveDigest\":\"1f43b9b5e479c34c75cf1ff505df79c7b6ff3047bbdc7281944c288abd5af417\",\"workspace\":\"local\",\"fileName\":\"mokina-final3-source-recovery.zip\",\"byteLength\":57933,\"state\":\"imported\"}"
+      },
+      {
+        "key": "mokina:context-snapshot:mokina-pr4-installed-1791197515916",
+        "value": "{\"snapshotId\":\"f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3\",\"projectId\":\"mokina-pr4-installed-1791197515916\",\"itemCount\":2,\"charCount\":95,\"frozenAt\":\"2026-10-05T11:59:24.578Z\",\"itemLabels\":[\"brief.md · 4 个片段\",\"logo.svg\"],\"excluded\":[]}"
+      },
+      {
+        "key": "mokina:recovery-import:25bf8e1a2393f1108d37029b3df5593236c755742ec93465bbafa9b290bddcf6:7be4afc38fc491529e3de14b8a28a498aef11b64ca39f5d330f952de13f0a0d0",
+        "value": "{\"operationId\":\"16750ad4-6ee9-42e7-a47d-3aafea582ee4\",\"targetProjectId\":\"a19e298b-3eaa-44f4-afdf-be0f3426caaa\",\"archiveDigest\":\"7be4afc38fc491529e3de14b8a28a498aef11b64ca39f5d330f952de13f0a0d0\",\"workspace\":\"local\",\"fileName\":\"final-selected-source-recovery.zip\",\"byteLength\":97685,\"state\":\"imported\"}"
+      }
+    ]
+  },
+  "after": {
+    "url": "od://app/",
+    "records": [
+      {
+        "key": "mokina:recovery-import:25bf8e1a2393f1108d37029b3df5593236c755742ec93465bbafa9b290bddcf6:1f43b9b5e479c34c75cf1ff505df79c7b6ff3047bbdc7281944c288abd5af417",
+        "value": "{\"operationId\":\"b32ad8b2-0e63-4e27-8933-df5e8dc2d1c8\",\"targetProjectId\":\"b6d7aae0-cec6-40bd-b70e-120d115367b1\",\"archiveDigest\":\"1f43b9b5e479c34c75cf1ff505df79c7b6ff3047bbdc7281944c288abd5af417\",\"workspace\":\"local\",\"fileName\":\"mokina-final3-source-recovery.zip\",\"byteLength\":57933,\"state\":\"imported\"}"
+      },
+      {
+        "key": "mokina:context-snapshot:mokina-pr4-installed-1791197515916",
+        "value": "{\"snapshotId\":\"f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3\",\"projectId\":\"mokina-pr4-installed-1791197515916\",\"itemCount\":2,\"charCount\":95,\"frozenAt\":\"2026-10-05T11:59:24.578Z\",\"itemLabels\":[\"brief.md · 4 个片段\",\"logo.svg\"],\"excluded\":[]}"
+      },
+      {
+        "key": "mokina:recovery-import:25bf8e1a2393f1108d37029b3df5593236c755742ec93465bbafa9b290bddcf6:7be4afc38fc491529e3de14b8a28a498aef11b64ca39f5d330f952de13f0a0d0",
+        "value": "{\"operationId\":\"16750ad4-6ee9-42e7-a47d-3aafea582ee4\",\"targetProjectId\":\"a19e298b-3eaa-44f4-afdf-be0f3426caaa\",\"archiveDigest\":\"7be4afc38fc491529e3de14b8a28a498aef11b64ca39f5d330f952de13f0a0d0\",\"workspace\":\"local\",\"fileName\":\"final-selected-source-recovery.zip\",\"byteLength\":97685,\"state\":\"imported\"}"
+      }
+    ]
+  },
+  "recordsRestoredExactly": true,
+  "formalSnapshotAfterRestart": {
+    "status": 200,
+    "body": {
+      "snapshot": {
+        "schemaVersion": 1,
+        "snapshotId": "f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3",
+        "projectId": "mokina-pr4-installed-1791197515916",
+        "createdAt": "2026-10-05T11:59:24.576Z",
+        "parserVersion": "mokina-material/1",
+        "selectionFingerprint": "2f3f12e13877c206215f5d5e875c520d9e6891d3c7b59fd5262e4f3c234db475",
+        "items": [
+          {
+            "kind": "material-excerpt",
+            "itemId": "S1",
+            "displayName": "brief.md · 4 个片段",
+            "sourceRef": {
+              "kind": "project-file",
+              "projectId": "mokina-pr4-installed-1791197515916",
+              "fileName": "brief.md"
+            },
+            "sourceDigest": "4e7f1b85fa8a5e5fe4774d1e9de43a2808f0066ff3cf6d458431bd7ca7f6343e",
+            "limitations": [],
+            "locators": [
+              "brief.md · 第 1 行",
+              "brief.md · 第 2 行",
+              "brief.md · 第 3 行",
+              "brief.md · 第 4 行"
+            ],
+            "text": "# 合成营销简报\n\n小山茶馆在社区开业，预算30万元。面向附近家庭，主渠道为门店与社群，不投短视频广告。\n\n# 品牌约束\n\n品牌色为绿色，必须使用冻结 logo A，活动页要写明预算与渠道。",
+            "textDigest": "8d4eefda7264ce787de0822936cd34e2217dd116719709947486972499b6b6ff"
+          },
+          {
+            "kind": "asset",
+            "itemId": "A1",
+            "displayName": "logo.svg",
+            "sourceRef": {
+              "kind": "project-file",
+              "projectId": "mokina-pr4-installed-1791197515916",
+              "fileName": "logo.svg"
+            },
+            "sourceDigest": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+            "limitations": [
+              "保存图片不等于已完成视觉理解；实际提供方式见运行回执。"
+            ],
+            "blobId": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+            "mimeType": "image/svg+xml",
+            "byteLength": 177,
+            "role": "logo",
+            "usageNote": "保留绿色 LOGO A 原始字节，放在标题旁"
+          }
+        ],
+        "excluded": [],
+        "fingerprint": "ef8a96d52352b8b6cb40f131c280b89152e01f0006ffbca1952973c2d7037ba7"
+      }
+    }
+  },
+  "globalConfigSHA256": "91ecdac72efe3dd0699b5c96a27b339cda4d7486321bd21ee0987f566aae767d",
+  "globalConfigUnchanged": true
+}

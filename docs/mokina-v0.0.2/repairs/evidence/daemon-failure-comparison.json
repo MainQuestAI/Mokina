@@ -1,0 +1,85 @@
+{
+  "baseSHA": "df4a0b2699cd2b37df2099b38da8fe8375d14b41",
+  "fullSuiteSHA": "0b3042aaa31dd4852dbeeba54cb704d056437289",
+  "regressionSHA": "6fe5d5346a0031a2459d04925a53be8e428f4ad9",
+  "fullSuite": {
+    "files": 904,
+    "failedTests": 18,
+    "passedTests": 11960,
+    "skippedTests": 15
+  },
+  "failures": [
+    {
+      "test": "tests/brand-prefetch.test.ts > prefetchFromHtml (extract from already-rendered DOM) > flags an anti-bot challenge page as blocked and thin",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/brand-routes.test.ts > brand routes > keeps logo 404 responses as JSON when no logo can be resolved",
+      "classification": "full-suite-failed-isolated-base-and-head-passed"
+    },
+    {
+      "test": "tests/brand-routes.test.ts > brand routes > does not fail extracting brands when a later same-conversation run is canceled",
+      "classification": "full-suite-failed-isolated-base-and-head-passed"
+    },
+    {
+      "test": "tests/brand-routes.test.ts > brand routes > aborts an active programmatic pass before extracting from browser HTML",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/brand-routes.test.ts > brand routes > synthesizes from a content-rich page whose minimalist palette the network gate would reject",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/brand-routes.test.ts > brand routes > keeps a browser HTML retry recoverable (needs_input, not terminal) after aborting an active programmatic pass",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/brand-routes.test.ts > brand routes > starts browser HTML retry promptly when stale finalize fallback is still settling",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/brand-routes.test.ts > brand routes > keeps cancel terminal when browser HTML extraction is in flight",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/codex-model-capability-preflight.test.ts > Codex configured-model capability preflight > blocks an unsupported configured default model before spawning Codex exec",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/codex-model-capability-preflight.test.ts > Codex configured-model capability preflight > does not overwrite cancellation while the version probe is in flight",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/export-inline-route.test.ts > POST /api/projects/:id/export/html route > rejects historical entries until their dependency graph is versioned",
+      "classification": "associated-test-updated-production-regression-passed"
+    },
+    {
+      "test": "tests/mokina-recovery-routes.test.ts > mokina recovery recovery routes > rejects a re-import of the same target and a corrupted archive",
+      "classification": "associated-test-updated-production-regression-passed"
+    },
+    {
+      "test": "tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > mirrors OpenDesign AMR entry clicks to the AMR analytics ingest shape",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > forwards campaignId and conversionSource on the outbound AMR analytics body",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > forwards optional onboarding profile (role/orgSize/useCase/source) to the AMR ingest body",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > mirrors OpenDesign onboarding profile snapshots with the header-derived device id",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/runtimes/codex-model-preflight.test.ts > Codex model capability preflight > blocks the known-old stable CLI only with confirmed ChatGPT auth",
+      "classification": "same-name-on-exact-base"
+    },
+    {
+      "test": "tests/runtimes/codex-model-preflight.test.ts > Codex model capability preflight > fails open for config overlays, API auth, and unconfirmed ChatGPT auth",
+      "classification": "same-name-on-exact-base"
+    }
+  ]
+}

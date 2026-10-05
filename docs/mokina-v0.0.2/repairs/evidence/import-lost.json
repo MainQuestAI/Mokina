@@ -1,0 +1,21 @@
+{
+  "postCount": 1,
+  "identity": {
+    "operationId": "2e7d8869-f6ab-4807-9848-b95c3fb9ccf0",
+    "targetProjectId": "0501274d-dd34-42bb-bbc4-a554d636478e"
+  },
+  "accepted": {
+    "projectId": "0501274d-dd34-42bb-bbc4-a554d636478e",
+    "warnings": []
+  },
+  "journal": {
+    "operationId": "2e7d8869-f6ab-4807-9848-b95c3fb9ccf0",
+    "targetProjectId": "0501274d-dd34-42bb-bbc4-a554d636478e",
+    "archiveDigest": "1f43b9b5e479c34c75cf1ff505df79c7b6ff3047bbdc7281944c288abd5af417",
+    "workspace": "local",
+    "fileName": "mokina-final3-source-recovery.zip",
+    "byteLength": 57933,
+    "state": "prepared"
+  },
+  "durableMatches": true
+}

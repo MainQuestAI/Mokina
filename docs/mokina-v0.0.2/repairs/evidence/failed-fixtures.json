@@ -1,0 +1,56 @@
+[
+  {
+    "fixture": "symlink runtime",
+    "runId": "a7796846-57a0-4dca-99cf-cd49c653fdce",
+    "observed": "client identity recovered; Codex refused workspace symlink; no candidate",
+    "resolution": "explicitly abandoned; real directory; fresh explicit retry de8d51cb-2e39-4651-9fee-bf6051905e75"
+  },
+  {
+    "fixture": "stale installed copy during build",
+    "observed": "assertion found local.2",
+    "resolution": "install after build completed, verify local.3"
+  },
+  {
+    "fixture": "API requests using prompt instead of message/currentPrompt",
+    "evidence": [
+      {
+        "appVersion": "0.0.2-local.3",
+        "deleteStatus": 200,
+        "deletedSourceGetStatus": 404,
+        "readerStatus": 200,
+        "fingerprint": "ef8a96d52352b8b6cb40f131c280b89152e01f0006ffbca1952973c2d7037ba7",
+        "projectId": "a19e298b-3eaa-44f4-afdf-be0f3426caaa",
+        "snapshotId": "f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3",
+        "runStatus": 202,
+        "run": {
+          "runId": "07add080-d1d6-4a9b-9b83-95bedf7e37f3",
+          "conversationId": "e6c739de-55c7-47ee-8673-36f030aa47d9",
+          "assistantMessageId": "cbb60fe9-ff11-4a5d-80df-30bc905b76d5",
+          "clientRequestId": "09088b36-2c67-49d0-9f55-91d2f9223813",
+          "reused": false,
+          "resumed": false
+        }
+      },
+      {
+        "configUpdate": 200,
+        "runStatus": 202,
+        "projectId": "a19e298b-3eaa-44f4-afdf-be0f3426caaa",
+        "snapshotId": "f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3",
+        "run": {
+          "runId": "4098938c-e010-4459-9823-d3748b9678ea",
+          "conversationId": "ce12251f-312b-4809-ab2a-76323f46319d",
+          "assistantMessageId": "300e2a3a-bd0d-4647-91f2-67c56f86e0c7",
+          "clientRequestId": "c67d547a-5917-49a0-9957-29bccb411e5c",
+          "reused": false,
+          "resumed": false
+        }
+      }
+    ],
+    "resolution": "valid production request and actual legacy/OD Next succeeded; invalid requests are not counted as passes"
+  },
+  {
+    "fixture": "marketing HTML under additional name in restored multi-HTML project",
+    "observed": "actual model wrote HTML and frozen logo, run succeeded but deliverableValidation entry_missing without canonical entry",
+    "resolution": "explicit canonical index.html next turn 03491a22-d761-41bb-bfc8-113fe6c732a4 succeeded, deliverableValid=true, validation=valid"
+  }
+]

@@ -1,0 +1,89 @@
+{
+  "phase": "before native Cmd Q",
+  "app": {
+    "url": "od://app/projects/eaa1c205-a26a-484f-8c6b-19185fbcc1c7/conversations/16a27b2e-2d53-4530-ae3c-9ed8fc82eea1/files/index.html",
+    "drafts": {
+      "od:chat-composer:draft:eaa1c205-a26a-484f-8c6b-19185fbcc1c7:16a27b2e-2d53-4530-ae3c-9ed8fc82eea1": "【local.5 重启验收草稿】继续检查预约交接说明；此输入尚未发送。",
+      "open-design:analytics.project_turn_index:eaa1c205-a26a-484f-8c6b-19185fbcc1c7": "1",
+      "open-design:project-tabs:v1:eaa1c205-a26a-484f-8c6b-19185fbcc1c7": "{\"tabs\":[\"index.html\"],\"active\":\"index.html\",\"updatedAt\":1791209090518}"
+    }
+  },
+  "ownedProcesses": [
+    "35346     1 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/MacOS/Mokina /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=mokina-local --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=desktop",
+    "35347 35346 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/MacOS/Mokina",
+    "35355 35347 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Frameworks/Mokina Helper.app/Contents/MacOS/Mokina Helper --type=gpu-process --user-data-dir=/Users/dingcheng/Library/Application Support/Mokina --gpu-preferences=SAAAAAAAAAAgAQAEAAAAAAAAAAAAAGAAAwAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --shared-files --field-trial-handle=1718379636,r,1320978913687072837,11529439845955057315,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,413664213841361116,186430786965891198,4 --trace-process-track-uuid=3190708988185955192 --seatbelt-client=31",
+    "35356 35347 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Frameworks/Mokina Helper.app/Contents/MacOS/Mokina Helper --type=utility --utility-sub-type=network.mojom.NetworkService --lang=zh-CN --service-sandbox-type=network --user-data-dir=/Users/dingcheng/Library/Application Support/Mokina --standard-schemes=od --secure-schemes=od --cors-schemes=od --fetch-schemes=od --streaming-schemes=od --shared-files --field-trial-handle=1718379636,r,1320978913687072837,11529439845955057315,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,413664213841361116,186430786965891198,4 --trace-process-track-uuid=3190708989122997041 --seatbelt-client=31",
+    "35369 35347 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/MacOS/Mokina /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=mokina-local --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=daemon",
+    "35370 35369 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Frameworks/Mokina Helper.app/Contents/MacOS/Mokina Helper /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app/prebundled/daemon/daemon-sidecar.mjs",
+    "35455 35347 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/MacOS/Mokina /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=mokina-local --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=web",
+    "35472     1 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Frameworks/Electron Framework.framework/Helpers/chrome_crashpad_handler --no-rate-limit --no-upload-gzip --monitor-self-annotation=ptype=crashpad-handler --database=/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local/logs/desktop/crashes --annotation=_productName=Mokina --annotation=_version=0.0.2-local.5 --annotation=plat=OS X --annotation=prod=Electron --annotation=ver=41.3.0 --handshake-fd=62",
+    "35473 35347 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Frameworks/Mokina Helper (Renderer).app/Contents/MacOS/Mokina Helper (Renderer) --type=renderer --user-data-dir=/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local/user-data --standard-schemes=od --secure-schemes=od --cors-schemes=od --fetch-schemes=od --streaming-schemes=od --app-path=/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app --enable-sandbox --lang=zh-CN --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=6 --time-ticks-at-unix-epoch=-1791125443188793 --launch-time-ticks=81996186849 --shared-files --field-trial-handle=1718379636,r,1320978913687072837,11529439845955057315,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,413664213841361116,186430786965891198,4 --trace-process-track-uuid=3190708991934122588 --od-os-locale=zh-Hans-CN --seatbelt-client=61",
+    "35489 35347 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Frameworks/Mokina Helper (Renderer).app/Contents/MacOS/Mokina Helper (Renderer) --type=renderer --user-data-dir=/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local/user-data --standard-schemes=od --secure-schemes=od --cors-schemes=od --fetch-schemes=od --streaming-schemes=od --app-path=/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app --enable-sandbox --lang=zh-CN --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1791125443188793 --launch-time-ticks=81996483531 --shared-files --field-trial-handle=1718379636,r,1320978913687072837,11529439845955057315,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,413664213841361116,186430786965891198,4 --trace-process-track-uuid=3190708990997080739 --od-os-locale=zh-Hans-CN --seatbelt-client=63",
+    "36070 35347 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Frameworks/Mokina Helper (Renderer).app/Contents/MacOS/Mokina Helper (Renderer) --type=renderer --user-data-dir=/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local/user-data --standard-schemes=od --secure-schemes=od --cors-schemes=od --fetch-schemes=od --streaming-schemes=od --app-path=/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app --enable-sandbox --lang=zh-CN --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=7 --time-ticks-at-unix-epoch=-1791125443188793 --launch-time-ticks=82045681020 --shared-files --field-trial-handle=1718379636,r,1320978913687072837,11529439845955057315,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,413664213841361116,186430786965891198,4 --trace-process-track-uuid=3190708992871164437 --od-os-locale=zh-Hans-CN --seatbelt-client=69",
+    "40697 35347 /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Frameworks/Mokina Helper.app/Contents/MacOS/Mokina Helper --type=utility --utility-sub-type=audio.mojom.AudioService --lang=zh-CN --service-sandbox-type=audio --message-loop-type-ui --user-data-dir=/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local/user-data --standard-schemes=od --secure-schemes=od --cors-schemes=od --fetch-schemes=od --streaming-schemes=od --shared-files --field-trial-handle=1718379636,r,1320978913687072837,11529439845955057315,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,413664213841361116,186430786965891198,4 --trace-process-track-uuid=3190708997556373682 --seatbelt-client=68"
+  ],
+  "peerProcesses": [
+    "3710     1 /Users/dingcheng/Library/Application Support/Open Design/launcher/channels/stable/namespaces/release-stable/versions/0.24.0/payload/Open Design.app/Contents/MacOS/Open Design /Users/dingcheng/Library/Application Support/Open Design/launcher/channels/stable/namespaces/release-stable/versions/0.24.0/payload/Open Design.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=release-stable --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=desktop",
+    "3714  3710 /Users/dingcheng/Library/Application Support/Open Design/launcher/channels/stable/namespaces/release-stable/versions/0.24.1/payload/Open Design.app/Contents/MacOS/Open Design --od-launcher-after-quit --od-launcher-target-pid 3711 --od-launcher-timeout-ms 60000 --od-launcher-delegated-generation 4 --od-launcher-delegated-version 0.24.1",
+    "3727  3714 /Users/dingcheng/Library/Application Support/Open Design/launcher/channels/stable/namespaces/release-stable/versions/0.24.1/payload/Open Design.app/Contents/MacOS/Open Design /Users/dingcheng/Library/Application Support/Open Design/launcher/channels/stable/namespaces/release-stable/versions/0.24.1/payload/Open Design.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=release-stable --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=daemon",
+    "3815  3714 /Users/dingcheng/Library/Application Support/Open Design/launcher/channels/stable/namespaces/release-stable/versions/0.24.1/payload/Open Design.app/Contents/MacOS/Open Design /Users/dingcheng/Library/Application Support/Open Design/launcher/channels/stable/namespaces/release-stable/versions/0.24.1/payload/Open Design.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=release-stable --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=web"
+  ],
+  "globalCodexConfigSha256": "91ecdac72efe3dd0699b5c96a27b339cda4d7486321bd21ee0987f566aae767d",
+  "diagnostics": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-10-05T14:16:50.583Z",
+    "product": {
+      "productId": "mokina",
+      "productName": "Mokina",
+      "productVersion": "0.0.2-local.5",
+      "releaseKind": "local-preview",
+      "edition": "local"
+    },
+    "build": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "nodeMajor": 24,
+      "osReleaseRedacted": true
+    },
+    "runtime": {
+      "uptimeSeconds": 2372,
+      "daemon": "ok",
+      "codexCli": "detected",
+      "dataRootIsolated": null
+    },
+    "privacy": {
+      "telemetry": "disabled",
+      "updater": "disabled",
+      "omitted": [
+        "credentials and tokens",
+        "prompt and transcript content",
+        "project and file names",
+        "absolute filesystem paths",
+        "run outputs"
+      ]
+    },
+    "network": [
+      {
+        "id": "codex-cli",
+        "kind": "external-tool",
+        "required": true,
+        "summary": "Codex CLI is user-provided; Mokina detects it and its login state but never installs or logs in for you.",
+        "nextAction": "Install the CLI or sign in with the official flow, then re-run the connection check."
+      },
+      {
+        "id": "model-endpoint",
+        "kind": "external-service",
+        "required": true,
+        "summary": "Model calls go to the endpoint the selected agent adapter is configured to use.",
+        "nextAction": "Open Agent settings, pick a configured agent, and verify the connection; offline browsing and editing stay available."
+      },
+      {
+        "id": "web-search",
+        "kind": "external-service",
+        "required": false,
+        "summary": "Search runs only when the user explicitly enables it for a task.",
+        "nextAction": "Ignore unless the task needs fresh sources; results are cited with URL and access time when used."
+      }
+    ]
+  }
+}

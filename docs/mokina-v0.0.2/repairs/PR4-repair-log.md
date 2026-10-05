@@ -59,7 +59,7 @@ BASE comparison uses a git archive of the exact BASE into an isolated temporary 
 - CI 0b3042aaa31dd4852dbeeba54cb704d056437289 已成功：https://github.com/MainQuestAI/Mokina/actions/runs/37298777628 。追加修复后的 HEAD 及安装包需重新验证。
 
 
-## 最终候选与交付（R1–R7）
+## 阶段候选 local.3（历史，已由 local.5 替代）
 
 | 提交 | Review ID / 修改入口 | 原失败及修复结果 | 证据类型 |
 |---|---|---|---|
@@ -92,3 +92,22 @@ BASE comparison uses a git archive of the exact BASE into an isolated temporary 
 ### R4 追加：恢复版本正式读取（local.4 原生验收）
 
 Finder 启动 local.4 后，从可见新建项目入口和 macOS 文件选择器导入有效恢复包。归档明确记录 v3 当前、v4 未采用候选，但正式 GET 和原生版本面板把 v4 同时标记为当前与候选。导入重建 manifest 未写 `schemaVersion: 2`，正式 reader 按旧版规则选最后一项。追加 production reader 的 prepare/create → export → import → list → re-export 行为回归，先失败后修复；导入 manifest 采用正式 v2 布局。恢复、CLI、版本存储 4 文件 34 用例通过。local.4 仅保留为失败发现证据，下一候选 local.5 重新构建并验收。
+
+
+## local.5 工程收口（R1–R7）
+
+| 提交 | Review / 修改入口 | 原失败与修复后结果 | 证据类型 |
+|---|---|---|---|
+| a51be059 | R6：EntryNavRail、daemon CLI、根 CI | 正常 rail 的两个入口红测、CLI 分派和默认 UUID 红测；复用已有 onNewProject，接通 recovery 分派与实际 fs/crypto，199 项组件相关回归及四项 CLI subprocess 通过 | 先红后绿；实际源码 CLI；CI |
+| 033c57df | R4：recovery-package 导入版本 manifest | 原生 local.4 把 v4 候选当 current；production reader 回归先失败；schemaVersion 2 修复后四文件 34 项通过，local.5 原生正式 GET 保留 v3 current、v4 unadopted | 原生失败保存；生产 reader 红转绿；typecheck/CI |
+| 后续文档提交 | R1–R7：矩阵、Runbook、最终包证据 | 更新为 local.5 已证实结果及限制；不改变最终产品代码，不触发用户专业签收，不自动合并 | 功能、安装包和专业签收分栏 |
+
+从 `033c57dfe08b1ca42fa8a883bfde522bd3326ed1` 重建 local.5 app/DMG/ZIP。DMG 408,013,900 bytes，SHA256 `40e2b1799fab254f5af6af8cffba976548cbe5e83fb9e334d666df9a991ea2bb`；ZIP 405,038,728 bytes，SHA256 `28a4200d0d7a4c4d32b99adae1d4438940b6e47ba63962a85f99ea05be560b77`。最终交付 `/Users/dingcheng/Mokina-PR4-QA/releases/0.0.2-local.5/`。PDF 资源 manifest 与已验资源一致，最终安装副本再次验证 25 个 Mach-O、受限 sandbox、中英文两页、扫描/损坏/超限正式 reader。
+
+同一最终包已从 Finder 启动，正常新建入口经原生选择器导入恢复包。原生资料面板准备实际 A 后替换原件 B；legacy 真实生成 index 并复制 A。strategy 修订在真实 daemon 受理后丢 202，刷新原成果从恢复入口找回唯一原 run，收集候选并显式采用；预算及渠道与原版一致。再选 strategy/budget 创建下游草稿，用户显式发送后实际生成活动页；日期、地址、联系方式保留待确认。OD Next 通过现有 automatic scenario 的完整 task completed，素材复制为相同 A；临时 active 模式已恢复原 off。
+
+历史 v1、当前 v3、未采用 v4 各经实际 macOS Save As 保存 HTML/ZIP/PDF（九文件），三类取消均未误写文件或改当前稿。六组 HTML/ZIP 外部 Chromium 打开无脚本错误/缺图；三个六页 PDF 分别在 macOS Preview 打开并渲染核对全部 18 页。PDFium 文本提取为零，保留此边界，不宣称搜索/复制文字已验收。
+
+安装包预捆绑 CLI 实际导出完整项目、导入新身份，正式 reader fingerprint 一致。删除已备份的合成源项目后，源返回 404、目标 reader 200，真实 run `f030c6a6-4476-4506-832f-ac384f46748a` succeeded 并落盘 HTML 和相同 A；再次导出、导入第二代目标仍正式可读。同 operation/target/archive 重试返回原项目。原生 Cmd Q 停止本实例全部记录 PID 和自己的 daemon，既有 Open Design 四 PID 存活；Finder 重开后未发送草稿一致、恢复 reader 和版本 200、Codex 全局配置摘要相同。
+
+产品 SHA CI [37317607651](https://github.com/MainQuestAI/Mokina/actions/runs/37317607651) 成功，含 13 项真实 daemon 浏览器回归。Web 在 a51be059 全量（最终未改 Web）12800 pass、8 BASE fail、1 expected failure、11 skipped；daemon 全量保留的 14 BASE 与两个时序疑点如前述。新关联回归通过，不将全量套件写成绿色。工程收口完成，用户专业签收未执行。逐项证据见 [矩阵](PR4-acceptance-matrix.md) 与 [final-local5](evidence/final-local5/README.md)。

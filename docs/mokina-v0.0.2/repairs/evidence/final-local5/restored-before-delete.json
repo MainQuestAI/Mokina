@@ -1,0 +1,85 @@
+{
+  "status": 200,
+  "snapshot": {
+    "schemaVersion": 1,
+    "snapshotId": "327e60ad-06f6-41ca-a134-7b956d13e2ac",
+    "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+    "createdAt": "2026-10-05T13:46:04.714Z",
+    "parserVersion": "mokina-material/1",
+    "selectionFingerprint": "c9f9c58e0846ec4b6a09fc3d060906dd8defd5afd760657ade72642b601fd204",
+    "items": [
+      {
+        "kind": "material-excerpt",
+        "itemId": "S1",
+        "displayName": "brief.md · 4 个片段",
+        "sourceRef": {
+          "kind": "project-file",
+          "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+          "fileName": "brief.md"
+        },
+        "sourceDigest": "4e7f1b85fa8a5e5fe4774d1e9de43a2808f0066ff3cf6d458431bd7ca7f6343e",
+        "limitations": [],
+        "locators": [
+          "brief.md · 第 1 行",
+          "brief.md · 第 2 行",
+          "brief.md · 第 3 行",
+          "brief.md · 第 4 行"
+        ],
+        "text": "# 合成营销简报\n\n小山茶馆在社区开业，预算30万元。面向附近家庭，主渠道为门店与社群，不投短视频广告。\n\n# 品牌约束\n\n品牌色为绿色，必须使用冻结 logo A，活动页要写明预算与渠道。",
+        "textDigest": "8d4eefda7264ce787de0822936cd34e2217dd116719709947486972499b6b6ff"
+      },
+      {
+        "kind": "asset",
+        "itemId": "A1",
+        "displayName": "final5-logo.svg",
+        "sourceRef": {
+          "kind": "project-file",
+          "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+          "fileName": "final5-logo.svg"
+        },
+        "sourceDigest": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+        "limitations": [
+          "保存图片不等于已完成视觉理解；实际提供方式见运行回执。"
+        ],
+        "blobId": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+        "mimeType": "image/svg+xml",
+        "byteLength": 177,
+        "role": "hero",
+        "usageNote": "使用本轮冻结 LOGO A，复制实际 SVG 字节到交付目录。"
+      }
+    ],
+    "excluded": [],
+    "fingerprint": "c52d530d7a3d0f9159a74010a09ab6dbb3b62556123c223e82e0862d4aeb3c12"
+  },
+  "versions": [
+    {
+      "id": "7bbbf91a-48ef-427f-8fb2-0d2807d5fbe0",
+      "fileName": "index.html",
+      "version": 1,
+      "label": "恢复版本 1",
+      "createdAt": 1791209093304,
+      "source": "restore",
+      "prompt": null,
+      "size": 15846,
+      "mime": "text/html",
+      "kind": "html",
+      "current": false,
+      "contentDigest": "efeeee9a99c5b3e119a08bc0c989a2b58490bb0f6fc562d6b8dc75760f467df7"
+    },
+    {
+      "id": "6e662d3d-953e-401c-b3c7-fcb9f01bf640",
+      "fileName": "index.html",
+      "version": 2,
+      "label": "恢复版本 2",
+      "createdAt": 1791209093304,
+      "source": "restore",
+      "prompt": null,
+      "size": 15981,
+      "mime": "text/html",
+      "kind": "html",
+      "current": true,
+      "contentDigest": "a7ecc905c4a34b4cff83200555b3fe9248c3034f747bc78aa76eda4485d738bc",
+      "baseVersionId": "7bbbf91a-48ef-427f-8fb2-0d2807d5fbe0"
+    }
+  ]
+}

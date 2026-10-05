@@ -2,11 +2,11 @@
 
 ## PR4 修复后的当前口径
 
-最终产品代码为 `6fe5d5346a0031a2459d04925a53be8e428f4ad9`，候选为 `0.0.2-local.3`。最新结果见 [PR4 实施记录](repairs/PR4-repair-log.md)、[验收矩阵](repairs/PR4-acceptance-matrix.md) 和 [Runbook](runbook.md)。下方 T00–T19 保留为原实施阶段历史，不能用来替代最终安装包验收。
+最终产品代码 `033c57dfe08b1ca42fa8a883bfde522bd3326ed1`，候选 `0.0.2-local.5`。R1–R7 与同一候选安装包的工程验收已收口；用户专业签收未执行。最终结果见 [实施记录](repairs/PR4-repair-log.md)、[验收矩阵](repairs/PR4-acceptance-matrix.md)、[Runbook](runbook.md) 与 [local.5 证据](repairs/evidence/final-local5/README.md)。
 
-校正旧结论：无 checks/运行记录不能证明 Actions 被禁用；本轮已核实仓库 Actions 启用，旧入口位于嵌套目录，根工作流已新增并在最终产品 SHA 上通过远端检查。旧 T05 的“未随包”也不满足本轮包内依赖路线，已由 R5 固定 Poppler/递归库/CMap/许可/摘要并在最终安装包验证；Homebrew/PATH 只保留开发环境使用。
+原生收口补修 R6 正常入口/CLI 分派及 R4 恢复版本 manifest schema，红转绿后重新构建 local.5。最终 DMG 经安装后从 Finder 启动，真实资料→生成→丢响应修订恢复与采用→选章接续完成；历史/当前/未采用候选各导出 HTML/ZIP/原生 PDF 并验证取消和外部打开；源项目删除后恢复项目继续运行及再次恢复；退出重开、实例隔离与全局配置摘要通过。PDFium 未提取到导出 PDF 文本，不宣称可搜索/可复制文字。
 
-工程收口仍未完成：Finder、原生导出保存/取消和 PDF 文件目视验收受 Mac 锁屏阻止。真实模型/安装包单项与用户专业签收分开，用户签收尚未执行。历史中的“完成”标记不扩展为当前工程收口。
+产品 SHA 远端检查 [37317607651](https://github.com/MainQuestAI/Mokina/actions/runs/37317607651) 成功。Web 八个精确 BASE 失败、daemon 十四个 BASE 失败及两个全量时序疑点继续单列；没有声称全量套件绿色。下方 T00–T19 是原实施阶段历史，其旧完成/未完成标记不能替代当前矩阵。
 
 ## 以下为原实施阶段记录
 

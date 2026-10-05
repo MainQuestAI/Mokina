@@ -1,0 +1,53 @@
+{
+  "projectId": "pr4-local5-odnext-0b7e0eb7-651d-4c89-a7bf-a79d2ac16e42",
+  "conversationId": "662c254d-8a4c-4186-bbda-3d55e65a5c45",
+  "snapshot": {
+    "schemaVersion": 1,
+    "snapshotId": "5c02393c-5176-443d-b23c-87ae262ad5ed",
+    "projectId": "pr4-local5-odnext-0b7e0eb7-651d-4c89-a7bf-a79d2ac16e42",
+    "createdAt": "2026-10-05T13:51:26.138Z",
+    "parserVersion": "mokina-material/1",
+    "selectionFingerprint": "808b32d4b32896828aadda85e42966e744c2dff62955c071ae015b7b73cd8c50",
+    "items": [
+      {
+        "kind": "asset",
+        "itemId": "A1",
+        "displayName": "logo.svg",
+        "sourceRef": {
+          "kind": "project-file",
+          "projectId": "pr4-local5-odnext-0b7e0eb7-651d-4c89-a7bf-a79d2ac16e42",
+          "fileName": "logo.svg"
+        },
+        "sourceDigest": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+        "limitations": [
+          "保存图片不等于已完成视觉理解；实际提供方式见运行回执。"
+        ],
+        "blobId": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+        "mimeType": "image/svg+xml",
+        "byteLength": 177,
+        "role": "logo",
+        "usageNote": "必须复制冻结实际字节"
+      }
+    ],
+    "excluded": [],
+    "fingerprint": "be5ee6780a2c6419792adb77b6c178e4af01a2e2a8b041be5aa58ae17ca3d29d"
+  },
+  "request": {
+    "projectId": "pr4-local5-odnext-0b7e0eb7-651d-4c89-a7bf-a79d2ac16e42",
+    "conversationId": "662c254d-8a4c-4186-bbda-3d55e65a5c45",
+    "agentId": "codex",
+    "clientRequestId": "7382eccc-d22d-4f12-acd6-c3935bfb9320",
+    "pluginId": "od-next-strategy",
+    "message": "立即制作可直接预览的 index.html 小山茶馆开业活动页，30万元预算，门店与社群渠道，不能只写计划。只用本轮冻结 LOGO A，读取提供的受控素材路径，复制原始SVG字节为 assets/final5-odnext-frozen.svg，禁止读项目中的 logo.svg（已替换B）。绿色风格，写实际文件，不要停在说明。",
+    "context": {
+      "mokinaSnapshotId": "5c02393c-5176-443d-b23c-87ae262ad5ed"
+    }
+  },
+  "status": 404,
+  "run": {
+    "error": {
+      "code": "PLUGIN_NOT_FOUND",
+      "message": "plugin not found"
+    }
+  }
+}

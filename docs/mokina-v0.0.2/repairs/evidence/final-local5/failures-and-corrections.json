@@ -1,0 +1,33 @@
+{
+  "productFailuresFixed": [
+    {
+      "candidate": "local.3",
+      "review": "R6",
+      "failure": "正常 entry rail 无新建/恢复入口；CLI 文档 recovery 子命令未分派且 fs/randomUUID 未定义",
+      "fixSHA": "a51be059300c6b942dd365a79aad81703f6a81e4",
+      "tests": "normal entry 2 red -> 199 related green; CLI subprocess 4 green"
+    },
+    {
+      "candidate": "local.4",
+      "review": "R4",
+      "failure": "正式 reader 把 v4 未采用候选当当前；原包指定 v3 current",
+      "fixSHA": "033c57dfe08b1ca42fa8a883bfde522bd3326ed1",
+      "tests": "version-reader-red.txt -> version-reader-green.txt"
+    }
+  ],
+  "testConstructionFailures": [
+    {
+      "file": "odnext-start.json",
+      "reason": "手写 pluginId=od-next-strategy 返回 PLUGIN_NOT_FOUND；未受理执行。改用现有 automatic scenario 和 active rollout 后完成，已恢复原 off 配置。"
+    },
+    {
+      "reason": "再导入夹具错误使用 --in/--target/--operation，CLI 明确拒绝 --file is required；按正式 --file/--target-project/--operation-id 后成功。"
+    },
+    {
+      "reason": "重启后旧端口连接拒绝，按实际 daemon PID/listening port 重定位；不是产品启动失败。"
+    },
+    {
+      "reason": "外部活动页预算默认折叠，初次 innerText 断言不可见；通过正常 summary 展开后可见 300,000，无页面代码修改。"
+    }
+  ]
+}

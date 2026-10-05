@@ -3511,13 +3511,27 @@ async function persistClearMokinaRevisionJob(key: string, job: MokinaRevisionJob
   if (!await removeDurableRecord(key)) return false;
   return clearMokinaRevisionJobIfCurrent(localStorage, key, job);
 }
+function sameRevisionIntent(a: MokinaRevisionJob | null, b: MokinaRevisionJob): a is MokinaRevisionJob {
+  return Boolean(a && a.operationId === b.operationId && a.clientRequestId === b.clientRequestId
+    && a.revisionProjectId === b.revisionProjectId && a.conversationId === b.conversationId
+    && a.sourceProjectId === b.sourceProjectId && a.sourceFile === b.sourceFile
+    && a.baseVersionId === b.baseVersionId && a.sectionId === b.sectionId);
+}
 export async function reconcileMokinaRevisionJob(key: string, job: MokinaRevisionJob, context?: WorkspaceCollabContext | null): Promise<MokinaRevisionJob> {
+  const current = parseMokinaRevisionJob(localStorage.getItem(key));
+  // Hydration may have persisted acceptance before the panel rerendered. Reuse
+  // that exact intent rather than treating its older in-memory copy as a CAS owner.
+  if (sameRevisionIntent(current, job) && current.runId) return current;
   if (job.runId) return job;
   if (!job.conversationId || !job.clientRequestId) throw new Error('修订尚未提交；可放弃本次准备后重新生成。');
-  const run = await queryRunAccepted(job.revisionProjectId, job.conversationId, job.clientRequestId, 10_000, context);
+  const run = await queryRunAccepted(job.revisionProjectId, job.conversationId, job.clientRequestId, 10_000,
+    job.workspaceContext !== undefined ? job.workspaceContext : context);
   if (!run?.id) throw new Error('受理状态尚未确认，请稍后恢复；当前稿未变化。');
   const accepted = { ...job, runId: run.id };
-  if (!await persistMokinaRevisionJob(key, accepted, job)) throw new Error('修订运行身份未能安全保存，请稍后恢复。');
+  if (!await persistMokinaRevisionJob(key, accepted, job)) {
+    const updated = parseMokinaRevisionJob(localStorage.getItem(key));
+    if (!sameRevisionIntent(updated, job) || updated.runId !== run.id) throw new Error('修订运行身份未能安全保存，请稍后恢复。');
+  }
   await persistClearSendRequest(job.revisionProjectId, job.conversationId, job.clientRequestId);
   return accepted;
 }

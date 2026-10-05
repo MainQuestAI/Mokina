@@ -68,12 +68,8 @@ export async function writePendingMokinaSnapshot(value: PendingMokinaContextSnap
   if (typeof window === 'undefined') return;
   const key = pendingMokinaSnapshotKey(value.projectId);
   const encoded = JSON.stringify(value);
-  try {
-    window.localStorage.setItem(key, encoded);
-  } catch {
-    // Quota/private mode: the panel still shows the frozen state this session.
-  }
   if (!await mirrorDurableRecord(key, encoded)) throw new Error('资料绑定未能安全保存，请重试。');
+  window.localStorage.setItem(key, encoded);
 }
 
 export function clearPendingMokinaSnapshot(projectId: string | null | undefined): void {

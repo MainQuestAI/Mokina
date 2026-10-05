@@ -205,7 +205,7 @@ import {
 } from './runtime/amr-auth-retry-continuation';
 import { installFontRecovery } from './runtime/font-recovery';
 import { prepareMokinaImport, persistMokinaImport } from './runtime/mokina/recovery-import-journal';
-import { hydrateDurableRecoveryIntoLocalStorage } from './runtime/persistence/mokina-recovery-store';
+import { isDurableRecoveryAvailable, hydrateDurableRecoveryIntoLocalStorage } from './runtime/persistence/mokina-recovery-store';
 import {
   exportProjectRecoveryZip,
   importProjectRecoveryZip,
@@ -927,7 +927,7 @@ export async function hydrateReadyTeamProject(
 }
 
 export function App() {
-  const [recoveryReady, setRecoveryReady] = useState(false);
+  const [recoveryReady, setRecoveryReady] = useState(() => !isDurableRecoveryAvailable());
   const [recoveryError, setRecoveryError] = useState<string | null>(null);
   const restore = useCallback(() => {
     setRecoveryError(null);

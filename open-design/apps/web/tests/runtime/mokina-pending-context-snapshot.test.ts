@@ -21,8 +21,8 @@ describe('pending mokina context snapshot', () => {
     window.localStorage.clear();
   });
 
-  it('round-trips a frozen snapshot record per project', () => {
-    writePendingMokinaSnapshot({
+  it('round-trips a frozen snapshot record per project', async () => {
+    await writePendingMokinaSnapshot({
       snapshotId: 'snap-1',
       projectId: 'p1',
       itemCount: 2,
@@ -50,11 +50,11 @@ describe('pending mokina context snapshot', () => {
     expect(readPendingMokinaSnapshot(null)).toBeNull();
   });
 
-  it('attaches the snapshot id to a send context only when one is pending', () => {
+  it('attaches the snapshot id to a send context only when one is pending', async () => {
     const empty = withPendingMokinaSnapshot({}, 'p1');
     expect(empty).toEqual({});
 
-    writePendingMokinaSnapshot({
+    await writePendingMokinaSnapshot({
       snapshotId: 'snap-2',
       projectId: 'p1',
       itemCount: 1,

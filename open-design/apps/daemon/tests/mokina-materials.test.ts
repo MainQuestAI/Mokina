@@ -46,6 +46,7 @@ describe('Mokina material extraction', () => {
   });
 
   it('prefers the packaged pdftotext path and falls back to known absolute locations before PATH', () => {
+    expect(resolvePdftotextBinary({ OD_RESOURCE_ROOT: '/bundled', OD_PDFTOTEXT_PATH: '/external' })).toContain('/bundled/pdf/');
     expect(resolvePdftotextBinary({ OD_PDFTOTEXT_PATH: ' /opt/mokina/bin/pdftotext ' })).toBe('/opt/mokina/bin/pdftotext');
     // No configured path: a Finder-launched process finds Homebrew/local installs
     // by absolute path even without an interactive shell PATH.

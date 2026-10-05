@@ -2426,7 +2426,7 @@ test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface a
   await testInfo.attach('r2-definitive-rejection-shot', { body: await page.screenshot(), contentType: 'image/png' });
 });
 
-test('[P1] Mokina revision lost POST response keeps one run and marks the intent unknown', async ({ page }, testInfo) => {
+test('[P1] Mokina revision lost POST response recovers the same run and adopts its candidate', async ({ page }, testInfo) => {
   await createProject(page, 'Mokina revision receipt loss');
   const { projectId, conversationId } = await currentProjectContext(page);
   const baseHtml = [
@@ -2473,7 +2473,7 @@ test('[P1] Mokina revision lost POST response keeps one run and marks the intent
   // T11: the POST carries a stable client identity minted before any side effect.
   expect(clientRequestId.length).toBeGreaterThan(0);
   expect(revisionProjectId.length).toBeGreaterThan(0);
-  expect(revisionRunId.length).toBeGreaterThan(0);
+  await expect.poll(() => revisionRunId, { timeout: T.long }).toBeTruthy();
 
   // The daemon accepted exactly one run for the revision project.
   const runsResponse = await page.request.get(`/api/runs?projectId=${encodeURIComponent(revisionProjectId)}`);
@@ -2505,6 +2505,47 @@ test('[P1] Mokina revision lost POST response keeps one run and marks the intent
   await page.waitForTimeout(2_500);
   expect(postCount).toBe(1);
 
+  // Recover the original artifact's job, collect a valid replacement and adopt it explicitly.
+  await page.getByRole('button', { name: 'Versions' }).click();
+  const recoveredDialog = page.getByRole('dialog', { name: 'Versions' });
+  await recoveredDialog.getByRole('button', { name: '修订章节' }).click();
+  await expect(recoveredDialog.getByRole('button', { name: /恢复上次修订候选|保存已完成运行的候选/ })).toBeVisible();
+  const job = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), `mokina:revision:${projectId}:plan.html`);
+  expect(job.runId).toBe(revisionRunId);
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/runs/${revisionRunId}`);
+    const body = await response.json(); return body.run?.status ?? body.status;
+  }, { timeout: T.long }).toBe('succeeded');
+  const replacement = await page.request.post(`/api/projects/${revisionProjectId}/files`, {
+    data: { name: 'MOKINA-REPLACEMENT.html', content: '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>新策略：社群为主</p></section>' },
+  });
+  expect(replacement.ok()).toBe(true);
+  // Wait for the replacement write's file events before starting the recovery.
+  await page.waitForTimeout(1000);
+  if (!await recoveredDialog.isVisible()) {
+    await page.getByRole('button', { name: 'Versions' }).click();
+    await recoveredDialog.getByRole('button', { name: '修订章节' }).click();
+  }
+  await recoveredDialog.getByRole('button', { name: /恢复上次修订候选|保存已完成运行的候选/ }).click();
+  let candidate: { id: string; candidate: boolean } | undefined;
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`);
+    const body = await response.json();
+    candidate = body.versions.find((version: { candidate?: boolean }) => version.candidate);
+    return candidate?.id;
+  }, { timeout: T.long }).toBeTruthy();
+  expect(postCount).toBe(1);
+  expect(candidate).toBeTruthy();
+  await expect(recoveredDialog.getByRole('button', { name: '采用候选', exact: true })).toBeVisible();
+  await recoveredDialog.getByRole('button', { name: '采用候选', exact: true }).click();
+  await page.locator('.file-version-restore-confirm').getByRole('button', { name: '采用候选', exact: true }).click();
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
+    return (await response.text()).includes('新策略：社群为主');
+  }, { timeout: T.long }).toBe(true);
+  const adoptedFile = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
+  expect(await adoptedFile.text()).toContain('新策略：社群为主');
+
   await testInfo.attach('revision-receipt-loss', {
     body: JSON.stringify({ projectId, conversationId, revisionProjectId, revisionRunId, clientRequestId, postCount }),
     contentType: 'application/json',
@@ -2525,6 +2566,11 @@ test('[P1] Mokina historical version export locks the clicked version and export
   expect(versionsResponse.ok()).toBe(true);
   const { versions } = (await versionsResponse.json()) as { versions: Array<{ id: string; version: number }> };
   const current = versions.find((version) => version.version === 1) ?? versions[0]!;
+  const edited = await page.request.post(`/api/projects/${projectId}/files`, { data: { name: 'plan.html', content: html.replace('</body>', '<p>Current version marker</p></body>') } });
+  expect(edited.ok()).toBe(true);
+  const updated = await (await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`)).json();
+  expect(updated.versions.find((version: { id: string }) => version.id === current.id).current).toBe(false);
+  expect(updated.versions.find((version: { current: boolean }) => version.current).id).not.toBe(current.id);
 
   const exportBodies: Array<Record<string, unknown>> = [];
   page.on('request', (request) => {
@@ -2566,7 +2612,7 @@ test('[P1] Mokina reduced transparency degrades materials live and restores', as
     const surfaces = [...document.querySelectorAll('body *')].filter((el) => {
       const style = getComputedStyle(el);
       return (style.backdropFilter && style.backdropFilter !== 'none')
-        || (style.webkitBackdropFilter && style.webkitBackdropFilter !== 'none');
+        || (style.getPropertyValue('-webkit-backdrop-filter') && style.getPropertyValue('-webkit-backdrop-filter') !== 'none');
     });
     const root = getComputedStyle(document.documentElement);
     return {

@@ -1,0 +1,7 @@
+Poppler utility rebuilt from poppler-26.03.0.tar.xz using clang++ -std=c++20 -O2.
+Sources: utils/pdftotext.cc, utils/parseargs.cc, utils/printencodings.cc, utils/Win32Console.cc.
+Config: PACKAGE_VERSION=26.03.0. Includes: installed Poppler 26.03.0 headers; link: libpoppler.158.
+Local modification: GlobalParams receives the executable-relative share/poppler directory.
+All non-system dylib load commands are rewritten to @loader_path and binaries are ad-hoc signed.
+The original Poppler source archive, modified utility source, dependency formula versions/source URLs,
+license declarations and installed license files accompany the runtime. System libraries stay OS-provided.

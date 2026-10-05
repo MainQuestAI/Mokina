@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
+import { join } from 'node:path';
 import { promisify } from "node:util";
 
 /**
@@ -22,6 +23,10 @@ export function resolvePdftotextBinary(
   env: NodeJS.ProcessEnv = process.env,
   options: PdftotextResolveOptions = {},
 ): string {
+  if (env.OD_RESOURCE_ROOT) {
+    const platform = process.platform === 'darwin' ? 'mac' : process.platform;
+    return join(env.OD_RESOURCE_ROOT, 'pdf', `${platform}-${process.arch}`, 'bin', 'pdftotext');
+  }
   const configured = env.OD_PDFTOTEXT_PATH?.trim();
   if (configured != null && configured.length > 0) return configured;
   const exists = options.exists ?? ((candidate: string) => existsSync(candidate));

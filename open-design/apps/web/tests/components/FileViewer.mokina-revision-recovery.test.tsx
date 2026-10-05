@@ -50,6 +50,18 @@ describe('Mokina revision recovery record ownership', () => {
     localStorage.clear(); vi.unstubAllGlobals();
   });
 
+  it('uses the already persisted accepted identity when the panel still holds its earlier intent', async () => {
+    const intent: MokinaRevisionJob = { ...job('ignored', 'race'), runId: undefined,
+      clientRequestId: 'request-race', conversationId: 'conversation-race', revisionProjectId: 'revision-race' };
+    localStorage.setItem('mokina:revision:race', JSON.stringify({ ...intent, runId: 'accepted-race' }));
+    const fetchMock = vi.fn(async () => Response.json({ runs: [{ id: 'accepted-race',
+      clientRequestId: 'request-race', projectId: 'revision-race', conversationId: 'conversation-race' }] }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(reconcileMokinaRevisionJob('mokina:revision:race', intent)).resolves.toMatchObject({ runId: 'accepted-race' });
+    expect(fetchMock).not.toHaveBeenCalled();
+    localStorage.clear(); vi.unstubAllGlobals();
+  });
+
   it('does not let a second run overwrite a pending recovery record', () => {
     const storage = memoryStorage();
     const first = job('run-a', 'operation-a');

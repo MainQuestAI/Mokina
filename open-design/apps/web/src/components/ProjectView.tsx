@@ -9157,6 +9157,7 @@ export function ProjectView({
             mcpServerIds: runContext?.mcpServerIds ?? [],
             connectorIds: runContext?.connectorIds ?? [],
             workspaceItems: runContext?.workspaceItems ?? [],
+            ...(runContext?.mokinaSnapshotId ? { mokinaSnapshotId: runContext.mokinaSnapshotId } : {}),
           },
         };
         mokinaSendRecord = await persistPendingSendRequest({ projectId: project.id,

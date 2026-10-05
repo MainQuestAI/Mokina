@@ -48,6 +48,7 @@ export interface ComposerDraftExtras {
 
 /** 需要「加载时再解析」的绑定。和 `RunContextSelection` 同形,少了不能落盘的那几项。 */
 export interface ComposerDraftContext {
+  mokinaSnapshotId?: string;
   skillIds: string[];
   mcpServerIds: string[];
   connectorIds: string[];
@@ -89,7 +90,8 @@ export function composerDraftExtrasAreEmpty(extras: ComposerDraftExtras): boolea
     && extras.context.skillIds.length === 0
     && extras.context.mcpServerIds.length === 0
     && extras.context.connectorIds.length === 0
-    && extras.context.workspaceItems.length === 0;
+    && extras.context.workspaceItems.length === 0
+    && !extras.context.mokinaSnapshotId;
 }
 
 function stringArray(raw: unknown, limit: number): string[] {
@@ -200,6 +202,8 @@ export function sanitizeComposerDraftExtras(raw: unknown): ComposerDraftExtras {
       mcpServerIds: stringArray(context.mcpServerIds, DRAFT_MAX_CONTEXT_ITEMS),
       connectorIds: stringArray(context.connectorIds, DRAFT_MAX_CONTEXT_ITEMS),
       workspaceItems: sanitizeWorkspaceItems(context.workspaceItems),
+      ...(typeof context.mokinaSnapshotId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(context.mokinaSnapshotId)
+        ? { mokinaSnapshotId: context.mokinaSnapshotId } : {}),
     },
   };
 }

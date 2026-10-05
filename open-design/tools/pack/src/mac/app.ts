@@ -24,6 +24,7 @@ import {
   prepareNodePtyRuntime,
   resolveNodePtyRuntimeArch,
 } from "../node-pty-runtime.js";
+import { copyBundledPdfRuntime } from '../resources/pdf-runtime.js';
 import { copyBundledResourceTrees, packBundledDshRuntime } from "../resources/index.js";
 import { copyOptionalVelaCliBinary } from "../vela-cli.js";
 import { electronBuilderVersionForAppVersion } from "../versioning/index.js";
@@ -149,6 +150,7 @@ export async function copyResourceTree(config: ToolPackConfig, paths: MacPaths):
     workspaceRoot: config.workspaceRoot,
     resourceRoot: paths.resourceRoot,
   });
+  await copyBundledPdfRuntime(config.workspaceRoot, paths.resourceRoot, process.arch);
   await packBundledDshRuntime({
     workspaceRoot: config.workspaceRoot,
     resourceRoot: paths.resourceRoot,

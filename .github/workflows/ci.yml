@@ -1,0 +1,44 @@
+name: Mokina PR checks
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mokina-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: open-design
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: open-design/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm guard
+      - run: pnpm typecheck
+      - run: pnpm i18n:check
+      - name: Recovery and input regression
+        run: |
+          pnpm --filter @open-design/web exec vitest run tests/runtime/mokina-recovery-store.test.ts tests/runtime/send-request-state.test.ts tests/runtime/mokina-pending-context-snapshot.test.ts tests/runtime/mokina-recovery-import-journal.test.ts tests/runtime/mokina-recovery-package-client.test.ts tests/components/MokinaContextPanel.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/ProjectView.retry-gating.test.tsx
+          pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-recovery-store.test.ts
+          pnpm --filter @open-design/daemon exec vitest run tests/mokina-context-store.test.ts tests/mokina-context-routes.test.ts tests/mokina-recovery-package.test.ts tests/mokina-materials.test.ts
+          pnpm --filter @open-design/tools-pack exec vitest run tests/resources/pdf-runtime.test.ts
+      - name: Browser prerequisites
+        run: |
+          pnpm --filter @open-design/daemon build
+          pnpm --filter @open-design/e2e exec playwright install --with-deps chromium
+      - name: Real daemon request recovery
+        env:
+          OD_PLAYWRIGHT_WORKERS: '1'
+        run: pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/real-daemon-run.test.ts --grep 'Mokina' --workers=1

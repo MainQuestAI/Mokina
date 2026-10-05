@@ -116,7 +116,7 @@
 - `python3 .github/config/scopes.json validate` → 有效。
 - `python3 .github/scripts/scopes.py plan --context pr --files <本分支 open-design/ 相对路径 83 项>` →
   enabled: `daemon_unit_tests, e2e_vitest, preflight, static_gate, ui_p0, workspace_unit_tests`（保守推导，覆盖 contracts 改动对 daemon/workspace 消费者的扇出）。
-- 未推送远端；实际 GitHub Actions 运行不在本机可执行范围内。
+- **远端状态**：分支已推送、PR #4 已开（`codex/mokina-v0.0.2-local-preview` → `codex/mokina-v0.0.2-b0-b1` 堆叠，https://github.com/MainQuestAI/Mokina/pull/4）。PR 无 checks 且仓库 `gh run list` 为空——Actions 在仓库设置层未启用；启用后 ci.yml（`pull_request` 触发、无分支过滤）即会按规划器门禁运行。属仓库设置操作，需维护者执行。
 
 ## 真实端到端运行（T19 前哨）
 

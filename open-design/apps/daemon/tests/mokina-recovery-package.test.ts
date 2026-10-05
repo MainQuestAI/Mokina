@@ -14,6 +14,7 @@ import {
 } from '../src/mokina/recovery-package.js';
 
 import { prepareMokinaContextSnapshot, readMokinaContextSnapshot } from '../src/mokina/context-store.js';
+import { createProjectFileVersion, listProjectFileVersions } from '../src/project-file-versions.js';
 
 function sha256(buffer: Buffer | string): string {
   return createHash('sha256').update(buffer).digest('hex');
@@ -78,6 +79,25 @@ describe('mokina recovery package', () => {
     if (original.ok && recovered.ok) expect(recovered.snapshot.fingerprint).toBe(original.snapshot.fingerprint);
     const second = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p2', projectName: 'restored', exportId: 'export-again' });
     expect(second.manifest.contexts).toHaveLength(1);
+  });
+
+  it('keeps the adopted current version separate from a later candidate in the production reader after import', async () => {
+    const content = await readFile(path.join(root, 'p1', 'plan.html'), 'utf8');
+    const current = await createProjectFileVersion(root, 'p1', 'plan.html', content);
+    const candidate = await createProjectFileVersion(root, 'p1', 'plan.html', `${content}<p>unadopted</p>`,
+      { candidate: true, baseVersionId: current.id, operationId: 'unadopted-candidate' });
+    const built = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p1', projectName: 'source', exportId: 'version-roundtrip' });
+    expect(built.manifest.versions.find(version => version.current)?.originalVersionId).toBe(current.id);
+    const imported = await importProjectRecoveryPackage({ projectsRoot: root, archive: built.buffer,
+      operationId: 'import-versions', targetProjectId: 'p2', ...await registered() });
+    expect(imported.ok).toBe(true);
+    const versions = await listProjectFileVersions(root, 'p2', 'plan.html');
+    expect(versions.find(version => version.current)?.id).toBe(current.id);
+    expect(versions.find(version => version.id === candidate.id)).toMatchObject({ candidate: true, current: false, baseVersionId: current.id });
+    expect(await readFile(path.join(root, 'p2', 'plan.html'), 'utf8')).toBe(content);
+    const again = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p2', projectName: 'restored', exportId: 'versions-again' });
+    expect(again.manifest.versions.find(version => version.current)?.originalVersionId).toBe(current.id);
+    expect(again.manifest.versions.find(version => version.originalVersionId === candidate.id)).toMatchObject({ candidate: true, current: false });
   });
 
   it('validates recovery paths strictly', () => {

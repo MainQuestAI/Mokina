@@ -87,3 +87,8 @@ BASE comparison uses a git archive of the exact BASE into an isolated temporary 
 同时实际 Node 子进程执行帮助中声明的 `od mokina recovery import/export` 均 exit 2；修复分发后又暴露未导入 fs 及默认 operationId 的 randomUUID。已使用 node:fs/promises 与 node:crypto 的正式导入。四个 CLI 子进程测试核对 multipart 输入、原 operation/target、写出的服务端字节和省略可选 operation 的 UUID，连同恢复 routes 共 7 项通过。红/绿证据在 evidence/native-*。测试的 ZIP 字节为 CLI 传输夹具，生产恢复包校验仍由现有真实 prepare/route 用例验证。
 
 上述两类回归加入根 CI。产品候选将重新构建为 local.4；local.3 保留为阶段证据，不代表新候选已通过原生验收。专业签收仍单独进行。
+
+
+### R4 追加：恢复版本正式读取（local.4 原生验收）
+
+Finder 启动 local.4 后，从可见新建项目入口和 macOS 文件选择器导入有效恢复包。归档明确记录 v3 当前、v4 未采用候选，但正式 GET 和原生版本面板把 v4 同时标记为当前与候选。导入重建 manifest 未写 `schemaVersion: 2`，正式 reader 按旧版规则选最后一项。追加 production reader 的 prepare/create → export → import → list → re-export 行为回归，先失败后修复；导入 manifest 采用正式 v2 布局。恢复、CLI、版本存储 4 文件 34 用例通过。local.4 仅保留为失败发现证据，下一候选 local.5 重新构建并验收。

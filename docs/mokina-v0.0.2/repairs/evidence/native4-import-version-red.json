@@ -1,0 +1,67 @@
+{
+  "status": 200,
+  "versions": [
+    {
+      "id": "987268c0-9140-47db-b667-2c89006a5ca1",
+      "fileName": "plan.html",
+      "version": 1,
+      "label": "恢复版本 1",
+      "createdAt": 1791201565166,
+      "source": "restore",
+      "prompt": null,
+      "size": 19965,
+      "mime": "text/html",
+      "kind": "html",
+      "current": false,
+      "contentDigest": "ea7cb765de00edc8fa8c898125a81de8565b3a5f4ee48664c37fef0dd50be661"
+    },
+    {
+      "id": "a1b87fb9-1a84-4002-a10b-335b114b94a3",
+      "fileName": "plan.html",
+      "version": 2,
+      "label": "恢复版本 2",
+      "createdAt": 1791201565166,
+      "source": "restore",
+      "prompt": null,
+      "size": 20972,
+      "mime": "text/html",
+      "kind": "html",
+      "current": false,
+      "contentDigest": "d2d405a15cee58571a1a89b41483670d06565728d8479802db9693291a39674c",
+      "baseVersionId": "987268c0-9140-47db-b667-2c89006a5ca1"
+    },
+    {
+      "id": "ee67b18e-01c9-4df4-85ce-d872d46416a3",
+      "fileName": "plan.html",
+      "version": 3,
+      "label": "恢复版本 3",
+      "createdAt": 1791201565166,
+      "source": "restore",
+      "prompt": null,
+      "size": 21533,
+      "mime": "text/html",
+      "kind": "html",
+      "current": false,
+      "contentDigest": "9c3ca233d848932f985e757798336e41c5c35c97b0e9f8d0b073581cd24f36b9",
+      "baseVersionId": "a1b87fb9-1a84-4002-a10b-335b114b94a3"
+    },
+    {
+      "id": "515d7b37-4d44-4781-ac3b-95d05b40fb50",
+      "fileName": "plan.html",
+      "version": 4,
+      "label": "恢复版本 4",
+      "createdAt": 1791201565166,
+      "source": "restore",
+      "prompt": null,
+      "size": 21582,
+      "mime": "text/html",
+      "kind": "html",
+      "current": true,
+      "contentDigest": "f6ca939f91e16b3b9c9281b336dc1f4c7adec3c41c2b849ba6ad2495db501d4a",
+      "candidate": true,
+      "baseVersionId": "ee67b18e-01c9-4df4-85ce-d872d46416a3"
+    }
+  ],
+  "url": "od://app/projects/a8136fef-74a8-4830-b84a-4d29659e127a/conversations/1fbdcbf9-22b5-4827-8c4c-7413ff1bb375/files/plan.html",
+  "candidateShownCurrent": true
+}

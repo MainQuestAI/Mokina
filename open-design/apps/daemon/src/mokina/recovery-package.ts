@@ -554,7 +554,7 @@ export async function importProjectRecoveryPackage(input: {
       const current = versions.find((version) => version.current)?.originalVersionId ?? null;
       await writeFileAtomic(
         path.join(versionRoot, 'manifest.json'),
-        Buffer.from(`${JSON.stringify({ entries, currentVersionId: current }, null, 2)}\n`, 'utf8'),
+        Buffer.from(`${JSON.stringify({ schemaVersion: 2, fileName: entryName, entries, currentVersionId: current }, null, 2)}\n`, 'utf8'),
       );
     }
     const name = (input.projectName ?? manifest.sourceProject.name).trim() || manifest.sourceProject.name;

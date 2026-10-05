@@ -21,6 +21,8 @@ import {
   resetDurableRecoveryForTests,
 } from '../../src/runtime/persistence/mokina-recovery-store';
 
+import { persistPendingSendRequest } from '../../src/runtime/chat/send-request-state';
+
 type FakeRecord = { recordId: string; value: string };
 
 function makeFakeStore(initial: Record<string, FakeRecord> = {}) {
@@ -107,7 +109,7 @@ describe('mokina durable recovery facade (web)', () => {
     expect(store.delete).toHaveBeenCalledWith('od:revision:a', 'r1');
   });
 
-  it("hydrates missing localStorage keys but never overwrites existing ones", async () => {
+  it("hydrates durable records over stale origin caches", async () => {
     const store = makeFakeStore({
       'od:revision:missing': { recordId: 'r1', value: 'durable-only' },
       'od:revision:present': { recordId: 'r2', value: 'durable-newer' },
@@ -117,9 +119,9 @@ describe('mokina durable recovery facade (web)', () => {
 
     const hydrated = await hydrateDurableRecoveryIntoLocalStorage();
 
-    expect(hydrated).toBe(1);
+    expect(hydrated).toBe(2);
     expect(window.localStorage.getItem('od:revision:missing')).toBe('durable-only');
-    expect(window.localStorage.getItem('od:revision:present')).toBe('local-copy');
+    expect(window.localStorage.getItem('od:revision:present')).toBe('durable-newer');
   });
 
   it("hydrates at most once per session", async () => {
@@ -131,4 +133,42 @@ describe('mokina durable recovery facade (web)', () => {
     expect(store.list).toHaveBeenCalledTimes(callsAfterFirst); // second call is a no-op
     expect(callsAfterFirst).toBeGreaterThan(0);
   });
+  it('serializes complete mutations: A/B/C leaves C and write/delete stays deleted', async () => {
+    const store = makeFakeStore();
+    installHost(store);
+    await Promise.all([
+      mirrorDurableRecord('mokina:revision:order', 'A'),
+      mirrorDurableRecord('mokina:revision:order', 'B'),
+      mirrorDurableRecord('mokina:revision:order', 'C'),
+    ]);
+    expect(store.records.get('mokina:revision:order')?.value).toBe('C');
+    await Promise.all([
+      mirrorDurableRecord('mokina:revision:delete', 'A'),
+      removeDurableRecord('mokina:revision:delete'),
+    ]);
+    expect(store.records.has('mokina:revision:delete')).toBe(false);
+  });
+
+  it('reports IPC failure and does not retry a conflicting write over its new owner', async () => {
+    const store = makeFakeStore();
+    installHost(store);
+    store.put.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    await expect(mirrorDurableRecord('mokina:revision:conflict', 'A')).resolves.toBe(false);
+    expect(store.put).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not admit sending before durable IPC completes and reports write failure', async () => {
+    const store = makeFakeStore(); installHost(store);
+    let complete!: (value: { ok: true; result: 'conflict' }) => void;
+    store.put.mockImplementationOnce(() => new Promise(resolve => { complete = resolve; }));
+    let admitted = false;
+    const saving = persistPendingSendRequest({ projectId: 'p', conversationId: 'c', clientRequestId: 'delayed', prompt: '保留输入' })
+      .then(result => { admitted = result !== 'failed'; return result; });
+    await flush();
+    expect(admitted).toBe(false);
+    complete({ ok: true, result: 'conflict' });
+    expect(await saving).toBe('failed');
+    expect(admitted).toBe(false);
+  });
+
 });

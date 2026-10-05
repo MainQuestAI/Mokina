@@ -103,7 +103,9 @@ import { useT, useI18n } from '../i18n';
 import { randomUUID as newClientOperationId } from '../utils/uuid';
 import {
   clearSendRequestRecord,
-  markSendRequestDispatched,
+  persistDispatchedSendRequest,
+  persistClearSendRequest,
+  queryRunAccepted,
   markSendRequestDraft,
   markSendRequestUnknown,
   persistPendingSendRequest,
@@ -3446,7 +3448,13 @@ export function buildMokinaContinuationV2(input: {
 }
 
 export type MokinaRevisionJob = {
-  runId: string;
+  runId?: string;
+  sourceProjectId?: string;
+  sourceFile?: string;
+  workspaceContext?: WorkspaceCollabContext | null;
+  conversationId?: string;
+  clientRequestId?: string;
+  dispatched?: boolean;
   revisionProjectId: string;
   baseVersionId: string;
   sectionId: string;
@@ -3458,7 +3466,7 @@ export function parseMokinaRevisionJob(raw: string | null): MokinaRevisionJob | 
   if (!raw) return null;
   try {
     const job = JSON.parse(raw) as Partial<MokinaRevisionJob>;
-    return job.runId && job.revisionProjectId && job.baseVersionId && job.sectionId
+    return (job.runId || job.clientRequestId) && job.revisionProjectId && job.baseVersionId && job.sectionId
       && typeof job.prompt === 'string' && job.operationId
       ? job as MokinaRevisionJob
       : null;
@@ -3489,6 +3497,29 @@ export function storeMokinaRevisionJobIfVacant(
   if (parseMokinaRevisionJob(storage.getItem(key))) return false;
   storage.setItem(key, JSON.stringify(job));
   return true;
+}
+
+export async function persistMokinaRevisionJob(key: string, job: MokinaRevisionJob, expected?: MokinaRevisionJob): Promise<boolean> {
+  const current = parseMokinaRevisionJob(localStorage.getItem(key));
+  if (expected ? !isSameMokinaRevisionJob(current, expected) : Boolean(current)) return false;
+  if (!await mirrorDurableRecord(key, JSON.stringify(job))) return false;
+  localStorage.setItem(key, JSON.stringify(job));
+  return true;
+}
+async function persistClearMokinaRevisionJob(key: string, job: MokinaRevisionJob): Promise<boolean> {
+  if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(localStorage.getItem(key)), job)) return false;
+  if (!await removeDurableRecord(key)) return false;
+  return clearMokinaRevisionJobIfCurrent(localStorage, key, job);
+}
+export async function reconcileMokinaRevisionJob(key: string, job: MokinaRevisionJob, context?: WorkspaceCollabContext | null): Promise<MokinaRevisionJob> {
+  if (job.runId) return job;
+  if (!job.conversationId || !job.clientRequestId) throw new Error('修订尚未提交；可放弃本次准备后重新生成。');
+  const run = await queryRunAccepted(job.revisionProjectId, job.conversationId, job.clientRequestId, 10_000, context);
+  if (!run?.id) throw new Error('受理状态尚未确认，请稍后恢复；当前稿未变化。');
+  const accepted = { ...job, runId: run.id };
+  if (!await persistMokinaRevisionJob(key, accepted, job)) throw new Error('修订运行身份未能安全保存，请稍后恢复。');
+  await persistClearSendRequest(job.revisionProjectId, job.conversationId, job.clientRequestId);
+  return accepted;
 }
 
 export type DeckKeyboardShortcut = 'next' | 'prev' | 'first' | 'last' | 'reset';
@@ -3604,18 +3635,21 @@ function FileVersionManagerModal({
     setRevisionRecoveryLoaded(true);
     if (savedJob) {
       const job = savedJob;
-      void fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
-        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined)
+      void reconcileMokinaRevisionJob(revisionStorageKey, job, workspaceContext).then(async resolved => {
+        Object.assign(job, resolved);
+        return fetch(`/api/runs/${encodeURIComponent(resolved.runId!)}`,
+        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
+      })
         .then(async response => {
           if (!response.ok) throw new Error('运行状态暂不可读');
           const body = await response.json() as { run?: { status: string }; status?: string };
           return body.run?.status ?? body.status ?? 'unknown';
         })
-        .then(status => {
+        .then(async status => {
           if (!active || !isSameMokinaRevisionJob(
             parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return;
           if (status === 'failed' || status === 'canceled') {
-            if (clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) {
+            if (await persistClearMokinaRevisionJob(revisionStorageKey, job)) {
               setPendingRevisionJob(null);
               setPendingRevisionStatus(null);
               setRevisionProgress(`上次修订已${status === 'canceled' ? '取消' : '失败'}；当前稿未变化。`);
@@ -4391,12 +4425,14 @@ function FileVersionManagerModal({
   }
 
   async function finishChapterCandidate(job: MokinaRevisionJob): Promise<boolean> {
+    job = await reconcileMokinaRevisionJob(revisionStorageKey, job, workspaceContext);
+    if (revisionPanelActiveRef.current) setPendingRevisionJob(job);
     let terminal: { status: string; error?: string | null } | null = null;
     for (let attempt = 0; attempt < 180; attempt++) {
       await new Promise(resolve => setTimeout(resolve, 1500));
       if (!revisionPanelActiveRef.current) return false;
       if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return false;
-      const statusResponse = await fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
+      const statusResponse = await fetch(`/api/runs/${encodeURIComponent(job.runId ?? '')}`,
         workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
       if (!revisionPanelActiveRef.current) return false;
       if (!statusResponse.ok) continue;
@@ -4411,7 +4447,7 @@ function FileVersionManagerModal({
     }
     if (!terminal) throw new Error(`修订运行 ${job.runId} 尚未完成；稍后可恢复，当前稿未变化。`);
     if (terminal.status !== 'succeeded') {
-      if (clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) {
+      if (await persistClearMokinaRevisionJob(revisionStorageKey, job)) {
         setPendingRevisionJob(null);
         setPendingRevisionStatus(null);
       }
@@ -4441,7 +4477,7 @@ function FileVersionManagerModal({
       throw new Error(body?.error?.message || '替换章节校验失败；当前稿未变化。');
     }
     const result = await candidateResponse.json() as { version: ProjectFileVersion };
-    if (!clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) return false;
+    if (!await persistClearMokinaRevisionJob(revisionStorageKey, job)) return false;
     setPendingRevisionJob(null);
     setPendingRevisionStatus(null);
     await loadVersions(result.version.id);
@@ -4462,16 +4498,23 @@ function FileVersionManagerModal({
 
   async function cancelChapterCandidate() {
     if (!pendingRevisionJob || revisionCancelBusy || revisionAbandonBusy) return;
-    const job = pendingRevisionJob;
+    let job = pendingRevisionJob;
     setRevisionCancelBusy(true);
     setError(null);
     try {
-      const response = await fetch(`/api/runs/${encodeURIComponent(job.runId)}/cancel`, {
+      if (!job.runId && !job.dispatched) {
+        if (await persistClearMokinaRevisionJob(revisionStorageKey, job)) {
+          setPendingRevisionJob(null); setPendingRevisionStatus(null);
+        }
+        return;
+      }
+      job = await reconcileMokinaRevisionJob(revisionStorageKey, job, workspaceContext);
+      const response = await fetch(`/api/runs/${encodeURIComponent(job.runId ?? '')}/cancel`, {
         method: 'POST',
         ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
       });
       if (!response.ok) throw new Error('取消请求失败；请检查运行状态后重试。');
-      const statusResponse = await fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
+      const statusResponse = await fetch(`/api/runs/${encodeURIComponent(job.runId ?? '')}`,
         workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
       if (!statusResponse.ok) throw new Error('已发送取消请求，但运行状态暂不可读。');
       const body = await statusResponse.json() as { run?: { status: string }; status?: string };
@@ -4479,7 +4522,7 @@ function FileVersionManagerModal({
         parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return;
       const status = body.run?.status ?? body.status;
       if (status === 'canceled' || status === 'failed') {
-        if (clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) {
+        if (await persistClearMokinaRevisionJob(revisionStorageKey, job)) {
           setPendingRevisionJob(null);
           setPendingRevisionStatus(null);
           setRevisionProgress('修订已取消；当前稿未变化。');
@@ -4512,7 +4555,7 @@ function FileVersionManagerModal({
         setConfirmAbandonRevision(false);
         throw new Error('修订记录已变化，请重新检查当前任务。');
       }
-      const response = await fetch(`/api/runs/${encodeURIComponent(job.runId)}`,
+      const response = await fetch(`/api/runs/${encodeURIComponent(job.runId ?? '')}`,
         workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
       if (!response.ok) {
         setPendingRevisionStatus('unknown');
@@ -4534,7 +4577,7 @@ function FileVersionManagerModal({
         setConfirmAbandonRevision(false);
         throw new Error('运行尚未成功结束，请先恢复或取消本次修订。');
       }
-      if (!clearMokinaRevisionJobIfCurrent(localStorage, revisionStorageKey, job)) {
+      if (!await persistClearMokinaRevisionJob(revisionStorageKey, job)) {
         throw new Error('修订记录已变化，请重新检查当前任务。');
       }
       setPendingRevisionJob(null);
@@ -4572,12 +4615,19 @@ function FileVersionManagerModal({
     // request instead of starting a second model run.
     const operationId = newClientOperationId();
     const clientRequestId = operationId;
+    let intent: MokinaRevisionJob = {
+      operationId, clientRequestId, revisionProjectId: newClientOperationId(),
+      sourceProjectId: projectId, sourceFile: file.name, workspaceContext,
+      baseVersionId, sectionId: revisionSectionId, prompt: request, dispatched: false,
+    };
     setRevisionBusy(true);
     setRevisionProgress('正在创建独立修订工作…');
     setError(null);
     let sendDispatched = false;
     let revisionScope: { projectId: string; conversationId: string } | null = null;
     try {
+      if (!await persistMokinaRevisionJob(revisionStorageKey, intent)) throw new Error('修订意图未能安全保存，未创建运行。');
+      setPendingRevisionJob(intent);
       const prompt = [
         `只修改 HTML 章节 ${revisionSectionId}。根据下方用户要求，生成一个完整的替换章节元素。`,
         `请把结果写入 MOKINA-REPLACEMENT.html。文件必须且只能包含一个顶层元素，其 id 与 data-mokina-id 都等于 ${revisionSectionId}。不要输出整篇 HTML、Markdown 代码围栏或其他章节。保留可核对事实，不编造来源。`,
@@ -4592,6 +4642,7 @@ function FileVersionManagerModal({
       const revisionPlugin = boundPlugin === 'mokina-marketing-plan' || boundPlugin === 'mokina-market-analysis'
         ? boundPlugin : 'mokina-market-analysis';
       const revisionProject = await createProject({
+        id: intent.revisionProjectId,
         name: `${file.name} · ${revisionSectionId} 修订`,
         skillId: null,
         designSystemId: null,
@@ -4603,6 +4654,9 @@ function FileVersionManagerModal({
         'MOKINA-BASE-SECTION.html', original.outerHTML, undefined, workspaceContext);
       if (!snapshotSaved) throw new Error('原章节快照保存失败，模型尚未运行。');
       revisionScope = { projectId: revisionProject.project.id, conversationId: revisionProject.conversationId };
+      const bound = { ...intent, revisionProjectId: revisionProject.project.id, conversationId: revisionProject.conversationId };
+      if (!await persistMokinaRevisionJob(revisionStorageKey, bound, intent)) throw new Error('修订项目绑定保存失败，模型尚未运行。');
+      intent = bound; setPendingRevisionJob(intent);
       // Persist the full send intent BEFORE the model can run: a storage
       // failure refuses the POST (PR3 send semantics, Spec T11 §5.3).
       const sendRecord = await persistPendingSendRequest({
@@ -4623,7 +4677,7 @@ function FileVersionManagerModal({
       if (sendRecord === 'failed') {
         throw new Error('修订发送意图未能安全保存，未启动作业；请重试。');
       }
-      const dispatched = markSendRequestDispatched(
+      const dispatched = await persistDispatchedSendRequest(
         revisionProject.project.id,
         revisionProject.conversationId,
         clientRequestId,
@@ -4631,6 +4685,9 @@ function FileVersionManagerModal({
       if (!dispatched) {
         throw new Error('修订发送身份核对失败，未启动作业；请重试。');
       }
+      const sending = { ...intent, dispatched: true };
+      if (!await persistMokinaRevisionJob(revisionStorageKey, sending, intent)) throw new Error('修订发送身份保存失败，模型尚未运行。');
+      intent = sending; setPendingRevisionJob(intent);
       sendDispatched = true;
       setRevisionProgress('正在运行 Codex 生成替换章节…');
       const runResponse = await fetch('/api/runs', {
@@ -4660,16 +4717,11 @@ function FileVersionManagerModal({
       }
       const created = await runResponse.json() as { runId: string };
       if (!created.runId) throw new Error('修订运行未返回 ID');
-      clearSendRequestRecord(revisionProject.project.id, revisionProject.conversationId, clientRequestId);
-      const job = { runId: created.runId, revisionProjectId: revisionProject.project.id,
-        baseVersionId, sectionId: revisionSectionId, prompt: request, operationId };
-      if (!storeMokinaRevisionJobIfVacant(localStorage, revisionStorageKey, job)) {
-        await fetch(`/api/runs/${encodeURIComponent(job.runId)}/cancel`, {
-          method: 'POST',
-          ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
-        }).catch(() => null);
-        throw new Error('已有另一项章节修订；新运行已请求取消，请先处理原修订。');
+      const job = { ...intent, runId: created.runId };
+      if (!await persistMokinaRevisionJob(revisionStorageKey, job, intent)) {
+        throw new Error('已受理修订，但身份交接保存失败；请恢复原任务。');
       }
+      await persistClearSendRequest(revisionProject.project.id, revisionProject.conversationId, clientRequestId);
       setPendingRevisionJob(job);
       setPendingRevisionStatus('running');
       await finishChapterCandidate(job);

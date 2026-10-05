@@ -376,7 +376,7 @@ import {
   loadSendRequestRecords,
   markSendRequestUnknown,
   markSendRequestDraft,
-  markSendRequestDispatched,
+  persistDispatchedSendRequest,
   recoverSendRequestRecords,
   SEND_REQUESTS_CHANGED,
   type SendRequestSnapshot,
@@ -8720,14 +8720,14 @@ export function ProjectView({
       const admission = new Promise<boolean>(resolve => { resolveAdmission = resolve; });
       const settleMokinaSend = MOKINA_LOCAL_EDITION ? {
         runCreateTimeoutMs: 30_000,
-        onBeforeRunCreate: () => {
+        onBeforeRunCreate: async () => {
           if (mokinaSendRecord === 'skipped') {
             // 无可恢复快照的发送照常进行（P1-2）：有预览凭据就推进阶段，
             // 没有也不拦——这里只拦截真正的存储失败。
-            markSendRequestDispatched(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+            await persistDispatchedSendRequest(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
             return true;
           }
-          const dispatched = markSendRequestDispatched(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+          const dispatched = await persistDispatchedSendRequest(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
           if (!dispatched) {
             retractPaintedTurn();
             sendAdmissionRef.current.set(clientRequestId, 'restore-draft');

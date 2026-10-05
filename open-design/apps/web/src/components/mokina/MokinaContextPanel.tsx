@@ -173,7 +173,7 @@ export function MokinaContextPanel({ projectId, files }: {
         itemLabels: items.map((item) => item.displayName).slice(0, 20),
         excluded: excluded.map((entry) => ({ displayName: entry.displayName, reason: '无法读取' })),
       };
-      writePendingMokinaSnapshot(record);
+      await writePendingMokinaSnapshot(record);
       setFrozen(record);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.freezeFailed'));

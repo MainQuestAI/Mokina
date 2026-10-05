@@ -927,6 +927,17 @@ export async function hydrateReadyTeamProject(
 }
 
 export function App() {
+  const [recoveryReady, setRecoveryReady] = useState(false);
+  const [recoveryError, setRecoveryError] = useState<string | null>(null);
+  const restore = useCallback(() => {
+    setRecoveryError(null);
+    void hydrateDurableRecoveryIntoLocalStorage().then(() => setRecoveryReady(true))
+      .catch(error => setRecoveryError(error instanceof Error ? error.message : '恢复失败'));
+  }, []);
+  useEffect(restore, [restore]);
+  if (!recoveryReady) return <div role="status">{recoveryError ?? '正在恢复本地工作…'}
+    {recoveryError ? <button onClick={restore}>重试恢复</button> : null}</div>;
+
   // `reducedMotion="user"` makes every motion/react component honor the OS
   // `prefers-reduced-motion` setting: transform/layout animations are zeroed
   // out while opacity-only changes are kept. The CSS `@media (prefers-reduced-
@@ -1003,7 +1014,7 @@ function AppInner() {
   // store still has (new port, replaced app, cleared origin). Never
   // overwrites an existing localStorage value; a no-op in web-only builds.
   useEffect(() => {
-    void hydrateDurableRecoveryIntoLocalStorage();
+    // Recovery has completed before AppInner mounts.
   }, []);
   // Observability marker. `apps/web/src/observability/white-screen.ts`
   // keys its "app actually mounted" success condition on this attribute

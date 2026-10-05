@@ -3,7 +3,7 @@
 import type { ChatRunStatusResponse, WorkspaceCollabContext } from '@open-design/contracts';
 import { queryRunByClientRequest } from '../../providers/daemon';
 import { sanitizeComposerDraftExtras, type ComposerDraftExtras, DRAFT_MAX_EXTRAS_CHARS } from './composer-draft';
-import { mirrorDurableRecord, removeDurableRecord } from '../persistence/mokina-recovery-store';
+import { mirrorDurableRecord, removeDurableRecord, flushDurableRecord } from '../persistence/mokina-recovery-store';
 
 export interface SendRequestSnapshot {
   readonly prompt: string;
@@ -138,10 +138,28 @@ export async function persistPendingSendRequest(input: Parameters<typeof savePen
   try {
     if (typeof navigator !== 'undefined' && navigator.locks) {
       return await navigator.locks.request(prefix(input.projectId, input.conversationId, input.authorityKey),
-        { mode: 'exclusive' }, () => savePendingSendRequest(input));
+        { mode: 'exclusive' }, () => persistSavedRequest(input));
     }
-    return savePendingSendRequest(input);
+    return await persistSavedRequest(input);
   } catch { return 'failed'; }
+}
+async function persistSavedRequest(input: Parameters<typeof savePendingSendRequest>[0]): Promise<SavePendingSendResult> {
+  const result = savePendingSendRequest(input);
+  if (result === 'failed') return result;
+  if (!await flushDurableRecord(recordKey(input))) {
+    owners.delete(recordKey(input));
+    return 'failed';
+  }
+  return result;
+}
+export async function persistDispatchedSendRequest(p: string, c: string, id: string, authorityKey?: string): Promise<boolean> {
+  return markSendRequestDispatched(p, c, id, authorityKey)
+    && await flushDurableRecord(recordKey({ projectId: p, conversationId: c, clientRequestId: id, authorityKey }));
+}
+export async function persistClearSendRequest(p: string, c: string, id: string, authorityKey?: string): Promise<boolean> {
+  return clearSendRequestRecord(p, c, id, authorityKey)
+    && await flushDurableRecord(recordKey({ projectId: p, conversationId: c, clientRequestId: id, authorityKey }))
+    && await flushDurableRecord(legacyKey(p, c));
 }
 function find(p: string, c: string, id: string, authorityKey?: string): SendRequestRecord | undefined {
   return loadSendRequestRecords(p, c, authorityKey).find(r => r.clientRequestId === id);

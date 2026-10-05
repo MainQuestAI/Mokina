@@ -553,7 +553,7 @@ export interface DaemonStreamOptions {
   assistantMessageId?: string | null;
   clientRequestId?: string | null;
   /** POST /api/runs 受理（2xx）后回调：发送三态清 pending 记录的锚点。 */
-  onBeforeRunCreate?: () => boolean;
+  onBeforeRunCreate?: () => boolean | Promise<boolean>;
   runCreateTimeoutMs?: number;
   onRunCreateAccepted?: () => void;
   /** POST /api/runs 未受理回调。definitive=true 是 daemon 的明确拒绝
@@ -1133,7 +1133,7 @@ export async function streamViaDaemon({
     cancelSignal?.removeEventListener('abort', cancelCreate);
   };
   try {
-    if (signal?.aborted || cancelSignal?.aborted || onBeforeRunCreate?.() === false) {
+    if (signal?.aborted || cancelSignal?.aborted || await onBeforeRunCreate?.() === false) {
       onRunCreateFailed?.({ definitive: true });
       emitRunStatus('failed');
       handlers.onError(new Error('Run was not sent'));

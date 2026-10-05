@@ -64,7 +64,7 @@ export function readPendingMokinaSnapshot(projectId: string | null | undefined):
   }
 }
 
-export function writePendingMokinaSnapshot(value: PendingMokinaContextSnapshot): void {
+export async function writePendingMokinaSnapshot(value: PendingMokinaContextSnapshot): Promise<void> {
   if (typeof window === 'undefined') return;
   const key = pendingMokinaSnapshotKey(value.projectId);
   const encoded = JSON.stringify(value);
@@ -73,7 +73,7 @@ export function writePendingMokinaSnapshot(value: PendingMokinaContextSnapshot):
   } catch {
     // Quota/private mode: the panel still shows the frozen state this session.
   }
-  mirrorDurableRecord(key, encoded);
+  if (!await mirrorDurableRecord(key, encoded)) throw new Error('资料绑定未能安全保存，请重试。');
 }
 
 export function clearPendingMokinaSnapshot(projectId: string | null | undefined): void {

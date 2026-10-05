@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 /**
@@ -146,30 +146,6 @@ export class MokinaRecoveryStore {
     await rename(temporary, target);
   }
 
-  private async enforceRecordCap(): Promise<void> {
-    let names: string[];
-    try {
-      names = await readdir(this.rootDir);
-    } catch {
-      return;
-    }
-    const files = names.filter((name) => name.endsWith(".json"));
-    if (files.length <= MOKINA_RECOVERY_STORE_LIMITS.maxRecords) return;
-    const stats = await Promise.all(
-      files.map(async (name) => {
-        try {
-          const info = await stat(join(this.rootDir, name));
-          return { name, mtimeMs: info.mtimeMs };
-        } catch {
-          return { name, mtimeMs: 0 };
-        }
-      }),
-    );
-    stats.sort((a, b) => a.mtimeMs - b.mtimeMs);
-    const excess = stats.slice(0, files.length - MOKINA_RECOVERY_STORE_LIMITS.maxRecords);
-    await Promise.all(excess.map((entry) => rm(join(this.rootDir, entry.name), { force: true })));
-  }
-
   get(key: string): Promise<MokinaRecoveryStoreResult<MokinaRecoveryStoreGetOutcome>> {
     return this.enqueue(async () => {
       if (!isAllowedMokinaRecoveryKey(key)) return { ok: false as const, reason: "invalid-key" };
@@ -245,6 +221,13 @@ export class MokinaRecoveryStore {
         return { ok: true as const, result: "conflict" as const };
       }
 
+      if (stored.kind === 'missing') {
+        await mkdir(this.rootDir, { recursive: true });
+        const names = await readdir(this.rootDir);
+        if (names.filter(name => name.endsWith('.json')).length >= MOKINA_RECOVERY_STORE_LIMITS.maxRecords) {
+          return { ok: false as const, reason: 'record-capacity' };
+        }
+      }
       await this.writeStored({
         schemaVersion: MOKINA_RECOVERY_STORE_SCHEMA_VERSION,
         key,
@@ -252,7 +235,7 @@ export class MokinaRecoveryStore {
         updatedAt: new Date().toISOString(),
         value: record.value,
       });
-      await this.enforceRecordCap();
+
       return { ok: true as const, result: "stored" as const };
     });
   }

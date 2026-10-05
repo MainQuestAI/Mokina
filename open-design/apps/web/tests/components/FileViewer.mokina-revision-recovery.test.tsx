@@ -8,6 +8,7 @@ import type { ProjectFile } from '../../src/types';
 import { FileViewer } from '../../src/components/FileViewer';
 import {
   clearMokinaRevisionJobIfCurrent,
+  reconcileMokinaRevisionJob,
   parseMokinaRevisionJob,
   storeMokinaRevisionJobIfVacant,
   type MokinaRevisionJob,
@@ -34,6 +35,21 @@ function memoryStorage() {
 }
 
 describe('Mokina revision recovery record ownership', () => {
+  it('recovers an accepted run from the original artifact intent without a second POST', async () => {
+    const intent: MokinaRevisionJob = { ...job('ignored', 'lost'), runId: undefined,
+      clientRequestId: 'request-lost', conversationId: 'conversation-lost', revisionProjectId: 'revision-project' };
+    localStorage.setItem('mokina:revision:lost', JSON.stringify(intent));
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ runs: [{
+      id: 'accepted-run', clientRequestId: 'request-lost', projectId: 'revision-project', conversationId: 'conversation-lost', status: 'succeeded',
+    }] }), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    const recovered = await reconcileMokinaRevisionJob('mokina:revision:lost', intent);
+    expect(recovered.runId).toBe('accepted-run');
+    expect(parseMokinaRevisionJob(localStorage.getItem('mokina:revision:lost'))?.runId).toBe('accepted-run');
+    expect(fetchMock.mock.calls).toHaveLength(1);
+    localStorage.clear(); vi.unstubAllGlobals();
+  });
+
   it('does not let a second run overwrite a pending recovery record', () => {
     const storage = memoryStorage();
     const first = job('run-a', 'operation-a');

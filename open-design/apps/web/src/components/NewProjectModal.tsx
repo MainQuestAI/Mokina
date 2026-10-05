@@ -44,10 +44,12 @@ interface Props {
   onCreate: (input: CreateInput & { requestId?: string }) => Promise<boolean> | boolean | void;
   onImportClaudeDesign?: (
     file: File,
+    options?: { copy?: boolean },
   ) => Promise<ImportClaudeDesignOutcome | void> | ImportClaudeDesignOutcome | void;
   onImportFolder?: (baseDir: string) => Promise<void> | void;
   onImportMokinaRecovery?: (
     file: File,
+    options?: { copy?: boolean },
   ) => Promise<{ ok: boolean; message?: string } | void> | { ok: boolean; message?: string } | void;
   onImportFolderResponse?: (response: OpenDesignHostProjectImportSuccess) => Promise<void> | void;
   onOpenConnectorsTab?: () => void;

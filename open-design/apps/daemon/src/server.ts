@@ -168,6 +168,7 @@ import {
   resolveMokinaSnapshotForRun,
 } from './runtimes/chat-run-context.js';
 import {
+  stageMokinaSnapshotAssets,
   buildDeliveryReceipt,
   buildMokinaContextPromptBlock,
   writeMokinaDeliveryReceipt,
@@ -11191,8 +11192,18 @@ export async function startServer({
       return failRun(mokinaSnapshotBinding.code, mokinaSnapshotBinding.message);
     }
     if (mokinaSnapshotBinding.status === 'bound') {
+      let staged;
+      try {
+        staged = await stageMokinaSnapshotAssets(PROJECTS_DIR, projectRecord!.id, mokinaSnapshotBinding.snapshot);
+      } catch (error) {
+        const receipt = buildDeliveryReceipt(mokinaSnapshotBinding.snapshot, run.id, 'not-submitted');
+        receipt.reason = error instanceof Error ? error.message : '冻结素材暂存失败';
+        await writeMokinaDeliveryReceipt(PROJECTS_DIR, projectRecord!.id, receipt);
+        (run as { mokinaContext?: unknown }).mokinaContext = receipt;
+        return failRun('MOKINA_SNAPSHOT_UNAVAILABLE', receipt.reason);
+      }
       if (run.odNextTaskInputSnapshot == null) {
-        const block = buildMokinaContextPromptBlock(mokinaSnapshotBinding.snapshot);
+        const block = buildMokinaContextPromptBlock(mokinaSnapshotBinding.snapshot, staged);
         runContextPrompt = runContextPrompt.length > 0 ? `${runContextPrompt}\n\n${block}` : block;
       }
       const mokinaReceipt = buildDeliveryReceipt(
@@ -11200,10 +11211,11 @@ export async function startServer({
         run.id,
         'submitted',
         new Date().toISOString(),
+        staged,
       );
       await writeMokinaDeliveryReceipt(
         PROJECTS_DIR,
-        mokinaSnapshotBinding.snapshot.projectId,
+        projectRecord!.id,
         mokinaReceipt,
       );
       // Mirror onto the live run so statusBody/SSE expose it immediately.

@@ -2,6 +2,7 @@
 //
 // T07：资料与背景面板——三层信息、服务端冻结、预算与来源变化拒绝、未纳入原因。
 
+import { webcrypto } from 'node:crypto';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -51,6 +52,24 @@ function extraction(overrides: Record<string, unknown> = {}) {
 }
 
 describe('MokinaContextPanel', () => {
+  it('freezes a selected SVG as an asset with role and actual source digest', async () => {
+    vi.stubGlobal('crypto', webcrypto);
+    let body: { selections: Array<{ mode: string; role: string; expectedSourceDigest: string }> } | undefined;
+    vi.stubGlobal('fetch', vi.fn(async (_url, options) => {
+      if (!options?.method) return new Response('<svg>A</svg>');
+      body = JSON.parse(options.body);
+      return new Response(JSON.stringify({ snapshot: { items: [{ kind: 'asset', displayName: 'logo.svg' }] } }), { status: 201 });
+    }));
+    render(<MokinaContextPanel projectId="p1" files={[materialFile('logo.svg')]} />);
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(screen.getByRole('button', { name: 'Preview readable range' }));
+    const role = await screen.findByRole('combobox', { name: 'logo.svg 素材角色' });
+    fireEvent.change(role, { target: { value: 'logo' } });
+    fireEvent.click(screen.getByRole('button', { name: /Freeze as task snapshot/ }));
+    await waitFor(() => expect(body?.selections[0]).toMatchObject({ mode: 'asset', role: 'logo', expectedSourceDigest: expect.stringMatching(/^[a-f0-9]{64}$/) }));
+    expect(fetchProjectMaterialMock).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
     window.localStorage.clear();
     fetchProjectMaterialMock.mockReset();

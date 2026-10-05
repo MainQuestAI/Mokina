@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -139,33 +139,56 @@ async function writeJsonAtomic(target: string, value: unknown): Promise<void> {
   await rename(temporary, target);
 }
 
-async function readSnapshotFile(target: string): Promise<MokinaContextSnapshot | null> {
-  try {
-    const parsed = JSON.parse(await readFile(target, 'utf8')) as unknown;
-    if (parsed == null || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
-    const snapshot = parsed as MokinaContextSnapshot;
-    if (snapshot.schemaVersion !== 1 || typeof snapshot.snapshotId !== 'string') return null;
-    if (typeof snapshot.fingerprint !== 'string' || !Array.isArray(snapshot.items)) return null;
-    return snapshot;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
-    return null;
+export type RestoredMokinaContext = {
+  schema: 'mokina.restored-context.v1';
+  ownerProjectId: string;
+  originalSnapshot: MokinaContextSnapshot;
+};
+/** Validate the production snapshot, including its content identity, before any reader consumes it. */
+export function validateMokinaSnapshot(value: unknown): value is MokinaContextSnapshot {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const row = value as MokinaContextSnapshot;
+  const digest = (v: unknown) => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
+  const text = (v: unknown) => typeof v === 'string';
+  if (row.schemaVersion !== 1 || !isValidSnapshotId(row.snapshotId) || !text(row.projectId) || !row.projectId
+    || !text(row.createdAt) || !Number.isFinite(Date.parse(row.createdAt)) || !text(row.parserVersion)
+    || !digest(row.selectionFingerprint) || !digest(row.fingerprint) || !Array.isArray(row.items) || !Array.isArray(row.excluded)
+    || row.items.length > MOKINA_CONTEXT_BUDGETS.maxItems) return false;
+  const ids = new Set<string>();
+  for (const item of row.items) {
+    if (!item || !text(item.itemId) || !item.itemId || ids.has(item.itemId) || !text(item.displayName)
+      || !digest(item.sourceDigest) || !Array.isArray(item.limitations) || !item.limitations.every(text)
+      || !item.sourceRef || !['project-file', 'design-system', 'user-note'].includes(item.sourceRef.kind)) return false;
+    ids.add(item.itemId);
+    if (item.sourceRef.kind === 'project-file' && (!text(item.sourceRef.projectId) || !text(item.sourceRef.fileName))) return false;
+    if (item.sourceRef.kind === 'design-system' && !text(item.sourceRef.designSystemId)) return false;
+    if (item.kind === 'asset') {
+      if (!digest(item.blobId) || item.blobId !== item.sourceDigest || !text(item.mimeType)
+        || !Number.isSafeInteger(item.byteLength) || item.byteLength < 0
+        || !['logo', 'hero', 'supporting'].includes(item.role) || !text(item.usageNote)) return false;
+    } else {
+      if (!['material-excerpt', 'brand-rule', 'artifact-section', 'user-note'].includes(item.kind)
+        || !text(item.text) || !digest(item.textDigest) || sha256Hex(item.text) !== item.textDigest
+        || !Array.isArray(item.locators) || !item.locators.every(text)) return false;
+    }
   }
+  if (!row.excluded.every(item => item && text(item.displayName) && text(item.explanation)
+    && ['user-excluded', 'unreadable', 'unsupported', 'budget', 'permission', 'unavailable'].includes(item.reason))) return false;
+  const { fingerprint, ...body } = row;
+  return computeSnapshotFingerprint(body) === fingerprint;
 }
-
-/** Distinguishes "absent" from "unreadable" for GET semantics. */
+export function unwrapMokinaSnapshot(value: unknown): MokinaContextSnapshot | null {
+  const snapshot = value && typeof value === 'object' && 'originalSnapshot' in value
+    ? (value as RestoredMokinaContext).originalSnapshot : value;
+  return validateMokinaSnapshot(snapshot) ? snapshot : null;
+}
+async function readSnapshotFile(target: string): Promise<MokinaContextSnapshot | null> {
+  try { return unwrapMokinaSnapshot(JSON.parse(await readFile(target, 'utf8'))); } catch { return null; }
+}
 async function snapshotFileState(target: string): Promise<'missing' | 'unreadable' | 'ok' | 'found-unreadable'> {
   try {
-    const parsed = JSON.parse(await readFile(target, 'utf8')) as unknown;
-    if (parsed == null || typeof parsed !== 'object' || Array.isArray(parsed)) return 'found-unreadable';
-    const snapshot = parsed as MokinaContextSnapshot;
-    if (snapshot.schemaVersion !== 1 || typeof snapshot.snapshotId !== 'string') return 'found-unreadable';
-    if (typeof snapshot.fingerprint !== 'string' || !Array.isArray(snapshot.items)) return 'found-unreadable';
-    return 'ok';
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return 'missing';
-    return 'found-unreadable';
-  }
+    return unwrapMokinaSnapshot(JSON.parse(await readFile(target, 'utf8'))) ? 'ok' : 'found-unreadable';
+  } catch (error) { return (error as NodeJS.ErrnoException).code === 'ENOENT' ? 'missing' : 'found-unreadable'; }
 }
 
 type FrozenItemResult =
@@ -463,7 +486,12 @@ export async function readMokinaContextSnapshot(
     return errorResult(409, MOKINA_CONTEXT_ERROR_CODES.SNAPSHOT_UNAVAILABLE, '快照记录损坏，不能从当前资料重建。');
   }
   const snapshot = await readSnapshotFile(target);
-  if (!snapshot || snapshot.projectId !== projectId) {
+  let owner = snapshot?.projectId;
+  try {
+    const stored = JSON.parse(await readFile(target, 'utf8')) as RestoredMokinaContext;
+    if (stored.schema === 'mokina.restored-context.v1') owner = stored.ownerProjectId;
+  } catch { owner = undefined; }
+  if (!snapshot || owner !== projectId || snapshot.snapshotId !== snapshotId) {
     return errorResult(409, MOKINA_CONTEXT_ERROR_CODES.SNAPSHOT_UNAVAILABLE, '快照记录损坏或归属不符。');
   }
   const { fingerprint, ...rest } = snapshot;
@@ -473,14 +501,34 @@ export async function readMokinaContextSnapshot(
   return { ok: true, snapshot };
 }
 
+export type MokinaStagedAssets = Record<string, { path: string; digest: string }>;
+/** Both prompt implementations receive the same verified frozen bytes and explicit paths. */
+export async function stageMokinaSnapshotAssets(projectsRoot: string, ownerProjectId: string, snapshot: MokinaContextSnapshot): Promise<MokinaStagedAssets> {
+  const staged: MokinaStagedAssets = {};
+  for (const item of snapshot.items) {
+    if (item.kind !== 'asset') continue;
+    const bytes = await readFile(mokinaBlobPath(projectsRoot, ownerProjectId, item.blobId));
+    if (sha256Hex(bytes) !== item.blobId || bytes.length !== item.byteLength) throw new Error(`冻结素材校验失败：${item.displayName}`);
+    const ext = Object.entries(ASSET_MIME_TYPES).find(([, mime]) => mime === item.mimeType)?.[0] ?? '.bin';
+    const target = path.join(mokinaContextDir(projectsRoot, ownerProjectId), 'inputs', snapshot.snapshotId, `${item.blobId}${ext}`);
+    await mkdir(path.dirname(target), { recursive: true });
+    const temporary = `${target}.tmp-${randomUUID()}`;
+    await writeFile(temporary, bytes, { mode: 0o400 }); await rename(temporary, target);
+    staged[item.itemId] = { path: target, digest: item.blobId };
+  }
+  return staged;
+}
+
 /** Compose the delimited material block a run receives for a snapshot. */
-export function buildMokinaContextPromptBlock(snapshot: MokinaContextSnapshot): string {
+export function buildMokinaContextPromptBlock(snapshot: MokinaContextSnapshot, staged: MokinaStagedAssets = {}): string {
   const lines: string[] = [
     '<mokina-context>',
     `快照 ${snapshot.snapshotId}（frozen ${snapshot.createdAt}）`,
   ];
   for (const item of snapshot.items) {
     if (item.kind === 'asset') {
+      if (!staged[item.itemId]) throw new Error(`冻结素材未提供：${item.displayName}`);
+      lines.push(`- 实际文件路径：${JSON.stringify(staged[item.itemId]!.path)}，SHA256=${item.blobId}`);
       lines.push(`- 素材「${item.displayName}」(${item.mimeType}, ${item.byteLength} bytes, role=${item.role})：${item.usageNote || '用户选定素材'}`);
       continue;
     }
@@ -497,13 +545,14 @@ export function buildDeliveryReceipt(
   runId: string,
   status: MokinaContextDeliveryReceipt['status'],
   submittedAt?: string,
+  staged: MokinaStagedAssets = {},
 ): MokinaContextDeliveryReceipt {
   return {
     runId,
     snapshotId: snapshot.snapshotId,
     fingerprint: snapshot.fingerprint,
-    includedItemIds: snapshot.items.map((item) => item.itemId),
-    itemDelivery: snapshot.items.map((item) => ({
+    includedItemIds: snapshot.items.filter(item => status !== 'not-submitted' && (item.kind !== 'asset' || staged[item.itemId])).map(item => item.itemId),
+    itemDelivery: snapshot.items.filter(item => status !== 'not-submitted' && (item.kind !== 'asset' || staged[item.itemId])).map((item) => ({
       itemId: item.itemId,
       mode: item.kind === 'asset' ? ('staged-file' as const) : ('inline-text' as const),
     })),

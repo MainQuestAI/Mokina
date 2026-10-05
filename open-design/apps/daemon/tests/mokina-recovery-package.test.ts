@@ -13,6 +13,8 @@ import {
   parseRecoveryManifest,
 } from '../src/mokina/recovery-package.js';
 
+import { prepareMokinaContextSnapshot, readMokinaContextSnapshot } from '../src/mokina/context-store.js';
+
 function sha256(buffer: Buffer | string): string {
   return createHash('sha256').update(buffer).digest('hex');
 }
@@ -38,19 +40,14 @@ async function seedProject(root: string): Promise<void> {
     ],
     currentVersionId: 'v2',
   }), 'utf8');
-  // context snapshot + blob
-  const contextDir = path.join(projectRoot, '.mokina', 'contexts');
-  const blobDir = path.join(projectRoot, '.mokina', 'blobs');
-  await mkdir(contextDir, { recursive: true });
-  await mkdir(blobDir, { recursive: true });
   const blob = Buffer.from('<svg id="logo"/>');
-  const blobId = sha256(blob);
-  await writeFile(path.join(blobDir, blobId), blob);
-  await writeFile(path.join(contextDir, 'snap-1.json'), JSON.stringify({
-    schemaVersion: 1, snapshotId: 'snap-1', projectId: 'p1', createdAt: '2026-10-04T00:00:00.000Z',
-    parserVersion: 'mokina-material/1', selectionFingerprint: sha256('sel'),
-    items: [{ kind: 'asset', itemId: 'A1', blobId }], excluded: [], fingerprint: sha256('fp'),
-  }), 'utf8');
+  const prepared = await prepareMokinaContextSnapshot({ projectsRoot: root, projectId: 'p1',
+    source: { readProjectFile: async () => ({ bytes: blob }) },
+    request: { snapshotId: 'snap-1', excluded: [], selections: [{ itemId: 'A1', mode: 'asset',
+      sourceRef: { kind: 'project-file', projectId: 'p1', fileName: 'assets/logo.svg' },
+      expectedSourceDigest: sha256(blob), role: 'logo', usageNote: '品牌标识' }] } });
+  if (!prepared.ok) throw new Error(prepared.message);
+
 }
 
 async function registered(): Promise<{ readProject: (id: string) => null; registerProject: (row: { id: string; name: string; metadata: Record<string, unknown> }) => void }> {
@@ -67,6 +64,20 @@ describe('mokina recovery package', () => {
 
   afterEach(async () => {
     await rm(root, { force: true, recursive: true });
+  });
+
+  it('reads imported snapshots with the production reader after source deletion and re-exports them', async () => {
+    const original = await readMokinaContextSnapshot(root, 'p1', 'snap-1');
+    const built = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p1', projectName: 'source', exportId: 'export-read' });
+    const imported = await importProjectRecoveryPackage({ projectsRoot: root, archive: built.buffer,
+      operationId: 'op-read', targetProjectId: 'p2', ...await registered() });
+    expect(imported.ok).toBe(true);
+    await rm(path.join(root, 'p1'), { recursive: true });
+    const recovered = await readMokinaContextSnapshot(root, 'p2', 'snap-1');
+    expect(recovered.ok).toBe(true);
+    if (original.ok && recovered.ok) expect(recovered.snapshot.fingerprint).toBe(original.snapshot.fingerprint);
+    const second = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p2', projectName: 'restored', exportId: 'export-again' });
+    expect(second.manifest.contexts).toHaveLength(1);
   });
 
   it('validates recovery paths strictly', () => {
@@ -88,7 +99,7 @@ describe('mokina recovery package', () => {
     expect(built.manifest.versions).toHaveLength(2);
     expect(built.manifest.versions.find((version) => version.current)?.originalVersionId).toBe('v2');
     expect(built.manifest.contexts).toEqual([
-      { originalSnapshotId: 'snap-1', payloadPath: '.mokina/contexts/snap-1.json', fingerprint: sha256('fp') },
+      { originalSnapshotId: 'snap-1', payloadPath: '.mokina/contexts/snap-1.json', fingerprint: expect.stringMatching(/^[a-f0-9]{64}$/) },
     ]);
     const parsed = parseRecoveryManifest(JSON.parse(await (await JSZip.loadAsync(built.buffer)).file('mokina-recovery.json')!.async('text')));
     expect(parsed).not.toBeNull();
@@ -180,11 +191,27 @@ describe('mokina recovery package', () => {
 
     const same = await importProjectRecoveryPackage({
       projectsRoot: root, archive: built.buffer, operationId: 'op-first', targetProjectId: 'p1',
-      readProject: () => ({ metadata: { mokinaOperationId: 'op-first' } }),
-      registerProject: () => undefined,
+      readProject: () => ({ metadata: { mokinaOperationId: 'op-first', mokinaArchiveDigest: sha256(built.buffer), mokinaRecoveryManifest: built.manifest } }),
+      registerProject: () => { throw new Error('must not register twice'); },
     });
-    expect(same.ok).toBe(false);
-    if (!same.ok) expect(same.code).toBe('MOKINA_RECOVERY_ALREADY_IMPORTED');
+    expect(same.ok).toBe(true);
+    if (same.ok) expect(same.projectId).toBe('p1');
+  });
+
+  it('rejects tampered snapshot content even when ZIP and manifest checksums are updated', async () => {
+    const built = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p1', projectName: 'P', exportId: 'tamper' });
+    const zip = await JSZip.loadAsync(built.buffer);
+    const manifest = JSON.parse(await zip.file('mokina-recovery.json')!.async('text'));
+    const payloadPath = manifest.contexts[0].payloadPath;
+    const snapshot = JSON.parse(await zip.file(payloadPath)!.async('text'));
+    snapshot.items[0].usageNote = '篡改';
+    const bytes = Buffer.from(JSON.stringify(snapshot));
+    const record = manifest.files.find((file: { path: string }) => file.path === payloadPath);
+    record.sha256 = sha256(bytes); record.byteLength = bytes.length;
+    zip.file(payloadPath, bytes); zip.file('mokina-recovery.json', JSON.stringify(manifest));
+    const result = await importProjectRecoveryPackage({ projectsRoot: root, archive: await zip.generateAsync({ type: 'nodebuffer' }),
+      operationId: 'tamper', targetProjectId: 'p2', ...await registered() });
+    expect(result.ok).toBe(false);
   });
 
   it('rejects a manifest whose version graph is inconsistent', async () => {

@@ -154,9 +154,11 @@ interface Props {
   onCreate: (input: CreateInput & { requestId?: string }) => void;
   onImportMokinaRecovery?: (
     file: File,
+    options?: { copy?: boolean },
   ) => Promise<{ ok: boolean; message?: string } | void> | { ok: boolean; message?: string } | void;
   onImportClaudeDesign?: (
     file: File,
+    options?: { copy?: boolean },
   ) => Promise<ImportClaudeDesignOutcome | void> | ImportClaudeDesignOutcome | void;
   // Local-server flow: the daemon-owned native folder picker returns the
   // selected baseDir, then the renderer POSTs `/api/import/folder`.
@@ -301,6 +303,7 @@ export function NewProjectPanel({
   const analytics = useAnalytics();
   const importInputRef = useRef<HTMLInputElement | null>(null);
   const recoveryInputRef = useRef<HTMLInputElement | null>(null);
+  const [importRecoveryCopy, setImportRecoveryCopy] = useState(false);
   const [importingRecovery, setImportingRecovery] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importZipError, setImportZipError] = useState<
@@ -837,7 +840,7 @@ export function NewProjectPanel({
     setImportingRecovery(true);
     setImportZipError(null);
     try {
-      const result = await onImportMokinaRecovery(file);
+      const result = await onImportMokinaRecovery(file, { copy: importRecoveryCopy });
       if (result?.ok === false) {
         setImportZipError({
           message: result.message
@@ -1188,6 +1191,8 @@ export function NewProjectPanel({
         ) : null}
         {onImportMokinaRecovery ? (
           <div className="newproj-open-folder">
+            <label><input type="checkbox" checked={importRecoveryCopy} disabled={importingRecovery}
+              onChange={event => setImportRecoveryCopy(event.target.checked)} />再导入一份副本</label>
             <input
               ref={recoveryInputRef}
               type="file"

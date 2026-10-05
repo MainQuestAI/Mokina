@@ -204,11 +204,11 @@ import {
   type AmrAuthRetryContinuation,
 } from './runtime/amr-auth-retry-continuation';
 import { installFontRecovery } from './runtime/font-recovery';
+import { prepareMokinaImport, persistMokinaImport } from './runtime/mokina/recovery-import-journal';
 import { hydrateDurableRecoveryIntoLocalStorage } from './runtime/persistence/mokina-recovery-store';
 import {
   exportProjectRecoveryZip,
   importProjectRecoveryZip,
-  mintRecoveryIdentity,
   saveRecoveryFile,
 } from './runtime/mokina/recovery-package-client';
 import {
@@ -3688,16 +3688,21 @@ function AppInner() {
   );
 
   const handleImportMokinaRecovery = useCallback(
-    async (file: File): Promise<{ ok: boolean; message?: string }> => {
-      const { operationId, targetProjectId } = mintRecoveryIdentity();
+    async (file: File, options?: { copy?: boolean }): Promise<{ ok: boolean; message?: string }> => {
       try {
-        const result = await importProjectRecoveryZip(file, {
+        const workspace = resolvedWorkspaceContextForWrite(workspaceContextStateRef.current);
+        const journal = await prepareMokinaImport(file, workspace ? workspaceIdentityCacheKey(workspace) : 'local', options?.copy);
+        const { operationId, targetProjectId } = journal;
+        const result = journal.state === 'imported' ? { projectId: targetProjectId, warnings: [] } : await importProjectRecoveryZip(file, {
           operationId,
           targetProjectId,
           workspaceContext: resolvedWorkspaceContextForWrite(workspaceContextStateRef.current),
         });
+        await persistMokinaImport({ ...journal, state: 'imported' });
         rememberLocalProject(result.projectId);
-        await refreshProjectsStrict();
+        try { await refreshProjectsStrict(); } catch {
+          return { ok: false, message: '项目已导入，列表刷新失败；重试将打开同一项目。' };
+        }
         if (result.warnings.length > 0) {
           setRecoveryNotice({ message: result.warnings.join('；'), tone: 'success' });
         }

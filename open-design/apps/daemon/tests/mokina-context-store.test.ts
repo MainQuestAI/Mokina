@@ -5,6 +5,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
+  stageMokinaSnapshotAssets,
   buildDeliveryReceipt,
   buildMokinaContextPromptBlock,
   canonicalJson,
@@ -36,6 +37,22 @@ describe('Mokina context store', () => {
 
   afterEach(async () => {
     await rm(projectsRoot, { force: true, recursive: true });
+  });
+
+  it('provides frozen A bytes after its source is removed and never reports a missing asset as staged', async () => {
+    const bytes = Buffer.from('<svg>A</svg>');
+    const prepared = await prepareMokinaContextSnapshot({ projectsRoot, projectId: 'p1', source: makeSource({ 'logo.svg': bytes }),
+      request: { snapshotId: 'asset-proof', excluded: [], selections: [{ itemId: 'A', mode: 'asset',
+        sourceRef: { kind: 'project-file', projectId: 'p1', fileName: 'logo.svg' }, expectedSourceDigest: sha256Hex(bytes), role: 'logo', usageNote: '品牌' }] } });
+    if (!prepared.ok) throw new Error(prepared.message);
+    const staged = await stageMokinaSnapshotAssets(projectsRoot, 'p1', prepared.snapshot);
+    expect(await readFile(staged.A!.path)).toEqual(bytes);
+    expect(buildMokinaContextPromptBlock(prepared.snapshot, staged)).toContain(staged.A!.path);
+    expect(buildDeliveryReceipt(prepared.snapshot, 'run', 'submitted', 'now', staged).itemDelivery).toEqual([{ itemId: 'A', mode: 'staged-file' }]);
+    await rm(path.join(projectsRoot, 'p1', '.mokina', 'blobs', sha256Hex(bytes)));
+    await expect(stageMokinaSnapshotAssets(projectsRoot, 'p1', prepared.snapshot)).rejects.toThrow();
+    expect(buildDeliveryReceipt(prepared.snapshot, 'run', 'not-submitted').itemDelivery).toEqual([]);
+    expect(() => buildMokinaContextPromptBlock(prepared.snapshot)).toThrow();
   });
 
   it('canonicalizes JSON with sorted keys and stable arrays', () => {

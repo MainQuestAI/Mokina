@@ -374,7 +374,12 @@ export function createOdNextInitialPromptBundleService(
       throw new Error(`${mokinaSnapshotBinding.code}: ${mokinaSnapshotBinding.message}`);
     }
     if (mokinaSnapshotBinding.status === 'bound') {
-      const block = buildMokinaContextPromptBlock(mokinaSnapshotBinding.snapshot);
+      const staged = Object.fromEntries(mokinaSnapshotBinding.snapshot.items.filter(item => item.kind === 'asset').map(item => {
+        const index = loadedTaskInputs.files.findIndex(file => file.sha256 === (item as { blobId: string }).blobId);
+        if (index < 0) throw new Error(`冻结素材未进入任务输入：${item.displayName}`);
+        return [item.itemId, { path: loadedTaskInputs.attachmentReferences[index]!, digest: loadedTaskInputs.files[index]!.sha256 }];
+      }));
+      const block = buildMokinaContextPromptBlock(mokinaSnapshotBinding.snapshot, staged);
       runContextPrompt = runContextPrompt.length > 0 ? `${runContextPrompt}\n\n${block}` : block;
     }
     const runtimeToolPrompt = deps.createAgentRuntimeToolPrompt(

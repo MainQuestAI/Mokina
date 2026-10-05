@@ -14,6 +14,7 @@ import {
   type MokinaRecoveryManifestVersion,
 } from '@open-design/contracts';
 
+import { unwrapMokinaSnapshot, validateMokinaSnapshot } from './context-store.js';
 import { IGNORED_PROJECT_DIR_NAMES } from '../project-ignored-dirs.js';
 
 /**
@@ -191,8 +192,8 @@ async function collectContextFiles(projectRoot: string): Promise<{
       warnings.push(`快照记录损坏，已跳过：${name}`);
       continue;
     }
-    const record = parsed as { snapshotId?: unknown; fingerprint?: unknown; items?: unknown };
-    if (typeof record.snapshotId !== 'string' || typeof record.fingerprint !== 'string') {
+    const record = unwrapMokinaSnapshot(parsed);
+    if (!record) {
       warnings.push(`快照记录结构不符，已跳过：${name}`);
       continue;
     }
@@ -405,11 +406,12 @@ export async function importProjectRecoveryPackage(input: {
   if (!VERSION_ID_RE.test(input.operationId)) {
     return fail(400, 'BAD_REQUEST', 'operationId 不合法。');
   }
+  const archiveDigest = sha256(input.archive);
   const existing = input.readProject(input.targetProjectId);
   if (existing != null) {
     const owner = existing.metadata?.mokinaOperationId;
-    if (owner === input.operationId) {
-      return fail(409, 'MOKINA_RECOVERY_ALREADY_IMPORTED', '该恢复操作已创建过目标项目，请在项目列表中打开。');
+    if (owner === input.operationId && existing.metadata?.mokinaArchiveDigest === archiveDigest) {
+      return { ok: true, projectId: input.targetProjectId, warnings: [], manifest: existing.metadata.mokinaRecoveryManifest as MokinaRecoveryManifest };
     }
     return fail(409, 'MOKINA_OPERATION_CONFLICT', '目标项目 ID 已被其他项目占用。');
   }
@@ -498,21 +500,25 @@ export async function importProjectRecoveryPackage(input: {
     if (payload == null) {
       return fail(400, 'BAD_REQUEST', `快照内容未包含在恢复包中：${context.payloadPath}`);
     }
-    let inner: { fingerprint?: unknown };
+    let inner: unknown;
     try {
-      inner = JSON.parse(payload.toString('utf8')) as { fingerprint?: unknown };
+      inner = unwrapMokinaSnapshot(JSON.parse(payload.toString('utf8')));
     } catch {
       return fail(400, 'BAD_REQUEST', `快照内容不可解析：${context.payloadPath}`);
     }
-    if (inner.fingerprint !== context.fingerprint) {
+    if (!validateMokinaSnapshot(inner) || inner.fingerprint !== context.fingerprint || inner.snapshotId !== context.originalSnapshotId) {
       return fail(400, 'BAD_REQUEST', `快照指纹校验失败：${context.payloadPath}`);
     }
-    for (const item of (JSON.parse(payload.toString('utf8')) as { items?: unknown[] }).items ?? []) {
-      const blobId = (item as { blobId?: unknown }).blobId;
-      if (typeof blobId === 'string' && !byPath.has(`${MOKINA_RECOVERY_CONTEXT_ROOT}/blobs/${blobId}`)) {
-        return fail(400, 'BAD_REQUEST', `快照素材未包含在恢复包中：${blobId}`);
+    for (const item of inner.items) {
+      if (item.kind !== 'asset') continue;
+      const bytes = buffers.get(`${MOKINA_RECOVERY_CONTEXT_ROOT}/blobs/${item.blobId}`);
+      if (!bytes || sha256(bytes) !== item.blobId || bytes.length !== item.byteLength) {
+        return fail(400, 'BAD_REQUEST', `快照素材校验失败：${item.displayName}`);
       }
     }
+    buffers.set(context.payloadPath, Buffer.from(JSON.stringify({ schema: 'mokina.restored-context.v1',
+      ownerProjectId: input.targetProjectId, originalSnapshot: inner })));
+
   }
 
   const projectRoot = path.join(input.projectsRoot, input.targetProjectId);
@@ -555,7 +561,7 @@ export async function importProjectRecoveryPackage(input: {
     input.registerProject({
       id: input.targetProjectId,
       name,
-      metadata: { mokinaOperationId: input.operationId, recoveredFrom: manifest.sourceProject.id, recoveredAt: new Date().toISOString() },
+      metadata: { mokinaArchiveDigest: archiveDigest, mokinaRecoveryManifest: manifest, mokinaOperationId: input.operationId, recoveredFrom: manifest.sourceProject.id, recoveredAt: new Date().toISOString() },
     });
   } catch (error) {
     await rm(projectRoot, { force: true, recursive: true }).catch(() => undefined);

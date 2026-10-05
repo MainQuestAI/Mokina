@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { MOKINA_CONTEXT_BUDGETS, type ProjectMaterialExtraction } from '@open-design/contracts';
+import { MOKINA_CONTEXT_BUDGETS, type MokinaContextSelection, type ProjectMaterialExtraction } from '@open-design/contracts';
 
 import type { ProjectFile } from '../../types';
 import { randomUUID } from '../../utils/uuid';
@@ -19,6 +19,7 @@ import {
   type PendingMokinaContextSnapshot,
 } from '../../runtime/mokina/pending-context-snapshot';
 
+import { mokinaBytesDigest } from '../../runtime/mokina/digest';
 /**
  * "资料与背景"面板（T07）：把本项目的资料段落冻结成一次不可变上下文快照，
  * 交给本会话的下一轮发送引用（`context.mokinaSnapshotId`）。服务端重读原件、
@@ -26,6 +27,7 @@ import {
  * 本次任务；未纳入项必须给出原因，不用一个对勾混同"上传/解析/选入/已提交"。
  */
 
+const MOKINA_ASSET_EXTENSIONS = /\.(?:png|jpe?g|webp|gif|svg)$/i;
 const MOKINA_MATERIAL_EXTENSIONS = /\.(?:txt|md|csv|pdf|docx|xlsx|pptx)$/i;
 
 type ReadResult = {
@@ -40,11 +42,12 @@ export function MokinaContextPanel({ projectId, files }: {
   const t = useT();
   const { workspaceContext } = useProjectCollabContext();
   const candidates = useMemo(
-    () => files.filter((file) => file.name !== 'MOKINA-CONTINUATION.json' && MOKINA_MATERIAL_EXTENSIONS.test(file.name)),
+    () => files.filter((file) => file.name !== 'MOKINA-CONTINUATION.json' && (MOKINA_MATERIAL_EXTENSIONS.test(file.name) || MOKINA_ASSET_EXTENSIONS.test(file.name))),
     [files],
   );
   const [selected, setSelected] = useState<string[]>([]);
   const [results, setResults] = useState<ReadResult[] | null>(null);
+  const [assets, setAssets] = useState<Array<{ name: string; digest: string; role: 'logo' | 'hero' | 'supporting'; usageNote: string }>>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [frozen, setFrozen] = useState<PendingMokinaContextSnapshot | null>(
     () => readPendingMokinaSnapshot(projectId),
@@ -53,7 +56,7 @@ export function MokinaContextPanel({ projectId, files }: {
   const [error, setError] = useState<string | null>(null);
 
   const readableMaterials = useMemo(
-    () => (results ?? []).filter((item) => !item.unreadable).map((item) => item.material),
+    () => (results ?? []).filter((item) => !item.unreadable && !MOKINA_ASSET_EXTENSIONS.test(item.material.name)).map((item) => item.material),
     [results],
   );
   const groups = useMemo(() => groupMokinaMaterialSections(readableMaterials), [readableMaterials]);
@@ -71,7 +74,14 @@ export function MokinaContextPanel({ projectId, files }: {
     setError(null);
     try {
       const extracted = await Promise.all(
-        selected.map((name) => fetchProjectMaterial(projectId, name, workspaceContext)),
+        selected.map(async name => {
+          if (!MOKINA_ASSET_EXTENSIONS.test(name)) return fetchProjectMaterial(projectId, name, workspaceContext);
+          const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}/raw/${name.split('/').map(encodeURIComponent).join('/')}`,
+            workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
+          if (!response.ok) return { error: '素材读取失败' };
+          return { name, contentDigest: await mokinaBytesDigest(await response.arrayBuffer()), status: 'read' as const,
+            limitations: ['仅冻结素材字节；实际提供方式以运行回执为准。'], sections: [] };
+        }),
       );
       const next: ReadResult[] = extracted.map((result, index) => {
         const name = selected[index]!;
@@ -91,6 +101,8 @@ export function MokinaContextPanel({ projectId, files }: {
         return { material: result, unreadable: result.status === 'unreadable' };
       });
       setResults(next);
+      setAssets(next.filter(item => !item.unreadable && MOKINA_ASSET_EXTENSIONS.test(item.material.name)).map(item => ({
+        name: item.material.name, digest: item.material.contentDigest, role: 'supporting', usageNote: '' })));
       setSelectedGroups([]);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.readFailed'));
@@ -101,7 +113,7 @@ export function MokinaContextPanel({ projectId, files }: {
 
   async function freezeSnapshot() {
     if (busy || !results) return;
-    if (chosenGroups.length === 0) {
+    if (chosenGroups.length === 0 && assets.length === 0) {
       setError(t('mokina.contextPanel.selectGroup'));
       return;
     }
@@ -118,7 +130,7 @@ export function MokinaContextPanel({ projectId, files }: {
       }
       byFile.set(group.name, entry);
     }
-    const selections = [...byFile.entries()].map(([fileName, entry], index) => ({
+    const selections: MokinaContextSelection[] = [...byFile.entries()].map(([fileName, entry], index) => ({
       itemId: `S${index + 1}`,
       mode: 'groups' as const,
       textKind: 'material-excerpt' as const,
@@ -126,6 +138,9 @@ export function MokinaContextPanel({ projectId, files }: {
       expectedSourceDigest: entry.digest,
       groupIds: [...entry.groupIds],
     }));
+    selections.push(...assets.map((asset, index) => ({ itemId: `A${index + 1}`, mode: 'asset' as const,
+      sourceRef: { kind: 'project-file' as const, projectId, fileName: asset.name }, expectedSourceDigest: asset.digest,
+      role: asset.role, usageNote: asset.usageNote })));
     if (selections.length === 0) {
       setError(t('mokina.contextPanel.noStableGroup'));
       return;
@@ -221,7 +236,7 @@ export function MokinaContextPanel({ projectId, files }: {
                 setSelected((current) => (event.target.checked
                   ? [...current, file.name]
                   : current.filter((name) => name !== file.name)));
-                setResults(null);
+                setResults(null); setAssets([]);
                 setSelectedGroups([]);
               }}
             />
@@ -253,6 +268,15 @@ export function MokinaContextPanel({ projectId, files }: {
           <p role="status">
             {t('mokina.contextPanel.budgetStatus', { chars: chosenChars.toLocaleString(), budget: budget.toLocaleString() })}
           </p>
+          {assets.map(asset => <div key={asset.name}>
+            <label>{asset.name} · 素材角色<select aria-label={`${asset.name} 素材角色`} value={asset.role}
+              onChange={event => setAssets(current => current.map(item => item.name === asset.name
+                ? { ...item, role: event.target.value as typeof asset.role } : item))}>
+              <option value="logo">品牌标识</option><option value="hero">主视觉</option><option value="supporting">辅助素材</option>
+            </select></label>
+            <input aria-label={`${asset.name} 使用说明`} value={asset.usageNote} placeholder="使用说明"
+              onChange={event => setAssets(current => current.map(item => item.name === asset.name ? { ...item, usageNote: event.target.value } : item))} />
+          </div>)}
           {groups.map((group) => (
             <label key={group.key}>
               <input
@@ -280,10 +304,10 @@ export function MokinaContextPanel({ projectId, files }: {
         </button>
         <button
           type="button"
-          disabled={busy || !results || chosenGroups.length === 0}
+          disabled={busy || !results || (chosenGroups.length === 0 && assets.length === 0)}
           onClick={() => void freezeSnapshot()}
         >
-          {busy ? t('mokina.contextPanel.busy') : t('mokina.contextPanel.freezeAction', { count: chosenGroups.length })}
+          {busy ? t('mokina.contextPanel.busy') : t('mokina.contextPanel.freezeAction', { count: chosenGroups.length + assets.length })}
         </button>
       </div>
     </details>

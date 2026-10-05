@@ -1,3 +1,5 @@
+import { stageMokinaSnapshotAssets } from '../mokina/context-store.js';
+import { resolveMokinaSnapshotForRun } from '../runtimes/chat-run-context.js';
 import type { Express, Request, Response } from 'express';
 import type Database from 'better-sqlite3';
 import fs from 'node:fs';
@@ -2857,7 +2859,13 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
           route: 'full_plan',
           mode: 'unresolved',
         });
+        const mokinaBinding = await resolveMokinaSnapshotForRun({ projectsRoot: PROJECTS_DIR, projectId: meta.projectId, context: contextValue });
+        if (mokinaBinding.status === 'error') throw new Error(mokinaBinding.message);
+        const frozenAssets = mokinaBinding.status === 'bound'
+          ? await stageMokinaSnapshotAssets(PROJECTS_DIR, meta.projectId!, mokinaBinding.snapshot) : {};
         createdTaskInputSnapshot = createOdNextTaskInputSnapshot({
+          frozenAttachments: Object.values(frozenAssets).map(asset => ({ sourcePath: asset.path,
+            allowedRoot: path.join(PROJECTS_DIR, meta.projectId!, '.mokina', 'inputs') })),
           snapshotsRoot: taskInputSnapshotsRoot,
           taskExecutionId,
           taskConfiguration,

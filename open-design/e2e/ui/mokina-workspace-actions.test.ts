@@ -102,7 +102,7 @@ test('[P1] Mokina continuation creates an editable fixed-excerpt draft without a
   const panel = page.locator('.artifact-version-panel');
   await panel.getByRole('checkbox', { name: /strategy：/ }).check();
   await panel.getByLabel('接续背景').fill('只选策略，制作门店传播内容。');
-  await panel.getByRole('button', { name: '创建接续项目（不发送）', exact: true }).click();
+  await panel.getByRole('button', { name: 'Create continuation project（不发送）', exact: true }).click();
   await expect(page).not.toHaveURL(new RegExp(source.projectId));
   const input = page.getByTestId('chat-composer-input');
   await expect(input).toContainText('【strategy】', { timeout: T.long });

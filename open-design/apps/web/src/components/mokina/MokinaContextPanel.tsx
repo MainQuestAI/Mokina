@@ -338,7 +338,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
             setBusy(true);
             try {
               if (await clearPendingMokinaSnapshot(projectId)) setFrozen(null);
-              else setError('资料绑定清理失败，请重试；原绑定仍然保留。');
+              else setError(t('mokina.contextPanel.clearFailed'));
             } finally { setBusy(false); }
           }}>
             {t('mokina.contextPanel.clearSnapshot')}

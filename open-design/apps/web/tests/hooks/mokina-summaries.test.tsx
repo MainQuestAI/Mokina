@@ -3,8 +3,9 @@ import { StrictMode } from 'react';
 import type { WorkspaceCollabContext } from '@open-design/contracts';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { useMokinaProjectSummary, resetMokinaEntrySummaryStore, evictMokinaEntrySummary, enqueueMokinaMetadataRead } from '../../src/hooks/useMokinaProjectSummaries';
-import { resolveMokinaProjectEntry } from '../../src/artifacts/mokina-project-entry';
+import { useMokinaProjectSummary, resetMokinaEntrySummaryStore, evictMokinaEntrySummary, enqueueMokinaMetadataRead, mokinaArtifactLineFromRecord, type MokinaEntrySummaryRecord } from '../../src/hooks/useMokinaProjectSummaries';
+import { resolveMokinaProjectEntry, type MokinaProjectSummary } from '../../src/artifacts/mokina-project-entry';
+import { en } from '../../src/i18n/locales/en';
 
 const mocks = vi.hoisted(() => ({ files: vi.fn(), versions: vi.fn() }));
 vi.mock('../../src/providers/registry', () => ({ fetchProjectFiles: mocks.files, fetchProjectFileVersions: mocks.versions }));
@@ -104,4 +105,41 @@ it('reset settles queued and active metadata promises, aborts physical reads and
   expect(signals).toHaveLength(2); // A cancelled queued task never dispatches.
   expect(signals.every(signal => signal.aborted)).toBe(true);
   expect(await enqueueMokinaMetadataRead(async () => 'fresh', external.signal, true)).toBe('fresh');
+});
+
+const translate = (key: string, vars?: Record<string, string | number>): string => {
+  const raw = en[key as keyof typeof en] ?? key;
+  if (!vars) return raw;
+  return raw.replace(/\{(\w+)\}/g, (_, name: string) => {
+    const value = vars[name];
+    return value == null ? `{${name}}` : String(value);
+  });
+};
+const summaryRecord = (summary: MokinaProjectSummary): MokinaEntrySummaryRecord => ({
+  status: 'ok', completeness: 'complete', summary, entries: [],
+});
+
+it('artifact row appends a non-interruptive hint while candidates await adoption', () => {
+  const line = mokinaArtifactLineFromRecord(summaryRecord({
+    state: 'artifacts', formalCount: 2,
+    primary: { entry: 'index.html', versionId: 'v2', versionNumber: 2, adoptedAt: null, createdAt: 2, adoptionOperationId: null },
+    candidateCount: 3, legacy: null,
+  }), translate);
+  expect(line).toEqual({ text: 'index.html · v2 +1 · 3 candidate(s) awaiting adoption', state: 'artifacts' });
+});
+
+it('artifact row omits the candidate hint when nothing awaits adoption', () => {
+  const line = mokinaArtifactLineFromRecord(summaryRecord({
+    state: 'artifacts', formalCount: 1,
+    primary: { entry: 'index.html', versionId: 'v1', versionNumber: 1, adoptedAt: null, createdAt: 1, adoptionOperationId: null },
+    candidateCount: 0, legacy: null,
+  }), translate);
+  expect(line).toEqual({ text: 'index.html · v1', state: 'artifacts' });
+});
+
+it('empty row still surfaces awaiting candidates without claiming a formal artifact', () => {
+  const line = mokinaArtifactLineFromRecord(summaryRecord({
+    state: 'empty', formalCount: 0, primary: null, candidateCount: 2, legacy: null,
+  }), translate);
+  expect(line).toEqual({ text: 'No formal artifacts yet · 2 candidate(s) awaiting adoption', state: 'empty' });
 });

@@ -178,23 +178,23 @@ describe('Mokina revision recovery UI', () => {
       ? Response.json({ error: { code: 'CONVERSATION_NOT_FOUND', message: 'refused before acceptance', details: { runAcceptance: 'not-accepted' } } }, { status: 404 })
       : originalFetch(input, init));
     const panel = await openRecoveryPanel();
-    fireEvent.change(within(panel).getByRole('combobox', { name: '要修订的章节' }), { target: { value: 'strategy' } });
-    fireEvent.change(within(panel).getByRole('textbox', { name: '章节修改要求' }), { target: { value: '保留我的拒绝后要求' } });
-    await waitFor(() => expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(false));
-    fireEvent.click(within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }));
+    fireEvent.change(within(panel).getByRole('combobox', { name: 'Section to revise' }), { target: { value: 'strategy' } });
+    fireEvent.change(within(panel).getByRole('textbox', { name: 'Section change request' }), { target: { value: '保留我的拒绝后要求' } });
+    await waitFor(() => expect((within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }));
     await waitFor(() => expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toMatchObject({ submissionState: 'rejected', prompt: '保留我的拒绝后要求' }));
     const posts = fetchMock.mock.calls.filter(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST');
     expect(posts).toHaveLength(1);
     const firstRequest = JSON.parse(String(posts[0]![1]?.body)).clientRequestId;
-    fireEvent.click(within(panel).getByRole('button', { name: '结束本次未受理修订' }));
+    fireEvent.click(within(panel).getByRole('button', { name: 'End this unaccepted revision' }));
     await waitFor(() => expect(localStorage.getItem(revisionKey)).toBeNull());
     expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith('/api/runs?') || String(url).endsWith('/cancel'))).toBe(false);
     cleanup(); await openRecoveryPanel();
-    expect((screen.getByRole('textbox', { name: '章节修改要求' }) as HTMLTextAreaElement).value).toBe('保留我的拒绝后要求');
-    expect((screen.getByRole('combobox', { name: '要修订的章节' }) as HTMLSelectElement).value).toBe('strategy');
+    expect((screen.getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).value).toBe('保留我的拒绝后要求');
+    expect((screen.getByRole('combobox', { name: 'Section to revise' }) as HTMLSelectElement).value).toBe('strategy');
     expect(fetchMock.mock.calls.filter(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toHaveLength(1);
-    await waitFor(() => expect((screen.getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(false));
-    fireEvent.click(screen.getByRole('button', { name: '生成候选（不改当前稿）' }));
+    await waitFor(() => expect((screen.getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(screen.getByRole('button', { name: 'Generate candidate (current draft unchanged)' }));
     await waitFor(() => expect(fetchMock.mock.calls.filter(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toHaveLength(2));
     const second = fetchMock.mock.calls.filter(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')[1]!;
     expect(JSON.parse(String(second[1]?.body)).clientRequestId).not.toBe(firstRequest);
@@ -208,14 +208,14 @@ describe('Mokina revision recovery UI', () => {
       : originalFetch(input, init));
     vi.spyOn(recoveryStore, 'mirrorDurableRecord').mockImplementation(async (key, raw) => !(key === revisionKey && JSON.parse(raw).submissionState === 'rejected'));
     const panel = await openRecoveryPanel();
-    fireEvent.change(within(panel).getByRole('combobox', { name: '要修订的章节' }), { target: { value: 'strategy' } });
-    fireEvent.change(within(panel).getByRole('textbox', { name: '章节修改要求' }), { target: { value: '保存失败仍保留' } });
-    await waitFor(() => expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(false));
-    fireEvent.click(within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }));
+    fireEvent.change(within(panel).getByRole('combobox', { name: 'Section to revise' }), { target: { value: 'strategy' } });
+    fireEvent.change(within(panel).getByRole('textbox', { name: 'Section change request' }), { target: { value: '保存失败仍保留' } });
+    await waitFor(() => expect((within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }));
     await waitFor(() => expect(screen.getByText(/拒绝身份保存失败/)).toBeTruthy());
     expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toMatchObject({ submissionState: 'unknown', prompt: '保存失败仍保留' });
-    expect(within(panel).getByRole('button', { name: '恢复上次修订候选' })).toBeTruthy();
-    expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(within(panel).getByRole('button', { name: 'Resume last revision candidate' })).toBeTruthy();
+    expect((within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it('RR3 refresh preserves rejected requirements and cleanup failure keeps the old intent blocking a new attempt', async () => {
@@ -225,12 +225,12 @@ describe('Mokina revision recovery UI', () => {
     const { fetchMock } = setupRecoveryFetch('running');
     vi.spyOn(recoveryStore, 'removeDurableRecord').mockResolvedValue(false);
     const panel = await openRecoveryPanel();
-    const end = await within(panel).findByRole('button', { name: '结束本次未受理修订' });
-    expect((within(panel).getByRole('textbox', { name: '章节修改要求' }) as HTMLTextAreaElement).value).toBe('刷新后仍然保留');
+    const end = await within(panel).findByRole('button', { name: 'End this unaccepted revision' });
+    expect((within(panel).getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).value).toBe('刷新后仍然保留');
     fireEvent.click(end);
     await waitFor(() => expect(screen.getByText(/记录清理失败/)).toBeTruthy());
     expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toMatchObject({ operationId: 'rejected', submissionState: 'rejected' });
-    expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement).disabled).toBe(true);
     expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith('/api/runs'))).toBe(false);
   });
 
@@ -239,48 +239,48 @@ describe('Mokina revision recovery UI', () => {
     let finish!: (ok: boolean) => void;
     vi.spyOn(recoveryStore, 'mirrorDurableRecord').mockImplementation(() => new Promise(resolve => { finish = resolve; }));
     const panel = await openRecoveryPanel();
-    fireEvent.click(within(panel).getByRole('button', { name: '继续制作' }));
-    const continuation = screen.getByRole('region', { name: '选择性接续' });
+    fireEvent.click(within(panel).getByRole('button', { name: 'Continue' }));
+    const continuation = screen.getByRole('region', { name: 'Selective continuation' });
     const selected = within(continuation).getByRole('checkbox') as HTMLInputElement;
     fireEvent.click(selected);
-    fireEvent.change(within(continuation).getByRole('textbox', { name: '接续背景' }), { target: { value: '保留我的背景' } });
-    fireEvent.click(within(continuation).getByRole('button', { name: '创建接续项目（不发送）' }));
+    fireEvent.change(within(continuation).getByRole('textbox', { name: 'Continuation background' }), { target: { value: '保留我的背景' } });
+    fireEvent.click(within(continuation).getByRole('button', { name: 'Create continuation project (no send)' }));
     await waitFor(() => expect(finish).toBeTypeOf('function'));
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);
     await act(async () => finish(false));
     await waitFor(() => expect(screen.getByText(/接续身份未能安全保存/)).toBeTruthy());
     expect(selected.checked).toBe(true);
-    expect((within(continuation).getByRole('textbox', { name: '接续背景' }) as HTMLTextAreaElement).value).toBe('保留我的背景');
+    expect((within(continuation).getByRole('textbox', { name: 'Continuation background' }) as HTMLTextAreaElement).value).toBe('保留我的背景');
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);
   });
 
   it('opens chapter revision directly and moves focus without starting a run', async () => {
     const { fetchMock } = setupRecoveryFetch('running');
     render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} />);
-    fireEvent.click(screen.getByRole('button', { name: '修订章节' }));
-    const select = await screen.findByRole('combobox', { name: '要修订的章节' });
+    fireEvent.click(screen.getByRole('button', { name: 'Revise section' }));
+    const select = await screen.findByRole('combobox', { name: 'Section to revise' });
     await waitFor(() => expect(document.activeElement).toBe(select));
     const panel = screen.getByRole('dialog', { name: 'Versions' });
     fireEvent.change(select, { target: { value: 'strategy' } });
-    const prompt = screen.getByRole('textbox', { name: '章节修改要求' });
+    const prompt = screen.getByRole('textbox', { name: 'Section change request' });
     fireEvent.change(prompt, { target: { value: '保留尚未发送的修订要求' } });
-    expect(screen.getByText('所选：v1 · 当前稿')).toBeTruthy();
+    expect(screen.getByText('Selected: v1 · Current draft')).toBeTruthy();
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toBe(false);
     // This component test checks state retention. Full-workspace Playwright
     // coverage separately proves these panel-owned controls are actionable.
-    const continueButton = within(panel).getByRole('button', { name: '继续制作' });
+    const continueButton = within(panel).getByRole('button', { name: 'Continue' });
     fireEvent.pointerDown(continueButton);
     expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(panel);
     fireEvent.pointerUp(continueButton);
     fireEvent.click(continueButton);
-    const continuation = screen.getByRole('region', { name: '选择性接续' });
+    const continuation = screen.getByRole('region', { name: 'Selective continuation' });
     await waitFor(() => expect(document.activeElement).toBe(within(continuation).getByRole('checkbox')));
-    expect((within(continuation).getByRole('button', { name: '创建接续项目（不发送）' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((within(continuation).getByRole('button', { name: 'Create continuation project (no send)' }) as HTMLButtonElement).disabled).toBe(true);
     const chapter = within(continuation).getByRole('checkbox') as HTMLInputElement;
     fireEvent.click(chapter);
-    const background = within(continuation).getByRole('textbox', { name: '接续背景' }) as HTMLTextAreaElement;
+    const background = within(continuation).getByRole('textbox', { name: 'Continuation background' }) as HTMLTextAreaElement;
     fireEvent.change(background, { target: { value: '保留尚未发送的接续背景' } });
-    const revisionButton = within(panel).getByRole('button', { name: '修订章节' });
+    const revisionButton = within(panel).getByRole('button', { name: 'Revise section' });
     fireEvent.pointerDown(revisionButton);
     expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(panel);
     fireEvent.pointerUp(revisionButton);
@@ -292,7 +292,7 @@ describe('Mokina revision recovery UI', () => {
     await waitFor(() => expect(document.activeElement).toBe(chapter));
     expect(chapter.checked).toBe(true);
     expect(background.value).toBe('保留尚未发送的接续背景');
-    expect(screen.getByText('所选：v1 · 当前稿')).toBeTruthy();
+    expect(screen.getByText('Selected: v1 · Current draft')).toBeTruthy();
     fireEvent.pointerDown(document.body);
     expect(screen.queryByRole('dialog', { name: 'Versions' })).toBeNull();
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toBe(false);
@@ -302,19 +302,19 @@ describe('Mokina revision recovery UI', () => {
   it('explains missing chapters instead of silently opening an unrelated version panel', async () => {
     setupRecoveryFetch('running');
     render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml="<html><body>普通成果</body></html>" />);
-    fireEvent.click(screen.getByRole('button', { name: '继续制作' }));
-    const message = await screen.findByText('此版本没有可选择的章节，暂时不能修订或接续。');
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    const message = await screen.findByText('This version has no selectable sections, so it cannot be revised or continued yet.');
     await waitFor(() => expect(document.activeElement).toBe(message));
-    expect(screen.queryByRole('button', { name: '创建接续项目（不发送）' })).toBeNull();
-    fireEvent.click(within(screen.getByRole('dialog', { name: 'Versions' })).getByRole('button', { name: '修订章节' }));
+    expect(screen.queryByRole('button', { name: 'Create continuation project (no send)' })).toBeNull();
+    fireEvent.click(within(screen.getByRole('dialog', { name: 'Versions' })).getByRole('button', { name: 'Revise section' }));
     await waitFor(() => expect(document.activeElement).toBe(message));
-    expect(screen.queryByRole('button', { name: '生成候选（不改当前稿）' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Generate candidate (current draft unchanged)' })).toBeNull();
   });
 
   it('keeps read-only action entries disabled', () => {
     const { fetchMock } = setupRecoveryFetch('running');
     render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} viewerOnly />);
-    for (const name of ['修订章节', '继续制作']) {
+    for (const name of ['Revise section', 'Continue']) {
       const button = screen.getByRole('button', { name }) as HTMLButtonElement;
       expect(button.disabled).toBe(true);
       fireEvent.click(button);
@@ -326,9 +326,9 @@ describe('Mokina revision recovery UI', () => {
   it('keeps both panel actions available to explain an empty version history', async () => {
     const { fetchMock } = setupRecoveryFetch('running', undefined, undefined, { versions: [] });
     const panel = await openRecoveryPanel();
-    for (const name of ['修订章节', '继续制作']) {
+    for (const name of ['Revise section', 'Continue']) {
       fireEvent.click(within(panel).getByRole('button', { name }));
-      const status = await within(panel).findByText('尚无已保存版本；请先完成并保存方案。');
+      const status = await within(panel).findByText('No saved versions yet; finish and save a draft first.');
       await waitFor(() => expect(document.activeElement).toBe(status));
     }
     expect(fetchMock.mock.calls.some(([url, init]) =>
@@ -338,14 +338,14 @@ describe('Mokina revision recovery UI', () => {
   it('disables the mounted panel actions when the viewer becomes read-only', async () => {
     const { fetchMock } = setupRecoveryFetch('running');
     const view = render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} />);
-    fireEvent.click(screen.getByRole('button', { name: '修订章节' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Revise section' }));
     const panel = await screen.findByRole('dialog', { name: 'Versions' });
-    await within(panel).findByRole('combobox', { name: '要修订的章节' });
+    await within(panel).findByRole('combobox', { name: 'Section to revise' });
     view.rerender(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} viewerOnly />);
-    for (const name of ['修订章节', '继续制作']) {
+    for (const name of ['Revise section', 'Continue']) {
       expect((within(panel).getByRole('button', { name }) as HTMLButtonElement).disabled).toBe(true);
     }
-    expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement).disabled).toBe(true);
     expect(fetchMock.mock.calls.some(([url, init]) =>
       (String(url) === '/api/projects' || String(url) === '/api/runs') && init?.method === 'POST')).toBe(false);
   });
@@ -358,22 +358,22 @@ describe('Mokina revision recovery UI', () => {
       versions: [{ ...currentVersion, version: 2 }, historical], historyContent,
     });
     const panel = await openRecoveryPanel();
-    await within(panel).findByRole('combobox', { name: '要修订的章节' });
+    await within(panel).findByRole('combobox', { name: 'Section to revise' });
     fireEvent.click(within(panel).getByRole('option', { name: /早期方案/ }));
-    fireEvent.click(within(panel).getByRole('button', { name: '修订章节' }));
-    await within(panel).findByText('正在读取所选版本；读取失败时请重新选择版本。');
-    fireEvent.click(within(panel).getByRole('button', { name: '继续制作' }));
+    fireEvent.click(within(panel).getByRole('button', { name: 'Revise section' }));
+    await within(panel).findByText('Reading the selected version; reselect a version if the read fails.');
+    fireEvent.click(within(panel).getByRole('button', { name: 'Continue' }));
     await act(async () => {
       resolveHistory(new Response(JSON.stringify({ version: historical,
         content: '<section id="history" data-mokina-id="history">早期结论</section>' }), { status: 200 }));
     });
     const checkbox = await within(panel).findByRole('checkbox', { name: 'history：早期结论' });
     await waitFor(() => expect(document.activeElement).toBe(checkbox));
-    expect(within(panel).getByText('所选：v1 · 历史稿')).toBeTruthy();
-    fireEvent.click(within(panel).getByRole('button', { name: '修订章节' }));
-    const status = await within(panel).findByText('章节修订仅支持当前稿；请先选择当前版本。');
+    expect(within(panel).getByText('Selected: v1 · History')).toBeTruthy();
+    fireEvent.click(within(panel).getByRole('button', { name: 'Revise section' }));
+    const status = await within(panel).findByText('Section revision only supports the current draft; select the current version first.');
     await waitFor(() => expect(document.activeElement).toBe(status));
-    expect(within(panel).queryByRole('combobox', { name: '要修订的章节' })).toBeNull();
+    expect(within(panel).queryByRole('combobox', { name: 'Section to revise' })).toBeNull();
     expect(fetchMock.mock.calls.some(([url, init]) =>
       (String(url) === '/api/projects' || String(url) === '/api/runs') && init?.method === 'POST')).toBe(false);
   });
@@ -383,14 +383,14 @@ describe('Mokina revision recovery UI', () => {
     localStorage.setItem(revisionKey, JSON.stringify(saved));
     const { fetchMock } = setupRecoveryFetch('running');
     const dialog = await openRecoveryPanel();
-    const generate = within(dialog).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement;
+    const generate = within(dialog).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement;
     expect(generate.disabled).toBe(true);
-    fireEvent.click(within(dialog).getByRole('button', { name: '取消本次修订' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Cancel this revision' }));
     await waitFor(() => expect(within(dialog).getByText('取消请求失败；请检查运行状态后重试。')).toBeTruthy());
     expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toEqual(saved);
     expect(fetchMock.mock.calls.some(([url]) => String(url) === '/api/runs/run-a/cancel')).toBe(true);
     expect(generate.disabled).toBe(true);
-    expect(within(dialog).queryByRole('button', { name: '放弃本次结果' })).toBeNull();
+    expect(within(dialog).queryByRole('button', { name: 'Discard this result' })).toBeNull();
   });
 
   it('preserves a succeeded job after candidate save fails and retries with one operation ID', async () => {
@@ -398,11 +398,11 @@ describe('Mokina revision recovery UI', () => {
     localStorage.setItem(revisionKey, JSON.stringify(saved));
     const { candidateOperations } = setupRecoveryFetch('succeeded');
     const dialog = await openRecoveryPanel();
-    const resume = await within(dialog).findByRole('button', { name: '保存已完成运行的候选' });
+    const resume = await within(dialog).findByRole('button', { name: 'Save candidate from finished run' });
     fireEvent.click(resume);
     await waitFor(() => expect(within(dialog).getByText('保存失败')).toBeTruthy(), { timeout: 5000 });
     expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toEqual(saved);
-    fireEvent.click(within(dialog).getByRole('button', { name: '保存已完成运行的候选' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Save candidate from finished run' }));
     await waitFor(() => expect(localStorage.getItem(revisionKey)).toBeNull(), { timeout: 5000 });
     expect(candidateOperations).toEqual(['operation-a', 'operation-a']);
   });
@@ -415,25 +415,25 @@ describe('Mokina revision recovery UI', () => {
     localStorage.setItem(revisionKey, JSON.stringify(saved));
     const { fetchMock } = setupRecoveryFetch('succeeded', failure);
     let dialog = await openRecoveryPanel();
-    fireEvent.click(await within(dialog).findByRole('button', { name: '保存已完成运行的候选' }));
+    fireEvent.click(await within(dialog).findByRole('button', { name: 'Save candidate from finished run' }));
     await waitFor(() => expect(within(dialog).getByText(message)).toBeTruthy(), { timeout: 5000 });
     expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toEqual(saved);
     cleanup();
     dialog = await openRecoveryPanel();
-    await within(dialog).findByRole('button', { name: '保存已完成运行的候选' });
+    await within(dialog).findByRole('button', { name: 'Save candidate from finished run' });
 
-    fireEvent.click(within(dialog).getByRole('button', { name: '放弃本次结果' }));
-    fireEvent.click(within(dialog).getByRole('button', { name: '返回继续保存' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Discard this result' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Back to saving' }));
     expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toEqual(saved);
 
-    fireEvent.click(within(dialog).getByRole('button', { name: '放弃本次结果' }));
-    fireEvent.click(within(dialog).getByRole('button', { name: '确认放弃结果' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Discard this result' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Confirm discard' }));
     await waitFor(() => expect(localStorage.getItem(revisionKey)).toBeNull());
     expect(fetchMock.mock.calls.some(([url]) => String(url) === '/api/runs/run-a/cancel')).toBe(false);
 
-    fireEvent.change(within(dialog).getByRole('combobox', { name: '要修订的章节' }), { target: { value: 'strategy' } });
-    fireEvent.change(within(dialog).getByRole('textbox', { name: '章节修改要求' }), { target: { value: '调整渠道' } });
-    fireEvent.click(within(dialog).getByRole('button', { name: '生成候选（不改当前稿）' }));
+    fireEvent.change(within(dialog).getByRole('combobox', { name: 'Section to revise' }), { target: { value: 'strategy' } });
+    fireEvent.change(within(dialog).getByRole('textbox', { name: 'Section change request' }), { target: { value: '调整渠道' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }));
     await waitFor(() => expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))?.runId).toBe('run-b'));
   });
 
@@ -445,13 +445,13 @@ describe('Mokina revision recovery UI', () => {
     const secondStatus = new Promise<Response>(resolve => { releaseStatus = resolve; });
     const { fetchMock } = setupRecoveryFetch('succeeded', undefined, secondStatus);
     const dialog = await openRecoveryPanel();
-    fireEvent.click(await within(dialog).findByRole('button', { name: '放弃本次结果' }));
-    fireEvent.click(within(dialog).getByRole('button', { name: '确认放弃结果' }));
+    fireEvent.click(await within(dialog).findByRole('button', { name: 'Discard this result' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Confirm discard' }));
     await waitFor(() => expect(fetchMock.mock.calls.filter(([url]) => String(url) === '/api/runs/run-a').length).toBe(2));
     localStorage.setItem(revisionKey, JSON.stringify(newer));
     releaseStatus(new Response(JSON.stringify({ run: { status: 'succeeded' } }), { status: 200 }));
     await waitFor(() => expect(within(dialog).getByText('修订记录已变化，请重新检查当前任务。')).toBeTruthy());
     expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toEqual(newer);
-    expect((within(dialog).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((within(dialog).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement).disabled).toBe(true);
   });
 });

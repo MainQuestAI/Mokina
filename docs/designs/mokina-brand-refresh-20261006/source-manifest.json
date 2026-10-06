@@ -1,0 +1,63 @@
+{
+  "captured_date": "2026-10-06 Asia/Shanghai",
+  "remote_main": "e3e8848e646df67a3220ffd7e915327629a04945",
+  "local_head": "e64e0d9b3db64529373b6b24cb17d61f4605897a",
+  "prototype_root": "/Users/dingcheng/Library/Application Support/Open Design/namespaces/release-stable/data/projects/mokina-v0-0-2-4c39",
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 5399,
+      "sha256": "a8b754c3a9142a30babb22a3be03c5fa8447b5ea7cc7f35ecddf9a3d92e82eae"
+    },
+    {
+      "path": "app.js",
+      "bytes": 66952,
+      "sha256": "ac035d2e0d7b4266f656eb3a13274bbb0c80f07a269df796bbd0656aafcbb0d5"
+    },
+    {
+      "path": "DESIGN.md",
+      "bytes": 21002,
+      "sha256": "aded31480f302e7ef448b4554b2e4b013d563cb7d47daa027033b21c42b64b89"
+    },
+    {
+      "path": "PRODUCT.md",
+      "bytes": 793,
+      "sha256": "f77547281c1eca1b5bff4255f816fde8a42cbb5462f9492d99154a406bf94dcf"
+    },
+    {
+      "path": "brand-spec.md",
+      "bytes": 1161,
+      "sha256": "4b944a79a5c71084f0a259ee9f8ef016733de2e9782eb9cfdc3c8621e044da8d"
+    },
+    {
+      "path": "MATERIAL-PARAMS.md",
+      "bytes": 5856,
+      "sha256": "fd78f4a2b88a4d94fc2feca0f37a9635e1b6ca38705db8382a2714541f95a171"
+    },
+    {
+      "path": "design-system/mokina-system.css",
+      "bytes": 5814,
+      "sha256": "294a5e6595046e0400714abe54f20b0383dc72ca81679fc6b0a895ac79906849"
+    },
+    {
+      "path": "design-system/liquid-pages.css",
+      "bytes": 31323,
+      "sha256": "44ff9fa352ec700debc421c3a90e1b465907eea11ac9b9ecf8993491cc0058a6"
+    },
+    {
+      "path": "design-system/liquid-workspace.css",
+      "bytes": 12581,
+      "sha256": "fd530b9a8b917c45b9d58d6ef24c75771904e264628f1ada7363fa6e98b46db4"
+    },
+    {
+      "path": "design-system/mokina-icons.js",
+      "bytes": 2041,
+      "sha256": "9d9a9995132d4f6b305d4d9bc7ad588e035f23f7cf4a5ccfdfaaccc36bff9954"
+    },
+    {
+      "path": "evidence/craft-review-20261005.md",
+      "bytes": 3194,
+      "sha256": "77cccd45d17839b1a9910c23a70702f20a89a7f59d26f949c367478bfe4b712b"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://github.com/MainQuestAI/Mokina/actions/runs/37402164154",
+  "conclusion": "success",
+  "prHeadSHA": "1ae0c1391a007ab2ce5dcfa8e3709c52097fc2c5",
+  "testedMergeSHA": "1e992789d442e09b033887c988dee6ca2a93f77d",
+  "baseSHA": "df4a0b2699cd2b37df2099b38da8fe8375d14b41",
+  "productSourceSHA": "8950986e41e5047c56aab4d3ba9fda900902aa9a",
+  "targetedTests": 265,
+  "realDaemonBrowserTests": 14,
+  "checks": [
+    "guard",
+    "typecheck",
+    "i18n",
+    "targeted regressions",
+    "real-daemon fake-Agent browser regressions"
+  ],
+  "fullSuitesIncluded": false
+}

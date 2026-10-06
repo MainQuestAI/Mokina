@@ -135,7 +135,7 @@ it('native scope lock serializes simultaneous preparations and keeps all eight o
   try {
     const saved = await Promise.all(Array.from({ length: 10 }, (_, index) => persistPendingSendRequest({ ...SCOPE, clientRequestId: `tab-${index}`, prompt: 'x', snapshot: { prompt: 'x', extras: extras() } })));
     expect(saved.filter((r) => r === 'saved')).toHaveLength(8); expect(loadSendRequestRecords('p1', 'c1')).toHaveLength(8);
-    expect(saved.filter((r) => r === 'skipped')).toHaveLength(2);
+    expect(saved.filter((r) => r === 'failed')).toHaveLength(2);
     expect(new Set(names).size).toBe(1);
   } finally { if (original) Object.defineProperty(navigator, 'locks', original); else Reflect.deleteProperty(navigator, 'locks'); }
 });

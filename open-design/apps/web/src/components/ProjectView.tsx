@@ -372,11 +372,11 @@ import {
 } from '../artifacts/mokina-project-entry';
 import { useMokinaProjectSummary, evictMokinaEntrySummary } from '../hooks/useMokinaProjectSummaries';
 import {
-  clearSendRequestRecord,
+  persistClearSendRequest,
+  persistSendRequestOutcome,
   loadSendRequestRecords,
-  markSendRequestUnknown,
   markSendRequestDraft,
-  markSendRequestDispatched,
+  persistDispatchedSendRequest,
   recoverSendRequestRecords,
   SEND_REQUESTS_CHANGED,
   type SendRequestSnapshot,
@@ -8472,7 +8472,7 @@ export function ProjectView({
   const [sendRecoveryRequest, setSendRecoveryRequest] = useState<{ id: string; snapshot: SendRequestSnapshot } | null>(null);
   /** 查明受理后的统一恢复（Spec FR-08）：按快照 user/assistant 身份回接原 run、
    * 清除本机待确认记录。挂载对账与显式重发前的核对共用这一段。 */
-  const reconcileAcceptedSendRun = useCallback((record: SendRequestRecord, run: ChatRunStatusResponse) => {
+  const reconcileAcceptedSendRun = useCallback(async (record: SendRequestRecord, run: ChatRunStatusResponse) => {
     const snapshot = record.snapshot;
     setMessages(current => {
       if (messagesConversationIdRef.current !== record.conversationId) return current;
@@ -8487,7 +8487,7 @@ export function ProjectView({
       else next.push(recovered);
       return next;
     });
-    clearSendRequestRecord(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey);
+    if (!await persistClearSendRequest(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey)) setError(t('mokina.pendingSend.saveFailed'));
     scheduleConversationMessageRefresh(record.conversationId);
   }, [scheduleConversationMessageRefresh]);
   useEffect(() => {
@@ -8507,7 +8507,7 @@ export function ProjectView({
         if (controller.signal.aborted) return;
         if (!run) continue;
         // Reconcile original message identity; then existing reattach owns the run.
-        reconcileAcceptedSendRun(record, run);
+        await reconcileAcceptedSendRun(record, run);
         update();
       }
     })();
@@ -8720,14 +8720,8 @@ export function ProjectView({
       const admission = new Promise<boolean>(resolve => { resolveAdmission = resolve; });
       const settleMokinaSend = MOKINA_LOCAL_EDITION ? {
         runCreateTimeoutMs: 30_000,
-        onBeforeRunCreate: () => {
-          if (mokinaSendRecord === 'skipped') {
-            // 无可恢复快照的发送照常进行（P1-2）：有预览凭据就推进阶段，
-            // 没有也不拦——这里只拦截真正的存储失败。
-            markSendRequestDispatched(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
-            return true;
-          }
-          const dispatched = markSendRequestDispatched(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+        onBeforeRunCreate: async () => {
+          const dispatched = await persistDispatchedSendRequest(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
           if (!dispatched) {
             retractPaintedTurn();
             sendAdmissionRef.current.set(clientRequestId, 'restore-draft');
@@ -8735,16 +8729,15 @@ export function ProjectView({
           }
           return dispatched;
         },
-        onRunCreateAccepted: () => {
+        onRunCreateAccepted: async () => {
           sendAdmissionRef.current.set(clientRequestId, 'accepted');
-          clearSendRequestRecord(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+          if (!await persistClearSendRequest(project.id, runConversationId, clientRequestId, projectRunAuthorityKey)) setError(t('mokina.pendingSend.saveFailed'));
           resolveAdmission(true);
         },
-        onRunCreateFailed: ({ definitive }: { definitive: boolean }) => {
+        onRunCreateFailed: async ({ definitive }: { definitive: boolean }) => {
           if (!mokinaSendRecord) return;
           sendAdmissionRef.current.set(clientRequestId, definitive ? 'restore-draft' : 'unknown');
-          if (definitive) markSendRequestDraft(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
-          else markSendRequestUnknown(project.id, runConversationId, clientRequestId, projectRunAuthorityKey);
+          if (!await persistSendRequestOutcome(project.id, runConversationId, clientRequestId, definitive ? 'draft' : 'unknown', projectRunAuthorityKey)) setError(t('mokina.pendingSend.saveFailed'));
           resolveAdmission(!definitive);
         },
       } : {};
@@ -9157,6 +9150,7 @@ export function ProjectView({
             mcpServerIds: runContext?.mcpServerIds ?? [],
             connectorIds: runContext?.connectorIds ?? [],
             workspaceItems: runContext?.workspaceItems ?? [],
+            ...(runContext?.mokinaSnapshotId ? { mokinaSnapshotId: runContext.mokinaSnapshotId } : {}),
           },
         };
         mokinaSendRecord = await persistPendingSendRequest({ projectId: project.id,
@@ -10986,9 +10980,8 @@ export function ProjectView({
       const outcome = sendAdmissionRef.current.get(clientRequestId);
       sendAdmissionRef.current.delete(clientRequestId);
       if (outcome === 'restore-draft') {
-        const record = loadSendRequestRecords(project.id, activeConversationId ?? '', projectRunAuthorityKey)
-          .find(record => record.clientRequestId === clientRequestId);
-        if (record?.status === 'draft') clearSendRequestRecord(project.id, activeConversationId!, clientRequestId, projectRunAuthorityKey);
+        // The original receipt stays crash-safe until ChatComposer has restored its input.
+        // A later explicit recovery/discard consumes it after durable transfer.
         return 'restore-draft';
       }
       if (started) return;
@@ -11249,8 +11242,8 @@ export function ProjectView({
    * 已存完整快照**走正常发送管线——服务端按既有幂等裁决 reused/409，不会产生
    * 第二个任务。放弃：只清除本机待确认记录并解除重试拦截。
    */
-  const discardPendingSendRecord = useCallback((record: SendRequestRecord) => {
-    clearSendRequestRecord(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey);
+  const discardPendingSendRecord = useCallback(async (record: SendRequestRecord) => {
+    if (!await persistClearSendRequest(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey)) setError(t('mokina.pendingSend.saveFailed'));
   }, []);
   const resendPendingSendRecord = useCallback(async (record: SendRequestRecord) => {
     const snapshot = record.snapshot;
@@ -11258,7 +11251,7 @@ export function ProjectView({
     const run = await queryRunAccepted(record.projectId, record.conversationId, record.clientRequestId,
       10_000, projectRunWorkspaceContext);
     if (run) {
-      reconcileAcceptedSendRun(record, run);
+      await reconcileAcceptedSendRun(record, run);
       return;
     }
     // 重发前把本地那轮「从未属于真实 run」的不确定占位撤下，再让发送管线把
@@ -14093,10 +14086,13 @@ export function ProjectView({
               forceStreamingMessageIds={forceStreamingPluginMessageIds}
               initialDraft={chatInitialDraft}
               sendRecoveryRequest={sendRecoveryRequest}
-              onSendRecoveryBlocked={() => { setError(t('mokina.pendingSend.draftOccupied')); setSendRecoveryRequest(null); }}
-              onSendRecoveryRestored={(id) => {
+              onSendRecoveryBlocked={(reason) => { setError(t(reason === 'storage' ? 'mokina.pendingSend.saveFailed' : 'mokina.pendingSend.draftOccupied')); setSendRecoveryRequest(null); }}
+              onSendRecoveryRestored={async (id) => {
                 if (sendRecoveryRequest?.snapshot.requiresContextReselection) setError(t('mokina.pendingSend.reselect'));
-                if (activeConversationId) clearSendRequestRecord(project.id, activeConversationId, id, projectRunAuthorityKey);
+                if (activeConversationId && !await persistClearSendRequest(project.id, activeConversationId, id, projectRunAuthorityKey)) {
+                  setError(t('mokina.pendingSend.saveFailed'));
+                  return;
+                }
                 setSendRecoveryRequest(null);
               }}
               onboardingStarterPath={onboardingEntryRef.current?.productType ?? null}

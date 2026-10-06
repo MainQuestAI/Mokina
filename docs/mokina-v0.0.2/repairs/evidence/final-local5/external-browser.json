@@ -1,0 +1,77 @@
+{
+  "evidenceType": "headless Chromium file URL actual exported files",
+  "results": [
+    {
+      "title": "小山茶馆｜社区开业营销方案",
+      "brokenImages": 0,
+      "externalImages": 0,
+      "budget": true,
+      "candidate": false,
+      "height": 5276,
+      "version": 1,
+      "mode": "html",
+      "errors": [],
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v1.html"
+    },
+    {
+      "title": "小山茶馆｜社区开业营销方案",
+      "brokenImages": 0,
+      "externalImages": 0,
+      "budget": true,
+      "candidate": false,
+      "height": 5276,
+      "version": 1,
+      "mode": "zip",
+      "errors": [],
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/unpacked-v1/plan-v1-historical/index.html"
+    },
+    {
+      "title": "小山茶馆｜社区开业营销方案",
+      "brokenImages": 0,
+      "externalImages": 0,
+      "budget": true,
+      "candidate": false,
+      "height": 5566,
+      "version": 3,
+      "mode": "html",
+      "errors": [],
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v3.html"
+    },
+    {
+      "title": "小山茶馆｜社区开业营销方案",
+      "brokenImages": 0,
+      "externalImages": 0,
+      "budget": true,
+      "candidate": false,
+      "height": 5566,
+      "version": 3,
+      "mode": "zip",
+      "errors": [],
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/unpacked-v3/plan/index.html"
+    },
+    {
+      "title": "小山茶馆｜社区开业营销方案",
+      "brokenImages": 0,
+      "externalImages": 0,
+      "budget": true,
+      "candidate": true,
+      "height": 5592,
+      "version": 4,
+      "mode": "html",
+      "errors": [],
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v4.html"
+    },
+    {
+      "title": "小山茶馆｜社区开业营销方案",
+      "brokenImages": 0,
+      "externalImages": 0,
+      "budget": true,
+      "candidate": true,
+      "height": 5592,
+      "version": 4,
+      "mode": "zip",
+      "errors": [],
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/unpacked-v4/plan-v4-candidate/index.html"
+    }
+  ]
+}

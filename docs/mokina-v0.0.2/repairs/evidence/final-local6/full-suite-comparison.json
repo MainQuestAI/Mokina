@@ -1,0 +1,250 @@
+{
+  "productSourceSHA": "8950986e41e5047c56aab4d3ba9fda900902aa9a",
+  "testedPRHeadSHA": "1ae0c1391a007ab2ce5dcfa8e3709c52097fc2c5",
+  "preSHA": "a167de9a7f504f5eb970e9efcb3cea091f9f1900",
+  "baseSHA": "df4a0b2699cd2b37df2099b38da8fe8375d14b41",
+  "method": "Current full suites on stable source; exact git archive sources for pre/base, shared pinned node_modules, all failing files rerun. Baselines are selected failing-file runs, not full suites. Error signature excludes stack paths; timeout signature comes from terminal FAIL block. Vitest JSON counts expected-failure as passed; web normal pass count is 12809, expected fail is 1.",
+  "runs": {
+    "web": {
+      "current": {
+        "numTotalTests": 12829,
+        "numPassedTests": 12810,
+        "numFailedTests": 8,
+        "numPendingTests": 11,
+        "numTodoTests": 0,
+        "success": false,
+        "normalPassedTests": 12809,
+        "expectedFailedTests": 1
+      },
+      "currentFileCount": 1260,
+      "preSelectedFailures": 8,
+      "baseSelectedFailures": 8,
+      "preSelectedFiles": 6,
+      "baseSelectedFiles": 6
+    },
+    "daemon": {
+      "current": {
+        "numTotalTests": 12016,
+        "numPassedTests": 11987,
+        "numFailedTests": 14,
+        "numPendingTests": 15,
+        "numTodoTests": 0,
+        "success": false
+      },
+      "currentFileCount": 905,
+      "preSelectedFailures": 14,
+      "baseSelectedFailures": 15,
+      "preSelectedFiles": 7,
+      "baseSelectedFiles": 6
+    }
+  },
+  "failures": [
+    {
+      "package": "web",
+      "file": "tests/campaigns/deepseek-v4-flash-ui-contract.test.ts",
+      "testName": "DeepSeek V4 Flash workbench campaign entry keeps the built-in campaign entry visible across entry tabs and project detail",
+      "currentSignature": "AssertionError: expected '// EntryShell — the centered-hero ent…' to match /topRightSlot=\\{\\s*topRightCampaignAud…/",
+      "preSignature": "AssertionError: expected '// EntryShell — the centered-hero ent…' to match /topRightSlot=\\{\\s*topRightCampaignAud…/",
+      "baseSignature": "AssertionError: expected '// EntryShell — the centered-hero ent…' to match /topRightSlot=\\{\\s*topRightCampaignAud…/",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "web",
+      "file": "tests/campaigns/deepseek-v4-flash-ui-contract.test.ts",
+      "testName": "DeepSeek V4 Flash workbench campaign entry keeps every CMS touchpoint host on the home view",
+      "currentSignature": "AssertionError: expected 'import { useCallback, useEffect, useL…' to match /\\{route\\.kind === 'home' && route\\.vi…/",
+      "preSignature": "AssertionError: expected 'import { useCallback, useEffect, useL…' to match /\\{route\\.kind === 'home' && route\\.vi…/",
+      "baseSignature": "AssertionError: expected 'import { useCallback, useEffect, useL…' to match /\\{route\\.kind === 'home' && route\\.vi…/",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "web",
+      "file": "tests/i18n/locales.test.ts",
+      "testName": "i18n locales keeps locale dictionaries aligned with English keys and placeholders",
+      "currentSignature": "AssertionError: zh-CN.homeHero.title: expected [] to deeply equal [ 'word' ]",
+      "preSignature": "AssertionError: zh-CN.homeHero.title: expected [] to deeply equal [ 'word' ]",
+      "baseSignature": "AssertionError: zh-CN.homeHero.title: expected [] to deeply equal [ 'word' ]",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "web",
+      "file": "tests/state/config.test.ts",
+      "testName": "mergeDaemonConfig defaults reporting on and mints an installationId when the install never opted out",
+      "currentSignature": "AssertionError: expected false to be true // Object.is equality",
+      "preSignature": "AssertionError: expected false to be true // Object.is equality",
+      "baseSignature": "AssertionError: expected false to be true // Object.is equality",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "web",
+      "file": "tests/components/HomeHero.rail.test.tsx",
+      "testName": "HomeHero intent rail leads the create group with the Brand Kit chip and its own action discriminator",
+      "currentSignature": "AssertionError: expected 'mokina-market-analysis' to be 'create-brand-kit' // Object.is equality",
+      "preSignature": "AssertionError: expected 'mokina-market-analysis' to be 'create-brand-kit' // Object.is equality",
+      "baseSignature": "AssertionError: expected 'mokina-market-analysis' to be 'create-brand-kit' // Object.is equality",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "web",
+      "file": "tests/components/HomeHero.scenario-cards.test.tsx",
+      "testName": "HomeHero scenario cards uses the fixed ten-item Home creation hierarchy in product order",
+      "currentSignature": "AssertionError: expected [ 'mokina-market-analysis', …(11) ] to deeply equal [ 'prototype', 'deck', …(8) ]",
+      "preSignature": "AssertionError: expected [ 'mokina-market-analysis', …(11) ] to deeply equal [ 'prototype', 'deck', …(8) ]",
+      "baseSignature": "AssertionError: expected [ 'mokina-market-analysis', …(11) ] to deeply equal [ 'prototype', 'deck', …(8) ]",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "web",
+      "file": "tests/components/chips.automatic-default.test.ts",
+      "testName": "create rail chips claim the automatic default marks every first-level output type as a product-owned automatic scenario",
+      "currentSignature": "AssertionError: expected [ 'mokina-market-analysis', …(1) ] to deeply equal []",
+      "preSignature": "AssertionError: expected [ 'mokina-market-analysis', …(1) ] to deeply equal []",
+      "baseSignature": "AssertionError: expected [ 'mokina-market-analysis', …(1) ] to deeply equal []",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "web",
+      "file": "tests/components/chips.automatic-default.test.ts",
+      "testName": "create rail chips claim the automatic default binds exactly the plugin the daemon re-derives from the chip metadata",
+      "currentSignature": "AssertionError: mokina-market-analysis: expected 'example-web-prototype' to be 'mokina-market-analysis' // Object.is equality",
+      "preSignature": "AssertionError: mokina-market-analysis: expected 'example-web-prototype' to be 'mokina-market-analysis' // Object.is equality",
+      "baseSignature": "AssertionError: mokina-market-analysis: expected 'example-web-prototype' to be 'mokina-market-analysis' // Object.is equality",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/brand-prefetch.test.ts",
+      "testName": "prefetchFromHtml (extract from already-rendered DOM) flags an anti-bot challenge page as blocked and thin",
+      "currentSignature": "Error: Test timed out in 20000ms.",
+      "preSignature": "Error: Test timed out in 20000ms.",
+      "baseSignature": "Error: Test timed out in 20000ms.",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/brand-routes.test.ts",
+      "testName": "brand routes aborts an active programmatic pass before extracting from browser HTML",
+      "currentSignature": "Error: Test timed out in 20000ms.",
+      "preSignature": "Error: Test timed out in 20000ms.",
+      "baseSignature": "Error: Test timed out in 20000ms.",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/brand-routes.test.ts",
+      "testName": "brand routes synthesizes from a content-rich page whose minimalist palette the network gate would reject",
+      "currentSignature": "Error: Test timed out in 20000ms.",
+      "preSignature": "Error: Test timed out in 20000ms.",
+      "baseSignature": "Error: Test timed out in 20000ms.",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/brand-routes.test.ts",
+      "testName": "brand routes keeps a browser HTML retry recoverable (needs_input, not terminal) after aborting an active programmatic pass",
+      "currentSignature": "Error: Test timed out in 20000ms.",
+      "preSignature": "Error: Test timed out in 20000ms.",
+      "baseSignature": "Error: Test timed out in 20000ms.",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/brand-routes.test.ts",
+      "testName": "brand routes starts browser HTML retry promptly when stale finalize fallback is still settling",
+      "currentSignature": "Error: Test timed out in 20000ms.",
+      "preSignature": "Error: Test timed out in 20000ms.",
+      "baseSignature": "Error: Test timed out in 20000ms.",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/brand-routes.test.ts",
+      "testName": "brand routes keeps cancel terminal when browser HTML extraction is in flight",
+      "currentSignature": "Error: Test timed out in 20000ms.",
+      "preSignature": "Error: Test timed out in 20000ms.",
+      "baseSignature": "Error: Test timed out in 20000ms.",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/codex-model-capability-preflight.test.ts",
+      "testName": "Codex configured-model capability preflight blocks an unsupported configured default model before spawning Codex exec",
+      "currentSignature": "AssertionError: expected 1 to be null",
+      "preSignature": "AssertionError: expected 1 to be null",
+      "baseSignature": "AssertionError: expected 1 to be null",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/codex-model-capability-preflight.test.ts",
+      "testName": "Codex configured-model capability preflight does not overwrite cancellation while the version probe is in flight",
+      "currentSignature": "Error: path did not appear: <temp>/codex-login-probed",
+      "preSignature": "Error: path did not appear: <temp>/codex-login-probed",
+      "baseSignature": "Error: path did not appear: <temp>/codex-login-probed",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/integrations/vela.routes.test.ts",
+      "testName": "POST /api/integrations/vela/analytics-entry mirrors OpenDesign AMR entry clicks to the AMR analytics ingest shape",
+      "currentSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "preSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "baseSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/integrations/vela.routes.test.ts",
+      "testName": "POST /api/integrations/vela/analytics-entry forwards campaignId and conversionSource on the outbound AMR analytics body",
+      "currentSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "preSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "baseSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/integrations/vela.routes.test.ts",
+      "testName": "POST /api/integrations/vela/analytics-entry forwards optional onboarding profile (role/orgSize/useCase/source) to the AMR ingest body",
+      "currentSignature": "AssertionError: expected [] to have a length of 1 but got +0",
+      "preSignature": "AssertionError: expected [] to have a length of 1 but got +0",
+      "baseSignature": "AssertionError: expected [] to have a length of 1 but got +0",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/integrations/vela.routes.test.ts",
+      "testName": "POST /api/integrations/vela/analytics-entry mirrors OpenDesign onboarding profile snapshots with the header-derived device id",
+      "currentSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "preSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "baseSignature": "AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/runtimes/codex-model-preflight.test.ts",
+      "testName": "Codex model capability preflight blocks the known-old stable CLI only with confirmed ChatGPT auth",
+      "currentSignature": "Error: expected { status: 'unknown', …(1) } to deeply equal { status: 'incompatible', …(3) }",
+      "preSignature": "Error: expected { status: 'unknown', …(1) } to deeply equal { status: 'incompatible', …(3) }",
+      "baseSignature": "Error: expected { status: 'unknown', …(1) } to deeply equal { status: 'incompatible', …(3) }",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/runtimes/codex-model-preflight.test.ts",
+      "testName": "Codex model capability preflight fails open for config overlays, API auth, and unconfirmed ChatGPT auth",
+      "currentSignature": "Error: expected { status: 'unknown', …(1) } to deeply equal { status: 'unknown', …(1) }",
+      "preSignature": "Error: expected { status: 'unknown', …(1) } to deeply equal { status: 'unknown', …(1) }",
+      "baseSignature": "Error: expected { status: 'unknown', …(1) } to deeply equal { status: 'unknown', …(1) }",
+      "classification": "same-name-and-signature-in-both"
+    },
+    {
+      "package": "daemon",
+      "file": "tests/export-inline-route.test.ts",
+      "testName": "POST /api/projects/:id/export/html route rejects historical entries until their dependency graph is versioned",
+      "currentSignature": null,
+      "preSignature": null,
+      "baseSignature": "AssertionError: expected 404 to be 409 // Object.is equality",
+      "classification": "baseline-only-failure"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+[
+  {
+    "name": "final-proof.pdf",
+    "status": 200,
+    "body": {
+      "name": "final-proof.pdf",
+      "contentDigest": "43638549cc97021de16230eca0c8156576f5bc42ed9fea5e5d00fbfca4b9741c",
+      "parserVersion": "mokina-material/1",
+      "status": "read",
+      "limitations": [
+        "仅读取文本层；图片、扫描页和复杂图表未识别。"
+      ],
+      "groupLimitations": [],
+      "sections": [
+        {
+          "location": "第 1 页",
+          "text": "中文资料：品牌预算五十万元\n\nMokina packaged PDF page 1",
+          "groupId": "page:1",
+          "groupLabel": "第 1 页"
+        },
+        {
+          "location": "第 2 页",
+          "text": "中文资料：品牌预算五十万元\n\nMokina packaged PDF page 2",
+          "groupId": "page:2",
+          "groupLabel": "第 2 页"
+        }
+      ]
+    }
+  },
+  {
+    "name": "final-oversized.pdf",
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "资料超过 10 MB 读取限制"
+      }
+    }
+  }
+]

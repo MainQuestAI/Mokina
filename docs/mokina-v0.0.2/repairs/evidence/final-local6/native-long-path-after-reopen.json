@@ -1,0 +1,50 @@
+{
+  "href": "od://app/",
+  "records": [
+    {
+      "key": "mokina:revision:d0baee72-f67e-4939-a97e-385584b56a95:资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+      "keyLength": 254,
+      "durable": {
+        "ok": true,
+        "found": true,
+        "record": {
+          "recordId": "b49559a9-8842-460b-8f12-a3312f47f457",
+          "value": "{\"operationId\":\"90f31766-bae4-4370-829d-77f3a9de41d8\",\"clientRequestId\":\"90f31766-bae4-4370-829d-77f3a9de41d8\",\"revisionProjectId\":\"4ec03ac8-63a4-457e-93ff-c68572318826\",\"sourceProjectId\":\"d0baee72-f67e-4939-a97e-385584b56a95\",\"sourceFile\":\"资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html\",\"workspaceContext\":null,\"baseVersionId\":\"46911c92-21ad-4805-a0ac-470b826e197b\",\"sectionId\":\"strategy\",\"prompt\":\"仅在 strategy 章节末尾加入“长路径中文空格修订验收成功”，保留其他章节和已有策略。\",\"dispatched\":true,\"submissionState\":\"accepted\",\"conversationId\":\"6021dbe1-1c42-4829-b531-2a456ff3afe7\",\"runId\":\"7695eea0-6371-45e7-8459-17d65bd697b6\"}"
+        }
+      }
+    }
+  ],
+  "runs": [
+    {
+      "id": "7695eea0-6371-45e7-8459-17d65bd697b6",
+      "status": "succeeded",
+      "exitCode": 0
+    },
+    {
+      "id": "abd1b788-8de8-4de0-8f80-5ae49a564484",
+      "status": "succeeded",
+      "exitCode": 0,
+      "mokinaContext": {
+        "runId": "abd1b788-8de8-4de0-8f80-5ae49a564484",
+        "snapshotId": "0d1057ed-bf92-4ed0-900a-f08585fc05e9",
+        "fingerprint": "e24fd927fa6677369b1c87d5c29aded3f7c17085ae0ea2480598bfb43e3ce2b5",
+        "includedItemIds": [
+          "S1",
+          "A1"
+        ],
+        "itemDelivery": [
+          {
+            "itemId": "S1",
+            "mode": "inline-text"
+          },
+          {
+            "itemId": "A1",
+            "mode": "staged-file"
+          }
+        ],
+        "status": "submitted",
+        "submittedAt": "2026-10-06T03:04:44.814Z"
+      }
+    }
+  ]
+}

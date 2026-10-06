@@ -12,6 +12,10 @@ import {
   releaseMetadataVersionFields,
   releaseNamespace,
   isReleaseChannel,
+  isMokinaLocalNamespace,
+  mokinaProductEnv,
+  parseMokinaPackagedProduct,
+  parseMokinaProductProfile,
 } from "../src/index.js";
 
 describe("@open-design/release", () => {
@@ -83,4 +87,62 @@ describe("@open-design/release", () => {
     expect(releaseChannelFromNamespace("release-local")).toBeNull();
   });
 
+});
+
+describe("mokina product profile", () => {
+  it("activates only for the mokina-local namespace and its boundary extensions", () => {
+    expect(isMokinaLocalNamespace("mokina-local")).toBe(true);
+    expect(isMokinaLocalNamespace("mokina-local-qa")).toBe(true);
+    expect(isMokinaLocalNamespace("mokina-local.2")).toBe(true);
+    expect(isMokinaLocalNamespace("mokina-local_v2")).toBe(true);
+    expect(isMokinaLocalNamespace("mokina-localism")).toBe(false);
+    expect(isMokinaLocalNamespace("mokina")).toBe(false);
+    expect(isMokinaLocalNamespace("release-mokina-local")).toBe(false);
+  });
+
+  it("accepts the packaged profile shape and rejects upstream drift", () => {
+    const profile = parseMokinaProductProfile({
+      productId: "mokina",
+      productName: "Mokina",
+      bundleIdentifier: "ai.mainquest.mokina.preview",
+      releaseKind: "local-preview",
+      namespace: "mokina-local",
+      automaticUpdates: false,
+      upstreamNews: false,
+      defaultTelemetry: false,
+      requiresUpstreamAccount: false,
+      registersOdScheme: false,
+    });
+    expect(profile.productId).toBe("mokina");
+    expect(profile.registersOdScheme).toBe(false);
+
+    expect(() => parseMokinaProductProfile({ ...profile, automaticUpdates: true })).toThrow(
+      /automaticUpdates must be false/,
+    );
+    expect(() => parseMokinaProductProfile({ ...profile, productId: "open-design" })).toThrow(
+      /productId must be "mokina"/,
+    );
+  });
+
+  it("parses the baked packaged product section and derives daemon env", () => {
+    const product = parseMokinaPackagedProduct({
+      productId: "mokina",
+      productName: "Mokina",
+      productVersion: "0.0.2-local.1",
+      releaseKind: "local-preview",
+      namespace: "mokina-local",
+      automaticUpdates: false,
+      upstreamNews: false,
+      defaultTelemetry: false,
+      requiresUpstreamAccount: false,
+      registersOdScheme: false,
+    });
+    expect(product.productVersion).toBe("0.0.2-local.1");
+    expect(mokinaProductEnv(product)).toEqual({
+      MOKINA_PRODUCT_ID: "mokina",
+      MOKINA_PRODUCT_NAME: "Mokina",
+      MOKINA_RELEASE_KIND: "local-preview",
+      MOKINA_PRODUCT_VERSION: "0.0.2-local.1",
+    });
+  });
 });

@@ -1,3 +1,5 @@
+import { stageMokinaSnapshotAssets } from '../mokina/context-store.js';
+import { resolveMokinaSnapshotForRun } from '../runtimes/chat-run-context.js';
 import type { Express, Request, Response } from 'express';
 import type Database from 'better-sqlite3';
 import fs from 'node:fs';
@@ -935,13 +937,37 @@ export function registerRunCreateRoute(
   app: Express,
   handleRunCreate: (req: ApiRequest, res: ApiResponse) => Promise<unknown>,
   sendApiError: RegisterRunRoutesDeps['http']['sendApiError'],
+  hasAcceptedRequest?: (req: ApiRequest) => boolean,
 ): void {
+  const pendingRequests = new Map<string, number>();
   app.post('/api/runs', async (req: ApiRequest, res: ApiResponse) => {
+    const clientRequestId = typeof req.body?.clientRequestId === 'string' ? req.body.clientRequestId : '';
+    if (clientRequestId) pendingRequests.set(clientRequestId, (pendingRequests.get(clientRequestId) ?? 0) + 1);
+    const json = res.json.bind(res);
+    // A refusal is a proof only when no prior run or competing admission owns
+    // this request. Bare 4xx/proxy errors carry no such proof to clients.
+    if (hasAcceptedRequest) res.json = (body: unknown) => {
+      const record = toJsonRecord(body);
+      const error = toJsonRecord(record.error);
+      const knownUnavailable = res.statusCode === 503 && (error.code === 'WORKSPACE_AUTHORITY_UNAVAILABLE' || error.code === 'UPSTREAM_UNAVAILABLE');
+      if (typeof error.code === 'string' && ((res.statusCode >= 400 && res.statusCode < 500) || knownUnavailable)) {
+        const unaccepted = Boolean(clientRequestId) && res.statusCode !== 409
+          && pendingRequests.get(clientRequestId) === 1 && !hasAcceptedRequest(req);
+        return json({ ...record, error: { ...error, details: { ...toJsonRecord(error.details), runAcceptance: unaccepted ? 'not-accepted' : 'unknown' } } });
+      }
+      return json(body);
+    };
     try {
       return await handleRunCreate(req, res);
     } catch (error) {
       if (res.headersSent) throw error;
       return sendStructuredRunCreateFailure(res, sendApiError, error);
+    } finally {
+      res.json = json;
+      if (clientRequestId) {
+        const remaining = (pendingRequests.get(clientRequestId) ?? 1) - 1;
+        if (remaining > 0) pendingRequests.set(clientRequestId, remaining); else pendingRequests.delete(clientRequestId);
+      }
     }
   });
 }
@@ -950,6 +976,25 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
   const { db, design } = ctx;
   const { createSseResponse, sendApiError } = ctx.http;
   const { BUNDLED_PLUGINS_DIR, PROJECTS_DIR, RUNTIME_DATA_DIR } = ctx.paths;
+
+  // T06: receipt fallback for run reads. The launch path also mirrors the
+  // receipt onto the live run object; reading the protected file here keeps
+  // the receipt visible after a daemon restart and when the run object was
+  // re-materialized. A run without a snapshot receipt costs one ENOENT check.
+  const attachMokinaReceipt = async <T extends { id?: string; projectId?: string | null; mokinaContext?: unknown }>(
+    status: T,
+    run: { id: string; projectId?: string | null },
+  ): Promise<T> => {
+    if (status.mokinaContext || !run.projectId) return status;
+    try {
+      const { readMokinaDeliveryReceipt } = await import('../mokina/context-store.js');
+      const receipt = await readMokinaDeliveryReceipt(PROJECTS_DIR, run.projectId, run.id);
+      if (receipt) (status as { mokinaContext?: unknown }).mokinaContext = receipt;
+    } catch {
+      // Diagnostics-only field; never fail a run read on it.
+    }
+    return status;
+  };
   const taskInputSnapshotsRoot = path.join(RUNTIME_DATA_DIR, 'od-next-task-inputs');
   const { detectAgents, getAgentDef } = ctx.agents;
   const { startChatRun } = ctx.chat;
@@ -2838,7 +2883,13 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
           route: 'full_plan',
           mode: 'unresolved',
         });
+        const mokinaBinding = await resolveMokinaSnapshotForRun({ projectsRoot: PROJECTS_DIR, projectId: meta.projectId, context: contextValue });
+        if (mokinaBinding.status === 'error') throw new Error(mokinaBinding.message);
+        const frozenAssets = mokinaBinding.status === 'bound'
+          ? await stageMokinaSnapshotAssets(PROJECTS_DIR, meta.projectId!, mokinaBinding.snapshot) : {};
         createdTaskInputSnapshot = createOdNextTaskInputSnapshot({
+          frozenAttachments: Object.values(frozenAssets).map(asset => ({ sourcePath: asset.path,
+            allowedRoot: path.join(PROJECTS_DIR, meta.projectId!, '.mokina', 'inputs') })),
           snapshotsRoot: taskInputSnapshotsRoot,
           taskExecutionId,
           taskConfiguration,
@@ -3240,7 +3291,10 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     );
   };
 
-  registerRunCreateRoute(app, handleRunCreate, sendApiError);
+  registerRunCreateRoute(app, handleRunCreate, sendApiError, req => {
+    const id = toJsonRecord(req.body).clientRequestId;
+    return typeof id !== 'string' || design.runs.list({}).some(run => run.clientRequestId === id);
+  });
 
   app.get('/api/runs', async (req: ApiRequest, res: ApiResponse) => {
     const { projectId, conversationId, status } = req.query;
@@ -3376,7 +3430,7 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     const run = design.runs.get(resultRunId);
     if (!requestedRun || !run) return sendApiError(res, 404, 'NOT_FOUND', 'run not found');
     if (!await authorizeRunProject(req, res, run, { mode: 'read' })) return;
-    const status = statusWithStrategyTask(run);
+    const status = await attachMokinaReceipt(statusWithStrategyTask(run), run);
     const project = run.projectId ? toProjectRecord(getProject(db, run.projectId)) : null;
     let files: ProjectFileEntry[] = [];
     if (project) {
@@ -3464,7 +3518,7 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     const run = design.runs.get(runId);
     if (!run) return sendApiError(res, 404, 'NOT_FOUND', 'run not found');
     if (!await authorizeRunProject(req, res, run, { mode: 'read' })) return;
-    const status = statusWithStrategyTask(run);
+    const status = await attachMokinaReceipt(statusWithStrategyTask(run), run);
     if (!design.runs.isTerminal(run.status)) {
       res.json(status);
       return;

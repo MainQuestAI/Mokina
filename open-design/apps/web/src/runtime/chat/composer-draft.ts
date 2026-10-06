@@ -35,6 +35,7 @@
  * 草稿是便利设施,不是数据源;宁可少回来几个芯片,也不能让输入框打不开。
  */
 import type { ChatAttachment, ChatCommentAttachment, WorkspaceContextItem } from '@open-design/contracts';
+import { mirrorDurableRecord, removeDurableRecord } from '../persistence/mokina-recovery-store';
 import type { ChatQuote } from './quote-selection';
 
 /** 一次待发送负载里除正文以外的部分。 */
@@ -47,6 +48,7 @@ export interface ComposerDraftExtras {
 
 /** 需要「加载时再解析」的绑定。和 `RunContextSelection` 同形,少了不能落盘的那几项。 */
 export interface ComposerDraftContext {
+  mokinaSnapshotId?: string;
   skillIds: string[];
   mcpServerIds: string[];
   connectorIds: string[];
@@ -88,7 +90,8 @@ export function composerDraftExtrasAreEmpty(extras: ComposerDraftExtras): boolea
     && extras.context.skillIds.length === 0
     && extras.context.mcpServerIds.length === 0
     && extras.context.connectorIds.length === 0
-    && extras.context.workspaceItems.length === 0;
+    && extras.context.workspaceItems.length === 0
+    && !extras.context.mokinaSnapshotId;
 }
 
 function stringArray(raw: unknown, limit: number): string[] {
@@ -199,6 +202,8 @@ export function sanitizeComposerDraftExtras(raw: unknown): ComposerDraftExtras {
       mcpServerIds: stringArray(context.mcpServerIds, DRAFT_MAX_CONTEXT_ITEMS),
       connectorIds: stringArray(context.connectorIds, DRAFT_MAX_CONTEXT_ITEMS),
       workspaceItems: sanitizeWorkspaceItems(context.workspaceItems),
+      ...(typeof context.mokinaSnapshotId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(context.mokinaSnapshotId)
+        ? { mokinaSnapshotId: context.mokinaSnapshotId } : {}),
     },
   };
 }
@@ -246,8 +251,14 @@ export function saveComposerDraftExtras(key: string | undefined, extras: Compose
   const storageKey = composerDraftExtrasKey(key);
   const encoded = serializeComposerDraftExtras(sanitizeComposerDraftExtras(extras));
   try {
-    if (encoded) window.localStorage.setItem(storageKey, encoded);
-    else window.localStorage.removeItem(storageKey);
+    if (encoded) {
+      window.localStorage.setItem(storageKey, encoded);
+      // 桌面 profile 下的持久镜像:换端口/换 origin 之后草稿不丢(T03)。
+      mirrorDurableRecord(storageKey, encoded);
+    } else {
+      window.localStorage.removeItem(storageKey);
+      removeDurableRecord(storageKey);
+    }
   } catch {
     // 隐私模式 / 配额满 —— 存不下不影响输入框继续用。
   }
@@ -257,7 +268,21 @@ export function clearComposerDraftExtras(key?: string): void {
   if (!key || typeof window === 'undefined') return;
   try {
     window.localStorage.removeItem(composerDraftExtrasKey(key));
+    removeDurableRecord(composerDraftExtrasKey(key));
   } catch {
     // 同上。
   }
+}
+
+/** Transfer a send receipt without consuming its only durable copy on failure. */
+export async function persistRecoveredComposerDraft(key: string, prompt: string, extras: ComposerDraftExtras, canApply: () => boolean = () => true): Promise<boolean> {
+  try {
+    const encoded = JSON.stringify(extras);
+    if (!await mirrorDurableRecord(key, prompt)) return false;
+    if (!await mirrorDurableRecord(composerDraftExtrasKey(key), encoded)) return false;
+    if (!canApply()) return false;
+    window.localStorage.setItem(key, prompt);
+    window.localStorage.setItem(composerDraftExtrasKey(key), encoded);
+    return true;
+  } catch { return false; }
 }

@@ -1,0 +1,19 @@
+{
+  "key": "od:composer-draft:qa-native-local6-deleted",
+  "put": {
+    "ok": true,
+    "result": "stored"
+  },
+  "deleted": {
+    "ok": true,
+    "result": "deleted"
+  },
+  "localCacheBeforeRendererReload": "{\"text\":\"已删除的旧草稿不得复活\"}",
+  "durable": {
+    "ok": true,
+    "found": false,
+    "deletedRecordId": "4aae3921-dfbc-4dec-b23f-6daf2d972809"
+  },
+  "revisionJob": null,
+  "evidenceType": "real desktop IPC delete succeeded; intentionally retain local cache to simulate exit before cleanup"
+}

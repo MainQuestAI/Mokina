@@ -1,0 +1,918 @@
+{
+  "schemaVersion": 1,
+  "notice": "所有状态为验收计划，不代表已执行。",
+  "cases": [
+    {
+      "id": "AC01",
+      "requirements": [
+        "R01"
+      ],
+      "tasks": [
+        "T00"
+      ],
+      "gate": "G0",
+      "mode": "source-check",
+      "title": "基线与冻结设计",
+      "expected": "PR3/current main 状态、精确 SHA、21 项设计摘要和旧失败签名可核对；工作树原资料未改。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC02",
+      "requirements": [
+        "R02"
+      ],
+      "tasks": [
+        "T01"
+      ],
+      "gate": "G1",
+      "mode": "integration",
+      "title": "产品身份和构建缓存",
+      "expected": "包名、bundle ID、productVersion、profile、edition 一致；改 profile 后不复用另一 edition 的产物。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC03",
+      "requirements": [
+        "R02",
+        "R19"
+      ],
+      "tasks": [
+        "T01",
+        "T04"
+      ],
+      "gate": "G1",
+      "mode": "network-inspection",
+      "title": "上游更新不回流",
+      "expected": "启动、菜单检查更新、缺失 feed 配置三路径均不请求上游更新/whats-new，不安装上游 payload。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC04",
+      "requirements": [
+        "R03"
+      ],
+      "tasks": [
+        "T02"
+      ],
+      "gate": "G1",
+      "mode": "real-macos",
+      "title": "清洁 Finder 启动",
+      "expected": "停止所有开发服务并移开源码可访问路径，在受控 PATH 下从 Finder 启动生产包，首页和本地项目可读。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC05",
+      "requirements": [
+        "R04"
+      ],
+      "tasks": [
+        "T04"
+      ],
+      "gate": "G1",
+      "mode": "real-macos",
+      "title": "Finder 的 Codex 发现",
+      "expected": "Finder 环境下定位已安装 CLI，实际执行使用正确环境/用户配置，不依赖交互 shell 启动。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC06",
+      "requirements": [
+        "R04"
+      ],
+      "tasks": [
+        "T04"
+      ],
+      "gate": "G1",
+      "mode": "integration+real-macos",
+      "title": "认证探测与错误分类",
+      "expected": "覆盖文件凭据、系统凭据、未登录及无法确认；不以 auth.json 存在作为唯一判定，密钥不进日志。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC07",
+      "requirements": [
+        "R03",
+        "R17"
+      ],
+      "tasks": [
+        "T02",
+        "T04"
+      ],
+      "gate": "G1",
+      "mode": "real-macos",
+      "title": "离线继续本地工作",
+      "expected": "断网且模型不可用仍能打开历史项目、手工编辑并保存新版本、导出已有内容。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC08",
+      "requirements": [
+        "R05"
+      ],
+      "tasks": [
+        "T02",
+        "T03"
+      ],
+      "gate": "G1",
+      "mode": "real-macos",
+      "title": "Mokina 与上游并行隔离",
+      "expected": "同机两产品及 QA namespace 同时存在时，项目、profile、进程注册和停止互不影响。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC09",
+      "requirements": [
+        "R05",
+        "R17"
+      ],
+      "tasks": [
+        "T03"
+      ],
+      "gate": "G1",
+      "mode": "real-macos",
+      "title": "跨端口草稿与意图恢复",
+      "expected": "保存长草稿/附件/unknown 意图，退出后制造端口占用再重开；输入和原请求身份保留，无自动重发。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC10",
+      "requirements": [
+        "R05",
+        "R11"
+      ],
+      "tasks": [
+        "T03",
+        "T11"
+      ],
+      "gate": "G3",
+      "mode": "fault-injection",
+      "title": "发送前落盘失败",
+      "expected": "在准备/dispatch 两阶段注入存储失败，普通发送和修订均无 run POST，输入保留且有明确错误。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC11",
+      "requirements": [
+        "R05"
+      ],
+      "tasks": [
+        "T02"
+      ],
+      "gate": "G1",
+      "mode": "integration",
+      "title": "数据根唯一传播",
+      "expected": "daemon RUNTIME_DATA_DIR、派生文件/DB、Agent OD_DATA_DIR 与 packaged resolver 一致，namespace 不冒充隔离。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC12",
+      "requirements": [
+        "R03",
+        "R17"
+      ],
+      "tasks": [
+        "T02"
+      ],
+      "gate": "G1",
+      "mode": "real-macos",
+      "title": "关闭退出和异常终止",
+      "expected": "重复启动聚焦；正常退出只停自身 sidecar；强制终止后重开核对原 run，不伪造持续执行。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC13",
+      "requirements": [
+        "R07"
+      ],
+      "tasks": [
+        "T05"
+      ],
+      "gate": "G2",
+      "mode": "unit+integration",
+      "title": "文本与 CSV 解析",
+      "expected": "中文 UTF-8、标题、引号逗号、多行 CSV 字段正常；统计按逻辑记录而非物理行误拆。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC14",
+      "requirements": [
+        "R07"
+      ],
+      "tasks": [
+        "T05"
+      ],
+      "gate": "G2",
+      "mode": "real-macos",
+      "title": "PDF 依赖与部分读取",
+      "expected": "无 Homebrew PATH 仍读文本 PDF；混合扫描页明确 partial；纯扫描不伪装已 OCR。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC15",
+      "requirements": [
+        "R07"
+      ],
+      "tasks": [
+        "T05"
+      ],
+      "gate": "G2",
+      "mode": "unit+integration",
+      "title": "Office 提取边界",
+      "expected": "DOCX 表格/PPTX 文本/XLSX 缓存值按定位返回；公式无缓存与空值不是零，日期不猜时区。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC16",
+      "requirements": [
+        "R07",
+        "R20"
+      ],
+      "tasks": [
+        "T05",
+        "T15"
+      ],
+      "gate": "G2",
+      "mode": "security-test",
+      "title": "解析超限和恶意结构",
+      "expected": "超限原件/解压总量/DTD 或损坏文档被拒绝或明确不可读；不执行内容或修改其他文件。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC17",
+      "requirements": [
+        "R08"
+      ],
+      "tasks": [
+        "T06"
+      ],
+      "gate": "G2",
+      "mode": "integration",
+      "title": "冻结真实文本和资产",
+      "expected": "快照文本/图片字节及摘要与所选内容一致，原资产后来被覆盖不改变已保存快照。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC18",
+      "requirements": [
+        "R08"
+      ],
+      "tasks": [
+        "T06"
+      ],
+      "gate": "G2",
+      "mode": "fault-injection",
+      "title": "冻结前来源变化",
+      "expected": "预览后修改原件再准备快照，409 SOURCE_CHANGED，保留其他草稿且无 run POST。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC19",
+      "requirements": [
+        "R08",
+        "R11"
+      ],
+      "tasks": [
+        "T06",
+        "T11"
+      ],
+      "gate": "G3",
+      "mode": "fault-injection",
+      "title": "冻结后重试不换来源",
+      "expected": "已冻结且发送结果未知时修改原件，核对/恢复仍使用原 snapshotId/digest/run，不新发。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC20",
+      "requirements": [
+        "R08"
+      ],
+      "tasks": [
+        "T06"
+      ],
+      "gate": "G2",
+      "mode": "integration",
+      "title": "快照准备幂等与冲突",
+      "expected": "相同 ID/selection 返回原结果；相同 ID 不同 selection 冲突；GET 不写入、不从最新文件补建。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC21",
+      "requirements": [
+        "R07",
+        "R09"
+      ],
+      "tasks": [
+        "T07"
+      ],
+      "gate": "G2",
+      "mode": "production-browser",
+      "title": "资料部分读取可解释",
+      "expected": "partial/unreadable 有定位/局限；用户可明确不纳入后继续，纯文本无资料不被无关附件阻断。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC22",
+      "requirements": [
+        "R08"
+      ],
+      "tasks": [
+        "T06",
+        "T07"
+      ],
+      "gate": "G2",
+      "mode": "unit+production-browser",
+      "title": "上下文预算不静默截断",
+      "expected": "达到集中预算常量边界可发送，超过提示缩小选择；被排除项有原因，不假装全部读完。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC23",
+      "requirements": [
+        "R08",
+        "R20"
+      ],
+      "tasks": [
+        "T06",
+        "T15"
+      ],
+      "gate": "G2",
+      "mode": "security-test",
+      "title": "快照权限与指令边界",
+      "expected": "跨 scope 未授权源不可冻结；材料中的恶意指令不升级成系统指令；绝对路径和凭据不进快照。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC24",
+      "requirements": [
+        "R09"
+      ],
+      "tasks": [
+        "T06",
+        "T07"
+      ],
+      "gate": "G2",
+      "mode": "integration+production-browser",
+      "title": "回执不冒称理解",
+      "expected": "排队时 prepared；adapter 实收输入后才 submitted；sourceId 与实际 payload 对应，无“AI 已理解”推断。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC25",
+      "requirements": [
+        "R10",
+        "R24"
+      ],
+      "tasks": [
+        "T08",
+        "T19"
+      ],
+      "gate": "G6",
+      "mode": "real-model+professional",
+      "title": "任务 A 真实方案",
+      "expected": "使用 fixtures A，真实产物有来源和行动取舍、预算守恒及禁止渠道约束，不用预置答案。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC26",
+      "requirements": [
+        "R10",
+        "R24"
+      ],
+      "tasks": [
+        "T08",
+        "T19"
+      ],
+      "gate": "G6",
+      "mode": "real-model+professional",
+      "title": "任务 A 预算反事实",
+      "expected": "改为 30 万后真实生成，渠道/行动/节奏合理调整且合计不超限，不是只改标题数字。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC27",
+      "requirements": [
+        "R15"
+      ],
+      "tasks": [
+        "T08"
+      ],
+      "gate": "G3",
+      "mode": "integration",
+      "title": "运行成功而产物不合格",
+      "expected": "模拟 succeeded 但无主文件/缺章节标记，UI 说明结构待修复而非可交付，不启动自动修复循环。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC28",
+      "requirements": [
+        "R11"
+      ],
+      "tasks": [
+        "T11",
+        "T17"
+      ],
+      "gate": "G3",
+      "mode": "real-daemon+fake-agent",
+      "title": "普通发送丢响应回归",
+      "expected": "真实 daemon 受理后丢响应，普通重试/模型切换/刷新/空 GET 后到达只恢复原 run，继承 PR3 证据方法。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC29",
+      "requirements": [
+        "R11"
+      ],
+      "tasks": [
+        "T11"
+      ],
+      "gate": "G3",
+      "mode": "real-daemon+fake-agent",
+      "title": "修订发送丢响应",
+      "expected": "对修订原始 POST 注入响应丢失；前置 journal 已存，重开与核对只有一个受理 run。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC30",
+      "requirements": [
+        "R13"
+      ],
+      "tasks": [
+        "T09"
+      ],
+      "gate": "G3",
+      "mode": "fault-injection",
+      "title": "helper 半创建恢复",
+      "expected": "项目创建响应丢失/快照写失败/草稿写失败逐项注入，恢复同一 targetProjectId，owner 不符不覆盖。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC31",
+      "requirements": [
+        "R13"
+      ],
+      "tasks": [
+        "T09"
+      ],
+      "gate": "G3",
+      "mode": "production-browser",
+      "title": "接续不自动发送",
+      "expected": "选择、确认创建、刷新恢复只产生项目/资料/草稿，捕获网络证明 run POST 为零。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC32",
+      "requirements": [
+        "R13",
+        "R09"
+      ],
+      "tasks": [
+        "T09",
+        "T10"
+      ],
+      "gate": "G3",
+      "mode": "integration",
+      "title": "精确来源与选择最小化",
+      "expected": "从指定历史/候选版本选两个章节，仅该内容/明确背景/资产进入目标，不传整篇或未选资料。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC33",
+      "requirements": [
+        "R08",
+        "R13"
+      ],
+      "tasks": [
+        "T09",
+        "T10"
+      ],
+      "gate": "G3",
+      "mode": "integration",
+      "title": "上游变化不漂移",
+      "expected": "创建接续后更新/删除上游原件，目标固定摘录和已复制素材不变；失效原链接不重建新事实。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC34",
+      "requirements": [
+        "R14",
+        "R24"
+      ],
+      "tasks": [
+        "T10",
+        "T19"
+      ],
+      "gate": "G6",
+      "mode": "real-model+professional",
+      "title": "任务 B 真实活动页",
+      "expected": "从 A 指定旧版接续形成真实页面，体现策略与品牌素材，可交互但不虚构表单提交或真实发布。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC35",
+      "requirements": [
+        "R12",
+        "R15"
+      ],
+      "tasks": [
+        "T11",
+        "T12"
+      ],
+      "gate": "G3",
+      "mode": "unit+integration",
+      "title": "单章替换完整性",
+      "expected": "合法替换只有选定区变化；非法多根/全篇/嵌套标记拒绝；其他区域字节摘要相同。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC36",
+      "requirements": [
+        "R12"
+      ],
+      "tasks": [
+        "T12"
+      ],
+      "gate": "G3",
+      "mode": "integration+production-browser",
+      "title": "采用冲突保护",
+      "expected": "候选生成后另行手改 current，采用返回冲突；当前稿不被覆盖；正常采用后摘要同步。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC37",
+      "requirements": [
+        "R11",
+        "R05"
+      ],
+      "tasks": [
+        "T03",
+        "T11"
+      ],
+      "gate": "G3",
+      "mode": "fault-injection",
+      "title": "新尝试与迟到旧响应",
+      "expected": "原 run 确定失败后用户新尝试，旧响应到达不覆盖新 journal/草稿/项目，也不触发第三次发送。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC38",
+      "requirements": [
+        "R16"
+      ],
+      "tasks": [
+        "T13"
+      ],
+      "gate": "G4",
+      "mode": "production-browser+real-macos",
+      "title": "三种版本指定导出",
+      "expected": "当前/历史/候选分别导出 HTML/PDF/ZIP，文件内容和 manifest versionId 与点击时所选完全一致。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC39",
+      "requirements": [
+        "R16"
+      ],
+      "tasks": [
+        "T13"
+      ],
+      "gate": "G4",
+      "mode": "fault-injection",
+      "title": "导出切版与取消",
+      "expected": "导出中换选版本不会导错；取消保存不记成功；版本失效不静默转 latest。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC40",
+      "requirements": [
+        "R16"
+      ],
+      "tasks": [
+        "T13",
+        "T19"
+      ],
+      "gate": "G6",
+      "mode": "real-macos",
+      "title": "原生 PDF 可读",
+      "expected": "真实 desktop exporter 输出中文/图片/表格/分页可读的 PDF，保留实际文件和页面检查证据。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC41",
+      "requirements": [
+        "R18",
+        "R19"
+      ],
+      "tasks": [
+        "T14",
+        "T15"
+      ],
+      "gate": "G4",
+      "mode": "integration",
+      "title": "恢复包白名单",
+      "expected": "包内版本/源文件/快照齐全，凭据、原始 SQLite、插件执行配置和可重放发送意图均不存在。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC42",
+      "requirements": [
+        "R18",
+        "R20"
+      ],
+      "tasks": [
+        "T14",
+        "T15"
+      ],
+      "gate": "G4",
+      "mode": "security-test",
+      "title": "恢复包输入不越界",
+      "expected": "篡改 hash、路径遍历、symlink、未知 schema、超限归档不写入正式项目，也不覆盖现有内容。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC43",
+      "requirements": [
+        "R18"
+      ],
+      "tasks": [
+        "T14"
+      ],
+      "gate": "G4",
+      "mode": "integration+real-macos",
+      "title": "恢复为新项目",
+      "expected": "新 ID 映射正确，current 每 entry 唯一，候选仍候选，冻结内容可读；不自动恢复运行或登录。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC44",
+      "requirements": [
+        "R19"
+      ],
+      "tasks": [
+        "T15"
+      ],
+      "gate": "G5",
+      "mode": "integration",
+      "title": "诊断脱敏与可行动性",
+      "expected": "诊断含产品/构建/平台/状态/不敏感 runId，默认没有正文/token/绝对用户路径；分类给具体下一动作。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC45",
+      "requirements": [
+        "R20"
+      ],
+      "tasks": [
+        "T15"
+      ],
+      "gate": "G5",
+      "mode": "security-test",
+      "title": "生成内容和 IPC 隔离",
+      "expected": "恶意 HTML 不能访问 Node/主进程敏感 IPC/daemon 非授权 API；外链导航和路径守卫不退化。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC46",
+      "requirements": [
+        "R21",
+        "R06"
+      ],
+      "tasks": [
+        "T16"
+      ],
+      "gate": "G5",
+      "mode": "production-browser+real-macos",
+      "title": "八视图冻结对照",
+      "expected": "P01–P08 对照冻结设计逐项截图，两尺寸无横向溢出/底部遮挡，视觉 mock 状态不进入产品。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC47",
+      "requirements": [
+        "R21",
+        "R22"
+      ],
+      "tasks": [
+        "T16"
+      ],
+      "gate": "G5",
+      "mode": "production-browser+real-macos",
+      "title": "键盘与系统降级",
+      "expected": "Tab/Esc/焦点返回/可见状态齐全；减少透明度和动态有效；中文英文可用，19 locale 键/插值完整。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC48",
+      "requirements": [
+        "R02",
+        "R23"
+      ],
+      "tasks": [
+        "T17"
+      ],
+      "gate": "G5",
+      "mode": "production-browser",
+      "title": "edition off 独立回归",
+      "expected": "单独构建 off：无 Mokina 文案/摘要/快照请求，原生发送预览和刷新恢复仍正常。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC49",
+      "requirements": [
+        "R23"
+      ],
+      "tasks": [
+        "T17"
+      ],
+      "gate": "G5",
+      "mode": "automated-regression",
+      "title": "最终关联失败归零",
+      "expected": "guard/typecheck/相关 unit/integration/e2e 通过；旧八失败逐签名比较，受影响旧失败不能继续豁免。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC50",
+      "requirements": [
+        "R10",
+        "R24"
+      ],
+      "tasks": [
+        "T08",
+        "T19"
+      ],
+      "gate": "G6",
+      "mode": "real-model+calculation",
+      "title": "任务 C 正确计算",
+      "expected": "使用 CSV 计算两期汇总、加权 CTR/CVR/CPL/ROAS；空值与 0 区分，结果吻合独立 expected。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC51",
+      "requirements": [
+        "R13",
+        "R24"
+      ],
+      "tasks": [
+        "T09",
+        "T19"
+      ],
+      "gate": "G6",
+      "mode": "real-model+production-ui",
+      "title": "任务 C 结论接续",
+      "expected": "选择一条分析结论成为新可编辑草稿，不强行进入活动页/固定 GTM；因果表达保持审慎。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC52",
+      "requirements": [
+        "R03",
+        "R05",
+        "R17",
+        "R24"
+      ],
+      "tasks": [
+        "T18",
+        "T19"
+      ],
+      "gate": "G6",
+      "mode": "real-macos+user",
+      "title": "最终本机跨重启使用",
+      "expected": "以交付包完成 A/B/C、正常退出/异常重开、替换应用版本后继续读取，证据绑定最终 SHA。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC53",
+      "requirements": [
+        "R05",
+        "R06"
+      ],
+      "tasks": [
+        "T03",
+        "T07"
+      ],
+      "gate": "G2",
+      "mode": "fault-injection",
+      "title": "新草稿不被旧读取覆盖",
+      "expected": "读取资料/恢复接续时切项目并输入新内容，旧结果完成只归原拥有者，不覆盖新输入。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC54",
+      "requirements": [
+        "R01",
+        "R06"
+      ],
+      "tasks": [
+        "T00",
+        "T17"
+      ],
+      "gate": "G5",
+      "mode": "integration",
+      "title": "legacy 与只读版本回归",
+      "expected": "旧 manifest-only 项目不被 GET 补造采用证据；读取未知不算 0；错误深链不乱跳。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC55",
+      "requirements": [
+        "R04",
+        "R19"
+      ],
+      "tasks": [
+        "T04",
+        "T15"
+      ],
+      "gate": "G5",
+      "mode": "network-inspection",
+      "title": "本地能力无云强依赖",
+      "expected": "没有 OpenDesign/AMR/团队配置仍完成核心流程；模型和用户显式外部工具请求清楚标识。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC56",
+      "requirements": [
+        "R02",
+        "R03"
+      ],
+      "tasks": [
+        "T02",
+        "T18"
+      ],
+      "gate": "G6",
+      "mode": "artifact-inspection",
+      "title": "发行包与依赖清单",
+      "expected": "包内无源码依赖/开发路径/凭据，记录真实架构、各依赖版本、许可证及签名状态，不虚构支持范围。",
+      "status": "not_run",
+      "evidence": []
+    },
+    {
+      "id": "AC57",
+      "requirements": [
+        "R24"
+      ],
+      "tasks": [
+        "T19"
+      ],
+      "gate": "G6",
+      "mode": "evidence-review",
+      "title": "交付证据与用户签收",
+      "expected": "所有 gate 有最终证据；fake、历史和真实模型分栏；用户实际使用结论单列，未验收不得填通过。",
+      "status": "not_run",
+      "evidence": []
+    }
+  ]
+}

@@ -13,6 +13,11 @@ import type {
   OpenDesignHostPickWorkingDirResult,
   OpenDesignHostPreviewNavigationFailure,
   OpenDesignHostPreviewNavigationFailureListener,
+  OpenDesignHostRecoveryStoreDeleteResult,
+  OpenDesignHostRecoveryStoreGetResult,
+  OpenDesignHostRecoveryStoreListResult,
+  OpenDesignHostRecoveryStorePutResult,
+  OpenDesignHostRecoveryStoreRecord,
   OpenDesignHostUpdaterActionOptions,
   OpenDesignHostUpdaterMenuLabels,
   OpenDesignHostUpdaterOpenDialogListener,
@@ -340,6 +345,46 @@ const updater = {
   },
 };
 
+const recoveryStore = {
+  get: async (key: string): Promise<OpenDesignHostRecoveryStoreGetResult> => {
+    try {
+      return await ipcRenderer.invoke('mokina:recovery-store:get', key);
+    } catch (error) {
+      return failure(reasonFromError(error));
+    }
+  },
+  list: async (prefix?: string): Promise<OpenDesignHostRecoveryStoreListResult> => {
+    try {
+      return await ipcRenderer.invoke('mokina:recovery-store:list', prefix ?? null);
+    } catch (error) {
+      return failure(reasonFromError(error));
+    }
+  },
+  put: async (
+    key: string,
+    record: OpenDesignHostRecoveryStoreRecord,
+    expectedRecordId?: string,
+  ): Promise<OpenDesignHostRecoveryStorePutResult> => {
+    try {
+      return await ipcRenderer.invoke(
+        'mokina:recovery-store:put',
+        key,
+        record,
+        expectedRecordId ?? null,
+      );
+    } catch (error) {
+      return failure(reasonFromError(error));
+    }
+  },
+  delete: async (key: string, expectedRecordId: string): Promise<OpenDesignHostRecoveryStoreDeleteResult> => {
+    try {
+      return await ipcRenderer.invoke('mokina:recovery-store:delete', key, expectedRecordId);
+    } catch (error) {
+      return failure(reasonFromError(error));
+    }
+  },
+};
+
 const osLocale = readOsLocaleFromArgv();
 
 ipcRenderer.on(APP_CONFIG_CHANGED_IPC_CHANNEL, () => {
@@ -378,6 +423,7 @@ const hostBridge = {
     setVisible: (visible: boolean): void =>
       ipcRenderer.send('desktop-pet:set-visible', Boolean(visible)),
   },
+  recoveryStore,
   updater,
 } satisfies OpenDesignHostBridge;
 

@@ -1,0 +1,547 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web
+
+ ❯ tests/providers/daemon-run-create-recovery.test.ts (6 tests | 1 failed) 11ms
+   × RR3 ambiguous 4xx remains unknown while an explicit admission refusal restores the draft 3ms
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx (18 tests | 2 failed) 13029ms
+     × RR3 persists a definitive refusal on the source intent and exits without looking for a nonexistent run 3165ms
+     × RR3 refresh preserves rejected requirements and cleanup failure keeps the old intent blocking a new attempt 3046ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/providers/daemon-run-create-recovery.test.ts > RR3 ambiguous 4xx remains unknown while an explicit admission refusal restores the draft
+AssertionError: expected "vi.fn()" to be called with arguments: [ { definitive: false } ]
+
+Received:
+
+  1st vi.fn() call:
+
+  [
+    {
+-     "definitive": false,
++     "definitive": true,
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ tests/providers/daemon-run-create-recovery.test.ts:60:67
+     58|   ] as const) {
+     59|     const input = options(); vi.spyOn(globalThis, 'fetch').mockResolve…
+     60|     await streamViaDaemon(input); expect(input.onRunCreateFailed).toHa…
+       |                                                                   ^
+     61|   }
+     62| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/components/FileViewer.mokina-revision-recovery.test.tsx > Mokina revision recovery UI > RR3 persists a definitive refusal on the source intent and exits without looking for a nonexistent run
+AssertionError: expected { …(11) } to match object { submissionState: 'rejected', …(1) }
+(10 matching properties omitted from actual)
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mdata-artifact-share-access[39m=[32m"private"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"viewer html-viewer"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"viewer-toolbar"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"viewer-toolbar-left"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Reload Preview"[39m
+              [33mclass[39m=[32m"icon-only od-tooltip"[39m
+              [33mdata-tooltip[39m=[32m"Reload Preview"[39m
+              [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+              [33mtitle[39m=[32m"Reload Preview"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"od-icon"[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mfocusable[39m=[32m"false"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M22 12C22 17.5228 17.5229 22 12 22C6.4772 22 2 17.5228 2 12C2 6.47715 6.4772 2 12 2V4C7.5817 4 4 7.58172 4 12C4 16.4183 7.5817 20 12 20C16.4183 20 20 16.4183 20 12C20 9.25022 18.6127 6.82447 16.4998 5.38451L16.5 8H14.5V2L20.5 2V4L18.0008 3.99989C20.4293 5.82434 22 8.72873 22 12Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"View mode"[39m
+              [33mclass[39m=[32m"viewer-tabs viewer-mode-tabs"[39m
+              [33mrole[39m=[32m"tablist"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Preview"[39m
+                [33maria-selected[39m=[32m"true"[39m
+                [33mclass[39m=[32m"viewer-tab active"[39m
+                [33mrole[39m=[32m"tab"[39m
+                [33mtitle[39m=[32m"Preview"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"viewer-tab-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12.0003 3C17.3924 3 21.8784 6.87976 22.8189 12C21.8784 17.1202 17.3924 21 12.0003 21C6.60812 21 2.12215 17.1202 1.18164 12C2.12215 6.87976 6.60812 3 12.0003 3ZM12.0003 19C16.2359 19 19.8603 16.052 20.7777 12C19.8603 7.94803 16.2359 5 12.0003 5C7.7646 5 4.14022 7.94803 3.22278 12C4.14022 16.052 7.7646 19 12.0003 19ZM12.0003 16.5C9.51498 16.5 7.50026 14.4853 7.50026 12C7.50026 9.51472 9.51498 7.5 12.0003 7.5C14.4855 7.5 16.5003 9.51472 16.5003 12C16.5003 14.4853 14.4855 16.5 12.0003 16.5ZM12.0003 14.5C13.381 14.5 14.5003 13.3807 14.5003 12C14.5003 10.6193 13.381 9.5 12.0003 9.5C10.6196 9.5 9.50026 10.6193 9.50026 12C9.50026 13.3807 10.6196 14.5 12.0003 14.5Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"viewer-tab-label"[39m
+                [36m>[39m
+                  [0mPreview[0m
+                [36m</span>[39m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Code"[39m
+                [33maria-selected[39m=[32m"false"[39m
+                [33mclass[39m=[32m"viewer-tab "[39m
+                [33mrole[39m=[32m"tab"[39m
+                [33mtitle[39m=[32m"Code"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"viewer-tab-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M24 12L18.3431 17.6569L16.9289 16.2426L21.1716 12L16.9289 7.75736L18.3431 6.34315L24 12ZM2.82843 12L7.07107 16.2426L5.65685 17.6569L0 12L5.65685 6.34315L7.07107 7.75736L2.82843 12ZM9.78845 21H7.66009L14.2116 3H16.3399L9.78845 21Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"viewer-tab-label"[39m
+                [36m>[39m
+                  [0mCode[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"viewer-preview-toolbar-inline"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"viewer-viewport-switcher"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33maria-expanded[39m=[32m"false"[39m
+                  [33maria-haspopup[39m=[32m"listbox"[39m
+                  [33maria-label[39m=[32m"Preview viewport"[39m
+                  [33mclass[39m=[32m"viewer-action viewer-viewport-trigger od-tooltip"[39m
+                  [33mdata-tooltip[39m=[32m"Full-width desktop preview"[39m
+                  [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+                  [33mtitle[39m=[32m"Full-width desktop preview"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"viewer-viewport-icon"[39m
+                    [33mfill[39m=[32m"currentColor"[39m
+                    [33mfocusable[39m=[32m"false"[39m
+                    [33mheight[39m=[32m"14"[39m
+                    [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"14"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [3...
+
+- Expected
++ Received
+
+  {
+    "prompt": "保留我的拒绝后要求",
+-   "submissionState": "rejected",
+  }
+
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx:185:91
+    183|     await waitFor(() => expect((within(panel).getByRole('button', { na…
+    184|     fireEvent.click(within(panel).getByRole('button', { name: '生成候选（不改…
+    185|     await waitFor(() => expect(parseMokinaRevisionJob(localStorage.get…
+       |                                                                                           ^
+    186|     const posts = fetchMock.mock.calls.filter(([url, init]) => String(…
+    187|     expect(posts).toHaveLength(1);
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/components/FileViewer.mokina-revision-recovery.test.tsx > Mokina revision recovery UI > RR3 refresh preserves rejected requirements and cleanup failure keeps the old intent blocking a new attempt
+TestingLibraryElementError: Unable to find role="button" and name "结束本次未受理修订"
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"Versions"[39m
+  [33mclass[39m=[32m"artifact-version-panel"[39m
+  [33mrole[39m=[32m"dialog"[39m
+[36m>[39m
+  [36m<header[39m
+    [33mclass[39m=[32m"artifact-version-panel__head"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<strong[39m
+        [33mtitle[39m=[32m"index.html"[39m
+      [36m>[39m
+        [0mindex.html[0m
+      [36m</strong>[39m
+      [36m<p>[39m
+        [0mVersion history · 1 version[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"artifact-version-panel__head-actions"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Open preview in a new window"[39m
+        [33mclass[39m=[32m"artifact-version-panel__open"[39m
+        [33mtitle[39m=[32m"Open preview in a new window"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mfill[39m=[32m"currentColor"[39m
+          [33mfocusable[39m=[32m"false"[39m
+          [33mheight[39m=[32m"15"[39m
+          [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"15"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</button>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Close"[39m
+        [33mclass[39m=[32m"artifact-version-panel__close"[39m
+        [33mtitle[39m=[32m"Close"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mfill[39m=[32m"currentColor"[39m
+          [33mfocusable[39m=[32m"false"[39m
+          [33mheight[39m=[32m"17"[39m
+          [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"17"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4149L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</button>[39m
+    [36m</div>[39m
+  [36m</header>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"_context_fe41eb"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"方案操作"[39m
+      [33mclass[39m=[32m"_actions_fe41eb"[39m
+      [33mrole[39m=[32m"group"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"_button_ee6a60 _ghost_ee6a60 ghost"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [0m修订章节[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"_button_ee6a60 _ghost_ee6a60 ghost"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [0m继续制作[0m
+      [36m</button>[39m
+    [36m</div>[39m
+    [36m<strong>[39m
+      [0m所选：v1 · 当前稿[0m
+    [36m</strong>[39m
+    [36m<span>[39m
+      [0m下载与接续使用所选版本；候选稿需采用后才会替换当前稿。[0m
+    [36m</span>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"_body_fe41eb"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"artifact-version-panel__preview"[39m
+    [36m>[39m
+      [36m<iframe[39m
+        [33msandbox[39m=[32m"allow-scripts allow-downloads"[39m
+        [33msrcdoc[39m=[32m"<html><head><script data-od-srcdoc-transport-activation>(function(){
+  var generation = \"\";
+  var bodyComplete = false;
+  function containsCompletionMarker(node){
+    if (!node || node.nodeType !== 1) return false;
+    if (node.tagName === 'TEMPLATE' && node.getAttribute('data-od-srcdoc-transport-body-complete') === generation) return true;
+    var candidates = node.querySelectorAll ? node.querySelectorAll('template[data-od-srcdoc-transport-body-complete]') : [];
+    for (var i = 0; i < candidates.length; i += 1) {
+      if (candidates[i].getAttribute('data-od-srcdoc-transport-body-complete') === generation) return true;
+    }
+    return false;
+  }
+  var completionObserver = typeof MutationObserver === 'function' ? new MutationObserver(function(records){
+    if (bodyComplete) return;
+    for (var i = 0; i < records.length; i += 1) {
+      var added = records[i].addedNodes || [];
+      for (var j = 0; j < added.length; j += 1) {
+        if (!containsCompletionMarker(added[j])) continue;
+        bodyComplete = true;
+        completionObserver.disconnect();
+        return;
+      }
+    }
+  }) : null;
+  if (completionObserver && document.documentElement) {
+    completionObserver.observe(document.documentElement, { childList: true, subtree: true });
+  }
+  function announceReady(probeId){
+    if (!generation) return;
+    try {
+      if (window.parent && window.parent !== window) {
+        var message = { type: 'od:srcdoc-transport-activated', generation: generation };
+        if (typeof probeId === 'string' && probeId) message.probeId = probeId;
+        message.bodyComplete = bodyComplete;
+        message.documentReadyState = document.readyState;
+        message.bodyPresent = !!document.body;
+        message.bodyChildCount = document.body ? document.body.children.length : 0;
+        message.documentElementChildCount = document.documentElement ? document.documentElement.children.length : 0;
+        window.parent.postMessage(message, '*');
+      }
+    } catch (_) { /* sandboxed parent */ }
+  }
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (data && data.type === 'od:srcdoc-transport-ready-probe') {
+      if (data.generation === generation) announceReady(data.probeId);
+      return;
+    }
+    if (!data || data.type !== 'od:srcdoc-transport-activate' || typeof data.html !== 'string' || typeof data.generation !== 'string' || !data.generation) return;
+    // document.open/write keeps the current Window realm. Re-running an
+    // authored classic script there can fail before execution when it declares
+    // a top-level let/const that the previous document already declared. Ask
+    // the host to remount the shared bootstrap so this generation gets a fresh
+    // realm, then let the one-shot shell perform the initial write.
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'od:srcdoc-transport-reset-required',
+          generation: data.generation
+        }, '*');
+      }
+    } catch (_) { /* sandboxed parent — host recovery will remount on timeout */ }
+  });
+  announceReady();
+})();</...
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"Versions"[39m
+  [33mclass[39m=[32m"artifact-version-panel"[39m
+  [33mrole[39m=[32m"dialog"[39m
+[36m>[39m
+  [36m<header[39m
+    [33mclass[39m=[32m"artifact-version-panel__head"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<strong[39m
+        [33mtitle[39m=[32m"index.html"[39m
+      [36m>[39m
+        [0mindex.html[0m
+      [36m</strong>[39m
+      [36m<p>[39m
+        [0mVersion history · 1 version[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"artifact-version-panel__head-actions"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Open preview in a new window"[39m
+        [33mclass[39m=[32m"artifact-version-panel__open"[39m
+        [33mtitle[39m=[32m"Open preview in a new window"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mfill[39m=[32m"currentColor"[39m
+          [33mfocusable[39m=[32m"false"[39m
+          [33mheight[39m=[32m"15"[39m
+          [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"15"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</button>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Close"[39m
+        [33mclass[39m=[32m"artifact-version-panel__close"[39m
+        [33mtitle[39m=[32m"Close"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mfill[39m=[32m"currentColor"[39m
+          [33mfocusable[39m=[32m"false"[39m
+          [33mheight[39m=[32m"17"[39m
+          [33mstyle[39m=[32m"display: inline-block; vertical-align: middle; flex-shrink: 0;"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"17"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4149L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</button>[39m
+    [36m</div>[39m
+  [36m</header>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"_context_fe41eb"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"方案操作"[39m
+      [33mclass[39m=[32m"_actions_fe41eb"[39m
+      [33mrole[39m=[32m"group"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"_button_ee6a60 _ghost_ee6a60 ghost"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [0m修订章节[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"_button_ee6a60 _ghost_ee6a60 ghost"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [0m继续制作[0m
+      [36m</button>[39m
+    [36m</div>[39m
+    [36m<strong>[39m
+      [0m所选：v1 · 当前稿[0m
+    [36m</strong>[39m
+    [36m<span>[39m
+      [0m下载与接续使用所选版本；候选稿需采用后才会替换当前稿。[0m
+    [36m</span>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"_body_fe41eb"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"artifact-version-panel__preview"[39m
+    [36m>[39m
+      [36m<iframe[39m
+        [33msandbox[39m=[32m"allow-scripts allow-downloads"[39m
+        [33msrcdoc[39m=[32m"<html><head><script data-od-srcdoc-transport-activation>(function(){
+  var generation = \"\";
+  var bodyComplete = false;
+  function containsCompletionMarker(node){
+    if (!node || node.nodeType !== 1) return false;
+    if (node.tagName === 'TEMPLATE' && node.getAttribute('data-od-srcdoc-transport-body-complete') === generation) return true;
+    var candidates = node.querySelectorAll ? node.querySelectorAll('template[data-od-srcdoc-transport-body-complete]') : [];
+    for (var i = 0; i < candidates.length; i += 1) {
+      if (candidates[i].getAttribute('data-od-srcdoc-transport-body-complete') === generation) return true;
+    }
+    return false;
+  }
+  var completionObserver = typeof MutationObserver === 'function' ? new MutationObserver(function(records){
+    if (bodyComplete) return;
+    for (var i = 0; i < records.length; i += 1) {
+      var added = records[i].addedNodes || [];
+      for (var j = 0; j < added.length; j += 1) {
+        if (!containsCompletionMarker(added[j])) continue;
+        bodyComplete = true;
+        completionObserver.disconnect();
+        return;
+      }
+    }
+  }) : null;
+  if (completionObserver && document.documentElement) {
+    completionObserver.observe(document.documentElement, { childList: true, subtree: true });
+  }
+  function announceReady(probeId){
+    if (!generation) return;
+    try {
+      if (window.parent && window.parent !== window) {
+        var message = { type: 'od:srcdoc-transport-activated', generation: generation };
+        if (typeof probeId === 'string' && probeId) message.probeId = probeId;
+        message.bodyComplete = bodyComplete;
+        message.documentReadyState = document.readyState;
+        message.bodyPresent = !!document.body;
+        message.bodyChildCount = document.body ? document.body.children.length : 0;
+        message.documentElementChildCount = document.documentElement ? document.documentElement.children.length : 0;
+        window.parent.postMessage(message, '*');
+      }
+    } catch (_) { /* sandboxed parent */ }
+  }
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (data && data.type === 'od:srcdoc-transport-ready-probe') {
+      if (data.generation === generation) announceReady(data.probeId);
+      return;
+    }
+    if (!data || data.type !== 'od:srcdoc-transport-activate' || typeof data.html !== 'string' || typeof data.generation !== 'string' || !data.generation) return;
+    // document.open/write keeps the current Window realm. Re-running an
+    // authored classic script there can fail before execution when it declares
+    // a top-level let/const that the previous document already declared. Ask
+    // the host to remount the shared bootstrap so this generation gets a fresh
+    // realm, then let the one-shot shell perform the initial write.
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'od:srcdoc-transport-reset-required',
+          generation: data.generation
+        }, '*');
+      }
+    } catch (_) { /* sandboxed parent — host recovery will remount on timeout */ }
+  });
+  announceReady();
+})();</...
+ ❯ waitForWrapper ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx:204:37
+    202|     vi.spyOn(recoveryStore, 'removeDurableRecord').mockResolvedValue(f…
+    203|     const panel = await openRecoveryPanel();
+    204|     const end = await within(panel).findByRole('button', { name: '结束本次…
+       |                                     ^
+    205|     expect((within(panel).getByRole('textbox', { name: '章节修改要求' }) as …
+    206|     fireEvent.click(end);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 21 passed (24)
+   Start at  09:37:44
+   Duration  15.72s (transform 2.02s, setup 907ms, import 1.78s, tests 13.04s, environment 813ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/providers/daemon-run-create-recovery.test.ts --maxWorkers=2

@@ -1,0 +1,331 @@
+ Failed Tests 18 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/brand-prefetch.test.ts > prefetchFromHtml (extract from already-rendered DOM) > flags an anti-bot challenge page as blocked and thin
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/brand-prefetch.test.ts:110:3
+    108|   });
+    109|
+    110|   it('flags an anti-bot challenge page as blocked and thin', async () …
+       |   ^
+    111|     const html =
+    112|       '<!doctype html><html><head><title>Just a moment...</title></hea…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/18]⎯
+
+ FAIL  tests/brand-routes.test.ts > brand routes > keeps logo 404 responses as JSON when no logo can be resolved
+AssertionError: expected { error: 'not found' } to deeply equal { error: 'logo not found' }
+
+- Expected
++ Received
+
+  {
+-   "error": "logo not found",
++   "error": "not found",
+  }
+
+ ❯ tests/brand-routes.test.ts:146:39
+    144|     expect(response.status).toBe(404);
+    145|     expect(response.contentType).toContain('application/json');
+    146|     expect(JSON.parse(response.body)).toEqual({ error: 'logo not found…
+       |                                       ^
+    147|   });
+    148|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/18]⎯
+
+ FAIL  tests/brand-routes.test.ts > brand routes > does not fail extracting brands when a later same-conversation run is canceled
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/brand-routes.test.ts:568:27
+    566|     const list = await requestJson('/api/brands');
+    567|
+    568|     expect(detail.status).toBe(200);
+       |                           ^
+    569|     expect(detail.body.meta.status).toBe('extracting');
+    570|     expect(detail.body.meta.error).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/18]⎯
+
+ FAIL  tests/brand-routes.test.ts > brand routes > aborts an active programmatic pass before extracting from browser HTML
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/brand-routes.test.ts:921:3
+    919|   });
+    920|
+    921|   it('aborts an active programmatic pass before extracting from browse…
+       |   ^
+    922|     let prefetchStarted!: () => void;
+    923|     const prefetchStartedPromise = new Promise<void>((resolve) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/18]⎯
+
+ FAIL  tests/brand-routes.test.ts > brand routes > synthesizes from a content-rich page whose minimalist palette the network gate would reject
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/brand-routes.test.ts:982:3
+    980|   });
+    981|
+    982|   it('synthesizes from a content-rich page whose minimalist palette th…
+       |   ^
+    983|     // Regression: a black/white/red brand (e.g. the Economist) harves…
+    984|     // than three non-extreme colors, which the network prefetch's `th…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/18]⎯
+
+ FAIL  tests/brand-routes.test.ts > brand routes > keeps a browser HTML retry recoverable (needs_input, not terminal) after aborting an active programmatic pass
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/brand-routes.test.ts:1045:3
+    1043|   });
+    1044|
+    1045|   it('keeps a browser HTML retry recoverable (needs_input, not termina…
+       |   ^
+    1046|     let prefetchStarted!: () => void;
+    1047|     const prefetchStartedPromise = new Promise<void>((resolve) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/18]⎯
+
+ FAIL  tests/brand-routes.test.ts > brand routes > starts browser HTML retry promptly when stale finalize fallback is still settling
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/brand-routes.test.ts:1360:3
+    1358|   });
+    1359|
+    1360|   it('starts browser HTML retry promptly when stale finalize fallback …
+       |   ^
+    1361|     const prefetch = vi.fn(async (url: string): Promise<PrefetchResult…
+    1362|     let logoFallbackStarted!: () => void;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/18]⎯
+
+ FAIL  tests/brand-routes.test.ts > brand routes > keeps cancel terminal when browser HTML extraction is in flight
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/brand-routes.test.ts:1427:3
+    1425|   });
+    1426|
+    1427|   it('keeps cancel terminal when browser HTML extraction is in flight'…
+       |   ^
+    1428|     let prefetchStarted!: () => void;
+    1429|     const prefetchStartedPromise = new Promise<void>((resolve) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/18]⎯
+
+ FAIL  tests/codex-model-capability-preflight.test.ts > Codex configured-model capability preflight > blocks an unsupported configured default model before spawning Codex exec
+AssertionError: expected 1 to be null
+
+- Expected:
+null
+
++ Received:
+1
+
+ ❯ tests/codex-model-capability-preflight.test.ts:101:29
+     99|     expect(failed.failureCategory).toBe('model_unavailable');
+    100|     expect(failed.failureDetail).toBe('cli_version_incompatible');
+    101|     expect(failed.exitCode).toBeNull();
+       |                             ^
+    102|     await expect(pathExists(spawnMarker)).resolves.toBe(false);
+    103|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/18]⎯
+
+ FAIL  tests/codex-model-capability-preflight.test.ts > Codex configured-model capability preflight > does not overwrite cancellation while the version probe is in flight
+Error: path did not appear: /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-codex-model-cancel-MzsHlz/codex-login-probed
+ ❯ waitForPath tests/codex-model-capability-preflight.test.ts:409:9
+    407|     await new Promise((resolve) => setTimeout(resolve, 25));
+    408|   }
+    409|   throw new Error(`path did not appear: ${filePath}`);
+       |         ^
+    410| }
+    411|
+ ❯ tests/codex-model-capability-preflight.test.ts:190:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/18]⎯
+
+ FAIL  tests/export-inline-route.test.ts > POST /api/projects/:id/export/html route > rejects historical entries until their dependency graph is versioned
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/export-inline-route.test.ts:902:29
+    900|   it('rejects historical entries until their dependency graph is versi…
+    901|     const response = await postExport({ fileName: 'pages/index.html', …
+    902|     expect(response.status).toBe(409);
+       |                             ^
+    903|     const body = (await response.json()) as { error: { code: string; d…
+    904|     expect(body.error.code).toBe('CONFLICT');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/18]⎯
+
+ FAIL  tests/mokina-recovery-routes.test.ts > mokina recovery recovery routes > rejects a re-import of the same target and a corrupted archive
+AssertionError: expected 200 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 200
+
+ ❯ tests/mokina-recovery-routes.test.ts:130:26
+    128|
+    129|     const again = await importRecovery(archive, { operationId, targetP…
+    130|     expect(again.status).toBe(409);
+       |                          ^
+    131|     expect(again.body?.error?.code).toBe('MOKINA_RECOVERY_ALREADY_IMPO…
+    132|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/18]⎯
+
+ FAIL  tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > mirrors OpenDesign AMR entry clicks to the AMR analytics ingest shape
+AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }
+
+- Expected
++ Received
+
+  {
+-   "mirrored": true,
+-   "status": 202,
++   "mirrored": false,
+  }
+
+ ❯ tests/integrations/vela.routes.test.ts:2564:20
+    2562|
+    2563|       expect(status).toBe(202);
+    2564|       expect(body).toEqual({ mirrored: true, status: 202 });
+       |                    ^
+    2565|       expect(requests).toHaveLength(1);
+    2566|       expect(requests[0]).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/18]⎯
+
+ FAIL  tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > forwards campaignId and conversionSource on the outbound AMR analytics body
+AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }
+
+- Expected
++ Received
+
+  {
+-   "mirrored": true,
+-   "status": 202,
++   "mirrored": false,
+  }
+
+ ❯ tests/integrations/vela.routes.test.ts:2642:20
+    2640|
+    2641|       expect(status).toBe(202);
+    2642|       expect(body).toEqual({ mirrored: true, status: 202 });
+       |                    ^
+    2643|       expect(requests).toHaveLength(1);
+    2644|       expect(requests[0]?.events?.[0]?.payload).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/18]⎯
+
+ FAIL  tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > forwards optional onboarding profile (role/orgSize/useCase/source) to the AMR ingest body
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/integrations/vela.routes.test.ts:2701:24
+    2699|
+    2700|       expect(status).toBe(202);
+    2701|       expect(requests).toHaveLength(1);
+       |                        ^
+    2702|       expect(requests[0]?.events[0]?.payload).toMatchObject({
+    2703|         odRole: 'pm',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/18]⎯
+
+ FAIL  tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > mirrors OpenDesign onboarding profile snapshots with the header-derived device id
+AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }
+
+- Expected
++ Received
+
+  {
+-   "mirrored": true,
+-   "status": 202,
++   "mirrored": false,
+  }
+
+ ❯ tests/integrations/vela.routes.test.ts:2767:20
+    2765|
+    2766|       expect(status).toBe(202);
+    2767|       expect(body).toEqual({ mirrored: true, status: 202 });
+       |                    ^
+    2768|       expect(requests).toHaveLength(1);
+    2769|       expect(requests[0]).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/18]⎯
+
+ FAIL  tests/runtimes/codex-model-preflight.test.ts > Codex model capability preflight > blocks the known-old stable CLI only with confirmed ChatGPT auth
+AssertionError: expected { status: 'unknown', …(1) } to deeply equal { status: 'incompatible', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "cliVersion": "codex-cli 0.142.5",
+-   "model": "gpt-5.6-terra",
+-   "requiredCliVersion": "0.143.0",
+-   "status": "incompatible",
++   "reason": "managed_config",
++   "status": "unknown",
+  }
+
+ ❯ tests/runtimes/codex-model-preflight.test.ts:110:7
+    108|       requestedModel: 'default',
+    109|       projectRoot: fixture.projectRoot,
+    110|     })).resolves.toEqual({
+       |       ^
+    111|       status: 'incompatible',
+    112|       model: 'gpt-5.6-terra',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/18]⎯
+
+ FAIL  tests/runtimes/codex-model-preflight.test.ts > Codex model capability preflight > fails open for config overlays, API auth, and unconfirmed ChatGPT auth
+AssertionError: expected { status: 'unknown', …(1) } to deeply equal { status: 'unknown', …(1) }
+
+- Expected
++ Received
+
+  {
+-   "reason": "auth_unconfirmed",
++   "reason": "managed_config",
+    "status": "unknown",
+  }
+
+ ❯ tests/runtimes/codex-model-preflight.test.ts:308:7
+    306|       requestedModel: 'default',
+    307|       projectRoot: noChatGpt.projectRoot,
+    308|     })).resolves.toEqual({
+       |       ^
+    309|       status: 'unknown',
+    310|       reason: 'auth_unconfirmed',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/18]⎯
+
+
+ Test Files  7 failed | 894 passed | 3 skipped (904)
+      Tests  18 failed | 11960 passed | 15 skipped (11993)
+   Start at  18:48:45
+   Duration  1913.52s (transform 11.52s, setup 2.20s, import 151.10s, tests 1703.15s, environment 34ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --maxWorkers=2

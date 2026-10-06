@@ -897,11 +897,10 @@ describe('POST /api/projects/:id/export/html route', () => {
     expect(body.error.message).toContain('EISDIR');
   });
 
-  it('rejects historical entries until their dependency graph is versioned', async () => {
+  it('rejects an unknown version instead of exporting the current file', async () => {
     const response = await postExport({ fileName: 'pages/index.html', versionId: 'v1' });
-    expect(response.status).toBe(409);
-    const body = (await response.json()) as { error: { code: string; details: { kind: string } } };
-    expect(body.error.code).toBe('CONFLICT');
-    expect(body.error.details.kind).toBe('historical-dependency-snapshot-unavailable');
+    expect(response.status).toBe(404);
+    const body = (await response.json()) as { error: { code: string } };
+    expect(body.error.code).toBe('VERSION_NOT_FOUND');
   });
 });

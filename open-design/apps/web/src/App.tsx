@@ -204,6 +204,13 @@ import {
   type AmrAuthRetryContinuation,
 } from './runtime/amr-auth-retry-continuation';
 import { installFontRecovery } from './runtime/font-recovery';
+import { prepareMokinaImport, persistMokinaImport } from './runtime/mokina/recovery-import-journal';
+import { isDurableRecoveryAvailable, hydrateDurableRecoveryIntoLocalStorage, LegacyRecoveryConfirmationRequired, resolveLegacyRecoveryRecords } from './runtime/persistence/mokina-recovery-store';
+import {
+  exportProjectRecoveryZip,
+  importProjectRecoveryZip,
+  saveRecoveryFile,
+} from './runtime/mokina/recovery-package-client';
 import {
   runWithConcurrency,
   STAGED_UPLOAD_CONCURRENCY,
@@ -920,6 +927,30 @@ export async function hydrateReadyTeamProject(
 }
 
 export function App() {
+  const [recoveryReady, setRecoveryReady] = useState(() => !isDurableRecoveryAvailable());
+  const [recoveryError, setRecoveryError] = useState<string | null>(null);
+  const [legacyConfirmation, setLegacyConfirmation] = useState(false);
+  const failed = useCallback((error: unknown) => {
+    setLegacyConfirmation(error instanceof LegacyRecoveryConfirmationRequired);
+    setRecoveryError(error instanceof Error ? error.message : '恢复失败');
+  }, []);
+  const restore = useCallback(() => {
+    setRecoveryError(null);
+    setLegacyConfirmation(false);
+    void hydrateDurableRecoveryIntoLocalStorage().then(() => setRecoveryReady(true))
+      .catch(failed);
+  }, [failed]);
+  const resolveLegacy = (choice: 'restore' | 'keep-backup') => {
+    setRecoveryError(null);
+    setLegacyConfirmation(false);
+    void resolveLegacyRecoveryRecords(choice).then(() => setRecoveryReady(true)).catch(failed);
+  };
+  useEffect(restore, [restore]);
+  if (!recoveryReady) return <div role="status">{recoveryError ?? '正在恢复本地工作…'}
+    {legacyConfirmation ? <><button onClick={() => resolveLegacy('restore')}>恢复这些旧记录</button>
+      <button onClick={() => resolveLegacy('keep-backup')}>保留备份并继续</button></> : null}
+    {recoveryError && !legacyConfirmation ? <button onClick={restore}>重试恢复</button> : null}</div>;
+
   // `reducedMotion="user"` makes every motion/react component honor the OS
   // `prefers-reduced-motion` setting: transform/layout animations are zeroed
   // out while opacity-only changes are kept. The CSS `@media (prefers-reduced-
@@ -992,6 +1023,12 @@ function AppInner() {
   // Icon fonts whose startup fetch lost a race stay tofu forever without
   // this — see runtime/font-recovery.ts.
   useEffect(() => installFontRecovery(), []);
+  // T03: restore drafts / send intents that only the durable desktop-profile
+  // store still has (new port, replaced app, cleared origin). Never
+  // overwrites an existing localStorage value; a no-op in web-only builds.
+  useEffect(() => {
+    // Recovery has completed before AppInner mounts.
+  }, []);
   // Observability marker. `apps/web/src/observability/white-screen.ts`
   // keys its "app actually mounted" success condition on this attribute
   // because the dynamic-import loading shell (`<div class="od-loading-shell">
@@ -1075,6 +1112,7 @@ function AppInner() {
   const [workingDirError, setWorkingDirError] = useState<string | null>(null);
   const [projectCreateError, setProjectCreateError] = useState<string | null>(null);
   const [projectOpenError, setProjectOpenError] = useState<string | null>(null);
+  const [recoveryNotice, setRecoveryNotice] = useState<{ message: string; tone: 'success' | 'error' } | null>(null);
   const [deepLinkResolutionFailure, setDeepLinkResolutionFailure] = useState<{
     projectId: string;
     failure: 'missing' | 'materialization-failed';
@@ -3644,6 +3682,52 @@ function AppInner() {
     [rememberLocalProject, resolveSourceProjectWorkspaceContext],
   );
 
+  const handleExportRecoveryProject = useCallback(
+    async (projectId: string) => {
+      try {
+        const { blob, filename } = await exportProjectRecoveryZip(projectId, {
+          workspaceContext: resolvedWorkspaceContextForWrite(workspaceContextStateRef.current),
+        });
+        saveRecoveryFile(blob, filename);
+        setRecoveryNotice({ message: t('recentProjects.exportRecoveryDone'), tone: 'success' });
+      } catch (err) {
+        setRecoveryNotice({
+          message: `${t('recentProjects.exportRecoveryFailed')}：${err instanceof Error ? err.message : ''}`,
+          tone: 'error',
+        });
+      }
+    },
+    [t],
+  );
+
+  const handleImportMokinaRecovery = useCallback(
+    async (file: File, options?: { copy?: boolean }): Promise<{ ok: boolean; message?: string }> => {
+      try {
+        const workspace = resolvedWorkspaceContextForWrite(workspaceContextStateRef.current);
+        const journal = await prepareMokinaImport(file, workspace ? workspaceIdentityCacheKey(workspace) : 'local', options?.copy);
+        const { operationId, targetProjectId } = journal;
+        const result = journal.state === 'imported' ? { projectId: targetProjectId, warnings: [] } : await importProjectRecoveryZip(file, {
+          operationId,
+          targetProjectId,
+          workspaceContext: resolvedWorkspaceContextForWrite(workspaceContextStateRef.current),
+        });
+        await persistMokinaImport({ ...journal, state: 'imported' });
+        rememberLocalProject(result.projectId);
+        try { await refreshProjectsStrict(); } catch {
+          return { ok: false, message: '项目已导入，列表刷新失败；重试将打开同一项目。' };
+        }
+        if (result.warnings.length > 0) {
+          setRecoveryNotice({ message: result.warnings.join('；'), tone: 'success' });
+        }
+        navigate({ kind: 'project', projectId: result.projectId, fileName: null });
+        return { ok: true };
+      } catch (err) {
+        return { ok: false, message: err instanceof Error ? err.message : undefined };
+      }
+    },
+    [navigate, refreshProjectsStrict, rememberLocalProject],
+  );
+
   const handleCreatePluginShareProject = useCallback(
     async (
       pluginId: string,
@@ -5644,12 +5728,14 @@ function AppInner() {
         onCreateProject={handleCreateProject}
         onCreatePluginShareProject={handleCreatePluginShareProject}
         onImportClaudeDesign={handleImportClaudeDesign}
+        onImportMokinaRecovery={handleImportMokinaRecovery}
         onImportFolder={handleImportFolder}
         onImportFolderResponse={handleImportFolderResponse}
         onOpenProject={handleOpenProject}
         onOpenLiveArtifact={handleOpenLiveArtifact}
         onDeleteProject={handleDeleteProject}
         onDuplicateProject={handleDuplicateProject}
+        onExportRecoveryProject={handleExportRecoveryProject}
         onRenameProject={handleRenameProject}
         onProjectsRefresh={refreshProjectsStrict}
         onTeamProjectContentReady={handleTeamProjectContentReady}
@@ -5877,6 +5963,14 @@ function AppInner() {
           role="alert"
           tone="error"
           onDismiss={() => setProjectOpenError(null)}
+        />
+      ) : null}
+      {recoveryNotice ? (
+        <Toast
+          message={recoveryNotice.message}
+          role={recoveryNotice.tone === 'error' ? 'alert' : 'status'}
+          tone={recoveryNotice.tone}
+          onDismiss={() => setRecoveryNotice(null)}
         />
       ) : null}
       {/* First-run privacy consent banner. It waits for daemon config

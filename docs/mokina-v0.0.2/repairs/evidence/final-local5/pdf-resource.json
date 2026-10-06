@@ -1,0 +1,11 @@
+{
+  "sourceSHA": "033c57dfe08b1ca42fa8a883bfde522bd3326ed1",
+  "appVersion": "0.0.2-local.5",
+  "binariesChecked": 25,
+  "externalReferences": [],
+  "manifestSHA256": "34991feb5c83b6cfc0727b267a26c5bd58013d0a62aafda6f6ebf6c7f045302d",
+  "sandboxPolicy": "(version 1)(allow default)(deny file-read* (subpath \"/opt/homebrew\") (subpath \"/usr/local/bin\") (subpath \"/Users/dingcheng/Coding-Project\"))",
+  "sandboxExitCode": 0,
+  "text": "中文资料：品牌预算五十万元\n\nMokina packaged PDF page 1\n\f中文资料：品牌预算五十万元\n\nMokina packaged PDF page 2\n\f",
+  "stderr": ""
+}

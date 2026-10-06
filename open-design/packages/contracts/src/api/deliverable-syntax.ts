@@ -168,6 +168,7 @@ export type DeliverableSyntaxCanonicalReason = `canonical_${
   | 'entry_missing'
   | 'entry_not_touched'
   | 'entry_unreadable'
+  | 'structure_invalid'
   | 'type_mismatch'}`;
 
 type DeliverableSyntaxToolEnvelope = {

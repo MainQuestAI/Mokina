@@ -28,6 +28,7 @@ export interface RunContextSelection {
   mcpServerIds?: string[];
   connectorIds?: string[];
   workspaceItems?: WorkspaceContextItem[];
+  mokinaSnapshotId?: string;
 }
 
 type MetadataContextRef = {
@@ -101,17 +102,20 @@ export function normalizeRunContextSelection(value: unknown): RunContextSelectio
     }
     return out;
   };
-  return {
+  const selection: RunContextSelection = {
     skillIds: stringList(value.skillIds),
     pluginIds: stringList(value.pluginIds),
     mcpServerIds: stringList(value.mcpServerIds),
     connectorIds: stringList(value.connectorIds),
     workspaceItems: normalizeWorkspaceContextItems(value.workspaceItems),
   };
+  const mokinaSnapshotId = cleanString(value.mokinaSnapshotId, 240);
+  if (mokinaSnapshotId) selection.mokinaSnapshotId = mokinaSnapshotId;
+  return selection;
 }
 
 export function mergeRunContextSelections(...contexts: unknown[]): RunContextSelection {
-  const merged: Required<RunContextSelection> = {
+  const merged: Required<Omit<RunContextSelection, 'mokinaSnapshotId'>> & Pick<RunContextSelection, 'mokinaSnapshotId'> = {
     skillIds: [],
     pluginIds: [],
     mcpServerIds: [],
@@ -122,6 +126,9 @@ export function mergeRunContextSelections(...contexts: unknown[]): RunContextSel
   const workspaceSeen = new Set<string>();
   for (const context of contexts) {
     const normalized = normalizeRunContextSelection(context);
+    if (normalized.mokinaSnapshotId && !merged.mokinaSnapshotId) {
+      merged.mokinaSnapshotId = normalized.mokinaSnapshotId;
+    }
     for (const key of listKeys) {
       const seen = new Set(merged[key]);
       for (const id of normalized[key] ?? []) {
@@ -139,7 +146,9 @@ export function mergeRunContextSelections(...contexts: unknown[]): RunContextSel
     }
   }
   return Object.fromEntries(
-    Object.entries(merged).filter(([, ids]) => ids.length > 0),
+    Object.entries(merged).filter(([, value]) => (
+      typeof value === 'string' ? value.length > 0 : Array.isArray(value) && value.length > 0
+    )),
   ) as RunContextSelection;
 }
 
@@ -278,4 +287,36 @@ export function renderRunContextPrompt(selection: unknown, metadata: unknown) {
   }
   if (lines.length === 0) return '';
   return ['## Selected run context', ...lines].join('\n');
+}
+
+export type MokinaRunSnapshotBinding =
+  | { status: 'none' }
+  | { status: 'bound'; snapshot: import('@open-design/contracts').MokinaContextSnapshot }
+  | { status: 'error'; code: string; message: string };
+
+/**
+ * Resolve the frozen context snapshot a run references (`context.mokinaSnapshotId`).
+ *
+ * The snapshot is re-read from protected storage and re-verified on every run,
+ * so a corrupt or foreign snapshot fails the run start instead of silently
+ * dropping the material the user selected. Runs without the field are
+ * untouched.
+ */
+export async function resolveMokinaSnapshotForRun(options: {
+  projectsRoot: string;
+  projectId: string | null | undefined;
+  context: unknown;
+}): Promise<MokinaRunSnapshotBinding> {
+  const selection = normalizeRunContextSelection(options.context);
+  const snapshotId = selection.mokinaSnapshotId;
+  if (!snapshotId) return { status: 'none' };
+  if (!options.projectId) {
+    return { status: 'error', code: 'MOKINA_SNAPSHOT_UNAVAILABLE', message: '快照必须绑定到执行项目。' };
+  }
+  const { readMokinaContextSnapshot } = await import('../mokina/context-store.js');
+  const result = await readMokinaContextSnapshot(options.projectsRoot, options.projectId, snapshotId);
+  if (!result.ok) {
+    return { status: 'error', code: result.code, message: result.message };
+  }
+  return { status: 'bound', snapshot: result.snapshot };
 }

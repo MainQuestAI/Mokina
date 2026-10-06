@@ -1,0 +1,16 @@
+{
+  "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+  "profile": "Finder default portable",
+  "fileName": "品牌-logo.svg",
+  "frozenAssetSHA256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+  "frozenAssetByteLength": 161,
+  "sourceSHA256AfterReplacement": "fef79a73e0fadcb72ecc8225ff11be8a6960587a54f045e66dba1738ccb1dbf7",
+  "nativeFlow": [
+    "Finder opened installed local.6",
+    "normal New Project blank create",
+    "native upload SVG and MD",
+    "material panel selected two groups, asset role logo and usage",
+    "freeze confirmed 2 items about85chars",
+    "external source now B"
+  ]
+}

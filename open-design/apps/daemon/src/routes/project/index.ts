@@ -74,6 +74,21 @@ import {
 import { replaceHtmlSection } from '../../mokina/sections.js';
 import { readMokinaMaterial } from '../../mokina/materials.js';
 import {
+  prepareMokinaContextSnapshot,
+  readMokinaContextSnapshot,
+  type MokinaContextStoreSource,
+} from '../../mokina/context-store.js';
+import {
+  assertMokinaDiagnosticsSanitized,
+  buildMokinaDiagnostics,
+} from '../../mokina/diagnostics.js';
+import { probeMokinaCodexConnection } from '../../mokina/codex-connection.js';
+import { isMokinaLocalEdition } from '../../mokina/edition.js';
+
+// Router registration happens at daemon boot; close enough for uptime reporting.
+const MOKINA_DIAGNOSTICS_STARTED_AT = Date.now();
+import type { PrepareMokinaContextRequest } from '@open-design/contracts';
+import {
   createUserDesignSystem,
   deleteUserDesignSystem,
   linkUserDesignSystemProject,
@@ -7249,6 +7264,123 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
         error?.message || 'material extraction failed');
     }
   });
+
+  app.post('/api/projects/:id/mokina/context-snapshots', async (req, res) => {
+    try {
+      const project = getProject(db, req.params.id);
+      if (!project) return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
+      if (!await authorizeProjectRequest(req, res, project.id, { mode: 'write', capability: 'writeFiles' })) return;
+      const body = req.body as Partial<PrepareMokinaContextRequest> | undefined;
+      if (!body || typeof body !== 'object' || typeof body.snapshotId !== 'string' || !Array.isArray(body.selections)) {
+        return sendApiError(res, 400, 'BAD_REQUEST', 'snapshotId and selections are required');
+      }
+      // Server re-reads every source; the client can only reference and
+      // pre-digest, never submit "verified" text of its own.
+      const source: MokinaContextStoreSource = {
+        readProjectFile: async (fileName, versionId) => {
+          try {
+            if (versionId) {
+              const version = await readProjectFileVersion(
+                PROJECTS_DIR,
+                project.id,
+                fileName,
+                versionId,
+                project.metadata,
+              );
+              return { bytes: Buffer.from(version.frozenContent ?? version.content, 'utf8') };
+            }
+            const file = await readProjectFile(PROJECTS_DIR, project.id, fileName, project.metadata);
+            return { bytes: file.buffer };
+          } catch (error: any) {
+            return { error: error?.code === 'ENOENT' ? 'missing' : 'unavailable' };
+          }
+        },
+      };
+      const result = await prepareMokinaContextSnapshot({
+        projectsRoot: PROJECTS_DIR,
+        projectId: project.id,
+        request: {
+          snapshotId: body.snapshotId,
+          selections: body.selections,
+          excluded: Array.isArray(body.excluded) ? body.excluded : [],
+        },
+        source,
+      });
+      if (!result.ok) {
+        return sendApiError(res, result.status, result.code, result.message);
+      }
+      res.status(result.reused ? 200 : 201).json({ snapshot: result.snapshot, reused: result.reused });
+    } catch (error: any) {
+      sendApiError(res, 400, 'BAD_REQUEST', error?.message || 'context snapshot failed');
+    }
+  });
+
+  // T15: minimum local diagnostics. Sanitized by construction; the test suite
+  // scans the response for credential/path/subject leakage.
+  let mokinaCodexProbe: { at: number; state: 'detected' | 'missing' } | null = null;
+  // T04: Codex connection check. `codex login status` is the authoritative
+  // login probe (covers file AND system credential storage); the response
+  // uses the daemon's existing failure vocabulary.
+  app.get('/api/mokina/codex-connection', async (_req, res) => {
+    try {
+      const report = await probeMokinaCodexConnection();
+      res.json(report);
+    } catch (error: any) {
+      sendApiError(res, 500, 'CODEX_CONNECTION_FAILED', error?.message || 'connection check failed');
+    }
+  });
+
+  app.get('/api/mokina/diagnostics', async (_req, res) => {
+    try {
+      if (mokinaCodexProbe == null || Date.now() - mokinaCodexProbe.at > 60_000) {
+        try {
+          const { execFile } = await import('node:child_process');
+          const { promisify } = await import('node:util');
+          await promisify(execFile)('codex', ['--version'], { timeout: 3000 });
+          mokinaCodexProbe = { at: Date.now(), state: 'detected' };
+        } catch {
+          mokinaCodexProbe = { at: Date.now(), state: 'missing' };
+        }
+      }
+      const report = buildMokinaDiagnostics({
+        productId: process.env.MOKINA_PRODUCT_ID ?? 'mokina',
+        productName: process.env.MOKINA_PRODUCT_NAME ?? 'Mokina',
+        productVersion: process.env.MOKINA_PRODUCT_VERSION ?? process.env.OD_APP_VERSION ?? null,
+        releaseKind: process.env.MOKINA_RELEASE_KIND ?? null,
+        edition: isMokinaLocalEdition() ? 'local' : 'off',
+        startedAt: MOKINA_DIAGNOSTICS_STARTED_AT,
+        checks: {
+          daemon: 'ok',
+          codexCli: mokinaCodexProbe.state,
+        },
+      });
+      assertMokinaDiagnosticsSanitized(report);
+      res.json(report);
+    } catch (error: any) {
+      sendApiError(res, 500, 'DIAGNOSTICS_FAILED', error?.message || 'diagnostics failed');
+    }
+  });
+
+  app.get(
+    /^\/api\/projects\/([^/]+)\/mokina\/context-snapshots\/([^/]+)$/u,
+    async (req, res) => {
+      try {
+        const params = req.params as unknown as { 0?: string; 1?: string };
+        const projectId = String(params[0] ?? '');
+        const snapshotId = String(params[1] ?? '');
+        const project = getProject(db, projectId);
+        if (!project) return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
+        if (!await authorizeProjectRequest(req, res, project.id, { mode: 'read' })) return;
+        const result = await readMokinaContextSnapshot(PROJECTS_DIR, project.id, snapshotId);
+        if (!result.ok) {
+          return sendApiError(res, result.status, result.code, result.message);
+        }
+        res.json({ snapshot: result.snapshot });
+      } catch (error: any) {
+        sendApiError(res, 400, 'BAD_REQUEST', error?.message || 'context snapshot read failed');
+      }
+    },
+  );
 
   app.get(/^\/api\/projects\/([^/]+)\/files\/(.+)\/versions$/u, async (req, res) => {
     try {

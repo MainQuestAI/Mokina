@@ -3,6 +3,7 @@
 import type { ChatRunStatusResponse, WorkspaceCollabContext } from '@open-design/contracts';
 import { queryRunByClientRequest } from '../../providers/daemon';
 import { sanitizeComposerDraftExtras, type ComposerDraftExtras, DRAFT_MAX_EXTRAS_CHARS } from './composer-draft';
+import { mirrorDurableRecord, removeDurableRecord, flushDurableRecord } from '../persistence/mokina-recovery-store';
 
 export interface SendRequestSnapshot {
   readonly prompt: string;
@@ -71,7 +72,14 @@ export function loadSendRequestRecords(p: string, c: string, authorityKey = 'non
   return [...records.values()].sort((a, b) => a.createdAt - b.createdAt);
 }
 function write(r: SendRequestRecord): boolean {
-  try { window.localStorage.setItem(recordKey(r), JSON.stringify(r)); changed(); return true; }
+  try {
+    const encoded = JSON.stringify(r);
+    window.localStorage.setItem(recordKey(r), encoded);
+    // Durable mirror under the desktop profile: a port/origin change must not
+    // orphan a prepared or unknown send intent (T03).
+    mirrorDurableRecord(recordKey(r), encoded);
+    changed(); return true;
+  }
   catch { return false; }
 }
 export function savePendingSendRequest(input: {
@@ -130,11 +138,59 @@ export async function persistPendingSendRequest(input: Parameters<typeof savePen
   try {
     if (typeof navigator !== 'undefined' && navigator.locks) {
       return await navigator.locks.request(prefix(input.projectId, input.conversationId, input.authorityKey),
-        { mode: 'exclusive' }, () => savePendingSendRequest(input));
+        { mode: 'exclusive' }, () => persistSavedRequest(input));
     }
-    return savePendingSendRequest(input);
+    return await persistSavedRequest(input);
   } catch { return 'failed'; }
 }
+async function persistSavedRequest(input: Parameters<typeof savePendingSendRequest>[0]): Promise<SavePendingSendResult> {
+  const result = savePendingSendRequest(input);
+  if (result === 'failed') return result;
+  // A full recovery queue cannot silently admit a request with no identity.
+  if (!find(input.projectId, input.conversationId, input.clientRequestId, input.authorityKey)) return 'failed';
+  if (!await flushDurableRecord(recordKey(input))) {
+    owners.delete(recordKey(input));
+    return 'failed';
+  }
+  return result;
+}
+export async function persistDispatchedSendRequest(p: string, c: string, id: string, authorityKey?: string): Promise<boolean> {
+  return markSendRequestDispatched(p, c, id, authorityKey)
+    && await flushDurableRecord(recordKey({ projectId: p, conversationId: c, clientRequestId: id, authorityKey }));
+}
+export async function persistClearSendRequest(p: string, c: string, id: string, authorityKey?: string): Promise<boolean> {
+  const r = find(p, c, id, authorityKey);
+  if (!r) return true;
+  const key = recordKey(r);
+  try {
+    // Preserve the local recovery card until every durable mutation succeeds.
+    const legacy = (authorityKey ?? 'none') === 'none' ? window.localStorage.getItem(legacyKey(p, c)) : null;
+    let nextLegacy: string | null = null;
+    if (legacy) {
+      const old: unknown = JSON.parse(legacy);
+      if (!Array.isArray(old)) return false;
+      const next = old.filter(row => !valid(row, p, c) || row.clientRequestId !== id);
+      nextLegacy = next.length ? JSON.stringify(next) : null;
+      const saved = nextLegacy == null ? await removeDurableRecord(legacyKey(p, c))
+        : await mirrorDurableRecord(legacyKey(p, c), nextLegacy);
+      if (!saved) return false;
+    }
+    if (!await removeDurableRecord(key)) return false;
+    if (legacy) {
+      if (nextLegacy == null) window.localStorage.removeItem(legacyKey(p, c));
+      else window.localStorage.setItem(legacyKey(p, c), nextLegacy);
+    }
+    window.localStorage.removeItem(key);
+    owners.delete(key); changed(); return true;
+  } catch { return false; }
+}
+export async function persistSendRequestOutcome(p: string, c: string, id: string, status: 'draft' | 'unknown', authorityKey?: string): Promise<boolean> {
+  const r = find(p, c, id, authorityKey);
+  if (!r) return false;
+  owners.delete(recordKey(r));
+  return write({ ...r, status }) && await flushDurableRecord(recordKey(r));
+}
+
 function find(p: string, c: string, id: string, authorityKey?: string): SendRequestRecord | undefined {
   return loadSendRequestRecords(p, c, authorityKey).find(r => r.clientRequestId === id);
 }
@@ -171,14 +227,21 @@ export function clearSendRequestRecord(p: string, c: string, id: string, authori
   if (!r) return true;
   try {
     window.localStorage.removeItem(recordKey(r));
+    removeDurableRecord(recordKey(r));
     if ((authorityKey ?? 'none') === 'none') {
       const raw = window.localStorage.getItem(legacyKey(p, c));
       if (raw) {
         const old: unknown = JSON.parse(raw);
         if (Array.isArray(old)) {
           const next = old.filter(row => !valid(row, p, c) || row.clientRequestId !== id);
-          if (next.length) window.localStorage.setItem(legacyKey(p, c), JSON.stringify(next));
-          else window.localStorage.removeItem(legacyKey(p, c));
+          if (next.length) {
+            const encodedNext = JSON.stringify(next);
+            window.localStorage.setItem(legacyKey(p, c), encodedNext);
+            mirrorDurableRecord(legacyKey(p, c), encodedNext);
+          } else {
+            window.localStorage.removeItem(legacyKey(p, c));
+            removeDurableRecord(legacyKey(p, c));
+          }
         }
       }
     }

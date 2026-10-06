@@ -1,0 +1,269 @@
+// @vitest-environment jsdom
+//
+// T03 桌面 profile 持久恢复存储的渲染层 facade：镜像、CAS 重试、hydration 不覆盖本地较新副本。
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { OpenDesignHostBridge } from '@open-design/host';
+
+const getOpenDesignHost = vi.fn<() => OpenDesignHostBridge | null>(() => null);
+
+vi.mock('@open-design/host', async () => {
+  const actual = await vi.importActual<typeof import('@open-design/host')>('@open-design/host');
+  return { ...actual, getOpenDesignHost: () => getOpenDesignHost() };
+
+});
+
+import {
+  hydrateDurableRecoveryIntoLocalStorage,
+  isDurableRecoveryAvailable,
+  mirrorDurableRecord,
+  removeDurableRecord,
+  resetDurableRecoveryForTests,
+  LegacyRecoveryConfirmationRequired,
+  resolveLegacyRecoveryRecords,
+} from '../../src/runtime/persistence/mokina-recovery-store';
+
+import { persistRecoveredComposerDraft } from '../../src/runtime/chat/composer-draft';
+import { clearPendingMokinaSnapshot, writePendingMokinaSnapshot, readPendingMokinaSnapshot } from '../../src/runtime/mokina/pending-context-snapshot';
+import { persistPendingSendRequest, persistClearSendRequest, loadSendRequestRecords } from '../../src/runtime/chat/send-request-state';
+
+type FakeRecord = { recordId: string; value: string };
+
+function makeFakeStore(initial: Record<string, FakeRecord> = {}) {
+  const records = new Map(Object.entries(initial));
+  return {
+    records,
+    delete: vi.fn(async (key: string, expectedRecordId: string) => {
+      const current = records.get(key);
+      if (!current || current.recordId !== expectedRecordId) return { ok: true as const, result: 'conflict' as const };
+      records.delete(key);
+      return { ok: true as const, result: 'deleted' as const };
+    }),
+    get: vi.fn(async (key: string) => {
+      const current = records.get(key);
+      return current
+        ? { ok: true as const, found: true as const, record: current }
+        : { ok: true as const, found: false as const };
+    }),
+    list: vi.fn(async (prefix?: string) => ({
+      ok: true as const,
+      keys: [...records.keys()].filter((key) => prefix == null || key.startsWith(prefix)),
+    })),
+    put: vi.fn(async (key: string, record: FakeRecord, expectedRecordId?: string) => {
+      const current = records.get(key);
+      if (expectedRecordId === undefined) {
+        if (current) return { ok: true as const, result: 'conflict' as const };
+      } else if (!current || current.recordId !== expectedRecordId) {
+        return { ok: true as const, result: 'conflict' as const };
+      }
+      records.set(key, record);
+      return { ok: true as const, result: 'stored' as const };
+    }),
+  };
+}
+
+type FakeStore = ReturnType<typeof makeFakeStore>;
+
+function installHost(store: FakeStore | null): void {
+  getOpenDesignHost.mockReturnValue(
+    store == null ? null : ({ recoveryStore: store } as unknown as OpenDesignHostBridge),
+  );
+}
+
+const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+describe('mokina durable recovery facade (web)', () => {
+  it.each(['restore', 'keep-backup'] as const)('requires an explicit %s decision for ambiguous legacy cache', async choice => {
+    const store = makeFakeStore(); installHost(store);
+    const get = store.get.getMockImplementation()!;
+    store.get.mockImplementation(async key => {
+      const result = await get(key);
+      return result.found ? result : { ...result, legacyMigration: 'confirm' as const };
+    });
+    const key = 'od:revision:draft:p:中文/方案.html';
+    localStorage.setItem(key, '旧要求');
+    await expect(hydrateDurableRecoveryIntoLocalStorage()).rejects.toBeInstanceOf(LegacyRecoveryConfirmationRequired);
+    expect(store.put).not.toHaveBeenCalled();
+    expect(localStorage.getItem(key)).toBe('旧要求');
+    await resolveLegacyRecoveryRecords(choice);
+    if (choice === 'restore') expect(store.records.get(key)?.value).toBe('旧要求');
+    else {
+      expect(store.put).not.toHaveBeenCalled();
+      expect(localStorage.getItem(key)).toBeNull();
+      expect(localStorage.getItem(`mokina:legacy-recovery:${encodeURIComponent(key)}`)).toBe('旧要求');
+    }
+  });
+  it('does not overwrite a competing record when explicit legacy restore conflicts', async () => {
+    const store = makeFakeStore(); installHost(store);
+    store.get.mockResolvedValue({ ok: true, found: false, legacyMigration: 'confirm' } as Awaited<ReturnType<typeof store.get>>);
+    const key = 'od:revision:legacy'; localStorage.setItem(key, '旧要求');
+    await expect(hydrateDurableRecoveryIntoLocalStorage()).rejects.toBeInstanceOf(LegacyRecoveryConfirmationRequired);
+    store.records.set(key, { recordId: 'foreign', value: '另一窗口' });
+    await expect(resolveLegacyRecoveryRecords('restore')).rejects.toThrow('冲突');
+    expect(store.records.get(key)?.value).toBe('另一窗口');
+    expect(localStorage.getItem(key)).toBe('旧要求');
+  });
+  beforeEach(() => {
+    window.localStorage.clear();
+    resetDurableRecoveryForTests();
+    getOpenDesignHost.mockReset();
+    getOpenDesignHost.mockReturnValue(null);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('keeps the receipt transfer incomplete until both draft writes are durable', async () => {
+    const store = makeFakeStore(); installHost(store);
+    let finish!: () => void;
+    const realPut = store.put.getMockImplementation()!;
+    store.put.mockImplementationOnce(async (...args) => { await new Promise<void>(resolve => { finish = resolve; }); return realPut(...args); });
+    const extras = { attachments: [], commentAttachments: [], quotes: [], context: { skillIds: [], mcpServerIds: [], connectorIds: [], workspaceItems: [], mokinaSnapshotId: 'snap' } };
+    const done = vi.fn();
+    const task = persistRecoveredComposerDraft('od:chat-composer:receipt', '原输入', extras).then(done);
+    await flush(); expect(done).not.toHaveBeenCalled();
+    expect(localStorage.getItem('od:chat-composer:receipt')).toBeNull();
+    finish(); await task; expect(done).toHaveBeenCalledWith(true);
+    expect(store.records.get('od:chat-composer:receipt:extras')?.value).toContain('snap');
+    store.put.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    await expect(persistRecoveredComposerDraft('od:chat-composer:failed', '保留凭据', extras)).resolves.toBe(false);
+    expect(localStorage.getItem('od:chat-composer:failed')).toBeNull();
+  });
+
+  it('keeps a send receipt visible when its durable cleanup fails', async () => {
+    const store = makeFakeStore(); installHost(store);
+    await persistPendingSendRequest({ projectId: 'p', conversationId: 'c', clientRequestId: 'receipt', prompt: '原请求' });
+    store.delete.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    await expect(persistClearSendRequest('p', 'c', 'receipt')).resolves.toBe(false);
+    expect(loadSendRequestRecords('p', 'c')).toHaveLength(1);
+    await expect(persistClearSendRequest('p', 'c', 'receipt')).resolves.toBe(true);
+    expect(loadSendRequestRecords('p', 'c')).toHaveLength(0);
+  });
+
+  it('retains a snapshot binding when its durable delete fails', async () => {
+    const store = makeFakeStore(); installHost(store);
+    await writePendingMokinaSnapshot({ projectId: 'p', snapshotId: 's', itemCount: 1, charCount: 1, frozenAt: '', itemLabels: [], excluded: [] });
+    store.delete.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    await expect(clearPendingMokinaSnapshot('p')).resolves.toBe(false);
+    expect(readPendingMokinaSnapshot('p')?.snapshotId).toBe('s');
+    await expect(clearPendingMokinaSnapshot('p')).resolves.toBe(true);
+    expect(readPendingMokinaSnapshot('p')).toBeNull();
+  });
+
+  it("no-ops without the desktop host bridge", async () => {
+    expect(isDurableRecoveryAvailable()).toBe(false);
+    mirrorDurableRecord('od:revision:a', 'v');
+    removeDurableRecord('od:revision:a');
+    await expect(hydrateDurableRecoveryIntoLocalStorage()).resolves.toBe(0);
+  });
+
+  it("mirrors a new record via create-if-absent and updates it via CAS", async () => {
+    const store = makeFakeStore();
+    installHost(store);
+
+    mirrorDurableRecord('od:revision:a', 'first');
+    await flush();
+    expect(store.records.get('od:revision:a')?.value).toBe('first');
+
+    mirrorDurableRecord('od:revision:a', 'second');
+    await flush();
+    expect(store.records.get('od:revision:a')?.value).toBe('second');
+  });
+
+  it("removes the durable copy only when the record exists", async () => {
+    const store = makeFakeStore({ 'od:revision:a': { recordId: 'r1', value: 'x' } });
+    installHost(store);
+    removeDurableRecord('od:revision:a');
+    await flush();
+    expect(store.records.has('od:revision:a')).toBe(false);
+    expect(store.delete).toHaveBeenCalledWith('od:revision:a', 'r1');
+  });
+
+  it("hydrates durable records over stale origin caches", async () => {
+    const store = makeFakeStore({
+      'od:revision:missing': { recordId: 'r1', value: 'durable-only' },
+      'od:revision:present': { recordId: 'r2', value: 'durable-newer' },
+    });
+    installHost(store);
+    window.localStorage.setItem('od:revision:present', 'local-copy');
+
+    const hydrated = await hydrateDurableRecoveryIntoLocalStorage();
+
+    expect(hydrated).toBe(2);
+    expect(window.localStorage.getItem('od:revision:missing')).toBe('durable-only');
+    expect(window.localStorage.getItem('od:revision:present')).toBe('durable-newer');
+  });
+
+  it("hydrates at most once per session", async () => {
+    const store = makeFakeStore({ 'od:send-request:v2:x': { recordId: 'r1', value: 'v' } });
+    installHost(store);
+    await hydrateDurableRecoveryIntoLocalStorage();
+    const callsAfterFirst = store.list.mock.calls.length;
+    await hydrateDurableRecoveryIntoLocalStorage();
+    expect(store.list).toHaveBeenCalledTimes(callsAfterFirst); // second call is a no-op
+    expect(callsAfterFirst).toBeGreaterThan(0);
+  });
+  it('serializes complete mutations: A/B/C leaves C and write/delete stays deleted', async () => {
+    const store = makeFakeStore();
+    installHost(store);
+    await Promise.all([
+      mirrorDurableRecord('mokina:revision:order', 'A'),
+      mirrorDurableRecord('mokina:revision:order', 'B'),
+      mirrorDurableRecord('mokina:revision:order', 'C'),
+    ]);
+    expect(store.records.get('mokina:revision:order')?.value).toBe('C');
+    await Promise.all([
+      mirrorDurableRecord('mokina:revision:delete', 'A'),
+      removeDurableRecord('mokina:revision:delete'),
+    ]);
+    expect(store.records.has('mokina:revision:delete')).toBe(false);
+  });
+
+  it('reports IPC failure and does not retry a conflicting write over its new owner', async () => {
+    const store = makeFakeStore();
+    installHost(store);
+    store.put.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    await expect(mirrorDurableRecord('mokina:revision:conflict', 'A')).resolves.toBe(false);
+    expect(store.put).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not admit sending before durable IPC completes and reports write failure', async () => {
+    const store = makeFakeStore(); installHost(store);
+    let complete!: (value: { ok: true; result: 'conflict' }) => void;
+    store.put.mockImplementationOnce(() => new Promise(resolve => { complete = resolve; }));
+    let admitted = false;
+    const saving = persistPendingSendRequest({ projectId: 'p', conversationId: 'c', clientRequestId: 'delayed', prompt: '保留输入' })
+      .then(result => { admitted = result !== 'failed'; return result; });
+    await flush();
+    expect(admitted).toBe(false);
+    complete({ ok: true, result: 'conflict' });
+    expect(await saving).toBe('failed');
+    expect(admitted).toBe(false);
+  });
+
+  it('RR4 returning to origin A does not remigrate its stale cache after origin B deleted the durable binding', async () => {
+    const key = 'mokina:context-snapshot:origin';
+    const store = makeFakeStore(); installHost(store);
+    await mirrorDurableRecord(key, 'frozen A'); localStorage.setItem(key, 'frozen A');
+    const originA = localStorage.getItem(key)!;
+    resetDurableRecoveryForTests(); localStorage.clear(); await hydrateDurableRecoveryIntoLocalStorage();
+    await removeDurableRecord(key); localStorage.removeItem(key);
+    store.get.mockImplementation(async candidate => candidate === key
+      ? { ok: true as const, found: false as const, deletedRecordId: 'deleted-in-B' }
+      : { ok: true as const, found: false as const });
+    resetDurableRecoveryForTests(); localStorage.setItem(key, originA);
+    await hydrateDurableRecoveryIntoLocalStorage();
+    expect(localStorage.getItem(key)).toBeNull(); expect(store.records.has(key)).toBe(false);
+  });
+
+  it('RR4 deletion committed before local cache cleanup still wins at restart', async () => {
+    const key = 'mokina:revision:crash'; const store = makeFakeStore(); installHost(store);
+    localStorage.setItem(key, 'old intent');
+    store.get.mockImplementation(async () => ({ ok: true as const, found: false as const, deletedRecordId: 'deleted-before-exit' }));
+    await hydrateDurableRecoveryIntoLocalStorage();
+    expect(localStorage.getItem(key)).toBeNull(); expect(store.put).not.toHaveBeenCalled();
+  });
+
+});

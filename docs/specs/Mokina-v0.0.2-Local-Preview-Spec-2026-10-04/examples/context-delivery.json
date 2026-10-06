@@ -1,0 +1,35 @@
+{
+  "runId": "synthetic-example-not-a-real-run",
+  "snapshotId": "33333333-3333-4333-8333-333333333333",
+  "fingerprint": "2fa9819ebd4f26300d6017db791e1f5b15240afa33a60bedb181968a2539e936",
+  "includedItemIds": [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5"
+  ],
+  "itemDelivery": [
+    {
+      "itemId": "S1",
+      "mode": "inline-text"
+    },
+    {
+      "itemId": "S2",
+      "mode": "inline-text"
+    },
+    {
+      "itemId": "S3",
+      "mode": "inline-text"
+    },
+    {
+      "itemId": "S4",
+      "mode": "staged-file"
+    },
+    {
+      "itemId": "S5",
+      "mode": "inline-text"
+    }
+  ],
+  "status": "prepared"
+}

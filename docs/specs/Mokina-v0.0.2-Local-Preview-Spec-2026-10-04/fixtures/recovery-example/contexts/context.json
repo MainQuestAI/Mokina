@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "33333333-3333-4333-8333-333333333333",
+  "projectId": "22222222-2222-4222-8222-222222222222",
+  "createdAt": "2026-10-04T00:00:00Z",
+  "parserVersion": "spec-fixture-v1",
+  "selectionFingerprint": "0a342ec27803e00a537a9e6e7c2d91a8a6dfdd2ceaa6de1f3b72163efeff8e71",
+  "items": [
+    {
+      "itemId": "S1",
+      "kind": "artifact-section",
+      "displayName": "历史方案 · audience",
+      "sourceRef": {
+        "kind": "project-file",
+        "projectId": "11111111-1111-4111-8111-111111111111",
+        "fileName": "plan.html",
+        "versionId": "55555555-5555-4555-8555-555555555551",
+        "versionState": "historical"
+      },
+      "sourceDigest": "bdff1bf3ba29297228b6ab08c578192e2027274f673937128cd5b258972f36b2",
+      "limitations": [],
+      "locators": [
+        "section#audience"
+      ],
+      "text": "主要计划人群为 22–35 岁城市工作人群，资源分配至少 60%。",
+      "textDigest": "91a09b86205ea3caa79de96d4095deb46f6686ea18b3b1126169633dbcd39b1a"
+    },
+    {
+      "itemId": "S2",
+      "kind": "artifact-section",
+      "displayName": "历史方案 · strategy",
+      "sourceRef": {
+        "kind": "project-file",
+        "projectId": "11111111-1111-4111-8111-111111111111",
+        "fileName": "plan.html",
+        "versionId": "55555555-5555-4555-8555-555555555551",
+        "versionState": "historical"
+      },
+      "sourceDigest": "bdff1bf3ba29297228b6ab08c578192e2027274f673937128cd5b258972f36b2",
+      "limitations": [],
+      "locators": [
+        "section#strategy"
+      ],
+      "text": "优先通过产品体验和门店场景传达口味价值，不以大额折扣作为核心理由。",
+      "textDigest": "c10daff95bbc1c6176520dbdc70114e16b6807efed4593c5eea37ad6f9eea23c"
+    },
+    {
+      "itemId": "S3",
+      "kind": "brand-rule",
+      "displayName": "本次活动页品牌规则",
+      "sourceRef": {
+        "kind": "project-file",
+        "projectId": "11111111-1111-4111-8111-111111111111",
+        "fileName": "brand-rules.md"
+      },
+      "sourceDigest": "faba0e73086103f065c3ae45eccd865bc4e60c9b3e7128f2a1b30af3ca346f6a",
+      "limitations": [
+        "测试规则，不是真实客户品牌审定文件。"
+      ],
+      "locators": [
+        "heading:1"
+      ],
+      "text": "# 本次活动页品牌规则（合成）\n\n以黑白和温和留白为主，标题简短，产品名称准确。不把折扣作为核心价值。不得使用医疗、减脂或其他未经证明的功效主张。测试标识可以用于本次内部预览，来源为本 Spec 合成素材，未声明任何真实商业授权。",
+      "textDigest": "9f0f4e915d13ad84caf74b88c58443c76a3abf1f67db66e65840b952f2641577"
+    },
+    {
+      "itemId": "S4",
+      "kind": "asset",
+      "displayName": "合成测试标识",
+      "sourceRef": {
+        "kind": "project-file",
+        "projectId": "11111111-1111-4111-8111-111111111111",
+        "fileName": "brand-mark.svg"
+      },
+      "sourceDigest": "0bc122890cfad0402ebe15b57cc568030a0504be83497d05c97f07acf9b280c9",
+      "limitations": [
+        "尚不表示模型执行了视觉识别。"
+      ],
+      "blobId": "0bc122890cfad0402ebe15b57cc568030a0504be83497d05c97f07acf9b280c9",
+      "mimeType": "image/svg+xml",
+      "byteLength": 374,
+      "role": "logo",
+      "usageNote": "仅供合成验收使用，不代表真实品牌授权。"
+    },
+    {
+      "itemId": "S5",
+      "kind": "user-note",
+      "displayName": "用户补充",
+      "sourceRef": {
+        "kind": "user-note"
+      },
+      "sourceDigest": "f8ec7e12e31b2287029b89189768a0881c7780c0622f72e5f9eea0a01a813116",
+      "limitations": [],
+      "locators": [
+        "本次用户补充"
+      ],
+      "text": "只制作内部预览；CTA 跳转体验说明，不连接真实报名服务。",
+      "textDigest": "f8ec7e12e31b2287029b89189768a0881c7780c0622f72e5f9eea0a01a813116"
+    }
+  ],
+  "excluded": [
+    {
+      "displayName": "原方案其他章节与对话",
+      "reason": "user-excluded",
+      "explanation": "未选择，不自动继承。"
+    }
+  ],
+  "fingerprint": "2fa9819ebd4f26300d6017db791e1f5b15240afa33a60bedb181968a2539e936"
+}

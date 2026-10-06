@@ -1,0 +1,14 @@
+{
+  "rows": [
+    {
+      "sectionId": "budget",
+      "unchanged": true
+    },
+    {
+      "sectionId": "channels",
+      "unchanged": true
+    }
+  ],
+  "candidateContainsRequirement": true,
+  "evidenceType": "native exported selected versions; normalized DOM section comparison"
+}

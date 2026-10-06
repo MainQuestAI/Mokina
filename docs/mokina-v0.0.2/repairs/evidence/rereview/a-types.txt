@@ -1,0 +1,12 @@
+
+> @open-design/daemon@0.22.1 typecheck /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon
+> pnpm --filter @open-design/contracts build && pnpm --filter @open-design/registry-protocol build && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+
+
+> @open-design/contracts@0.22.1 build /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/contracts
+> node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+
+
+> @open-design/registry-protocol@0.5.0 build /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/registry-protocol
+> node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+

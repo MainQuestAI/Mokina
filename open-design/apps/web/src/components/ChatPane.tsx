@@ -52,7 +52,7 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { composerDraftExtrasKey } from '../runtime/chat/composer-draft';
+import { persistRecoveredComposerDraft } from '../runtime/chat/composer-draft';
 import historyStyles from './chat/ConversationHistoryDock.module.css';
 import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask } from '@open-design/contracts';
 import { useAnalytics } from '../analytics/provider';
@@ -730,7 +730,7 @@ interface Props {
   initialDraft?: string;
   sendRecoveryRequest?: { id: string; snapshot: SendRequestSnapshot } | null;
   onSendRecoveryRestored?: (id: string) => void;
-  onSendRecoveryBlocked?: () => void;
+  onSendRecoveryBlocked?: (reason?: 'storage' | 'occupied') => void;
   // Product path of the Home recommendation that started this project. When
   // set (and concrete), the empty-conversation starter cards show that path's
   // starters — one-click composer replacements — instead of the generic set.
@@ -2748,15 +2748,21 @@ export function ChatPane({
     // Transfer the complete receipt before removing its only crash-safe copy.
     // Failure keeps the original receipt available and leaves the current draft alone.
     if (!composerDraftStorageKey) { onSendRecoveryBlocked?.(); return; }
-    try {
-      window.localStorage.setItem(composerDraftStorageKey, snapshot.prompt);
-      window.localStorage.setItem(composerDraftExtrasKey(composerDraftStorageKey), JSON.stringify(snapshot.extras));
-    } catch { onSendRecoveryBlocked?.(); return; }
-    composerRef.current.restoreDraft({ text: snapshot.prompt,
-      attachments: snapshot.extras.attachments, commentAttachments: snapshot.extras.commentAttachments,
-      quotes: snapshot.extras.quotes,
-      meta: { context: snapshot.extras.context, skillIds: snapshot.extras.context.skillIds } });
-    onSendRecoveryRestored?.(id);
+    let active = true;
+    void (async () => {
+      const saved = await persistRecoveredComposerDraft(composerDraftStorageKey, snapshot.prompt, snapshot.extras,
+        () => active && composerRef.current != null && !composerRef.current.hasDraft());
+      if (!active) return;
+      if (!saved || !composerRef.current || composerRef.current.hasDraft()) {
+        onSendRecoveryBlocked?.(!saved ? 'storage' : 'occupied'); return;
+      }
+      composerRef.current.restoreDraft({ text: snapshot.prompt,
+        attachments: snapshot.extras.attachments, commentAttachments: snapshot.extras.commentAttachments,
+        quotes: snapshot.extras.quotes,
+        meta: { context: snapshot.extras.context, skillIds: snapshot.extras.context.skillIds } });
+      onSendRecoveryRestored?.(id);
+    })();
+    return () => { active = false; };
   }, [sendRecoveryRequest, composerDraftStorageKey, onSendRecoveryRestored, onSendRecoveryBlocked]);
 
   const seededComposerSeedRef = useRef(false);

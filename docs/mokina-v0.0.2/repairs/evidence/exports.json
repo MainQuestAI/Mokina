@@ -1,0 +1,76 @@
+{
+  "sourceSHA": "6fe5d5346a0031a2459d04925a53be8e428f4ad9",
+  "appVersion": "0.0.2-local.3",
+  "evidenceType": "installed WebContents UI export; blob download intercepted before native Save As; native dialogs NOT verified",
+  "exports": [
+    {
+      "version": 1,
+      "format": "html",
+      "downloadFilename": "plan-v1-historical.html",
+      "bytes": 20212,
+      "sha256": "1177987ca39c144670bed574d1ecae1957c1138c71f6794a826df7107c56ba34",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/v1.html",
+      "htmlHasUnadoptedCandidate": false
+    },
+    {
+      "version": 1,
+      "format": "zip",
+      "downloadFilename": "plan-v1-historical.zip",
+      "bytes": 68073,
+      "sha256": "093a2ad0c8093da427d9a3df258421efd9e2858cf83363e35df9d92cf8903a94",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/v1.zip",
+      "entries": [
+        "plan-v1-historical/index.html",
+        "plan-v1-historical/DESIGN-HANDOFF.md",
+        "plan-v1-historical/DESIGN-MANIFEST.json"
+      ],
+      "htmlHasUnadoptedCandidate": false
+    },
+    {
+      "version": 3,
+      "format": "html",
+      "downloadFilename": "plan.html",
+      "bytes": 21780,
+      "sha256": "0cfac755a97ecb32ab67a37e367c7a921b04c4f2a3e7132bbd80a330369e602f",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/v3.html",
+      "htmlHasUnadoptedCandidate": false
+    },
+    {
+      "version": 3,
+      "format": "zip",
+      "downloadFilename": "plan.zip",
+      "bytes": 69529,
+      "sha256": "f887325c78957048660fc34edb44c825de98695978fe87ea1bf05fc828be3704",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/v3.zip",
+      "entries": [
+        "plan/index.html",
+        "plan/DESIGN-HANDOFF.md",
+        "plan/DESIGN-MANIFEST.json"
+      ],
+      "htmlHasUnadoptedCandidate": false
+    },
+    {
+      "version": 4,
+      "format": "html",
+      "downloadFilename": "plan-v4-candidate.html",
+      "bytes": 21829,
+      "sha256": "44b059407fc511d3e5652f1666dc77757b4b1630969c8e8d7292b0ebbf6a46ec",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/v4.html",
+      "htmlHasUnadoptedCandidate": true
+    },
+    {
+      "version": 4,
+      "format": "zip",
+      "downloadFilename": "plan-v4-candidate.zip",
+      "bytes": 69682,
+      "sha256": "0636109a7586a42b92a38fc686777f3d62dc15122563808895c6653bb750de07",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/v4.zip",
+      "entries": [
+        "plan-v4-candidate/index.html",
+        "plan-v4-candidate/DESIGN-HANDOFF.md",
+        "plan-v4-candidate/DESIGN-MANIFEST.json"
+      ],
+      "htmlHasUnadoptedCandidate": true
+    }
+  ]
+}

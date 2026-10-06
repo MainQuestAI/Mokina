@@ -1,0 +1,32 @@
+{
+  "ownPids": [
+    40219,
+    40220,
+    40223,
+    40224,
+    40238,
+    40239,
+    40325,
+    40358,
+    40363,
+    40365,
+    40567
+  ],
+  "remainingOwnPids": [],
+  "peerPids": [
+    3710,
+    3714,
+    3715,
+    3716,
+    3727,
+    3728,
+    3815,
+    3837,
+    3838,
+    3848,
+    4027
+  ],
+  "peerPidsPreserved": true,
+  "globalConfigAndAccountUnchanged": true,
+  "evidenceType": "final native Command-Q; no active synthetic runs; retained installed app, recovery archives, outputs and unsent long-path continuation"
+}

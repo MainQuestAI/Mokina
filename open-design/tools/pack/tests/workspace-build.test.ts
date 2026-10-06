@@ -574,5 +574,7 @@ describe("createWorkspaceBuildCacheKey", () => {
     expect(createWorkspaceBuildCacheKeyFromInputs({ ...inputs, node: "mac.workspace-build" })).not.toBe(baseline);
     expect(createWorkspaceBuildCacheKeyFromInputs({ ...inputs, nodeVersion: "v24.0.1" })).not.toBe(baseline);
     expect(createWorkspaceBuildCacheKeyFromInputs({ ...inputs, schemaVersion: inputs.schemaVersion + 1 })).not.toBe(baseline);
+    const pdfA = createWorkspaceBuildCacheKeyFromInputs({ ...inputs, pdfRuntimeManifestSha256: 'pdf-runtime-a' });
+    expect(createWorkspaceBuildCacheKeyFromInputs({ ...inputs, pdfRuntimeManifestSha256: 'pdf-runtime-b' })).not.toBe(pdfA);
   });
 });

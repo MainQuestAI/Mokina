@@ -1,0 +1,27 @@
+{
+  "postCount": 1,
+  "accepted": {
+    "runId": "de8d51cb-2e39-4651-9fee-bf6051905e75",
+    "conversationId": "4dfb2325-bb16-48fe-aa56-65327b05fcb5",
+    "assistantMessageId": "74cfc908-202e-4465-9f8a-a628304f6b4d",
+    "clientRequestId": "2890a504-2faa-44f3-84cf-8d19bb6e0906",
+    "reused": false,
+    "resumed": false,
+    "appliedPluginSnapshotId": "b710f2d4-c997-4039-80df-239839ec6dd8",
+    "pluginId": "mokina-market-analysis"
+  },
+  "job": {
+    "operationId": "2890a504-2faa-44f3-84cf-8d19bb6e0906",
+    "clientRequestId": "2890a504-2faa-44f3-84cf-8d19bb6e0906",
+    "revisionProjectId": "9f9682ab-5f56-42dd-a8d5-eb18c6ced1ba",
+    "sourceProjectId": "mokina-pr4-installed-1791197515916",
+    "sourceFile": "plan.html",
+    "workspaceContext": null,
+    "baseVersionId": "a1b87fb9-1a84-4002-a10b-335b114b94a3",
+    "sectionId": "strategy",
+    "prompt": "立即写入 MOKINA-REPLACEMENT.html，补开业前一天预约复核与到店一次核销。只修订strategy章节，保留原预算与门店社群渠道，不读取其他项目或历史记忆。",
+    "dispatched": true,
+    "conversationId": "4dfb2325-bb16-48fe-aa56-65327b05fcb5"
+  },
+  "durableMatches": true
+}

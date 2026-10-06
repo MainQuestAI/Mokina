@@ -44,8 +44,13 @@ interface Props {
   onCreate: (input: CreateInput & { requestId?: string }) => Promise<boolean> | boolean | void;
   onImportClaudeDesign?: (
     file: File,
+    options?: { copy?: boolean },
   ) => Promise<ImportClaudeDesignOutcome | void> | ImportClaudeDesignOutcome | void;
   onImportFolder?: (baseDir: string) => Promise<void> | void;
+  onImportMokinaRecovery?: (
+    file: File,
+    options?: { copy?: boolean },
+  ) => Promise<{ ok: boolean; message?: string } | void> | { ok: boolean; message?: string } | void;
   onImportFolderResponse?: (response: OpenDesignHostProjectImportSuccess) => Promise<void> | void;
   onOpenConnectorsTab?: () => void;
   onClose: () => void;
@@ -81,6 +86,7 @@ function NewProjectModalBody({
   loading,
   onCreate,
   onImportClaudeDesign,
+  onImportMokinaRecovery,
   onImportFolder,
   onImportFolderResponse,
   onOpenConnectorsTab,
@@ -184,6 +190,7 @@ function NewProjectModalBody({
               void handleCreate(input);
             }}
             {...(onImportClaudeDesign ? { onImportClaudeDesign } : {})}
+            {...(onImportMokinaRecovery ? { onImportMokinaRecovery } : {})}
             {...(onImportFolder ? { onImportFolder } : {})}
             {...(onImportFolderResponse ? { onImportFolderResponse } : {})}
             {...(onOpenConnectorsTab ? { onOpenConnectorsTab } : {})}

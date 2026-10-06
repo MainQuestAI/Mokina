@@ -1,0 +1,211 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon
+
+ ❯ tests/mokina-recovery-package.test.ts (21 tests | 12 failed) 197ms
+     × RR1 refuses unsafe target ../sentinel before consulting the registry 25ms
+     × RR1 refuses unsafe target . before consulting the registry 9ms
+     × RR1 refuses unsafe target .. before consulting the registry 9ms
+     × RR1 refuses unsafe target sub\file before consulting the registry 8ms
+     × RR1 refuses unsafe target xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx before consulting the registry 9ms
+     × RR1 refuses unsafe target absolute before consulting the registry 10ms
+     × RR1 preserves an unowned target directory 9ms
+     × RR1 preserves an unowned target file 5ms
+     × RR1 preserves an unowned target symlink 8ms
+     × RR2 serializes overlapping imports (different owner: false) without deleting the winner 10ms
+     × RR2 serializes overlapping imports (different owner: true) without deleting the winner 8ms
+     × RR2 preserves a committed directory after registration failure and recovers it with the same identity 9ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 refuses unsafe target ../sentinel before consulting the registry
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 refuses unsafe target sub\file before consulting the registry
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 refuses unsafe target xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx before consulting the registry
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 refuses unsafe target absolute before consulting the registry
+AssertionError: expected { ok: true, …(3) } to match object { ok: false, status: 400, …(1) }
+(10 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "BAD_REQUEST",
+-   "ok": false,
+-   "status": 400,
++   "ok": true,
+  }
+
+ ❯ tests/mokina-recovery-package.test.ts:80:20
+     78|     const result = await importProjectRecoveryPackage({ projectsRoot: …
+     79|       targetProjectId: target === 'absolute' ? sentinel : target, read…
+     80|     expect(result).toMatchObject({ ok: false, status: 400, code: 'BAD_…
+       |                    ^
+     81|     expect(readProject).not.toHaveBeenCalled(); expect(registerProject…
+     82|     expect(await readFile(path.join(sentinel, 'keep.txt'), 'utf8')).to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 refuses unsafe target . before consulting the registry
+AssertionError: expected { ok: true, projectId: '.', …(2) } to match object { ok: false, status: 400, …(1) }
+(10 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "BAD_REQUEST",
+-   "ok": false,
+-   "status": 400,
++   "ok": true,
+  }
+
+ ❯ tests/mokina-recovery-package.test.ts:80:20
+     78|     const result = await importProjectRecoveryPackage({ projectsRoot: …
+     79|       targetProjectId: target === 'absolute' ? sentinel : target, read…
+     80|     expect(result).toMatchObject({ ok: false, status: 400, code: 'BAD_…
+       |                    ^
+     81|     expect(readProject).not.toHaveBeenCalled(); expect(registerProject…
+     82|     expect(await readFile(path.join(sentinel, 'keep.txt'), 'utf8')).to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 refuses unsafe target .. before consulting the registry
+AssertionError: expected { ok: true, projectId: '..', …(2) } to match object { ok: false, status: 400, …(1) }
+(10 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "BAD_REQUEST",
+-   "ok": false,
+-   "status": 400,
++   "ok": true,
+  }
+
+ ❯ tests/mokina-recovery-package.test.ts:80:20
+     78|     const result = await importProjectRecoveryPackage({ projectsRoot: …
+     79|       targetProjectId: target === 'absolute' ? sentinel : target, read…
+     80|     expect(result).toMatchObject({ ok: false, status: 400, code: 'BAD_…
+       |                    ^
+     81|     expect(readProject).not.toHaveBeenCalled(); expect(registerProject…
+     82|     expect(await readFile(path.join(sentinel, 'keep.txt'), 'utf8')).to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 preserves an unowned target directory
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 preserves an unowned target symlink
+AssertionError: expected { ok: true, …(3) } to match object { ok: false, status: 409, …(1) }
+(10 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "MOKINA_OPERATION_CONFLICT",
+-   "ok": false,
+-   "status": 409,
++   "ok": true,
+  }
+
+ ❯ tests/mokina-recovery-package.test.ts:93:20
+     91|     const built = await buildProjectRecoveryPackage({ projectsRoot: ro…
+     92|     const result = await importProjectRecoveryPackage({ projectsRoot: …
+     93|     expect(result).toMatchObject({ ok: false, status: 409, code: 'MOKI…
+       |                    ^
+     94|     expect((await lstat(target)).isSymbolicLink()).toBe(kind === 'syml…
+     95|     if (kind === 'file') expect(await readFile(target, 'utf8')).toBe('…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR1 preserves an unowned target file
+AssertionError: expected { ok: false, status: 500, …(2) } to match object { ok: false, status: 409, …(1) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "MOKINA_OPERATION_CONFLICT",
++   "code": "MOKINA_RECOVERY_IMPORT_FAILED",
+    "ok": false,
+-   "status": 409,
++   "status": 500,
+  }
+
+ ❯ tests/mokina-recovery-package.test.ts:93:20
+     91|     const built = await buildProjectRecoveryPackage({ projectsRoot: ro…
+     92|     const result = await importProjectRecoveryPackage({ projectsRoot: …
+     93|     expect(result).toMatchObject({ ok: false, status: 409, code: 'MOKI…
+       |                    ^
+     94|     expect((await lstat(target)).isSymbolicLink()).toBe(kind === 'syml…
+     95|     if (kind === 'file') expect(await readFile(target, 'utf8')).toBe('…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR2 serializes overlapping imports (different owner: false) without deleting the winner
+AssertionError: expected { ok: false, status: 500, …(2) } to match object { ok: true, projectId: 'p2' }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": true,
+-   "projectId": "p2",
++   "ok": false,
+  }
+
+ ❯ tests/mokina-recovery-package.test.ts:116:24
+    114|     release(); const results = await Promise.all([first, second]);
+    115|     expect(results[0]).toMatchObject({ ok: true, projectId: 'p2' });
+    116|     expect(results[1]).toMatchObject(differentOwner ? { ok: false, sta…
+       |                        ^
+    117|     expect(registerProject).toHaveBeenCalledTimes(1);
+    118|     expect(await readFile(path.join(root, 'p2', 'plan.html'), 'utf8'))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR2 serializes overlapping imports (different owner: true) without deleting the winner
+AssertionError: expected { ok: false, status: 500, …(2) } to match object { ok: true, projectId: 'p2' }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": true,
+-   "projectId": "p2",
++   "ok": false,
+  }
+
+ ❯ tests/mokina-recovery-package.test.ts:115:24
+    113|     const second = importProjectRecoveryPackage({ ...input, operationI…
+    114|     release(); const results = await Promise.all([first, second]);
+    115|     expect(results[0]).toMatchObject({ ok: true, projectId: 'p2' });
+       |                        ^
+    116|     expect(results[1]).toMatchObject(differentOwner ? { ok: false, sta…
+    117|     expect(registerProject).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > RR2 preserves a committed directory after registration failure and recovers it with the same identity
+Error: ENOENT: no such file or directory, open '/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/mokina-recovery-OEaYND/p2/plan.html'
+ ❯ tests/mokina-recovery-package.test.ts:131:20
+    129|     expect(await importProjectRecoveryPackage(input)).toMatchObject({ …
+    130|     expect(row).toBeNull();
+    131|     const before = await readFile(path.join(root, 'p2', 'plan.html'));
+       |                    ^
+    132|     expect(await importProjectRecoveryPackage({ ...input, operationId:…
+    133|     expect(await importProjectRecoveryPackage(input)).toMatchObject({ …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  12 failed | 9 passed (21)
+   Start at  09:32:59
+   Duration  576ms (transform 172ms, setup 16ms, import 297ms, tests 197ms, environment 0ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/mokina-recovery-package.test.ts

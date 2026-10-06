@@ -1,0 +1,100 @@
+        "!**/node_modules/.bin",
+        "!**/node_modules/electron{,/**/*}",
+        "!**/*.map",
+        "!**/*.tsbuildinfo",
+        "!**/.next/cache",
+        "!**/.next/cache/**",
+        "!**/node_modules/better-sqlite3/build/Release/obj",
+        "!**/node_modules/better-sqlite3/build/Release/obj/**",
+        "!**/node_modules/better-sqlite3/deps",
+        "!**/node_modules/better-sqlite3/deps/**"
+      ],
+      "nativeRebuild": {
+        "buildFromSource": false,
+        "mode": "sequential",
+        "modules": [
+          "better-sqlite3"
+        ]
+      },
+      "targets": [
+        "dir",
+        "dmg",
+        "zip"
+      ],
+      "webOutputMode": "standalone"
+    },
+    "dmgBytes": 408035059,
+    "generatedAt": "2026-10-06T02:03:40.920Z",
+    "outputRootBytes": 4070814499,
+    "resourceRootBytes": 338741250,
+    "runtimeNamespaceRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/runtime/mac/namespaces/mokina-local",
+    "topLevel": {
+      "appResourcesBytes": 311134552,
+      "electronFrameworksBytes": 237750504,
+      "resourcesBytes": 742848616
+    },
+    "tracked": {
+      "appNodeModulesBytes": 293024001,
+      "betterSqlite3Bytes": 2064730,
+      "betterSqlite3SourceResidueBytes": 0,
+      "bundledNodeBytes": 0,
+      "electronLocalesBytes": 12437016,
+      "markdownBytes": 15874806,
+      "nextBytes": 0,
+      "nextSwcBytes": 0,
+      "prebundledRuntimeBytes": 18094805,
+      "sharpLibvipsBytes": 17777811,
+      "sourcemapBytes": 212,
+      "tsbuildInfoBytes": 0,
+      "webCopiedStandaloneBytes": 91232713,
+      "webNextCacheBytes": 0,
+      "webPackageBytes": 0,
+      "webPackageStandaloneBytes": 0
+    },
+    "zipBytes": 405041739
+  },
+  "timings": [
+    {
+      "durationMs": 81750,
+      "phase": "workspace-build"
+    },
+    {
+      "durationMs": 0,
+      "phase": "seed-app-config"
+    },
+    {
+      "durationMs": 5541,
+      "phase": "resource-tree"
+    },
+    {
+      "durationMs": 1771,
+      "phase": "workspace-tarballs"
+    },
+    {
+      "durationMs": 22098,
+      "phase": "assembled-app"
+    },
+    {
+      "durationMs": 61038,
+      "phase": "electron-builder"
+    },
+    {
+      "durationMs": 1901,
+      "phase": "xattr-scrub"
+    },
+    {
+      "durationMs": 30099,
+      "phase": "payload-artifact"
+    },
+    {
+      "durationMs": 304,
+      "phase": "artifacts"
+    },
+    {
+      "durationMs": 4621,
+      "phase": "size-report"
+    }
+  ],
+  "to": "all",
+  "zipPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/zip/Mokina-mokina-local.zip"
+}

@@ -1,0 +1,59 @@
+cutes the documented recovery export and writes the server bytes 210ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/mokina-cli-recovery.test.ts > executes the documented recovery import and forwards the original operation/target/file
+AssertionError: od mokina context prepare --project <id> --snapshot <id> (--selections <json|file|->) [--excluded <json|file>] [--json]
+od mokina context get     --project <id> --snapshot <id> [--json]
+od mokina recovery export --project <id> --out <path.zip> [--operation-id <id>] [--json]
+od mokina recovery import --file <path.zip> --target-project <new-id> [--name <项目名>] [--operation-id <id>] [--json]
+: expected 2 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ tests/mokina-cli-recovery.test.ts:49:54
+     47|   await writeFile(archive, archiveBytes);
+     48|   const result = await invoke(['mokina', 'recovery', 'import', '--file…
+     49|   expect(result.code, result.stderr + result.stdout).toBe(0);
+       |                                                      ^
+     50|   expect(JSON.parse(result.stdout)).toMatchObject({ projectId: 'cli-ta…
+     51|   expect(requests).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/mokina-cli-recovery.test.ts > executes the documented recovery export and writes the server bytes
+AssertionError: od mokina context prepare --project <id> --snapshot <id> (--selections <json|file|->) [--excluded <json|file>] [--json]
+od mokina context get     --project <id> --snapshot <id> [--json]
+od mokina recovery export --project <id> --out <path.zip> [--operation-id <id>] [--json]
+od mokina recovery import --file <path.zip> --target-project <new-id> [--name <项目名>] [--operation-id <id>] [--json]
+: expected 2 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ tests/mokina-cli-recovery.test.ts:61:54
+     59|   const output = join(directory, 'export.zip');
+     60|   const result = await invoke(['mokina', 'recovery', 'export', '--proj…
+     61|   expect(result.code, result.stderr + result.stdout).toBe(0);
+       |                                                      ^
+     62|   expect(await readFile(output)).toEqual(archiveBytes);
+     63|   expect(requests).toEqual([{ url: '/api/projects/cli-project/mokina/r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  21:09:01
+   Duration  567ms (transform 20ms, setup 18ms, import 20ms, tests 454ms, environment 0ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/mokina-cli-recovery.test.ts

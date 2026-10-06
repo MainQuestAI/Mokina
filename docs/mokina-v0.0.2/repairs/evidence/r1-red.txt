@@ -1,0 +1,60 @@
+ failure and does not retry a conflicting write over its new owner 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/runtime/mokina-recovery-store.test.ts > mokina durable recovery facade (web) > hydrates durable records over stale origin caches
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/runtime/mokina-recovery-store.test.ts:120:22
+    118|     const hydrated = await hydrateDurableRecoveryIntoLocalStorage();
+    119|
+    120|     expect(hydrated).toBe(2);
+       |                      ^
+    121|     expect(window.localStorage.getItem('od:revision:missing')).toBe('d…
+    122|     expect(window.localStorage.getItem('od:revision:present')).toBe('d…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/runtime/mokina-recovery-store.test.ts > mokina durable recovery facade (web) > serializes complete mutations: A/B/C leaves C and write/delete stays deleted
+AssertionError: expected 'A' to be 'C' // Object.is equality
+
+Expected: "C"
+Received: "A"
+
+ ❯ tests/runtime/mokina-recovery-store.test.ts:142:63
+    140|       mirrorDurableRecord('mokina:revision:order', 'C'),
+    141|     ]);
+    142|     expect(store.records.get('mokina:revision:order')?.value).toBe('C'…
+       |                                                               ^
+    143|     await Promise.all([
+    144|       mirrorDurableRecord('mokina:revision:delete', 'A'),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/runtime/mokina-recovery-store.test.ts > mokina durable recovery facade (web) > reports IPC failure and does not retry a conflicting write over its new owner
+TypeError: You must provide a Promise to expect() when using .resolves, not 'undefined'.
+ ❯ tests/runtime/mokina-recovery-store.test.ts:154:70
+    152|     installHost(store);
+    153|     store.put.mockResolvedValueOnce({ ok: true, result: 'conflict' });
+    154|     await expect(mirrorDurableRecord('mokina:revision:conflict', 'A'))…
+       |                                                                      ^
+    155|     expect(store.put).toHaveBeenCalledTimes(1);
+    156|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 4 passed (7)
+   Start at  18:00:22
+   Duration  981ms (transform 257ms, setup 435ms, import 14ms, tests 10ms, environment 448ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/runtime/mokina-recovery-store.test.ts

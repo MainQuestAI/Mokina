@@ -1,0 +1,64 @@
+
+Running 14 tests using 1 worker
+
+(node:6825) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6825) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 (13.4s)
+  ✓   2 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 (11.5s)
+  ✓   3 [chromium] › ui/real-daemon-run.test.ts:2199:1 › [P1] Mokina PR3 Home first send creates one real daemon run (7.2s)
+  ✓   4 [chromium] › ui/real-daemon-run.test.ts:2220:1 › [P1] Mokina R2 resend after an empty lookup preserves the original request identity (4.3s)
+  ✓   5 [chromium] › ui/real-daemon-run.test.ts:2264:1 › [P1] Mokina R2 explicit resend reuses the original request identity when the server never received it (5.5s)
+  ✓   6 [chromium] › ui/real-daemon-run.test.ts:2300:1 › [P1] Mokina R2 resend after the original run already finished creates no second run (6.0s)
+  ✓   7 [chromium] › ui/real-daemon-run.test.ts:2342:1 › [P1] Mokina R2 discard clears the receipt and unblocks sending (6.5s)
+  ✓   8 [chromium] › ui/real-daemon-run.test.ts:2370:1 › [P1] Mokina R2 oversize prompt still sends without a recoverable snapshot (8.2s)
+  ✓   9 [chromium] › ui/real-daemon-run.test.ts:2390:1 › [P1] Mokina R2 first generated file auto-opens in an empty project (8.9s)
+  ✘  10 [chromium] › ui/real-daemon-run.test.ts:2405:1 › [P1] Mokina R2 definitive rejection keeps the draft, the failure surface and a restorable receipt (15.5s)
+(node:18654) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18654) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [chromium] › ui/real-daemon-run.test.ts:2429:1 › [P1] Mokina RR3 real daemon refusal survives reload and explicit exit permits a new attempt (11.6s)
+  ✓  12 [chromium] › ui/real-daemon-run.test.ts:2472:1 › [P1] Mokina revision lost POST response recovers the same run and adopts its candidate (14.4s)
+  ✓  13 [chromium] › ui/real-daemon-run.test.ts:2598:1 › [P1] Mokina historical version export locks the clicked version and exports once (6.1s)
+  ✓  14 [chromium] › ui/real-daemon-run.test.ts:2649:1 › [P1] Mokina reduced transparency degrades materials live and restores (5.9s)
+
+
+  1) [chromium] › ui/real-daemon-run.test.ts:2405:1 › [P1] Mokina R2 definitive rejection keeps the draft, the failure surface and a restorable receipt
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('mokina-pending-send')
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 10000ms[22m
+    [2m  - waiting for getByTestId('mokina-pending-send')[22m
+    [2m    24 × locator resolved to 1 element[22m
+    [2m       - unexpected value "1"[22m
+
+
+      2417 |   // card, and a retry with a fresh request identity goes through.
+      2418 |   await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
+    > 2419 |   await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
+           |                                                         ^
+      2420 |   await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
+      2421 |   await page.unroute('**/api/runs');
+      2422 |   await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+        at /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/e2e/ui/real-daemon-run.test.ts:2419:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ui/reports/test-results/real-daemon-run--P1-Mokina-0cbaa-ce-and-a-restorable-receipt-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ui/reports/test-results/real-daemon-run--P1-Mokina-0cbaa-ce-and-a-restorable-receipt-chromium/error-context.md
+
+  1 failed
+    [chromium] › ui/real-daemon-run.test.ts:2405:1 › [P1] Mokina R2 definitive rejection keeps the draft, the failure surface and a restorable receipt
+  13 passed (3.0m)
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/e2e:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test -c playwright.config.ts ui/real-daemon-run.test.ts --grep Mokina --workers=1

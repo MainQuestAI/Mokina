@@ -1,0 +1,130 @@
+{
+  "source": "60198b4d-1e0f-4491-886d-032f04cadf37",
+  "target": "d0baee72-f67e-4939-a97e-385584b56a95",
+  "snapshotId": "0d1057ed-bf92-4ed0-900a-f08585fc05e9",
+  "deletedStatus": 200,
+  "sourceStatus": 404,
+  "before": {
+    "status": 200,
+    "body": {
+      "snapshot": {
+        "schemaVersion": 1,
+        "snapshotId": "0d1057ed-bf92-4ed0-900a-f08585fc05e9",
+        "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+        "createdAt": "2026-10-06T02:31:48.778Z",
+        "parserVersion": "mokina-material/1",
+        "selectionFingerprint": "48b06fffb17c67002d73a235c6ebda0aa9a3dd208852ca821ebff118d41bffff",
+        "items": [
+          {
+            "kind": "material-excerpt",
+            "itemId": "S1",
+            "displayName": "资料说明.md · 4 个片段",
+            "sourceRef": {
+              "kind": "project-file",
+              "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+              "fileName": "资料说明.md"
+            },
+            "sourceDigest": "f32265710cdf51cb0b5d7cd000eb558aeb76a1880ee6eaa78b2982c44a10f089",
+            "limitations": [],
+            "locators": [
+              "资料说明.md · 第 1 行",
+              "资料说明.md · 第 2 行",
+              "资料说明.md · 第 3 行",
+              "资料说明.md · 第 4 行"
+            ],
+            "text": "# 品牌\n\n小山茶馆。预算30万元，渠道门店与社群，绿色风格。禁止虚构历史经营数据。\n\n# 活动\n\n春季新品体验，预约留资后门店接待；日期、门店地址和联系方式待用户确认。",
+            "textDigest": "95910281c98bf87f2fca2526a9e916a9f0a891474f9192ac45215da080ed5b0d"
+          },
+          {
+            "kind": "asset",
+            "itemId": "A1",
+            "displayName": "品牌-logo.svg",
+            "sourceRef": {
+              "kind": "project-file",
+              "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+              "fileName": "品牌-logo.svg"
+            },
+            "sourceDigest": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+            "limitations": [
+              "保存图片不等于已完成视觉理解；实际提供方式见运行回执。"
+            ],
+            "blobId": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+            "mimeType": "image/svg+xml",
+            "byteLength": 161,
+            "role": "logo",
+            "usageNote": "页眉采用冻结的 LOGO A，保留绿色品牌风格"
+          }
+        ],
+        "excluded": [],
+        "fingerprint": "e24fd927fa6677369b1c87d5c29aded3f7c17085ae0ea2480598bfb43e3ce2b5"
+      }
+    }
+  },
+  "after": {
+    "status": 200,
+    "body": {
+      "snapshot": {
+        "schemaVersion": 1,
+        "snapshotId": "0d1057ed-bf92-4ed0-900a-f08585fc05e9",
+        "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+        "createdAt": "2026-10-06T02:31:48.778Z",
+        "parserVersion": "mokina-material/1",
+        "selectionFingerprint": "48b06fffb17c67002d73a235c6ebda0aa9a3dd208852ca821ebff118d41bffff",
+        "items": [
+          {
+            "kind": "material-excerpt",
+            "itemId": "S1",
+            "displayName": "资料说明.md · 4 个片段",
+            "sourceRef": {
+              "kind": "project-file",
+              "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+              "fileName": "资料说明.md"
+            },
+            "sourceDigest": "f32265710cdf51cb0b5d7cd000eb558aeb76a1880ee6eaa78b2982c44a10f089",
+            "limitations": [],
+            "locators": [
+              "资料说明.md · 第 1 行",
+              "资料说明.md · 第 2 行",
+              "资料说明.md · 第 3 行",
+              "资料说明.md · 第 4 行"
+            ],
+            "text": "# 品牌\n\n小山茶馆。预算30万元，渠道门店与社群，绿色风格。禁止虚构历史经营数据。\n\n# 活动\n\n春季新品体验，预约留资后门店接待；日期、门店地址和联系方式待用户确认。",
+            "textDigest": "95910281c98bf87f2fca2526a9e916a9f0a891474f9192ac45215da080ed5b0d"
+          },
+          {
+            "kind": "asset",
+            "itemId": "A1",
+            "displayName": "品牌-logo.svg",
+            "sourceRef": {
+              "kind": "project-file",
+              "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+              "fileName": "品牌-logo.svg"
+            },
+            "sourceDigest": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+            "limitations": [
+              "保存图片不等于已完成视觉理解；实际提供方式见运行回执。"
+            ],
+            "blobId": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+            "mimeType": "image/svg+xml",
+            "byteLength": 161,
+            "role": "logo",
+            "usageNote": "页眉采用冻结的 LOGO A，保留绿色品牌风格"
+          }
+        ],
+        "excluded": [],
+        "fingerprint": "e24fd927fa6677369b1c87d5c29aded3f7c17085ae0ea2480598bfb43e3ce2b5"
+      }
+    }
+  },
+  "clientRequestId": "13bf47cb-1067-4b5d-a6fb-f2b9b40b3c2d",
+  "runStatus": 202,
+  "run": {
+    "runId": "846d0163-1498-4ce6-8af7-b152c0734c93",
+    "conversationId": "1d92cd68-eada-4a90-a515-aad8c293d18b",
+    "assistantMessageId": "feb7b65d-7109-4c7b-99ea-55c3a0c1ebc6",
+    "clientRequestId": "13bf47cb-1067-4b5d-a6fb-f2b9b40b3c2d",
+    "reused": false,
+    "resumed": false
+  },
+  "evidenceType": "native exported/imported recovery; four overlapping actual POSTs; formal reader and real Codex after synthetic source deletion"
+}

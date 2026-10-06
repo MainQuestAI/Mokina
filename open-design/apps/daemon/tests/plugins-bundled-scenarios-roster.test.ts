@@ -39,6 +39,12 @@ const CANONICAL = new Map<string, { taskKind: string; pipelineStages: string[] }
 // starters sit here too: they are user-facing plugins for downstream
 // handoff, but they must not become the canonical tune-collab fallback.
 const SIBLINGS = new Map<string, { taskKind: string }>([
+  // Mokina marketing scenarios ride the canonical new-generation task kind as
+  // manual-entry siblings; they are registered by the bundled walker and must
+  // stay out of the `od-<taskKind>` canonical-id rule.
+  ['mokina-market-analysis', { taskKind: 'new-generation' }],
+  ['mokina-marketing-plan',  { taskKind: 'new-generation' }],
+  ['mokina-landing-page',    { taskKind: 'new-generation' }],
   ['od-default',          { taskKind: 'new-generation' }],
   ['od-media-generation', { taskKind: 'new-generation' }],
   ['od-plugin-authoring', { taskKind: 'new-generation' }],

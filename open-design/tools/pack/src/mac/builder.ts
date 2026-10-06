@@ -21,7 +21,8 @@ import {
   WEB_STANDALONE_RESOURCE_NAME,
 } from "./constants.js";
 import { pathExists } from "./fs.js";
-import { resolveMacInstallIdentity } from "./identity.js";
+import { resolveMacArtifactBaseName, resolveMacInstallIdentity } from "./identity.js";
+import { resolveMokinaProductProfileForNamespace } from "../config/product-profile.js";
 import { readPackagedVersion } from "./manifest.js";
 import { sanitizeNamespace } from "./paths.js";
 import type { ElectronBuilderTarget, MacBuildOutput, MacPaths } from "./types.js";
@@ -91,6 +92,8 @@ export async function runElectronBuilder(
 ): Promise<void> {
   const namespaceToken = sanitizeNamespace(config.namespace);
   const identity = resolveMacInstallIdentity(config);
+  const artifactBaseName = resolveMacArtifactBaseName(config);
+  const mokinaProfile = resolveMokinaProductProfileForNamespace(config.namespace);
   const packagedVersion = await readPackagedVersion(config);
   const packageVersion = electronBuilderVersionForAppVersion(packagedVersion);
   const webStandaloneHookConfigPath = config.webOutputMode === "standalone"
@@ -98,7 +101,7 @@ export async function runElectronBuilder(
     : null;
   const builderConfig = {
     appId: identity.appId,
-    artifactName: `${PRODUCT_NAME}-${namespaceToken}.\${ext}`,
+    artifactName: `${artifactBaseName}-${namespaceToken}.\${ext}`,
     afterPack: webStandaloneHookConfigPath == null ? undefined : macResources.webStandaloneAfterPackHook,
     afterSign: config.signed && config.macNotarize ? macResources.notarizeHook : undefined,
     asar: ELECTRON_BUILDER_ASAR,
@@ -145,13 +148,18 @@ export async function runElectronBuilder(
     // writes it into Info.plist CFBundleURLTypes; a runtime
     // setAsDefaultProtocolClient alone is unreliable on macOS). The scheme string
     // must match INVITE_DEEPLINK_SCHEME in
-    // apps/desktop/src/main/invite-deeplink-core.ts.
-    protocols: [
-      {
-        name: `${PRODUCT_NAME} Invite`,
-        schemes: ["opendesign"],
-      },
-    ],
+    // apps/desktop/src/main/invite-deeplink-core.ts. The Mokina local preview
+    // does not take over OS schemes (registersOdScheme: false).
+    ...(mokinaProfile == null
+      ? {
+          protocols: [
+            {
+              name: `${PRODUCT_NAME} Invite`,
+              schemes: ["opendesign"],
+            },
+          ],
+        }
+      : {}),
     nodeGypRebuild: false,
     npmRebuild: false,
     productName: identity.productName,

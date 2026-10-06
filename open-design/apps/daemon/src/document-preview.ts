@@ -5,6 +5,7 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import JSZip from 'jszip';
 import { kindFor } from './projects.js';
+import { resolvePdftotextBinary } from './pdftotext.js';
 
 const execFileP = promisify(execFile);
 const MAX_COMPRESSED_PREVIEW_BYTES = 10 * 1024 * 1024;
@@ -74,7 +75,7 @@ async function previewPdf(buffer: Buffer): Promise<PreviewSection[]> {
   const tmpFile = path.join(tmpDir, 'input.pdf');
   await writeFile(tmpFile, buffer, { flag: 'wx' });
   try {
-    const { stdout } = await execFileP('pdftotext', ['-layout', tmpFile, '-'], {
+    const { stdout } = await execFileP(resolvePdftotextBinary(), ['-layout', tmpFile, '-'], {
       timeout: 5000,
       maxBuffer: 2 * 1024 * 1024,
     });

@@ -1,0 +1,36 @@
+{
+  "versions": [
+    {
+      "id": "7bbbf91a-48ef-427f-8fb2-0d2807d5fbe0",
+      "fileName": "index.html",
+      "version": 1,
+      "label": "Version 1",
+      "createdAt": 1791208358510,
+      "source": "ai",
+      "prompt": "本轮立即制作并写入 index.html 营销方案，不能只写计划或说明。只依据本轮冻结简报和冻结 LOGO A；读取提供的受控素材路径，复制原始 SVG 字节为 assets/final5-frozen-logo.svg，禁止读取已被替换成 B 的 final5-logo.svg。小山茶馆，预算30万元，渠道门店与社群，绿色风格。必须有 strategy、budget、channels 三个 section，id 和 data-mokina-id 同名；步骤与指标可执行。不要修改已有 plan.html；index.html 使用唯一默认入口，可直接预览。",
+      "size": 15846,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "current": true,
+      "promptSource": "message",
+      "contentDigest": "efeeee9a99c5b3e119a08bc0c989a2b58490bb0f6fc562d6b8dc75760f467df7"
+    },
+    {
+      "id": "6e662d3d-953e-401c-b3c7-fcb9f01bf640",
+      "fileName": "index.html",
+      "version": 2,
+      "label": "候选：strategy",
+      "createdAt": 1791208678101,
+      "source": "ai",
+      "prompt": "只改 strategy 章节：补充“开业前一天，社群运营逐户复核预约，并向店长交接；到店先检查核销状态，同一预约不可重复核销”。保留该章节 id 与 data-mokina-id，不改预算、渠道、其他章节。立即写实际候选文件。",
+      "size": 15981,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "current": false,
+      "contentDigest": "a7ecc905c4a34b4cff83200555b3fe9248c3034f747bc78aa76eda4485d738bc",
+      "candidate": true,
+      "baseVersionId": "7bbbf91a-48ef-427f-8fb2-0d2807d5fbe0",
+      "operationId": "84d6a86e-7c2f-42a1-b60d-2de335c3cb19"
+    }
+  ]
+}

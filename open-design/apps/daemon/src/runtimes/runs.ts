@@ -602,6 +602,9 @@ function durableRunState(run) {
     ...(runHasHostRecordedDeliveryFailure(run)
       ? { mediaTaskFailures: run.mediaTaskFailures }
       : {}),
+    // T06: the minimal delivery receipt for a run that referenced a frozen
+    // Mokina context snapshot; absent for every other run.
+    ...(run.mokinaContext ? { mokinaContext: run.mokinaContext } : {}),
     ...(typeof run.userPrompt === 'string' ? { userPrompt: run.userPrompt } : {}),
     ...(typeof run.model === 'string' ? { model: run.model } : {}),
     ...(typeof run.resolvedModelId === 'string'

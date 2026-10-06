@@ -1,0 +1,93 @@
+{
+  "runs": [
+    {
+      "id": "c0580394-517b-4378-bf34-6356c730c27d",
+      "projectId": "eaa1c205-a26a-484f-8c6b-19185fbcc1c7",
+      "conversationId": "16a27b2e-2d53-4530-ae3c-9ed8fc82eea1",
+      "assistantMessageId": "53bc21ed-fef9-4925-b97c-13461c6b5545",
+      "clientRequestId": "edbb7cba-3561-4a4d-9a5b-f111a3014b4f",
+      "agentId": "codex",
+      "designSystemId": null,
+      "designSystemRequestedId": null,
+      "designSystemSelectionSource": "none",
+      "designSystemDigest": null,
+      "appliedPluginSnapshotId": "266a4ceb-a374-4f37-a261-fb6db1202bfb",
+      "pluginId": "mokina-landing-page",
+      "strategyRolloutDecision": {
+        "schemaVersion": 1,
+        "decisionClass": "explicit_user",
+        "requestedMode": "off",
+        "effectiveMode": "off",
+        "taskType": null,
+        "assignmentBucket": 9793,
+        "eligible": false,
+        "syntheticCanary": false,
+        "reasonCodes": [
+          "od_next_rollout_explicit_user_authority",
+          "od_next_rollout_off"
+        ],
+        "primaryReasonCode": "od_next_rollout_explicit_user_authority"
+      },
+      "status": "running",
+      "createdAt": 1791208880452,
+      "updatedAt": 1791208932852,
+      "terminalAt": null,
+      "cancelRequested": false,
+      "cancelOrigin": null,
+      "terminalTrigger": null,
+      "childPid": 44240,
+      "processGroupId": 44240,
+      "childExited": false,
+      "childExitObservedAt": null,
+      "exitCode": null,
+      "signal": null,
+      "error": null,
+      "errorCode": null,
+      "failureCategory": null,
+      "failureDetail": null,
+      "failureAction": null,
+      "retryable": null,
+      "resumable": false,
+      "endedWithUnfinishedWork": false,
+      "eventsLogPath": "/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local/data/runs/c0580394-517b-4378-bf34-6356c730c27d/events.jsonl",
+      "workspace": {
+        "storage": {
+          "kind": "od-owned",
+          "baseDir": null
+        },
+        "provenance": null
+      },
+      "mediaExecution": {
+        "mode": "enabled"
+      },
+      "toolBundle": {
+        "mcpServers": []
+      },
+      "promptCache": {
+        "stablePromptHash": "8559eba17fe7058beadc00448f314cbd69d4c3bf6f4bdcf3321416bb6aa3024b",
+        "hit": false,
+        "missReason": "new-session",
+        "changedSections": null
+      },
+      "nativeSessionRecovery": {
+        "agentId": "codex",
+        "state": "captured_not_resumed",
+        "acquisition": "stream-captured",
+        "continuation": "native-resume-by-id",
+        "handle": {
+          "present": true,
+          "kind": "cli-thread-id",
+          "display": null,
+          "sha256": "6d081242e8529bba8f396424479ee4e32a4bde53bb8ffc4193557ef730406b04",
+          "redacted": true
+        },
+        "guardReason": null,
+        "fallbackReason": null,
+        "updatedAt": 1791208880739
+      },
+      "clientType": "desktop",
+      "manualResumeAttemptCount": 0,
+      "rechargeWaitDurationMs": 0
+    }
+  ]
+}

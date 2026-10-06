@@ -49,3 +49,14 @@ it('acceptance query carries original workspace identity and ignores runs from o
   expect(await queryRunByClientRequest('p', 'c', 'request', { workspaceContext: context })).toMatchObject({ id: 'original' });
   expect(fetch.mock.calls[0]?.[1]?.headers).toMatchObject({ 'x-od-workspace-id': 'ws-A', 'x-od-workspace-member-id': 'member-A' });
 });
+
+it('RR3 ambiguous 4xx remains unknown while an explicit admission refusal restores the draft', async () => {
+  for (const [status, error, definitive] of [
+    [409, { code: 'IDEMPOTENCY_CONFLICT', message: 'existing request' }, false],
+    [400, { code: 'BAD_REQUEST', message: 'unproven refusal' }, false],
+    [404, { code: 'CONVERSATION_NOT_FOUND', message: 'refused', details: { runAcceptance: 'not-accepted' } }, true],
+  ] as const) {
+    const input = options(); vi.spyOn(globalThis, 'fetch').mockResolvedValue(Response.json({ error }, { status }));
+    await streamViaDaemon(input); expect(input.onRunCreateFailed).toHaveBeenCalledWith({ definitive });
+  }
+});

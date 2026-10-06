@@ -1,0 +1,29 @@
+d accepted identity when the panel still holds its earlier intent 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/FileViewer.mokina-revision-recovery.test.tsx > Mokina revision recovery record ownership > uses the already persisted accepted identity when the panel still holds its earlier intent
+AssertionError: promise rejected "Error: 修订运行身份未能安全保存，请稍后恢复。" instead of resolving
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx:60:76
+     58|       clientRequestId: 'request-race', projectId: 'revision-race', con…
+     59|     vi.stubGlobal('fetch', fetchMock);
+     60|     await expect(reconcileMokinaRevisionJob('mokina:revision:race', in…
+       |                                                                            ^
+     61|     expect(fetchMock).not.toHaveBeenCalled();
+     62|     localStorage.clear(); vi.unstubAllGlobals();
+
+Caused by: Error: 修订运行身份未能安全保存，请稍后恢复。
+ ❯ Module.reconcileMokinaRevisionJob src/components/FileViewer.tsx:3520:66
+ ❯ tests/components/FileViewer.mokina-revision-recovery.test.tsx:60:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 skipped (15)
+   Start at  18:39:19
+   Duration  2.43s (transform 1.65s, setup 368ms, import 1.68s, tests 14ms, environment 259ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/components/FileViewer.mokina-revision-recovery.test.tsx --testNamePattern already persisted accepted

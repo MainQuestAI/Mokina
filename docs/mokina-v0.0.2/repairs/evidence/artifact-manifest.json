@@ -1,0 +1,20 @@
+{
+  "sourceSHA": "6fe5d5346a0031a2459d04925a53be8e428f4ad9",
+  "appVersion": "0.0.2-local.3",
+  "installedAppPath": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app",
+  "artifacts": [
+    {
+      "path": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/dmg/Mokina-mokina-local.dmg",
+      "bytes": 408015164,
+      "sha256": "c44ac8ca6db7e89db12b9162e9adcd0baa6cc4a72abcf44983a701bc97350330",
+      "deliveryPath": "/Users/dingcheng/Mokina-PR4-QA/releases/Mokina-mokina-local.dmg"
+    },
+    {
+      "path": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/zip/Mokina-mokina-local.zip",
+      "bytes": 405038742,
+      "sha256": "e9ca49c2004c13e29231c0024f021d7c48fb71052a98d3b4f1d4c13b46fb1109",
+      "deliveryPath": "/Users/dingcheng/Mokina-PR4-QA/releases/Mokina-mokina-local.zip"
+    }
+  ],
+  "runtimeRoot": "/Users/dingcheng/Mokina-PR4-QA/runtime/mac/namespaces/mokina-local"
+}

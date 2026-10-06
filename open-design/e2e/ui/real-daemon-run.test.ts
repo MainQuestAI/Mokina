@@ -2408,20 +2408,293 @@ test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface a
   const { projectId, conversationId } = await currentProjectContext(page);
   await page.route('**/api/runs', async route => {
     if (route.request().method() !== 'POST') return route.continue();
-    await route.fulfill({ status: 409, json: { error: { code: 'IDEMPOTENCY_CONFLICT', message: 'clientRequestId is already associated with a different logical run request' } } });
+    await route.fulfill({ status: 404, json: { error: { code: 'NOT_FOUND', message: 'request rejected before acceptance', details: { runAcceptance: 'not-accepted' } } } });
   });
   await page.getByTestId('chat-composer-input').fill('Observation draft for definitive rejection');
   await page.getByTestId('chat-send').click();
-  // P3-2 observation: a definitive rejection clears the local receipt (the
-  // composer draft is the recovery), keeps the composer text and the failure
-  // card, and a retry with a fresh request identity goes through.
+  // A proven refusal keeps the receipt until the user explicitly restores its
+  // draft. Durable transfer then clears it and permits a new request identity.
+  await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
+  await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
+  // Recovery never overwrites occupied input, even when it resembles the receipt.
+  await page.getByTestId('chat-composer-input').fill('');
+  await page.getByTestId('mokina-pending-send').getByRole('button', { name: 'Restore unsent draft' }).click();
   await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
   await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
   await page.unroute('**/api/runs');
   await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
   await page.getByTestId('chat-send').click();
   await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
   await testInfo.attach('r2-definitive-rejection', { body: JSON.stringify({ projectId, conversationId }), contentType: 'application/json' });
   await testInfo.attach('r2-definitive-rejection-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina RR3 real daemon refusal survives reload and explicit exit permits a new attempt', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina RR3 refusal');
+  const { projectId } = await currentProjectContext(page);
+  const written = await page.request.post(`/api/projects/${projectId}/files`, {
+    data: { name: 'plan.html', content: '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>原策略</p></section>' },
+  });
+  expect(written.ok()).toBe(true);
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+  let requestId = ''; let childProjectId = ''; let posts = 0;
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    posts++;
+    const body = route.request().postDataJSON(); requestId = body.clientRequestId; childProjectId = body.projectId;
+    const response = await route.fetch({ postData: { ...body, conversationId: 'missing-conversation-rr3' } });
+    expect(response.status()).toBe(404);
+    expect(await response.json()).toMatchObject({ error: { details: { runAcceptance: 'not-accepted' } } });
+    await route.fulfill({ response });
+  });
+  await page.getByRole('button', { name: 'Versions' }).click();
+  let dialog = page.getByRole('dialog', { name: 'Versions' });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await dialog.getByRole('combobox', { name: '要修订的章节' }).selectOption('strategy');
+  await dialog.getByRole('textbox', { name: '章节修改要求' }).fill('拒绝后保留这一条要求');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+  await expect(dialog.getByRole('button', { name: '结束本次未受理修订' })).toBeVisible();
+  expect((await (await page.request.get(`/api/runs?projectId=${childProjectId}`)).json()).runs).toHaveLength(0);
+  await page.reload({ waitUntil: 'domcontentloaded' }); await waitForLoadingToClear(page);
+  await page.getByRole('button', { name: 'Versions' }).click(); dialog = page.getByRole('dialog', { name: 'Versions' });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await expect(dialog.getByRole('textbox', { name: '章节修改要求' })).toHaveValue('拒绝后保留这一条要求');
+  expect(posts).toBe(1);
+  await dialog.getByRole('button', { name: '结束本次未受理修订' }).click();
+  await expect(dialog.getByRole('button', { name: '生成候选（不改当前稿）' })).toBeEnabled();
+  await page.unroute('**/api/runs');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+  const key = `mokina:revision:${projectId}:plan.html`;
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.runId, key), { timeout: T.long }).toBeTruthy();
+  const next = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), key);
+  expect(next.clientRequestId).not.toBe(requestId);
+  await testInfo.attach('rr3-real-refusal', { body: JSON.stringify({ projectId, childProjectId, runCount: 0, rejectedRequestId: requestId, next }), contentType: 'application/json' });
+});
+
+test('[P1] Mokina revision lost POST response recovers the same run and adopts its candidate', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina revision receipt loss');
+  const { projectId, conversationId } = await currentProjectContext(page);
+  const baseHtml = [
+    '<!doctype html><html><body>',
+    '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>原始策略：门店联合活动</p></section>',
+    '<section id="budget" data-mokina-id="budget"><h2>预算</h2><p>原始预算 50 万</p></section>',
+    '</body></html>',
+  ].join('');
+  const written = await page.request.post(`/api/projects/${projectId}/files`, {
+    data: { name: 'plan.html', content: baseHtml },
+  });
+  expect(written.ok()).toBe(true);
+
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+
+  let postCount = 0;
+  let clientRequestId = '';
+  let revisionProjectId = '';
+  let revisionRunId = '';
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    postCount += 1;
+    const body = route.request().postDataJSON() as { clientRequestId?: string; projectId?: string };
+    clientRequestId = body.clientRequestId ?? '';
+    revisionProjectId = body.projectId ?? '';
+    // The real daemon accepts the request first; only the receipt is lost.
+    const response = await route.fetch();
+    expect(response.ok()).toBe(true);
+    revisionRunId = ((await response.json()) as { runId: string }).runId;
+    await route.abort('failed');
+  });
+
+  const versionsButton = page.getByRole('button', { name: 'Versions' });
+  await versionsButton.click();
+  const dialog = page.getByRole('dialog', { name: 'Versions' });
+  await expect(dialog).toBeVisible({ timeout: T.long });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await dialog.getByRole('combobox', { name: '要修订的章节' }).selectOption('strategy');
+  await dialog.getByRole('textbox', { name: '章节修改要求' }).fill('把渠道改为社群为主');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+
+  await expect.poll(() => postCount, { timeout: T.long }).toBe(1);
+  // T11: the POST carries a stable client identity minted before any side effect.
+  expect(clientRequestId.length).toBeGreaterThan(0);
+  expect(revisionProjectId.length).toBeGreaterThan(0);
+  await expect.poll(() => revisionRunId, { timeout: T.long }).toBeTruthy();
+
+  // The daemon accepted exactly one run for the revision project.
+  const runsResponse = await page.request.get(`/api/runs?projectId=${encodeURIComponent(revisionProjectId)}`);
+  expect(runsResponse.ok()).toBe(true);
+  const runsBody = (await runsResponse.json()) as { runs: Array<{ id: string; clientRequestId?: string | null }> };
+  expect(runsBody.runs).toHaveLength(1);
+  expect(runsBody.runs[0]?.clientRequestId).toBe(clientRequestId);
+
+  // The send intent is preserved as unknown instead of being dropped or resent.
+  const intent = await page.evaluate(() => {
+    const keys: string[] = [];
+    for (let index = 0; index < window.localStorage.length; index += 1) {
+      const key = window.localStorage.key(index);
+      if (key && key.startsWith('od:send-request:')) keys.push(window.localStorage.getItem(key) ?? '');
+    }
+    return keys.join('\n');
+  });
+  expect(intent).toContain(clientRequestId);
+  expect(intent).toContain('"unknown"');
+
+  // The current draft is byte-identical: a lost candidate never touches it.
+  const current = await page.request.get(`/api/projects/${projectId}/files/plan.html`);
+  expect(await current.text()).toContain('原始预算 50 万');
+
+  // No automatic resend: waits and a reload keep the single POST.
+  await page.waitForTimeout(2_500);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+  await page.waitForTimeout(2_500);
+  expect(postCount).toBe(1);
+
+  // Recover the original artifact's job, collect a valid replacement and adopt it explicitly.
+  await page.getByRole('button', { name: 'Versions' }).click();
+  const recoveredDialog = page.getByRole('dialog', { name: 'Versions' });
+  await recoveredDialog.getByRole('button', { name: '修订章节' }).click();
+  await expect(recoveredDialog.getByRole('button', { name: /恢复上次修订候选|保存已完成运行的候选/ })).toBeVisible();
+  const job = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), `mokina:revision:${projectId}:plan.html`);
+  expect(job.runId).toBe(revisionRunId);
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/runs/${revisionRunId}`);
+    const body = await response.json(); return body.run?.status ?? body.status;
+  }, { timeout: T.long }).toBe('succeeded');
+  const replacement = await page.request.post(`/api/projects/${revisionProjectId}/files`, {
+    data: { name: 'MOKINA-REPLACEMENT.html', content: '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>新策略：社群为主</p></section>' },
+  });
+  expect(replacement.ok()).toBe(true);
+  // Wait for the replacement write's file events before starting the recovery.
+  await page.waitForTimeout(1000);
+  if (!await recoveredDialog.isVisible()) {
+    await page.getByRole('button', { name: 'Versions' }).click();
+    await recoveredDialog.getByRole('button', { name: '修订章节' }).click();
+  }
+  await recoveredDialog.getByRole('button', { name: /恢复上次修订候选|保存已完成运行的候选/ }).click();
+  let candidate: { id: string; candidate: boolean } | undefined;
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`);
+    const body = await response.json();
+    candidate = body.versions.find((version: { candidate?: boolean }) => version.candidate);
+    return candidate?.id;
+  }, { timeout: T.long }).toBeTruthy();
+  expect(postCount).toBe(1);
+  expect(candidate).toBeTruthy();
+  await expect(recoveredDialog.getByRole('button', { name: '采用候选', exact: true })).toBeVisible();
+  await recoveredDialog.getByRole('button', { name: '采用候选', exact: true }).click();
+  await page.locator('.file-version-restore-confirm').getByRole('button', { name: '采用候选', exact: true }).click();
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
+    return (await response.text()).includes('新策略：社群为主');
+  }, { timeout: T.long }).toBe(true);
+  const adoptedFile = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
+  expect(await adoptedFile.text()).toContain('新策略：社群为主');
+
+  await testInfo.attach('revision-receipt-loss', {
+    body: JSON.stringify({ projectId, conversationId, revisionProjectId, revisionRunId, clientRequestId, postCount }),
+    contentType: 'application/json',
+  });
+});
+
+test('[P1] Mokina historical version export locks the clicked version and exports once', async ({ page }, testInfo) => {
+  const projectId = `mokina-version-export-${Date.now()}`;
+  const created = await page.request.post('/api/projects', {
+    data: { id: projectId, name: 'Version export lock', skillId: null, designSystemId: null, metadata: { kind: 'prototype' } },
+  });
+  expect(created.ok()).toBe(true);
+  const html = await readFile(join(process.cwd(), '..', '..', 'docs', 'mokina-v0.0.2', 'evidence', 'e2e-plan-export.html'), 'utf8');
+  const written = await page.request.post(`/api/projects/${projectId}/files`, { data: { name: 'plan.html', content: html } });
+  expect(written.ok()).toBe(true);
+
+  const versionsResponse = await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`);
+  expect(versionsResponse.ok()).toBe(true);
+  const { versions } = (await versionsResponse.json()) as { versions: Array<{ id: string; version: number }> };
+  const current = versions.find((version) => version.version === 1) ?? versions[0]!;
+  const edited = await page.request.post(`/api/projects/${projectId}/files`, { data: { name: 'plan.html', content: html.replace('</body>', '<p>Current version marker</p></body>') } });
+  expect(edited.ok()).toBe(true);
+  const updated = await (await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`)).json();
+  expect(updated.versions.find((version: { id: string }) => version.id === current.id).current).toBe(false);
+  expect(updated.versions.find((version: { current: boolean }) => version.current).id).not.toBe(current.id);
+
+  const exportBodies: Array<Record<string, unknown>> = [];
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().includes('/export/html')) {
+      const body = request.postDataJSON() as Record<string, unknown>;
+      // The viewport primes a renderable copy through the same route with the
+      // raw file name as its title; that is a preview read, not the export.
+      if (body.title !== 'plan.html') exportBodies.push(body);
+    }
+  });
+
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2500);
+  await page.getByRole('button', { name: 'Versions' }).click();
+  await page.waitForTimeout(900);
+  // Pick the oldest version row, then export it.
+  const panel = page.locator('.artifact-version-panel');
+  await panel.getByText('Manual edit').last().click();
+  await page.waitForTimeout(900);
+  await page.getByRole('button', { name: 'Download' }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole('menuitem', { name: 'Export as standalone HTML' }).click();
+  await expect.poll(() => exportBodies.length, { timeout: 10000 }).toBe(1);
+
+  // The export carries exactly the version selected in the panel (T13 lock).
+  expect(exportBodies[0]?.versionId).toBe(current.id);
+  await testInfo.attach('version-export-lock', {
+    body: JSON.stringify({ projectId, versionId: current.id, exportBodies }),
+    contentType: 'application/json',
+  });
+});
+
+test('[P1] Mokina reduced transparency degrades materials live and restores', async ({ page }, testInfo) => {
+  await gotoEntryHome(page);
+  await dismissPrivacyDialog(page);
+  await page.waitForTimeout(1200);
+
+  const sample = () => page.evaluate(() => {
+    const surfaces = [...document.querySelectorAll('body *')].filter((el) => {
+      const style = getComputedStyle(el);
+      return (style.backdropFilter && style.backdropFilter !== 'none')
+        || (style.getPropertyValue('-webkit-backdrop-filter') && style.getPropertyValue('-webkit-backdrop-filter') !== 'none');
+    });
+    const root = getComputedStyle(document.documentElement);
+    return {
+      glassSurfaceCount: surfaces.length,
+      materialRegular: root.getPropertyValue('--material-regular').trim(),
+      bgElevated: root.getPropertyValue('--bg-elevated').trim(),
+      reducedMatches: matchMedia('(prefers-reduced-transparency: reduce)').matches,
+      headingVisible: Boolean([...document.querySelectorAll('h1, h2')].find((el) => (el.textContent || '').trim().length > 0)),
+    };
+  });
+
+  const before = await sample();
+  expect(before.reducedMatches).toBe(false);
+
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }],
+  });
+  await page.waitForTimeout(800);
+  const reduced = await sample();
+
+  expect(reduced.reducedMatches).toBe(true);
+  // Tokens collapse to the solid elevated surface: same value, no blur left.
+  expect(reduced.materialRegular).toBe(reduced.bgElevated);
+  expect(reduced.glassSurfaceCount).toBe(0);
+  expect(reduced.headingVisible).toBe(true);
+
+  await cdp.send('Emulation.setEmulatedMedia', { features: [] });
+  await page.waitForTimeout(800);
+  const restored = await sample();
+  expect(restored.reducedMatches).toBe(false);
+  expect(restored.glassSurfaceCount).toBe(before.glassSurfaceCount);
+
+  await testInfo.attach('reduced-transparency', {
+    body: JSON.stringify({ before, reduced, restored }),
+    contentType: 'application/json',
+  });
 });

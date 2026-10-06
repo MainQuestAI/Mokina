@@ -146,6 +146,7 @@ export function RailRecentRow({
   onOpen,
   onRename,
   onDuplicate,
+  onExportRecovery,
   onMoveToTeam,
   onDelete,
 }: {
@@ -183,6 +184,7 @@ export function RailRecentRow({
    *  own — the confirmation is the shared project delete dialog, the same one
    *  the project cards open. */
   onDelete?: (project: Project) => void;
+  onExportRecovery?: (project: Project) => void;
 }) {
   const t = useT();
   const hoverCover = useProjectHoverCover(project, workspaceContext);
@@ -269,7 +271,7 @@ export function RailRecentRow({
     onRename?.(project.id, next);
   }
 
-  const hasMenu = Boolean(onRename || onDuplicate || onDelete || (moveToTeamAvailable && onMoveToTeam));
+  const hasMenu = Boolean(onRename || onDuplicate || onDelete || onExportRecovery || (moveToTeamAvailable && onMoveToTeam));
   const foreignTitle = ownedBySelf ? undefined : t('recentProjects.ownOnlyMutation');
 
   return (
@@ -447,6 +449,20 @@ export function RailRecentRow({
               the workspace cannot have (OPEND-2794: 无可用团队空间时按产品规则
               隐藏). A shared row and a foreign row keep the item and explain
               themselves instead. */}
+          {onExportRecovery ? (
+            <button
+              type="button"
+              role="menuitem"
+              data-testid="entry-nav-recent-export-recovery"
+              onClick={() => {
+                releasePopup(project.id, 'menu');
+                onExportRecovery(project);
+              }}
+            >
+              <Icon name="download" size={14} />
+              <span>{t('recentProjects.exportRecovery')}</span>
+            </button>
+          ) : null}
           {moveToTeamAvailable && onMoveToTeam ? (
             <button
               type="button"

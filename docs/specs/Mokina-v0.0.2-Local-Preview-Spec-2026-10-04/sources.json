@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "S01",
+      "title": "PR3 元数据与最终修复说明",
+      "url": "https://github.com/MainQuestAI/Mokina/pull/3",
+      "evidenceKind": "live-pr-metadata",
+      "note": "2026-10-04 读取：open/draft/未合并；head 53da96c。测试结果为 PR 作者声明，不是本次重新执行。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S02",
+      "title": "根 README",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/README.md",
+      "evidenceKind": "source-read",
+      "note": "原生 open-design 入口和历史原型混排；启动命令边界。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S03",
+      "title": "原生根 AGENTS",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/AGENTS.md",
+      "evidenceKind": "source-read",
+      "note": "目录/模块责任、Node/pnpm、数据根、生命周期、prompt composition 约束；已读相关区段。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S04",
+      "title": "B0+B1 已批准 Spec",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/docs/specs/Mokina-B0-B1-开发Spec-2026-10-03.md",
+      "evidenceKind": "approved-spec-read",
+      "note": "既有批准范围和八视图/B2/B3/B4 边界；不是新增功能已完成证明。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S05",
+      "title": "后续批次 TODO",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/TODOS.md",
+      "evidenceKind": "source-read",
+      "note": "B2/B3/B4 和明确后置范围、活动页真实入口前提。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S06",
+      "title": "材料提取实现",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/apps/daemon/src/mokina/materials.ts",
+      "evidenceKind": "source-read",
+      "note": "七类提取、10MiB/150k 等限制、pdftotext 和公式缓存语义；本次读取完整文件。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S07",
+      "title": "文件、资料和版本 DTO",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/packages/contracts/src/api/files.ts",
+      "evidenceKind": "source-read",
+      "note": "原生版本/采用/readOnly/frozenContent/导出与隔离预览合同。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S08",
+      "title": "运行与上下文 DTO",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/packages/contracts/src/api/context.ts",
+      "evidenceKind": "source-read",
+      "note": "RunContextSelection 现有字段；同时读取 api/chat.ts 的 ChatRequest 相关区段。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S09",
+      "title": "营销 HTML 成果契约",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/plugins/_official/scenarios/mokina-marketing-plan/references/report-contract.md",
+      "evidenceKind": "source-read",
+      "note": "自包含、稳定章节、来源、数字与打印要求。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S10",
+      "title": "FileViewer 修订生成入口",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/apps/web/src/components/FileViewer.tsx#L4300-L4530",
+      "evidenceKind": "source-read",
+      "note": "generateChapterCandidate 缺 clientRequestId，runId 返回后才存 job；静态发现未本机复现。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S11",
+      "title": "FileViewer 接续创建入口",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/apps/web/src/components/FileViewer.tsx#L4160-L4305",
+      "evidenceKind": "source-read",
+      "note": "固定摘录、先建项目再写文件、旧 v1 schema 与未发送草稿。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S12",
+      "title": "FileViewer 版本导出菜单",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/apps/web/src/components/FileViewer.tsx#L4670-L4910",
+      "evidenceKind": "source-read",
+      "note": "此面板 HTML 菜单仅 current 可见；不能据此推断不存在其他路径。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S13",
+      "title": "V0.0.2 实施记录",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/docs/Mokina-V0.0.2-实施记录.md",
+      "evidenceKind": "historical-evidence",
+      "note": "PR2 工作区/草稿/导出等历史运行边界；部分 PDF 为浏览器 fallback。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S14",
+      "title": "打包责任与更新机制",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/tools/pack/AGENTS.md",
+      "evidenceKind": "source-read",
+      "note": "现有 tools-pack、product/channel/namespace、updater 默认源和 cache 规则。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S15",
+      "title": "打包配置实现",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/tools/pack/src/config/index.ts",
+      "evidenceKind": "source-read",
+      "note": "本地 fork 无键时遥测/团队部分短路、mac standalone、工具 flags；已读相关区段。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S16",
+      "title": "冻结设计清单",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/docs/designs/mokina-v0.0.2-20261002/manifest.json",
+      "evidenceKind": "source-read",
+      "note": "项目 mokina-v0-0-2-4c39，21 文件摘要；未在本会话解包逐项重做视觉验收。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S17",
+      "title": "B0+B1 运行记录",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/docs/Mokina-B0-B1-运行与验收记录.md",
+      "evidenceKind": "historical-evidence",
+      "note": "现有 API/真实 Codex 链/八视图映射；历史报告不等于最终包已通过。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "E01",
+      "title": "Codex Authentication 官方文档",
+      "url": "https://developers.openai.com/codex/auth/",
+      "evidenceKind": "official-web-read",
+      "note": "凭据可来自文件或系统存储；不应仅判断 auth.json；本次规划期间已查官方资料。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "E02",
+      "title": "Electron Security 官方文档",
+      "url": "https://www.electronjs.org/docs/latest/tutorial/security",
+      "evidenceKind": "official-web-read",
+      "note": "隔离、sandbox、Node 权限、IPC sender 与导航安全原则。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "E03",
+      "title": "Electron Code Signing 官方文档",
+      "url": "https://www.electronjs.org/docs/latest/tutorial/code-signing",
+      "evidenceKind": "official-web-read",
+      "note": "签名/公证与本地预览、公开分发的区别。",
+      "accessDate": "2026-10-04"
+    },
+    {
+      "id": "S18",
+      "title": "原生 run 路由文件位置",
+      "url": "https://github.com/MainQuestAI/Mokina/blob/53da96ca9080afb5b5141490d6e95858a6e18e9a/open-design/apps/daemon/src/routes/runs.ts",
+      "evidenceKind": "source-read",
+      "note": "末次核对读取文件开头确认路径和原生运行依赖；不代表此会话完整审查了全部路由实现。",
+      "accessDate": "2026-10-04"
+    }
+  ]
+}

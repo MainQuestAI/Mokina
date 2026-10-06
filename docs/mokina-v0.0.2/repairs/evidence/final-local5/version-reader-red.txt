@@ -1,0 +1,33 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon
+
+ ❯ tests/mokina-recovery-package.test.ts (9 tests | 1 failed) 95ms
+     × keeps the adopted current version separate from a later candidate in the production reader after import 22ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/mokina-recovery-package.test.ts > mokina recovery package > keeps the adopted current version separate from a later candidate in the production reader after import
+AssertionError: expected '747da525-74e4-4887-91ec-75237fea8c18' to be 'b20c9d86-d4a3-4870-bee8-29b103e4e722' // Object.is equality
+
+Expected: "b20c9d86-d4a3-4870-bee8-29b103e4e722"
+Received: "747da525-74e4-4887-91ec-75237fea8c18"
+
+ ❯ tests/mokina-recovery-package.test.ts:95:59
+     93|     expect(imported.ok).toBe(true);
+     94|     const versions = await listProjectFileVersions(root, 'p2', 'plan.h…
+     95|     expect(versions.find(version => version.current)?.id).toBe(current…
+       |                                                           ^
+     96|     expect(versions.find(version => version.id === candidate.id)).toMa…
+     97|     expect(await readFile(path.join(root, 'p2', 'plan.html'), 'utf8'))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  21:29:12
+   Duration  577ms (transform 194ms, setup 16ms, import 379ms, tests 95ms, environment 0ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/mokina-recovery-package.test.ts

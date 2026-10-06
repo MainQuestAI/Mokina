@@ -1,0 +1,92 @@
+{
+  "poppler": {
+    "version": "26.03.0",
+    "license": "\"GPL-2.0-only\"",
+    "source": "https://poppler.freedesktop.org/poppler-26.03.0.tar.xz"
+  },
+  "freetype": {
+    "version": "2.14.3",
+    "license": "\"FTL\"",
+    "source": "https://downloads.sourceforge.net/project/freetype/freetype2/2.14.3/freetype-2.14.3.tar.xz"
+  },
+  "fontconfig": {
+    "version": "2.17.1",
+    "license": "\"MIT\"",
+    "source": "https://gitlab.freedesktop.org/fontconfig/fontconfig/-/archive/2.17.1/fontconfig-2.17.1.tar.gz"
+  },
+  "jpeg-turbo": {
+    "version": "3.2.0",
+    "license": "all_of: [",
+    "source": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz"
+  },
+  "gpgmepp": {
+    "version": "2.0.0",
+    "license": "\"LGPL-2.1-or-later\"",
+    "source": "https://www.gnupg.org/ftp/gcrypt/gpgmepp/gpgmepp-2.0.0.tar.xz"
+  },
+  "openjpeg": {
+    "version": "2.5.4",
+    "license": "\"BSD-2-Clause\"",
+    "source": "https://github.com/uclouvain/openjpeg/archive/refs/tags/v2.5.4.tar.gz"
+  },
+  "little-cms2": {
+    "version": "2.19",
+    "license": "\"MIT\"",
+    "source": "https://downloads.sourceforge.net/project/lcms/lcms/2.19/lcms2-2.19.tar.gz"
+  },
+  "libpng": {
+    "version": "1.6.58",
+    "license": "\"libpng-2.0\"",
+    "source": "https://downloads.sourceforge.net/project/libpng/libpng16/1.6.58/libpng-1.6.58.tar.xz"
+  },
+  "libtiff": {
+    "version": "4.7.2",
+    "license": "\"libtiff\"",
+    "source": "https://download.osgeo.org/libtiff/tiff-4.7.2.tar.gz"
+  },
+  "nss": {
+    "version": "3.122",
+    "license": "\"MPL-2.0\"",
+    "source": "https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_122_RTM/src/nss-3.122.tar.gz"
+  },
+  "nspr": {
+    "version": "4.38.2",
+    "license": "\"MPL-2.0\"",
+    "source": "https://archive.mozilla.org/pub/nspr/releases/v4.38.2/src/nspr-4.38.2.tar.gz"
+  },
+  "gpgme": {
+    "version": "2.0.1",
+    "license": "\"LGPL-2.1-or-later\"",
+    "source": "https://www.gnupg.org/ftp/gcrypt/gpgme/gpgme-2.0.1.tar.bz2"
+  },
+  "gettext": {
+    "version": "1.0",
+    "license": "all_of: [",
+    "source": "https://ftpmirror.gnu.org/gnu/gettext/gettext-1.0.tar.gz"
+  },
+  "webp": {
+    "version": "1.6.0",
+    "license": "\"BSD-3-Clause\"",
+    "source": "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.6.0.tar.gz"
+  },
+  "zstd": {
+    "version": "1.5.7_1",
+    "license": "all_of: [",
+    "source": "https://github.com/facebook/zstd/archive/refs/tags/v1.5.7.tar.gz"
+  },
+  "xz": {
+    "version": "5.8.3",
+    "license": "all_of: [",
+    "source": "https://github.com/tukaani-project/xz/releases/download/v5.8.3/xz-5.8.3.tar.gz"
+  },
+  "libassuan": {
+    "version": "3.0.2",
+    "license": "all_of: [",
+    "source": "https://gnupg.org/ftp/gcrypt/libassuan/libassuan-3.0.2.tar.bz2"
+  },
+  "libgpg-error": {
+    "version": "1.59",
+    "license": "\"LGPL-2.1-or-later\"",
+    "source": "https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.59.tar.bz2"
+  }
+}

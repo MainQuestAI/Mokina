@@ -1,0 +1,272 @@
+{
+  "appPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/builder/mac-arm64/Mokina.app",
+  "cacheReport": {
+    "entries": [
+      {
+        "durationMs": 61823,
+        "entryPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/tools-pack/cache/entries/mac.workspace-build/57d3588b1f68df69e2134a220dbb3ea991fe2f26048623649cd16c1daf760478",
+        "key": "572a4baa7ce2512b08fcc9ea9cf8a58352e31fd60a19913e535a4206fac85dfd",
+        "keyHash": "57d3588b1f68df69e2134a220dbb3ea991fe2f26048623649cd16c1daf760478",
+        "materialized": [
+          {
+            "durationMs": 5,
+            "from": "outputs/packages/components/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/components/dist"
+          },
+          {
+            "durationMs": 3,
+            "from": "outputs/packages/release/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/release/dist"
+          },
+          {
+            "durationMs": 82,
+            "from": "outputs/packages/contracts/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/contracts/dist"
+          },
+          {
+            "durationMs": 3,
+            "from": "outputs/packages/registry-protocol/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/registry-protocol/dist"
+          },
+          {
+            "durationMs": 2,
+            "from": "outputs/packages/sidecar-proto/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/sidecar-proto/dist"
+          },
+          {
+            "durationMs": 2,
+            "from": "outputs/packages/launcher-proto/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/launcher-proto/dist"
+          },
+          {
+            "durationMs": 5,
+            "from": "outputs/packages/platform/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/platform/dist"
+          },
+          {
+            "durationMs": 10,
+            "from": "outputs/packages/sidecar/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/sidecar/dist"
+          },
+          {
+            "durationMs": 8,
+            "from": "outputs/packages/download/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/download/dist"
+          },
+          {
+            "durationMs": 5,
+            "from": "outputs/packages/host/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/host/dist"
+          },
+          {
+            "durationMs": 2,
+            "from": "outputs/packages/agui-adapter/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/agui-adapter/dist"
+          },
+          {
+            "durationMs": 9,
+            "from": "outputs/packages/plugin-runtime/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/plugin-runtime/dist"
+          },
+          {
+            "durationMs": 3,
+            "from": "outputs/packages/diagnostics/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/diagnostics/dist"
+          },
+          {
+            "durationMs": 2,
+            "from": "outputs/packages/dsh-runtime/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/packages/dsh-runtime/dist"
+          },
+          {
+            "durationMs": 482,
+            "from": "outputs/apps/daemon/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon/dist"
+          },
+          {
+            "durationMs": 4,
+            "from": "outputs/apps/web/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web/dist"
+          },
+          {
+            "durationMs": 26,
+            "from": "outputs/apps/desktop/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/desktop/dist"
+          },
+          {
+            "durationMs": 11,
+            "from": "outputs/apps/packaged/dist",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/packaged/dist"
+          },
+          {
+            "durationMs": 1011,
+            "from": "outputs/apps/web/.next/standalone",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web/.next/standalone"
+          },
+          {
+            "durationMs": 238,
+            "from": "outputs/apps/web/.next/static",
+            "to": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web/.next/static"
+          }
+        ],
+        "nodeId": "mac.workspace-build",
+        "outputs": [
+          "stamp.json",
+          "outputs/packages/components/dist",
+          "outputs/packages/release/dist",
+          "outputs/packages/contracts/dist",
+          "outputs/packages/registry-protocol/dist",
+          "outputs/packages/sidecar-proto/dist",
+          "outputs/packages/launcher-proto/dist",
+          "outputs/packages/platform/dist",
+          "outputs/packages/sidecar/dist",
+          "outputs/packages/download/dist",
+          "outputs/packages/host/dist",
+          "outputs/packages/agui-adapter/dist",
+          "outputs/packages/plugin-runtime/dist",
+          "outputs/packages/diagnostics/dist",
+          "outputs/packages/dsh-runtime/dist",
+          "outputs/apps/daemon/dist",
+          "outputs/apps/web/dist",
+          "outputs/apps/desktop/dist",
+          "outputs/apps/packaged/dist",
+          "outputs/apps/web/.next/standalone",
+          "outputs/apps/web/.next/static"
+        ],
+        "reason": "missing manifest",
+        "status": "miss"
+      }
+    ],
+    "root": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/tools-pack/cache"
+  },
+  "dmgPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/dmg/Mokina-mokina-local.dmg",
+  "latestMacYmlPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/zip/latest-mac.yml",
+  "outputRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local",
+  "payloadPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/payload/Mokina-mokina-local-payload.zip",
+  "resourceRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/resources/open-design",
+  "runtimeNamespaceRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/runtime/mac/namespaces/mokina-local",
+  "sizeReport": {
+    "appBytes": 985998492,
+    "builder": {
+      "asar": false,
+      "compression": "normal",
+      "electronLanguages": [
+        "en",
+        "de",
+        "zh_CN",
+        "zh_TW",
+        "pt_BR",
+        "es",
+        "ru",
+        "fa",
+        "ar",
+        "ja",
+        "ko",
+        "pl",
+        "hu",
+        "fr",
+        "uk",
+        "tr"
+      ],
+      "filePatterns": [
+        "**/*",
+        "!**/node_modules/.bin",
+        "!**/node_modules/electron{,/**/*}",
+        "!**/*.map",
+        "!**/*.tsbuildinfo",
+        "!**/.next/cache",
+        "!**/.next/cache/**",
+        "!**/node_modules/better-sqlite3/build/Release/obj",
+        "!**/node_modules/better-sqlite3/build/Release/obj/**",
+        "!**/node_modules/better-sqlite3/deps",
+        "!**/node_modules/better-sqlite3/deps/**"
+      ],
+      "nativeRebuild": {
+        "buildFromSource": false,
+        "mode": "sequential",
+        "modules": [
+          "better-sqlite3"
+        ]
+      },
+      "targets": [
+        "dir",
+        "dmg",
+        "zip"
+      ],
+      "webOutputMode": "standalone"
+    },
+    "dmgBytes": 408013900,
+    "generatedAt": "2026-10-05T13:36:10.497Z",
+    "outputRootBytes": 4070765495,
+    "resourceRootBytes": 338741250,
+    "runtimeNamespaceRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/runtime/mac/namespaces/mokina-local",
+    "topLevel": {
+      "appResourcesBytes": 311125804,
+      "electronFrameworksBytes": 237750504,
+      "resourcesBytes": 742836357
+    },
+    "tracked": {
+      "appNodeModulesBytes": 293024001,
+      "betterSqlite3Bytes": 2064730,
+      "betterSqlite3SourceResidueBytes": 0,
+      "bundledNodeBytes": 0,
+      "electronLocalesBytes": 12437016,
+      "markdownBytes": 15874806,
+      "nextBytes": 0,
+      "nextSwcBytes": 0,
+      "prebundledRuntimeBytes": 18086057,
+      "sharpLibvipsBytes": 17777811,
+      "sourcemapBytes": 212,
+      "tsbuildInfoBytes": 0,
+      "webCopiedStandaloneBytes": 91229202,
+      "webNextCacheBytes": 0,
+      "webPackageBytes": 0,
+      "webPackageStandaloneBytes": 0
+    },
+    "zipBytes": 405038728
+  },
+  "timings": [
+    {
+      "durationMs": 62492,
+      "phase": "workspace-build"
+    },
+    {
+      "durationMs": 1,
+      "phase": "seed-app-config"
+    },
+    {
+      "durationMs": 3890,
+      "phase": "resource-tree"
+    },
+    {
+      "durationMs": 1723,
+      "phase": "workspace-tarballs"
+    },
+    {
+      "durationMs": 54634,
+      "phase": "assembled-app"
+    },
+    {
+      "durationMs": 59386,
+      "phase": "electron-builder"
+    },
+    {
+      "durationMs": 1933,
+      "phase": "xattr-scrub"
+    },
+    {
+      "durationMs": 29664,
+      "phase": "payload-artifact"
+    },
+    {
+      "durationMs": 283,
+      "phase": "artifacts"
+    },
+    {
+      "durationMs": 3428,
+      "phase": "size-report"
+    }
+  ],
+  "to": "all",
+  "zipPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/zip/Mokina-mokina-local.zip"
+}

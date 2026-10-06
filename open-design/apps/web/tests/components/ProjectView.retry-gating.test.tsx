@@ -1315,7 +1315,7 @@ describe('Mokina request admission and recovery join the actual host callbacks',
   it('a known failed run may start a new attempt, but loss of that retry receipt cannot create a third attempt', async () => {
     conversationMessages = conversationMessages.map(message => ({ ...message, clientRequestId: 'accepted-original-request' }));
     streamViaDaemon.mockImplementation(async options => {
-      expect(options.onBeforeRunCreate()).toBe(true);
+      expect(await options.onBeforeRunCreate()).toBe(true);
       options.onRunCreateFailed({ definitive: false });
       options.handlers.onError(new Error('retry receipt lost'));
     });
@@ -1354,7 +1354,7 @@ describe('Mokina request admission and recovery join the actual host callbacks',
   it('failure to persist dispatch after preparation still performs no POST, retracts the turn and retains the draft', async () => {
     conversationMessages = [];
     streamViaDaemon.mockImplementation(async options => {
-      expect(options.onBeforeRunCreate()).toBe(false);
+      expect(await options.onBeforeRunCreate()).toBe(false);
       options.onRunCreateFailed({ definitive: true });
       options.handlers.onError(new Error('Run was not sent'));
     });
@@ -1373,7 +1373,7 @@ describe('Mokina request admission and recovery join the actual host callbacks',
   it('response loss stops local busy state; ordinary retry checks the same request instead of creating a new ID', async () => {
     conversationMessages = [];
     streamViaDaemon.mockImplementation(async options => {
-      expect(options.onBeforeRunCreate()).toBe(true);
+      expect(await options.onBeforeRunCreate()).toBe(true);
       options.onRunCreateFailed({ definitive: false });
       options.handlers.onError(new Error('receipt lost'));
     });

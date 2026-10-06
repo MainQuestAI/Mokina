@@ -1,0 +1,16 @@
+{
+  "projectId": "rr6-refused-255935ed-7f36-49bd-930d-9d22c14075d5",
+  "clientRequestId": "e0d556a1-e6f3-4871-ad91-d08129e7e3fd",
+  "status": 404,
+  "body": {
+    "error": {
+      "code": "CONVERSATION_NOT_FOUND",
+      "message": "conversation not found for project",
+      "details": {
+        "runAcceptance": "not-accepted"
+      }
+    }
+  },
+  "runCount": 0,
+  "evidenceType": "installed local.6 real daemon refusal; source intent UI exit pending"
+}

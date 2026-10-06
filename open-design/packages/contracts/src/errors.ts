@@ -206,6 +206,11 @@ export interface ApiErrorResponse {
   error: ApiError;
 }
 
+/** Optional proof on POST /api/runs refusals. Missing proof leaves acceptance unknown. */
+export interface RunCreateAcceptanceDetails {
+  runAcceptance: 'not-accepted' | 'unknown';
+}
+
 export type ApiValidationIssue = {
   /** Dot/bracket path, JSON pointer, or form field name that failed validation. */
   path: string;

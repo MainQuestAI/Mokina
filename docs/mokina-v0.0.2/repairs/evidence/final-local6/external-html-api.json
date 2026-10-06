@@ -1,0 +1,27 @@
+{
+  "evidenceType": "headless external Chromium on byte-identical API-generated outputs; native export dialogs pending",
+  "rows": [
+    {
+      "title": "小山茶馆 · 春季新品体验营销方案",
+      "sectionIds": [
+        "strategy",
+        "budget",
+        "channels"
+      ],
+      "brokenImages": 0,
+      "file": "index.html",
+      "errors": [],
+      "hasBudget": true,
+      "bodyCharacters": 1024
+    },
+    {
+      "title": "小山茶馆 · 恢复包验收",
+      "sectionIds": [],
+      "brokenImages": 0,
+      "file": "recovered-check.html",
+      "errors": [],
+      "hasBudget": true,
+      "bodyCharacters": 31
+    }
+  ]
+}

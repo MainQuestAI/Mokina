@@ -2,7 +2,9 @@
 
 ## PR4 修复后的当前口径
 
-最终产品代码 `033c57dfe08b1ca42fa8a883bfde522bd3326ed1`，候选 `0.0.2-local.5`。R1–R7 与同一候选安装包的工程验收已收口；用户专业签收未执行。最终结果见 [实施记录](repairs/PR4-repair-log.md)、[验收矩阵](repairs/PR4-acceptance-matrix.md)、[Runbook](runbook.md) 与 [local.5 证据](repairs/evidence/final-local5/README.md)。
+当前候选 `0.0.2-local.6`，产品源码 `8950986e41e5047c56aab4d3ba9fda900902aa9a`。RR1–RR5 修复、远端产品检查、全量失败对照及同 DMG 安装的原生工程验收完成：Finder、资料选择/真实生成、拒绝退出/重试、丢响应恢复/采用、接续、退出重开、九份导出/取消/外部打开、源删除后恢复快照真实运行/再次导出均通过。**本机 arm64 工程收口完成；用户专业签收未执行，PR 不自动合并。** 全量 22 个历史失败全部在修复前及精确 BASE 同名同签名重现，本轮无新增或未解释时序失败；未宣称全量全绿。见 [实施记录](repairs/PR4-repair-log.md)、[矩阵](repairs/PR4-acceptance-matrix.md)、[Runbook](runbook.md) 与 [local.6](repairs/evidence/final-local6/README.md)。
+
+以下保留上一轮产品 `033c57d`、候选 `0.0.2-local.5` 的 R1–R7 历史验收，不替代本轮结果。
 
 原生收口补修 R6 正常入口/CLI 分派及 R4 恢复版本 manifest schema，红转绿后重新构建 local.5。最终 DMG 经安装后从 Finder 启动，真实资料→生成→丢响应修订恢复与采用→选章接续完成；历史/当前/未采用候选各导出 HTML/ZIP/原生 PDF 并验证取消和外部打开；源项目删除后恢复项目继续运行及再次恢复；退出重开、实例隔离与全局配置摘要通过。PDFium 未提取到导出 PDF 文本，不宣称可搜索/可复制文字。
 

@@ -1,0 +1,23 @@
+{
+  "globalCodexFilesSha256": {
+    "config.toml": "09a90f759d1d64dc835ea860a66f6cfffe5d02099987cc139aa58f4ea055b792",
+    "auth.json": "5b3839442265cb470ba78a1f11430fae6518ada24d540776a8bbcb37b92a1970"
+  },
+  "globalConfigUnchanged": true,
+  "peerPids": [
+    3710,
+    3714,
+    3715,
+    3716,
+    3727,
+    3728,
+    3815,
+    3837,
+    3838,
+    3848,
+    4027,
+    19786
+  ],
+  "evidenceType": "installed CLI QA profile stop/restart; other app PIDs and account/config file digests, not Finder quit",
+  "peerPidsPreserved": true
+}

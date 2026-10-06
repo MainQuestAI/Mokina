@@ -1,0 +1,63 @@
+{
+  "projects": [
+    {
+      "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+      "projectStatus": 404,
+      "runs": [
+        {
+          "id": "2bd8f36e-38b2-401e-ae43-117b88910064",
+          "status": "succeeded",
+          "clientRequestId": "f7d9deb1-03b4-42c7-b603-2aae33d9d6f3"
+        },
+        {
+          "id": "6ad721c2-815b-4bda-bed3-8c0e966ad45a",
+          "status": "succeeded",
+          "clientRequestId": "e82ac627-5b0b-4a0a-af73-8554a3b3f99b"
+        }
+      ]
+    },
+    {
+      "projectId": "d0baee72-f67e-4939-a97e-385584b56a95",
+      "projectStatus": 200,
+      "runs": [
+        {
+          "id": "846d0163-1498-4ce6-8af7-b152c0734c93",
+          "status": "succeeded",
+          "clientRequestId": "13bf47cb-1067-4b5d-a6fb-f2b9b40b3c2d"
+        },
+        {
+          "id": "abd1b788-8de8-4de0-8f80-5ae49a564484",
+          "status": "succeeded",
+          "clientRequestId": "7d8cef46-cda4-4978-8871-a62d78b70427"
+        }
+      ]
+    },
+    {
+      "projectId": "529956e4-f9f5-4cbd-83cf-2cbfebbabaa1",
+      "projectStatus": 200,
+      "runs": []
+    },
+    {
+      "projectId": "cce77046-8373-4d4a-b021-2627afe95be7",
+      "projectStatus": 200,
+      "runs": [
+        {
+          "id": "29e16e1f-59ba-4324-b5d1-d831b0dcc557",
+          "status": "succeeded",
+          "clientRequestId": "eed6717b-b497-4470-a427-9ee70f43c8e8"
+        }
+      ]
+    },
+    {
+      "projectId": "96c9c886-7281-4c26-9a56-0949f40a71d0",
+      "projectStatus": 200,
+      "runs": []
+    }
+  ],
+  "deletedDraft": {
+    "ok": true,
+    "found": false,
+    "deletedRecordId": "4aae3921-dfbc-4dec-b23f-6daf2d972809"
+  },
+  "evidenceType": "same installed candidate final statuses; original synthetic source removed, restored and second generation available, continuation explicit run succeeded and long-path continuation remains unsent"
+}

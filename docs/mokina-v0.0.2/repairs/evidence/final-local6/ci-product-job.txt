@@ -1,0 +1,1382 @@
+﻿2026-10-06T02:02:24.1546491Z Current runner version: '2.337.0'
+2026-10-06T02:02:24.1568255Z ##[group]Runner Image Provisioner
+2026-10-06T02:02:24.1568943Z Hosted Compute Agent
+2026-10-06T02:02:24.1569582Z Version: 20260901.588
+2026-10-06T02:02:24.1570094Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-10-06T02:02:24.1570711Z Build Date: 2026-09-01T19:56:44Z
+2026-10-06T02:02:24.1571265Z Worker ID: {87e381e8-da31-48a6-a2fe-73c901d5e1c5}
+2026-10-06T02:02:24.1571847Z Azure Region: westcentralus
+2026-10-06T02:02:24.1572387Z ##[endgroup]
+2026-10-06T02:02:24.1573439Z ##[group]Operating System
+2026-10-06T02:02:24.1573985Z Ubuntu
+2026-10-06T02:02:24.1574439Z 24.04.5
+2026-10-06T02:02:24.1574887Z LTS
+2026-10-06T02:02:24.1575393Z ##[endgroup]
+2026-10-06T02:02:24.1576121Z ##[group]Runner Image
+2026-10-06T02:02:24.1576672Z Image: ubuntu-24.04
+2026-10-06T02:02:24.1577156Z Version: 20260927.320.1
+2026-10-06T02:02:24.1578244Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-06T02:02:24.1579493Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+2026-10-06T02:02:24.1580288Z ##[endgroup]
+2026-10-06T02:02:24.1581183Z ##[group]GITHUB_TOKEN Permissions
+2026-10-06T02:02:24.1582874Z Contents: read
+2026-10-06T02:02:24.1583371Z Metadata: read
+2026-10-06T02:02:24.1583840Z ##[endgroup]
+2026-10-06T02:02:24.1585831Z Secret source: Actions
+2026-10-06T02:02:24.1586642Z Cache mode: write
+2026-10-06T02:02:24.1587308Z Prepare workflow directory
+2026-10-06T02:02:24.1946642Z Prepare all required actions
+2026-10-06T02:02:24.1985451Z Getting action download info
+2026-10-06T02:02:24.4937428Z Download action repository 'actions/checkout@v6.0.2' (SHA:de0fac2e4500dabe0009e67214ff5f5447ce83dd)
+2026-10-06T02:02:24.5827337Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-10-06T02:02:25.3696595Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-06T02:02:25.6177120Z Complete job name: validate
+2026-10-06T02:02:25.6904327Z ##[group]Run actions/checkout@v6.0.2
+2026-10-06T02:02:25.6905323Z with:
+2026-10-06T02:02:25.6905918Z   repository: MainQuestAI/Mokina
+2026-10-06T02:02:25.6912135Z   token: ***
+2026-10-06T02:02:25.6912562Z   ssh-strict: true
+2026-10-06T02:02:25.6913011Z   ssh-user: git
+2026-10-06T02:02:25.6913471Z   persist-credentials: true
+2026-10-06T02:02:25.6913988Z   clean: true
+2026-10-06T02:02:25.6914434Z   sparse-checkout-cone-mode: true
+2026-10-06T02:02:25.6915003Z   fetch-depth: 1
+2026-10-06T02:02:25.6915428Z   fetch-tags: false
+2026-10-06T02:02:25.6916088Z   show-progress: true
+2026-10-06T02:02:25.6916575Z   lfs: false
+2026-10-06T02:02:25.6917003Z   submodules: false
+2026-10-06T02:02:25.6917460Z   set-safe-directory: true
+2026-10-06T02:02:25.6918247Z ##[endgroup]
+2026-10-06T02:02:25.7770576Z Syncing repository: MainQuestAI/Mokina
+2026-10-06T02:02:25.7773439Z ##[group]Getting Git version info
+2026-10-06T02:02:25.7774709Z Working directory is '/home/runner/work/Mokina/Mokina'
+2026-10-06T02:02:25.7777067Z [command]/usr/bin/git version
+2026-10-06T02:02:25.7889640Z git version 2.55.0
+2026-10-06T02:02:25.7909172Z ##[endgroup]
+2026-10-06T02:02:25.7921670Z Temporarily overriding HOME='/home/runner/work/_temp/0a93830d-9467-4401-8edb-2b24d5618f76' before making global git config changes
+2026-10-06T02:02:25.7924882Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-06T02:02:25.7927865Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Mokina/Mokina
+2026-10-06T02:02:25.7971839Z Deleting the contents of '/home/runner/work/Mokina/Mokina'
+2026-10-06T02:02:25.7976109Z ##[group]Initializing the repository
+2026-10-06T02:02:25.7981824Z [command]/usr/bin/git init /home/runner/work/Mokina/Mokina
+2026-10-06T02:02:25.8063637Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-06T02:02:25.8066204Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-06T02:02:25.8068963Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-06T02:02:25.8070745Z hint: call:
+2026-10-06T02:02:25.8071603Z hint:
+2026-10-06T02:02:25.8073037Z hint: 	git config --global init.defaultBranch <name>
+2026-10-06T02:02:25.8074535Z hint:
+2026-10-06T02:02:25.8076068Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-06T02:02:25.8078198Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-06T02:02:25.8080125Z hint:
+2026-10-06T02:02:25.8081131Z hint: 	git branch -m <name>
+2026-10-06T02:02:25.8082148Z hint:
+2026-10-06T02:02:25.8083691Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-06T02:02:25.8086277Z Initialized empty Git repository in /home/runner/work/Mokina/Mokina/.git/
+2026-10-06T02:02:25.8090166Z [command]/usr/bin/git remote add origin https://github.com/MainQuestAI/Mokina
+2026-10-06T02:02:25.8117264Z ##[endgroup]
+2026-10-06T02:02:25.8118980Z ##[group]Disabling automatic garbage collection
+2026-10-06T02:02:25.8120578Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-06T02:02:25.8148663Z ##[endgroup]
+2026-10-06T02:02:25.8150276Z ##[group]Setting up auth
+2026-10-06T02:02:25.8151565Z Removing SSH command configuration
+2026-10-06T02:02:25.8154445Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-06T02:02:25.8199834Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-06T02:02:25.8603042Z Removing HTTP extra header
+2026-10-06T02:02:25.8608337Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-06T02:02:25.8644248Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-06T02:02:25.8840570Z Removing includeIf entries pointing to credentials config files
+2026-10-06T02:02:25.8845044Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-06T02:02:25.8880152Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-06T02:02:25.9083676Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-06T02:02:25.9123459Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Mokina/Mokina/.git.path /home/runner/work/_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:02:25.9156402Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Mokina/Mokina/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:02:26.1085935Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:02:26.1120345Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:02:26.1148075Z ##[endgroup]
+2026-10-06T02:02:26.1149112Z ##[group]Fetching the repository
+2026-10-06T02:02:26.1156191Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1e992789d442e09b033887c988dee6ca2a93f77d:refs/remotes/pull/4/merge
+2026-10-06T02:02:35.4501038Z From https://github.com/MainQuestAI/Mokina
+2026-10-06T02:02:35.4502788Z  * [new ref]         1e992789d442e09b033887c988dee6ca2a93f77d -> pull/4/merge
+2026-10-06T02:02:35.4506528Z ##[endgroup]
+2026-10-06T02:02:35.4507625Z ##[group]Determining the checkout info
+2026-10-06T02:02:35.4508889Z ##[endgroup]
+2026-10-06T02:02:35.4511628Z [command]/usr/bin/git sparse-checkout disable
+2026-10-06T02:02:35.4561027Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-06T02:02:35.4593693Z ##[group]Checking out the ref
+2026-10-06T02:02:35.4597064Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/4/merge
+2026-10-06T02:02:36.4812033Z Updating files:  79% (11174/14112)
+2026-10-06T02:02:36.5089801Z Updating files:  80% (11290/14112)
+2026-10-06T02:02:36.6169948Z Updating files:  81% (11431/14112)
+2026-10-06T02:02:36.6382576Z Updating files:  82% (11572/14112)
+2026-10-06T02:02:36.6475052Z Updating files:  83% (11713/14112)
+2026-10-06T02:02:36.6759455Z Updating files:  84% (11855/14112)
+2026-10-06T02:02:36.6912201Z Updating files:  85% (11996/14112)
+2026-10-06T02:02:36.7099200Z Updating files:  86% (12137/14112)
+2026-10-06T02:02:36.7168210Z Updating files:  87% (12278/14112)
+2026-10-06T02:02:36.7248203Z Updating files:  88% (12419/14112)
+2026-10-06T02:02:36.7327265Z Updating files:  89% (12560/14112)
+2026-10-06T02:02:36.7411615Z Updating files:  90% (12701/14112)
+2026-10-06T02:02:36.7503278Z Updating files:  91% (12842/14112)
+2026-10-06T02:02:36.7643749Z Updating files:  92% (12984/14112)
+2026-10-06T02:02:36.8133378Z Updating files:  93% (13125/14112)
+2026-10-06T02:02:36.8347441Z Updating files:  94% (13266/14112)
+2026-10-06T02:02:36.8591623Z Updating files:  95% (13407/14112)
+2026-10-06T02:02:36.8767074Z Updating files:  96% (13548/14112)
+2026-10-06T02:02:36.9070756Z Updating files:  97% (13689/14112)
+2026-10-06T02:02:37.3266043Z Updating files:  98% (13830/14112)
+2026-10-06T02:02:37.3420629Z Updating files:  99% (13971/14112)
+2026-10-06T02:02:37.3421321Z Updating files: 100% (14112/14112)
+2026-10-06T02:02:37.3421614Z Updating files: 100% (14112/14112), done.
+2026-10-06T02:02:37.3543880Z Note: switching to 'refs/remotes/pull/4/merge'.
+2026-10-06T02:02:37.3544413Z
+2026-10-06T02:02:37.3544677Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-06T02:02:37.3545381Z changes and commit them, and you can discard any commits you make in this
+2026-10-06T02:02:37.3546009Z state without impacting any branches by switching back to a branch.
+2026-10-06T02:02:37.3546240Z
+2026-10-06T02:02:37.3546398Z If you want to create a new branch to retain commits you create, you may
+2026-10-06T02:02:37.3546752Z do so (now or later) by using -c with the switch command. Example:
+2026-10-06T02:02:37.3546950Z
+2026-10-06T02:02:37.3547045Z   git switch -c <new-branch-name>
+2026-10-06T02:02:37.3547177Z
+2026-10-06T02:02:37.3547273Z Or undo this operation with:
+2026-10-06T02:02:37.3547402Z
+2026-10-06T02:02:37.3547476Z   git switch -
+2026-10-06T02:02:37.3547581Z
+2026-10-06T02:02:37.3547745Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-06T02:02:37.3547978Z
+2026-10-06T02:02:37.3548255Z HEAD is now at 1e99278 Merge 1ae0c1391a007ab2ce5dcfa8e3709c52097fc2c5 into df4a0b2699cd2b37df2099b38da8fe8375d14b41
+2026-10-06T02:02:37.3600844Z ##[endgroup]
+2026-10-06T02:02:37.5026723Z [command]/usr/bin/git log -1 --format=%H
+2026-10-06T02:02:37.5056679Z 1e992789d442e09b033887c988dee6ca2a93f77d
+2026-10-06T02:02:37.5284405Z ##[group]Run pnpm/action-setup@v4
+2026-10-06T02:02:37.5284648Z with:
+2026-10-06T02:02:37.5284811Z   version: 10.33.2
+2026-10-06T02:02:37.5284986Z   dest: ~/setup-pnpm
+2026-10-06T02:02:37.5285165Z   run_install: null
+2026-10-06T02:02:37.5285328Z   cache: false
+2026-10-06T02:02:37.5285515Z   cache_dependency_path: pnpm-lock.yaml
+2026-10-06T02:02:37.5285896Z   package_json_file: package.json
+2026-10-06T02:02:37.5286105Z   standalone: false
+2026-10-06T02:02:37.5286274Z ##[endgroup]
+2026-10-06T02:02:37.6495924Z ##[group]Running self-installer...
+2026-10-06T02:02:37.9752580Z (node:2238) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-06T02:02:37.9753777Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-06T02:02:38.2907460Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-10-06T02:02:38.2976601Z Packages: +1
+2026-10-06T02:02:38.2977006Z +
+2026-10-06T02:02:38.7284533Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-10-06T02:02:38.8296849Z
+2026-10-06T02:02:38.8297367Z dependencies:
+2026-10-06T02:02:38.8297697Z + pnpm 10.33.2 (12.9.1 is available)
+2026-10-06T02:02:38.8297914Z
+2026-10-06T02:02:38.8319173Z Done in 1s
+2026-10-06T02:02:38.8476091Z ##[endgroup]
+2026-10-06T02:02:38.8476425Z Installation Completed!
+2026-10-06T02:02:38.8640529Z ##[group]Run actions/setup-node@v4
+2026-10-06T02:02:38.8640757Z with:
+2026-10-06T02:02:38.8640916Z   node-version: 24
+2026-10-06T02:02:38.8641082Z   cache: pnpm
+2026-10-06T02:02:38.8641283Z   cache-dependency-path: open-design/pnpm-lock.yaml
+2026-10-06T02:02:38.8641530Z   always-auth: false
+2026-10-06T02:02:38.8641709Z   check-latest: false
+2026-10-06T02:02:38.8643571Z   token: ***
+2026-10-06T02:02:38.8643760Z env:
+2026-10-06T02:02:38.8643973Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-06T02:02:38.8644222Z ##[endgroup]
+2026-10-06T02:02:38.9862326Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-06T02:02:38.9865687Z (node:2253) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-06T02:02:38.9866256Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-06T02:02:38.9868452Z ##[group]Environment details
+2026-10-06T02:02:39.3054733Z node: v24.21.0
+2026-10-06T02:02:39.3055169Z npm: 11.19.0
+2026-10-06T02:02:39.3055437Z yarn: 1.22.22
+2026-10-06T02:02:39.3056167Z ##[endgroup]
+2026-10-06T02:02:39.3071025Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-10-06T02:02:39.6744122Z /home/runner/setup-pnpm/node_modules/.bin/store/v10
+2026-10-06T02:02:39.8543884Z Cache hit for: node-cache-Linux-x64-pnpm-d864f85f2ddf51e7da8840b2efd5843dc54329938522798f061473abae338d5e
+2026-10-06T02:02:39.8629821Z (node:2253) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-06T02:02:41.0652084Z Received 33554432 of 873652590 (3.8%), 32.0 MBs/sec
+2026-10-06T02:02:42.0654848Z Received 197132288 of 873652590 (22.6%), 94.0 MBs/sec
+2026-10-06T02:02:43.0660129Z Received 306184192 of 873652590 (35.0%), 97.3 MBs/sec
+2026-10-06T02:02:44.0686945Z Received 469762048 of 873652590 (53.8%), 112.0 MBs/sec
+2026-10-06T02:02:45.0657345Z Received 645922816 of 873652590 (73.9%), 123.2 MBs/sec
+2026-10-06T02:02:46.0680011Z Received 771751936 of 873652590 (88.3%), 122.6 MBs/sec
+2026-10-06T02:02:46.7406825Z Received 873652590 of 873652590 (100.0%), 124.9 MBs/sec
+2026-10-06T02:02:46.7429977Z Cache Size: ~833 MB (873652590 B)
+2026-10-06T02:02:46.7478384Z [command]/usr/bin/tar -xf /home/runner/work/_temp/a65aefbf-4ad8-4cee-837c-63c181d981a5/cache.tzst -P -C /home/runner/work/Mokina/Mokina --use-compress-program unzstd
+2026-10-06T02:02:57.0971606Z Cache restored successfully
+2026-10-06T02:02:57.1551460Z Cache restored from key: node-cache-Linux-x64-pnpm-d864f85f2ddf51e7da8840b2efd5843dc54329938522798f061473abae338d5e
+2026-10-06T02:02:57.1731426Z ##[group]Run pnpm install --frozen-lockfile
+2026-10-06T02:02:57.1731781Z pnpm install --frozen-lockfile
+2026-10-06T02:02:57.7497172Z shell: /usr/bin/bash -e {0}
+2026-10-06T02:02:57.7497430Z env:
+2026-10-06T02:02:57.7497677Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-06T02:02:57.7497942Z ##[endgroup]
+2026-10-06T02:02:58.0208050Z Scope: all 28 workspace projects
+2026-10-06T02:02:58.0746272Z Lockfile is up to date, resolution step is skipped
+2026-10-06T02:02:58.1456316Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-10-06T02:02:58.2297107Z Packages: +1113
+2026-10-06T02:02:58.2326948Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-06T02:02:59.1467287Z Progress: resolved 1113, reused 1109, downloaded 0, added 227
+2026-10-06T02:03:00.1481518Z Progress: resolved 1113, reused 1109, downloaded 0, added 459
+2026-10-06T02:03:01.1509935Z Progress: resolved 1113, reused 1109, downloaded 0, added 797
+2026-10-06T02:03:02.1510318Z Progress: resolved 1113, reused 1109, downloaded 0, added 887
+2026-10-06T02:03:03.0778334Z Progress: resolved 1113, reused 1109, downloaded 0, added 1113, done
+2026-10-06T02:03:05.4086558Z
+2026-10-06T02:03:05.4087280Z devDependencies:
+2026-10-06T02:03:05.4087823Z + @open-design/components 0.8.0 <- packages/components
+2026-10-06T02:03:05.4088483Z + @open-design/daemon 0.22.1 <- apps/daemon
+2026-10-06T02:03:05.4088959Z + @open-design/tools-dev 0.22.1 <- tools/dev
+2026-10-06T02:03:05.4089428Z + @open-design/tools-pack 0.22.1 <- tools/pack
+2026-10-06T02:03:05.4089901Z + @open-design/tools-release 0.22.1 <- tools/release
+2026-10-06T02:03:05.4090392Z + @open-design/tools-serve 0.6.0 <- tools/serve
+2026-10-06T02:03:05.4090811Z + @types/node 20.19.39
+2026-10-06T02:03:05.4091089Z + tsx 4.22.3
+2026-10-06T02:03:05.4091357Z + typescript 5.9.3
+2026-10-06T02:03:05.4091633Z + yaml 2.9.0
+2026-10-06T02:03:05.4091774Z
+2026-10-06T02:03:06.8459355Z . postinstall$ node ./scripts/postinstall.mjs
+2026-10-06T02:03:06.9687660Z . postinstall: postinstall: materialized dom-to-pptx browser bundle
+2026-10-06T02:03:06.9717462Z . postinstall: postinstall: dependency-aware parallel build enabled (concurrency=1)
+2026-10-06T02:03:06.9746804Z . postinstall: postinstall: building packages/release
+2026-10-06T02:03:07.1523669Z . postinstall: > @open-design/release@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/release
+2026-10-06T02:03:07.1526132Z . postinstall: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:08.0047246Z . postinstall: postinstall: building packages/components
+2026-10-06T02:03:08.2335930Z . postinstall: > @open-design/components@0.8.0 build /home/runner/work/Mokina/Mokina/open-design/packages/components
+2026-10-06T02:03:08.2339410Z . postinstall: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:09.6514196Z . postinstall: postinstall: building packages/platform
+2026-10-06T02:03:09.8744740Z . postinstall: > @open-design/platform@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/platform
+2026-10-06T02:03:09.8746708Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:10.7703873Z . postinstall: postinstall: building packages/registry-protocol
+2026-10-06T02:03:10.9903305Z . postinstall: > @open-design/registry-protocol@0.5.0 build /home/runner/work/Mokina/Mokina/open-design/packages/registry-protocol
+2026-10-06T02:03:10.9904433Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:11.9411644Z . postinstall: postinstall: building packages/diagnostics
+2026-10-06T02:03:12.1538794Z . postinstall: > @open-design/diagnostics@0.2.0 build /home/runner/work/Mokina/Mokina/open-design/packages/diagnostics
+2026-10-06T02:03:12.1539749Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:12.8122920Z . postinstall: postinstall: building packages/dsh-runtime
+2026-10-06T02:03:13.0271223Z . postinstall: > @open-design/dsh-runtime@0.1.0 build /home/runner/work/Mokina/Mokina/open-design/packages/dsh-runtime
+2026-10-06T02:03:13.0272416Z . postinstall: > tsx ./clean.ts && tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:14.0916678Z . postinstall: postinstall: building packages/contracts
+2026-10-06T02:03:14.3032822Z . postinstall: > @open-design/contracts@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/contracts
+2026-10-06T02:03:14.3033830Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:18.1500941Z . postinstall: postinstall: building packages/download
+2026-10-06T02:03:18.3640027Z . postinstall: > @open-design/download@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/download
+2026-10-06T02:03:18.3640939Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:19.1294380Z . postinstall: postinstall: building packages/host
+2026-10-06T02:03:19.3417924Z . postinstall: > @open-design/host@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/host
+2026-10-06T02:03:19.3419002Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:20.0226604Z . postinstall: postinstall: building packages/sidecar-proto
+2026-10-06T02:03:20.2389527Z . postinstall: > @open-design/sidecar-proto@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/sidecar-proto
+2026-10-06T02:03:20.2390588Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:20.9062826Z . postinstall: postinstall: building packages/sidecar
+2026-10-06T02:03:21.1193694Z . postinstall: > @open-design/sidecar@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/sidecar
+2026-10-06T02:03:21.1194710Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:22.0881343Z . postinstall: postinstall: building tools/serve
+2026-10-06T02:03:22.3010296Z . postinstall: > @open-design/tools-serve@0.6.0 build /home/runner/work/Mokina/Mokina/open-design/tools/serve
+2026-10-06T02:03:22.3011262Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly && node --experimental-strip-types ../../packages/metatool/src/cli.ts write .
+2026-10-06T02:03:23.0959017Z . postinstall: {"hash":"3b353617f71d206f073eca6527e2afdb4b381b5eb5a96343d8dc380ecd2136b2","metadataPath":"/home/runner/work/Mokina/Mokina/open-design/tools/serve/dist/metadata.json"}
+2026-10-06T02:03:23.1120863Z . postinstall: postinstall: building packages/standalone
+2026-10-06T02:03:23.3215306Z . postinstall: > @open-design/standalone@0.1.0 build /home/runner/work/Mokina/Mokina/open-design/packages/standalone
+2026-10-06T02:03:23.3216533Z . postinstall: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:24.4778762Z . postinstall: postinstall: building packages/agui-adapter
+2026-10-06T02:03:24.6908130Z . postinstall: > @open-design/agui-adapter@0.5.0 build /home/runner/work/Mokina/Mokina/open-design/packages/agui-adapter
+2026-10-06T02:03:24.6908959Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:25.7362960Z . postinstall: postinstall: building packages/plugin-runtime
+2026-10-06T02:03:25.9473410Z . postinstall: > @open-design/plugin-runtime@0.5.0 build /home/runner/work/Mokina/Mokina/open-design/packages/plugin-runtime
+2026-10-06T02:03:25.9474613Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:27.3750222Z . postinstall: postinstall: building packages/launcher-proto
+2026-10-06T02:03:27.5885215Z . postinstall: > @open-design/launcher-proto@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/launcher-proto
+2026-10-06T02:03:27.5886240Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:03:28.2301058Z . postinstall: postinstall: building tools/dev
+2026-10-06T02:03:28.4458915Z . postinstall: > @open-design/tools-dev@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/tools/dev
+2026-10-06T02:03:28.4459957Z . postinstall: > node ./esbuild.config.mjs && node --experimental-strip-types ../../packages/metatool/src/cli.ts write .
+2026-10-06T02:03:28.5737870Z . postinstall: {"hash":"b771839aa52c2bfb244699a28c54a57e9cb74d90c9a56eb82c037fdd888a8091","metadataPath":"/home/runner/work/Mokina/Mokina/open-design/tools/dev/dist/metadata.json"}
+2026-10-06T02:03:28.5902888Z . postinstall: postinstall: building apps/daemon
+2026-10-06T02:03:28.8002593Z . postinstall: > @open-design/daemon@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/apps/daemon
+2026-10-06T02:03:28.8003615Z . postinstall: > tsc -p tsconfig.json
+2026-10-06T02:03:42.0757256Z . postinstall: postinstall: building tools/pack
+2026-10-06T02:03:42.2857322Z . postinstall: > @open-design/tools-pack@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/tools/pack
+2026-10-06T02:03:42.2858427Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly && node --experimental-strip-types ../../packages/metatool/src/cli.ts write .
+2026-10-06T02:03:44.0637912Z . postinstall: {"hash":"5ce0153caabfbb475b9dd6b93105862dfd6eb3d9e176df155b31672a42ad7380","metadataPath":"/home/runner/work/Mokina/Mokina/open-design/tools/pack/dist/metadata.json"}
+2026-10-06T02:03:44.0805177Z . postinstall: postinstall: building tools/release
+2026-10-06T02:03:44.3050928Z . postinstall: > @open-design/tools-release@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/tools/release
+2026-10-06T02:03:44.3051903Z . postinstall: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly && node --experimental-strip-types ../../packages/metatool/src/cli.ts write .
+2026-10-06T02:03:45.6917959Z . postinstall: {"hash":"e391cebb5bf5574e4f02b5135ca1cbe5b9e5859af0cb4c3d8297ae926aabe28d","metadataPath":"/home/runner/work/Mokina/Mokina/open-design/tools/release/dist/metadata.json"}
+2026-10-06T02:03:45.7221351Z . postinstall: Done
+2026-10-06T02:03:45.7244644Z ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+2026-10-06T02:03:45.7245323Z │                                                                              │
+2026-10-06T02:03:45.7246349Z │   Ignored build scripts: @ffmpeg-installer/linux-x64@4.1.0,                  │
+2026-10-06T02:03:45.7247034Z │   @ffprobe-installer/linux-x64@5.2.0, @google/genai@1.52.0,                  │
+2026-10-06T02:03:45.7247667Z │   node-pty@1.1.0.                                                            │
+2026-10-06T02:03:45.7248297Z │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+2026-10-06T02:03:45.7248974Z │   to run scripts.                                                            │
+2026-10-06T02:03:45.7249560Z │                                                                              │
+2026-10-06T02:03:45.7250281Z ╰──────────────────────────────────────────────────────────────────────────────╯
+2026-10-06T02:03:45.7361957Z Done in 47.9s using pnpm v10.33.2
+2026-10-06T02:03:45.7777887Z ##[group]Run pnpm guard
+2026-10-06T02:03:45.7778125Z pnpm guard
+2026-10-06T02:03:45.7834578Z shell: /usr/bin/bash -e {0}
+2026-10-06T02:03:45.7834809Z env:
+2026-10-06T02:03:45.7835030Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-06T02:03:45.7835287Z ##[endgroup]
+2026-10-06T02:03:46.0098505Z
+2026-10-06T02:03:46.0099334Z > open-design@0.22.1 guard /home/runner/work/Mokina/Mokina/open-design
+2026-10-06T02:03:46.0099896Z > tsx ./scripts/guard.ts
+2026-10-06T02:03:46.0100113Z
+2026-10-06T02:03:47.3277060Z Residual JavaScript check passed: project-owned code is TypeScript-only.
+2026-10-06T02:03:47.3280138Z Root package-manager lockfile check passed: no bun.lock found.
+2026-10-06T02:03:47.3399785Z Package dependency spec check passed: 27 package.json files, 225 exact specs, 66 workspace:* specs, 7 external-host peer ranges.
+2026-10-06T02:03:48.0055196Z Product-neutrality check passed: public docs, contracts, and prompts use generic orchestrator naming.
+2026-10-06T02:03:57.8877869Z Cross-app import check passed: apps do not import another app's private implementation.
+2026-10-06T02:03:58.5355998Z HTML structural boundary check passed: no hand-rolled boundary lookups outside packages/contracts/src/runtime/html-injection-points.ts.
+2026-10-06T02:03:59.4867382Z @ts-nocheck import check passed: every @ts-nocheck file's relative imports resolve.
+2026-10-06T02:03:59.5087724Z Test layout check passed: apps/packages/tools tests live in sibling tests directories.
+2026-10-06T02:03:59.5093346Z Scripts test-free check passed: no test files under root scripts/.
+2026-10-06T02:03:59.5477750Z Scripts library architecture check passed: workflow control and guard internals stay layered.
+2026-10-06T02:03:59.5550332Z E2E layout check passed: Vitest, Playwright UI, resources, lib, and scripts stay in their lanes.
+2026-10-06T02:03:59.5635937Z Web test layout check passed: web tests stay lightweight and Vitest-only.
+2026-10-06T02:04:00.8218554Z Web import isolation check passed: web runtime imports stay behind contracts and daemon HTTP APIs.
+2026-10-06T02:04:00.9260859Z Run start choke-point check passed: every physical Run starts through the internal run-creation service.
+2026-10-06T02:04:00.9263433Z Tools layout check passed: tools/ top-level entries match the active boundary allowlist.
+2026-10-06T02:04:01.1634840Z Style policy check passed: Tailwind palette classes and enforced hardcoded UI colors stay token-first.
+2026-10-06T02:04:01.3531783Z Craft reference check passed: 239 references across 98 manifests resolve or are explicitly planned.
+2026-10-06T02:04:01.3538045Z What's New document check passed: docs/whats-new.json resolves to highlight id 0.22.1 plus zh-CN override.
+2026-10-06T02:04:01.3646986Z What's New publish workflow check passed: only `publish` holds the `whats-new-publish` environment and its 4 R2 secrets, gated on `validate`.
+2026-10-06T02:04:01.3718136Z HTML plugin preview contract check passed: 0 HTML-backed examples valid.
+2026-10-06T02:04:01.4485474Z Plugin preview manifest check passed: 176 entries consistent with 474 shipped plugins.
+2026-10-06T02:04:01.9803276Z Design system manifest check passed: 152 project manifests valid; DESIGN.md-only systems skipped.
+2026-10-06T02:04:02.1522079Z Design system package quality passed: 151 migrated packages checked; average score 100.
+2026-10-06T02:04:02.2023168Z Design system component fixture report: scanned 152 components.html fixtures.
+2026-10-06T02:04:02.2023831Z Design system component fixture selector coverage:
+2026-10-06T02:04:02.2025396Z - buttons: 133/152 fixtures include .btn, .btn-primary, .btn-secondary, :hover, :focus-visible
+2026-10-06T02:04:02.2026236Z - inputs: 148/152 fixtures include .field, input, label
+2026-10-06T02:04:02.2026681Z - cards: 60/152 fixtures include .card
+2026-10-06T02:04:02.2027771Z - badges: 42/152 fixtures include .badge
+2026-10-06T02:04:02.2028167Z - links: 53/152 fixtures include a
+2026-10-06T02:04:02.2028552Z - keyboard: 48/152 fixtures include kbd
+2026-10-06T02:04:02.2029405Z - icons: 60/152 fixtures include .icon
+2026-10-06T02:04:02.2029801Z - typography: 46/152 fixtures include h1, h2, h3, .lead, .eyebrow, .body-muted, .body-sm
+2026-10-06T02:04:02.2030337Z - layout: 47/152 fixtures include .container, section, .stack-3, .stack-4, .stack-6, .row-between
+2026-10-06T02:04:02.2035324Z Design system component fixture report: most common selector gaps (report-only):
+2026-10-06T02:04:02.2036094Z - badges .badge: missing in 110/152
+2026-10-06T02:04:02.2036518Z - layout .row-between: missing in 104/152
+2026-10-06T02:04:02.2036929Z - keyboard kbd: missing in 104/152
+2026-10-06T02:04:02.2037270Z - links a: missing in 99/152
+2026-10-06T02:04:02.2037655Z - cards .card: missing in 92/152
+2026-10-06T02:04:02.2038031Z - icons .icon: missing in 92/152
+2026-10-06T02:04:02.2038420Z - typography .body-sm: missing in 90/152
+2026-10-06T02:04:02.2038818Z - layout .stack-6: missing in 89/152
+2026-10-06T02:04:02.2039238Z - typography .body-muted: missing in 87/152
+2026-10-06T02:04:02.2039657Z - layout .stack-3: missing in 86/152
+2026-10-06T02:04:02.2040090Z - layout .stack-4: missing in 85/152
+2026-10-06T02:04:02.2040512Z - buttons .btn-secondary: missing in 19/152
+2026-10-06T02:04:02.2040958Z - typography .lead: missing in 14/152
+2026-10-06T02:04:02.2041381Z - typography .eyebrow: missing in 7/152
+2026-10-06T02:04:02.2041809Z - buttons .btn-primary: missing in 6/152
+2026-10-06T02:04:02.2042230Z - inputs .field: missing in 4/152
+2026-10-06T02:04:02.2043195Z Design system component fixture literal inventory (outside :root): 933 color expressions, 4344 px values, 843 hardcoded font-family declarations.
+2026-10-06T02:04:02.2044351Z Design system component fixture report: top literal-heavy fixtures (report-only):
+2026-10-06T02:04:02.2044854Z - design-systems/tom-modern/components.html: 32 colors, 156 px, 14 font-family
+2026-10-06T02:04:02.2045360Z - design-systems/raycast/components.html: 36 colors, 79 px, 7 font-family
+2026-10-06T02:04:02.2046215Z - design-systems/binance/components.html: 30 colors, 45 px, 5 font-family
+2026-10-06T02:04:02.2046787Z - design-systems/stripe/components.html: 15 colors, 51 px, 9 font-family
+2026-10-06T02:04:02.2047449Z - design-systems/airbnb/components.html: 1 colors, 61 px, 12 font-family
+2026-10-06T02:04:02.2048041Z - design-systems/spacex/components.html: 18 colors, 49 px, 7 font-family
+2026-10-06T02:04:02.2048633Z - design-systems/mintlify/components.html: 12 colors, 50 px, 9 font-family
+2026-10-06T02:04:02.2049210Z - design-systems/resend/components.html: 16 colors, 42 px, 12 font-family
+2026-10-06T02:04:02.2049830Z - design-systems/vercel/components.html: 17 colors, 41 px, 10 font-family
+2026-10-06T02:04:02.2050492Z - design-systems/xiaohongshu/components.html: 12 colors, 45 px, 9 font-family
+2026-10-06T02:04:02.2051118Z Design system component fixture report completed in report-only mode.
+2026-10-06T02:04:02.2503633Z Design system token-fixture sync passed: 152 brand pairs aligned (components.html :root matches tokens.css :root).
+2026-10-06T02:04:02.2916531Z Design system A1 required tokens passed: 152 brands declare all 26 A1 tokens.
+2026-10-06T02:04:02.3310292Z Design system A2 required tokens passed: 152 brands declare all 26 A2 tokens.
+2026-10-06T02:04:02.3731332Z Design system B-slot required tokens passed: 152 brands declare all 4 B-slot tokens.
+2026-10-06T02:04:02.4162926Z Design system unknown token allowlist passed: 8538 declarations across 152 brands all match shared schema or brand extensions.
+2026-10-06T02:04:02.4167776Z Design system A2 defaults parity passed: 26 A2 fallbacks match tokens.schema.ts ↔ defaults.css byte-for-byte.
+2026-10-06T02:04:02.5387768Z Design system flag parity passed: 0 prose-only brands produce byte-identical prompts under OD_DESIGN_TOKEN_CHANNEL flag-off vs flag-on; 152 structured brands show the expected token-channel divergence.
+2026-10-06T02:04:02.6650534Z Design system component manifest extraction passed: 152 fixtures summarized (8030 selectors across 1160 present component groups).
+2026-10-06T02:04:02.7248814Z ##[group]Run pnpm typecheck
+2026-10-06T02:04:02.7249064Z pnpm typecheck
+2026-10-06T02:04:02.7304645Z shell: /usr/bin/bash -e {0}
+2026-10-06T02:04:02.7304862Z env:
+2026-10-06T02:04:02.7305079Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-06T02:04:02.7305328Z ##[endgroup]
+2026-10-06T02:04:02.9484817Z
+2026-10-06T02:04:02.9485790Z > open-design@0.22.1 typecheck /home/runner/work/Mokina/Mokina/open-design
+2026-10-06T02:04:02.9486820Z > pnpm -r --workspace-concurrency=4 --if-present run typecheck && tsc -p scripts/tsconfig.json --noEmit
+2026-10-06T02:04:02.9487344Z
+2026-10-06T02:04:03.1946508Z Scope: 27 of 28 workspace projects
+2026-10-06T02:04:03.1977262Z packages/components typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:03.1982774Z packages/diagnostics typecheck$ tsc -p tsconfig.json --noEmit
+2026-10-06T02:04:03.1985409Z packages/dsh-runtime typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:03.1989576Z packages/metatool typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:04.7199967Z packages/diagnostics typecheck: Done
+2026-10-06T02:04:04.7201261Z packages/platform typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:06.8810107Z packages/metatool typecheck: Done
+2026-10-06T02:04:06.8877528Z packages/registry-protocol typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:07.0209177Z packages/dsh-runtime typecheck: Done
+2026-10-06T02:04:07.0233043Z packages/release typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:08.7877789Z packages/platform typecheck: Done
+2026-10-06T02:04:08.8002799Z packages/components typecheck: Done
+2026-10-06T02:04:09.5466563Z packages/release typecheck: Done
+2026-10-06T02:04:10.0295266Z packages/registry-protocol typecheck: Done
+2026-10-06T02:04:10.0300159Z packages/contracts typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:10.0301856Z packages/download typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:10.0303420Z packages/host typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:10.0304922Z packages/sidecar typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:13.5607907Z packages/host typecheck: Done
+2026-10-06T02:04:13.5609074Z packages/sidecar-proto typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:14.1426873Z packages/download typecheck: Done
+2026-10-06T02:04:14.1428083Z tools/serve typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:15.3259091Z packages/sidecar typecheck: Done
+2026-10-06T02:04:16.7204450Z packages/sidecar-proto typecheck: Done
+2026-10-06T02:04:17.2598077Z tools/serve typecheck: Done
+2026-10-06T02:04:21.6849614Z packages/contracts typecheck: Done
+2026-10-06T02:04:21.6854183Z apps/web typecheck$ tsc -b --noEmit
+2026-10-06T02:04:21.6856586Z e2e typecheck$ tsc -p tsconfig.json --noEmit
+2026-10-06T02:04:21.6858634Z packages/agui-adapter typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:21.6860102Z packages/launcher-proto typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:25.0316186Z packages/launcher-proto typecheck: Done
+2026-10-06T02:04:25.0321046Z packages/plugin-runtime typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:26.8499310Z packages/agui-adapter typecheck: Done
+2026-10-06T02:04:26.8547351Z packages/standalone typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:04:32.2428998Z packages/standalone typecheck: Done
+2026-10-06T02:04:32.2453456Z tools/dev typecheck$ tsc -p tsconfig.json --noEmit
+2026-10-06T02:04:32.8574199Z packages/plugin-runtime typecheck: Done
+2026-10-06T02:04:34.2827742Z tools/dev typecheck: Done
+2026-10-06T02:04:36.7155863Z e2e typecheck: Done
+2026-10-06T02:05:12.0337673Z apps/web typecheck: Done
+2026-10-06T02:05:12.0341899Z apps/closure pretypecheck$ pnpm --filter @open-design/standalone build
+2026-10-06T02:05:12.0344128Z apps/daemon typecheck$ pnpm --filter @open-design/contracts build && pnpm --filter @open-design/registry-protocol build && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:05:12.0345494Z apps/desktop typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:05:12.0346625Z shells/terminal pretypecheck$ pnpm --filter @open-design/standalone build
+2026-10-06T02:05:12.4657531Z apps/closure pretypecheck: > @open-design/standalone@0.1.0 build /home/runner/work/Mokina/Mokina/open-design/packages/standalone
+2026-10-06T02:05:12.4687059Z apps/closure pretypecheck: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:05:12.4840197Z apps/daemon typecheck: > @open-design/contracts@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/packages/contracts
+2026-10-06T02:05:12.4893912Z apps/daemon typecheck: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:05:12.4928450Z shells/terminal pretypecheck: > @open-design/standalone@0.1.0 build /home/runner/work/Mokina/Mokina/open-design/packages/standalone
+2026-10-06T02:05:12.4953070Z shells/terminal pretypecheck: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:05:15.4569619Z apps/closure pretypecheck: Done
+2026-10-06T02:05:15.4572289Z apps/closure typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:05:15.5524466Z shells/terminal pretypecheck: Done
+2026-10-06T02:05:15.5529012Z shells/terminal typecheck$ tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:05:18.3983665Z apps/closure typecheck: Done
+2026-10-06T02:05:18.4007198Z tools/pack typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:05:18.7907400Z shells/terminal typecheck: Done
+2026-10-06T02:05:18.7964515Z tools/release typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:05:23.5610965Z apps/daemon typecheck: > @open-design/registry-protocol@0.5.0 build /home/runner/work/Mokina/Mokina/open-design/packages/registry-protocol
+2026-10-06T02:05:23.5618215Z apps/daemon typecheck: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+2026-10-06T02:05:26.1850953Z tools/release typecheck: Done
+2026-10-06T02:05:27.1700127Z tools/pack typecheck: Done
+2026-10-06T02:05:31.0954876Z apps/desktop typecheck: Done
+2026-10-06T02:05:58.7514322Z apps/daemon typecheck: Done
+2026-10-06T02:05:58.7518840Z apps/packaged typecheck$ pnpm --filter @open-design/desktop build && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+2026-10-06T02:05:59.0031799Z apps/packaged typecheck: > @open-design/desktop@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/apps/desktop
+2026-10-06T02:05:59.0034837Z apps/packaged typecheck: > tsc -p tsconfig.json
+2026-10-06T02:06:04.9744517Z apps/packaged typecheck: Done
+2026-10-06T02:06:08.1614171Z ##[group]Run pnpm i18n:check
+2026-10-06T02:06:08.1614551Z pnpm i18n:check
+2026-10-06T02:06:08.1682449Z shell: /usr/bin/bash -e {0}
+2026-10-06T02:06:08.1682675Z env:
+2026-10-06T02:06:08.1682894Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-06T02:06:08.1683158Z ##[endgroup]
+2026-10-06T02:06:08.3931710Z
+2026-10-06T02:06:08.3935072Z > open-design@0.22.1 i18n:check /home/runner/work/Mokina/Mokina/open-design
+2026-10-06T02:06:08.3936208Z > tsx ./scripts/i18n-check.ts
+2026-10-06T02:06:08.3936742Z
+2026-10-06T02:06:08.6058005Z i18n P0 check passed: locale registration, README switchers, and core doc links are consistent.
+2026-10-06T02:06:08.6344483Z ##[group]Run pnpm --filter @open-design/web exec vitest run tests/runtime/mokina-recovery-store.test.ts tests/runtime/send-request-state.test.ts tests/providers/daemon-run-create-recovery.test.ts tests/runtime/mokina-pending-context-snapshot.test.ts tests/runtime/mokina-recovery-import-journal.test.ts tests/runtime/mokina-recovery-package-client.test.ts tests/components/MokinaContextPanel.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/ProjectView.retry-gating.test.tsx tests/components/EntryNavRail.recent-section.test.tsx
+2026-10-06T02:06:08.6347948Z pnpm --filter @open-design/web exec vitest run tests/runtime/mokina-recovery-store.test.ts tests/runtime/send-request-state.test.ts tests/providers/daemon-run-create-recovery.test.ts tests/runtime/mokina-pending-context-snapshot.test.ts tests/runtime/mokina-recovery-import-journal.test.ts tests/runtime/mokina-recovery-package-client.test.ts tests/components/MokinaContextPanel.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/ProjectView.retry-gating.test.tsx tests/components/EntryNavRail.recent-section.test.tsx
+2026-10-06T02:06:08.6349762Z pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-recovery-store.test.ts
+2026-10-06T02:06:08.6350998Z pnpm --filter @open-design/daemon exec vitest run tests/mokina-context-store.test.ts tests/mokina-context-routes.test.ts tests/mokina-recovery-package.test.ts tests/mokina-materials.test.ts tests/mokina-recovery-routes.test.ts tests/export-inline-route.test.ts tests/mokina-cli-recovery.test.ts tests/run-request-idempotency.test.ts tests/routes/runs-structured-errors.test.ts
+2026-10-06T02:06:08.6352217Z pnpm --filter @open-design/tools-pack exec vitest run tests/resources/pdf-runtime.test.ts
+2026-10-06T02:06:08.6409468Z shell: /usr/bin/bash -e {0}
+2026-10-06T02:06:08.6409687Z env:
+2026-10-06T02:06:08.6409897Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-06T02:06:08.6410154Z ##[endgroup]
+2026-10-06T02:06:09.1351843Z
+2026-10-06T02:06:09.1353359Z  RUN  v4.1.6 /home/runner/work/Mokina/Mokina/open-design/apps/web
+2026-10-06T02:06:09.1354048Z
+2026-10-06T02:06:15.8364002Z stderr | tests/components/EntryNavRail.recent-section.test.tsx > EntryNavRail 最近浏览过 section > keeps the row menu open with the failure when the move is refused
+2026-10-06T02:06:15.8378338Z [useWorkspaceProjectMove] share project to team failed: WorkspaceProjectMoveError: no
+2026-10-06T02:06:15.8379380Z     at moveWorkspaceProject (/home/runner/work/Mokina/Mokina/open-design/apps/web/src/state/projects.ts:256:11)
+2026-10-06T02:06:15.8380597Z     at Object.shareToTeam (/home/runner/work/Mokina/Mokina/open-design/apps/web/src/components/project-actions/useWorkspaceProjectMove.ts:70:28) {
+2026-10-06T02:06:15.8381318Z   code: 'FORBIDDEN'
+2026-10-06T02:06:15.8381696Z }
+2026-10-06T02:06:15.8381837Z
+2026-10-06T02:06:16.2270487Z  ✓ tests/components/EntryNavRail.recent-section.test.tsx (25 tests) 2344ms
+2026-10-06T02:06:16.2271871Z      ✓ polls only visible rows in a 500-project catalog and follows the scroll window  973ms
+2026-10-06T02:06:17.3816395Z  ✓ tests/runtime/mokina-recovery-store.test.ts (16 tests) 19ms
+2026-10-06T02:06:17.4782976Z  ✓ tests/components/ProjectView.retry-gating.test.tsx (32 tests) 1668ms
+2026-10-06T02:06:18.3286557Z  ✓ tests/runtime/send-request-state.test.ts (21 tests) 36ms
+2026-10-06T02:06:19.0333436Z  ✓ tests/components/MokinaContextPanel.test.tsx (5 tests) 346ms
+2026-10-06T02:06:19.3090113Z  ✓ tests/providers/daemon-run-create-recovery.test.ts (6 tests) 22ms
+2026-10-06T02:06:19.9518892Z  ✓ tests/runtime/mokina-recovery-package-client.test.ts (6 tests) 16ms
+2026-10-06T02:06:20.2640142Z  ✓ tests/runtime/mokina-pending-context-snapshot.test.ts (3 tests) 7ms
+2026-10-06T02:06:20.8425513Z  ✓ tests/runtime/mokina-recovery-import-journal.test.ts (1 test) 7ms
+2026-10-06T02:06:21.7520556Z stderr | tests/components/FileViewer.mokina-revision-recovery.test.tsx > Mokina revision recovery UI > lets the user abandon a succeeded job with missing-replacement and start a new revision
+2026-10-06T02:06:21.7521435Z [fetchProjectFileText] failed: {
+2026-10-06T02:06:21.7521770Z   name: 'MOKINA-REPLACEMENT.html',
+2026-10-06T02:06:21.7522102Z   projectId: 'project-run-a',
+2026-10-06T02:06:21.7522351Z   status: 404,
+2026-10-06T02:06:21.7522582Z   statusText: '',
+2026-10-06T02:06:21.7522931Z   url: '/api/projects/project-run-a/raw/MOKINA-REPLACEMENT.html'
+2026-10-06T02:06:21.7523318Z }
+2026-10-06T02:06:21.7523480Z
+2026-10-06T02:06:23.7220474Z  ✓ tests/components/FileViewer.mokina-revision-recovery.test.tsx (19 tests) 9072ms
+2026-10-06T02:06:23.7222151Z      ✓ RR3 persists a definitive refusal on the source intent and exits without looking for a nonexistent run  846ms
+2026-10-06T02:06:23.7223148Z      ✓ preserves a succeeded job after candidate save fails and retries with one operation ID  3156ms
+2026-10-06T02:06:23.7224469Z      ✓ lets the user abandon a succeeded job with missing-replacement and start a new revision  1763ms
+2026-10-06T02:06:23.7225469Z      ✓ lets the user abandon a succeeded job with invalid-candidate and start a new revision  1730ms
+2026-10-06T02:06:23.7252138Z
+2026-10-06T02:06:23.7257317Z  Test Files  10 passed (10)
+2026-10-06T02:06:23.7269418Z       Tests  134 passed (134)
+2026-10-06T02:06:23.7271897Z    Start at  02:06:09
+2026-10-06T02:06:23.7272986Z    Duration  14.49s (transform 11.05s, setup 3.89s, import 12.28s, tests 13.54s, environment 6.08s)
+2026-10-06T02:06:23.7273553Z
+2026-10-06T02:06:24.3006418Z
+2026-10-06T02:06:24.3007893Z  RUN  v4.1.6 /home/runner/work/Mokina/Mokina/open-design/apps/desktop
+2026-10-06T02:06:24.3008574Z
+2026-10-06T02:06:24.8422318Z  ✓ tests/main/mokina-recovery-store.test.ts (19 tests) 354ms
+2026-10-06T02:06:24.8423436Z      ✓ counts retained deletion facts toward capacity and never evicts them  306ms
+2026-10-06T02:06:24.8444496Z
+2026-10-06T02:06:24.8456911Z  Test Files  1 passed (1)
+2026-10-06T02:06:24.8457572Z       Tests  19 passed (19)
+2026-10-06T02:06:24.8458043Z    Start at  02:06:24
+2026-10-06T02:06:24.8458788Z    Duration  539ms (transform 51ms, setup 0ms, import 67ms, tests 354ms, environment 0ms)
+2026-10-06T02:06:24.8459207Z
+2026-10-06T02:06:25.3352151Z
+2026-10-06T02:06:25.3353589Z  RUN  v4.1.6 /home/runner/work/Mokina/Mokina/open-design/apps/daemon
+2026-10-06T02:06:25.3354273Z
+2026-10-06T02:06:31.9844501Z stdout | tests/export-inline-route.test.ts > GET /api/projects/:id/export/*?inline=1 route
+2026-10-06T02:06:31.9845429Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:31.9845883Z
+2026-10-06T02:06:31.9851051Z stdout | tests/export-inline-route.test.ts > GET /api/projects/:id/export/*?inline=1 route
+2026-10-06T02:06:31.9851679Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:31.9851906Z
+2026-10-06T02:06:31.9969086Z stdout | tests/export-inline-route.test.ts > GET /api/projects/:id/export/*?inline=1 route
+2026-10-06T02:06:31.9969991Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:31.9970296Z
+2026-10-06T02:06:32.0554404Z stdout | tests/export-inline-route.test.ts > GET /api/projects/:id/export/*?inline=1 route
+2026-10-06T02:06:32.0555312Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:32.0555916Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:32.0556269Z   requestedMode: 'auto',
+2026-10-06T02:06:32.0556517Z   mode: 'send',
+2026-10-06T02:06:32.0556763Z   effectiveMode: 'off',
+2026-10-06T02:06:32.0557035Z   environment: 'development',
+2026-10-06T02:06:32.0557306Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:32.0557721Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:32.0558105Z   taskProtocol: 'none',
+2026-10-06T02:06:32.0558355Z   readyToSend: false,
+2026-10-06T02:06:32.0558605Z   schemaReady: true,
+2026-10-06T02:06:32.0558865Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:32.0559085Z }
+2026-10-06T02:06:32.0559179Z
+2026-10-06T02:06:32.9271444Z stdout | tests/export-inline-route.test.ts > POST /api/projects/:id/export/html route
+2026-10-06T02:06:32.9272026Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:32.9272516Z
+2026-10-06T02:06:32.9279338Z stdout | tests/export-inline-route.test.ts > POST /api/projects/:id/export/html route
+2026-10-06T02:06:32.9279971Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:32.9280180Z
+2026-10-06T02:06:32.9457811Z stdout | tests/export-inline-route.test.ts > POST /api/projects/:id/export/html route
+2026-10-06T02:06:32.9467018Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:32.9467563Z
+2026-10-06T02:06:32.9616152Z stdout | tests/export-inline-route.test.ts > POST /api/projects/:id/export/html route
+2026-10-06T02:06:32.9617519Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:32.9618263Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:32.9618769Z   requestedMode: 'auto',
+2026-10-06T02:06:32.9619154Z   mode: 'send',
+2026-10-06T02:06:32.9619614Z   effectiveMode: 'off',
+2026-10-06T02:06:32.9620041Z   environment: 'development',
+2026-10-06T02:06:32.9620473Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:32.9621195Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:32.9621812Z   taskProtocol: 'none',
+2026-10-06T02:06:32.9622165Z   readyToSend: false,
+2026-10-06T02:06:32.9622523Z   schemaReady: true,
+2026-10-06T02:06:32.9622901Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:32.9623223Z }
+2026-10-06T02:06:32.9623349Z
+2026-10-06T02:06:33.1532707Z  ✓ tests/export-inline-route.test.ts (47 tests) 2028ms
+2026-10-06T02:06:33.7618462Z  ✓ tests/mokina-recovery-package.test.ts (22 tests) 273ms
+2026-10-06T02:06:35.7721342Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > RR3 proves a fresh pre-admission refusal has no run and does not misclassify a previously accepted identity
+2026-10-06T02:06:35.7722200Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:35.7722677Z
+2026-10-06T02:06:35.7733732Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > RR3 proves a fresh pre-admission refusal has no run and does not misclassify a previously accepted identity
+2026-10-06T02:06:35.7734590Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:35.7734811Z
+2026-10-06T02:06:35.7855953Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > RR3 proves a fresh pre-admission refusal has no run and does not misclassify a previously accepted identity
+2026-10-06T02:06:35.7857213Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:35.7857800Z
+2026-10-06T02:06:35.8338709Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > RR3 proves a fresh pre-admission refusal has no run and does not misclassify a previously accepted identity
+2026-10-06T02:06:35.8340445Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:35.8341182Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:35.8341681Z   requestedMode: 'auto',
+2026-10-06T02:06:35.8342067Z   mode: 'send',
+2026-10-06T02:06:35.8342449Z   effectiveMode: 'off',
+2026-10-06T02:06:35.8342878Z   environment: 'development',
+2026-10-06T02:06:35.8343309Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:35.8343976Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:35.8344581Z   taskProtocol: 'none',
+2026-10-06T02:06:35.8344970Z   readyToSend: false,
+2026-10-06T02:06:35.8345350Z   schemaReady: true,
+2026-10-06T02:06:35.8346354Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:35.8346688Z }
+2026-10-06T02:06:35.8346818Z
+2026-10-06T02:06:36.0880166Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > RR3 proves a fresh pre-admission refusal has no run and does not misclassify a previously accepted identity
+2026-10-06T02:06:36.0881349Z [od-next-rollout] {
+2026-10-06T02:06:36.0881776Z   decisionClass: 'observe',
+2026-10-06T02:06:36.0882211Z   requestedMode: 'active',
+2026-10-06T02:06:36.0882642Z   effectiveMode: 'observe',
+2026-10-06T02:06:36.0883253Z   taskType: 'prototype',
+2026-10-06T02:06:36.0883642Z   agentId: 'claude',
+2026-10-06T02:06:36.0884100Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:36.0884387Z   sourceKind: 'bundled',
+2026-10-06T02:06:36.0884755Z   assignmentClass: 'not_included',
+2026-10-06T02:06:36.0885179Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:36.0885866Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:36.0886387Z }
+2026-10-06T02:06:36.0886482Z
+2026-10-06T02:06:37.0266475Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > returns the same logical run when a lost POST /api/runs response is retried
+2026-10-06T02:06:37.0267650Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:37.0267906Z
+2026-10-06T02:06:37.0274662Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > returns the same logical run when a lost POST /api/runs response is retried
+2026-10-06T02:06:37.0275498Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:37.0275883Z
+2026-10-06T02:06:37.0454018Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > returns the same logical run when a lost POST /api/runs response is retried
+2026-10-06T02:06:37.0467086Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:37.0467603Z
+2026-10-06T02:06:37.0634327Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > returns the same logical run when a lost POST /api/runs response is retried
+2026-10-06T02:06:37.0635279Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:37.0635967Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:37.0636430Z   requestedMode: 'auto',
+2026-10-06T02:06:37.0636796Z   mode: 'send',
+2026-10-06T02:06:37.0637133Z   effectiveMode: 'off',
+2026-10-06T02:06:37.0637401Z   environment: 'development',
+2026-10-06T02:06:37.0637675Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:37.0638096Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:37.0638461Z   taskProtocol: 'none',
+2026-10-06T02:06:37.0638721Z   readyToSend: false,
+2026-10-06T02:06:37.0638961Z   schemaReady: true,
+2026-10-06T02:06:37.0639215Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:37.0639430Z }
+2026-10-06T02:06:37.0639512Z
+2026-10-06T02:06:37.2641322Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > returns the same logical run when a lost POST /api/runs response is retried
+2026-10-06T02:06:37.2649446Z [od-next-rollout] {
+2026-10-06T02:06:37.2650228Z   decisionClass: 'observe',
+2026-10-06T02:06:37.2650965Z   requestedMode: 'active',
+2026-10-06T02:06:37.2651295Z   effectiveMode: 'observe',
+2026-10-06T02:06:37.2651590Z   taskType: 'prototype',
+2026-10-06T02:06:37.2651921Z   agentId: 'claude',
+2026-10-06T02:06:37.2652620Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:37.2653093Z   sourceKind: 'bundled',
+2026-10-06T02:06:37.2653466Z   assignmentClass: 'not_included',
+2026-10-06T02:06:37.2653953Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:37.2654622Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:37.2655151Z }
+2026-10-06T02:06:37.2655278Z
+2026-10-06T02:06:37.4316896Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > returns the same logical run when a lost POST /api/runs response is retried
+2026-10-06T02:06:37.4318079Z [od-next-rollout] {
+2026-10-06T02:06:37.4318790Z   decisionClass: 'observe',
+2026-10-06T02:06:37.4319222Z   requestedMode: 'active',
+2026-10-06T02:06:37.4319848Z   effectiveMode: 'observe',
+2026-10-06T02:06:37.4320256Z   taskType: 'prototype',
+2026-10-06T02:06:37.4320671Z   agentId: 'claude',
+2026-10-06T02:06:37.4321190Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:37.4321616Z   sourceKind: 'bundled',
+2026-10-06T02:06:37.4321997Z   assignmentClass: 'not_included',
+2026-10-06T02:06:37.4322414Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:37.4322934Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:37.4323264Z }
+2026-10-06T02:06:37.4323356Z
+2026-10-06T02:06:38.1957556Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > rejects reusing one clientRequestId for a different logical request
+2026-10-06T02:06:38.1958619Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:38.1958866Z
+2026-10-06T02:06:38.2036425Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > rejects reusing one clientRequestId for a different logical request
+2026-10-06T02:06:38.2037250Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:38.2037475Z
+2026-10-06T02:06:38.2176914Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > rejects reusing one clientRequestId for a different logical request
+2026-10-06T02:06:38.2178228Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:38.2178582Z
+2026-10-06T02:06:38.2330570Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > rejects reusing one clientRequestId for a different logical request
+2026-10-06T02:06:38.2332304Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:38.2333239Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:38.2334049Z   requestedMode: 'auto',
+2026-10-06T02:06:38.2334468Z   mode: 'send',
+2026-10-06T02:06:38.2334823Z   effectiveMode: 'off',
+2026-10-06T02:06:38.2335222Z   environment: 'development',
+2026-10-06T02:06:38.2335925Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:38.2336575Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:38.2337019Z   taskProtocol: 'none',
+2026-10-06T02:06:38.2337294Z   readyToSend: false,
+2026-10-06T02:06:38.2337547Z   schemaReady: true,
+2026-10-06T02:06:38.2337878Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:38.2338202Z }
+2026-10-06T02:06:38.2338310Z
+2026-10-06T02:06:38.4243623Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > rejects reusing one clientRequestId for a different logical request
+2026-10-06T02:06:38.4244399Z [od-next-rollout] {
+2026-10-06T02:06:38.4244695Z   decisionClass: 'observe',
+2026-10-06T02:06:38.4245313Z   requestedMode: 'active',
+2026-10-06T02:06:38.4245582Z   effectiveMode: 'observe',
+2026-10-06T02:06:38.4246165Z   taskType: 'prototype',
+2026-10-06T02:06:38.4246525Z   agentId: 'claude',
+2026-10-06T02:06:38.4246856Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:38.4247165Z   sourceKind: 'bundled',
+2026-10-06T02:06:38.4247437Z   assignmentClass: 'not_included',
+2026-10-06T02:06:38.4247845Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:38.4248364Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:38.4248775Z }
+2026-10-06T02:06:38.4248923Z
+2026-10-06T02:06:38.5959386Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > rejects reusing one clientRequestId for a different logical request
+2026-10-06T02:06:38.5960320Z [od-next-rollout] {
+2026-10-06T02:06:38.5960917Z   decisionClass: 'observe',
+2026-10-06T02:06:38.5961346Z   requestedMode: 'active',
+2026-10-06T02:06:38.5961725Z   effectiveMode: 'observe',
+2026-10-06T02:06:38.5962003Z   taskType: 'prototype',
+2026-10-06T02:06:38.5962263Z   agentId: 'claude',
+2026-10-06T02:06:38.5962555Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:38.5962831Z   sourceKind: 'bundled',
+2026-10-06T02:06:38.5963102Z   assignmentClass: 'not_included',
+2026-10-06T02:06:38.5963508Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:38.5964023Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:38.5964346Z }
+2026-10-06T02:06:38.5964433Z
+2026-10-06T02:06:39.3074160Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > treats execution-shaping fields omitted by the legacy fingerprint as idempotency conflicts
+2026-10-06T02:06:39.3074980Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:39.3075166Z
+2026-10-06T02:06:39.3080242Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > treats execution-shaping fields omitted by the legacy fingerprint as idempotency conflicts
+2026-10-06T02:06:39.3081068Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:39.3081297Z
+2026-10-06T02:06:39.3213684Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > treats execution-shaping fields omitted by the legacy fingerprint as idempotency conflicts
+2026-10-06T02:06:39.3214886Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:39.3215183Z
+2026-10-06T02:06:39.3437022Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > treats execution-shaping fields omitted by the legacy fingerprint as idempotency conflicts
+2026-10-06T02:06:39.3438049Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:39.3438505Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:39.3438821Z   requestedMode: 'auto',
+2026-10-06T02:06:39.3439056Z   mode: 'send',
+2026-10-06T02:06:39.3439284Z   effectiveMode: 'off',
+2026-10-06T02:06:39.3439548Z   environment: 'development',
+2026-10-06T02:06:39.3439815Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:39.3440234Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:39.3440607Z   taskProtocol: 'none',
+2026-10-06T02:06:39.3440850Z   readyToSend: false,
+2026-10-06T02:06:39.3441091Z   schemaReady: true,
+2026-10-06T02:06:39.3441355Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:39.3441573Z }
+2026-10-06T02:06:39.3441898Z
+2026-10-06T02:06:39.5280526Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > treats execution-shaping fields omitted by the legacy fingerprint as idempotency conflicts
+2026-10-06T02:06:39.5281270Z [od-next-rollout] {
+2026-10-06T02:06:39.5281563Z   decisionClass: 'observe',
+2026-10-06T02:06:39.5281838Z   requestedMode: 'active',
+2026-10-06T02:06:39.5282105Z   effectiveMode: 'observe',
+2026-10-06T02:06:39.5282366Z   taskType: 'prototype',
+2026-10-06T02:06:39.5282614Z   agentId: 'claude',
+2026-10-06T02:06:39.5282891Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:39.5283217Z   sourceKind: 'bundled',
+2026-10-06T02:06:39.5283636Z   assignmentClass: 'not_included',
+2026-10-06T02:06:39.5284258Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:39.5285048Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:39.5285575Z }
+2026-10-06T02:06:39.5285852Z
+2026-10-06T02:06:39.6787641Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > treats execution-shaping fields omitted by the legacy fingerprint as idempotency conflicts
+2026-10-06T02:06:39.6788382Z [od-next-rollout] {
+2026-10-06T02:06:39.6788675Z   decisionClass: 'observe',
+2026-10-06T02:06:39.6788951Z   requestedMode: 'active',
+2026-10-06T02:06:39.6789209Z   effectiveMode: 'observe',
+2026-10-06T02:06:39.6789472Z   taskType: 'prototype',
+2026-10-06T02:06:39.6789721Z   agentId: 'claude',
+2026-10-06T02:06:39.6789995Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:39.6790278Z   sourceKind: 'bundled',
+2026-10-06T02:06:39.6790548Z   assignmentClass: 'not_included',
+2026-10-06T02:06:39.6790953Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:39.6791485Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:39.6791809Z }
+2026-10-06T02:06:39.6791897Z
+2026-10-06T02:06:40.5266588Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:40.5267306Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:40.5267493Z
+2026-10-06T02:06:40.5271035Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:40.5271751Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:40.5271972Z
+2026-10-06T02:06:40.5395306Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:40.5396413Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:40.5396710Z
+2026-10-06T02:06:40.5603596Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:40.5604985Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:40.5605518Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:40.5606018Z   requestedMode: 'auto',
+2026-10-06T02:06:40.5606255Z   mode: 'send',
+2026-10-06T02:06:40.5606487Z   effectiveMode: 'off',
+2026-10-06T02:06:40.5606760Z   environment: 'development',
+2026-10-06T02:06:40.5607047Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:40.5607452Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:40.5607836Z   taskProtocol: 'none',
+2026-10-06T02:06:40.5608341Z   readyToSend: false,
+2026-10-06T02:06:40.5608587Z   schemaReady: true,
+2026-10-06T02:06:40.5608850Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:40.5609069Z }
+2026-10-06T02:06:40.5609157Z
+2026-10-06T02:06:40.7380220Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:40.7381094Z [od-next-rollout] {
+2026-10-06T02:06:40.7381864Z   decisionClass: 'observe',
+2026-10-06T02:06:40.7382317Z   requestedMode: 'active',
+2026-10-06T02:06:40.7382731Z   effectiveMode: 'observe',
+2026-10-06T02:06:40.7383123Z   taskType: 'prototype',
+2026-10-06T02:06:40.7383490Z   agentId: 'claude',
+2026-10-06T02:06:40.7383926Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:40.7384376Z   sourceKind: 'bundled',
+2026-10-06T02:06:40.7384802Z   assignmentClass: 'not_included',
+2026-10-06T02:06:40.7385460Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:40.7386527Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:40.7387076Z }
+2026-10-06T02:06:40.7387234Z
+2026-10-06T02:06:41.6220889Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:41.6221617Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:41.6221800Z
+2026-10-06T02:06:41.6230654Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:41.6231414Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:41.6231627Z
+2026-10-06T02:06:41.6384313Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:41.6386103Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:41.6386652Z
+2026-10-06T02:06:41.6664122Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:41.6666948Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:41.6667961Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:41.6668662Z   requestedMode: 'auto',
+2026-10-06T02:06:41.6669178Z   mode: 'send',
+2026-10-06T02:06:41.6669676Z   effectiveMode: 'off',
+2026-10-06T02:06:41.6670202Z   environment: 'development',
+2026-10-06T02:06:41.6670736Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:41.6671531Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:41.6672240Z   taskProtocol: 'none',
+2026-10-06T02:06:41.6672773Z   readyToSend: false,
+2026-10-06T02:06:41.6673279Z   schemaReady: true,
+2026-10-06T02:06:41.6673808Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:41.6674265Z }
+2026-10-06T02:06:41.6674572Z
+2026-10-06T02:06:41.7478125Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > keeps the request-to-run mapping across a daemon restart
+2026-10-06T02:06:41.7478882Z [od-next-rollout] {
+2026-10-06T02:06:41.7479181Z   decisionClass: 'observe',
+2026-10-06T02:06:41.7479514Z   requestedMode: 'active',
+2026-10-06T02:06:41.7479813Z   effectiveMode: 'observe',
+2026-10-06T02:06:41.7480117Z   taskType: 'prototype',
+2026-10-06T02:06:41.7480403Z   agentId: 'claude',
+2026-10-06T02:06:41.7481096Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:41.7481414Z   sourceKind: 'bundled',
+2026-10-06T02:06:41.7481723Z   assignmentClass: 'not_included',
+2026-10-06T02:06:41.7482192Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:41.7482757Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:41.7483139Z }
+2026-10-06T02:06:41.7483235Z
+2026-10-06T02:06:42.4625404Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:42.4626759Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:42.4627073Z
+2026-10-06T02:06:42.4631651Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:42.4632707Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:42.4632924Z
+2026-10-06T02:06:42.4764588Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:42.4765954Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:42.4766266Z
+2026-10-06T02:06:42.4927485Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:42.4928943Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:42.4929501Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:42.4929804Z   requestedMode: 'auto',
+2026-10-06T02:06:42.4930045Z   mode: 'send',
+2026-10-06T02:06:42.4930285Z   effectiveMode: 'off',
+2026-10-06T02:06:42.4930577Z   environment: 'development',
+2026-10-06T02:06:42.4930872Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:42.4931631Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:42.4932002Z   taskProtocol: 'none',
+2026-10-06T02:06:42.4932252Z   readyToSend: false,
+2026-10-06T02:06:42.4932494Z   schemaReady: true,
+2026-10-06T02:06:42.4932752Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:42.4932993Z }
+2026-10-06T02:06:42.4933078Z
+2026-10-06T02:06:42.6921855Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:42.6922561Z [od-next-rollout] {
+2026-10-06T02:06:42.6922857Z   decisionClass: 'observe',
+2026-10-06T02:06:42.6923142Z   requestedMode: 'active',
+2026-10-06T02:06:42.6923441Z   effectiveMode: 'observe',
+2026-10-06T02:06:42.6923717Z   taskType: 'prototype',
+2026-10-06T02:06:42.6923982Z   agentId: 'claude',
+2026-10-06T02:06:42.6924269Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:42.6924548Z   sourceKind: 'bundled',
+2026-10-06T02:06:42.6924824Z   assignmentClass: 'not_included',
+2026-10-06T02:06:42.6925232Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:42.6925912Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:42.6926372Z }
+2026-10-06T02:06:42.6926461Z
+2026-10-06T02:06:43.6590059Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:43.6590793Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:43.6590982Z
+2026-10-06T02:06:43.6596572Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:43.6597355Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:43.6597562Z
+2026-10-06T02:06:43.6726625Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:43.6727733Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:43.6728047Z
+2026-10-06T02:06:43.7157190Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:43.7158847Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:43.7159670Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:43.7160207Z   requestedMode: 'auto',
+2026-10-06T02:06:43.7160633Z   mode: 'send',
+2026-10-06T02:06:43.7161065Z   effectiveMode: 'off',
+2026-10-06T02:06:43.7161541Z   environment: 'development',
+2026-10-06T02:06:43.7162023Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:43.7162681Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:43.7163362Z   taskProtocol: 'none',
+2026-10-06T02:06:43.7163778Z   readyToSend: false,
+2026-10-06T02:06:43.7164210Z   schemaReady: true,
+2026-10-06T02:06:43.7164656Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:43.7165025Z }
+2026-10-06T02:06:43.7165155Z
+2026-10-06T02:06:43.8121003Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists one immutable workflow-to-run binding across daemon restarts
+2026-10-06T02:06:43.8121738Z [od-next-rollout] {
+2026-10-06T02:06:43.8122027Z   decisionClass: 'observe',
+2026-10-06T02:06:43.8122309Z   requestedMode: 'active',
+2026-10-06T02:06:43.8122915Z   effectiveMode: 'observe',
+2026-10-06T02:06:43.8123181Z   taskType: 'prototype',
+2026-10-06T02:06:43.8123437Z   agentId: 'claude',
+2026-10-06T02:06:43.8123722Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:43.8124015Z   sourceKind: 'bundled',
+2026-10-06T02:06:43.8124299Z   assignmentClass: 'not_included',
+2026-10-06T02:06:43.8124724Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:43.8125249Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:43.8125579Z }
+2026-10-06T02:06:43.8125843Z
+2026-10-06T02:06:44.5480063Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists the terminal Plugin HTML version origin on the Run
+2026-10-06T02:06:44.5481166Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:44.5481591Z
+2026-10-06T02:06:44.5486558Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists the terminal Plugin HTML version origin on the Run
+2026-10-06T02:06:44.5487300Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:44.5487516Z
+2026-10-06T02:06:44.5614262Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists the terminal Plugin HTML version origin on the Run
+2026-10-06T02:06:44.5615020Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:44.5615237Z
+2026-10-06T02:06:44.5837409Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists the terminal Plugin HTML version origin on the Run
+2026-10-06T02:06:44.5838682Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:44.5839302Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:44.5839800Z   requestedMode: 'auto',
+2026-10-06T02:06:44.5840167Z   mode: 'send',
+2026-10-06T02:06:44.5840529Z   effectiveMode: 'off',
+2026-10-06T02:06:44.5840799Z   environment: 'development',
+2026-10-06T02:06:44.5841137Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:44.5841806Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:44.5842357Z   taskProtocol: 'none',
+2026-10-06T02:06:44.5842609Z   readyToSend: false,
+2026-10-06T02:06:44.5842860Z   schemaReady: true,
+2026-10-06T02:06:44.5843120Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:44.5843339Z }
+2026-10-06T02:06:44.5843428Z
+2026-10-06T02:06:44.7679332Z stdout | tests/run-request-idempotency.test.ts > run request idempotency > persists the terminal Plugin HTML version origin on the Run
+2026-10-06T02:06:44.7680164Z [od-next-rollout] {
+2026-10-06T02:06:44.7680478Z   decisionClass: 'observe',
+2026-10-06T02:06:44.7680760Z   requestedMode: 'active',
+2026-10-06T02:06:44.7681029Z   effectiveMode: 'observe',
+2026-10-06T02:06:44.7681291Z   taskType: 'prototype',
+2026-10-06T02:06:44.7681647Z   agentId: 'claude',
+2026-10-06T02:06:44.7681925Z   agentVersion: 'claude-code 1.0.0',
+2026-10-06T02:06:44.7682207Z   sourceKind: 'bundled',
+2026-10-06T02:06:44.7682619Z   assignmentClass: 'not_included',
+2026-10-06T02:06:44.7683032Z   primaryReasonCode: 'od_next_rollout_x1_capability_fixture_unverified',
+2026-10-06T02:06:44.7683697Z   advertisedCapabilityGap: [ 'forwardSubagentText', 'customAgents' ]
+2026-10-06T02:06:44.7684041Z }
+2026-10-06T02:06:44.7684129Z
+2026-10-06T02:06:45.0697729Z  ✓ tests/run-request-idempotency.test.ts (7 tests) 10098ms
+2026-10-06T02:06:45.0699552Z      ✓ RR3 proves a fresh pre-admission refusal has no run and does not misclassify a previously accepted identity  1404ms
+2026-10-06T02:06:45.0700851Z      ✓ returns the same logical run when a lost POST /api/runs response is retried  1230ms
+2026-10-06T02:06:45.0702003Z      ✓ rejects reusing one clientRequestId for a different logical request  1156ms
+2026-10-06T02:06:45.0703115Z      ✓ treats execution-shaping fields omitted by the legacy fingerprint as idempotency conflicts  1085ms
+2026-10-06T02:06:45.0704180Z      ✓ keeps the request-to-run mapping across a daemon restart  2047ms
+2026-10-06T02:06:45.0705209Z      ✓ persists one immutable workflow-to-run binding across daemon restarts  2064ms
+2026-10-06T02:06:45.0706455Z      ✓ persists the terminal Plugin HTML version origin on the Run  1112ms
+2026-10-06T02:06:45.4179343Z  ✓ tests/mokina-context-store.test.ts (12 tests) 39ms
+2026-10-06T02:06:47.3722977Z stdout | tests/mokina-recovery-routes.test.ts > mokina recovery recovery routes
+2026-10-06T02:06:47.3723647Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:47.3723850Z
+2026-10-06T02:06:47.3732904Z stdout | tests/mokina-recovery-routes.test.ts > mokina recovery recovery routes
+2026-10-06T02:06:47.3733582Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:47.3733798Z
+2026-10-06T02:06:47.3837114Z stdout | tests/mokina-recovery-routes.test.ts > mokina recovery recovery routes
+2026-10-06T02:06:47.3838357Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:47.3839302Z
+2026-10-06T02:06:47.4344547Z stdout | tests/mokina-recovery-routes.test.ts > mokina recovery recovery routes
+2026-10-06T02:06:47.4345364Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:47.4345991Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:47.4346304Z   requestedMode: 'auto',
+2026-10-06T02:06:47.4346549Z   mode: 'send',
+2026-10-06T02:06:47.4346785Z   effectiveMode: 'off',
+2026-10-06T02:06:47.4347048Z   environment: 'development',
+2026-10-06T02:06:47.4347334Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:47.4347737Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:47.4348104Z   taskProtocol: 'none',
+2026-10-06T02:06:47.4348354Z   readyToSend: false,
+2026-10-06T02:06:47.4348603Z   schemaReady: true,
+2026-10-06T02:06:47.4348859Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:47.4349074Z }
+2026-10-06T02:06:47.4349161Z
+2026-10-06T02:06:48.6646982Z  ✓ tests/mokina-recovery-routes.test.ts (6 tests) 2068ms
+2026-10-06T02:06:48.6648302Z      ✓ RR1 actual CLI rejects an unsafe target through the daemon  853ms
+2026-10-06T02:06:48.9319586Z  ✓ tests/mokina-materials.test.ts (7 tests) 24ms
+2026-10-06T02:06:50.8405981Z stdout | tests/mokina-context-routes.test.ts > mokina context snapshot routes
+2026-10-06T02:06:50.8406844Z [plugins] registered 463 bundled plugin(s)
+2026-10-06T02:06:50.8407125Z
+2026-10-06T02:06:50.8415114Z stdout | tests/mokina-context-routes.test.ts > mokina context snapshot routes
+2026-10-06T02:06:50.8415884Z [plugins] seeded community registry source (5 plugin(s))
+2026-10-06T02:06:50.8416269Z
+2026-10-06T02:06:50.8523489Z stdout | tests/mokina-context-routes.test.ts > mokina context snapshot routes
+2026-10-06T02:06:50.8525228Z [plugins] seeded official registry source (463 plugin(s))
+2026-10-06T02:06:50.8526125Z
+2026-10-06T02:06:50.9073404Z stdout | tests/mokina-context-routes.test.ts > mokina context snapshot routes
+2026-10-06T02:06:50.9074639Z [telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+2026-10-06T02:06:50.9075371Z [telemetry] effective task observation rollout {
+2026-10-06T02:06:50.9076065Z   requestedMode: 'auto',
+2026-10-06T02:06:50.9076435Z   mode: 'send',
+2026-10-06T02:06:50.9076800Z   effectiveMode: 'off',
+2026-10-06T02:06:50.9077275Z   environment: 'development',
+2026-10-06T02:06:50.9077689Z   tag: 'od-next-task-v1',
+2026-10-06T02:06:50.9078346Z   effectiveSink: { kind: 'none', host: null, protocol: null },
+2026-10-06T02:06:50.9078970Z   taskProtocol: 'none',
+2026-10-06T02:06:50.9079361Z   readyToSend: false,
+2026-10-06T02:06:50.9079751Z   schemaReady: true,
+2026-10-06T02:06:50.9080148Z   blockedReason: 'missing_sink'
+2026-10-06T02:06:50.9080478Z }
+2026-10-06T02:06:50.9080600Z
+2026-10-06T02:06:51.0144317Z  ✓ tests/mokina-context-routes.test.ts (3 tests) 912ms
+2026-10-06T02:06:51.6566830Z  ✓ tests/routes/runs-structured-errors.test.ts (3 tests) 58ms
+2026-10-06T02:06:53.5280455Z  ✓ tests/mokina-cli-recovery.test.ts (4 tests) 1730ms
+2026-10-06T02:06:53.5282104Z    ✓ executes the documented recovery import and forwards the original operation/target/file  443ms
+2026-10-06T02:06:53.5283542Z    ✓ executes the documented recovery export and writes the server bytes  433ms
+2026-10-06T02:06:53.5285526Z    ✓ mints an operation identity when recovery export omits the optional flag  420ms
+2026-10-06T02:06:53.5287190Z    ✓ mints an operation identity when recovery import omits the optional flag  424ms
+2026-10-06T02:06:53.5323389Z
+2026-10-06T02:06:53.5337932Z  Test Files  9 passed (9)
+2026-10-06T02:06:53.5356932Z       Tests  111 passed (111)
+2026-10-06T02:06:53.5357583Z    Start at  02:06:25
+2026-10-06T02:06:53.5366808Z    Duration  28.13s (transform 4.52s, setup 58ms, import 9.91s, tests 17.23s, environment 1ms)
+2026-10-06T02:06:53.5367295Z
+2026-10-06T02:06:54.1009590Z
+2026-10-06T02:06:54.1011152Z  RUN  v4.1.6 /home/runner/work/Mokina/Mokina/open-design/tools/pack
+2026-10-06T02:06:54.1011731Z
+2026-10-06T02:06:54.2691365Z  ✓ tests/resources/pdf-runtime.test.ts (1 test) 15ms
+2026-10-06T02:06:54.2713490Z
+2026-10-06T02:06:54.2716699Z  Test Files  1 passed (1)
+2026-10-06T02:06:54.2717460Z       Tests  1 passed (1)
+2026-10-06T02:06:54.2718006Z    Start at  02:06:54
+2026-10-06T02:06:54.2718826Z    Duration  164ms (transform 26ms, setup 0ms, import 40ms, tests 15ms, environment 0ms)
+2026-10-06T02:06:54.2720381Z
+2026-10-06T02:06:54.3226766Z ##[group]Run pnpm --filter @open-design/daemon build
+2026-10-06T02:06:54.3227103Z pnpm --filter @open-design/daemon build
+2026-10-06T02:06:54.3227449Z pnpm --filter @open-design/e2e exec playwright install --with-deps chromium
+2026-10-06T02:06:54.3284301Z shell: /usr/bin/bash -e {0}
+2026-10-06T02:06:54.3284517Z env:
+2026-10-06T02:06:54.3284754Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-06T02:06:54.3284999Z ##[endgroup]
+2026-10-06T02:06:54.5862999Z
+2026-10-06T02:06:54.5863867Z > @open-design/daemon@0.22.1 build /home/runner/work/Mokina/Mokina/open-design/apps/daemon
+2026-10-06T02:06:54.5864303Z > tsc -p tsconfig.json
+2026-10-06T02:06:54.5864423Z
+2026-10-06T02:07:09.0546045Z Installing dependencies...
+2026-10-06T02:07:09.0612105Z Switching to root user to install dependencies...
+2026-10-06T02:07:09.1411129Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-06T02:07:09.1667884Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-06T02:07:09.1668976Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-06T02:07:09.1697960Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-06T02:07:09.1730795Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-06T02:07:09.1759152Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-06T02:07:09.2679493Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [458 kB]
+2026-10-06T02:07:09.2824107Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [515 kB]
+2026-10-06T02:07:09.2869483Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
+2026-10-06T02:07:09.3136730Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1370 kB]
+2026-10-06T02:07:09.3217500Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [305 kB]
+2026-10-06T02:07:09.3229906Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [181 kB]
+2026-10-06T02:07:09.3242539Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1701 kB]
+2026-10-06T02:07:09.3332685Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [341 kB]
+2026-10-06T02:07:09.3356435Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [388 kB]
+2026-10-06T02:07:09.3383801Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1728 kB]
+2026-10-06T02:07:09.3469045Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [395 kB]
+2026-10-06T02:07:09.3493652Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [13.3 kB]
+2026-10-06T02:07:09.3503188Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+2026-10-06T02:07:09.4049654Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [5764 B]
+2026-10-06T02:07:09.4087377Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [12.6 kB]
+2026-10-06T02:07:09.4109508Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1071 kB]
+2026-10-06T02:07:09.4164684Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [222 kB]
+2026-10-06T02:07:09.4182741Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [46.4 kB]
+2026-10-06T02:07:09.4196717Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1216 kB]
+2026-10-06T02:07:09.4257404Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [244 kB]
+2026-10-06T02:07:09.4276730Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [76.3 kB]
+2026-10-06T02:07:09.4291159Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1566 kB]
+2026-10-06T02:07:09.4368267Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [361 kB]
+2026-10-06T02:07:17.8195227Z Fetched 12.6 MB in 1s (11.2 MB/s)
+2026-10-06T02:07:18.5317239Z Reading package lists...
+2026-10-06T02:07:18.5607168Z Reading package lists...
+2026-10-06T02:07:18.7678703Z Building dependency tree...
+2026-10-06T02:07:18.7684962Z Reading state information...
+2026-10-06T02:07:18.9291679Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-06T02:07:18.9292304Z libasound2t64 set to manually installed.
+2026-10-06T02:07:18.9292933Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-06T02:07:18.9293504Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-06T02:07:18.9294023Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-06T02:07:18.9294483Z libatk1.0-0t64 set to manually installed.
+2026-10-06T02:07:18.9295015Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-06T02:07:18.9295514Z libatspi2.0-0t64 set to manually installed.
+2026-10-06T02:07:18.9296181Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-06T02:07:18.9296648Z libcairo2 set to manually installed.
+2026-10-06T02:07:18.9297157Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-06T02:07:18.9297674Z libcups2t64 set to manually installed.
+2026-10-06T02:07:18.9298160Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-06T02:07:18.9298667Z libdbus-1-3 set to manually installed.
+2026-10-06T02:07:18.9299246Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-06T02:07:18.9299788Z libdrm2 set to manually installed.
+2026-10-06T02:07:18.9300300Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+2026-10-06T02:07:18.9300836Z libglib2.0-0t64 set to manually installed.
+2026-10-06T02:07:18.9301350Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-06T02:07:18.9301829Z libnspr4 set to manually installed.
+2026-10-06T02:07:18.9302283Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+2026-10-06T02:07:18.9302680Z libnss3 set to manually installed.
+2026-10-06T02:07:18.9303121Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-06T02:07:18.9303536Z libpango-1.0-0 set to manually installed.
+2026-10-06T02:07:18.9304276Z libx11-6 is already the newest version (2:1.8.7-1build1).
+2026-10-06T02:07:18.9304569Z libx11-6 set to manually installed.
+2026-10-06T02:07:18.9304913Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-06T02:07:18.9305303Z libxcb1 set to manually installed.
+2026-10-06T02:07:18.9305792Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-06T02:07:18.9306127Z libxcomposite1 set to manually installed.
+2026-10-06T02:07:18.9306445Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-06T02:07:18.9306790Z libxdamage1 set to manually installed.
+2026-10-06T02:07:18.9307158Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-06T02:07:18.9307447Z libxext6 set to manually installed.
+2026-10-06T02:07:18.9307746Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-06T02:07:18.9308049Z libxfixes3 set to manually installed.
+2026-10-06T02:07:18.9308372Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-06T02:07:18.9308801Z libxkbcommon0 set to manually installed.
+2026-10-06T02:07:18.9309254Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-06T02:07:18.9309692Z libxrandr2 set to manually installed.
+2026-10-06T02:07:18.9310164Z xvfb is already the newest version (2:21.1.12-1ubuntu1.8).
+2026-10-06T02:07:18.9310775Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-06T02:07:18.9311381Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-06T02:07:18.9311705Z libfontconfig1 set to manually installed.
+2026-10-06T02:07:18.9312304Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.1).
+2026-10-06T02:07:18.9312854Z libfreetype6 set to manually installed.
+2026-10-06T02:07:18.9313351Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-06T02:07:18.9313791Z fonts-liberation set to manually installed.
+2026-10-06T02:07:18.9314108Z The following additional packages will be installed:
+2026-10-06T02:07:18.9314502Z   libgl1-mesa-dri libglx-mesa0 mesa-libgallium xfonts-encodings xfonts-utils
+2026-10-06T02:07:18.9314833Z Recommended packages:
+2026-10-06T02:07:18.9315060Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-10-06T02:07:18.9484927Z The following NEW packages will be installed:
+2026-10-06T02:07:18.9485790Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-06T02:07:18.9492455Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-06T02:07:18.9492942Z   xfonts-utils
+2026-10-06T02:07:18.9497284Z The following packages will be upgraded:
+2026-10-06T02:07:18.9501563Z   libgbm1 libgl1-mesa-dri libglx-mesa0 mesa-libgallium
+2026-10-06T02:07:18.9655144Z 4 upgraded, 9 newly installed, 0 to remove and 21 not upgraded.
+2026-10-06T02:07:18.9655842Z Need to get 32.1 MB of archives.
+2026-10-06T02:07:18.9656415Z After this operation, 79.5 MB of additional disk space will be used.
+2026-10-06T02:07:18.9657022Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-06T02:07:19.1382352Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-06T02:07:19.2843377Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-06T02:07:19.4867277Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-06T02:07:19.5368127Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-06T02:07:19.6777216Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-06T02:07:19.9044548Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgl1-mesa-dri amd64 25.2.8-0ubuntu0.24.04.4 [38.0 kB]
+2026-10-06T02:07:19.9529820Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglx-mesa0 amd64 25.2.8-0ubuntu0.24.04.4 [110 kB]
+2026-10-06T02:07:20.0016573Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgbm1 amd64 25.2.8-0ubuntu0.24.04.4 [34.2 kB]
+2026-10-06T02:07:20.0503332Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 mesa-libgallium amd64 25.2.8-0ubuntu0.24.04.4 [10.8 MB]
+2026-10-06T02:07:20.2570662Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-06T02:07:20.3117479Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-06T02:07:20.3591903Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-06T02:07:20.4125188Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-06T02:07:20.6432039Z Fetched 32.1 MB in 1s (21.9 MB/s)
+2026-10-06T02:07:20.6622178Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-06T02:07:20.6992340Z (Reading database ...
+2026-10-06T02:07:20.6992788Z (Reading database ... 5%
+2026-10-06T02:07:20.6993088Z (Reading database ... 10%
+2026-10-06T02:07:20.6993301Z (Reading database ... 15%
+2026-10-06T02:07:20.6993498Z (Reading database ... 20%
+2026-10-06T02:07:20.6993691Z (Reading database ... 25%
+2026-10-06T02:07:20.6993890Z (Reading database ... 30%
+2026-10-06T02:07:20.6994083Z (Reading database ... 35%
+2026-10-06T02:07:20.6994272Z (Reading database ... 40%
+2026-10-06T02:07:20.6994579Z (Reading database ... 45%
+2026-10-06T02:07:20.6994836Z (Reading database ... 50%
+2026-10-06T02:07:20.7023290Z (Reading database ... 55%
+2026-10-06T02:07:20.7817003Z (Reading database ... 60%
+2026-10-06T02:07:20.9850559Z (Reading database ... 65%
+2026-10-06T02:07:21.2801608Z (Reading database ... 70%
+2026-10-06T02:07:21.4455319Z (Reading database ... 75%
+2026-10-06T02:07:21.5822172Z (Reading database ... 80%
+2026-10-06T02:07:21.8036148Z (Reading database ... 85%
+2026-10-06T02:07:21.9569849Z (Reading database ... 90%
+2026-10-06T02:07:22.1047959Z (Reading database ... 95%
+2026-10-06T02:07:22.1048389Z (Reading database ... 100%
+2026-10-06T02:07:22.1048896Z (Reading database ... 202296 files and directories currently installed.)
+2026-10-06T02:07:22.1090486Z Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-06T02:07:22.1207864Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-06T02:07:22.3776060Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-06T02:07:22.3886975Z Preparing to unpack .../01-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-06T02:07:22.3893570Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-06T02:07:22.6111779Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-06T02:07:22.6226849Z Preparing to unpack .../02-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-06T02:07:22.6231943Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-06T02:07:22.6411149Z Selecting previously unselected package fonts-unifont.
+2026-10-06T02:07:22.6524875Z Preparing to unpack .../03-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-06T02:07:22.6530164Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-06T02:07:22.9084150Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-06T02:07:22.9196874Z Preparing to unpack .../04-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-06T02:07:22.9289665Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-06T02:07:23.3821505Z Preparing to unpack .../05-libgl1-mesa-dri_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-06T02:07:23.3951005Z Unpacking libgl1-mesa-dri:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-06T02:07:23.4434113Z Preparing to unpack .../06-libglx-mesa0_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-06T02:07:23.4456192Z Unpacking libglx-mesa0:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-06T02:07:23.4773760Z Preparing to unpack .../07-libgbm1_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-06T02:07:23.5149649Z Unpacking libgbm1:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-06T02:07:23.6214380Z Preparing to unpack .../08-mesa-libgallium_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-06T02:07:23.6229867Z Unpacking mesa-libgallium:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-06T02:07:23.9534253Z Selecting previously unselected package xfonts-encodings.
+2026-10-06T02:07:23.9646410Z Preparing to unpack .../09-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-06T02:07:23.9652646Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-06T02:07:24.0500454Z Selecting previously unselected package xfonts-utils.
+2026-10-06T02:07:24.0609264Z Preparing to unpack .../10-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-06T02:07:24.0632487Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-06T02:07:24.3060859Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-06T02:07:24.3173855Z Preparing to unpack .../11-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-06T02:07:24.3180098Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-06T02:07:24.3458340Z Selecting previously unselected package xfonts-scalable.
+2026-10-06T02:07:24.3568017Z Preparing to unpack .../12-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-06T02:07:24.3572998Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-06T02:07:24.4025859Z Setting up mesa-libgallium:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-06T02:07:24.4042213Z Setting up libgbm1:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-06T02:07:24.4056261Z Setting up libgl1-mesa-dri:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-06T02:07:24.4117480Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-06T02:07:24.4208335Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-06T02:07:24.4655334Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-06T02:07:24.4669529Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-06T02:07:24.4683310Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-06T02:07:24.4741681Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-06T02:07:24.4781919Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-06T02:07:24.4796083Z Setting up libglx-mesa0:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-06T02:07:24.4810685Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-06T02:07:24.4845238Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-06T02:07:24.5534168Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-06T02:07:24.9291593Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-10-06T02:07:25.8412941Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-06T02:07:25.8430300Z Not building database; man-db/auto-update is not 'true'.
+2026-10-06T02:07:25.8439157Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-06T02:07:26.9039808Z
+2026-10-06T02:07:26.9040835Z Running kernel seems to be up-to-date.
+2026-10-06T02:07:26.9041073Z
+2026-10-06T02:07:26.9041202Z No services need to be restarted.
+2026-10-06T02:07:26.9041376Z
+2026-10-06T02:07:26.9041490Z No containers need to be restarted.
+2026-10-06T02:07:26.9041631Z
+2026-10-06T02:07:26.9041775Z No user sessions are running outdated binaries.
+2026-10-06T02:07:26.9041938Z
+2026-10-06T02:07:26.9042156Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-06T02:07:27.7604206Z Downloading Chrome for Testing 148.0.7778.96 (playwright chromium v1223) from https://cdn.playwright.dev/builds/cft/148.0.7778.96/linux64/chrome-linux64.zip
+2026-10-06T02:07:28.7478830Z |                                                                                |   0% of 175.4 MiB
+2026-10-06T02:07:28.9571778Z |■■■■■■■■                                                                        |  10% of 175.4 MiB
+2026-10-06T02:07:29.0330045Z |■■■■■■■■■■■■■■■■                                                                |  20% of 175.4 MiB
+2026-10-06T02:07:29.1120554Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 175.4 MiB
+2026-10-06T02:07:29.1845778Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 175.4 MiB
+2026-10-06T02:07:29.2581169Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 175.4 MiB
+2026-10-06T02:07:29.3586305Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 175.4 MiB
+2026-10-06T02:07:29.4292991Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 175.4 MiB
+2026-10-06T02:07:29.5111554Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 175.4 MiB
+2026-10-06T02:07:29.5850806Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 175.4 MiB
+2026-10-06T02:07:29.6430607Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 175.4 MiB
+2026-10-06T02:07:32.0235137Z Chrome for Testing 148.0.7778.96 (playwright chromium v1223) downloaded to /home/runner/.cache/ms-playwright/chromium-1223
+2026-10-06T02:07:32.0239502Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-06T02:07:33.1220059Z |                                                                                |   0% of 2.3 MiB
+2026-10-06T02:07:33.1591050Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-06T02:07:33.1864000Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-06T02:07:33.2033364Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-06T02:07:33.2095269Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-06T02:07:33.2231191Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-06T02:07:33.2280403Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-06T02:07:33.2394720Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-06T02:07:33.2427030Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-06T02:07:33.2463092Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-06T02:07:33.2566047Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-06T02:07:33.3057717Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-06T02:07:33.3060324Z Downloading Chrome Headless Shell 148.0.7778.96 (playwright chromium-headless-shell v1223) from https://cdn.playwright.dev/builds/cft/148.0.7778.96/linux64/chrome-headless-shell-linux64.zip
+2026-10-06T02:07:34.2826765Z |                                                                                |   0% of 113.2 MiB
+2026-10-06T02:07:34.4577966Z |■■■■■■■■                                                                        |  10% of 113.2 MiB
+2026-10-06T02:07:34.5070340Z |■■■■■■■■■■■■■■■■                                                                |  20% of 113.2 MiB
+2026-10-06T02:07:34.5491619Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 113.2 MiB
+2026-10-06T02:07:34.6038557Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 113.2 MiB
+2026-10-06T02:07:34.6409489Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 113.2 MiB
+2026-10-06T02:07:34.6837589Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 113.2 MiB
+2026-10-06T02:07:34.7320738Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 113.2 MiB
+2026-10-06T02:07:34.7737531Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 113.2 MiB
+2026-10-06T02:07:34.8099641Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 113.2 MiB
+2026-10-06T02:07:34.8569353Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 113.2 MiB
+2026-10-06T02:07:36.6520916Z Chrome Headless Shell 148.0.7778.96 (playwright chromium-headless-shell v1223) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1223
+2026-10-06T02:07:36.6842875Z ##[group]Run pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/real-daemon-run.test.ts --grep 'Mokina' --workers=1
+2026-10-06T02:07:36.6843643Z pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/real-daemon-run.test.ts --grep 'Mokina' --workers=1
+2026-10-06T02:07:36.6900981Z shell: /usr/bin/bash -e {0}
+2026-10-06T02:07:36.6901195Z env:
+2026-10-06T02:07:36.6901411Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-06T02:07:36.6901685Z   OD_PLAYWRIGHT_WORKERS: 1
+2026-10-06T02:07:36.6901867Z ##[endgroup]
+2026-10-06T02:07:39.7366080Z
+2026-10-06T02:07:39.7366672Z Running 14 tests using 1 worker
+2026-10-06T02:07:39.7366989Z
+2026-10-06T02:08:40.8914351Z   ✓   1 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 (20.9s)
+2026-10-06T02:08:58.0137506Z   ✓   2 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 (17.1s)
+2026-10-06T02:09:06.6588170Z   ✓   3 [chromium] › ui/real-daemon-run.test.ts:2199:1 › [P1] Mokina PR3 Home first send creates one real daemon run (8.6s)
+2026-10-06T02:09:13.0971074Z   ✓   4 [chromium] › ui/real-daemon-run.test.ts:2220:1 › [P1] Mokina R2 resend after an empty lookup preserves the original request identity (6.4s)
+2026-10-06T02:09:20.7545326Z   ✓   5 [chromium] › ui/real-daemon-run.test.ts:2264:1 › [P1] Mokina R2 explicit resend reuses the original request identity when the server never received it (7.6s)
+2026-10-06T02:09:27.1104418Z   ✓   6 [chromium] › ui/real-daemon-run.test.ts:2300:1 › [P1] Mokina R2 resend after the original run already finished creates no second run (6.3s)
+2026-10-06T02:09:34.4909408Z   ✓   7 [chromium] › ui/real-daemon-run.test.ts:2342:1 › [P1] Mokina R2 discard clears the receipt and unblocks sending (7.4s)
+2026-10-06T02:09:41.6133098Z   ✓   8 [chromium] › ui/real-daemon-run.test.ts:2370:1 › [P1] Mokina R2 oversize prompt still sends without a recoverable snapshot (7.1s)
+2026-10-06T02:09:49.1588212Z   ✓   9 [chromium] › ui/real-daemon-run.test.ts:2390:1 › [P1] Mokina R2 first generated file auto-opens in an empty project (7.5s)
+2026-10-06T02:09:56.4623825Z   ✓  10 [chromium] › ui/real-daemon-run.test.ts:2405:1 › [P1] Mokina R2 definitive rejection keeps the draft, the failure surface and a restorable receipt (7.3s)
+2026-10-06T02:10:09.3879756Z   ✓  11 [chromium] › ui/real-daemon-run.test.ts:2433:1 › [P1] Mokina RR3 real daemon refusal survives reload and explicit exit permits a new attempt (12.9s)
+2026-10-06T02:10:28.1932391Z   ✓  12 [chromium] › ui/real-daemon-run.test.ts:2476:1 › [P1] Mokina revision lost POST response recovers the same run and adopts its candidate (18.8s)
+2026-10-06T02:10:37.3902004Z   ✓  13 [chromium] › ui/real-daemon-run.test.ts:2602:1 › [P1] Mokina historical version export locks the clicked version and exports once (9.2s)
+2026-10-06T02:10:45.7718380Z   ✓  14 [chromium] › ui/real-daemon-run.test.ts:2653:1 › [P1] Mokina reduced transparency degrades materials live and restores (8.4s)
+2026-10-06T02:10:46.9334121Z ##[notice]  14 passed (3.2m)
+2026-10-06T02:10:46.9340317Z
+2026-10-06T02:10:46.9340491Z   14 passed (3.2m)
+2026-10-06T02:10:47.0362103Z Post job cleanup.
+2026-10-06T02:10:47.1437482Z (node:7281) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-06T02:10:47.1438120Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-06T02:10:47.1440793Z Cache hit occurred on the primary key node-cache-Linux-x64-pnpm-d864f85f2ddf51e7da8840b2efd5843dc54329938522798f061473abae338d5e, not saving cache.
+2026-10-06T02:10:47.1541561Z Post job cleanup.
+2026-10-06T02:10:47.2703558Z Pruning is unnecessary.
+2026-10-06T02:10:47.2838392Z Post job cleanup.
+2026-10-06T02:10:47.3597238Z [command]/usr/bin/git version
+2026-10-06T02:10:47.3634402Z git version 2.55.0
+2026-10-06T02:10:47.3669320Z Temporarily overriding HOME='/home/runner/work/_temp/2183f2be-eb29-4786-b82e-1920e341588f' before making global git config changes
+2026-10-06T02:10:47.3670319Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-06T02:10:47.3674556Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Mokina/Mokina
+2026-10-06T02:10:47.3702763Z Removing SSH command configuration
+2026-10-06T02:10:47.3708550Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-06T02:10:47.3738606Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-06T02:10:47.3970935Z Removing HTTP extra header
+2026-10-06T02:10:47.3976800Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-06T02:10:47.4007849Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-06T02:10:47.4235276Z Removing includeIf entries pointing to credentials config files
+2026-10-06T02:10:47.4241374Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-06T02:10:47.4266419Z includeif.gitdir:/home/runner/work/Mokina/Mokina/.git.path
+2026-10-06T02:10:47.4267137Z includeif.gitdir:/home/runner/work/Mokina/Mokina/.git/worktrees/*.path
+2026-10-06T02:10:47.4267773Z includeif.gitdir:/github/workspace/.git.path
+2026-10-06T02:10:47.4268311Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-06T02:10:47.4277029Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Mokina/Mokina/.git.path
+2026-10-06T02:10:47.4296144Z /home/runner/work/_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:10:47.4307759Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Mokina/Mokina/.git.path /home/runner/work/_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:10:47.4350634Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Mokina/Mokina/.git/worktrees/*.path
+2026-10-06T02:10:47.4373012Z /home/runner/work/_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:10:47.4385040Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Mokina/Mokina/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:10:47.4427802Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-06T02:10:47.4451899Z /github/runner_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:10:47.4462061Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:10:47.4499627Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-06T02:10:47.4521723Z /github/runner_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:10:47.4532003Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config
+2026-10-06T02:10:47.4573555Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-06T02:10:47.4789864Z Removing credentials config '/home/runner/work/_temp/git-credentials-fa52da5b-c53b-4045-bfb3-488516a5e872.config'
+2026-10-06T02:10:47.4939682Z Cleaning up orphan processes
+2026-10-06T02:10:47.5263572Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

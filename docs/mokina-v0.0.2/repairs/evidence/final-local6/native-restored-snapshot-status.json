@@ -1,0 +1,27 @@
+{
+  "id": "abd1b788-8de8-4de0-8f80-5ae49a564484",
+  "status": "succeeded",
+  "exitCode": 0,
+  "terminalAt": 1791255953648,
+  "mokinaContext": {
+    "runId": "abd1b788-8de8-4de0-8f80-5ae49a564484",
+    "snapshotId": "0d1057ed-bf92-4ed0-900a-f08585fc05e9",
+    "fingerprint": "e24fd927fa6677369b1c87d5c29aded3f7c17085ae0ea2480598bfb43e3ce2b5",
+    "includedItemIds": [
+      "S1",
+      "A1"
+    ],
+    "itemDelivery": [
+      {
+        "itemId": "S1",
+        "mode": "inline-text"
+      },
+      {
+        "itemId": "A1",
+        "mode": "staged-file"
+      }
+    ],
+    "status": "submitted",
+    "submittedAt": "2026-10-06T03:04:44.814Z"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "oldNativePids": [
+    28179,
+    28180,
+    28193,
+    28283
+  ],
+  "remainingOldNativePids": [],
+  "peerPids": [
+    3710,
+    3714,
+    3715,
+    3716,
+    3727,
+    3728,
+    3815,
+    3837,
+    3838,
+    3848,
+    4027
+  ],
+  "peerPidsPreserved": true,
+  "excludedTaskOwnedHelpers": [
+    {
+      "pid": 19786,
+      "ppid": 56591,
+      "reason": "task-owned temporary helper, not another desktop instance"
+    }
+  ],
+  "globalConfigAndAccountUnchanged": true,
+  "evidenceType": "CUA native Command-Q; original Finder instance stopped; persistent other app PIDs and account/config intact",
+  "verificationNote": "First inventory comparison included task-owned helper 19786 which ended independently; final comparison scopes persistent other desktop processes by ownership, preserves raw baseline inventory."
+}

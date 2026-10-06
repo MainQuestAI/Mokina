@@ -1,0 +1,115 @@
+{
+  "evidenceType": "installed local.6 desktop IPC; CLI launch, Finder pending",
+  "rows": [
+    {
+      "key": "od:revision:qa-local6:deliverables/plan.html",
+      "id": "df1a1dab-60b3-4fe1-a932-d5d5a7e12895",
+      "put": {
+        "ok": true,
+        "result": "stored"
+      },
+      "get": {
+        "ok": true,
+        "found": true,
+        "record": {
+          "recordId": "df1a1dab-60b3-4fe1-a932-d5d5a7e12895",
+          "value": "deliverables/plan.html"
+        }
+      }
+    },
+    {
+      "key": "od:revision:qa-local6:营销资料/方案 空格.html",
+      "id": "256997b1-ae63-48fa-80d2-adc413a5cdcf",
+      "put": {
+        "ok": true,
+        "result": "stored"
+      },
+      "get": {
+        "ok": true,
+        "found": true,
+        "record": {
+          "recordId": "256997b1-ae63-48fa-80d2-adc413a5cdcf",
+          "value": "营销资料/方案 空格.html"
+        }
+      }
+    },
+    {
+      "key": "od:revision:qa-local6:a/plan.html",
+      "id": "85578ed5-b167-4fe2-8a30-b1e6b9155010",
+      "put": {
+        "ok": true,
+        "result": "stored"
+      },
+      "get": {
+        "ok": true,
+        "found": true,
+        "record": {
+          "recordId": "85578ed5-b167-4fe2-8a30-b1e6b9155010",
+          "value": "a/plan.html"
+        }
+      }
+    },
+    {
+      "key": "od:revision:qa-local6:b/plan.html",
+      "id": "ba89b35c-437e-490a-9dbc-ddcefc288d8a",
+      "put": {
+        "ok": true,
+        "result": "stored"
+      },
+      "get": {
+        "ok": true,
+        "found": true,
+        "record": {
+          "recordId": "ba89b35c-437e-490a-9dbc-ddcefc288d8a",
+          "value": "b/plan.html"
+        }
+      }
+    },
+    {
+      "key": "od:revision:qa-local6:目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/plan.html",
+      "id": "066014eb-fb37-49fb-b7bf-3a8aeba50e89",
+      "put": {
+        "ok": true,
+        "result": "stored"
+      },
+      "get": {
+        "ok": true,
+        "found": true,
+        "record": {
+          "recordId": "066014eb-fb37-49fb-b7bf-3a8aeba50e89",
+          "value": "目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/plan.html"
+        }
+      }
+    }
+  ],
+  "deletion": {
+    "key": "od:revision:qa-local6:deleted",
+    "id": "1212efd6-20d0-4030-983b-eeaef8d699f7",
+    "deletion": {
+      "ok": true,
+      "result": "deleted"
+    },
+    "get": {
+      "ok": true,
+      "found": false,
+      "deletedRecordId": "95214f82-53d7-4418-a19d-d5449f20eed4"
+    },
+    "stale": {
+      "ok": true,
+      "result": "conflict"
+    }
+  },
+  "origin": "od://app",
+  "product": {
+    "ok": true,
+    "version": "0.0.2-local.6",
+    "amrTerminalReporter": {
+      "status": "active",
+      "pending": 0,
+      "delivered": 0,
+      "unsupported": 0,
+      "terminalFailed": 0,
+      "oldestPendingAgeMs": null
+    }
+  }
+}

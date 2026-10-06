@@ -1,6 +1,24 @@
 # PR4 修复验收矩阵
 
-上轮 R1–R7 的 local.5 成功路径与证据保留为历史结果。2026-10-06 复审新增 RR1–RR5，本轮工程收口重新置为未完成，需新候选 local.6 通过全部复验。用户营销专业签收未执行；PR 未合并。全量套件保留的 BASE 失败及两个时序疑点另列，没有将全量套件表述为绿色。
+**RR1–RR5 修复与同一 local.6 本机 arm64 安装包工程验收完成。** 用户专业签收未执行，PR 未合并。local.5 保留为历史证据；其两个全量时序疑点是旧结果，本轮 22 个失败全部在修复前及精确 BASE 同名同签名重现，没有新增或未解释时序失败，不表述全量套件绿色。
+
+## 2026-10-06 RR1–RR5 与 local.6
+
+产品源码 `8950986e`；产品检查点 PR HEAD `1ae0c139`；CI 实际 merge checkout `1e992789`（父提交为精确 BASE `df4a0b2` 和该 HEAD）。[37402164154](https://github.com/MainQuestAI/Mokina/actions/runs/37402164154) success：guard/typecheck/i18n、265 定向与 14 真实 daemon/假 Agent 浏览器通过。最终文档 HEAD 检查在 PR 正文另列。源码、构建、包摘要见 [manifest](evidence/final-local6/artifact-manifest.json)。
+
+| 范围 | 功能验证 | 同一 local.6 安装包验证 | 用户专业签收 |
+|---|---|---|---|
+| RR1 目标路径 | 服务、HTTP、实际 CLI 非法目标提前拒绝；哨兵/根不变，无注册 | 包 API 非法目标 400，正常原生文件选择器导入通过 | 不适用 |
+| RR2 占用、并发、中断 | 可控信号并发/竞争、暂存失败、注册缺口同身份补注册；不删最终目录 | 原生导出包四次同身份重叠 POST 仅一个目标；不同身份 409、正式 reader 通过 | 不适用 |
+| RR3 明确拒绝退出 | 源先 rejected；保存/清理失败保留身份；明确结束后新身份；daemon runCount=0 | 原生生成受理前拒绝→刷新保留要求→结束→显式新尝试通过 | 未执行 |
+| RR3 未知与采用 | 裸 4xx/并行受理 unknown，保存失败保持身份；丢响应同 run | 原生实际 202 丢失→刷新→同 run→候选→显式采用；其他章节不变 | 未执行 |
+| RR4 删除与旧草稿 | 删除身份/CAS/容量/v1/显式旧缓存确认及跨 origin harness 通过 | 实际 Host 删除后保留旧缓存，重开清除；CLI profile 跨实例重开 tombstone 保留、旧 CAS 拒绝 | 不适用 |
+| RR5 合法键 | 五类键和 4096 字符边界通过 | 实际 IPC 五类键重开；中文/空格/子目录 201 字符文件、254 字符修订键，Finder 重开同 run、候选收集与选章接续通过 | 未执行 |
+| 冻结与恢复连续性 | prepare/fingerprint/blob/reader 生产校验回归通过 | 原生选择 SVG/摘录冻结 A、源换 B；真实生成与活动页接续；恢复后源删除，正式 reader/明确快照真实运行/原生再导出/二代导入通过 | 未执行 |
+| PDF 解析 | 包资源及解析回归通过 | 25 Mach-O 无开发依赖；受限中英两页；正式 reader 扫描不 OCR、损坏 unreadable、超限报错 | 不适用 |
+| 发布、导出与退出 | 同产品 SHA app/DMG/ZIP，静态与相关包全量检查完成 | 同 DMG 安装 Finder 启动；v2/v3/v4 九份原生 HTML/ZIP/PDF、取消、外部 Chrome/Preview；退出重开及仅本实例停止、全局账号/config 不变 | 未执行 |
+
+详见 [local.6 证据](evidence/final-local6/README.md)、[全量对照](evidence/final-local6/full-suite-comparison.md) 与 [工程状态](evidence/final-local6/acceptance-status.json)。当前 web 12809 普通通过、8 失败、1 expected failure、11 skipped；daemon 11987 通过、14 失败、15 skipped；desktop 507 通过、1 skipped。修复前/BASE 只重跑失败文件，未声称它们全量通过。PDF 正文搜索/复制未验证。以下为 local.5 历史矩阵。
 
 输入 HEAD `7135b52fe5c03537fbc000ec0686df01692a26f4`；精确 BASE `df4a0b2699cd2b37df2099b38da8fe8375d14b41`；最终产品代码 `033c57dfe08b1ca42fa8a883bfde522bd3326ed1`。日期：2026-10-05。[候选 manifest](evidence/final-local5/artifact-manifest.json) · [工程状态](evidence/final-local5/acceptance-status.json)。后续仅文档提交不改变本候选包。
 

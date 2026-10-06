@@ -1,0 +1,53 @@
+{
+  "event": {
+    "mode": "lost",
+    "ids": {
+      "projectId": "4b654560-671d-47e7-81d8-07c31a0a7f5f",
+      "conversationId": "c2e3808e-0bcd-417a-9a2f-0e42cd2ba037",
+      "clientRequestId": "b631830c-a43d-4743-95ac-f3358804378f"
+    },
+    "status": 202,
+    "result": {
+      "runId": "85d45865-2fc7-4fc3-bb90-44e9d665ea1e",
+      "conversationId": "c2e3808e-0bcd-417a-9a2f-0e42cd2ba037",
+      "assistantMessageId": "9b2a21a9-84e3-469b-ac6e-00121d5d9ded",
+      "clientRequestId": "b631830c-a43d-4743-95ac-f3358804378f",
+      "reused": false,
+      "resumed": false,
+      "appliedPluginSnapshotId": "dfc1395e-6e95-446d-aaf4-ced8bbaf976f",
+      "pluginId": "mokina-market-analysis"
+    }
+  },
+  "localJob": {
+    "operationId": "b631830c-a43d-4743-95ac-f3358804378f",
+    "clientRequestId": "b631830c-a43d-4743-95ac-f3358804378f",
+    "revisionProjectId": "4b654560-671d-47e7-81d8-07c31a0a7f5f",
+    "sourceProjectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+    "sourceFile": "index.html",
+    "workspaceContext": null,
+    "baseVersionId": "05a0fd31-7b42-4092-a685-c7415c49d4ee",
+    "sectionId": "strategy",
+    "prompt": "仅修订 strategy：在原策略内加入一句“原生 local.6 门店执行清单”，其余章节保持原样，不编造经营数据。",
+    "dispatched": true,
+    "submissionState": "unknown",
+    "conversationId": "c2e3808e-0bcd-417a-9a2f-0e42cd2ba037"
+  },
+  "durableJob": {
+    "ok": true,
+    "found": true,
+    "record": {
+      "recordId": "25694645-04b5-42e7-8bee-e61fe40276ff",
+      "value": "{\"operationId\":\"b631830c-a43d-4743-95ac-f3358804378f\",\"clientRequestId\":\"b631830c-a43d-4743-95ac-f3358804378f\",\"revisionProjectId\":\"4b654560-671d-47e7-81d8-07c31a0a7f5f\",\"sourceProjectId\":\"60198b4d-1e0f-4491-886d-032f04cadf37\",\"sourceFile\":\"index.html\",\"workspaceContext\":null,\"baseVersionId\":\"05a0fd31-7b42-4092-a685-c7415c49d4ee\",\"sectionId\":\"strategy\",\"prompt\":\"仅修订 strategy：在原策略内加入一句“原生 local.6 门店执行清单”，其余章节保持原样，不编造经营数据。\",\"dispatched\":true,\"submissionState\":\"unknown\",\"conversationId\":\"c2e3808e-0bcd-417a-9a2f-0e42cd2ba037\"}"
+    }
+  },
+  "runs": [
+    {
+      "id": "85d45865-2fc7-4fc3-bb90-44e9d665ea1e",
+      "status": "running",
+      "projectId": "4b654560-671d-47e7-81d8-07c31a0a7f5f",
+      "conversationId": "c2e3808e-0bcd-417a-9a2f-0e42cd2ba037",
+      "clientRequestId": "b631830c-a43d-4743-95ac-f3358804378f"
+    }
+  ],
+  "evidenceType": "native click new generate; one-shot network fault after actual daemon 202; original source unknown intent durable"
+}

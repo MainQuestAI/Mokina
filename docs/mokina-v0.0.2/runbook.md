@@ -1,8 +1,32 @@
 # Mokina V0.0.2 Local Preview · 本机使用 Runbook
 
-候选版本 `0.0.2-local.5`，macOS arm64。产品代码 SHA：`033c57dfe08b1ca42fa8a883bfde522bd3326ed1`。后续仅文档和验收证据的提交不改变本候选包。
+当前候选为 `0.0.2-local.6`，macOS arm64，产品源码 `8950986e41e5047c56aab4d3ba9fda900902aa9a`。RR1–RR5、同一 DMG 安装的 Finder 原生工程验收已完成。用户营销专业签收未执行；不自动合并 PR。全量历史失败单列，不宣称全绿。
 
-上轮 R1–R7 在 local.5 的工程验收记录如下；2026-10-06 新增 RR1–RR5 正在修复，当前工程收口未完成，后续以 local.6 复验为准：Finder 启动、真实生成/修订恢复/采用/接续、指定版本三种格式原生保存与取消、恢复后继续运行及退出重开均通过。用户营销专业签收未执行。全量历史失败及两个时序疑点单列，不声称全量套件绿色。
+## local.6 交付与使用
+
+| 项目 | 值 |
+|---|---|
+| DMG | `Mokina-mokina-local.dmg`，408,035,059 bytes |
+| DMG SHA256 | `f0b9f250a28c2d912042dc387e1e21437622a2a6bc2e319d9fa22bc9aaf5f787` |
+| ZIP | `Mokina-mokina-local.zip`，405,041,739 bytes |
+| ZIP SHA256 | `e24be3531f0b476fb89330dcac807a85e8dfef3cac84e85fa1bd51ca1794480f` |
+
+交付及 manifest：`/Users/dingcheng/Mokina-PR4-QA/releases/0.0.2-local.6/`。已从该 DMG 安装到 `/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app`。同一安装副本已经 Finder 启动、退出重开及实际原生界面链验收。包自带 web、daemon 和 PDF 文本工具；生成仍需要已有 Codex CLI、账号和网络。签名、公证及公开发行范围不变。
+
+1. 启动先恢复桌面权威记录，再挂载业务入口。删除标记阻止旧窗口缓存复活。pre-v2 profile 的缺失原因无法判定时，选择「恢复这些旧记录」或「保留备份并继续」，不会自动回灌。后者保留本 origin 的独立旧缓存备份。容量不足、CAS 冲突及 IPC 失败明确阻止操作，本版不自动淘汰删除事实。
+2. 单章修订收到 daemon 的明确未受理证明时，原成果保留要求并提供「结束本次未受理修订」。先保存要求草稿、再清理旧记录，全部成功后才解除生成阻塞；用户再次点击生成才创建新身份。刷新、查询空结果和裸 4xx 不创建新尝试。
+3. 普通发送的拒绝回执保留至显式恢复或丢弃。恢复不覆盖已占用输入；先保留当前输入，再清空输入框并选择恢复。持久转移成功后才清理回执。
+4. 恢复包普通重试保持目标、操作与归档摘要。同身份重叠请求返回同一项目，其他归属返回冲突并保留原内容；注册中断后，同身份重试校验已提交内容再补注册。
+
+Finder 默认数据为 `~/Library/Application Support/Mokina/namespaces/mokina-local`；CLI QA 使用 `/Users/dingcheng/Mokina-PR4-QA/runtime/mac/namespaces/mokina-local`。两者不能混作同一次用户流程证据。本轮后者通过了实际 IPC 保存/删除/重开、真实 Codex API 生成、冻结 A 后换 B、四个重叠导入、源项目删除后正式 reader 与真实运行、第二代恢复。CLI 重启保留其他 Open Design 进程及全局 Codex 配置/账号文件摘要。包内 PDF 25 个二进制无开发目录依赖，中英文多页读取及扫描/损坏/超限正式 reader 验证通过。
+
+Finder 默认 profile 的独立完整流程也已通过：原生选择资料与素材、真实 Codex 生成、受理前拒绝后结束/新尝试、丢 202 恢复同 run 并采用、选章接续及退出重开。采用前历史 v2/当前 v3/未采用候选 v4，各导出 HTML/ZIP/原生 PDF，共九份；取消不写文件，外部 Chrome/Preview 打开正确。恢复包原生导出/导入重叠四次只建一个目标，删除合成源后仍可正式读取和引用快照运行，原生再次导出及二代 reader 通过。201 字符中文/空格/子目录文件可在重开后恢复修订并接续。最终验收实例已退出，其他 11 个桌面进程及全局账号/config 摘要保持不变。
+
+成果 PDF 不宣称可搜索或可复制正文；营销专业签收待用户另行完成。安装 app、九份导出及恢复 ZIP 已保留。完整证据见 [local.6](repairs/evidence/final-local6/README.md) 与 [矩阵](repairs/PR4-acceptance-matrix.md)。
+
+## local.5 历史 Runbook
+
+以下保留源码 `033c57d`、版本 `0.0.2-local.5` 的原验收与产物记录，不代表 local.6 的工程收口结果。
 
 ## 产物与身份
 

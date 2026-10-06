@@ -1,0 +1,15 @@
+{
+  "projectId": "d0baee72-f67e-4939-a97e-385584b56a95",
+  "snapshotId": "0d1057ed-bf92-4ed0-900a-f08585fc05e9",
+  "clientRequestId": "7d8cef46-cda4-4978-8871-a62d78b70427",
+  "status": 202,
+  "run": {
+    "runId": "abd1b788-8de8-4de0-8f80-5ae49a564484",
+    "conversationId": "1d92cd68-eada-4a90-a515-aad8c293d18b",
+    "assistantMessageId": "b694a3ee-6e01-4d98-85a3-d2da78b8f8b8",
+    "clientRequestId": "7d8cef46-cda4-4978-8871-a62d78b70427",
+    "reused": false,
+    "resumed": false
+  },
+  "fixtureCorrection": "earlier request placed mokinaSnapshotId at top level and did not produce context receipt; corrected to production context.mokinaSnapshotId; earlier run retained, not counted as frozen snapshot proof"
+}

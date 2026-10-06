@@ -1,0 +1,5 @@
+{
+  "records": [],
+  "runStatus": "succeeded",
+  "note": "Diagnostic before generation: unsent revision edit is component state, no saved intent yet. Accepted pre-send identity and actual Finder restart proof are in native-long-path-accepted/after-reopen."
+}

@@ -1,0 +1,17 @@
+{
+  "key": "od:composer-draft:qa-native-local6-deleted",
+  "localCache": null,
+  "durable": {
+    "ok": true,
+    "found": false,
+    "deletedRecordId": "4aae3921-dfbc-4dec-b23f-6daf2d972809"
+  },
+  "revisionJob": null,
+  "runs": [
+    {
+      "id": "85d45865-2fc7-4fc3-bb90-44e9d665ea1e",
+      "status": "succeeded"
+    }
+  ],
+  "evidenceType": "CUA native reload; host-authoritative hydration removed cache after committed tombstone"
+}

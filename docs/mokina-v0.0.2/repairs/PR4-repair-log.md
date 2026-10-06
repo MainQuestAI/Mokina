@@ -139,3 +139,26 @@ B 组浏览器首次运行：13 项通过，普通拒绝用例 1 项失败。用
 红：desktop 新复验 6 项失败、web 删除恢复 2 项失败。绿：desktop 定向 19 项、web facade 16 项通过；desktop 全量 507 项通过、1 跳过。guard、全仓 typecheck、i18n 检查通过。实际 IPC、Finder、跨 origin、local.6 工程流程及远端 CI 尚待复验；全量 daemon/web 运行中，未声明全部绿色。根 CI 复用现有入口，纳入受理分类及真实 daemon 拒绝测试。
 
 普通发送拒绝用例第二次复验：显式恢复遇到已占用输入，产品按原语义阻止覆盖，receipt 保留；用例先清空已恢复的输入再点击 Restore unsent draft 后，通过持久转移并清理。最终窄用例通过，首次 14 项回归中其余 13 项通过。保留失败截图与上下文，没有改动产品以迁就旧断言。最终产品源码固定为 8950986e，local.6 构建启动；此后测试/证据提交单独标记。
+
+## 2026-10-06 local.6 全量与候选验证（进行中）
+
+最终产品源码固定为 `8950986e41e5047c56aab4d3ba9fda900902aa9a`；`1ae0c139` 仅修改普通拒绝 receipt 浏览器用例及证据。远端 CI 37402164154 success，实际 merge 测试 SHA `1e992789d442e09b033887c988dee6ca2a93f77d`（BASE df4a0b2 + HEAD 1ae0c139），265 项定向和 14 项真实 daemon/假 Agent 浏览器通过。
+
+稳定源码全量：web 12809 普通通过、8 失败、1 expected failure、11 skipped；daemon 11987 通过、14 失败、15 skipped；desktop 507 通过、1 skipped。当前 22 个失败全部在 `a167de9` 和精确 BASE 的相应失败文件重跑中同名、同错误签名重现；本轮未发现新增或未解释时序失败。BASE 独有 export-inline 旧断言另列。对照为精确 git archive 源码、相同锁定依赖的失败文件运行，不冒称 BASE 全量通过；原始全量命令退出 1。名称、签名和范围见 evidence/final-local6/full-suite-comparison.md/json。
+
+同源码构建 app/DMG/ZIP `0.0.2-local.6`，DMG 安装副本版本、资源版本及包摘要已核对。CLI QA profile 的真实 IPC/删除标记重开、真实 Codex 冻结 A→源 B 生成、同身份重叠导入、源删除后的正式 reader/真实运行/再次导出恢复、包内 PDF 与其他实例/config 账号摘要通过。先前锁屏阻碍已解除，Finder 已从安装目录打开同一 app；正常新建、原生选择器上传 MD/SVG、面板摘录/品牌标识选择和冻结通过，真实生成运行中。Finder 流程、原生导出及专业签收尚未全部完成，工程收口保持未完成。
+
+
+## 2026-10-06 local.6 原生工程收口
+
+同一 source 8950986e / local.6 DMG 安装副本经 Finder 打开，正常创建/上传 MD、SVG、选择摘录与品牌标识、冻结 A 后换 B，真实 Codex 输出仍为 A。首轮合成 prompt 漏 data-mokina-id，保留 v1/v2，真实 follow-up 补标注成为 v3；这是夹具纠正，未改产品。真实 daemon 受理前拒绝 runCount=0，原成果刷新保留要求，显式结束旧意图后新身份；新尝试实际 202 丢失后恢复同 run，收集 v4、显式采用，预算/渠道不变。
+
+采用前历史 v2、当前 v3、未采用 v4 各原生保存 HTML/ZIP/PDF，共九份；三种取消不写文件；原生 Chrome 打开六份 HTML/解压 ZIP，Preview 打开三个四页 PDF。PDF 搜索/复制未验证。选 strategy/budget 建活动页草稿，退出/Finder 重开原草稿一致、runCount=0，明确发送后真实生成成功。
+
+原生导出恢复包并选择文件导入，网络夹具重叠四个相同实际 POST，仅一个目标。删除合成源后正式快照指纹不变；恢复运行初次 helper 把 snapshotId 放在错误层级，未产生回执，保留失败；正确 context.mokinaSnapshotId 独立真实 run succeeded，暂存及复制素材 SHA 等于 161-byte A。原生再次导出，正式二代导入/reader 指纹不变。
+
+中文/空格/子目录 201 字符文件产生 254 字符修订键，真实 Host 保存 accepted；原生退出/Finder 重开仍同 run/要求/章节，收集候选，再从候选 strategy 创建接续草稿，未自动发送。实际 IPC 五类键与此一条复杂路径完整 UI 流程分开记录，不扩大证明范围。Host 删除后故意保留本地旧缓存，renderer 重开不复活；跨 origin/失败 IPC/容量/旧缓存确认继续以定向 harness 证据列示。
+
+两次原生退出核对本实例记录 PID 全部停止，11 个其他既有桌面 PID 保留，全局 Codex config/auth 摘要不变。首次清单混入本任务临时 helper 已按归属纠正，原始清单保留；最终完整核对通过。原生 UI 暂时锁屏、Chrome connector/AX 绑定超时、ZIP 嵌套路径假定与二代 helper JS 解析失败均记录为工具/夹具失败，后续实际完成，不将失败计为通过。
+
+工程收口完成（本机 arm64 local preview）；用户专业签收未执行，未签名/未公证，不自动合并。全量历史 22 个失败与精确 pre/BASE 同名同签名，未宣称全量绿色。证据详见 final-local6/README、状态、原生 JSON、全量比较；最终文档提交的远端 CI 在 PR 正文另记，产品代码与包身份未变化。

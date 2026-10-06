@@ -1,4 +1,6 @@
 import { Fragment, memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import { MokinaRunEvidence } from './mokina/MokinaRunEvidence';
 import { useCharReveal } from "./chat/useCharReveal";
 import { ExecutionShell } from "./chat/ExecutionShell";
 import { buildTurnBlocks } from "../runtime/chat/build-turn-blocks";
@@ -1399,6 +1401,14 @@ function AssistantMessageImpl({
              * `runtime/chat/artifact-refs.ts`。
              */
             artifactRefs={messageArtifactRefs(message)}
+          />
+        ) : null}
+        {MOKINA_LOCAL_EDITION && projectId && message.runId ? (
+          <MokinaRunEvidence
+            projectId={projectId}
+            runId={message.runId}
+            runActive={streaming}
+            workspaceContext={workspaceContext}
           />
         ) : null}
         {showCompletionRow ? (

@@ -366,6 +366,7 @@ import {
 import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunityPrompt';
 import { CenteredLoader } from './Loading';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import { clearPendingMokinaSnapshotIfCurrent } from '../runtime/mokina/pending-context-snapshot';
 import {
   resolveMokinaProjectEntry,
   type MokinaFormalEntry,
@@ -8488,6 +8489,10 @@ export function ProjectView({
       return next;
     });
     if (!await persistClearSendRequest(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey)) setError(t('mokina.pendingSend.saveFailed'));
+    // N03: 迟到确认证明这一发实际已受理——它引用的快照绑定已被消费，交接清除
+    // （带 id 比对：只清它自己那一份，用户其间新准备的绑定不动）。
+    const reconciledSnapshotId = snapshot?.extras?.context?.mokinaSnapshotId;
+    if (reconciledSnapshotId) void clearPendingMokinaSnapshotIfCurrent(record.projectId, reconciledSnapshotId);
     scheduleConversationMessageRefresh(record.conversationId);
   }, [scheduleConversationMessageRefresh]);
   useEffect(() => {
@@ -8581,6 +8586,10 @@ export function ProjectView({
             ? pendingBlockedTask.taskAnalytics
           : buildInitialTaskAnalytics(randomUUID()));
       const runContext = meta?.context ?? retryTarget?.userMsg.runContext;
+      // N03: 本次输入绑定本次明确提交——发送受理后这份绑定即被消费交接，
+      // 之后的独立任务不会静默继承它（重试/回执恢复走固化在消息与
+      // send-request 记录里的原 id，不依赖 pending key）。
+      const submittedMokinaSnapshotId = runContext?.mokinaSnapshotId ?? null;
       const unclaimedHistoryBase = retryTarget
         ? retryTarget.priorMessages
         : baseMessages ?? messages;
@@ -8732,6 +8741,9 @@ export function ProjectView({
         onRunCreateAccepted: async () => {
           sendAdmissionRef.current.set(clientRequestId, 'accepted');
           if (!await persistClearSendRequest(project.id, runConversationId, clientRequestId, projectRunAuthorityKey)) setError(t('mokina.pendingSend.saveFailed'));
+          // 仅当 pending 仍是本次引用的那一份才交接清除；恢复草稿/排队期间
+          // 用户新冻结的绑定不能被子代发送静默清掉。
+          if (submittedMokinaSnapshotId) void clearPendingMokinaSnapshotIfCurrent(project.id, submittedMokinaSnapshotId);
           resolveAdmission(true);
         },
         onRunCreateFailed: async ({ definitive }: { definitive: boolean }) => {
@@ -14341,6 +14353,7 @@ export function ProjectView({
         <FileWorkspace
           projectId={project.id}
           projectName={currentProject.name}
+          projectDesignSystemId={projectDesignSystemId}
           viewerOnly={projectMutationReadOnly}
           materializationPending={projectCollab.materializationPending}
           filesAuthoritative={committedFilesGeneration > 0}

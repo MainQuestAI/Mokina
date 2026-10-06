@@ -306,3 +306,152 @@ describe('Mokina context store', () => {
     expect(submitted?.includedItemIds).toEqual(['S1']);
   });
 });
+
+describe('Mokina context store — design-system brand sources (N04)', () => {
+  let projectsRoot: string;
+
+  beforeEach(async () => {
+    projectsRoot = await mkdtemp(path.join(tmpdir(), 'mokina-brand-'));
+  });
+
+  afterEach(async () => {
+    await rm(projectsRoot, { force: true, recursive: true });
+  });
+
+  const BRAND_MD = '# 山茶品牌规范\n\n主色 #B3392E，辅色米白。';
+
+  function brandSource(brand: Record<string, { bytes: Buffer; displayName: string }>): MokinaContextStoreSource {
+    return {
+      readProjectFile: async () => ({ error: 'missing' }),
+      readDesignSystem: async (designSystemId) => {
+        const entry = brand[designSystemId];
+        return entry ? { bytes: entry.bytes, displayName: entry.displayName } : { error: 'missing' };
+      },
+    };
+  }
+
+  function brandSelection(designSystemId: string, digest: string) {
+    return {
+      itemId: 'B1',
+      mode: 'groups' as const,
+      textKind: 'brand-rule' as const,
+      sourceRef: { kind: 'design-system' as const, designSystemId },
+      expectedSourceDigest: digest,
+      groupIds: [],
+    };
+  }
+
+  it('freezes a brand kit as an immutable brand-rule item with content digest and locators', async () => {
+    const bytes = Buffer.from(BRAND_MD, 'utf8');
+    const prepared = await prepareMokinaContextSnapshot({
+      projectsRoot,
+      projectId: 'p1',
+      source: brandSource({ shancha: { bytes, displayName: '山茶咖啡' } }),
+      request: {
+        snapshotId: 'brand-snap-1',
+        selections: [brandSelection('shancha', sha256Hex(bytes))],
+        excluded: [],
+      },
+    });
+    if (!prepared.ok) throw new Error(prepared.message);
+    const item = prepared.snapshot.items[0]!;
+    expect(item).toMatchObject({
+      kind: 'brand-rule',
+      displayName: '山茶咖啡 · 品牌规则',
+      sourceDigest: sha256Hex(bytes),
+      sourceRef: { kind: 'design-system', designSystemId: 'shancha' },
+      locators: ['design-system:shancha'],
+    });
+    expect(item.kind === 'brand-rule' && item.textDigest).toBe(sha256Hex(bytes));
+    expect(item.limitations.join('')).toContain('冻结');
+    const readBack = await readMokinaContextSnapshot(projectsRoot, 'p1', 'brand-snap-1');
+    expect(readBack.ok && readBack.snapshot.items[0]!.kind).toBe('brand-rule');
+  });
+
+  it('rejects with SOURCE_CHANGED when the brand kit changed after preview', async () => {
+    const previewBytes = Buffer.from(BRAND_MD, 'utf8');
+    const prepared = await prepareMokinaContextSnapshot({
+      projectsRoot,
+      projectId: 'p1',
+      source: brandSource({ shancha: { bytes: Buffer.from('# 已更新的规范\n主色 #000000。', 'utf8'), displayName: '山茶咖啡' } }),
+      request: {
+        snapshotId: 'brand-snap-2',
+        selections: [brandSelection('shancha', sha256Hex(previewBytes))],
+        excluded: [],
+      },
+    });
+    expect(prepared.ok).toBe(false);
+    if (prepared.ok) return;
+    expect(prepared.code).toBe('MOKINA_SOURCE_CHANGED');
+  });
+
+  it('rejects a missing brand kit without freezing anything', async () => {
+    const bytes = Buffer.from(BRAND_MD, 'utf8');
+    const prepared = await prepareMokinaContextSnapshot({
+      projectsRoot,
+      projectId: 'p1',
+      source: brandSource({}),
+      request: {
+        snapshotId: 'brand-snap-3',
+        selections: [brandSelection('ghost', sha256Hex(bytes))],
+        excluded: [],
+      },
+    });
+    expect(prepared.ok).toBe(false);
+    if (prepared.ok) return;
+    expect(prepared.code).toBe('MOKINA_CONTEXT_NOT_SUPPORTED');
+    expect(prepared.message).toContain('ghost');
+  });
+
+  it('enforces the shared excerpt budget on brand-rule text', async () => {
+    const big = Buffer.from(`# 巨大规范\n\n${'规则 '.repeat(20_000)}`, 'utf8');
+    const prepared = await prepareMokinaContextSnapshot({
+      projectsRoot,
+      projectId: 'p1',
+      source: brandSource({ huge: { bytes: big, displayName: '巨型品牌' } }),
+      request: {
+        snapshotId: 'brand-snap-4',
+        selections: [brandSelection('huge', sha256Hex(big))],
+        excluded: [],
+      },
+    });
+    expect(prepared.ok).toBe(false);
+    if (prepared.ok) return;
+    expect(prepared.code).toBe('MOKINA_CONTEXT_LIMIT');
+  });
+});
+
+describe('Mokina context store — design-system input guards (review)', () => {
+  it('rejects a design-system selection in a non-brand-rule shape instead of silently freezing', async () => {
+    const projectsRoot = await mkdtemp(path.join(tmpdir(), 'mokina-brand-guard-'));
+    try {
+      const bytes = Buffer.from('# 规范\n', 'utf8');
+      const source: MokinaContextStoreSource = {
+        readProjectFile: async () => ({ error: 'missing' }),
+        readDesignSystem: async () => ({ bytes, displayName: '山茶' }),
+      };
+      const prepared = await prepareMokinaContextSnapshot({
+        projectsRoot,
+        projectId: 'p1',
+        source,
+        request: {
+          snapshotId: 'brand-guard-1',
+          selections: [{
+            itemId: 'B1',
+            mode: 'asset',
+            sourceRef: { kind: 'design-system', designSystemId: 'shancha' },
+            expectedSourceDigest: sha256Hex(bytes),
+            role: 'logo',
+            usageNote: '',
+          } as never],
+          excluded: [],
+        },
+      });
+      expect(prepared.ok).toBe(false);
+      if (prepared.ok) return;
+      expect(prepared.code).toBe('MOKINA_CONTEXT_NOT_SUPPORTED');
+    } finally {
+      await rm(projectsRoot, { force: true, recursive: true });
+    }
+  });
+});

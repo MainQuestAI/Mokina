@@ -910,6 +910,11 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
     // next `sendComposedTurn` (then cleared). An explicit meta.entryFrom always
     // wins over this pending value.
     const pendingEntryFromRef = useRef<ChatAnalyticsEntryFrom | null>(null);
+    // N03: a restored (receipt/queue) draft keeps the ORIGINAL request's
+    // snapshot binding instead of silently re-binding whatever the project's
+    // pending key happens to hold now. Cleared with the rest of the composer
+    // state once the restored turn is actually sent.
+    const restoredMokinaSnapshotRef = useRef<string | null>(null);
     const petEnabled = Boolean(onAdoptPet && onTogglePet);
     const [recentDirs, setRecentDirs] = useState<string[]>([]);
     useEffect(() => {
@@ -1464,6 +1469,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
           // since queueing) are skipped rather than crashing. The applied
           // plugin is restored from its full snapshot, so it needs no lookup.
           const ctx = meta?.context;
+          restoredMokinaSnapshotRef.current = ctx?.mokinaSnapshotId ?? null;
           // 队列这条路径是**一次性**解析:点「编辑」时懒加载的列表早就回来了,
           // 对不上就是真的没了。刷新那条路径首屏列表还是空的,处理方式不同 ——
           // 见 `pendingRestoredContextRef`。
@@ -1547,6 +1553,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
       setStagedMcpServers([]);
       setStagedConnectors([]);
       setStagedWorkspaceContexts(linkedWorkspaceContexts);
+      restoredMokinaSnapshotRef.current = null;
       setWorkspaceLinkedDirAdds(nextWorkspaceLinkedDirAdds);
       if (
         promotedWorkspaceContextDir &&
@@ -1586,9 +1593,14 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
         ...(connectorIds.length > 0 ? { connectorIds } : {}),
         ...(workspaceItems.length > 0 ? { workspaceItems } : {}),
       };
-      // T07: the material panel freezes a context snapshot; the next send of
-      // this project references it so the run receives the frozen excerpts.
-      const context = withPendingMokinaSnapshot(baseContext, projectId);
+      // T07/N03: the material panel freezes a context snapshot; the next send of
+      // this project references it so the run receives the frozen excerpts. A
+      // restored draft keeps its original binding (see restoredMokinaSnapshotRef)
+      // instead of silently re-binding the project's current pending snapshot.
+      const restoredMokinaSnapshotId = restoredMokinaSnapshotRef.current;
+      const context = restoredMokinaSnapshotId
+        ? { ...baseContext, mokinaSnapshotId: restoredMokinaSnapshotId }
+        : withPendingMokinaSnapshot(baseContext, projectId);
       const meta: ChatSendMeta = {
         ...(skillIds.length > 0 ? { skillIds } : {}),
         ...(activeAppliedPlugin

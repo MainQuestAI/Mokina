@@ -9151,6 +9151,7 @@ export async function startServer({
     projectPreviewScopes,
   });
   registerProjectFileRoutes(app, {
+    mokinaBrandDesignSystems: { listAllDesignSystems, readDesignSystemWorkspaceTextFile },
     db,
     http: httpDeps,
     paths: pathDeps,

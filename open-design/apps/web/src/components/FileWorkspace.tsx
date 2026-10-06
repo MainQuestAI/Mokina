@@ -212,6 +212,8 @@ interface Props {
   projectId: string;
   projectKind: TrackingProjectKind;
   projectName?: string;
+  /** N04: brand kit bound to the project (preselects the panel's brand source). */
+  projectDesignSystemId?: string | null;
   // Basename of the project's chosen working directory (e.g. "openclaw").
   // Threaded to DesignFilesPanel as the breadcrumb root label. Undefined for
   // default-storage projects.
@@ -1461,6 +1463,7 @@ export function FileWorkspace({
   projectId,
   projectKind,
   projectName,
+  projectDesignSystemId,
   rootDirName,
   reloading,
   resolvedDir,
@@ -4415,7 +4418,7 @@ export function FileWorkspace({
       {!viewerOnly && !designSystemProject && !initialMaterializationPending ? (
         <>
           <MokinaMaterialPicker projectId={projectId} projectName={projectName || '市场工作'} files={files} />
-          <MokinaContextPanel projectId={projectId} files={files} />
+          <MokinaContextPanel projectId={projectId} files={files} projectDesignSystemId={projectDesignSystemId ?? null} />
         </>
       ) : null}
       <div className="ws-body">

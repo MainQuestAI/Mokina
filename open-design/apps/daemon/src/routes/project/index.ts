@@ -93,6 +93,7 @@ import {
   deleteUserDesignSystem,
   linkUserDesignSystemProject,
   listDesignSystems,
+  readDesignSystem,
   propagateWorkspaceProjectRename,
   resolveWorkspaceProjectDesignSystemRoot,
   type DesignSystemSummary,
@@ -5805,6 +5806,24 @@ export function registerProjectArtifactRoutes(app: Express, ctx: RegisterProject
 export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' | 'paths' | 'uploads' | 'node' | 'projectStore' | 'projectFiles' | 'documents' | 'artifacts' | 'projectPreviewScopes'> {
   verifyWorkspaceRequestAuthority?: VerifyWorkspaceRequestAuthority;
   authorizeProjectRequest?: AuthorizeProjectRequest;
+  /**
+   * N04: brand-kit reads for Mokina context snapshots. Same read order as the
+   * design-system detail route (workspace project mirror first, then
+   * canonical roots). Optional: callers that never freeze a brand source can
+   * omit it.
+   */
+  mokinaBrandDesignSystems?: {
+    listAllDesignSystems: (options?: {
+      workspaceId?: string | null;
+      workspaceMemberId?: string | null;
+      exactTeam?: boolean;
+    }) => Promise<Array<{ id: string; title?: string | null }>>;
+    readDesignSystemWorkspaceTextFile: (
+      dbHandle: unknown,
+      summary: unknown,
+      filePath: string,
+    ) => Promise<string | null>;
+  };
   /** Startup-hydrated O(1) quarantine lookup for stale Team mirrors. */
   isProjectRevoked?: (projectId: string) => boolean;
   /** Durable first-open placeholder stamp lookup. */
@@ -5812,6 +5831,7 @@ export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' |
 }
 
 export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFileRoutesDeps) {
+  const { listAllDesignSystems, readDesignSystemWorkspaceTextFile } = ctx.mokinaBrandDesignSystems ?? {};
   const { db } = ctx;
   const { sendApiError, sendMulterError } = ctx.http;
   // The design-token suggestion route reads the design-system roots to resolve
@@ -7293,6 +7313,54 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
             return { bytes: file.buffer };
           } catch (error: any) {
             return { error: error?.code === 'ENOENT' ? 'missing' : 'unavailable' };
+          }
+        },
+        // N04: brand-kit sources resolve with the same three-step fallback the
+        // design-token suggestions use (built-in root -> user root -> user:
+        // prefix). The frozen bytes are the brand's DESIGN.md, so a later
+        // brand-kit update never alters an already-frozen snapshot.
+        readDesignSystem: async (designSystemId) => {
+          try {
+            // N04 review(M3): 与品牌详情同一读源——工作区项目镜像（编辑期
+            // 真身）优先，其次 canonical 根三段回退。面板摘要在详情接口取，
+            // 两侧一致才不会必然 SOURCE_CHANGED。
+            const workspaceId = (req.header('x-od-workspace-id') ?? '').trim() || null;
+            const workspaceMemberId = (req.header('x-od-workspace-member-id') ?? '').trim() || null;
+            if (workspaceId && listAllDesignSystems && readDesignSystemWorkspaceTextFile) {
+              try {
+                const systems = await listAllDesignSystems({ workspaceId, workspaceMemberId });
+                const summary = systems.find((entry) => entry.id === designSystemId);
+                if (summary) {
+                  const mirror = await readDesignSystemWorkspaceTextFile(db, summary, 'DESIGN.md');
+                  if (mirror != null) {
+                    return { bytes: Buffer.from(mirror, 'utf8'), displayName: summary.title ?? designSystemId };
+                  }
+                }
+              } catch {
+                // 镜像不可用时退回 canonical 根。
+              }
+            }
+            const candidates: Array<{ root: string; options: { idPrefix?: string } }> = [
+              { root: DESIGN_SYSTEMS_DIR, options: {} },
+              { root: USER_DESIGN_SYSTEMS_DIR, options: {} },
+              { root: USER_DESIGN_SYSTEMS_DIR, options: { idPrefix: 'user:' } },
+            ];
+            for (const candidate of candidates) {
+              const body = await readDesignSystem(candidate.root, designSystemId, candidate.options);
+              if (body == null) continue;
+              let displayName = designSystemId;
+              try {
+                const summaries = await listDesignSystems(candidate.root);
+                const found = summaries.find((summary) => summary.id === designSystemId);
+                if (found?.title) displayName = found.title;
+              } catch {
+                // 名称只是展示层；读不到就退回 id。
+              }
+              return { bytes: Buffer.from(body, 'utf8'), displayName };
+            }
+            return { error: 'missing' };
+          } catch {
+            return { error: 'unavailable' };
           }
         },
       };

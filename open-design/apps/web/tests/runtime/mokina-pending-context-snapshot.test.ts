@@ -70,3 +70,33 @@ describe('pending mokina context snapshot', () => {
     expect(withPendingMokinaSnapshot({ skillIds: ['s1'] }, 'p2')).toEqual({ skillIds: ['s1'] });
   });
 });
+
+describe('clearPendingMokinaSnapshotIfCurrent (N03 review M1/M2)', () => {
+  it('clears only while the pending record is still the referenced snapshot', async () => {
+    const { writePendingMokinaSnapshot, readPendingMokinaSnapshot, clearPendingMokinaSnapshotIfCurrent } = await import('../../src/runtime/mokina/pending-context-snapshot');
+    await writePendingMokinaSnapshot({
+      snapshotId: 'snap-current', projectId: 'p1', itemCount: 1, charCount: 1,
+      frozenAt: 'now', itemLabels: [], excluded: [],
+    });
+    // Same id -> consumed.
+    expect(await clearPendingMokinaSnapshotIfCurrent('p1', 'snap-current')).toBe(true);
+    expect(readPendingMokinaSnapshot('p1')).toBeNull();
+  });
+
+  it('keeps a newer freeze made after the send was queued', async () => {
+    const { writePendingMokinaSnapshot, readPendingMokinaSnapshot, clearPendingMokinaSnapshotIfCurrent } = await import('../../src/runtime/mokina/pending-context-snapshot');
+    await writePendingMokinaSnapshot({
+      snapshotId: 'snap-newer', projectId: 'p1', itemCount: 1, charCount: 1,
+      frozenAt: 'now', itemLabels: [], excluded: [],
+    });
+    // A send referencing the OLD snapshot must not clear the NEW binding.
+    expect(await clearPendingMokinaSnapshotIfCurrent('p1', 'snap-old')).toBe(false);
+    expect(readPendingMokinaSnapshot('p1')?.snapshotId).toBe('snap-newer');
+  });
+
+  it('no-ops when nothing is pending', async () => {
+    const { clearPendingMokinaSnapshotIfCurrent } = await import('../../src/runtime/mokina/pending-context-snapshot');
+    expect(await clearPendingMokinaSnapshotIfCurrent('p-missing', 'snap-x')).toBe(false);
+    expect(await clearPendingMokinaSnapshotIfCurrent('p-missing', null)).toBe(false);
+  });
+});

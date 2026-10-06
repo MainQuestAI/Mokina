@@ -1,6 +1,6 @@
 # PR4 修复验收矩阵
 
-R1–R7 修复、定向回归、远端 CI 及同一 `0.0.2-local.5` 安装包的工程验收通过，工程收口完成。用户营销专业签收未执行；PR 未合并。全量套件保留的 BASE 失败及两个时序疑点另列，没有将全量套件表述为绿色。
+上轮 R1–R7 的 local.5 成功路径与证据保留为历史结果。2026-10-06 复审新增 RR1–RR5，本轮工程收口重新置为未完成，需新候选 local.6 通过全部复验。用户营销专业签收未执行；PR 未合并。全量套件保留的 BASE 失败及两个时序疑点另列，没有将全量套件表述为绿色。
 
 输入 HEAD `7135b52fe5c03537fbc000ec0686df01692a26f4`；精确 BASE `df4a0b2699cd2b37df2099b38da8fe8375d14b41`；最终产品代码 `033c57dfe08b1ca42fa8a883bfde522bd3326ed1`。日期：2026-10-05。[候选 manifest](evidence/final-local5/artifact-manifest.json) · [工程状态](evidence/final-local5/acceptance-status.json)。后续仅文档提交不改变本候选包。
 

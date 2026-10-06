@@ -1,5 +1,10 @@
 import type http from 'node:http';
 import { randomUUID } from 'node:crypto';
+import { spawn } from 'node:child_process';
+import { mkdtemp, rm, writeFile as writeLocalFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { startServer } from '../src/server.js';
@@ -32,7 +37,7 @@ describe('mokina recovery recovery routes', () => {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ id, name: '恢复包测试项目' }),
     });
-    expect(response.status).toBe(200);
+    expect(response.status, await response.clone().text()).toBe(200);
     projectsToClean.push(id);
     return id;
   }
@@ -43,7 +48,7 @@ describe('mokina recovery recovery routes', () => {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ name, content }),
     });
-    expect(response.status).toBe(200);
+    expect(response.status, await response.clone().text()).toBe(200);
   }
 
   async function createVersion(projectId: string, name: string): Promise<void> {
@@ -152,5 +157,46 @@ describe('mokina recovery recovery routes', () => {
 
     const unknownProject = await exportRecovery('no-such-project', randomUUID());
     expect([403, 404]).toContain(unknownProject.status);
+  });
+
+  it('RR1 refuses unsafe targets through the actual HTTP import endpoint', async () => {
+    const source = await createProject(); await writeFile(source, 'plan.html', 'boundary');
+    const archive = Buffer.from(await (await exportRecovery(source, randomUUID())).arrayBuffer());
+    for (const targetProjectId of ['../sibling', '.', '..', '/absolute', 'a\\b', 'x'.repeat(129)]) {
+      const result = await importRecovery(archive, { operationId: randomUUID(), targetProjectId });
+      expect(result.status).toBe(400); expect(result.body?.error?.code).toBe('BAD_REQUEST');
+    }
+    expect(await (await fetch(`${baseUrl}/api/projects/${source}/files/plan.html`)).text()).toContain('boundary');
+  });
+
+  it('RR2 overlapping HTTP retries register one intact project and refuse another owner', async () => {
+    const source = await createProject(); await writeFile(source, 'plan.html', 'overlap'); await createVersion(source, 'plan.html');
+    const archive = Buffer.from(await (await exportRecovery(source, randomUUID())).arrayBuffer());
+    const targetProjectId = `mokina-overlap-${randomUUID()}`; projectsToClean.push(targetProjectId);
+    const operationId = randomUUID();
+    const results = await Promise.all(Array.from({ length: 4 }, () => importRecovery(archive, { operationId, targetProjectId })));
+    expect(results.map(result => result.status)).toEqual([200, 200, 200, 200]);
+    expect(results.every(result => result.body.projectId === targetProjectId)).toBe(true);
+    expect((await importRecovery(archive, { operationId: randomUUID(), targetProjectId })).status).toBe(409);
+    expect(await (await fetch(`${baseUrl}/api/projects/${targetProjectId}/files/plan.html`)).text()).toContain('overlap');
+    const versions = await (await fetch(`${baseUrl}/api/projects/${targetProjectId}/files/plan.html/versions`)).json() as { versions: unknown[] };
+    const original = await (await fetch(`${baseUrl}/api/projects/${source}/files/plan.html/versions`)).json() as { versions: unknown[] };
+    expect(versions.versions).toHaveLength(original.versions.length);
+  });
+
+  it('RR1 actual CLI rejects an unsafe target through the daemon', async () => {
+    const source = await createProject(); await writeFile(source, 'plan.html', 'cli boundary');
+    const archive = Buffer.from(await (await exportRecovery(source, randomUUID())).arrayBuffer());
+    const temporary = await mkdtemp(join(tmpdir(), 'mokina-rr-cli-'));
+    try {
+      const file = join(temporary, 'recovery.zip'); await writeLocalFile(file, archive);
+      const result = await new Promise<{ code: number | null; output: string }>((resolve, reject) => {
+        const child = spawn(process.execPath, ['--import', 'tsx', fileURLToPath(new URL('../src/cli.ts', import.meta.url)),
+          'mokina', 'recovery', 'import', '--file', file, '--target-project', '../sibling', '--operation-id', randomUUID(), '--daemon-url', baseUrl, '--json']);
+        let output = ''; child.stdout.on('data', chunk => { output += chunk; }); child.stderr.on('data', chunk => { output += chunk; });
+        child.on('error', reject); child.on('close', code => resolve({ code, output }));
+      });
+      expect(result.code).not.toBe(0); expect(result.output).toContain('targetProjectId');
+    } finally { await rm(temporary, { recursive: true, force: true }); }
   });
 });

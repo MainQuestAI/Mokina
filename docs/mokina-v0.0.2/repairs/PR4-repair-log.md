@@ -111,3 +111,15 @@ Finder 启动 local.4 后，从可见新建项目入口和 macOS 文件选择器
 安装包预捆绑 CLI 实际导出完整项目、导入新身份，正式 reader fingerprint 一致。删除已备份的合成源项目后，源返回 404、目标 reader 200，真实 run `f030c6a6-4476-4506-832f-ac384f46748a` succeeded 并落盘 HTML 和相同 A；再次导出、导入第二代目标仍正式可读。同 operation/target/archive 重试返回原项目。原生 Cmd Q 停止本实例全部记录 PID 和自己的 daemon，既有 Open Design 四 PID 存活；Finder 重开后未发送草稿一致、恢复 reader 和版本 200、Codex 全局配置摘要相同。
 
 产品 SHA CI [37317607651](https://github.com/MainQuestAI/Mokina/actions/runs/37317607651) 成功，含 13 项真实 daemon 浏览器回归。Web 在 a51be059 全量（最终未改 Web）12800 pass、8 BASE fail、1 expected failure、11 skipped；daemon 全量保留的 14 BASE 与两个时序疑点如前述。新关联回归通过，不将全量套件写成绿色。工程收口完成，用户专业签收未执行。逐项证据见 [矩阵](PR4-acceptance-matrix.md) 与 [final-local5](evidence/final-local5/README.md)。
+
+
+## 2026-10-06 复审 A：RR1 / RR2
+
+本轮输入 HEAD a167de9；精确 BASE df4a0b2。原 local.5 证据保留；RR1–RR5 及新候选验收完成前，工程收口状态为未完成。
+
+- 入口：recovery-package 服务函数；HTTP 与实际 CLI 共用服务边界。
+- 原失败：12 个红测，非法目标未拒绝、无归属目录和链接被写入、重叠请求注册冲突后删除成功文件、注册中断后文件丢失。
+- 修复：isSafeId/projectDir 前置；按规范化根与目标串行提交；独占暂存和原子提交；失败只清暂存。已提交未注册目录保留摘要、归属及文件清单，同身份复验后补注册。
+- 修复后：daemon 四文件 44 项通过，包含 HTTP 重叠请求、真实 CLI 非法目标、生产 reader 及暂存写入失败；daemon typecheck 通过。
+- 夹具纠正：新增 HTTP 版本断言改为与源项目一致（上传已有自动版本）；CLI 临时 ZIP 写入使用 writeLocalFile，避免与 HTTP writeFile helper 同名。首次失败保留，不计为工程通过。
+- 证据：evidence/rereview/a-red.txt、a-green.txt、a-types.txt。类型为服务 / HTTP / 实际 CLI 子进程；尚不代表新安装包验收。

@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import JSZip from 'jszip';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   buildProjectRecoveryPackage,
@@ -64,7 +64,92 @@ describe('mokina recovery package', () => {
   });
 
   afterEach(async () => {
+    vi.restoreAllMocks();
     await rm(root, { force: true, recursive: true });
+  });
+
+  it.each(['../sentinel', '.', '..', 'sub\\file', 'x'.repeat(129), 'absolute'])('RR1 refuses unsafe target %s before consulting the registry', async target => {
+    const managed = path.join(root, 'managed');
+    const sentinel = path.join(root, 'sentinel');
+    await mkdir(managed); await mkdir(sentinel);
+    await writeFile(path.join(sentinel, 'keep.txt'), 'unchanged');
+    const built = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p1', projectName: 'P', exportId: 'boundary' });
+    const readProject = vi.fn(() => null); const registerProject = vi.fn();
+    const result = await importProjectRecoveryPackage({ projectsRoot: managed, archive: built.buffer, operationId: 'boundary',
+      targetProjectId: target === 'absolute' ? sentinel : target, readProject, registerProject });
+    expect(result).toMatchObject({ ok: false, status: 400, code: 'BAD_REQUEST' });
+    expect(readProject).not.toHaveBeenCalled(); expect(registerProject).not.toHaveBeenCalled();
+    expect(await readFile(path.join(sentinel, 'keep.txt'), 'utf8')).toBe('unchanged');
+    expect(await readdir(managed)).toEqual([]);
+  });
+
+  it.each(['directory', 'file', 'symlink'])('RR1 preserves an unowned target %s', async kind => {
+    const target = path.join(root, 'occupied');
+    if (kind === 'directory') { await mkdir(target); await writeFile(path.join(target, 'keep.txt'), 'unchanged'); }
+    if (kind === 'file') await writeFile(target, 'unchanged');
+    if (kind === 'symlink') await symlink(path.join(root, 'p1'), target);
+    const built = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p1', projectName: 'P', exportId: 'occupied' });
+    const result = await importProjectRecoveryPackage({ projectsRoot: root, archive: built.buffer, operationId: 'occupied', targetProjectId: 'occupied', ...await registered() });
+    expect(result).toMatchObject({ ok: false, status: 409, code: 'MOKINA_OPERATION_CONFLICT' });
+    expect((await lstat(target)).isSymbolicLink()).toBe(kind === 'symlink');
+    if (kind === 'file') expect(await readFile(target, 'utf8')).toBe('unchanged');
+    if (kind === 'directory') expect(await readFile(path.join(target, 'keep.txt'), 'utf8')).toBe('unchanged');
+    expect(await readMokinaContextSnapshot(root, 'p1', 'snap-1')).toMatchObject({ ok: true });
+  });
+
+  it.each([false, true])('RR2 serializes overlapping imports (different owner: %s) without deleting the winner', async differentOwner => {
+    const built = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p1', projectName: 'P', exportId: 'overlap' });
+    let release!: () => void; let entered!: () => void;
+    const blocked = new Promise<void>(resolve => { release = resolve; });
+    const reached = new Promise<void>(resolve => { entered = resolve; });
+    const load = JSZip.loadAsync.bind(JSZip);
+    vi.spyOn(JSZip, 'loadAsync').mockImplementationOnce(async (...args) => { entered(); await blocked; return load(...args); });
+    const rows = new Map<string, { metadata: Record<string, unknown> }>();
+    const registerProject = vi.fn((row: { id: string; metadata: Record<string, unknown> }) => {
+      if (rows.has(row.id)) throw new Error('duplicate registration'); rows.set(row.id, row);
+    });
+    const input = { projectsRoot: root, archive: built.buffer, operationId: 'overlap', targetProjectId: 'p2', readProject: (id: string) => rows.get(id) ?? null, registerProject };
+    const first = importProjectRecoveryPackage(input); await reached;
+    const second = importProjectRecoveryPackage({ ...input, operationId: differentOwner ? 'another' : input.operationId });
+    release(); const results = await Promise.all([first, second]);
+    expect(results[0]).toMatchObject({ ok: true, projectId: 'p2' });
+    expect(results[1]).toMatchObject(differentOwner ? { ok: false, status: 409 } : { ok: true, projectId: 'p2' });
+    expect(registerProject).toHaveBeenCalledTimes(1);
+    expect(await readFile(path.join(root, 'p2', 'plan.html'), 'utf8')).toBe(await readFile(path.join(root, 'p1', 'plan.html'), 'utf8'));
+    expect(await readMokinaContextSnapshot(root, 'p2', 'snap-1')).toMatchObject({ ok: true });
+    expect(await listProjectFileVersions(root, 'p2', 'plan.html')).toHaveLength(2);
+  });
+
+  it('RR2 preserves a committed directory after registration failure and recovers it with the same identity', async () => {
+    const built = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p1', projectName: 'P', exportId: 'commit-gap' });
+    let row: { metadata: Record<string, unknown> } | null = null;
+    const registerProject = vi.fn((next: { metadata: Record<string, unknown> }) => { row = next; });
+    registerProject.mockImplementationOnce(() => { throw new Error('registration interrupted'); });
+    const input = { projectsRoot: root, archive: built.buffer, operationId: 'commit-gap', targetProjectId: 'p2', readProject: () => row, registerProject };
+    expect(await importProjectRecoveryPackage(input)).toMatchObject({ ok: false });
+    expect(row).toBeNull();
+    const before = await readFile(path.join(root, 'p2', 'plan.html'));
+    expect(await importProjectRecoveryPackage({ ...input, operationId: 'intruder' })).toMatchObject({ ok: false, status: 409 });
+    expect(await importProjectRecoveryPackage(input)).toMatchObject({ ok: true, projectId: 'p2' });
+    expect(await readFile(path.join(root, 'p2', 'plan.html'))).toEqual(before);
+    expect(await readMokinaContextSnapshot(root, 'p2', 'snap-1')).toMatchObject({ ok: true });
+    expect(registerProject).toHaveBeenCalledTimes(2);
+  });
+
+  it('RR2 does not register a partially staged package after a file/directory collision', async () => {
+    const built = await buildProjectRecoveryPackage({ projectsRoot: root, projectId: 'p1', projectName: 'P', exportId: 'stage-failure' });
+    const zip = await JSZip.loadAsync(built.buffer);
+    const manifest = JSON.parse(await zip.file('mokina-recovery.json')!.async('text'));
+    for (const relative of ['blocked', 'blocked/file.txt']) {
+      const bytes = Buffer.from(relative); zip.file(relative, bytes);
+      manifest.files.push({ path: relative, kind: 'original', byteLength: bytes.length, sha256: sha256(bytes) });
+    }
+    zip.file('mokina-recovery.json', JSON.stringify(manifest));
+    const registerProject = vi.fn();
+    const result = await importProjectRecoveryPackage({ projectsRoot: root, archive: await zip.generateAsync({ type: 'nodebuffer' }),
+      operationId: 'stage-failure', targetProjectId: 'p2', readProject: () => null, registerProject });
+    expect(result).toMatchObject({ ok: false }); expect(registerProject).not.toHaveBeenCalled();
+    expect(await readdir(root)).toEqual(['p1']);
   });
 
   it('reads imported snapshots with the production reader after source deletion and re-exports them', async () => {

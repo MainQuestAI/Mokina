@@ -1,5 +1,5 @@
-import { createHash } from 'node:crypto';
-import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
+import { createHash, randomUUID } from 'node:crypto';
+import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rename, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import JSZip from 'jszip';
@@ -16,6 +16,7 @@ import {
 
 import { unwrapMokinaSnapshot, validateMokinaSnapshot } from './context-store.js';
 import { IGNORED_PROJECT_DIR_NAMES } from '../project-ignored-dirs.js';
+import { isSafeId, projectDir } from '../projects.js';
 
 /**
  * Mokina project recovery package (T14): export a project's data (originals,
@@ -34,6 +35,16 @@ import { IGNORED_PROJECT_DIR_NAMES } from '../project-ignored-dirs.js';
 const MANAGED_DIR_NAMES = new Set(['.file-versions', '.mokina']);
 const VERSION_ID_RE = /^[A-Za-z0-9_-]+$/u;
 const SHA256_RE = /^[a-f0-9]{64}$/u;
+const IMPORT_COMMIT_FILE = '.mokina-recovery-import.json';
+const importTails = new Map<string, Promise<ImportRecoveryResult>>();
+type ImportCommit = {
+  schema: 'mokina.recovery-import-commit.v1';
+  operationId: string;
+  targetProjectId: string;
+  archiveDigest: string;
+  ownerToken: string;
+  files: Array<{ path: string; sha256: string; byteLength: number }>;
+};
 
 export const MOKINA_RECOVERY_VERSION_ROOT = '.file-versions';
 export const MOKINA_RECOVERY_CONTEXT_ROOT = '.mokina';
@@ -62,6 +73,7 @@ async function collectProjectFiles(projectRoot: string): Promise<CollectedFile[]
     const absoluteDir = path.join(projectRoot, relativeDir);
     const entries = await readdir(absoluteDir, { withFileTypes: true });
     for (const entry of entries) {
+      if (relativeDir === '' && entry.name === IMPORT_COMMIT_FILE) continue;
       const relative = relativeDir ? `${relativeDir}/${entry.name}` : entry.name;
       const absolute = path.join(projectRoot, relative);
       if (entry.isSymbolicLink()) continue;
@@ -389,7 +401,7 @@ async function writeFileAtomic(target: string, buffer: Buffer): Promise<void> {
   await rename(temporary, target);
 }
 
-export async function importProjectRecoveryPackage(input: {
+type RecoveryImportInput = {
   projectsRoot: string;
   archive: Buffer;
   operationId: string;
@@ -402,18 +414,74 @@ export async function importProjectRecoveryPackage(input: {
    */
   readProject: (projectId: string) => { metadata?: Record<string, unknown> | null } | null;
   registerProject: (row: { id: string; name: string; metadata: Record<string, unknown> }) => void;
-}): Promise<ImportRecoveryResult> {
-  if (!VERSION_ID_RE.test(input.operationId)) {
+};
+
+/** Validate before any registry or target access; serialize the entire import per managed target. */
+export async function importProjectRecoveryPackage(input: RecoveryImportInput): Promise<ImportRecoveryResult> {
+  if (!isSafeId(input.targetProjectId)) return fail(400, 'BAD_REQUEST', 'targetProjectId 不合法。');
+  if (!isSafeId(input.operationId) || !VERSION_ID_RE.test(input.operationId)) {
     return fail(400, 'BAD_REQUEST', 'operationId 不合法。');
   }
+  try {
+    await mkdir(input.projectsRoot, { recursive: true });
+    const projectsRoot = await realpath(input.projectsRoot);
+    const key = projectDir(projectsRoot, input.targetProjectId);
+    const previous = importTails.get(key) ?? Promise.resolve();
+    const task = previous.catch(() => undefined).then(() => importRecoveryIntoOwnedTarget({ ...input, projectsRoot }));
+    importTails.set(key, task);
+    try { return await task; }
+    finally { if (importTails.get(key) === task) importTails.delete(key); }
+  } catch (error) {
+    return fail(500, 'MOKINA_RECOVERY_IMPORT_FAILED', error instanceof Error ? error.message : String(error));
+  }
+}
+
+async function inspectTarget(target: string): Promise<Awaited<ReturnType<typeof lstat>> | null> {
+  try { return await lstat(target); }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null; throw error; }
+}
+
+async function readImportCommit(projectRoot: string): Promise<ImportCommit | null> {
+  try {
+    const target = path.join(projectRoot, IMPORT_COMMIT_FILE);
+    const info = await lstat(target);
+    if (!info.isFile() || info.isSymbolicLink()) return null;
+    const record = JSON.parse(await readFile(target, 'utf8')) as ImportCommit;
+    return record.schema === 'mokina.recovery-import-commit.v1' && typeof record.ownerToken === 'string'
+      && Array.isArray(record.files) ? record : null;
+  } catch { return null; }
+}
+
+async function verifyCommittedFiles(projectRoot: string, files: ImportCommit['files']): Promise<void> {
+  for (const file of files) {
+    if (!isSafeRecoveryPath(file.path) || !SHA256_RE.test(file.sha256)) throw new Error('已提交恢复内容清单不合法。');
+    let current = projectRoot;
+    for (const segment of file.path.split('/')) {
+      current = path.join(current, segment);
+      if ((await lstat(current)).isSymbolicLink()) throw new Error('已提交恢复内容含符号链接。');
+    }
+    const bytes = await readFile(current);
+    if (bytes.length !== file.byteLength || sha256(bytes) !== file.sha256) throw new Error('已提交恢复内容校验失败。');
+  }
+}
+
+async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promise<ImportRecoveryResult> {
+  const projectRoot = projectDir(input.projectsRoot, input.targetProjectId);
   const archiveDigest = sha256(input.archive);
+  const target = await inspectTarget(projectRoot);
   const existing = input.readProject(input.targetProjectId);
   if (existing != null) {
     const owner = existing.metadata?.mokinaOperationId;
-    if (owner === input.operationId && existing.metadata?.mokinaArchiveDigest === archiveDigest) {
+    if (owner === input.operationId && existing.metadata?.mokinaArchiveDigest === archiveDigest
+      && target?.isDirectory() && !target.isSymbolicLink()) {
       return { ok: true, projectId: input.targetProjectId, warnings: [], manifest: existing.metadata.mokinaRecoveryManifest as MokinaRecoveryManifest };
     }
     return fail(409, 'MOKINA_OPERATION_CONFLICT', '目标项目 ID 已被其他项目占用。');
+  }
+  const committed = target?.isDirectory() && !target.isSymbolicLink() ? await readImportCommit(projectRoot) : null;
+  if (target && (!committed || committed.operationId !== input.operationId
+    || committed.targetProjectId !== input.targetProjectId || committed.archiveDigest !== archiveDigest)) {
+    return fail(409, 'MOKINA_OPERATION_CONFLICT', '目标目录不属于本次恢复操作。');
   }
 
   let zip: JSZip;
@@ -460,6 +528,7 @@ export async function importProjectRecoveryPackage(input: {
   const byPath = new Map(manifest.files.map((file) => [file.path, file]));
   const buffers = new Map<string, Buffer>();
   for (const file of manifest.files) {
+    if (file.path === IMPORT_COMMIT_FILE) return fail(400, 'BAD_REQUEST', '恢复包包含保留的操作记录。');
     const entry = zip.file(file.path);
     if (entry == null) {
       return fail(400, 'BAD_REQUEST', `恢复包清单与内容不符，缺少：${file.path}`);
@@ -521,18 +590,14 @@ export async function importProjectRecoveryPackage(input: {
 
   }
 
-  const projectRoot = path.join(input.projectsRoot, input.targetProjectId);
   const warnings: string[] = [];
+  let staging: string | undefined;
   try {
-    await mkdir(projectRoot, { recursive: true });
-    for (const [relativePath, buffer] of buffers) {
-      await writeFileAtomic(path.join(projectRoot, relativePath), buffer);
-    }
     // Rebuild the version store faithfully: same layout, id mapping preserved,
     // candidates stay candidates and never become current here.
     for (const [entryName, versions] of groupByEntry(manifest.versions)) {
       const key = createHash('sha256').update(entryName).digest('hex').slice(0, 24);
-      const versionRoot = path.join(projectRoot, MOKINA_RECOVERY_VERSION_ROOT, key);
+      const versionRoot = `${MOKINA_RECOVERY_VERSION_ROOT}/${key}`;
       const entries = versions.map((version) => ({
         id: version.originalVersionId,
         fileName: entryName,
@@ -552,10 +617,29 @@ export async function importProjectRecoveryPackage(input: {
         ...(version.baseOriginalVersionId ? { baseVersionId: version.baseOriginalVersionId } : {}),
       }));
       const current = versions.find((version) => version.current)?.originalVersionId ?? null;
-      await writeFileAtomic(
-        path.join(versionRoot, 'manifest.json'),
+      buffers.set(
+        `${versionRoot}/manifest.json`,
         Buffer.from(`${JSON.stringify({ schemaVersion: 2, fileName: entryName, entries, currentVersionId: current }, null, 2)}\n`, 'utf8'),
       );
+    }
+    const files = [...buffers].map(([relative, bytes]) => ({ path: relative, sha256: sha256(bytes), byteLength: bytes.length }));
+    if (committed) {
+      // A process may have committed the directory before SQLite registration.
+      // Recover only this exact operation, and verify every byte again.
+      if (JSON.stringify(committed.files) !== JSON.stringify(files)) throw new Error('恢复操作的已提交内容与归档不符。');
+      await verifyCommittedFiles(projectRoot, files);
+    } else {
+      staging = await mkdtemp(path.join(input.projectsRoot, '.mokina-recovery-stage-'));
+      for (const [relativePath, buffer] of buffers) await writeFileAtomic(path.join(staging, relativePath), buffer);
+      const marker: ImportCommit = { schema: 'mokina.recovery-import-commit.v1', operationId: input.operationId,
+        targetProjectId: input.targetProjectId, archiveDigest, ownerToken: randomUUID(), files };
+      await writeFileAtomic(path.join(staging, IMPORT_COMMIT_FILE), Buffer.from(JSON.stringify(marker)));
+      // Never rename onto an existing directory or follow a target symlink.
+      if (await inspectTarget(projectRoot) || input.readProject(input.targetProjectId)) {
+        return fail(409, 'MOKINA_OPERATION_CONFLICT', '提交前目标项目已被占用。');
+      }
+      await rename(staging, projectRoot);
+      staging = undefined;
     }
     const name = (input.projectName ?? manifest.sourceProject.name).trim() || manifest.sourceProject.name;
     input.registerProject({
@@ -564,8 +648,9 @@ export async function importProjectRecoveryPackage(input: {
       metadata: { mokinaArchiveDigest: archiveDigest, mokinaRecoveryManifest: manifest, mokinaOperationId: input.operationId, recoveredFrom: manifest.sourceProject.id, recoveredAt: new Date().toISOString() },
     });
   } catch (error) {
-    await rm(projectRoot, { force: true, recursive: true }).catch(() => undefined);
     return fail(500, 'MOKINA_RECOVERY_IMPORT_FAILED', error instanceof Error ? error.message : String(error));
+  } finally {
+    if (staging) await rm(staging, { force: true, recursive: true });
   }
   if (manifest.contexts.length === 0 && manifest.versions.length === 0) {
     warnings.push('恢复包不含版本或快照，仅恢复原件。');

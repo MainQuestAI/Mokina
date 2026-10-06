@@ -104,6 +104,14 @@ export type MokinaContextStoreSource = {
     fileName: string,
     versionId?: string,
   ) => Promise<{ bytes: Buffer } | { error: 'missing' | 'unavailable' }>;
+  /**
+   * N04: read a brand kit's rule document (its DESIGN.md bytes) for
+   * design-system snapshot sources. Required as soon as a selection
+   * references `sourceRef.kind: 'design-system'`.
+   */
+  readDesignSystem?: (
+    designSystemId: string,
+  ) => Promise<{ bytes: Buffer; displayName: string } | { error: 'missing' | 'unavailable' }>;
 };
 
 export type PrepareSnapshotInput = {
@@ -220,11 +228,65 @@ async function freezeItem(
     };
   }
 
+  if (selection.sourceRef.kind === 'design-system') {
+    // N04: 品牌套件源——冻结品牌规则文档（DESIGN.md）字节。品牌套件没有版本
+    // 号，按 user-note 的同一惯例用冻结时的真实内容摘要作为 sourceDigest；
+    // 套件后续更新不影响已冻结快照，预览后被改动则 SOURCE_CHANGED。
+    const { designSystemId } = selection.sourceRef;
+    if (!input.source?.readDesignSystem) {
+      return {
+        ok: false,
+        code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED,
+        message: '缺少品牌来源读取器，无法冻结该选择。',
+      };
+    }
+    const brand = await input.source.readDesignSystem(designSystemId);
+    if ('error' in brand) {
+      return {
+        ok: false,
+        code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED,
+        message: brand.error === 'missing'
+          ? `品牌来源不存在：${designSystemId}`
+          : `品牌来源暂不可读：${designSystemId}`,
+      };
+    }
+    const sourceDigest = sha256Hex(brand.bytes);
+    if (sourceDigest !== selection.expectedSourceDigest) {
+      return {
+        ok: false,
+        code: MOKINA_CONTEXT_ERROR_CODES.SOURCE_CHANGED,
+        message: '品牌规则在预览后已变化，请重新读取后再使用。',
+      };
+    }
+    const text = brand.bytes.toString('utf8');
+    if (text.trim().length === 0) {
+      return {
+        ok: false,
+        code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED,
+        message: `品牌来源没有可冻结的规则内容：${designSystemId}`,
+      };
+    }
+    return {
+      ok: true,
+      item: {
+        kind: 'brand-rule',
+        itemId: selection.itemId,
+        displayName: `${brand.displayName} · 品牌规则`,
+        sourceRef: { kind: 'design-system', designSystemId },
+        sourceDigest,
+        limitations: ['品牌规则以冻结时的品牌套件内容为准；原品牌套件后续更新不影响本快照。'],
+        locators: [`design-system:${designSystemId}`],
+        text,
+        textDigest: sha256Hex(Buffer.from(text, 'utf8')),
+      },
+    };
+  }
+
   if (selection.sourceRef.kind !== 'project-file') {
     return {
       ok: false,
       code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED,
-      message: '本版快照只支持项目文件与用户补充说明；设计系统品牌来源尚未接入。',
+      message: '本版快照只支持项目文件、品牌套件与用户补充说明。',
     };
   }
   const { fileName, versionId, versionState } = selection.sourceRef;

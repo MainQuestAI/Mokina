@@ -1,0 +1,45 @@
+.evidence {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--bg-panel, #f4f4f4);
+  color: var(--text, #222);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.evidence summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.items {
+  margin: 8px 0 0;
+  padding: 0 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.items li {
+  display: flex;
+  flex-direction: column;
+}
+
+.items small {
+  opacity: 0.75;
+}
+
+.limitations {
+  font-style: italic;
+}
+
+.excluded span {
+  text-decoration: line-through;
+  opacity: 0.8;
+}
+
+.error {
+  margin: 6px 0 0;
+  color: var(--danger, #b3392e);
+}

@@ -115,7 +115,8 @@ describe('MokinaContextPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: /Freeze as task snapshot/ }));
 
     await screen.findByText(/Added to the task snapshot/);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    // N04 adds a catalog read on mount; the freeze itself is exactly one POST.
+    expect(fetchMock.mock.calls.filter((call) => (call[1] as { method?: string } | undefined)?.method === 'POST')).toHaveLength(1);
     const pending = readPendingMokinaSnapshot('p1');
     expect(pending?.snapshotId).toBeTruthy();
     expect(pending?.itemCount).toBe(1);

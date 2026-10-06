@@ -10,6 +10,7 @@ import type {
 } from './comments';
 import type { ResearchOptions } from './research';
 import type { RunContextSelection } from './context.js';
+import type { MokinaContextDeliveryReceipt } from './mokina-context.js';
 import type { MediaExecutionPolicy, RunMediaTaskFailure } from './media.js';
 import type { AppliedPluginSnapshot } from '../plugins/apply.js';
 import type { McpAuthMode, McpServerConfig, McpTransport } from './mcp';
@@ -743,6 +744,11 @@ export interface ChatRunStatusResponse {
   terminalTrigger?: RunTerminalTrigger | null;
   /** Metadata-only terminal persistence and delivery state. */
   terminalLifecycle?: RunTerminalLifecycleStatus;
+  /**
+   * N03: delivery receipt for the Mokina context snapshot this run referenced
+   * (attached by the daemon on run reads; absent for runs without a snapshot).
+   */
+  mokinaContext?: MokinaContextDeliveryReceipt | null;
   childPid?: number | null;
   processGroupId?: number | null;
   childExited?: boolean;

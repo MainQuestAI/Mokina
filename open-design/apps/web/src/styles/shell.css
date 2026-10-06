@@ -2645,3 +2645,8 @@ a.avatar-item:visited {
 .mokina-material-picker textarea { box-sizing: border-box; width: 100%; min-height: 54px; resize: vertical; }
 .mokina-material-picker button { margin-top: 8px; padding: 6px 10px; border-radius: 6px; background: var(--accent); color: white; }
 .mokina-material-picker button:disabled { opacity: .5; cursor: default; }
+/* N04: brand-kit source row inside the 资料与背景 panel. */
+.mokina-context-panel__brand { display: grid; gap: 4px; margin: 8px 0; padding: 8px; border: 1px solid var(--border); border-radius: 7px; }
+.mokina-context-panel__brand label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mokina-context-panel__brand select { max-width: 260px; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-panel); color: inherit; }
+.mokina-context-panel__brand small { opacity: .75; line-height: 1.5; }

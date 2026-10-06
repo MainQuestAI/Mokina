@@ -1,11 +1,15 @@
 import { mirrorDurableRecord, removeDurableRecord } from '../persistence/mokina-recovery-store';
 
 /**
- * The frozen context snapshot the NEXT send of a project should reference
- * (T07). Written by the material panel after the snapshot API accepted the
- * selection, read by the composer when it assembles `meta.context`, and
- * mirrored into the durable desktop profile so a port change does not detach
- * the user's prepared material from the conversation.
+ * The frozen context snapshot the CURRENT send of a project references
+ * (T07; N03). Written by the material panel (and the Home create flow) after
+ * the snapshot API accepted the selection, read by the composer while it
+ * assembles `meta.context`, and mirrored into the durable desktop profile so
+ * a port change does not detach the user's prepared material from the
+ * conversation. N03 semantics: one explicit submit consumes the binding — the
+ * ProjectView clears this record once the send that referenced it is
+ * accepted, so the next independent task never silently inherits it
+ * (retries and receipt recovery carry the original id in their own records).
  */
 export type PendingMokinaContextSnapshot = {
   snapshotId: string;
@@ -20,6 +24,14 @@ export type PendingMokinaContextSnapshot = {
 };
 
 const KEY_PREFIX = 'mokina:context-snapshot:';
+
+/** Same-tab signal so mounted surfaces (the panel) refresh when a send consumes or a freeze replaces the binding. */
+export const PENDING_MOKINA_SNAPSHOT_CHANGED_EVENT = 'mokina:context-snapshot-changed';
+
+function notifyChanged(): void {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent(PENDING_MOKINA_SNAPSHOT_CHANGED_EVENT));
+}
 
 export function pendingMokinaSnapshotKey(projectId: string): string {
   return `${KEY_PREFIX}${projectId}`;
@@ -70,13 +82,14 @@ export async function writePendingMokinaSnapshot(value: PendingMokinaContextSnap
   const encoded = JSON.stringify(value);
   if (!await mirrorDurableRecord(key, encoded)) throw new Error('资料绑定未能安全保存，请重试。');
   window.localStorage.setItem(key, encoded);
+  notifyChanged();
 }
 
 export async function clearPendingMokinaSnapshot(projectId: string | null | undefined): Promise<boolean> {
   if (!projectId || typeof window === 'undefined') return false;
   const key = pendingMokinaSnapshotKey(projectId);
   if (!await removeDurableRecord(key)) return false;
-  try { window.localStorage.removeItem(key); return true; } catch { return false; }
+  try { window.localStorage.removeItem(key); notifyChanged(); return true; } catch { return false; }
 }
 
 /**

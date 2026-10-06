@@ -366,6 +366,7 @@ import {
 import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunityPrompt';
 import { CenteredLoader } from './Loading';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import { clearPendingMokinaSnapshot } from '../runtime/mokina/pending-context-snapshot';
 import {
   resolveMokinaProjectEntry,
   type MokinaFormalEntry,
@@ -8581,6 +8582,10 @@ export function ProjectView({
             ? pendingBlockedTask.taskAnalytics
           : buildInitialTaskAnalytics(randomUUID()));
       const runContext = meta?.context ?? retryTarget?.userMsg.runContext;
+      // N03: 本次输入绑定本次明确提交——发送受理后这份绑定即被消费交接，
+      // 之后的独立任务不会静默继承它（重试/回执恢复走固化在消息与
+      // send-request 记录里的原 id，不依赖 pending key）。
+      const submittedMokinaSnapshotId = runContext?.mokinaSnapshotId ?? null;
       const unclaimedHistoryBase = retryTarget
         ? retryTarget.priorMessages
         : baseMessages ?? messages;
@@ -8732,6 +8737,7 @@ export function ProjectView({
         onRunCreateAccepted: async () => {
           sendAdmissionRef.current.set(clientRequestId, 'accepted');
           if (!await persistClearSendRequest(project.id, runConversationId, clientRequestId, projectRunAuthorityKey)) setError(t('mokina.pendingSend.saveFailed'));
+          if (submittedMokinaSnapshotId) void clearPendingMokinaSnapshot(project.id);
           resolveAdmission(true);
         },
         onRunCreateFailed: async ({ definitive }: { definitive: boolean }) => {
@@ -14341,6 +14347,7 @@ export function ProjectView({
         <FileWorkspace
           projectId={project.id}
           projectName={currentProject.name}
+          projectDesignSystemId={projectDesignSystemId}
           viewerOnly={projectMutationReadOnly}
           materializationPending={projectCollab.materializationPending}
           filesAuthoritative={committedFilesGeneration > 0}

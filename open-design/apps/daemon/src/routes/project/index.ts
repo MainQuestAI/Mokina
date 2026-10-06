@@ -93,6 +93,7 @@ import {
   deleteUserDesignSystem,
   linkUserDesignSystemProject,
   listDesignSystems,
+  readDesignSystem,
   propagateWorkspaceProjectRename,
   resolveWorkspaceProjectDesignSystemRoot,
   type DesignSystemSummary,
@@ -7293,6 +7294,35 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
             return { bytes: file.buffer };
           } catch (error: any) {
             return { error: error?.code === 'ENOENT' ? 'missing' : 'unavailable' };
+          }
+        },
+        // N04: brand-kit sources resolve with the same three-step fallback the
+        // design-token suggestions use (built-in root -> user root -> user:
+        // prefix). The frozen bytes are the brand's DESIGN.md, so a later
+        // brand-kit update never alters an already-frozen snapshot.
+        readDesignSystem: async (designSystemId) => {
+          try {
+            const candidates: Array<{ root: string; options: { idPrefix?: string } }> = [
+              { root: DESIGN_SYSTEMS_DIR, options: {} },
+              { root: USER_DESIGN_SYSTEMS_DIR, options: {} },
+              { root: USER_DESIGN_SYSTEMS_DIR, options: { idPrefix: 'user:' } },
+            ];
+            for (const candidate of candidates) {
+              const body = await readDesignSystem(candidate.root, designSystemId, candidate.options);
+              if (body == null) continue;
+              let displayName = designSystemId;
+              try {
+                const summaries = await listDesignSystems(candidate.root);
+                const found = summaries.find((summary) => summary.id === designSystemId);
+                if (found?.title) displayName = found.title;
+              } catch {
+                // 名称只是展示层；读不到就退回 id。
+              }
+              return { bytes: Buffer.from(body, 'utf8'), displayName };
+            }
+            return { error: 'missing' };
+          } catch {
+            return { error: 'unavailable' };
           }
         },
       };

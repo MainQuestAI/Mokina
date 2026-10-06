@@ -2,6 +2,20 @@ import type { ProjectMaterialExtraction } from '@open-design/contracts';
 
 /** Pure grouping/rendering helpers shared by the material picker surfaces. */
 
+// File classes Mokina context selection understands. Shared by the
+// in-project 资料与背景 panel and the Home attachment band so both
+// surfaces agree on what can become 资料摘录 vs 素材.
+export const MOKINA_ASSET_FILE_PATTERN = /\.(?:png|jpe?g|webp|gif|svg)$/i;
+export const MOKINA_MATERIAL_FILE_PATTERN = /\.(?:txt|md|csv|pdf|docx|xlsx|pptx)$/i;
+
+export function isMokinaMaterialFileName(name: string): boolean {
+  return MOKINA_MATERIAL_FILE_PATTERN.test(name);
+}
+
+export function isMokinaAssetFileName(name: string): boolean {
+  return MOKINA_ASSET_FILE_PATTERN.test(name);
+}
+
 export type MokinaSelectionGroup = {
   key: string;
   name: string;

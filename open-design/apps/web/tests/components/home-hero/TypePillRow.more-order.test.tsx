@@ -48,7 +48,7 @@ function renderRow() {
 
 describe('TypePillRow — 更多 (OPEND-3146)', () => {
   it('keeps the marketing entries inline and lists upstream types behind 更多', () => {
-    expect([...HOME_TYPE_ROW_IDS]).toEqual(['mokina-market-analysis', 'mokina-marketing-plan']);
+    expect([...HOME_TYPE_ROW_IDS]).toEqual(['mokina-market-analysis', 'mokina-marketing-plan', 'mokina-landing-page']);
     expect([...HOME_TYPE_ROW_MORE_IDS]).toEqual(EXPECTED_MORE_ORDER);
 
     renderRow();

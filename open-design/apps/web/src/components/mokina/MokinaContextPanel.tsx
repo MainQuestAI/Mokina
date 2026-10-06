@@ -11,6 +11,8 @@ import { fetchProjectMaterial } from '../../providers/registry';
 import {
   baseMokinaGroupId,
   groupMokinaMaterialSections,
+  MOKINA_ASSET_FILE_PATTERN,
+  MOKINA_MATERIAL_FILE_PATTERN,
 } from '../../runtime/mokina/material-selection';
 import {
   clearPendingMokinaSnapshot,
@@ -27,8 +29,8 @@ import { mokinaBytesDigest } from '../../runtime/mokina/digest';
  * 本次任务；未纳入项必须给出原因，不用一个对勾混同"上传/解析/选入/已提交"。
  */
 
-const MOKINA_ASSET_EXTENSIONS = /\.(?:png|jpe?g|webp|gif|svg)$/i;
-const MOKINA_MATERIAL_EXTENSIONS = /\.(?:txt|md|csv|pdf|docx|xlsx|pptx)$/i;
+const MOKINA_ASSET_EXTENSIONS = MOKINA_ASSET_FILE_PATTERN;
+const MOKINA_MATERIAL_EXTENSIONS = MOKINA_MATERIAL_FILE_PATTERN;
 
 type ReadResult = {
   material: ProjectMaterialExtraction;

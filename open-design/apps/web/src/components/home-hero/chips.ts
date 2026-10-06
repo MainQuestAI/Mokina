@@ -35,6 +35,7 @@ export type ChipScenarioPluginId =
   | DefaultScenarioPluginId
   | 'mokina-market-analysis'
   | 'mokina-marketing-plan'
+  | 'mokina-landing-page'
   | 'example-hyperframes'
   // Powered-preview scenarios: real-time GPU / off-main-thread artifacts that
   // render in the cross-origin-isolated "powered preview" iframe. Kept as
@@ -126,6 +127,23 @@ export const HOME_HERO_CHIPS: ReadonlyArray<HomeHeroChip> = [
     action: {
       kind: 'apply-scenario',
       pluginId: 'mokina-marketing-plan',
+      projectKind: 'other',
+      projectMetadata: { kind: 'other', intent: 'marketing' },
+    },
+  },
+  {
+    id: 'mokina-landing-page',
+    label: '营销活动页',
+    icon: 'layout',
+    group: 'create',
+    description: '把已定策略、品牌规范与选定素材落实为活动页',
+    // The landing-page scenario is how a fixed strategy becomes a
+    // deliverable (B3/T10 verified pipeline). Same binding shape as the
+    // other two Mokina entries: a user pin on the marketing route, never
+    // an automatic default — picking the chip must not start a run.
+    action: {
+      kind: 'apply-scenario',
+      pluginId: 'mokina-landing-page',
       projectKind: 'other',
       projectMetadata: { kind: 'other', intent: 'marketing' },
     },
@@ -414,6 +432,7 @@ export function chipsForGroup(group: ChipGroup): HomeHeroChip[] {
 export const CREATE_RAIL_ORDER = [
   'mokina-market-analysis',
   'mokina-marketing-plan',
+  'mokina-landing-page',
   'prototype',
   'deck',
   'document',
@@ -429,7 +448,7 @@ export const CREATE_RAIL_ORDER = [
 // The Home type row is an explicit product decision: the marketing entries
 // stay inline, and 更多 holds EVERY other create type. The lists together cover
 // `CREATE_RAIL_ORDER`; `TypePillRow.more-order.test.tsx` pins both.
-export const HOME_TYPE_ROW_IDS: readonly string[] = ['mokina-market-analysis', 'mokina-marketing-plan'];
+export const HOME_TYPE_ROW_IDS: readonly string[] = ['mokina-market-analysis', 'mokina-marketing-plan', 'mokina-landing-page'];
 export const HOME_TYPE_ROW_MORE_IDS: readonly string[] = [
   'prototype',
   'deck',
@@ -450,7 +469,7 @@ export const HOME_TYPE_ROW_MORE_IDS: readonly string[] = [
 // from someone else's site rather than the user's design system, so it stays
 // off the design-system teaser too.
 const ONBOARDING_ARTIFACT_OMIT = new Set<string>([
-  'mokina-market-analysis', 'mokina-marketing-plan', 'web-clone', 'video', 'audio',
+  'mokina-market-analysis', 'mokina-marketing-plan', 'mokina-landing-page', 'web-clone', 'video', 'audio',
 ]);
 
 // The artifact chips shown on the onboarding "build a design system" step — a

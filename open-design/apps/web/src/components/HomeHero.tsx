@@ -57,6 +57,9 @@ import {
   type HomeHeroChip,
 } from './home-hero/chips';
 import { homeHeroChipLabel } from './home-hero/chip-labels';
+import type { HomeMokinaFilePlan } from '../runtime/mokina/home-material-snapshot';
+import { isMokinaAssetFileName, isMokinaMaterialFileName } from '../runtime/mokina/material-selection';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { RotatingTitleWord } from './home-hero/RotatingTitleWord';
 import { ScenarioArt } from './home-hero/ScenarioArt';
 import { useEdgeAutoScroll, EdgeScrollZones } from './home-hero/EdgeAutoScroll';
@@ -204,6 +207,9 @@ interface Props {
   selectedDesignSystemId?: string | null;
   onDesignSystemChange?: (id: string | null) => void;
   stagedFiles?: File[];
+  /** N02: index-parallel Mokina plan for stagedFiles (null = plain attachment). */
+  mokinaFilePlans?: Array<HomeMokinaFilePlan | null>;
+  onMokinaFilePlanChange?: (index: number, plan: HomeMokinaFilePlan | null) => void;
   onAddFiles?: (files: File[]) => void;
   onRemoveFile?: (index: number) => void;
   /** Opens the "Import from Figma" dialog; omit to hide the menu entry. */
@@ -340,6 +346,7 @@ const EMPTY_PLUGIN_INPUT_VALUES: Record<string, unknown> = {};
 const EMPTY_INPUT_NAMES: string[] = [];
 const EMPTY_DESIGN_SYSTEMS: DesignSystemSummary[] = [];
 const EMPTY_STAGED_FILES: File[] = [];
+const EMPTY_MOKINA_FILE_PLANS: Array<HomeMokinaFilePlan | null> = [];
 const EMPTY_SKILLS: SkillSummary[] = [];
 const EMPTY_MCP_OPTIONS: McpServerConfig[] = [];
 const EMPTY_CONNECTOR_OPTIONS: ConnectorDetail[] = [];
@@ -387,6 +394,8 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
     selectedDesignSystemId = null,
     onDesignSystemChange,
     stagedFiles = EMPTY_STAGED_FILES,
+    mokinaFilePlans = EMPTY_MOKINA_FILE_PLANS,
+    onMokinaFilePlanChange = () => undefined,
     onAddFiles = () => undefined,
     onImportFigma,
     onRemoveFile = () => undefined,
@@ -1695,6 +1704,11 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
                   const key = homeFileKey(file, index);
                   const previewUrl = stagedFilePreviewUrls.get(key) ?? null;
                   const previewKind = fileTypePreviewKind(file.name, file.type);
+                  // N02: the Mokina plan slot for this file (null = plain attachment).
+                  const mokinaPlan = mokinaFilePlans[index] ?? null;
+                  const mokinaPlanSupported =
+                    MOKINA_LOCAL_EDITION &&
+                    (isMokinaMaterialFileName(file.name) || isMokinaAssetFileName(file.name));
                   const fileBody = (
                     <>
                       {previewUrl && previewKind === 'video' ? (
@@ -1762,6 +1776,70 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
                           {fileBody}
                         </span>
                       )}
+                      {mokinaPlanSupported ? (
+                        // N02: mark this staged file as Mokina 资料/素材 so the
+                        // create freezes it into the shared context snapshot
+                        // instead of shipping it as an opaque attachment. Choosing
+                        // here never starts a model — freezing happens only after
+                        // the project exists and the send is explicitly submitted.
+                        <span className="home-hero__mokina-plan">
+                          <select
+                            aria-label={`${file.name} Mokina 用途`}
+                            value={mokinaPlan?.kind ?? ''}
+                            onChange={(event) => {
+                              const value = event.target.value;
+                              if (value === '') {
+                                onMokinaFilePlanChange(index, null);
+                              } else if (value === 'material') {
+                                onMokinaFilePlanChange(index, {
+                                  name: file.name,
+                                  size: file.size,
+                                  kind: 'material',
+                                });
+                              } else {
+                                onMokinaFilePlanChange(index, {
+                                  name: file.name,
+                                  size: file.size,
+                                  kind: 'asset',
+                                  role: mokinaPlan?.role ?? 'supporting',
+                                  usageNote: mokinaPlan?.usageNote ?? '',
+                                });
+                              }
+                            }}
+                          >
+                            <option value="">附件</option>
+                            <option value="material">资料</option>
+                            <option value="asset">素材</option>
+                          </select>
+                          {mokinaPlan?.kind === 'asset' ? (
+                            <>
+                              <select
+                                aria-label={`${file.name} 素材角色`}
+                                value={mokinaPlan.role ?? 'supporting'}
+                                onChange={(event) => onMokinaFilePlanChange(index, {
+                                  ...mokinaPlan,
+                                  kind: 'asset',
+                                  role: event.target.value as 'logo' | 'hero' | 'supporting',
+                                })}
+                              >
+                                <option value="logo">品牌标识</option>
+                                <option value="hero">主视觉</option>
+                                <option value="supporting">辅助素材</option>
+                              </select>
+                              <input
+                                aria-label={`${file.name} 使用说明`}
+                                value={mokinaPlan.usageNote ?? ''}
+                                placeholder="使用说明"
+                                onChange={(event) => onMokinaFilePlanChange(index, {
+                                  ...mokinaPlan,
+                                  kind: 'asset',
+                                  usageNote: event.target.value,
+                                })}
+                              />
+                            </>
+                          ) : null}
+                        </span>
+                      ) : null}
                       {/* No tooltip on this one: the × already sits inside a
                           chip that names the file, so the floating 移除文件
                           bubble was covering the chip above it for no new
@@ -4126,6 +4204,7 @@ function homeHeroChipDescription(chipId: string, t: ReturnType<typeof useT>): st
   switch (chipId) {
     case 'mokina-market-analysis': return '以资料和来源形成可核对的市场判断';
     case 'mokina-marketing-plan': return '连接目标、受众、行动、预算和验证';
+    case 'mokina-landing-page': return '把已定策略、品牌规范与选定素材落实为活动页';
     case 'prototype': return t('homeHero.chip.prototypeDesc');
     case 'web-clone': return t('homeHero.chip.webCloneDesc');
     case 'wireframe': return t('homeHero.chip.wireframeDesc');

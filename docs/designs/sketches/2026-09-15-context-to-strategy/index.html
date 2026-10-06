@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Mokina · 从研究到策略 · 三状态线框</title>
+<style>
+:root{--ink:#242424;--muted:#747474;--line:#dededb;--paper:#fff;--wash:#f6f6f3;--soft:#eeeeea}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--wash);font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}button,select,textarea{font:inherit;color:inherit}button,select{cursor:pointer}button{background:white;border:1px solid var(--line);border-radius:7px;padding:7px 12px}button:hover{background:var(--soft);border-color:#999}button:focus-visible,select:focus-visible,textarea:focus-visible,[contenteditable]:focus-visible{outline:2px solid #333;outline-offset:3px}button:disabled{cursor:default;opacity:.55}button.primary{background:#30302e;border-color:#30302e;color:#fff}button.primary:hover{background:#111}button.flat{border-color:transparent;background:transparent}button.small{font-size:12px;padding:5px 9px}.muted{color:var(--muted)}.tiny{font-size:11px}.label{font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase}.tag{border:1px solid var(--line);border-radius:5px;font-size:11px;padding:2px 6px;color:#62625f;white-space:nowrap}.darktag{background:#333;color:white;border-color:#333}.row{display:flex;align-items:center;gap:9px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}.grow{flex:1}.mono{font-variant-numeric:tabular-nums}.dot{display:inline-block;width:6px;height:6px;border:1px solid #666;border-radius:50%;margin-right:6px}.dot.fill{background:#666}
+.reviewbar{height:56px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#efefeb;gap:20px}.reviewbar .stamp{font-size:11px;letter-spacing:1px;white-space:nowrap}.steps{display:flex;gap:6px}.step{border-color:transparent;background:transparent;font-size:12px;padding:7px 13px;color:#777}.step[aria-current="step"]{background:white;border-color:#aaa;color:#222}.step b{font-size:11px;margin-right:7px}.reviewbar .last{font-size:11px;color:#777}
+.app{height:calc(100vh - 56px);min-height:684px;display:flex;overflow:hidden}.sidebar{width:208px;flex-shrink:0;padding:22px 14px 16px;border-right:1px solid var(--line);display:flex;flex-direction:column;background:#f4f4f1}.brand{font-size:23px;font-weight:620;letter-spacing:-1px;padding:0 9px 22px}.brandmark{display:inline-grid;place-items:center;width:26px;height:26px;border:1px solid #888;border-radius:7px;font-size:18px;margin-right:7px}.new-work{width:100%;text-align:left;padding:9px 12px;margin-bottom:25px;background:transparent}.navlabel{font-size:11px;color:#888;padding:0 10px;margin:0 0 10px}.thread{padding:10px;border:1px solid transparent;border-radius:7px;margin-bottom:7px;font-size:13px}.thread.active{background:#e8e8e3;border-color:#d7d7d1}.thread .sub{font-size:11px;color:#777;margin-top:3px}.sidebar .bottom{margin-top:auto;border-top:1px solid var(--line);padding:13px 5px 0}.sidebar .bottom button{display:block;width:100%;text-align:left;margin:1px 0;padding:6px}.avatar{width:26px;height:26px;border:1px solid #b7b7b1;border-radius:50%;display:grid;place-items:center;font-size:11px}.screen{display:flex;flex:1;min-width:0}[hidden]{display:none!important}
+.chat{width:344px;flex-shrink:0;display:flex;flex-direction:column;background:#fcfcfa;border-right:1px solid var(--line);min-height:0}.chathead{height:66px;border-bottom:1px solid var(--line);padding:14px 21px}.chathead strong{font-size:14px}.chathead .muted{font-size:11px}.messages{padding:22px 22px 10px;overflow:auto;flex:1;min-height:0}.user{margin:0 0 24px 28px;background:#eeeee9;border-radius:10px 10px 2px 10px;padding:12px 14px;font-size:13px;line-height:1.8}.agent-name{font-size:12px;font-weight:650;display:flex;align-items:center;gap:7px;margin-bottom:10px}.agent-icon{width:19px;height:19px;border:1px solid #888;border-radius:5px;display:grid;place-items:center;font-size:10px}.messages p{font-size:13px;line-height:1.85;margin:0 0 13px}.messages h3{font-size:13px;margin:20px 0 7px}.rule{height:1px;background:var(--line);margin:17px 0}.context-ready{padding:12px;border:1px dashed #bbb;border-radius:6px;font-size:12px;line-height:1.8}.suggestion{display:block;text-align:left;width:100%;padding:12px;margin-top:12px;font-size:12px}.suggestion strong{font-weight:550;display:block}.suggestion span{font-size:11px;color:#777}.composer-wrap{padding:14px 18px 16px;border-top:1px solid var(--line);background:#fcfcfa}.context-label{display:flex;justify-content:space-between;font-size:11px;color:#777;margin-bottom:7px}.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}.chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;border:1px solid #ccc;border-radius:4px;padding:4px 6px;background:#fff}.chip .chip-open{border:0;background:transparent;font-size:10px;padding:0}.chip .remove{border:0;background:transparent;font-size:12px;padding:0 2px;color:#888}.composer{border:1px solid #bcbcb7;background:white;border-radius:9px;padding:10px}.composer textarea{width:100%;height:68px;resize:none;border:0;outline:none;font-size:12px;line-height:1.75;padding:1px 2px;background:transparent}.composer select{font-size:11px;border:0;background:#f2f2ee;border-radius:4px;padding:5px}.composer-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}.disclaimer{font-size:10px;color:#8a8a85;margin-top:8px;text-align:center}.inline-status{font-size:11px;color:#777;min-height:18px;padding-top:5px}
+.canvas{flex:1;min-width:0;display:flex;flex-direction:column;background:#f7f7f4}.canvastop{padding:0 24px;min-height:66px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid var(--line);gap:10px}.tabs{display:flex;align-self:stretch;gap:22px;align-items:center}.tab{height:100%;border:0;border-radius:0;background:transparent;padding:0;font-size:12px;border-bottom:2px solid transparent}.tab.selected{border-bottom-color:#333;font-weight:600}.canvasbody{padding:26px 30px;overflow:auto;flex:1;min-height:0}.paper{max-width:850px;margin:auto;background:#fff;border:1px solid var(--line);padding:30px 34px}.paper h1{font-size:25px;font-weight:560;line-height:1.4;letter-spacing:-.5px;margin:8px 0 10px}.paper h2{font-size:16px;font-weight:560;margin:24px 0 12px}.paper p{font-size:13px;line-height:1.9;margin:8px 0 12px}.docmeta{font-size:11px;color:#777;display:flex;gap:12px;flex-wrap:wrap}.paper .intro{color:#666;font-size:12px;line-height:1.9;border-bottom:1px solid var(--line);padding-bottom:19px;margin:17px 0}.selected-excerpt{border:1px solid #8e8e86;border-left:3px solid #494942;background:#f4f4ef;padding:17px 18px;position:relative}.selected-excerpt h3{font-size:15px;margin:10px 0;font-weight:550}.selected-excerpt p{font-size:12px;margin:0 0 12px}.excerpt-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #ddddd6;padding-top:12px}.skeleton-row{display:grid;grid-template-columns:90px 1fr 85px;gap:14px;padding:11px 0;border-bottom:1px solid #eee;font-size:11px;color:#777}.skeleton-row strong{font-weight:500;color:#444}.docfooter{font-size:10px;color:#888;display:flex;justify-content:space-between;gap:14px;border-top:1px solid var(--line);padding-top:18px;margin-top:25px}.state-note{padding:12px 24px;border-top:1px solid var(--line);font-size:11px;background:#f0f0eb;display:flex;gap:10px;color:#777}.state-note b{color:#444;font-weight:550}
+.noteshead{margin-bottom:22px}.noteshead h1{font-size:25px;margin:5px 0 9px;font-weight:550;letter-spacing:-.6px}.noteshead p{font-size:12px;color:#777;margin:0}.evidence-row{display:grid;grid-template-columns:115px 1fr;gap:14px;border-top:1px solid var(--line);padding:18px 0}.evidence-row .key{font-size:12px;font-weight:550}.evidence-row p{font-size:13px;margin:0 0 8px;line-height:1.85}.evidence-row .source{font-size:11px;color:#888}.number{font-size:11px;display:inline-grid;place-items:center;width:20px;height:20px;border:1px solid #ccc;border-radius:50%;margin-right:7px}.discussion-callout{margin-top:20px;border:1px dashed #aaa;padding:15px 17px;background:#f7f7f3}.discussion-callout strong{font-size:13px;font-weight:550}.discussion-callout p{font-size:12px;margin-bottom:0}
+.compare-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:22px}.compare-head h1{font-size:25px;line-height:1.4;margin:5px 0 7px;font-weight:550}.compare-head p{font-size:12px;color:#777;margin:0}.direction-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.direction{background:white;border:1px solid #c9c9c3;min-width:0}.direction-hero{height:116px;padding:18px;background:repeating-linear-gradient(135deg,#f3f3ef,#f3f3ef 8px,#f6f6f2 8px,#f6f6f2 16px);border-bottom:1px solid var(--line);position:relative;display:flex;flex-direction:column;justify-content:space-between}.direction:nth-child(2) .direction-hero{background:#eeeeea}.letter{font-size:11px;letter-spacing:1px}.concept{font-size:19px;letter-spacing:-.5px;line-height:1.45;font-weight:550;max-width:230px}.direction-body{padding:17px 19px}.direction-body h2{font-size:14px;line-height:1.65;font-weight:550;margin:0 0 13px}.detail{border-top:1px solid #e6e6e2;padding:11px 0}.detail small{font-size:10px;color:#888;display:block;margin-bottom:4px}.detail p{font-size:12px;line-height:1.8;margin:0}.direction-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.compare-summary{margin-top:18px;border:1px solid var(--line);background:#fff;padding:13px 16px;font-size:12px;line-height:1.9}.reference-strip{font-size:11px;color:#777;display:flex;gap:8px;flex-wrap:wrap;margin-top:17px}.reading{border:1px solid var(--line);padding:25px;background:white}.reading h2{font-size:20px}.reading p{font-size:13px;line-height:1.9}
+dialog{width:560px;max-width:calc(100vw - 40px);border:1px solid #aaa;border-radius:9px;padding:26px;color:var(--ink);box-shadow:0 15px 60px #0002}dialog::backdrop{background:#0003}dialog h2{font-size:19px;font-weight:550;margin:0 0 14px}dialog p{font-size:13px;line-height:1.9}dialog .close-row{text-align:right;margin-top:20px}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:7px;font-size:12px;max-width:640px;z-index:10;box-shadow:0 5px 20px #0002}
+@media(max-width:1300px){.sidebar{width:180px;padding-left:10px;padding-right:10px}.chat{width:312px}.canvasbody{padding:22px}.paper{padding:24px}.reviewbar .last{display:none}.direction-body{padding:14px}.concept{font-size:17px}.direction-hero{height:105px}.messages{padding:18px}.composer-wrap{padding:12px 14px}.evidence-row{grid-template-columns:95px 1fr}.paper h1,.compare-head h1,.noteshead h1{font-size:23px}}
+@media(max-width:1000px){.sidebar{width:155px}.chat{width:290px}.canvasbody{padding:16px}.direction-grid{grid-template-columns:1fr}.reviewbar{padding:0 12px}.reviewbar .stamp{display:none}.paper{padding:20px}.app{min-width:900px}}
+</style>
+</head>
+<body>
+<!-- Three review states of ONE workspace. The top strip is a review control, not product navigation. -->
+<header class="reviewbar">
+  <span class="stamp">MOKINA / INTERACTION STUDY</span>
+  <nav class="steps" aria-label="线框状态">
+    <button class="step" data-goto="1" aria-current="step"><b>01</b>带入上下文</button>
+    <button class="step" data-goto="2"><b>02</b>讨论适用性</button>
+    <button class="step" data-goto="3"><b>03</b>比较策略方向</button>
+  </nav>
+  <span class="last">三状态线框 · 全部为合成示例</span>
+</header>
+<div class="app">
+<aside class="sidebar" aria-label="全局导航">
+  <div class="brand"><span class="brandmark">m</span>Mokina</div>
+  <button class="new-work" data-info="new">＋　新工作</button>
+  <div class="navlabel">最近工作</div>
+  <div class="thread active"><div>宠物食品 · 从研究到策略</div><div class="sub" id="thread-state"><span class="dot"></span>继续讨论</div></div>
+  <div class="thread"><div>下周内容选题</div><div class="sub"><span class="dot fill"></span>正在整理 · 状态示意</div></div>
+  <div class="thread"><div>品牌表达备忘录</div><div class="sub">昨天</div></div>
+  <div class="bottom">
+    <button class="flat" data-info="brand">◇　品牌背景</button>
+    <button class="flat" data-info="method">▧　方法与模板</button>
+    <div class="row" style="padding:15px 7px 0"><span class="avatar">我</span><span class="tiny">个人空间</span><span class="grow"></span><span class="muted">···</span></div>
+  </div>
+</aside>
+
+<!-- State 1: attaching evidence prepares context; it never starts execution. -->
+<section class="screen" data-screen="1" aria-label="状态一：带入上下文">
+ <section class="chat">
+  <header class="chathead"><strong>从研究到自己的方向</strong><div class="muted">当前会话 · 不必另建项目</div></header>
+  <div class="messages">
+   <div class="user">帮我分析一下，过去 3 个月宠物食品行业最流行的产品品类是什么？</div>
+   <div class="agent-name"><span class="agent-icon">m</span>Mokina <span class="tag">示例对话</span></div>
+   <p>研究报告在右侧。你可以引用整份报告，也可以只带走与当前工作有关的部分。</p>
+   <p>接下来，我们可以结合你的产品和目标，讨论这些线索是否适用。</p>
+   <div class="context-ready"><span class="label">当前选择</span><br><strong>研究线索 02 · 信息理解</strong><br><span class="muted">市场报告 v2 · 仅选定片段</span></div>
+   <div class="rule"></div>
+   <p class="muted">也可以直接提供自己的资料开始，不必先有一份研究报告。</p>
+  </div>
+  <div class="composer-wrap">
+   <div class="context-label"><span>本轮带入</span><button class="flat small" data-info="context">查看范围 ↗</button></div>
+   <div class="chips">
+    <span class="chip report-chip"><button class="chip-open" data-info="report">▤ 市场报告 v2 · 片段</button><button class="remove" aria-label="移除报告引用">×</button></span>
+    <span class="chip"><button class="chip-open" data-info="product">▤ 产品资料</button></span>
+    <span class="chip"><button class="chip-open" data-info="goal">◎ 当前目标</button></span>
+   </div>
+   <div class="composer">
+    <textarea aria-label="状态一消息">结合这段研究和我的产品资料，先帮我判断是否适合，不要开始制作策略。</textarea>
+    <div class="composer-footer"><select aria-label="状态一行动模式"><option value="ask">讨论 · Ask</option><option value="plan">规划 · Plan</option><option value="execute">执行</option></select><button class="primary small" data-send="1">发送讨论 ↑</button></div>
+   </div>
+   <div class="disclaimer">线框仅切换示例，不执行搜索或模型生成</div>
+  </div>
+ </section>
+ <section class="canvas">
+  <div class="canvastop"><div class="tabs"><button class="tab selected" data-info="original">▤　市场研究</button></div><div class="row"><span class="tag">v2 · 示例版本</span><button class="flat small" data-info="versions">版本 ↗</button></div></div>
+  <div class="canvasbody">
+   <article class="paper">
+    <div class="row between"><span class="label">RESEARCH / WORKING PAPER</span><span class="tag">合成材料</span></div>
+    <h1>宠物食品市场研究</h1>
+    <div class="docmeta"><span>研究窗口：近 3 个月</span><span>版本 v2</span><span>非真实行业报告</span></div>
+    <p class="intro">用于呈现“报告如何成为下一项工作的上下文”。以下仅是研究问题与分析线索示例，不包含真实市场排名或销量结论。</p>
+    <h2>可以继续分析的线索</h2>
+    <div class="skeleton-row"><strong>01　品类表现</strong><span>销售、增长与讨论热度应分别观察</span><span>研究口径示例</span></div>
+    <div class="selected-excerpt" style="margin:17px 0">
+     <div class="row between"><span class="tag darktag">已选中片段</span><span class="tiny muted">线索 02 / R-02</span></div>
+     <h3>信息理解：把产品的喂养理由讲清楚</h3>
+     <p>可将“原料与喂养信息是否易于理解”作为一个待验证的沟通方向。这个线索本身，不足以证明市场需求或销售效果。</p>
+     <div class="excerpt-foot"><span class="tiny muted">示例观点 · 不是市场结论</span><button class="small" id="attach-report">用于当前工作 ↗</button></div>
+    </div>
+    <div class="skeleton-row"><strong>03　竞争表达</strong><span>比较不同品牌如何解释产品特点</span><span>分析框架示例</span></div>
+    <h2>判断之前，补上自己的视角</h2>
+    <p class="muted">同一个市场线索，对不同的产品、品牌和目标可能意味着不同的选择。引用它作为依据，不等于默认采用它作为策略。</p>
+    <div class="docfooter"><span>研究与策略分别保留 · 引用固定版本</span><span>示例页 01</span></div>
+   </article>
+  </div>
+  <div class="state-note"><b>01 / 带入上下文</b><span>选定内容进入输入框；引用动作本身不触发制作。</span></div>
+ </section>
+</section>
+
+<!-- State 2: the right panel is a view of the discussion, not a newly generated strategy artifact. -->
+<section class="screen" data-screen="2" aria-label="状态二：讨论适用性" hidden>
+ <section class="chat">
+  <header class="chathead"><strong>从研究到自己的方向</strong><div class="muted">继续当前会话 · 讨论模式</div></header>
+  <div class="messages">
+   <div class="user">结合这段研究和我的产品资料，先帮我判断是否适合，不要开始制作策略。</div>
+   <div class="agent-name"><span class="agent-icon">m</span>Mokina <span class="tag">只讨论，不改稿</span></div>
+   <p>可以把它作为沟通角度，但现在还不能据此判断哪些品类更畅销。</p>
+   <h3>与你的资料相符的部分</h3>
+   <p>产品资料里有原料说明，品牌故事也强调把选择理由讲清楚。两者可以支持一个更易理解的表达方向。</p>
+   <h3>暂时不能推出的结论</h3>
+   <p>我们没有销售或受众验证数据，不能把这个方向称为“已验证的增长机会”。</p>
+   <div class="rule"></div>
+   <p class="muted">现有背景足以讨论初步方向。如果需要判断市场规模，再针对缺口补充研究。</p>
+  </div>
+  <button class="suggestion" style="width:calc(100% - 36px);margin:0 18px 12px;flex-shrink:0" id="suggest-directions"><strong>下一步：形成两个策略方向　↗</strong><span>点击仅填入请求，你可以继续修改后发送。</span></button>
+  <div class="composer-wrap">
+   <div class="context-label"><span>本轮带入 · 与上轮一致</span><button class="flat small" data-info="context">查看范围 ↗</button></div>
+   <div class="chips"><span class="chip"><button class="chip-open" data-info="report">▤ 市场报告 v2 · 片段</button></span><span class="chip"><button class="chip-open" data-info="product">▤ 产品资料</button></span><span class="chip"><button class="chip-open" data-info="goal">◎ 当前目标</button></span></div>
+   <div class="composer">
+    <textarea aria-label="状态二消息" placeholder="继续追问，或选择上方的下一步建议…"></textarea>
+    <div class="composer-footer"><select aria-label="状态二行动模式"><option value="ask">讨论 · Ask</option><option value="plan">规划 · Plan</option><option value="execute">执行</option></select><button class="primary small" data-send="2">发送 ↑</button></div>
+   </div>
+   <div class="inline-status" id="suggestion-status"></div>
+   <div class="disclaimer">没有新增策略版本 · 下一步仍由你决定</div>
+  </div>
+ </section>
+ <section class="canvas">
+  <div class="canvastop"><div class="tabs"><button class="tab" data-open-report="2">▤　市场研究</button><button class="tab selected" data-open-notes>背景对照</button></div><span class="tag">讨论视图 · 非成果版本</span></div>
+  <div class="canvasbody">
+   <div class="paper notes-panel">
+    <div class="noteshead"><span class="label">CONTEXT / FIT</span><h1>这条线索，对我们意味着什么？</h1><p>把外部线索和内部条件放在一起，先判断是否适用。</p></div>
+    <div class="evidence-row"><div class="key"><span class="number">1</span>外部线索</div><div><p>探索“让原料与喂养信息更易懂”的沟通方向。</p><div class="source">市场报告 v2 · R-02 · 合成研究假设</div></div></div>
+    <div class="evidence-row"><div class="key"><span class="number">2</span>内部条件</div><div><p>产品资料提供了原料说明；品牌故事强调“把每一份选择讲清楚”。</p><div class="source">产品资料、品牌摘录 · 合成内容，可查看</div></div></div>
+    <div class="evidence-row"><div class="key"><span class="number">3</span>当前目标</div><div><p>帮助第一次接触品牌的人理解产品，先形成沟通方向。</p><div class="source">当前任务目标 · 未提供数值 KPI，不强制补填</div></div></div>
+    <div class="discussion-callout"><strong>可以推进：表达方向的探索</strong><p>以真实可用的原料说明和品牌故事为基础，提出不同表达方式。暂不承诺销量提升，也不需要自动重跑完整市场研究。</p></div>
+    <div class="row between" style="margin-top:20px"><span class="tiny muted">引用并不等于采用结论</span><button class="small" data-info="context">展开本次依据 ↗</button></div>
+    <div class="docfooter"><span>研究原文未改动 · 尚未制作策略</span><span>讨论内容的可视化呈现</span></div>
+   </div>
+   <article class="paper original-panel" hidden></article>
+  </div>
+  <div class="state-note"><b>02 / 讨论适用性</b><span>先连接内外部信息；只有明确执行才产生策略成果。</span></div>
+ </section>
+</section>
+
+<!-- State 3: the strategy is a separate artifact with a fixed reference to the original report. -->
+<section class="screen" data-screen="3" aria-label="状态三：比较策略方向" hidden>
+ <section class="chat">
+  <header class="chathead"><strong>从研究到自己的方向</strong><div class="muted">当前会话 · 策略成果可继续讨论</div></header>
+  <div class="messages">
+   <div class="user">基于刚才的判断，形成两个不同的沟通方向。保留各自的依据和取舍，先不用制作内容。</div>
+   <div class="agent-name"><span class="agent-icon">m</span>Mokina <span class="tag">执行结果示意</span></div>
+   <p>右侧是两个方向的示例草稿。它们都使用同一份背景，但承担不同的表达重点。</p>
+   <h3>A · 先把产品讲清楚</h3>
+   <p>以原料和喂养信息为起点，帮助用户理解选择理由。</p>
+   <h3>B · 先让品牌被理解</h3>
+   <p>以品牌故事为起点，建立情感联系，再承接具体产品信息。</p>
+   <div class="rule"></div>
+   <p class="muted">你可以继续讨论其中一个方向，或提出组合要求。原研究不会因此被改写。</p>
+  </div>
+  <button class="suggestion" style="width:calc(100% - 36px);margin:0 18px 12px;flex-shrink:0" id="combine"><strong>结合 A 的信息结构与 B 的故事　↗</strong><span>仅准备组合请求，不覆盖当前方案。</span></button>
+  <div class="composer-wrap">
+   <div class="context-label"><span id="selection-label">当前对象：营销方向 v1</span><button class="flat small" data-info="strategy-source">依据 ↗</button></div>
+   <div class="chips"><span class="chip">▧ 营销方向 v1</span><span class="chip"><button class="chip-open" data-info="report">引用：研究 v2 · R-02</button></span></div>
+   <div class="composer">
+    <textarea aria-label="状态三消息" placeholder="选中一个方向，讨论、修改或组合…"></textarea>
+    <div class="composer-footer"><select aria-label="状态三行动模式"><option value="ask">讨论 · Ask</option><option value="plan">规划 · Plan</option><option value="execute">执行</option></select><button class="primary small" data-send="3">发送 ↑</button></div>
+   </div>
+   <div class="disclaimer">组合、采用和后续版本的完整流程待下一轮细化</div>
+  </div>
+ </section>
+ <section class="canvas">
+  <div class="canvastop"><div class="tabs"><button class="tab" data-open-report="3">▤　市场研究</button><button class="tab selected" data-open-strategy>▧　营销方向</button></div><div class="row"><span class="tag">v1 · 草案</span><button class="flat small" data-info="strategy-version">版本 ↗</button></div></div>
+  <div class="canvasbody">
+   <div class="strategy-panel">
+    <div class="compare-head"><div><span class="label">STRATEGY / TWO DIRECTIONS</span><h1>让产品被理解，让品牌被记住。</h1><p>两个可讨论的方向，而不是已经验证的市场选择。</p></div><div class="row"><button class="small view-work" aria-pressed="true">工作视图</button><button class="small view-reading" aria-pressed="false">阅读视图</button></div></div>
+    <div class="work-view">
+    <div class="direction-grid">
+     <article class="direction" data-direction="A">
+      <div class="direction-hero"><span class="letter">DIRECTION A / 产品解释</span><div class="concept" data-editable>每一份选择，<br>都有清楚的理由。</div></div>
+      <div class="direction-body">
+       <h2 data-editable>先把产品讲清楚</h2>
+       <div class="detail"><small>如何服务当前目标</small><p data-editable>将原料与喂养信息组织成容易理解的选择理由。</p></div>
+       <div class="detail"><small>可以依靠什么</small><p>产品资料中的原料说明；研究 R-02 仅作为探索线索。</p></div>
+       <div class="detail"><small>需要接受的取舍</small><p>信息更直接；品牌故事与情感表达需要另外补足。</p></div>
+       <div class="direction-actions"><button class="small" data-discuss="A">讨论这个方向</button><button class="flat small" data-edit="A">编辑</button><a href="deepen.html" style="font-size:12px;padding:5px 9px;color:inherit">预览深化 A ↗</a></div>
+      </div>
+     </article>
+     <article class="direction" data-direction="B">
+      <div class="direction-hero"><span class="letter">DIRECTION B / 品牌叙事</span><div class="concept" data-editable>从第一口开始，<br>认真对待每一天。</div></div>
+      <div class="direction-body">
+       <h2 data-editable>先让品牌被理解</h2>
+       <div class="detail"><small>如何服务当前目标</small><p data-editable>以品牌故事建立理解，再带出具体的产品理由。</p></div>
+       <div class="detail"><small>可以依靠什么</small><p>本轮提供的品牌故事与产品资料，不虚构额外品牌经历。</p></div>
+       <div class="detail"><small>需要接受的取舍</small><p>表达更有情境；避免只有故事、没有清楚的产品信息。</p></div>
+       <div class="direction-actions"><button class="small" data-discuss="B">讨论这个方向</button><button class="flat small" data-edit="B">编辑</button></div>
+      </div>
+     </article>
+    </div>
+    <div class="compare-summary"><strong>讨论重点</strong>　先决定这次更需要解释产品，还是建立品牌理解。也可以组合，但需要重新检查整体表达是否一致。</div>
+    </div>
+    <article class="reading" hidden><span class="label">营销方向 / v1 · 同一成果的阅读视图</span><h2>两种沟通方向</h2><div class="reading-content"></div><p class="muted">以上为合成示例，未验证市场效果。查看原研究不会改写本策略，策略修改也不会回填为市场事实。</p></article>
+    <div class="reference-strip"><span>本次依据：</span><button class="flat small" data-info="strategy-source">研究 v2 · R-02　/　产品资料　/　品牌摘录　/　当前目标 ↗</button></div>
+   </div>
+   <article class="paper original-panel" hidden></article>
+  </div>
+  <div class="state-note"><b>03 / 比较策略方向</b><span>新策略与原研究分开保存；比较、修改围绕具体对象发生。</span></div>
+ </section>
+</section>
+</div>
+<dialog id="detail-dialog" aria-labelledby="dialog-title"><h2 id="dialog-title"></h2><div id="dialog-body"></div><div class="close-row"><button id="close-dialog">关闭</button></div></dialog>
+<div class="toast" role="status" hidden></div>
+<script>
+(function(){
+'use strict';
+var state=1,toastTimer;
+var dialog=document.getElementById('detail-dialog');
+var info={
+ report:['市场报告 v2 · 选定片段','<p><span class="tag">合成材料 / R-02</span></p><p>可将“原料与喂养信息是否易于理解”作为一个待验证的沟通方向。这个线索本身，不足以证明市场需求或销售效果。</p><p class="muted">本轮只引用该片段，不自动带入整份报告。线框未连接真实报告库。</p>'],
+ product:['产品资料 · 合成输入','<p>示例产品：一款宠物主食产品。现有资料包括原料说明和使用说明；没有销售表现或效果验证数据。</p><p>品牌摘录：“把每一份选择讲清楚。”用于演示内部背景怎样参与判断，不代表真实品牌。</p>'],
+ goal:['当前目标','<p>帮助第一次接触品牌的人理解产品，先形成沟通方向，不开始制作内容。</p><p class="muted">本例没有数值 KPI。产品不会强制补齐品牌、预算和 KPI 才允许工作。</p>'],
+ context:['本轮使用的上下文','<p>① 市场报告 v2 的 R-02 片段（若已移除，则不选用）。</p><p>② 本次提供的产品资料及品牌摘录。</p><p>③ 当前目标：帮助初次接触品牌的人理解产品。</p><p class="muted">可以从内部资料直接开始，研究不是必选项。这些内容全部为线框合成示例。</p>'],
+ 'strategy-source':['营销方向 v1 · 固定依据','<p>外部线索：研究 v2 / R-02（探索假设）。</p><p>内部背景：产品资料、品牌摘录与本轮目标。</p><p class="muted">研究后续版本不自动替换此处引用；这里展示产品机制，不是真实生成记录。</p>'],
+ versions:['研究版本示意','<p>当前展示：研究 v2（示例标签）。本稿没有真实研究历史，不伪造 v1 内容。</p><p>策略另存为独立成果，查看策略不会覆盖研究。</p>'],
+ 'strategy-version':['策略版本示意','<p>当前展示：营销方向 v1 · 示例草案。</p><p>本线框展示到方向比较。候选、采用、冲突处理和完整历史待下一轮细化，不在此模拟成功。</p>'],
+ original:['原研究保持不变','<p>这里始终展示所引用的研究 v2。新策略里的品牌判断不会回填为原报告已经证明的市场事实。</p>'],
+ brand:['品牌背景 · 辅助入口','<p>可按需建立、选择或修改 Brand Kit。本轮只画研究接续的三个状态，不新增品牌配置页面。</p>'],
+ method:['方法与模板 · 辅助入口','<p>研究重点、行业视角与指标口径可以个性化；模板影响分析本身，不只影响报告排版。</p><p class="muted">方法库页面不在这三个状态的范围内。</p>'],
+ new:['新工作 · 范围说明','<p>这是同一工作区的三状态线框，不是新产品入口。新建、并行运行和会话恢复需要后续真实实现与验证。</p>']
+};
+function notice(s){var el=document.querySelector('.toast');el.textContent=s;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.hidden=true;},3500);}
+function showInfo(key){var v=info[key]||info.context;document.getElementById('dialog-title').textContent=v[0];document.getElementById('dialog-body').innerHTML=v[1];dialog.showModal();}
+function go(n){state=n;document.querySelectorAll('[data-screen]').forEach(function(el){el.hidden=Number(el.dataset.screen)!==n;});document.querySelectorAll('[data-goto]').forEach(function(el){if(Number(el.dataset.goto)===n)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');});document.getElementById('thread-state').innerHTML='<span class="dot"></span>'+['','继续讨论','讨论中 · 未制作','有策略草案'][n];history.replaceState(null,'','#state-'+n);}
+document.querySelectorAll('[data-goto]').forEach(function(b){b.addEventListener('click',function(){go(Number(b.dataset.goto));});});
+document.querySelectorAll('[data-info]').forEach(function(b){b.addEventListener('click',function(){showInfo(b.dataset.info);});});
+document.getElementById('close-dialog').addEventListener('click',function(){dialog.close();});
+document.querySelector('.remove').addEventListener('click',function(){document.querySelector('.report-chip').hidden=true;document.getElementById('attach-report').disabled=false;document.getElementById('attach-report').textContent='用于当前工作 ↗';notice('已移除本轮引用。仍可只用内部资料继续。');});
+document.getElementById('attach-report').addEventListener('click',function(){document.querySelector('.report-chip').hidden=false;this.textContent='已加入本轮上下文';this.disabled=true;notice('引用已准备，尚未发送或开始制作。');});
+document.getElementById('suggest-directions').addEventListener('click',function(){var s=document.querySelector('[data-screen="2"]');s.querySelector('textarea').value='基于刚才的判断，形成两个不同的沟通方向。保留各自的依据和取舍，先不用制作内容。';document.getElementById('suggestion-status').textContent='请求已填入；切换为“执行”后可预览第三状态。';s.querySelector('textarea').focus();});
+document.querySelectorAll('[data-send]').forEach(function(b){b.addEventListener('click',function(){var n=Number(b.dataset.send),s=document.querySelector('[data-screen="'+n+'"]'),mode=s.querySelector('select').value,text=s.querySelector('textarea').value.trim();if(!text){notice('先输入请求，或选择下一步建议。');return;}if(mode==='plan'){notice('规划模式只安排范围，本线框不制作成果。');return;}if(n===1){if(text!=='结合这段研究和我的产品资料，先帮我判断是否适合，不要开始制作策略。'){notice('自由输入已保留；本稿只预览所示请求，不模拟新回答。');return;}if(mode!=='ask'){notice('当前请求明确“不要开始制作”，不会因切换模式而执行。');return;}if(document.querySelector('.report-chip').hidden){notice('报告引用已移除。本稿未绘制纯内部资料分支；不会带入已移除的报告。');return;}go(2);}else if(n===2&&mode==='execute'){var baseline='基于刚才的判断，形成两个不同的沟通方向。保留各自的依据和取舍，先不用制作内容。';if(text!==baseline){notice('这是三状态线框；自由输入已保留，不会冒充已按新请求生成。');return;}go(3);}else if(n===2){notice('仍是讨论模式，没有制作策略或新增版本。');}else{notice('本线框到方向比较为止。请求已保留，尚未生成、组合或采用新版本。');}});});
+function original(n){var root=document.querySelector('[data-screen="'+n+'"]');root.querySelector('.original-panel').innerHTML=document.querySelector('[data-screen="1"] .paper').innerHTML;root.querySelector('.original-panel').querySelectorAll('button').forEach(function(b){b.remove();});root.querySelector('.original-panel').hidden=false;var panel=root.querySelector(n===2?'.notes-panel':'.strategy-panel');panel.hidden=true;root.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('selected',!!t.dataset.openReport);});}
+document.querySelectorAll('[data-open-report]').forEach(function(b){b.addEventListener('click',function(){original(Number(b.dataset.openReport));});});
+document.querySelector('[data-open-notes]').addEventListener('click',function(){var s=document.querySelector('[data-screen="2"]');s.querySelector('.notes-panel').hidden=false;s.querySelector('.original-panel').hidden=true;s.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('selected',t.hasAttribute('data-open-notes'));});});
+document.querySelector('[data-open-strategy]').addEventListener('click',function(){var s=document.querySelector('[data-screen="3"]');s.querySelector('.strategy-panel').hidden=false;s.querySelector('.original-panel').hidden=true;s.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('selected',t.hasAttribute('data-open-strategy'));});});
+document.querySelectorAll('[data-discuss]').forEach(function(b){b.addEventListener('click',function(){var d=b.dataset.discuss,s=document.querySelector('[data-screen="3"]');s.querySelector('textarea').value='解释方向 '+d+' 如何服务当前目标，先不要修改方案。';s.querySelector('select').value='ask';document.getElementById('selection-label').textContent='当前对象：营销方向 v1 · 方向 '+d;s.querySelector('textarea').focus();});});
+document.getElementById('combine').addEventListener('click',function(){var s=document.querySelector('[data-screen="3"]');s.querySelector('textarea').value='保留 A 的信息结构，结合 B 的品牌故事，另做一版。不要覆盖原方向。';document.getElementById('selection-label').textContent='当前对象：营销方向 v1 · A + B';notice('已准备组合请求；尚未执行，原方向保持不变。');s.querySelector('textarea').focus();});
+document.querySelectorAll('[data-edit]').forEach(function(b){b.addEventListener('click',function(){var card=b.closest('.direction'),on=b.dataset.editing!=='yes';b.dataset.editing=on?'yes':'no';card.querySelectorAll('[data-editable]').forEach(function(el){el.contentEditable=on?'true':'false';el.style.outline=on?'1px dashed #999':'';});b.textContent=on?'结束编辑':'编辑';if(on){card.querySelector('[data-editable]').focus();notice('可编辑本地示例文字；刷新不保存，不代表版本功能已经实现。');}});});
+document.querySelector('.view-reading').addEventListener('click',function(){var target=document.querySelector('.reading-content');target.replaceChildren();document.querySelectorAll('.direction').forEach(function(card){var heading=document.createElement('h3');heading.textContent=card.querySelector('h2').textContent;target.appendChild(heading);card.querySelectorAll('.detail').forEach(function(d){var p=document.createElement('p');p.textContent=d.querySelector('small').textContent+'：'+d.querySelector('p').textContent;target.appendChild(p);});});document.querySelector('.work-view').hidden=true;document.querySelector('.reading').hidden=false;this.setAttribute('aria-pressed','true');document.querySelector('.view-work').setAttribute('aria-pressed','false');});
+document.querySelector('.view-work').addEventListener('click',function(){document.querySelector('.work-view').hidden=false;document.querySelector('.reading').hidden=true;this.setAttribute('aria-pressed','true');document.querySelector('.view-reading').setAttribute('aria-pressed','false');});
+go(Math.max(1,Math.min(3,Number(location.hash.replace('#state-',''))||1)));
+window.mokinaSketch={go:go,state:function(){return state;}};
+})();
+</script>
+</body>
+</html>

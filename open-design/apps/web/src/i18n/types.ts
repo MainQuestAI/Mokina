@@ -5854,6 +5854,14 @@ export interface Dict {
   'fileViewer.mokina.materialBriefAria': string;
   'fileViewer.mokina.materialStartFailed': string;
   'fileViewer.mokina.materialSnapshotSaveFailed': string;
+  'fileViewer.mokina.continuationBudgetExceeded': string;
+  'fileViewer.mokina.continuationAssetReadFailed': string;
+  'fileViewer.mokina.continuationAssetTooLarge': string;
+  'fileViewer.mokina.continuationBrandReadFailed': string;
+  'fileViewer.mokina.continuationSnapshotFailed': string;
+  'fileViewer.mokina.continuationSelectionChanged': string;
+  'fileViewer.mokina.continuationExcluded': string;
+  'mokina.contextPanel.clearFailed': string;
   'fileViewer.mokina.continuationAssets': string;
   'fileViewer.mokina.continuationUsagePlaceholder': string;
   'fileViewer.mokina.assetRoleLogo': string;

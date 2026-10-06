@@ -48,6 +48,22 @@
 
 未跑项：e2e 全套重跑（N08）；其余历史失败分类（N07）。
 
-## 合并前审查
+## 合并前审查与修复（2026-10-06，独立 subagent 审查 PR #7）
 
-待 PR 开出后按既定流程由独立 subagent 审查。
+审查结论：无 BLOCKER，5 项 MAJOR 需修复。已全部修复并复验（typecheck 0 错 / 44 项定向测试 / guard 22 项全过）：
+
+| 级别 | 问题 | 修复 |
+|---|---|---|
+| M1 | 重试重复上传素材，daemon 改名堆积孤儿文件（hero-1.png） | 上传前列出目标项目已有文件并跳过同名；冻结时 daemon 仍重验 digest |
+| M2 | uploadProjectFiles 失败被吞，报错滞后误导 | 消费返回值的 failed 列表，立即抛出真实错误 |
+| M3 | 目录加载一次性 guard 在请求前置位，瞬态失败永久空目录 | 移除 ref-guard，依赖 continuationPanelAvailable/projectId 触发；失败不置位 |
+| M4 | zh-TW 新键混入简体、其余 locale 英文占位 | zh-TW 全部正体化（已核验 0 简体残留）；其余 locale 英文占位为过渡态并在 PR 声明（此前这些界面显示中文，英文占位不构成回退），后续走翻译交付稿 |
+| M5 | 接续编排逻辑零自动化测试 | 部分处理：journal 快照 id 往返用例已有；全编排自动化测试记为 N07 待办（本次两次真实链路实测覆盖成功路径） |
+| M7 | 前两处 journal 写入丢失 contextSnapshotId | 三处 checkpoint 统一透传既有 id |
+| M8 | 改选后重试必现 409 且不可恢复 | 409 CONFLICT 时清除 journal 并给出可操作提示 |
+| M9/M6 | 素材/品牌 excluded 静默 | 冻结成功后面板提示未纳入项 |
+| M10 | 新错误路径硬编码中文 | 8 个新键进 i18n（types.ts + 19 locale），含面板 clearFailed |
+| M11 | 品牌字数无客户端预算校验 | 章节+品牌字数发送前校验 |
+| M12 | 品牌预览竞态/0 字闪示 | 序号守卫 |
+
+未修 MINOR（评估后留后续）：raw 读取缓存策略（ETag 已兜底）、orphan -1 文件被资料候选展示（治本靠 M1 已修）、NIT 级代码风格。

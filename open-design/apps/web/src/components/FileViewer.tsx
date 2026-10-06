@@ -3655,6 +3655,7 @@ function FileVersionManagerModal({
   const [continuationBrandPreview, setContinuationBrandPreview] = useState<{ title: string; chars: number } | null>(null);
   const [continuationDesignSystems, setContinuationDesignSystems] = useState<Array<{ id: string; title: string }>>([]);
   const [continuationAssetCandidates, setContinuationAssetCandidates] = useState<string[]>([]);
+  const brandPreviewSeqRef = useRef(0);
   const [continuationBusy, setContinuationBusy] = useState(false);
   const [revisionSectionId, setRevisionSectionId] = useState('');
   const [revisionRequest, setRevisionRequest] = useState('');
@@ -3849,8 +3850,7 @@ function FileVersionManagerModal({
   }, [selectedContent, selectedContentMatchesVersion]);
   const continuationPanelAvailable = continuationSections.length > 0 && Boolean(selectedVersion);
   useEffect(() => {
-    if (!MOKINA_LOCAL_EDITION || !continuationPanelAvailable || continuationCatalogReadyRef.current) return;
-    continuationCatalogReadyRef.current = true;
+    if (!MOKINA_LOCAL_EDITION || !continuationPanelAvailable) return;
     let cancelled = false;
     void fetchDesignSystems(workspaceContext)
       .then((systems) => { if (!cancelled) setContinuationDesignSystems(systems.map((system) => ({ id: system.id, title: system.title }))); })
@@ -3862,7 +3862,6 @@ function FileVersionManagerModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [continuationPanelAvailable, projectId]);
   const revisionSectionRef = useRef<HTMLElement>(null);
-  const continuationCatalogReadyRef = useRef(false);
   const continuationSectionRef = useRef<HTMLElement>(null);
   const actionStatusRef = useRef<HTMLParagraphElement>(null);
   const handledActionRef = useRef<MokinaActionRequest | null>(null);
@@ -4420,6 +4419,10 @@ function FileVersionManagerModal({
     if (chosen.length === 0) { setError('请先选择至少一个章节。'); return; }
     const total = chosen.reduce((sum, section) => sum + section.text.length, 0);
     if (total > 24_000) { setError('选定章节超过 24,000 字符；请缩小选择。'); return; }
+    if (continuationBrandPreview && total + continuationBrandPreview.chars > MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits) {
+      setError(t('fileViewer.mokina.continuationBudgetExceeded'));
+      return;
+    }
     setContinuationBusy(true);
     setError(null);
     const journalKey = `od:continuation:${projectId}:${file.name}:${selectedVersion.id}`;
@@ -4438,7 +4441,7 @@ function FileVersionManagerModal({
       );
       const operationId = existingJournal?.operationId ?? newClientOperationId();
       const targetProjectId = existingJournal?.targetProjectId ?? newClientOperationId();
-      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'prepared', updatedAt: new Date().toISOString() });
+      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, ...(existingJournal?.contextSnapshotId ? { contextSnapshotId: existingJournal.contextSnapshotId } : {}), checkpoint: 'prepared', updatedAt: new Date().toISOString() });
       const target = resolveMokinaContinuationTarget(continuationIntent);
       const prompt = [
         target.promptLead,
@@ -4456,7 +4459,7 @@ function FileVersionManagerModal({
         pendingPrompt: prompt,
         workspaceContext,
       });
-      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'project-created', updatedAt: new Date().toISOString() });
+      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, ...(existingJournal?.contextSnapshotId ? { contextSnapshotId: existingJournal.contextSnapshotId } : {}), checkpoint: 'project-created', updatedAt: new Date().toISOString() });
       // N05: freeze the selected assets (bytes uploaded to the target project)
       // and the chosen brand rules into the TARGET project's context snapshot,
       // then bind it as that project's pending snapshot so the first explicit
@@ -4470,19 +4473,30 @@ function FileVersionManagerModal({
         await storeJournal({ schemaVersion: 2, operationId, targetProjectId, contextSnapshotId: snapshotId, checkpoint: 'project-created', updatedAt: new Date().toISOString() });
         const selections: MokinaContextSelection[] = [];
         const excluded: MokinaExcludedContextItem[] = [];
+        // Idempotent retry: a previous attempt may already have uploaded some
+        // assets into the target project. Re-uploading would make the daemon
+        // rename duplicates (hero-1.png) and pollute the draft, so skip names
+        // the target already has — the daemon re-verifies digests at freeze.
+        const targetFiles = await fetchProjectFiles(project.project.id, { workspaceContext }).catch(() => []);
+        const targetNames = new Set(targetFiles.map((entry) => entry.name));
         for (const [index, asset] of continuationAssets.entries()) {
-          const raw = await fetch(projectFileUrl(projectId, asset.name, workspaceContext));
+          const raw = await fetch(projectFileUrl(projectId, asset.name, workspaceContext), { cache: 'no-store' });
           if (!raw.ok) {
-            excluded.push({ displayName: asset.name, reason: 'unavailable', explanation: '素材读取失败' });
+            excluded.push({ displayName: asset.name, reason: 'unavailable', explanation: t('fileViewer.mokina.continuationAssetReadFailed') });
             continue;
           }
           const bytes = await raw.arrayBuffer();
           if (bytes.byteLength > MOKINA_CONTEXT_BUDGETS.maxAssetBytes) {
-            excluded.push({ displayName: asset.name, reason: 'budget', explanation: '素材超过单次 30 MiB 预算' });
+            excluded.push({ displayName: asset.name, reason: 'budget', explanation: t('fileViewer.mokina.continuationAssetTooLarge') });
             continue;
           }
           const digest = await mokinaBytesDigest(bytes);
-          await uploadProjectFiles(project.project.id, [new File([bytes], asset.name)], undefined, workspaceContext);
+          if (!targetNames.has(asset.name)) {
+            const uploaded = await uploadProjectFiles(project.project.id, [new File([bytes], asset.name)], undefined, workspaceContext);
+            const failure = uploaded.failed.find((entry) => entry.name === asset.name) ?? uploaded.failed[0];
+            if (failure) throw new Error(failure.error || t('fileViewer.mokina.continuationAssetReadFailed'));
+            targetNames.add(asset.name);
+          }
           selections.push({
             itemId: `A${index + 1}`,
             mode: 'asset',
@@ -4510,7 +4524,7 @@ function FileVersionManagerModal({
               groupIds: [],
             });
           } catch {
-            excluded.push({ displayName: continuationBrandId, reason: 'unavailable', explanation: '品牌规则读取失败，未纳入本次接续' });
+            excluded.push({ displayName: continuationBrandId, reason: 'unavailable', explanation: t('fileViewer.mokina.continuationBrandReadFailed') });
           }
         }
         if (selections.length > 0) {
@@ -4530,9 +4544,15 @@ function FileVersionManagerModal({
             error?: { message?: string };
           } | null;
           if (!response.ok || !body?.snapshot) {
+            if (body?.error && 'code' in body.error && body.error.code === 'MOKINA_SNAPSHOT_CONFLICT') {
+              // The selection changed under a pinned snapshotId; the journal can
+              // never succeed. Clear it so the next attempt mints fresh ids.
+              await clearJournal().catch(() => {});
+              throw new Error(t('fileViewer.mokina.continuationSelectionChanged'));
+            }
             // The journal keeps checkpoint 'project-created' with the same
             // snapshotId; retrying reuses the target and the idempotent id.
-            throw new Error(body?.error?.message ?? '接续快照冻结失败；原选择已保留，可重试。');
+            throw new Error(body?.error?.message ?? t('fileViewer.mokina.continuationSnapshotFailed'));
           }
           const items = body.snapshot.items ?? [];
           await writePendingMokinaSnapshot({
@@ -4545,6 +4565,9 @@ function FileVersionManagerModal({
             excluded: excluded.map((entry) => ({ displayName: entry.displayName, reason: entry.explanation || entry.reason })),
           });
           contextSnapshotId = snapshotId;
+        }
+        if (excluded.length > 0) {
+          setError(t('fileViewer.mokina.continuationExcluded', { names: excluded.map((entry) => entry.displayName).join('、') }));
         }
       }
       const fixed = buildMokinaContinuationV2({
@@ -5255,15 +5278,16 @@ function FileVersionManagerModal({
                     const id = event.target.value;
                     setContinuationBrandId(id);
                     const summary = continuationDesignSystems.find((system) => system.id === id);
+                    const seq = ++brandPreviewSeqRef.current;
                     setContinuationBrandPreview(id && summary ? { title: summary.title, chars: 0 } : null);
                     if (id && summary) {
                       void fetch(`/api/design-systems/${encodeURIComponent(id)}`,
                         workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined)
                         .then(async (response) => {
-                          if (!response.ok) return;
+                          if (!response.ok || seq !== brandPreviewSeqRef.current) return;
                           const body = await response.json().catch(() => null) as { body?: string } | null;
                           const text = typeof body?.body === 'string' ? body.body : '';
-                          if (text.trim()) setContinuationBrandPreview({ title: summary.title, chars: text.length });
+                          if (text.trim() && seq === brandPreviewSeqRef.current) setContinuationBrandPreview({ title: summary.title, chars: text.length });
                         })
                         .catch(() => {});
                     }

@@ -349,7 +349,7 @@ function assertProjectCreatePreparationWithinDeadline(
   }
 }
 
-export interface RegisterProjectRoutesDeps extends RouteDeps<'db' | 'design' | 'http' | 'paths' | 'projectStore' | 'projectFiles' | 'conversations' | 'templates' | 'status' | 'events' | 'ids' | 'telemetry' | 'appConfig' | 'agents' | 'validation' | 'collabSync' | 'designSystems'> {
+export interface RegisterProjectRoutesDeps extends RouteDeps<'db' | 'design' | 'http' | 'paths' | 'projectStore' | 'projectFiles' | 'conversations' | 'templates' | 'status' | 'events' | 'ids' | 'telemetry' | 'appConfig' | 'agents' | 'validation' | 'collabSync'> {
   /**
    * Request-wide deadline for the read-only preparation POST /api/projects
    * runs before its transaction. Production keeps the 15s default; tests and
@@ -2188,7 +2188,6 @@ function buildDesignSystemCopyPendingPrompt(input: {
 
 export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDeps) {
   const { db, design } = ctx;
-  const { listAllDesignSystems, readDesignSystemWorkspaceTextFile } = ctx.designSystems;
   const projectCreatePreparationTimeoutMs =
     typeof ctx.projectCreatePreparationTimeoutMs === 'number'
     && Number.isFinite(ctx.projectCreatePreparationTimeoutMs)
@@ -5807,6 +5806,24 @@ export function registerProjectArtifactRoutes(app: Express, ctx: RegisterProject
 export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' | 'paths' | 'uploads' | 'node' | 'projectStore' | 'projectFiles' | 'documents' | 'artifacts' | 'projectPreviewScopes'> {
   verifyWorkspaceRequestAuthority?: VerifyWorkspaceRequestAuthority;
   authorizeProjectRequest?: AuthorizeProjectRequest;
+  /**
+   * N04: brand-kit reads for Mokina context snapshots. Same read order as the
+   * design-system detail route (workspace project mirror first, then
+   * canonical roots). Optional: callers that never freeze a brand source can
+   * omit it.
+   */
+  mokinaBrandDesignSystems?: {
+    listAllDesignSystems: (options?: {
+      workspaceId?: string | null;
+      workspaceMemberId?: string | null;
+      exactTeam?: boolean;
+    }) => Promise<Array<{ id: string; title?: string | null }>>;
+    readDesignSystemWorkspaceTextFile: (
+      dbHandle: unknown,
+      summary: unknown,
+      filePath: string,
+    ) => Promise<string | null>;
+  };
   /** Startup-hydrated O(1) quarantine lookup for stale Team mirrors. */
   isProjectRevoked?: (projectId: string) => boolean;
   /** Durable first-open placeholder stamp lookup. */
@@ -5814,6 +5831,7 @@ export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' |
 }
 
 export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFileRoutesDeps) {
+  const { listAllDesignSystems, readDesignSystemWorkspaceTextFile } = ctx.mokinaBrandDesignSystems ?? {};
   const { db } = ctx;
   const { sendApiError, sendMulterError } = ctx.http;
   // The design-token suggestion route reads the design-system roots to resolve
@@ -7308,7 +7326,7 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
             // 两侧一致才不会必然 SOURCE_CHANGED。
             const workspaceId = (req.header('x-od-workspace-id') ?? '').trim() || null;
             const workspaceMemberId = (req.header('x-od-workspace-member-id') ?? '').trim() || null;
-            if (workspaceId) {
+            if (workspaceId && listAllDesignSystems && readDesignSystemWorkspaceTextFile) {
               try {
                 const systems = await listAllDesignSystems({ workspaceId, workspaceMemberId });
                 const summary = systems.find((entry) => entry.id === designSystemId);

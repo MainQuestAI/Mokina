@@ -1,0 +1,85 @@
+
+> @open-design/daemon@0.22.1 pretest /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> pnpm --filter '@open-design/daemon^...' --workspace-concurrency=4 --if-present run build
+
+Scope: 10 of 28 workspace projects
+../../packages/release build$ tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/platform build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/registry-protocol build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/diagnostics build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/diagnostics build: Done
+../../packages/release build: Done
+../../packages/platform build: Done
+../../packages/registry-protocol build: Done
+../../packages/sidecar-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/contracts build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar-proto build: Done
+../../packages/sidecar build: Done
+../../packages/contracts build: Done
+../../packages/agui-adapter build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/launcher-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/plugin-runtime build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/launcher-proto build: Done
+../../packages/agui-adapter build: Done
+../../packages/plugin-runtime build: Done
+
+> @open-design/daemon@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> vitest run -c vitest.config.ts tests/project-file-version-routes.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+
+stdout | tests/project-file-version-routes.test.ts > project file version routes
+[plugins] registered 462 bundled plugin(s)
+
+stdout | tests/project-file-version-routes.test.ts > project file version routes
+[plugins] seeded community registry source (5 plugin(s))
+
+stdout | tests/project-file-version-routes.test.ts > project file version routes
+[plugins] seeded official registry source (462 plugin(s))
+
+stdout | tests/project-file-version-routes.test.ts > project file version routes
+[telemetry] effective run sink { kind: 'none', host: null, protocol: null }
+[telemetry] effective task observation rollout {
+  requestedMode: 'auto',
+  mode: 'send',
+  effectiveMode: 'off',
+  environment: 'development',
+  tag: 'od-next-task-v1',
+  effectiveSink: { kind: 'none', host: null, protocol: null },
+  taskProtocol: 'none',
+  readyToSend: false,
+  schemaReady: true,
+  blockedReason: 'missing_sink'
+}
+
+ ❯ tests/project-file-version-routes.test.ts (16 tests | 1 failed) 1633ms
+     × readOnly listing of legacy HTML leaves version storage unchanged; normal GET remains compatible 47ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/project-file-version-routes.test.ts > project file version routes > readOnly listing of legacy HTML leaves version storage unchanged; normal GET remains compatible
+Error: invalid file name
+ ❯ validateProjectPath src/projects.ts:1512:11
+    1510| export function validateProjectPath(raw) {
+    1511|   if (typeof raw !== 'string' || !raw.trim()) {
+    1512|     throw new Error('invalid file name');
+       |           ^
+    1513|   }
+    1514|   const normalized = raw.replace(/\\/g, '/');
+ ❯ validateUserFileName src/project-file-versions.ts:460:20
+ ❯ getProjectFileVersionRootStats src/project-file-versions.ts:872:20
+ ❯ tests/project-file-version-routes.test.ts:71:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  09:22:06
+   Duration  5.48s (transform 2.77s, setup 15ms, import 3.75s, tests 1.63s, environment 0ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/daemon@0.22.1 test: `vitest run -c vitest.config.ts tests/project-file-version-routes.test.ts`
+Exit status 1

@@ -1,0 +1,13 @@
+{
+  "productId": "mokina",
+  "productName": "Mokina",
+  "productVersion": "0.0.2-local.1",
+  "bundleIdentifier": "ai.mainquest.mokina.preview",
+  "releaseKind": "local-preview",
+  "namespace": "mokina-local",
+  "automaticUpdates": false,
+  "upstreamNews": false,
+  "defaultTelemetry": false,
+  "requiresUpstreamAccount": false,
+  "registersOdScheme": false
+}

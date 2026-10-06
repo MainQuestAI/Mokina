@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "status": "not_run",
+  "productVersion": "0.0.2-local.1",
+  "planningBaseline": "53da96ca9080afb5b5141490d6e95858a6e18e9a",
+  "actualReleaseSha": null,
+  "actualPr3MergeSha": null,
+  "actualMacOS": null,
+  "actualArchitecture": null,
+  "actualCodexVersion": null,
+  "actualModel": null,
+  "actualEngineVersion": null,
+  "artifact": null,
+  "artifactSha256": null,
+  "signingStatus": null,
+  "notarizationStatus": null,
+  "gates": {
+    "G0": {
+      "status": "not_run",
+      "evidence": []
+    },
+    "G1": {
+      "status": "not_run",
+      "evidence": []
+    },
+    "G2": {
+      "status": "not_run",
+      "evidence": []
+    },
+    "G3": {
+      "status": "not_run",
+      "evidence": []
+    },
+    "G4": {
+      "status": "not_run",
+      "evidence": []
+    },
+    "G5": {
+      "status": "not_run",
+      "evidence": []
+    },
+    "G6": {
+      "status": "not_run",
+      "evidence": []
+    }
+  },
+  "professionalReview": {
+    "status": "not_run",
+    "reviewer": null,
+    "scores": null
+  },
+  "userAcceptance": {
+    "status": "not_run",
+    "date": null,
+    "acceptedBy": null
+  },
+  "warning": "这是待填写模板，不是真实运行、签名或用户签收证据。"
+}

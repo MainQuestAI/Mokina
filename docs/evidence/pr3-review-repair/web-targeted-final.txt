@@ -1,0 +1,13 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/hooks/mokina-summaries.test.tsx tests/artifacts/mokina-project-entry.test.ts tests/components/EntryNavRail.recent-section.test.tsx tests/components/ProjectView.retry-gating.test.tsx tests/providers/daemon-run-create-recovery.test.ts tests/runtime/amr-balance-gate-personal-tiers.test.ts tests/state/force-light-theme.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+
+ Test Files  8 passed (8)
+      Tests  121 passed (121)
+   Start at  09:45:31
+   Duration  4.44s (transform 2.84s, setup 1.68s, import 2.63s, tests 2.23s, environment 1.70s)
+

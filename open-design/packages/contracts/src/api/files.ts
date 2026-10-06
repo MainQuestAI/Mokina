@@ -59,6 +59,8 @@ export interface ProjectFilesResponse {
 export interface ProjectMaterialExtraction {
   name: string;
   contentDigest: string;
+  /** Parser identity that produced this extraction; frozen into context snapshots. */
+  parserVersion?: string;
   status: 'read' | 'partial' | 'unreadable';
   limitations: string[];
   groupLimitations?: Array<{
@@ -129,6 +131,9 @@ export interface ProjectFileVersion {
   parentVersionId?: string;
   origin?: ArtifactOrigin;
 }
+
+/** readOnly lists saved history without creating a baseline version. */
+export interface ProjectFileVersionsQuery { readOnly?: boolean; }
 
 export interface ProjectFileVersionsResponse {
   file: ProjectFile;

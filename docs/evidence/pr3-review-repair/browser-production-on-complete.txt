@@ -1,0 +1,47 @@
+
+Running 9 tests using 1 worker
+
+(node:9440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 (3.9s)
+  ✓  2 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 (3.6s)
+  ✓  3 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 (1.5s)
+  ✓  4 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1440x900 (1.5s)
+  ✓  5 [chromium] › ui/mokina-workspace-actions.test.ts:71:1 › [P1] Mokina panel explains historical and chapterless action restrictions (1.9s)
+  ✘  6 [chromium] › ui/mokina-workspace-actions.test.ts:96:1 › [P1] Mokina continuation creates an editable fixed-excerpt draft without a run (1.5s)
+(node:10212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  7 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 (3.9s)
+  ✓  8 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 (3.8s)
+  ✓  9 [chromium] › ui/real-daemon-run.test.ts:2195:1 › [P1] Mokina PR3 Home first send creates one real daemon run (2.8s)
+
+
+  1) [chromium] › ui/mokina-workspace-actions.test.ts:96:1 › [P1] Mokina continuation creates an editable fixed-excerpt draft without a run 
+
+    SyntaxError: "undefined" is not valid JSON
+
+      113 |   expect(snapshot.ok()).toBe(true);
+      114 |   const data = await snapshot.json() as { content: string };
+    > 115 |   expect(JSON.parse(data.content)).toMatchObject({ source: { projectId: source.projectId, fileName: 'plan.html' }, sections: [{ id: 'strategy' }], background: '只选策略，制作门店传播内容。' });
+          |               ^
+      116 |   await input.fill('Edited continuation draft');
+      117 |   await page.reload({ waitUntil: 'domcontentloaded' });
+      118 |   await expect(input).toHaveText('Edited continuation draft');
+        at /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/ui/mokina-workspace-actions.test.ts:115:15
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../.tmp/pr3-production-on-complete-artifacts/mokina-workspace-actions---4a82b-excerpt-draft-without-a-run-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../.tmp/pr3-production-on-complete-artifacts/mokina-workspace-actions---4a82b-excerpt-draft-without-a-run-chromium/error-context.md
+
+  1 failed
+    [chromium] › ui/mokina-workspace-actions.test.ts:96:1 › [P1] Mokina continuation creates an editable fixed-excerpt draft without a run 
+  8 passed (37.7s)
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test -c playwright.config.ts ui/real-daemon-run.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts --grep Mokina PR3|Mokina open-resolution|Mokina panel|Mokina continuation --workers=1 --reporter=list,json --output=/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/.tmp/pr3-production-on-complete-artifacts

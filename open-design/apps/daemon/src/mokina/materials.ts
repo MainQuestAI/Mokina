@@ -1,17 +1,24 @@
 import { createHash } from 'node:crypto';
-import { execFile } from 'node:child_process';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import JSZip from 'jszip';
 import { load } from 'cheerio';
 import type { ProjectMaterialExtraction } from '@open-design/contracts';
+import { runPdftotext } from '../pdftotext.js';
 
 export type MokinaMaterial = ProjectMaterialExtraction;
 
+/**
+ * Identity of the extraction rules in this module. Bump when a change alters
+ * what a given source file extracts (a parser upgrade must invalidate cached
+ * snapshots keyed by sourceDigest+parserVersion instead of silently reusing
+ * the old text).
+ */
+export const MOKINA_MATERIAL_PARSER_VERSION = 'mokina-material/1';
+
 export async function readMokinaMaterial(name: string, buffer: Buffer): Promise<MokinaMaterial> {
-  const result: MokinaMaterial = { name, contentDigest: createHash('sha256').update(buffer).digest('hex'), status: 'read', limitations: [], groupLimitations: [], sections: [] };
+  const result: MokinaMaterial = { name, contentDigest: createHash('sha256').update(buffer).digest('hex'), parserVersion: MOKINA_MATERIAL_PARSER_VERSION, status: 'read', limitations: [], groupLimitations: [], sections: [] };
   if (buffer.length > 10 * 1024 * 1024) throw new Error('资料超过 10 MB 读取限制');
   const ext = path.extname(name).toLowerCase();
   const add = (location: string, text: string, groupId: string, groupLabel: string) => {
@@ -48,8 +55,9 @@ export async function readMokinaMaterial(name: string, buffer: Buffer): Promise<
     const directory = await mkdtemp(path.join(tmpdir(), 'mokina-material-'));
     try {
       const file = path.join(directory, 'source.pdf'); await writeFile(file, buffer);
-      const { stdout } = await promisify(execFile)('pdftotext', ['-layout', file, '-'], { timeout: 15_000, maxBuffer: 4 * 1024 * 1024 });
-      const pages = stdout.split('\f'); if (!pages.at(-1)?.trim()) pages.pop();
+      const extracted = await runPdftotext(file);
+      if (!extracted.ok) throw new Error(extracted.reason);
+      const pages = extracted.stdout.split('\f'); if (!pages.at(-1)?.trim()) pages.pop();
       pages.forEach((page, i) => {
         const location = `第 ${i + 1} 页`;
         if (!page.trim()) {

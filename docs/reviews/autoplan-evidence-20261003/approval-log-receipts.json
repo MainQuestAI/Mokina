@@ -1,0 +1,62 @@
+[
+  {
+    "skill": "plan-ceo-review",
+    "phase": "ceo",
+    "status": "saved"
+  },
+  {
+    "skill": "autoplan-voices",
+    "phase": "ceo",
+    "status": "saved"
+  },
+  {
+    "skill": "plan-design-review",
+    "phase": "design",
+    "status": "saved"
+  },
+  {
+    "skill": "autoplan-voices",
+    "phase": "design",
+    "status": "saved"
+  },
+  {
+    "skill": "plan-devex-review",
+    "phase": "dx",
+    "status": "saved"
+  },
+  {
+    "skill": "autoplan-voices",
+    "phase": "dx",
+    "status": "saved"
+  },
+  {
+    "skill": "plan-eng-review",
+    "phase": "eng",
+    "status": "saved"
+  },
+  {
+    "skill": "autoplan-voices",
+    "phase": "eng",
+    "status": "saved"
+  },
+  {
+    "skill": "autoplan-voices",
+    "phase": "ceo initial",
+    "status": "unavailable attempt saved"
+  },
+  {
+    "choice": "TASTE-1",
+    "decision_id": "e74db84e-1fe6-415b-b9c6-6f10afd85a5e",
+    "status": "saved"
+  },
+  {
+    "choice": "TASTE-2",
+    "decision_id": "6fe32134-ddc2-46bf-983e-c10325ea69d0",
+    "status": "saved"
+  },
+  {
+    "choice": "TASTE-3",
+    "decision_id": "7448fe88-7fd2-4b57-9d0b-b1c5a85500ef",
+    "status": "saved"
+  }
+]

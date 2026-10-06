@@ -1,0 +1,98 @@
+{
+  "evidenceType": "installed local.6 formal APIs; same candidate, separate CLI QA profile; no native dialogs",
+  "operationId": "ebf2de95-61b8-4620-910c-080956eb184a",
+  "targetProjectId": "rr6-restored-bcad1b33-25b4-4a71-8ab2-3f0a8963fcfc",
+  "sameIdentity": [
+    {
+      "status": 200,
+      "body": {
+        "projectId": "rr6-restored-bcad1b33-25b4-4a71-8ab2-3f0a8963fcfc",
+        "warnings": []
+      }
+    },
+    {
+      "status": 200,
+      "body": {
+        "projectId": "rr6-restored-bcad1b33-25b4-4a71-8ab2-3f0a8963fcfc",
+        "warnings": []
+      }
+    },
+    {
+      "status": 200,
+      "body": {
+        "projectId": "rr6-restored-bcad1b33-25b4-4a71-8ab2-3f0a8963fcfc",
+        "warnings": []
+      }
+    },
+    {
+      "status": 200,
+      "body": {
+        "projectId": "rr6-restored-bcad1b33-25b4-4a71-8ab2-3f0a8963fcfc",
+        "warnings": []
+      }
+    }
+  ],
+  "differentIdentity": {
+    "status": 409,
+    "body": {
+      "error": {
+        "code": "MOKINA_OPERATION_CONFLICT",
+        "message": "目标项目 ID 已被其他项目占用。"
+      }
+    }
+  },
+  "invalidTargets": [
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "targetProjectId 不合法。"
+        }
+      }
+    },
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "targetProjectId 不合法。"
+        }
+      }
+    },
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "targetProjectId 不合法。"
+        }
+      }
+    },
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "targetProjectId 不合法。"
+        }
+      }
+    }
+  ],
+  "formalFilesCount": 4,
+  "sourceDeleted": true,
+  "sourceProjectId": "rr-local6-ed19b850-2b80-4832-aa83-e323145bd439",
+  "snapshotId": "b6b2f54f-392e-4db5-b7fc-e52a3a3d9030",
+  "fingerprintBefore": "5c5324d5e348ec85a5962f98c7ec37b02a8135b5a22bdecee8f8f60e5a835a05",
+  "fingerprintAfter": "5c5324d5e348ec85a5962f98c7ec37b02a8135b5a22bdecee8f8f60e5a835a05",
+  "secondImport": {
+    "targetProjectId": "rr6-roundtrip-97389e2b-5d70-4a36-b189-b6899176d6c7",
+    "operationId": "e4f301fa-a7f7-4778-a4b6-7685aff7f60a",
+    "result": {
+      "projectId": "rr6-roundtrip-97389e2b-5d70-4a36-b189-b6899176d6c7",
+      "warnings": []
+    },
+    "fingerprint": "5c5324d5e348ec85a5962f98c7ec37b02a8135b5a22bdecee8f8f60e5a835a05",
+    "zipByteLength": 33853
+  }
+}

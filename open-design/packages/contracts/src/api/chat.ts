@@ -813,7 +813,8 @@ export interface ChatRunStatusResponse {
     | 'entry_missing'
     | 'entry_not_touched'
     | 'entry_unreadable'
-    | 'type_mismatch';
+    | 'type_mismatch'
+    | 'structure_invalid';
   /** Whether the project holds a usable canonical deliverable RIGHT NOW,
    *  regardless of whether this run wrote it. `deliverableValid` answers "did
    *  THIS run deliver" and is the right gate for accepting a completion claim;
@@ -830,7 +831,8 @@ export interface ChatRunStatusResponse {
     | 'project_missing'
     | 'entry_missing'
     | 'entry_unreadable'
-    | 'type_mismatch';
+    | 'type_mismatch'
+    | 'structure_invalid';
   /** Canonical project-relative file selected by deliverable validation. */
   deliverableEntryFile?: string;
   /** File kind of deliverableEntryFile, derived from the daemon file index. */

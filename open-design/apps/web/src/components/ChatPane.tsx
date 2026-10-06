@@ -1,3 +1,4 @@
+import type { SendRequestSnapshot } from '../runtime/chat/send-request-state';
 import { conversationMetaLabel } from '../runtime/chat/conversation-time';
 export { conversationMetaLabel } from '../runtime/chat/conversation-time';
 import { QuoteBar } from './chat/QuoteBar';
@@ -51,6 +52,7 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { persistRecoveredComposerDraft } from '../runtime/chat/composer-draft';
 import historyStyles from './chat/ConversationHistoryDock.module.css';
 import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask } from '@open-design/contracts';
 import { useAnalytics } from '../analytics/provider';
@@ -726,6 +728,9 @@ interface Props {
   shareToOpenDesignBusyMessageId?: string | null;
   forceStreamingMessageIds?: Set<string>;
   initialDraft?: string;
+  sendRecoveryRequest?: { id: string; snapshot: SendRequestSnapshot } | null;
+  onSendRecoveryRestored?: (id: string) => void;
+  onSendRecoveryBlocked?: (reason?: 'storage' | 'occupied') => void;
   // Product path of the Home recommendation that started this project. When
   // set (and concrete), the empty-conversation starter cards show that path's
   // starters — one-click composer replacements — instead of the generic set.
@@ -1353,6 +1358,9 @@ export function ChatPane({
   shareToOpenDesignBusyMessageId,
   forceStreamingMessageIds,
   initialDraft,
+  sendRecoveryRequest,
+  onSendRecoveryRestored,
+  onSendRecoveryBlocked,
   onboardingStarterPath = null,
   composerPlaceholder,
   onSubmitQuestionForm,
@@ -2733,6 +2741,30 @@ export function ChatPane({
   // need to review and Send. Fires once, after the composer mounts for the
   // routed conversation; re-checks on conversation change so an async-loaded
   // composer still gets seeded. The seed is consumed (cleared) on apply.
+  useEffect(() => {
+    if (!sendRecoveryRequest || !composerRef.current) return;
+    if (composerRef.current.hasDraft()) { onSendRecoveryBlocked?.(); return; }
+    const { snapshot, id } = sendRecoveryRequest;
+    // Transfer the complete receipt before removing its only crash-safe copy.
+    // Failure keeps the original receipt available and leaves the current draft alone.
+    if (!composerDraftStorageKey) { onSendRecoveryBlocked?.(); return; }
+    let active = true;
+    void (async () => {
+      const saved = await persistRecoveredComposerDraft(composerDraftStorageKey, snapshot.prompt, snapshot.extras,
+        () => active && composerRef.current != null && !composerRef.current.hasDraft());
+      if (!active) return;
+      if (!saved || !composerRef.current || composerRef.current.hasDraft()) {
+        onSendRecoveryBlocked?.(!saved ? 'storage' : 'occupied'); return;
+      }
+      composerRef.current.restoreDraft({ text: snapshot.prompt,
+        attachments: snapshot.extras.attachments, commentAttachments: snapshot.extras.commentAttachments,
+        quotes: snapshot.extras.quotes,
+        meta: { context: snapshot.extras.context, skillIds: snapshot.extras.context.skillIds } });
+      onSendRecoveryRestored?.(id);
+    })();
+    return () => { active = false; };
+  }, [sendRecoveryRequest, composerDraftStorageKey, onSendRecoveryRestored, onSendRecoveryBlocked]);
+
   const seededComposerSeedRef = useRef(false);
   useEffect(() => {
     if (seededComposerSeedRef.current) return;

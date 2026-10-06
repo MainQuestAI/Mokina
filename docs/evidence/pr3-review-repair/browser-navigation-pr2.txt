@@ -1,0 +1,91 @@
+
+Running 5 tests using 1 worker
+
+(node:58705) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:58705) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 (0ms)
+(node:60186) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:60186) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 (3ms)
+(node:61004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:61004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 (0ms)
+(node:62136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:62136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1440x900 (5.8s)
+  ✓  5 [chromium] › ui/mokina-workspace-actions.test.ts:71:1 › [P1] Mokina panel explains historical and chapterless action restrictions (5.7s)
+
+
+  1) [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 
+
+    Error: Playwright web warmup timed out after 120000ms
+
+       at ../lib/playwright/runtime-lifecycle.ts:27
+
+      25 |   } catch (error) {
+      26 |     if (signal.aborted) {
+    > 27 |       throw new Error(`Playwright web warmup timed out after ${timeoutMs}ms`, { cause: error });
+         |             ^
+      28 |     }
+      29 |     throw error;
+      30 |   }
+        at warmPlaywrightWebRuntime (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/playwright/runtime-lifecycle.ts:27:13)
+        at Object.base.extend.toolsDev.scope (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/playwright/suite.ts:78:9)
+    [cause]: TimeoutError: The operation was aborted due to timeout
+
+  2) [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 
+
+    Error: Playwright web warmup timed out after 120000ms
+
+       at ../lib/playwright/runtime-lifecycle.ts:27
+
+      25 |   } catch (error) {
+      26 |     if (signal.aborted) {
+    > 27 |       throw new Error(`Playwright web warmup timed out after ${timeoutMs}ms`, { cause: error });
+         |             ^
+      28 |     }
+      29 |     throw error;
+      30 |   }
+        at warmPlaywrightWebRuntime (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/playwright/runtime-lifecycle.ts:27:13)
+        at Object.base.extend.toolsDev.scope (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/playwright/suite.ts:78:9)
+    [cause]: TimeoutError: The operation was aborted due to timeout
+
+  3) [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 
+
+    Error: Expected JSON output from tools-dev, got: 
+    > open-design@0.22.1 tools-dev /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design
+    > pnpm exec tools-dev start web --namespace playwright-58696-055d1774-w0 --tools-dev-root /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/.tmp/e2e/playwright-58696-055d1774-w0/i2-p61004/scratch/tools-dev --daemon-port 64791 --web-port 64792 --json --parent-pid 61004
+
+
+
+       at ../lib/tools-dev/cli.ts:106
+
+      104 |   const jsonStart = Math.max(objectStart, arrayStart);
+      105 |   if (jsonStart < 0) {
+    > 106 |     throw new Error(`Expected JSON output from tools-dev, got: ${stdout}`);
+          |           ^
+      107 |   }
+      108 |   return JSON.parse(stdout.slice(jsonStart + 1)) as T;
+      109 | }
+        at parseJsonOutput (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/tools-dev/cli.ts:106:11)
+        at runToolsDevJson (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/tools-dev/cli.ts:86:10)
+        at command (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/tools-dev/runtime.ts:57:12)
+        at Object.startWeb (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/tools-dev/runtime.ts:91:24)
+        at Object.base.extend.toolsDev.scope (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/lib/playwright/suite.ts:57:9)
+
+  3 failed
+    [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 
+    [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 
+    [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 
+  2 passed (9.7m)
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test -c playwright.config.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts --workers=1

@@ -1,0 +1,73 @@
+ operation identity when recovery import omits the optional flag 223ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/mokina-cli-recovery.test.ts > mints an operation identity when recovery export omits the optional flag
+AssertionError: /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon/src/cli.ts:2182
+    ? flags['operation-id'].trim()
+                            ^
+
+ReferenceError: randomUUID is not defined
+    at runMokinaRecoveryExport (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon/src/cli.ts:2182:29)
+    at async <anonymous> (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon/src/cli.ts:843:3)
+
+Node.js v24.12.0
+: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ runMokinaRecoveryExport src/cli.ts:2182:29
+ ❯ <anonymous> src/cli.ts:843:3
+ ❯ tests/mokina-cli-recovery.test.ts:68:54
+     66| it('mints an operation identity when recovery export omits the optiona…
+     67|   const result = await invoke(['mokina', 'recovery', 'export', '--proj…
+     68|   expect(result.code, result.stderr + result.stdout).toBe(0);
+       |                                                      ^
+     69|   const output = JSON.parse(result.stdout);
+     70|   expect(output.operationId).toMatch(/^[0-9a-f-]{36}$/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/mokina-cli-recovery.test.ts > mints an operation identity when recovery import omits the optional flag
+AssertionError: /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon/src/cli.ts:2219
+    ? flags['operation-id'].trim()
+                            ^
+
+ReferenceError: randomUUID is not defined
+    at runMokinaRecoveryImport (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon/src/cli.ts:2219:29)
+    at async <anonymous> (/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon/src/cli.ts:843:3)
+
+Node.js v24.12.0
+: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ runMokinaRecoveryImport src/cli.ts:2219:29
+ ❯ <anonymous> src/cli.ts:843:3
+ ❯ tests/mokina-cli-recovery.test.ts:77:54
+     75|   await writeFile(archive, archiveBytes);
+     76|   const result = await invoke(['mokina', 'recovery', 'import', '--file…
+     77|   expect(result.code, result.stderr + result.stdout).toBe(0);
+       |                                                      ^
+     78|   expect(requests[0]!.body).toMatch(/name="operationId"\r\n\r\n[0-9a-f…
+     79| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  21:13:26
+   Duration  1.01s (transform 16ms, setup 14ms, import 16ms, tests 911ms, environment 0ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/mokina-cli-recovery.test.ts

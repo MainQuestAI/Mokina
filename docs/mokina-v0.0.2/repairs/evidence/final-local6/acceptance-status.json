@@ -1,0 +1,11 @@
+{
+  "engineeringClosed": true,
+  "sourceSHA": "8950986e41e5047c56aab4d3ba9fda900902aa9a",
+  "candidate": "0.0.2-local.6",
+  "nativeBlock": null,
+  "nativePending": [],
+  "nativeStatus": "passed same DMG-installed candidate; Finder native entry, real Codex, fault-injected refusal/lost202, adoption, continuation, native exports/cancel/external viewers, source-deleted recovery, long-path reopen, final instance-only quit",
+  "professionalSignoff": "not performed",
+  "fullSuites": "web8 + daemon14 historical failures; every current failure same name/signature in pre a167de9 and exact BASE df4a0b2 selected failing-file runs",
+  "publicDistribution": "not included; unsigned/unnotarized arm64 local preview"
+}

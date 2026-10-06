@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // @ts-nocheck
 import { readFileSync, writeFileSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import { basename } from 'node:path';
 import { runDaemonCliStartup, startDaemonRuntime } from './daemon-startup.js';
 import { runLiveArtifactsMcpServer } from './mcp-live-artifacts-server.js';
@@ -402,6 +403,7 @@ const SUBCOMMAND_MAP = {
   brand: runBrand,
   brands: runBrand,
   project: runProject,
+  mokina: runMokina,
   strategy: runStrategy,
   workspace: runWorkspace,
   automation: runAutomation,
@@ -2145,6 +2147,192 @@ function surfaceFetchError(err, daemonUrl) {
         'reached from a regular shell.',
     );
   }
+}
+
+function printMokinaHelp() {
+  console.log(`od mokina context prepare --project <id> --snapshot <id> (--selections <json|file|->) [--excluded <json|file>] [--json]
+od mokina context get     --project <id> --snapshot <id> [--json]
+od mokina recovery export --project <id> --out <path.zip> [--operation-id <id>] [--json]
+od mokina recovery import --file <path.zip> --target-project <new-id> [--name <项目名>] [--operation-id <id>] [--json]`);
+}
+
+async function runMokina(args) {
+  const [sub, ...rest] = args;
+  if ((sub !== 'context' && sub !== 'recovery') || args.includes('--help') || args.includes('-h') || sub == null) {
+    printMokinaHelp();
+    process.exit(sub == null || sub === 'help' || args.includes('--help') || args.includes('-h') ? 0 : 2);
+  }
+  const [action, ...actionArgs] = rest;
+  if (sub === 'context' && action === 'prepare') return runMokinaContextPrepare(actionArgs);
+  if (sub === 'context' && action === 'get') return runMokinaContextGet(actionArgs);
+  if (action === 'export') return runMokinaRecoveryExport(actionArgs);
+  if (action === 'import') return runMokinaRecoveryImport(actionArgs);
+  console.error(`unknown subcommand: od mokina ${sub} ${action ?? ''}`);
+  printMokinaHelp();
+  process.exit(2);
+}
+
+async function runMokinaRecoveryExport(rawArgs) {
+  const { writeFile } = await import('node:fs/promises');
+  const { flags, projectId } = parseMokinaContextFlags(rawArgs, {
+    requireSelections: false,
+    required: ['project', 'out'],
+  });
+  const outPath = typeof flags.out === 'string' ? flags.out.trim() : '';
+  const operationId = typeof flags['operation-id'] === 'string' && flags['operation-id'].trim()
+    ? flags['operation-id'].trim()
+    : randomUUID();
+  const daemonUrl = await cliDaemonUrl(flags);
+  const url = `${daemonUrl.replace(/\/$/, '')}/api/projects/${encodeURIComponent(projectId)}/mokina/recovery-export`;
+  let resp;
+  try {
+    resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ operationId }),
+    });
+  } catch (err) {
+    console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  if (!resp.ok) {
+    console.error(`[mokina] ${resp.status} ${resp.statusText}`);
+    process.exit(1);
+  }
+  const buffer = Buffer.from(await resp.arrayBuffer());
+  await writeFile(outPath, buffer);
+  if (flags.json) {
+    process.stdout.write(JSON.stringify({ ok: true, out: outPath, bytes: buffer.length, operationId }, null, 2) + '\n');
+    return;
+  }
+  console.log(`[mokina] recovery package written: ${outPath} (${buffer.length} bytes, operationId=${operationId})`);
+}
+
+async function runMokinaRecoveryImport(rawArgs) {
+  const { readFile } = await import('node:fs/promises');
+  const { flags } = parseMokinaContextFlags(rawArgs, {
+    requireSelections: false,
+    required: ['file', 'target-project'],
+  });
+  const filePath = typeof flags.file === 'string' ? flags.file.trim() : '';
+  const targetProjectId = typeof flags['target-project'] === 'string' ? flags['target-project'].trim() : '';
+  const operationId = typeof flags['operation-id'] === 'string' && flags['operation-id'].trim()
+    ? flags['operation-id'].trim()
+    : randomUUID();
+  const daemonUrl = await cliDaemonUrl(flags);
+  const url = `${daemonUrl.replace(/\/$/, '')}/api/mokina/recovery-import`;
+  const form = new FormData();
+  form.append('operationId', operationId);
+  form.append('targetProjectId', targetProjectId);
+  if (typeof flags.name === 'string' && flags.name.trim()) form.append('projectName', flags.name.trim());
+  form.append('file', new Blob([await readFile(filePath)], { type: 'application/zip' }), 'recovery.zip');
+  let resp;
+  try {
+    resp = await fetch(url, { method: 'POST', body: form });
+  } catch (err) {
+    console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  const data = await resp.json().catch(() => null);
+  if (!resp.ok) {
+    console.error(`[mokina] ${resp.status} ${JSON.stringify(data)}`);
+    process.exit(1);
+  }
+  process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+}
+
+function parseMokinaContextFlags(rawArgs, { requireSelections, required = ['project', 'snapshot'] }) {
+  let flags;
+  try {
+    flags = parseFlags(rawArgs, {
+      string: ['project', 'snapshot', 'selections', 'excluded', 'daemon-url', 'namespace', 'out', 'file', 'target-project', 'name', 'operation-id'],
+      boolean: ['json'],
+    });
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : String(err));
+    process.exit(2);
+  }
+  for (const name of required) {
+    const value = flags[name];
+    if (typeof value !== 'string' || !value.trim()) {
+      console.error(`--${name} is required`);
+      process.exit(2);
+    }
+  }
+  const projectId = typeof flags.project === 'string' ? flags.project.trim() : '';
+  const snapshotId = typeof flags.snapshot === 'string' ? flags.snapshot.trim() : '';
+  if (requireSelections) {
+    if (typeof flags.selections !== 'string' || !flags.selections.trim()) {
+      console.error('--selections is required (inline JSON, file path, or - for stdin)');
+      process.exit(2);
+    }
+  }
+  return { flags, projectId, snapshotId };
+}
+
+async function runMokinaContextPrepare(rawArgs) {
+  const { flags, projectId, snapshotId } = parseMokinaContextFlags(rawArgs, { requireSelections: true });
+  const selections = safeReadJsonFile(flags.selections);
+  if (!Array.isArray(selections)) {
+    console.error('--selections must be a JSON array (or a file/stdin with one)');
+    process.exit(2);
+  }
+  const excluded = typeof flags.excluded === 'string' && flags.excluded.trim()
+    ? safeReadJsonFile(flags.excluded)
+    : [];
+  if (excluded == null || !Array.isArray(excluded)) {
+    console.error('--excluded must be a JSON array when provided');
+    process.exit(2);
+  }
+  const daemonUrl = await cliDaemonUrl(flags);
+  const url = `${daemonUrl.replace(/\/$/, '')}/api/projects/${encodeURIComponent(projectId)}/mokina/context-snapshots`;
+  let resp;
+  try {
+    resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ snapshotId, selections, excluded }),
+    });
+  } catch (err) {
+    console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  const data = await resp.json().catch(() => null);
+  if (!resp.ok) {
+    const message = data && typeof data === 'object' && 'error' in data
+      ? JSON.stringify((data as { error: unknown }).error)
+      : resp.statusText;
+    console.error(`[mokina] ${resp.status} ${message}`);
+    process.exit(1);
+  }
+  if (flags.json) {
+    process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+    return;
+  }
+  const snapshot = (data as { snapshot?: { snapshotId?: string; fingerprint?: string; items?: unknown[] } }).snapshot;
+  console.log(`[mokina] snapshot ${snapshot?.snapshotId ?? snapshotId} (${snapshot?.items?.length ?? 0} items) fingerprint=${snapshot?.fingerprint ?? '?'}`);
+}
+
+async function runMokinaContextGet(rawArgs) {
+  const { flags, projectId, snapshotId } = parseMokinaContextFlags(rawArgs, { requireSelections: false });
+  const daemonUrl = await cliDaemonUrl(flags);
+  const url = `${daemonUrl.replace(/\/$/, '')}/api/projects/${encodeURIComponent(projectId)}/mokina/context-snapshots/${encodeURIComponent(snapshotId)}`;
+  let resp;
+  try {
+    resp = await fetch(url);
+  } catch (err) {
+    console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  const data = await resp.json().catch(() => null);
+  if (!resp.ok) {
+    const message = data && typeof data === 'object' && 'error' in data
+      ? JSON.stringify((data as { error: unknown }).error)
+      : resp.statusText;
+    console.error(`[mokina] ${resp.status} ${message}`);
+    process.exit(1);
+  }
+  process.stdout.write(JSON.stringify(data, null, 2) + '\n');
 }
 
 function parseFlags(argv, opts = {}) {
@@ -8330,7 +8518,7 @@ async function runFiles(args) {
   od files delete <projectId> <name>           Delete a project file.
   od files diff   <projectId> <relpathA> [<relpathB> | --against -]
                                                Print a unified diff.
-  od files versions <projectId> <relpath>      List saved HTML versions.
+  od files versions <projectId> <relpath> [--read-only]  List saved HTML versions; read-only never creates a baseline.
   od files version-read <projectId> <relpath> <versionId>
                                                Stream one saved HTML version.
   od files version-create <projectId> <relpath>
@@ -8363,7 +8551,7 @@ Common options:
   const rest = args.slice(1);
   const flags = parseFlags(rest, {
     string: PROJECT_RESOURCE_STRING_FLAGS,
-    boolean: PROJECT_BOOLEAN_FLAGS,
+    boolean: new Set([...PROJECT_BOOLEAN_FLAGS, 'read-only']),
   });
   const base = (await projectDaemonUrl(flags)).replace(/\/$/, '');
   const workspaceHeaders =
@@ -8498,11 +8686,11 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, rel] = positional;
       if (!id || !rel) {
-        console.error('Usage: od files versions <projectId> <relpath>');
+        console.error('Usage: od files versions <projectId> <relpath> [--read-only]');
         process.exit(2);
       }
       const resp = await fetch(
-        `${base}/api/projects/${encodeURIComponent(id)}/files/${encodeProjectRelpath(rel)}/versions`,
+        `${base}/api/projects/${encodeURIComponent(id)}/files/${encodeProjectRelpath(rel)}/versions${rest.includes('--read-only') ? '?readOnly=true' : ''}`,
         { headers: workspaceHeaders },
       );
       if (!resp.ok) return structuredHttpFailure(resp, 'project-not-found');

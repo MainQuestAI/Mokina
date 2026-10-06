@@ -1,0 +1,103 @@
+{
+  "sourceSHA": "033c57dfe08b1ca42fa8a883bfde522bd3326ed1",
+  "appVersion": "0.0.2-local.5",
+  "evidenceType": "CUA native menus and actual macOS Save As, no dialog overrides",
+  "exports": [
+    {
+      "version": 1,
+      "format": "html",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v1.html",
+      "bytes": 20212,
+      "sha256": "1177987ca39c144670bed574d1ecae1957c1138c71f6794a826df7107c56ba34",
+      "htmlHasUnadoptedCandidate": false
+    },
+    {
+      "version": 1,
+      "format": "zip",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v1.zip",
+      "bytes": 68073,
+      "sha256": "eb2243851d23d9a298de697ac216bdfba95c5a47a949f1485eae415aa45d1aee",
+      "htmlHasUnadoptedCandidate": false,
+      "entries": [
+        "plan-v1-historical/index.html",
+        "plan-v1-historical/DESIGN-HANDOFF.md",
+        "plan-v1-historical/DESIGN-MANIFEST.json"
+      ]
+    },
+    {
+      "version": 1,
+      "format": "pdf",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v1.pdf",
+      "bytes": 1661399,
+      "sha256": "dfd49679e45ef51e9b639313e23d245ab3b146319a325fc830b3ffe6fa5aee8c",
+      "pages": 6,
+      "textChars": 0
+    },
+    {
+      "version": 3,
+      "format": "html",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v3.html",
+      "bytes": 21780,
+      "sha256": "0cfac755a97ecb32ab67a37e367c7a921b04c4f2a3e7132bbd80a330369e602f",
+      "htmlHasUnadoptedCandidate": false
+    },
+    {
+      "version": 3,
+      "format": "zip",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v3.zip",
+      "bytes": 69529,
+      "sha256": "0e8f554c3aee81b42498f666fa043366cc4f81befc40d9a46a1296de15145f82",
+      "htmlHasUnadoptedCandidate": false,
+      "entries": [
+        "plan/index.html",
+        "plan/DESIGN-HANDOFF.md",
+        "plan/DESIGN-MANIFEST.json"
+      ]
+    },
+    {
+      "version": 3,
+      "format": "pdf",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v3.pdf",
+      "bytes": 1941432,
+      "sha256": "9e44fdb4981e1ad303bdd5fca0652602142e9e62c6b42aa53acd8ca9da209464",
+      "pages": 6,
+      "textChars": 0
+    },
+    {
+      "version": 4,
+      "format": "html",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v4.html",
+      "bytes": 21829,
+      "sha256": "44b059407fc511d3e5652f1666dc77757b4b1630969c8e8d7292b0ebbf6a46ec",
+      "htmlHasUnadoptedCandidate": true
+    },
+    {
+      "version": 4,
+      "format": "zip",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v4.zip",
+      "bytes": 69682,
+      "sha256": "96e35a04b0d62902f8b7e975cc006893e0ce316db1a157d3d9caf47fe5864493",
+      "htmlHasUnadoptedCandidate": true,
+      "entries": [
+        "plan-v4-candidate/index.html",
+        "plan-v4-candidate/DESIGN-HANDOFF.md",
+        "plan-v4-candidate/DESIGN-MANIFEST.json"
+      ]
+    },
+    {
+      "version": 4,
+      "format": "pdf",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v4.pdf",
+      "bytes": 1951538,
+      "sha256": "6db03b0ee84931a003fa9f38a0b94e9abad47d4ce1b5601fb969e4d6e6e7ad21",
+      "pages": 6,
+      "textChars": 0
+    }
+  ],
+  "cancellation": {
+    "html": "returned to v4",
+    "zip": "returned to v4",
+    "pdf": "returned to v4",
+    "filesWritten": []
+  }
+}

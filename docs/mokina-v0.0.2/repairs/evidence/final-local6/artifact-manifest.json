@@ -1,0 +1,42 @@
+{
+  "sourceSHA": "8950986e41e5047c56aab4d3ba9fda900902aa9a",
+  "appVersion": "0.0.2-local.6",
+  "platform": "darwin",
+  "arch": "arm64",
+  "buildCommand": "pnpm tools-pack mac build --dir .tmp/mokina-pr4-pack --namespace mokina-local --portable --to all --app-version 0.0.2-local.6 --json",
+  "artifacts": [
+    {
+      "kind": "dmg",
+      "buildPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/dmg/Mokina-mokina-local.dmg",
+      "deliveryPath": "/Users/dingcheng/Mokina-PR4-QA/releases/0.0.2-local.6/Mokina-mokina-local.dmg",
+      "byteLength": 408035059,
+      "sha256": "f0b9f250a28c2d912042dc387e1e21437622a2a6bc2e319d9fa22bc9aaf5f787"
+    },
+    {
+      "kind": "zip",
+      "buildPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pr4-pack/out/mac/namespaces/mokina-local/zip/Mokina-mokina-local.zip",
+      "deliveryPath": "/Users/dingcheng/Mokina-PR4-QA/releases/0.0.2-local.6/Mokina-mokina-local.zip",
+      "byteLength": 405041739,
+      "sha256": "e24be3531f0b476fb89330dcac807a85e8dfef3cac84e85fa1bd51ca1794480f"
+    }
+  ],
+  "packagedConfig": {
+    "appVersion": "0.0.2-local.6",
+    "daemonCliEntryRelative": "app/prebundled/daemon/daemon-cli.mjs",
+    "daemonSidecarEntryRelative": "app/prebundled/daemon/daemon-sidecar.mjs",
+    "namespace": "mokina-local",
+    "product": {
+      "productId": "mokina",
+      "productName": "Mokina",
+      "productVersion": "0.0.2-local.6",
+      "releaseKind": "local-preview",
+      "automaticUpdates": false,
+      "upstreamNews": false,
+      "defaultTelemetry": false,
+      "requiresUpstreamAccount": false,
+      "registersOdScheme": false
+    },
+    "webSidecarEntryRelative": "app/prebundled/web-sidecar.mjs",
+    "webOutputMode": "standalone"
+  }
+}

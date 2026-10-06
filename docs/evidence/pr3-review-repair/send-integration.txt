@@ -1,0 +1,116 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/components/ProjectView.retry-gating.test.tsx tests/providers/daemon-run-create-recovery.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+(node:51874) PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 4)
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/providers/daemon-run-create-recovery.test.ts (5 tests | 4 failed) 16ms
+   × dispatch persistence refusal performs no POST and ends the busy/error surface 7ms
+   × 30 seconds aborts creation; timeout remains unknown and releases local preparation 2ms
+   × an accepted receipt cannot regress to create failure when its stream fails 1ms
+   × unstructured gateway failure is unknown while structured refusal restores the draft 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/providers/daemon-run-create-recovery.test.ts > dispatch persistence refusal performs no POST and ends the busy/error surface
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ scopeHistoryToAgent src/providers/daemon.ts:216:24
+    214| function scopeHistoryToAgent(history: ChatMessage[], targetAgentId?: s…
+    215|   if (!targetAgentId) return history;
+    216|   for (let i = history.length - 1; i >= 0; i -= 1) {
+       |                        ^
+    217|     const message = history[i];
+    218|     if (
+ ❯ buildDaemonTranscript src/providers/daemon.ts:312:25
+ ❯ streamViaDaemon src/providers/daemon.ts:1091:22
+ ❯ tests/providers/daemon-run-create-recovery.test.ts:12:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/providers/daemon-run-create-recovery.test.ts > 30 seconds aborts creation; timeout remains unknown and releases local preparation
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ scopeHistoryToAgent src/providers/daemon.ts:216:24
+    214| function scopeHistoryToAgent(history: ChatMessage[], targetAgentId?: s…
+    215|   if (!targetAgentId) return history;
+    216|   for (let i = history.length - 1; i >= 0; i -= 1) {
+       |                        ^
+    217|     const message = history[i];
+    218|     if (
+ ❯ buildDaemonTranscript src/providers/daemon.ts:312:25
+ ❯ streamViaDaemon src/providers/daemon.ts:1091:22
+ ❯ tests/providers/daemon-run-create-recovery.test.ts:21:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/providers/daemon-run-create-recovery.test.ts > an accepted receipt cannot regress to create failure when its stream fails
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ scopeHistoryToAgent src/providers/daemon.ts:216:24
+    214| function scopeHistoryToAgent(history: ChatMessage[], targetAgentId?: s…
+    215|   if (!targetAgentId) return history;
+    216|   for (let i = history.length - 1; i >= 0; i -= 1) {
+       |                        ^
+    217|     const message = history[i];
+    218|     if (
+ ❯ buildDaemonTranscript src/providers/daemon.ts:312:25
+ ❯ streamViaDaemon src/providers/daemon.ts:1091:22
+ ❯ tests/providers/daemon-run-create-recovery.test.ts:34:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/providers/daemon-run-create-recovery.test.ts > unstructured gateway failure is unknown while structured refusal restores the draft
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ scopeHistoryToAgent src/providers/daemon.ts:216:24
+    214| function scopeHistoryToAgent(history: ChatMessage[], targetAgentId?: s…
+    215|   if (!targetAgentId) return history;
+    216|   for (let i = history.length - 1; i >= 0; i -= 1) {
+       |                        ^
+    217|     const message = history[i];
+    218|     if (
+ ❯ buildDaemonTranscript src/providers/daemon.ts:312:25
+ ❯ streamViaDaemon src/providers/daemon.ts:1091:22
+ ❯ tests/providers/daemon-run-create-recovery.test.ts:40:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ scopeHistoryToAgent src/providers/daemon.ts:216:24
+    214| function scopeHistoryToAgent(history: ChatMessage[], targetAgentId?: s…
+    215|   if (!targetAgentId) return history;
+    216|   for (let i = history.length - 1; i >= 0; i -= 1) {
+       |                        ^
+    217|     const message = history[i];
+    218|     if (
+ ❯ buildDaemonTranscript src/providers/daemon.ts:312:25
+ ❯ streamViaDaemon src/providers/daemon.ts:1091:22
+ ❯ tests/providers/daemon-run-create-recovery.test.ts:21:19
+ ❯ ../../node_modules/.pnpm/@vitest+runner@4.1.6/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+ ❯ ../../node_modules/.pnpm/@vitest+runner@4.1.6/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+ ❯ ../../node_modules/.pnpm/@vitest+runner@4.1.6/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+ ❯ runWithCancel ../../node_modules/.pnpm/@vitest+runner@4.1.6/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10
+ ❯ ../../node_modules/.pnpm/@vitest+runner@4.1.6/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+
+This error originated in "tests/providers/daemon-run-create-recovery.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "30 seconds aborts creation; timeout remains unknown and releases local preparation". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 31 passed (35)
+     Errors  1 error
+   Start at  09:26:35
+   Duration  5.72s (transform 3.65s, setup 1.32s, import 3.35s, tests 1.13s, environment 847ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 test: `vitest run -c vitest.config.ts --maxWorkers=2 tests/components/ProjectView.retry-gating.test.tsx tests/providers/daemon-run-create-recovery.test.ts`
+Exit status 1

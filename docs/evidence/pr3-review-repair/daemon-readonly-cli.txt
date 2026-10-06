@@ -1,0 +1,65 @@
+
+> @open-design/daemon@0.22.1 pretest /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> pnpm --filter '@open-design/daemon^...' --workspace-concurrency=4 --if-present run build
+
+Scope: 10 of 28 workspace projects
+../../packages/release build$ tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/diagnostics build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/registry-protocol build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/platform build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/release build: Done
+../../packages/diagnostics build: Done
+../../packages/platform build: Done
+../../packages/registry-protocol build: Done
+../../packages/sidecar-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/contracts build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar-proto build: Done
+../../packages/sidecar build: Done
+../../packages/contracts build: Done
+../../packages/agui-adapter build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/plugin-runtime build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/launcher-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/launcher-proto build: Done
+../../packages/agui-adapter build: Done
+../../packages/plugin-runtime build: Done
+
+> @open-design/daemon@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> vitest run -c vitest.config.ts tests/project-file-version-routes.test.ts tests/cli-files-write.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+
+ ❯ tests/cli-files-write.test.ts (7 tests | 1 failed) 3680ms
+     × `files versions --read-only` forwards the existing GET query without any mutation 905ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/cli-files-write.test.ts > od files write / upload (ESM require regression) > `files versions --read-only` forwards the existing GET query without any mutation
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/cli-files-write.test.ts:116:25
+    114|   it('`files versions --read-only` forwards the existing GET query wit…
+    115|     const result = await runCli(['files', 'versions', 'proj-1', 'legac…
+    116|     expect(result.code).toBe(0);
+       |                         ^
+    117|     expect(stub.requests).toEqual([{ method: 'GET', url: '/api/project…
+    118|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 22 passed (23)
+   Start at  09:25:10
+   Duration  10.52s (transform 3.48s, setup 32ms, import 4.68s, tests 5.58s, environment 0ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/daemon@0.22.1 test: `vitest run -c vitest.config.ts tests/project-file-version-routes.test.ts tests/cli-files-write.test.ts`
+Exit status 1

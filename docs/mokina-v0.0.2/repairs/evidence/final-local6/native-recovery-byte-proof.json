@@ -1,0 +1,29 @@
+{
+  ".mokina/blobs/49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896": {
+    "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+    "byteLength": 161
+  },
+  ".mokina/inputs/0d1057ed-bf92-4ed0-900a-f08585fc05e9/49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896.svg": {
+    "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+    "byteLength": 161
+  },
+  "assets/recovered-logo.svg": {
+    "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+    "byteLength": 161
+  },
+  "archive": {
+    "sha256": "00c7f3bca14dac710ef77cabe0635697ee78a4de39700a4d59a1872de6c2b218",
+    "byteLength": 92850
+  },
+  "note": "First API run omitted context nesting, does not prove snapshot submission. Explicit context run receipt and output recorded separately.",
+  "assets/recovered-frozen-logo.svg": {
+    "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+    "byteLength": 161
+  },
+  "finalHTML": {
+    "exists": true,
+    "logoA": true,
+    "budget": true,
+    "sourceDeleted": true
+  }
+}

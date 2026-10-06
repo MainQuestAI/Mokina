@@ -555,6 +555,12 @@ interface Props {
   onOpenLiveArtifact: (projectId: string, artifactId: string) => void;
   onDeleteProject: (id: string) => Promise<boolean | void> | boolean | void;
   onDuplicateProject?: (id: string) => Promise<void> | void;
+  /** T14: export a project's recovery package from the recent-project menu. */
+  onExportRecoveryProject?: (id: string) => Promise<void> | void;
+  /** T14: import a Mokina recovery ZIP as a new project. */
+  onImportMokinaRecovery?: (
+    file: File,
+  ) => Promise<{ ok: boolean; message?: string } | void> | { ok: boolean; message?: string } | void;
   onRenameProject: (id: string, name: string) => void;
   onProjectsRefresh?: () => Promise<void> | void;
   onTeamProjectContentReady?: (
@@ -670,6 +676,8 @@ export function EntryShell({
   onOpenLiveArtifact,
   onDeleteProject,
   onDuplicateProject,
+  onExportRecoveryProject,
+  onImportMokinaRecovery,
   onRenameProject,
   onProjectsRefresh,
   onTeamProjectContentReady,
@@ -1894,6 +1902,7 @@ export function EntryShell({
           onRenameRecentProject={onRenameProject}
           onDeleteRecentProject={onDeleteProject}
           onDuplicateRecentProject={onDuplicateProject}
+          onExportRecoveryRecentProject={onExportRecoveryProject}
           /* And the same shared-state answer + optimistic markers the grids
              get, so 转入团队空间 from the rail updates every list at once. */
           isSharedRecentProject={isSharedProject}
@@ -2207,6 +2216,7 @@ export function EntryShell({
         loading={skillsLoading}
         onCreate={handleCreate}
         onImportClaudeDesign={onImportClaudeDesign}
+        {...(onImportMokinaRecovery ? { onImportMokinaRecovery } : {})}
         {...(onImportFolder ? { onImportFolder } : {})}
         {...(onImportFolderResponse ? { onImportFolderResponse } : {})}
         onOpenConnectorsTab={() => {

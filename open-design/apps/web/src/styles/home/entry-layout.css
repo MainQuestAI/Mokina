@@ -1247,6 +1247,28 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* 名称 + 成果摘要的同列纵排容器（Spec B1 FR-04）：占满 flex 主轴，让两段
+   文本各自 ellipsize；行高由内容撑开（按钮本身 height: auto）。 */
+.entry-nav-rail__recent-text {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+/* 成果摘要固定一行截断（Spec B1 §8：辅助文字 ≥13px）。同 `--rail-ink-quiet`
+   墨色只降字重不降对比；失败/无权限态不加装饰，靠文字本身说明。 */
+.entry-nav-rail__recent-artifact {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 400;
+}
+.entry-nav-rail__recent-artifact.is-unreadable {
+  font-style: italic;
+}
 /* A completed, unread project keeps its folder and adds this notice at the
    row's end (OPEND-3133): a 6px disc in the design's blue, pushed to the right
    edge by `margin-left: auto` whatever the name's length. The row's hover
@@ -9279,3 +9301,69 @@ button.entry-nav-rail__menu-credits-row:active:not(:disabled) {
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
+
+/* 「结果待确认」（Spec B1 FR-08）：composer 底部的非打断 status 行。
+   不抢焦点、不用只颜色标记；核对按钮 44px 目标。 */
+.mokina-pending-send {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--text, #333) 5%, transparent);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.mokina-pending-send__text {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-muted, #667);
+}
+
+.mokina-pending-send__verify {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 4px 12px;
+  border: 1px solid var(--border, #dbdbdb);
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text, #333);
+  cursor: pointer;
+}
+
+.mokina-pending-send__verify:hover {
+  background: color-mix(in srgb, var(--text, #333) 8%, transparent);
+}
+
+/* 资料/背景辅助入口（Spec B1 FR-01/FR-03）：工作目录行首位的次级按钮，
+   与工作目录选择器同一行高；入口只做真实导航，不承载选择状态。 */
+.home-hero__materials-entry {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 5px 12px;
+  border: 1px solid var(--border, #dbdbdb);
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-muted, #667);
+  cursor: pointer;
+}
+
+.home-hero__materials-entry:hover {
+  background: color-mix(in srgb, var(--text, #333) 8%, transparent);
+  color: var(--text, #333);
+}
+
+.mokina-pending-send__verify:focus-visible,
+.home-hero__materials-entry:focus-visible { outline: 2px solid var(--text, #333); outline-offset: 2px; }
+.mokina-pending-send { flex-direction: column; align-items: stretch; }
+.mokina-pending-send > div { display: flex; align-items: center; gap: 12px; }
+.entry-nav-rail__recent-name.is-mokina-name { white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }

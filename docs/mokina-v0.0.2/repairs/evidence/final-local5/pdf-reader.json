@@ -1,0 +1,68 @@
+[
+  {
+    "name": "broken-proof.pdf",
+    "status": 200,
+    "body": {
+      "name": "broken-proof.pdf",
+      "contentDigest": "cafcfe64bdc138d48572826a441e436f1f382d0a478636667a7ece5e7aff868f",
+      "parserVersion": "mokina-material/1",
+      "status": "unreadable",
+      "limitations": [
+        "PDF 文本提取失败；请检查 pdftotext，或提供文本版本。",
+        "未提取到可用文本，不能作为事实依据。"
+      ],
+      "groupLimitations": [],
+      "sections": []
+    }
+  },
+  {
+    "name": "proof.pdf",
+    "status": 200,
+    "body": {
+      "name": "proof.pdf",
+      "contentDigest": "43638549cc97021de16230eca0c8156576f5bc42ed9fea5e5d00fbfca4b9741c",
+      "parserVersion": "mokina-material/1",
+      "status": "read",
+      "limitations": [
+        "仅读取文本层；图片、扫描页和复杂图表未识别。"
+      ],
+      "groupLimitations": [],
+      "sections": [
+        {
+          "location": "第 1 页",
+          "text": "中文资料：品牌预算五十万元\n\nMokina packaged PDF page 1",
+          "groupId": "page:1",
+          "groupLabel": "第 1 页"
+        },
+        {
+          "location": "第 2 页",
+          "text": "中文资料：品牌预算五十万元\n\nMokina packaged PDF page 2",
+          "groupId": "page:2",
+          "groupLabel": "第 2 页"
+        }
+      ]
+    }
+  },
+  {
+    "name": "scan-proof.pdf",
+    "status": 200,
+    "body": {
+      "name": "scan-proof.pdf",
+      "contentDigest": "a305d4b1d35b5886d27fe87db2235ff26218f01be84b625cab5e326ee688656f",
+      "parserVersion": "mokina-material/1",
+      "status": "unreadable",
+      "limitations": [
+        "仅读取文本层；图片、扫描页和复杂图表未识别。",
+        "未提取到可用文本，不能作为事实依据。"
+      ],
+      "groupLimitations": [
+        {
+          "groupId": "page:1",
+          "location": "第 1 页",
+          "message": "没有可读文本，未进行 OCR。"
+        }
+      ],
+      "sections": []
+    }
+  }
+]

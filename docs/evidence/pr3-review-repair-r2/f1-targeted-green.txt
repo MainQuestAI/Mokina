@@ -1,0 +1,43 @@
+.                                        |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/closure                             |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/daemon                              |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/desktop                             |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/packaged                            |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/web                                 |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+e2e                                      |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/agui-adapter                    |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/components                      |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/download                        |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/dsh-runtime                     |  WARN  Unsupported engine: wanted: {"node":">=24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/host                            |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/launcher-proto                  |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/metatool                        |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/platform                        |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/plugin-runtime                  |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/release                         |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/sidecar                         |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/sidecar-proto                   |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/standalone                      |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+shells/terminal                          |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+tools/dev                                |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+tools/pack                               |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+tools/release                            |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+tools/serve                              |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/components/ProjectView.pending-send-exit.test.tsx tests/components/ProjectView.retry-gating.test.tsx tests/components/ChatPane.send-failed.test.tsx tests/components/ChatPane.recovered-run-error.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+ ✓ tests/components/ProjectView.pending-send-exit.test.tsx (6 tests) 140ms
+ ✓ tests/components/ProjectView.retry-gating.test.tsx (32 tests) 866ms
+ ✓ tests/components/ChatPane.recovered-run-error.test.tsx (6 tests) 76ms
+ ✓ tests/components/ChatPane.send-failed.test.tsx (1 test) 91ms
+ ✓ tests/runtime/send-request-state.test.ts (21 tests) 13ms
+
+ Test Files  5 passed (5)
+      Tests  66 passed (66)
+   Start at  16:52:17
+   Duration  5.26s (transform 5.16s, setup 1.36s, import 5.85s, tests 1.19s, environment 1.48s)
+

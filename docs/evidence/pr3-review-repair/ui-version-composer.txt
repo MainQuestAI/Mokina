@@ -1,0 +1,63 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/components/MokinaEntryChooserDialog.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/providers/daemon.test.ts tests/components/ChatComposer.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+ ❯ tests/components/MokinaEntryChooserDialog.test.tsx (2 tests | 1 failed) 90ms
+   × uses the native dialog portal, traps focus, closes with Esc and restores the trigger 75ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/MokinaEntryChooserDialog.test.tsx > uses the native dialog portal, traps focus, closes with Esc and restores the trigger
+AssertionError: expected <button type="button" …(1)>…(2)</button> to be <button></button> // Object.is equality
+
+- Expected
++ Received
+
+- <button />
++ <button
++   class="_item_a74af3"
++   type="button"
++ >
++   <span
++     class="_itemName_a74af3"
++   >
++     plan.html
++   </span>
++   <span
++     class="_itemVersion_a74af3"
++   >
++     Formal artifact
++      · v
++     3
++     <span
++       class="_itemTime_a74af3"
++     >
++       Version time
++       ：
++       1/1/70, 8:00 AM
++     </span>
++   </span>
++ </button>
+
+ ❯ tests/components/MokinaEntryChooserDialog.test.tsx:13:34
+     11|   const dialog = screen.getByRole('dialog'); expect(dialog.parentEleme…
+     12|   const buttons = screen.getAllByRole('button'); const first = buttons…
+     13|   expect(document.activeElement).toBe(first);
+       |                                  ^
+     14|   fireEvent.keyDown(document, { key: 'Tab', shiftKey: true }); expect(…
+     15|   fireEvent.keyDown(document, { key: 'Tab' }); expect(document.activeE…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 14 passed (15)
+   Start at  09:49:46
+   Duration  10.08s (transform 3.15s, setup 884ms, import 3.21s, tests 7.41s, environment 810ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 test: `vitest run -c vitest.config.ts --maxWorkers=2 tests/components/MokinaEntryChooserDialog.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/providers/daemon.test.ts tests/components/ChatComposer.test.tsx`
+Exit status 1

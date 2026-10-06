@@ -574,6 +574,7 @@ export function createOdNextTaskInputSnapshot(input: {
   taskConfiguration: OdNextTaskConfigurationV1;
   projectRoot: string;
   projectAttachments?: readonly string[];
+  frozenAttachments?: readonly { sourcePath: string; allowedRoot: string }[];
   uploadRoot: string;
   imagePaths?: readonly string[];
   commentCount?: number;
@@ -587,6 +588,7 @@ export function createOdNextTaskInputSnapshot(input: {
 }): OdNextTaskInputSnapshotDescriptor {
   const taskExecutionId = safeTaskId(input.taskExecutionId);
   const sources: SnapshotSource[] = [
+    ...(input.frozenAttachments ?? []).map(source => ({ ...source, kind: 'file' as const })),
     ...(input.projectAttachments ?? []).map((sourcePath) => ({
       kind: 'file' as const,
       sourcePath,

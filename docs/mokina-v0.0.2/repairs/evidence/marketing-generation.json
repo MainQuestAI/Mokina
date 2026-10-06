@@ -1,0 +1,73 @@
+{
+  "status": "succeeded",
+  "errorCode": null,
+  "artifactCount": 2,
+  "receipt": {
+    "runId": "16c2d499-f56d-41c1-b408-0a33a1201026",
+    "snapshotId": "f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3",
+    "fingerprint": "ef8a96d52352b8b6cb40f131c280b89152e01f0006ffbca1952973c2d7037ba7",
+    "includedItemIds": [
+      "S1",
+      "A1"
+    ],
+    "itemDelivery": [
+      {
+        "itemId": "S1",
+        "mode": "inline-text"
+      },
+      {
+        "itemId": "A1",
+        "mode": "staged-file"
+      }
+    ],
+    "status": "submitted",
+    "submittedAt": "2026-10-05T12:21:36.699Z"
+  },
+  "deliverableValid": false,
+  "sourceSHA": "6fe5d5346a0031a2459d04925a53be8e428f4ad9",
+  "appVersion": "0.0.2-local.3",
+  "projectId": "a19e298b-3eaa-44f4-afdf-be0f3426caaa",
+  "runId": "16c2d499-f56d-41c1-b408-0a33a1201026",
+  "htmlBytes": 18534,
+  "htmlSHA256": "5d8ada64782d6609e618de758cf8e57fcf10899db01e5f5409af5ab20585b688",
+  "sections": [
+    "strategy",
+    "budget",
+    "channels"
+  ],
+  "budget30Wan": true,
+  "logoSHA256": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+  "evidenceType": "installed daemon API, real Codex generation; restored snapshot after source deleted",
+  "canonicalEntryRunId": "03491a22-d761-41bb-bfc8-113fe6c732a4",
+  "canonicalEntryResult": {
+    "http": 200,
+    "status": "succeeded",
+    "errorCode": null,
+    "artifactCount": 1,
+    "deliverableValid": true,
+    "deliverableValidation": "valid",
+    "entry": "index.html",
+    "receipt": {
+      "runId": "03491a22-d761-41bb-bfc8-113fe6c732a4",
+      "snapshotId": "f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3",
+      "fingerprint": "ef8a96d52352b8b6cb40f131c280b89152e01f0006ffbca1952973c2d7037ba7",
+      "includedItemIds": [
+        "S1",
+        "A1"
+      ],
+      "itemDelivery": [
+        {
+          "itemId": "S1",
+          "mode": "inline-text"
+        },
+        {
+          "itemId": "A1",
+          "mode": "staged-file"
+        }
+      ],
+      "status": "submitted",
+      "submittedAt": "2026-10-05T12:28:57.964Z"
+    }
+  },
+  "canonicalEntrySHA256": "5d8ada64782d6609e618de758cf8e57fcf10899db01e5f5409af5ab20585b688"
+}

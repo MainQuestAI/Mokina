@@ -165,7 +165,14 @@ import { assertOdNextSemanticRequestFactProducerCoverage } from './runtimes/od-n
 import {
   normalizeRunContextSelection,
   renderRunContextPrompt,
+  resolveMokinaSnapshotForRun,
 } from './runtimes/chat-run-context.js';
+import {
+  stageMokinaSnapshotAssets,
+  buildDeliveryReceipt,
+  buildMokinaContextPromptBlock,
+  writeMokinaDeliveryReceipt,
+} from './mokina/context-store.js';
 import {
   daemonAgentPayloadToPersistedAgentEvent,
   persistRunEventToAssistantMessage,
@@ -11171,7 +11178,49 @@ export async function startServer({
         ? skillId
         : projectRecord?.skillId,
     );
-    const runContextPrompt = renderRunContextPrompt(context, projectRecord?.metadata);
+    let runContextPrompt = renderRunContextPrompt(context, projectRecord?.metadata);
+    // T06: a run bound to a frozen context snapshot injects the material block
+    // into the prompt; a snapshot that cannot be read fails the run instead of
+    // silently running without the user's selected material. The OD Next path
+    // already folded the block into its prepared bundle.
+    const mokinaSnapshotBinding = await resolveMokinaSnapshotForRun({
+      projectsRoot: PROJECTS_DIR,
+      projectId: projectRecord?.id ?? null,
+      context,
+    });
+    if (mokinaSnapshotBinding.status === 'error') {
+      return failRun(mokinaSnapshotBinding.code, mokinaSnapshotBinding.message);
+    }
+    if (mokinaSnapshotBinding.status === 'bound') {
+      let staged;
+      try {
+        staged = await stageMokinaSnapshotAssets(PROJECTS_DIR, projectRecord!.id, mokinaSnapshotBinding.snapshot);
+      } catch (error) {
+        const receipt = buildDeliveryReceipt(mokinaSnapshotBinding.snapshot, run.id, 'not-submitted');
+        receipt.reason = error instanceof Error ? error.message : '冻结素材暂存失败';
+        await writeMokinaDeliveryReceipt(PROJECTS_DIR, projectRecord!.id, receipt);
+        (run as { mokinaContext?: unknown }).mokinaContext = receipt;
+        return failRun('MOKINA_SNAPSHOT_UNAVAILABLE', receipt.reason);
+      }
+      if (run.odNextTaskInputSnapshot == null) {
+        const block = buildMokinaContextPromptBlock(mokinaSnapshotBinding.snapshot, staged);
+        runContextPrompt = runContextPrompt.length > 0 ? `${runContextPrompt}\n\n${block}` : block;
+      }
+      const mokinaReceipt = buildDeliveryReceipt(
+        mokinaSnapshotBinding.snapshot,
+        run.id,
+        'submitted',
+        new Date().toISOString(),
+        staged,
+      );
+      await writeMokinaDeliveryReceipt(
+        PROJECTS_DIR,
+        projectRecord!.id,
+        mokinaReceipt,
+      );
+      // Mirror onto the live run so statusBody/SSE expose it immediately.
+      (run as { mokinaContext?: unknown }).mokinaContext = mokinaReceipt;
+    }
     const linkedDirs = (() => {
       if (!Array.isArray(projectRecord?.metadata?.linkedDirs)) return [];
       const v = validateLinkedDirs(projectRecord.metadata.linkedDirs);

@@ -1,6 +1,21 @@
 # Mokina
 
-V0.0.1 原生实现位于 [`open-design/`](./open-design/)。它基于固定的完整 OpenDesign 宿主，当前开发与验收状态见 [`Mokina-V0.0.1-运行与验收记录.md`](./docs/Mokina-V0.0.1-运行与验收记录.md)。下文是保留的 V6.2 原型说明，不代表原生版本的能力或验收结果。
+仓库：`MainQuestAI/Mokina`（https://github.com/MainQuestAI/Mokina）。这是 OpenDesign 宿主的 Mokina fork，不要拉取或指向上游 OpenDesign 仓库。
+
+## 运行 Mokina（原生实现，最小入口）
+
+原生实现位于 [`open-design/`](./open-design/)，基于固定的完整 OpenDesign 宿主（当前基线 `ac6115406f3f780ef5c624a9aad1a87cbbad882a`）。运行数据目录契约与全部命令规范见 [`open-design/AGENTS.md`](./open-design/AGENTS.md)；启动必须显式指定空的 `OD_DATA_DIR`（namespace 本身不隔离数据）。最简启动：
+
+```sh
+cd open-design
+corepack pnpm install --frozen-lockfile
+OD_DATA_DIR="/path/to/empty-data-dir" corepack pnpm tools-dev start web \
+  --namespace mokina-dev --daemon-port 18613 --web-port 18614 --no-env-file
+```
+
+Web 打开 `http://127.0.0.1:18614`；daemon API 在 `http://127.0.0.1:18613`。停止：`corepack pnpm tools-dev stop --namespace mokina-dev`。Mokina edition 默认 on；以 `NEXT_PUBLIC_MOKINA_EDITION=off`（Web 构建）与 `MOKINA_LOCAL_EDITION=off`（daemon）显式关闭。
+
+当前开发与验收状态见 [`Mokina-V0.0.1-运行与验收记录.md`](./docs/Mokina-V0.0.1-运行与验收记录.md)。下文是保留的 V6.2 原型说明，不代表原生版本的能力或验收结果。
 
 ## 历史原型：Marketing Desktop · V6.2
 

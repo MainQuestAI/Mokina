@@ -38,6 +38,10 @@ import {
   type BuildDeckRenderInputOptions,
 } from './deck-export.js';
 import { readProjectFileVersion } from './project-file-versions.js';
+import {
+  buildProjectRecoveryPackage,
+  importProjectRecoveryPackage,
+} from './mokina/recovery-package.js';
 import { authorizeReasoningEgress, sendReasoningEgressDenial } from './reasoning-egress.js';
 import { sandboxImportedProjectRootUnavailableReason } from './sandbox-mode.js';
 import { parseOrchestratorWorkspace } from './workspace-contract.js';
@@ -340,6 +344,67 @@ export function registerImportRoutes(app: Express, ctx: RegisterImportRoutesDeps
       sendApiError(res, 400, 'BAD_REQUEST', String(err?.message || err));
     }
   });
+
+  // Mokina project recovery import (T14): a whitepaper-checked ZIP produces a
+  // NEW project; credentials, configs and send intents are never accepted.
+  app.post(
+    '/api/mokina/recovery-import',
+    importUpload.single('file'),
+    async (req, res) => {
+      try {
+        if (!req.file) return sendApiError(res, 400, 'BAD_REQUEST', 'recovery zip file required');
+        const body = (req.body ?? {}) as { operationId?: unknown; targetProjectId?: unknown; projectName?: unknown };
+        const operationId = typeof body.operationId === 'string' ? body.operationId.trim() : '';
+        const targetProjectId = typeof body.targetProjectId === 'string' ? body.targetProjectId.trim() : '';
+        const projectName = typeof body.projectName === 'string' && body.projectName.trim()
+          ? body.projectName.trim().slice(0, 200)
+          : undefined;
+        if (!operationId || !targetProjectId) {
+          fs.promises.unlink(req.file.path).catch(() => {});
+          return sendApiError(res, 400, 'BAD_REQUEST', 'operationId and targetProjectId required');
+        }
+        const archive = await fs.promises.readFile(req.file.path);
+        const result = await importProjectRecoveryPackage({
+          projectsRoot: PROJECTS_DIR,
+          archive,
+          operationId,
+          targetProjectId,
+          ...(projectName ? { projectName } : {}),
+          readProject: (projectId) => {
+            const row = getProject(db, projectId);
+            return row ? { metadata: (row.metadata ?? null) as Record<string, unknown> | null } : null;
+          },
+          registerProject: ({ id, name, metadata }) => {
+            const now = Date.now();
+            db.transaction(() => {
+              insertProject(db, {
+                id,
+                name,
+                skillId: null,
+                designSystemId: null,
+                metadata,
+                createdAt: now,
+                updatedAt: now,
+              });
+              insertConversation(db, {
+                id: randomId(),
+                projectId: id,
+                title: '恢复项目',
+                createdAt: now,
+                updatedAt: now,
+              });
+            })();
+          },
+        });
+        fs.promises.unlink(req.file.path).catch(() => {});
+        if (!result.ok) return sendApiError(res, result.status, result.code, result.message);
+        res.json({ projectId: result.projectId, warnings: result.warnings });
+      } catch (error: any) {
+        if (req.file?.path) fs.promises.unlink(req.file.path).catch(() => {});
+        sendApiError(res, 400, 'BAD_REQUEST', error?.message || 'recovery import failed');
+      }
+    },
+  );
 
   app.post('/api/import/folder', async (req, res) => {
     try {
@@ -1523,6 +1588,35 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
     });
     if (!authority) return;
     await handleStandaloneHtmlExport(res, req.params.id, req.body);
+  });
+
+  // Mokina project recovery export (T14): one ZIP with a manifest, originals,
+  // versions (frozen content included), snapshots and assets. Never carries
+  // credentials, app config, caches, absolute paths or send intents.
+  app.post('/api/projects/:id/mokina/recovery-export', async (req, res) => {
+    const authority = await authorizeExportRead(req, res, {
+      deriveWorkspaceFromProject: true,
+      toolEndpoint: PROJECT_EXPORT_TOOL_ENDPOINT,
+    });
+    if (!authority) return;
+    const operationId = typeof req.body?.operationId === 'string' ? req.body.operationId.trim() : '';
+    if (!operationId) return sendApiError(res, 400, 'BAD_REQUEST', 'operationId required');
+    const project = getProject(db, req.params.id);
+    if (!project) return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
+    try {
+      const built = await buildProjectRecoveryPackage({
+        projectsRoot: PROJECTS_DIR,
+        projectId: project.id,
+        projectName: project.name || 'project',
+        exportId: operationId,
+      });
+      const safeName = built.baseName.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'project-recovery';
+      res.setHeader('content-type', 'application/zip');
+      res.setHeader('content-disposition', `attachment; filename="${safeName}.zip"`);
+      res.send(built.buffer);
+    } catch (error: any) {
+      sendApiError(res, 409, 'MOKINA_RECOVERY_EXPORT_FAILED', error?.message || 'recovery export failed');
+    }
   });
 
   // Generic programmatic export (HTML / PDF / image / PPTX) for callers using

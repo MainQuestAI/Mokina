@@ -1,0 +1,33 @@
+{
+  "evidenceType": "Finder directory selection and Open action via CUA; installed bundle and resources read; running process identities",
+  "appPath": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app",
+  "bundleVersion": "0.0.2-local.6",
+  "resourceVersion": "0.0.2-local.6",
+  "nativeProjectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+  "nativeConversationId": "282b209d-7ddf-4d29-800f-c2cb7fffe870",
+  "profile": "/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local",
+  "processes": [
+    {
+      "pid": 28179,
+      "ppid": 1,
+      "command": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/MacOS/Mokina /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=mokina-local --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=desktop"
+    },
+    {
+      "pid": 28180,
+      "ppid": 28179,
+      "command": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/MacOS/Mokina"
+    },
+    {
+      "pid": 28193,
+      "ppid": 28180,
+      "command": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/MacOS/Mokina /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=mokina-local --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=daemon"
+    },
+    {
+      "pid": 28283,
+      "ppid": 28180,
+      "command": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/MacOS/Mokina /Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app/Contents/Resources/app/node_modules/@open-design/sidecar/dist/supervisor.mjs --od-stamp-channel=stable --od-stamp-namespace=mokina-local --od-stamp-source=packaged --od-stamp-mode=runtime --od-stamp-app=web"
+    }
+  ],
+  "historicalProfileRuntimeConfigVersion": "0.0.2-local.3",
+  "runtimeConfigNote": "Historical runtime file retained; running executables and resource version are local.6. No source or development server launched."
+}

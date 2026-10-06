@@ -24,6 +24,7 @@ import {
   prepareNodePtyRuntime,
   resolveNodePtyRuntimeArch,
 } from "../node-pty-runtime.js";
+import { copyBundledPdfRuntime } from '../resources/pdf-runtime.js';
 import { copyBundledResourceTrees, packBundledDshRuntime } from "../resources/index.js";
 import { copyOptionalVelaCliBinary } from "../vela-cli.js";
 import { electronBuilderVersionForAppVersion } from "../versioning/index.js";
@@ -35,6 +36,7 @@ import {
   INTERNAL_PACKAGES,
 } from "./constants.js";
 import { resolveMacInstallIdentity } from "./identity.js";
+import { resolveMokinaProductProfileForNamespace } from "../config/product-profile.js";
 import { readPackagedVersion } from "./manifest.js";
 import type { MacPaths, PackedTarballInfo } from "./types.js";
 
@@ -148,6 +150,7 @@ export async function copyResourceTree(config: ToolPackConfig, paths: MacPaths):
     workspaceRoot: config.workspaceRoot,
     resourceRoot: paths.resourceRoot,
   });
+  await copyBundledPdfRuntime(config.workspaceRoot, paths.resourceRoot, process.arch);
   await packBundledDshRuntime({
     workspaceRoot: config.workspaceRoot,
     resourceRoot: paths.resourceRoot,
@@ -164,21 +167,45 @@ export function renderMacPackagedConfig(options: {
   config: ToolPackConfig;
   usePrebundledStandaloneWeb: boolean;
 }): string {
+  const mokinaProfile = resolveMokinaProductProfileForNamespace(options.config.namespace);
+  // The Mokina local preview carries no upstream cloud/telemetry/update
+  // destination at all, so those keys are omitted even when the environment
+  // provided them: the running product must not be able to reach them.
+  const upstreamCloudKeys = mokinaProfile == null
+    ? {
+        ...(options.config.amrProfile == null ? {} : { amrProfile: options.config.amrProfile }),
+        ...(options.config.telemetryRelayUrl == null ? {} : { telemetryRelayUrl: options.config.telemetryRelayUrl }),
+        ...(options.config.updateMetadataUrl == null ? {} : { updateMetadataUrl: options.config.updateMetadataUrl }),
+        ...(options.config.posthogKey == null ? {} : { posthogKey: options.config.posthogKey }),
+        ...(options.config.posthogHost == null ? {} : { posthogHost: options.config.posthogHost }),
+        ...(options.config.velaWebUrl == null ? {} : { velaWebUrl: options.config.velaWebUrl }),
+        ...(options.config.velaWebUrls == null ? {} : { velaWebUrls: options.config.velaWebUrls }),
+      }
+    : {};
   return `${JSON.stringify(
     {
-      ...(options.config.amrProfile == null ? {} : { amrProfile: options.config.amrProfile }),
+      ...upstreamCloudKeys,
       appVersion: options.appVersion,
       ...(options.usePrebundledStandaloneWeb ? { daemonCliEntryRelative: MAC_PREBUNDLED_DAEMON_CLI_RELATIVE_PATH } : {}),
       ...(options.usePrebundledStandaloneWeb
         ? { daemonSidecarEntryRelative: MAC_PREBUNDLED_DAEMON_SIDECAR_RELATIVE_PATH }
         : {}),
       namespace: options.config.namespace,
-      ...(options.config.telemetryRelayUrl == null ? {} : { telemetryRelayUrl: options.config.telemetryRelayUrl }),
-      ...(options.config.updateMetadataUrl == null ? {} : { updateMetadataUrl: options.config.updateMetadataUrl }),
-      ...(options.config.posthogKey == null ? {} : { posthogKey: options.config.posthogKey }),
-      ...(options.config.posthogHost == null ? {} : { posthogHost: options.config.posthogHost }),
-      ...(options.config.velaWebUrl == null ? {} : { velaWebUrl: options.config.velaWebUrl }),
-      ...(options.config.velaWebUrls == null ? {} : { velaWebUrls: options.config.velaWebUrls }),
+      ...(mokinaProfile == null
+        ? {}
+        : {
+            product: {
+              productId: mokinaProfile.productId,
+              productName: mokinaProfile.productName,
+              productVersion: options.appVersion,
+              releaseKind: mokinaProfile.releaseKind,
+              automaticUpdates: mokinaProfile.automaticUpdates,
+              upstreamNews: mokinaProfile.upstreamNews,
+              defaultTelemetry: mokinaProfile.defaultTelemetry,
+              requiresUpstreamAccount: mokinaProfile.requiresUpstreamAccount,
+              registersOdScheme: mokinaProfile.registersOdScheme,
+            },
+          }),
       ...(options.usePrebundledStandaloneWeb ? { webSidecarEntryRelative: MAC_PREBUNDLED_WEB_SIDECAR_RELATIVE_PATH } : {}),
       webOutputMode: options.config.webOutputMode,
       ...(options.config.portable ? {} : { namespaceBaseRoot: options.config.roots.runtime.namespaceBaseRoot }),

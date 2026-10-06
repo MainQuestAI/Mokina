@@ -1,0 +1,812 @@
+.                                        |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/closure                             |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/daemon                              |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/desktop                             |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/packaged                            |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+apps/web                                 |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+e2e                                      |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/agui-adapter                    |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/components                      |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/download                        |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/dsh-runtime                     |  WARN  Unsupported engine: wanted: {"node":">=24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/host                            |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/launcher-proto                  |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/metatool                        |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/platform                        |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/plugin-runtime                  |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/release                         |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/sidecar                         |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/sidecar-proto                   |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+packages/standalone                      |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+shells/terminal                          |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+tools/dev                                |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+tools/pack                               |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+tools/release                            |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+tools/serve                              |  WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/components/ProjectView.pending-send-exit.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+ ❯ tests/runtime/send-request-state.test.ts (21 tests | 8 failed) 20ms
+     ✓ pending 落盘可读回；clear 移除指定请求 2ms
+     ✓ unknown 标记保留身份与正文预览；不存在的请求不写入 1ms
+     ✓ 长正文只存 120 字符预览（不持久化无边界正文） 0ms
+     ✓ 同 scope 满 8 条后拒绝新增，不能挤掉未确认请求 1ms
+     ✓ scope 之间互不串扰（跨项目不共享请求记录） 1ms
+     ✓ 写入失败（配额满）时 savePendingSendRequest 返回 false——调用方须停在草稿不 POST 1ms
+     ✓ 损坏的存储内容按空记录处理，不抛错 0ms
+     ✓ 原 POST 晚到时空列表仍保持未知 1ms
+   ✓ saves complete bounded prompt and extras regardless of object property order 2ms
+   ✓ live prepared and dispatched sends remain pending; orphan phases recover conservatively without age guesses 0ms
+   ✓ legacy preview-only pending becomes unknown, never a restored full draft 0ms
+   ✓ authority scopes and independently saved requests cannot overwrite siblings 0ms
+   ✓ native scope lock serializes simultaneous preparations and keeps all eight old receipts 1ms
+     × unknown/draft 不占在途容量：8 条 unknown 后第 9 条带快照仍可保存 3ms
+     × 8 条在途（pending）时新发送返回 skipped：不拒发、不新增记录 1ms
+     × 每 scope 软上限：unknown/draft 攒满后新发送 skipped，不拒发也不淘汰旧记录 2ms
+     × 正文超 64Ki：返回 skipped，写预览记录但不写快照（发送不被拒绝） 0ms
+     × extras 被 sanitize 收窄（25 条引用）：返回 skipped 而不是拒绝发送 1ms
+     × allowExisting：同 ID 重写回 pending/prepared，不新增条数，快照可用 0ms
+     × allowExisting 不受在途容量限制：8 条 pending + 自身 unknown 仍可重写 0ms
+     × 重复 ID 且无 allowExisting：skipped 且原记录不被覆盖 0ms
+ ❯ tests/components/ProjectView.pending-send-exit.test.tsx (6 tests | 6 failed) 137ms
+     × 服务端没收到时：重新发送复用原 clientRequestId 与快照全文，成功后记录清除 58ms
+     × 服务端已受理时：重新发送先只读核对，恢复原 run，不再 POST 26ms
+     × 服务端明确拒绝（409）时：重新发送转入可编辑草稿，快照完整正文保留 17ms
+     × 放弃这条：清除记录与提示，普通重试不再被拦 16ms
+     × 100Ki 正文照常发送，只提示不可自动恢复，不出现保存失败 11ms
+     × 25 条批注（超过 20 条上限）照常发送 8ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/runtime/send-request-state.test.ts > R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态） > unknown/draft 不占在途容量：8 条 unknown 后第 9 条带快照仍可保存
+AssertionError: expected false to be 'saved' // Object.is equality
+
+- Expected:
+"saved"
+
++ Received:
+false
+
+ ❯ tests/runtime/send-request-state.test.ts:147:20
+    145|     }
+    146|     const result = savePendingSendRequest({ ...SCOPE, clientRequestId:…
+    147|     expect(result).toBe('saved');
+       |                    ^
+    148|     expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationI…
+    149|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  tests/runtime/send-request-state.test.ts > R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态） > 8 条在途（pending）时新发送返回 skipped：不拒发、不新增记录
+AssertionError: expected false to be 'skipped' // Object.is equality
+
+- Expected:
+"skipped"
+
++ Received:
+false
+
+ ❯ tests/runtime/send-request-state.test.ts:154:20
+    152|     for (let i = 0; i < 8; i += 1) savePendingSendRequest({ ...SCOPE, …
+    153|     const result = savePendingSendRequest({ ...SCOPE, clientRequestId:…
+    154|     expect(result).toBe('skipped');
+       |                    ^
+    155|     expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationI…
+    156|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  tests/runtime/send-request-state.test.ts > R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态） > 每 scope 软上限：unknown/draft 攒满后新发送 skipped，不拒发也不淘汰旧记录
+AssertionError: expected false to be 'skipped' // Object.is equality
+
+- Expected:
+"skipped"
+
++ Received:
+false
+
+ ❯ tests/runtime/send-request-state.test.ts:164:20
+    162|     }
+    163|     const result = savePendingSendRequest({ ...SCOPE, clientRequestId:…
+    164|     expect(result).toBe('skipped');
+       |                    ^
+    165|     expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationI…
+    166|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  tests/runtime/send-request-state.test.ts > R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态） > 正文超 64Ki：返回 skipped，写预览记录但不写快照（发送不被拒绝）
+AssertionError: expected false to be 'skipped' // Object.is equality
+
+- Expected:
+"skipped"
+
++ Received:
+false
+
+ ❯ tests/runtime/send-request-state.test.ts:170:87
+    168|   it('正文超 64Ki：返回 skipped，写预览记录但不写快照（发送不被拒绝）', () => {
+    169|     const big = 'b'.repeat(64 * 1024 + 1);
+    170|     expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'big', …
+       |                                                                                       ^
+    171|     const record = loadSendRequestRecords(SCOPE.projectId, SCOPE.conve…
+    172|     expect(record?.promptPreview).toHaveLength(120);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  tests/runtime/send-request-state.test.ts > R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态） > extras 被 sanitize 收窄（25 条引用）：返回 skipped 而不是拒绝发送
+AssertionError: expected false to be 'skipped' // Object.is equality
+
+- Expected:
+"skipped"
+
++ Received:
+false
+
+ ❯ tests/runtime/send-request-state.test.ts:178:129
+    176|   it('extras 被 sanitize 收窄（25 条引用）：返回 skipped 而不是拒绝发送', () => {
+    177|     const many = extras(); many.quotes = Array.from({ length: 25 }, (_…
+    178|     expect(savePendingSendRequest({ ...SCOPE, clientRequestId: 'shed',…
+       |                                                                                                                                 ^
+    179|   });
+    180|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  tests/runtime/send-request-state.test.ts > R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态） > allowExisting：同 ID 重写回 pending/prepared，不新增条数，快照可用
+AssertionError: expected false to be 'saved' // Object.is equality
+
+- Expected:
+"saved"
+
++ Received:
+false
+
+ ❯ tests/runtime/send-request-state.test.ts:185:20
+    183|     markSendRequestUnknown(SCOPE.projectId, SCOPE.conversationId, 'req…
+    184|     const result = savePendingSendRequest({ ...SCOPE, clientRequestId:…
+    185|     expect(result).toBe('saved');
+       |                    ^
+    186|     const records = loadSendRequestRecords(SCOPE.projectId, SCOPE.conv…
+    187|     expect(records).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  tests/runtime/send-request-state.test.ts > R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态） > allowExisting 不受在途容量限制：8 条 pending + 自身 unknown 仍可重写
+AssertionError: expected false to be 'saved' // Object.is equality
+
+- Expected:
+"saved"
+
++ Received:
+false
+
+ ❯ tests/runtime/send-request-state.test.ts:197:20
+    195|     for (let i = 0; i < 8; i += 1) savePendingSendRequest({ ...SCOPE, …
+    196|     const result = savePendingSendRequest({ ...SCOPE, clientRequestId:…
+    197|     expect(result).toBe('saved');
+       |                    ^
+    198|     expect(loadSendRequestRecords(SCOPE.projectId, SCOPE.conversationI…
+    199|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  tests/runtime/send-request-state.test.ts > R2 保存三态与在途容量（红测：期望 saved/skipped/failed 三态） > 重复 ID 且无 allowExisting：skipped 且原记录不被覆盖
+AssertionError: expected false to be 'skipped' // Object.is equality
+
+- Expected:
+"skipped"
+
++ Received:
+false
+
+ ❯ tests/runtime/send-request-state.test.ts:204:20
+    202|     savePendingSendRequest({ ...SCOPE, clientRequestId: 'req-1', promp…
+    203|     const result = savePendingSendRequest({ ...SCOPE, clientRequestId:…
+    204|     expect(result).toBe('skipped');
+       |                    ^
+    205|     const records = loadSendRequestRecords(SCOPE.projectId, SCOPE.conv…
+    206|     expect(records).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+ FAIL  tests/components/ProjectView.pending-send-exit.test.tsx > R2 「结果待确认」的显式出口 > 服务端没收到时：重新发送复用原 clientRequestId 与快照全文，成功后记录清除
+TestingLibraryElementError: Unable to find an element by: [data-testid="mokina-pending-send-resend"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"split _workspaceLayout_71b10c"[39m
+      [33mstyle[39m=[32m"--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"split-chat-slot"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-chat-tabs-dock"[39m
+          [33mdata-testid[39m=[32m"workspace-tabs-dock"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"_dock_8c9b80"[39m
+            [33mdata-testid[39m=[32m"chat-history-dock"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"chat.collapsePane"[39m
+            [33mclass[39m=[32m"split-chat-collapse od-tooltip"[39m
+            [33mdata-testid[39m=[32m"chat-collapse-toggle"[39m
+            [33mdata-tooltip[39m=[32m"chat.collapsePane"[39m
+            [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+            [33mtitle[39m=[32m"chat.collapsePane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"od-icon"[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mfocusable[39m=[32m"false"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"mokina-pending-send"[39m
+            [33mdata-testid[39m=[32m"mokina-pending-send"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"mokina-pending-send__text"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.title[0m
+                [0m：[0m
+                [0ma fresh prompt[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"mokina-pending-send__verify"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.verify[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"active-conversation"[39m
+          [36m>[39m
+            [0mconv-a[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"host-error"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"retry-pending-id"[39m
+          [36m>[39m
+            [0mnone[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"assistant-summary"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"user-summary"[39m
+          [36m>[39m
+            [0m767c45be-9fe6-4c14-aba2-ba656b8f035f[0m
+          [36m</output>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"chat-retry"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mretry[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"send-message"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0msend[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"comment-float-host"[39m
+        [33mdata-testid[39m=[32m"comment-float-host"[39m
+        [33mid[39m=[32m":r0:"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"project.resizeChatPanel"[39m
+        [33maria-orientation[39m=[32m"vertical"[39m
+        [33maria-valuemax[39m=[32m"720"[39m
+        [33maria-valuemin[39m=[32m"345"[39m
+        [33maria-valuenow[39m=[32m"460"[39m
+        [33mclass[39m=[32m"split-resize-handle"[39m
+        [33mrole[39m=[32m"separator"[39m
+        [33mtabindex[39m=[32m"0"[39m
+        [33mtitle[39m=[32m"project.resizeChatPanel"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"file-workspace"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/components/ProjectView.pending-send-exit.test.tsx:454:28
+    452|     const firstCall = streamViaDaemon.mock.calls[0]?.[0] as { clientRe…
+    453|     streamMode.mode = 'accepted';
+    454|     fireEvent.click(screen.getByTestId('mokina-pending-send-resend'));
+       |                            ^
+    455|     await waitFor(() => {
+    456|       expect(storedRecords()).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/14]⎯
+
+ FAIL  tests/components/ProjectView.pending-send-exit.test.tsx > R2 「结果待确认」的显式出口 > 服务端已受理时：重新发送先只读核对，恢复原 run，不再 POST
+TestingLibraryElementError: Unable to find an element by: [data-testid="mokina-pending-send-resend"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"split _workspaceLayout_71b10c"[39m
+      [33mstyle[39m=[32m"--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"split-chat-slot"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-chat-tabs-dock"[39m
+          [33mdata-testid[39m=[32m"workspace-tabs-dock"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"_dock_8c9b80"[39m
+            [33mdata-testid[39m=[32m"chat-history-dock"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"chat.collapsePane"[39m
+            [33mclass[39m=[32m"split-chat-collapse od-tooltip"[39m
+            [33mdata-testid[39m=[32m"chat-collapse-toggle"[39m
+            [33mdata-tooltip[39m=[32m"chat.collapsePane"[39m
+            [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+            [33mtitle[39m=[32m"chat.collapsePane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"od-icon"[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mfocusable[39m=[32m"false"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"mokina-pending-send"[39m
+            [33mdata-testid[39m=[32m"mokina-pending-send"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"mokina-pending-send__text"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.title[0m
+                [0m：[0m
+                [0ma fresh prompt[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"mokina-pending-send__verify"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.verify[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"active-conversation"[39m
+          [36m>[39m
+            [0mconv-a[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"host-error"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"retry-pending-id"[39m
+          [36m>[39m
+            [0mnone[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"assistant-summary"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"user-summary"[39m
+          [36m>[39m
+            [0m3f7d124e-801d-4761-85de-b1d818481f1c[0m
+          [36m</output>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"chat-retry"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mretry[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"send-message"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0msend[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"comment-float-host"[39m
+        [33mdata-testid[39m=[32m"comment-float-host"[39m
+        [33mid[39m=[32m":r1:"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"project.resizeChatPanel"[39m
+        [33maria-orientation[39m=[32m"vertical"[39m
+        [33maria-valuemax[39m=[32m"720"[39m
+        [33maria-valuemin[39m=[32m"345"[39m
+        [33maria-valuenow[39m=[32m"460"[39m
+        [33mclass[39m=[32m"split-resize-handle"[39m
+        [33mrole[39m=[32m"separator"[39m
+        [33mtabindex[39m=[32m"0"[39m
+        [33mtitle[39m=[32m"project.resizeChatPanel"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"file-workspace"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/components/ProjectView.pending-send-exit.test.tsx:483:28
+    481|     });
+    482|     const callsBefore = streamViaDaemon.mock.calls.length;
+    483|     fireEvent.click(screen.getByTestId('mokina-pending-send-resend'));
+       |                            ^
+    484|     await waitFor(() => {
+    485|       expect(storedRecords()).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/14]⎯
+
+ FAIL  tests/components/ProjectView.pending-send-exit.test.tsx > R2 「结果待确认」的显式出口 > 服务端明确拒绝（409）时：重新发送转入可编辑草稿，快照完整正文保留
+TestingLibraryElementError: Unable to find an element by: [data-testid="mokina-pending-send-resend"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"split _workspaceLayout_71b10c"[39m
+      [33mstyle[39m=[32m"--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"split-chat-slot"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-chat-tabs-dock"[39m
+          [33mdata-testid[39m=[32m"workspace-tabs-dock"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"_dock_8c9b80"[39m
+            [33mdata-testid[39m=[32m"chat-history-dock"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"chat.collapsePane"[39m
+            [33mclass[39m=[32m"split-chat-collapse od-tooltip"[39m
+            [33mdata-testid[39m=[32m"chat-collapse-toggle"[39m
+            [33mdata-tooltip[39m=[32m"chat.collapsePane"[39m
+            [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+            [33mtitle[39m=[32m"chat.collapsePane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"od-icon"[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mfocusable[39m=[32m"false"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"mokina-pending-send"[39m
+            [33mdata-testid[39m=[32m"mokina-pending-send"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"mokina-pending-send__text"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.title[0m
+                [0m：[0m
+                [0ma fresh prompt[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"mokina-pending-send__verify"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.verify[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"active-conversation"[39m
+          [36m>[39m
+            [0mconv-a[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"host-error"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"retry-pending-id"[39m
+          [36m>[39m
+            [0mnone[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"assistant-summary"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"user-summary"[39m
+          [36m>[39m
+            [0m9fcd0f7a-8bd1-4cb4-95a3-82628fe00f21[0m
+          [36m</output>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"chat-retry"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mretry[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"send-message"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0msend[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"comment-float-host"[39m
+        [33mdata-testid[39m=[32m"comment-float-host"[39m
+        [33mid[39m=[32m":r2:"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"project.resizeChatPanel"[39m
+        [33maria-orientation[39m=[32m"vertical"[39m
+        [33maria-valuemax[39m=[32m"720"[39m
+        [33maria-valuemin[39m=[32m"345"[39m
+        [33maria-valuenow[39m=[32m"460"[39m
+        [33mclass[39m=[32m"split-resize-handle"[39m
+        [33mrole[39m=[32m"separator"[39m
+        [33mtabindex[39m=[32m"0"[39m
+        [33mtitle[39m=[32m"project.resizeChatPanel"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"file-workspace"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/components/ProjectView.pending-send-exit.test.tsx:497:28
+    495|     await sendAndLoseResponse();
+    496|     streamMode.mode = 'conflict';
+    497|     fireEvent.click(screen.getByTestId('mokina-pending-send-resend'));
+       |                            ^
+    498|     await waitFor(() => {
+    499|       expect(storedRecords()[0]?.status).toBe('draft');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/14]⎯
+
+ FAIL  tests/components/ProjectView.pending-send-exit.test.tsx > R2 「结果待确认」的显式出口 > 放弃这条：清除记录与提示，普通重试不再被拦
+TestingLibraryElementError: Unable to find an element by: [data-testid="mokina-pending-send-discard"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"split _workspaceLayout_71b10c"[39m
+      [33mstyle[39m=[32m"--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"split-chat-slot"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-chat-tabs-dock"[39m
+          [33mdata-testid[39m=[32m"workspace-tabs-dock"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"_dock_8c9b80"[39m
+            [33mdata-testid[39m=[32m"chat-history-dock"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"chat.collapsePane"[39m
+            [33mclass[39m=[32m"split-chat-collapse od-tooltip"[39m
+            [33mdata-testid[39m=[32m"chat-collapse-toggle"[39m
+            [33mdata-tooltip[39m=[32m"chat.collapsePane"[39m
+            [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+            [33mtitle[39m=[32m"chat.collapsePane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"od-icon"[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mfocusable[39m=[32m"false"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"mokina-pending-send"[39m
+            [33mdata-testid[39m=[32m"mokina-pending-send"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"mokina-pending-send__text"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.title[0m
+                [0m：[0m
+                [0ma fresh prompt[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"mokina-pending-send__verify"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.verify[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"active-conversation"[39m
+          [36m>[39m
+            [0mconv-a[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"host-error"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"retry-pending-id"[39m
+          [36m>[39m
+            [0mnone[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"assistant-summary"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"user-summary"[39m
+          [36m>[39m
+            [0mbae3c247-3f33-4987-822f-06c4e69e1e59[0m
+          [36m</output>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"chat-retry"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mretry[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"send-message"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0msend[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"comment-float-host"[39m
+        [33mdata-testid[39m=[32m"comment-float-host"[39m
+        [33mid[39m=[32m":r3:"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"project.resizeChatPanel"[39m
+        [33maria-orientation[39m=[32m"vertical"[39m
+        [33maria-valuemax[39m=[32m"720"[39m
+        [33maria-valuemin[39m=[32m"345"[39m
+        [33maria-valuenow[39m=[32m"460"[39m
+        [33mclass[39m=[32m"split-resize-handle"[39m
+        [33mrole[39m=[32m"separator"[39m
+        [33mtabindex[39m=[32m"0"[39m
+        [33mtitle[39m=[32m"project.resizeChatPanel"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"file-workspace"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/components/ProjectView.pending-send-exit.test.tsx:508:28
+    506|   it('放弃这条：清除记录与提示，普通重试不再被拦', async () => {
+    507|     await sendAndLoseResponse();
+    508|     fireEvent.click(screen.getByTestId('mokina-pending-send-discard'));
+       |                            ^
+    509|     await waitFor(() => {
+    510|       expect(storedRecords()).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/14]⎯
+
+ FAIL  tests/components/ProjectView.pending-send-exit.test.tsx > R2 大小上限不再拒发 > 100Ki 正文照常发送，只提示不可自动恢复，不出现保存失败
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ tests/components/ProjectView.pending-send-exit.test.tsx:531:29
+    529|       expect(sendOutcomes[0]).toBeUndefined();
+    530|     });
+    531|     expect(streamViaDaemon).toHaveBeenCalledTimes(1);
+       |                             ^
+    532|     expect(screen.getByTestId('host-error').textContent).not.toContain…
+    533|     expect(screen.getByTestId('host-error').textContent).toContain('mo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/14]⎯
+
+ FAIL  tests/components/ProjectView.pending-send-exit.test.tsx > R2 大小上限不再拒发 > 25 条批注（超过 20 条上限）照常发送
+AssertionError: expected 'restore-draft' to be undefined
+
+- Expected:
+undefined
+
++ Received:
+"restore-draft"
+
+ ❯ tests/components/ProjectView.pending-send-exit.test.tsx:549:21
+    547|       outcome = await onSend('with many comments', [], comments);
+    548|     });
+    549|     expect(outcome).toBeUndefined();
+       |                     ^
+    550|     expect(streamViaDaemon).toHaveBeenCalledTimes(1);
+    551|     expect(screen.getByTestId('host-error').textContent).not.toContain…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/14]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  14 failed | 13 passed (27)
+   Start at  16:31:36
+   Duration  2.83s (transform 2.11s, setup 952ms, import 1.81s, tests 157ms, environment 649ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 test: `vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/components/ProjectView.pending-send-exit.test.tsx`
+Exit status 1

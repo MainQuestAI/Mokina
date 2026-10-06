@@ -1,0 +1,68 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/desktop
+
+ ❯ tests/main/mokina-recovery-store.test.ts (16 tests | 6 failed) 31ms
+     × RR5 persists legitimate composite file key deliverables/plan.html across instances 3ms
+     × RR5 persists legitimate composite file key 营销资料/方案 空格.html across instances 1ms
+     × RR5 persists legitimate composite file key a/plan.html across instances 1ms
+     × RR5 persists legitimate composite file key b/plan.html across instances 1ms
+     × RR5 persists legitimate composite file key 目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/plan.html across instances 1ms
+     × RR4 deletion survives restart, rejects stale recreation, and permits an explicit new generation with CAS 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/main/mokina-recovery-store.test.ts > mokina recovery store > RR5 persists legitimate composite file key deliverables/plan.html across instances
+ FAIL  tests/main/mokina-recovery-store.test.ts > mokina recovery store > RR5 persists legitimate composite file key 营销资料/方案 空格.html across instances
+ FAIL  tests/main/mokina-recovery-store.test.ts > mokina recovery store > RR5 persists legitimate composite file key a/plan.html across instances
+ FAIL  tests/main/mokina-recovery-store.test.ts > mokina recovery store > RR5 persists legitimate composite file key b/plan.html across instances
+ FAIL  tests/main/mokina-recovery-store.test.ts > mokina recovery store > RR5 persists legitimate composite file key 目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/目录/plan.html across instances
+AssertionError: expected { ok: false, reason: 'invalid-key' } to deeply equal { ok: true, result: 'stored' }
+
+- Expected
++ Received
+
+  {
+-   "ok": true,
+-   "result": "stored",
++   "ok": false,
++   "reason": "invalid-key",
+  }
+
+ ❯ tests/main/mokina-recovery-store.test.ts:134:74
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/main/mokina-recovery-store.test.ts > mokina recovery store > RR4 deletion survives restart, rejects stale recreation, and permits an explicit new generation with CAS
+AssertionError: expected { ok: true, result: { found: false } } to match object { ok: true, …(1) }
+
+- Expected
++ Received
+
+  {
+    "ok": true,
+    "result": {
+-     "deletedRecordId": Any<String>,
+      "found": false,
+    },
+  }
+
+ ❯ tests/main/mokina-recovery-store.test.ts:145:21
+    143|     const reopened = createMokinaRecoveryStore(root);
+    144|     const deleted = await reopened.get(key);
+    145|     expect(deleted).toMatchObject({ ok: true, result: { found: false, …
+       |                     ^
+    146|     expect(await reopened.list('mokina:context-snapshot:')).toEqual({ …
+    147|     expect(await reopened.put(key, { recordId: 'stale', value: 'old ca…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 10 passed (16)
+   Start at  09:47:02
+   Duration  140ms (transform 24ms, setup 0ms, import 34ms, tests 31ms, environment 0ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/desktop:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/main/mokina-recovery-store.test.ts

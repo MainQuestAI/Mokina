@@ -1,0 +1,49 @@
+{
+  "evidenceType": "external headless Chromium on byte-identical product outputs with original relative paths",
+  "results": [
+    {
+      "title": "小山茶馆｜社区开业营销方案",
+      "brokenImages": 0,
+      "remoteImages": 0,
+      "name": "marketing",
+      "expandedBudget": false,
+      "errors": [],
+      "budget300000": true,
+      "bodyTextCharacters": 2333,
+      "unknownsKept": false
+    },
+    {
+      "title": "小山茶馆 · 开门见茶",
+      "brokenImages": 0,
+      "remoteImages": 0,
+      "name": "odnext",
+      "expandedBudget": false,
+      "errors": [],
+      "budget300000": false,
+      "bodyTextCharacters": 789,
+      "unknownsKept": false
+    },
+    {
+      "title": "小山茶馆 · 社区开业营销执行页",
+      "brokenImages": 0,
+      "remoteImages": 0,
+      "name": "restored",
+      "expandedBudget": false,
+      "errors": [],
+      "budget300000": true,
+      "bodyTextCharacters": 946,
+      "unknownsKept": true
+    },
+    {
+      "title": "小山茶馆 · 社区开业活动",
+      "brokenImages": 0,
+      "remoteImages": 0,
+      "name": "landing",
+      "expandedBudget": true,
+      "errors": [],
+      "budget300000": true,
+      "bodyTextCharacters": 1545,
+      "unknownsKept": true
+    }
+  ]
+}

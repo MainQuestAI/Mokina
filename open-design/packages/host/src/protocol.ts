@@ -372,6 +372,42 @@ export type OpenDesignHostUpdaterOpenDialogRequest = {
 
 export type OpenDesignHostUpdaterOpenDialogListener = (request: OpenDesignHostUpdaterOpenDialogRequest) => void;
 
+
+// --- Mokina recovery store (desktop-only durable draft/journal storage) ---
+//
+// The Mokina local preview keeps composer drafts, PR3 send-intent records and
+// revision/continuation journals under the desktop profile instead of a
+// browser origin, so a port change or an app replacement cannot orphan an
+// unknown in-flight request. Semantics mirror `contracts/mokina-local.ts`
+// `DurableRecoveryStore`: `put`/`delete` compare the expected record id and
+// conflict instead of overwriting; `put` without an expected id is
+// create-if-absent, never an unconditional overwrite.
+export const OPEN_DESIGN_HOST_RECOVERY_STORE_RESULTS = Object.freeze({
+  CONFLICT: "conflict",
+  DELETED: "deleted",
+  STORED: "stored",
+} as const);
+
+export type OpenDesignHostRecoveryStoreRecord = {
+  recordId: string;
+  value: unknown;
+};
+
+export type OpenDesignHostRecoveryStoreGetResult =
+  | { ok: true; found: false; deletedRecordId?: string; legacyMigration?: 'confirm' }
+  | { ok: true; found: true; record: OpenDesignHostRecoveryStoreRecord }
+  | OpenDesignHostFailure;
+
+export type OpenDesignHostRecoveryStorePutResult =
+  | { ok: true; result: (typeof OPEN_DESIGN_HOST_RECOVERY_STORE_RESULTS)["STORED" | "CONFLICT"] }
+  | OpenDesignHostFailure;
+
+export type OpenDesignHostRecoveryStoreDeleteResult =
+  | { ok: true; result: (typeof OPEN_DESIGN_HOST_RECOVERY_STORE_RESULTS)["DELETED" | "CONFLICT"] }
+  | OpenDesignHostFailure;
+
+export type OpenDesignHostRecoveryStoreListResult = { ok: true; keys: string[] } | OpenDesignHostFailure;
+
 export type OpenDesignHostBridge = {
   // Optional so older host builds still satisfy the bridge shape; callers
   // must feature-detect before invoking.
@@ -404,6 +440,18 @@ export type OpenDesignHostBridge = {
     // Optional so older host builds still satisfy the bridge shape; callers
     // must feature-detect before invoking.
     pickWorkingDir?(): Promise<OpenDesignHostPickWorkingDirResult>;
+  };
+  // Optional so web builds and older desktop hosts keep the same contract;
+  // callers must feature-detect and keep their localStorage fallback.
+  recoveryStore?: {
+    delete(key: string, expectedRecordId: string): Promise<OpenDesignHostRecoveryStoreDeleteResult>;
+    get(key: string): Promise<OpenDesignHostRecoveryStoreGetResult>;
+    list(prefix?: string): Promise<OpenDesignHostRecoveryStoreListResult>;
+    put(
+      key: string,
+      record: OpenDesignHostRecoveryStoreRecord,
+      expectedRecordId?: string,
+    ): Promise<OpenDesignHostRecoveryStorePutResult>;
   };
   shell: {
     openExternal(url: string): Promise<OpenDesignHostActionResult>;

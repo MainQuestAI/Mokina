@@ -1,0 +1,6 @@
+ WARN  Unsupported engine: wanted: {"node":"~24"} (current: {"node":"v22.22.3","pnpm":"10.33.2"})
+
+> open-design@0.22.1 i18n:check /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design
+> tsx ./scripts/i18n-check.ts
+
+i18n P0 check passed: locale registration, README switchers, and core doc links are consistent.

@@ -1,0 +1,22 @@
+{
+  "bytes": 10485761,
+  "uploadStatus": 200,
+  "upload": {
+    "file": {
+      "name": "final5-oversized.pdf",
+      "path": "final5-oversized.pdf",
+      "size": 10485761,
+      "mtime": 1791210246935.0176,
+      "kind": "pdf",
+      "mime": "application/pdf",
+      "artifactManifest": null
+    }
+  },
+  "status": 400,
+  "body": {
+    "error": {
+      "code": "BAD_REQUEST",
+      "message": "资料超过 10 MB 读取限制"
+    }
+  }
+}

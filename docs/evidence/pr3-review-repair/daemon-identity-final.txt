@@ -1,0 +1,38 @@
+
+> @open-design/daemon@0.22.1 pretest /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> pnpm --filter '@open-design/daemon^...' --workspace-concurrency=4 --if-present run build
+
+Scope: 10 of 28 workspace projects
+../../packages/release build$ tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/platform build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/registry-protocol build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/diagnostics build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/diagnostics build: Done
+../../packages/release build: Done
+../../packages/platform build: Done
+../../packages/registry-protocol build: Done
+../../packages/sidecar build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/contracts build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/sidecar-proto build: Done
+../../packages/sidecar build: Done
+../../packages/contracts build: Done
+../../packages/launcher-proto build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/plugin-runtime build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/agui-adapter build$ node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+../../packages/launcher-proto build: Done
+../../packages/agui-adapter build: Done
+../../packages/plugin-runtime build: Done
+
+> @open-design/daemon@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+> vitest run -c vitest.config.ts tests/run-create-workspace-gate.test.ts tests/run-request-idempotency.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/daemon
+
+
+ Test Files  2 passed (2)
+      Tests  80 passed (80)
+   Start at  10:19:28
+   Duration  22.13s (transform 2.60s, setup 17ms, import 3.84s, tests 18.13s, environment 0ms)
+

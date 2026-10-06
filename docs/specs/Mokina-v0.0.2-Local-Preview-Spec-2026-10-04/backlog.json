@@ -1,0 +1,467 @@
+{
+  "schemaVersion": 1,
+  "productRelease": "0.0.2-local.1",
+  "baseline": "53da96ca9080afb5b5141490d6e95858a6e18e9a",
+  "tasks": [
+    {
+      "id": "T00",
+      "title": "基线与实现映射",
+      "gate": "G0",
+      "dependsOn": [],
+      "requirements": [
+        "R01"
+      ],
+      "codeOwner": "现有 PR3、根/模块 AGENTS、冻结 design manifest、历史失败证据",
+      "scope": "核对 PR3 最终状态及 SHA；创建隔离 worktree；记录实际 Mac/CLI；完成有界 implementation-map。",
+      "definitionOfDone": "基线、21 项设计摘要、已知失败清单、真实代码落点和工作区保护记录齐全。",
+      "acceptance": [
+        "AC01",
+        "AC54"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T01",
+      "title": "独立产品 profile 与最早桌面切片",
+      "gate": "G1",
+      "dependsOn": [
+        "T00"
+      ],
+      "requirements": [
+        "R02",
+        "R03"
+      ],
+      "codeOwner": "tools/pack 配置与 resources；desktop/packaged 产品身份接缝",
+      "scope": "引入 Mokina profile；隔离更新/新闻策略；打一个可从 Finder 打开的生产壳层包。",
+      "definitionOfDone": "Mokina 名称/版本/身份一致；不接管 od scheme；包内没有上游更新 fallback。",
+      "acceptance": [
+        "AC02",
+        "AC03"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T02",
+      "title": "打包依赖闭包与 sidecar 生命周期",
+      "gate": "G1",
+      "dependsOn": [
+        "T01"
+      ],
+      "requirements": [
+        "R03",
+        "R05"
+      ],
+      "codeOwner": "tools/pack、apps/packaged、apps/desktop、既有 sidecar 原语",
+      "scope": "消除源码目录、外部 node_modules 和开发进程依赖；处理重复启动、端口冲突和退出。",
+      "definitionOfDone": "清洁 PATH 下无源码仍启动；重开可读项目；只停止本实例进程。",
+      "acceptance": [
+        "AC04",
+        "AC07",
+        "AC08",
+        "AC11",
+        "AC12",
+        "AC56"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T03",
+      "title": "草稿与发送意图的稳定桌面存储",
+      "gate": "G1",
+      "dependsOn": [
+        "T01"
+      ],
+      "requirements": [
+        "R05",
+        "R11",
+        "R17"
+      ],
+      "codeOwner": "host 持久存储/窄 desktop IPC；Composer draft、send-request-state、revision journal",
+      "scope": "增加异步存储 facade；保留旧记录；确保跨端口和应用升级不丢草稿/未知请求。",
+      "definitionOfDone": "落盘失败不发送；unknown 不丢弃；不同产品/QA 不串数据；旧回调不能覆盖新草稿。",
+      "acceptance": [
+        "AC08",
+        "AC09",
+        "AC10",
+        "AC37",
+        "AC53"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T04",
+      "title": "Codex 连接与本地能力开关",
+      "gate": "G1",
+      "dependsOn": [
+        "T02"
+      ],
+      "requirements": [
+        "R04",
+        "R19"
+      ],
+      "codeOwner": "既有 Agent 设置、adapter、packaged 环境与产品策略",
+      "scope": "诊断 CLI/认证/模型；修 Finder PATH；不要求上游账号；用户触发真实连接测试。",
+      "definitionOfDone": "文件/系统凭据路径都能探测；无网络仍浏览；无配置不发团队/遥测/新闻请求。",
+      "acceptance": [
+        "AC03",
+        "AC05",
+        "AC06",
+        "AC07",
+        "AC55"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T05",
+      "title": "资料解析与 PDF 包内依赖",
+      "gate": "G2",
+      "dependsOn": [
+        "T02"
+      ],
+      "requirements": [
+        "R07"
+      ],
+      "codeOwner": "daemon/src/mokina/materials.ts；tools/pack/resources",
+      "scope": "复用七类解析；绑定 parserVersion；打包文本 PDF 依赖；保留部分读取/公式缓存语义。",
+      "definitionOfDone": "clean Mac 文本 PDF 可读；七类资料限制准确；扫描页不冒充已识别。",
+      "acceptance": [
+        "AC13",
+        "AC14",
+        "AC15",
+        "AC16"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T06",
+      "title": "不可变上下文快照与 run 引用",
+      "gate": "G2",
+      "dependsOn": [
+        "T05"
+      ],
+      "requirements": [
+        "R08",
+        "R09",
+        "R20"
+      ],
+      "codeOwner": "contracts api/context、新增 mokina-context；daemon/mokina；routes/project 与 runs",
+      "scope": "实现 POST/GET 快照与唯一 context.mokinaSnapshotId；服务端冻结/校验/注入；记录 delivery 回执。",
+      "definitionOfDone": "来源变更/幂等冲突/跨项目权限可测；快照不漂移；旧 run 接口兼容。",
+      "acceptance": [
+        "AC17",
+        "AC18",
+        "AC19",
+        "AC20",
+        "AC22",
+        "AC23",
+        "AC24"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T07",
+      "title": "资料选择和使用依据 UI",
+      "gate": "G2",
+      "dependsOn": [
+        "T06",
+        "T03"
+      ],
+      "requirements": [
+        "R06",
+        "R07",
+        "R09"
+      ],
+      "codeOwner": "HomeView/HomeHero/ChatComposer；原文件/设计系统选择器；局部上下文面板",
+      "scope": "连接真实解析、定位、预算、排除说明和依据回执；不增第二资料中心。",
+      "definitionOfDone": "选择/返回不丢草稿；partial 可解释；未选内容不自动纳入；未知历史不伪造。",
+      "acceptance": [
+        "AC21",
+        "AC22",
+        "AC24",
+        "AC53"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T08",
+      "title": "真实专业场景与输出检查",
+      "gate": "G3",
+      "dependsOn": [
+        "T06"
+      ],
+      "requirements": [
+        "R10",
+        "R15"
+      ],
+      "codeOwner": "mokina 两场景、report-contract、prompt composition 双实现、原生 deliverable 检查",
+      "scope": "校准提示/引用/预算约束；把章节结构检查接入原产物验证；保留通用任务。",
+      "definitionOfDone": "方案有取舍和来源；反事实预算任务敏感；空/不可寻址产物不显示可交付。",
+      "acceptance": [
+        "AC25",
+        "AC26",
+        "AC27",
+        "AC50"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T09",
+      "title": "可靠 helper 创建与接续 schema v2",
+      "gate": "G3",
+      "dependsOn": [
+        "T03",
+        "T06"
+      ],
+      "requirements": [
+        "R13",
+        "R11"
+      ],
+      "codeOwner": "FileViewer continuation/createProject；新增窄 artifact operations helper",
+      "scope": "保存稳定 operation/targetProjectId；分步可恢复创建；固定来源/快照/草稿；兼容 v1。",
+      "definitionOfDone": "项目已建但快照失败可恢复同一目标；创建和恢复均零 run POST；旧项目不覆盖。",
+      "acceptance": [
+        "AC30",
+        "AC31",
+        "AC32",
+        "AC33",
+        "AC51"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T10",
+      "title": "真实活动页接续制作",
+      "gate": "G3",
+      "dependsOn": [
+        "T07",
+        "T08",
+        "T09"
+      ],
+      "requirements": [
+        "R14",
+        "R13"
+      ],
+      "codeOwner": "原生场景注册及新增薄 mokina-landing-page；P07/P08",
+      "scope": "支持目标类型、选定品牌/素材；新项目显式发送制作；产物进入原工作区。",
+      "definitionOfDone": "真实活动页用选定资料/素材；来源冻结；可修订可导出；没有虚构发布/表单回执。",
+      "acceptance": [
+        "AC32",
+        "AC33",
+        "AC34"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T11",
+      "title": "修订入口复用 PR3 受理恢复",
+      "gate": "G3",
+      "dependsOn": [
+        "T03",
+        "T08",
+        "T09"
+      ],
+      "requirements": [
+        "R11"
+      ],
+      "codeOwner": "FileViewer generateChapterCandidate；providers/daemon；send-request-state",
+      "scope": "发送前持久全部身份；原 scope 查询；恢复旧 accepted job；候选保存重试不重跑模型。",
+      "definitionOfDone": "真实 daemon 注入丢响应后只有一个 run；切换模型/刷新不能产生第二次新尝试。",
+      "acceptance": [
+        "AC10",
+        "AC19",
+        "AC28",
+        "AC29",
+        "AC35",
+        "AC37"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T12",
+      "title": "候选比较与采用一致性",
+      "gate": "G3",
+      "dependsOn": [
+        "T11"
+      ],
+      "requirements": [
+        "R12",
+        "R17"
+      ],
+      "codeOwner": "FileViewer 比较区；native candidates/adopt；摘要失效通知",
+      "scope": "宽窄屏比较；字节级非所选章节不变；沿用 current CAS；保留手改与恢复。",
+      "definitionOfDone": "候选不改 current；冲突不覆盖；采用后目录和工作区指向同一版本。",
+      "acceptance": [
+        "AC35",
+        "AC36"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T13",
+      "title": "指定版本桌面导出",
+      "gate": "G4",
+      "dependsOn": [
+        "T02",
+        "T12"
+      ],
+      "requirements": [
+        "R16"
+      ],
+      "codeOwner": "FileViewer 版本菜单、原生 exporter、frozenContent 与 manifest",
+      "scope": "历史/候选 HTML 入口；版本锁定与取消；桌面 PDF、独立 HTML/ZIP 内容核查。",
+      "definitionOfDone": "切换版本不导错；应用外打开正确；原生 PDF 实测而非仅 fallback。",
+      "acceptance": [
+        "AC38",
+        "AC39",
+        "AC40"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T14",
+      "title": "项目成果恢复包",
+      "gate": "G4",
+      "dependsOn": [
+        "T06",
+        "T13"
+      ],
+      "requirements": [
+        "R18"
+      ],
+      "codeOwner": "原生项目 export/import/版本存储；窄 recovery 路由",
+      "scope": "生成白名单恢复包；新项目导入、摘要/路径校验、版本关系 remap；排除凭据/运行意图。",
+      "definitionOfDone": "恢复后各版本/来源可读、current 唯一；不覆盖旧项目、不启动任务。",
+      "acceptance": [
+        "AC41",
+        "AC42",
+        "AC43"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T15",
+      "title": "脱敏诊断与安全边界",
+      "gate": "G5",
+      "dependsOn": [
+        "T04",
+        "T06"
+      ],
+      "requirements": [
+        "R19",
+        "R20"
+      ],
+      "codeOwner": "原设置/诊断、IPC、preview isolation、权限/路径工具",
+      "scope": "提供最小脱敏诊断包；验证不受信 HTML/路径不能越权；记录实际网络依赖。",
+      "definitionOfDone": "诊断无正文/令牌默认泄露；预览不能碰主进程 API；未选来源不自动传递。",
+      "acceptance": [
+        "AC16",
+        "AC23",
+        "AC41",
+        "AC42",
+        "AC44",
+        "AC45",
+        "AC55"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T16",
+      "title": "八视图冻结迁移与 i18n",
+      "gate": "G5",
+      "dependsOn": [
+        "T07",
+        "T10",
+        "T12",
+        "T13"
+      ],
+      "requirements": [
+        "R21",
+        "R22"
+      ],
+      "codeOwner": "原生 P01–P08 组件和现有 tokens/locales；冻结设计包",
+      "scope": "补齐材质/排版/焦点/状态；保留 PR2 布局；中文主流程和所有 locale 合同。",
+      "definitionOfDone": "1440×900/1280×720 可操作；八视图逐项映射；系统降级真实检查。",
+      "acceptance": [
+        "AC46",
+        "AC47"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T17",
+      "title": "持续回归与最小 CI",
+      "gate": "G5",
+      "dependsOn": [
+        "T00"
+      ],
+      "requirements": [
+        "R23",
+        "R01"
+      ],
+      "codeOwner": "现有 e2e/Vitest/guard/typecheck 与 GitHub workflow 约束",
+      "scope": "先启用可复用的范围检查，每片补测试；收尾复验所有受影响与全量基线差异。",
+      "definitionOfDone": "新增相关失败为零；旧八失败有精确签名和关联判断；on/off 各自生产构建。",
+      "acceptance": [
+        "AC28",
+        "AC48",
+        "AC49",
+        "AC54"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T18",
+      "title": "候选发行包与用户 Runbook",
+      "gate": "G6",
+      "dependsOn": [
+        "T14",
+        "T15",
+        "T16",
+        "T17"
+      ],
+      "requirements": [
+        "R02",
+        "R03",
+        "R19"
+      ],
+      "codeOwner": "root README、原生 docs、tools-pack 产物清单、release evidence",
+      "scope": "整理原型/产品边界；产出候选 dmg/zip、哈希、依赖/平台/签名状态、上手文档。",
+      "definitionOfDone": "说明不需源码启动；实际支持架构和外部 CLI 前置清楚；不伪称公证或公开发布。",
+      "acceptance": [
+        "AC52",
+        "AC56"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "T19",
+      "title": "本机三个真实任务与用户签收",
+      "gate": "G6",
+      "dependsOn": [
+        "T18",
+        "T04"
+      ],
+      "requirements": [
+        "R24",
+        "R10",
+        "R14",
+        "R16",
+        "R17"
+      ],
+      "codeOwner": "目标 Mac 安装包；真实 Agent；A/B/C 合成输入和实际产物",
+      "scope": "执行三任务与退出重开/导出恢复；专业和工程分开评审；记录用户使用结果。",
+      "definitionOfDone": "最终 SHA/安装包/真实 run/版本/导出文件一致；未做项明确 not_run；签收后才宣布交付。",
+      "acceptance": [
+        "AC25",
+        "AC26",
+        "AC34",
+        "AC40",
+        "AC50",
+        "AC51",
+        "AC52",
+        "AC57"
+      ],
+      "status": "planned"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "event": {
+    "mode": "reject",
+    "ids": {
+      "projectId": "1fbed8e2-d060-44ba-88ff-aa2d742ed150",
+      "conversationId": "70e61fe3-09eb-4e0b-b48c-e608dddb6c8f",
+      "clientRequestId": "08ee4d5a-7cda-44b1-b718-087ecd938465"
+    },
+    "status": 404,
+    "result": {
+      "error": {
+        "code": "CONVERSATION_NOT_FOUND",
+        "message": "conversation not found for project",
+        "details": {
+          "runAcceptance": "not-accepted"
+        }
+      }
+    }
+  },
+  "runCount": 0,
+  "localJob": {
+    "operationId": "08ee4d5a-7cda-44b1-b718-087ecd938465",
+    "clientRequestId": "08ee4d5a-7cda-44b1-b718-087ecd938465",
+    "revisionProjectId": "1fbed8e2-d060-44ba-88ff-aa2d742ed150",
+    "sourceProjectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+    "sourceFile": "index.html",
+    "workspaceContext": null,
+    "baseVersionId": "05a0fd31-7b42-4092-a685-c7415c49d4ee",
+    "sectionId": "strategy",
+    "prompt": "仅修订 strategy：在原策略内加入一句“原生 local.6 门店执行清单”，其余章节保持原样，不编造经营数据。",
+    "dispatched": true,
+    "submissionState": "rejected",
+    "conversationId": "70e61fe3-09eb-4e0b-b48c-e608dddb6c8f"
+  },
+  "durableJob": {
+    "ok": true,
+    "found": true,
+    "record": {
+      "recordId": "cc1ff503-f997-44a4-8d7a-5fef49f2b2fe",
+      "value": "{\"operationId\":\"08ee4d5a-7cda-44b1-b718-087ecd938465\",\"clientRequestId\":\"08ee4d5a-7cda-44b1-b718-087ecd938465\",\"revisionProjectId\":\"1fbed8e2-d060-44ba-88ff-aa2d742ed150\",\"sourceProjectId\":\"60198b4d-1e0f-4491-886d-032f04cadf37\",\"sourceFile\":\"index.html\",\"workspaceContext\":null,\"baseVersionId\":\"05a0fd31-7b42-4092-a685-c7415c49d4ee\",\"sectionId\":\"strategy\",\"prompt\":\"仅修订 strategy：在原策略内加入一句“原生 local.6 门店执行清单”，其余章节保持原样，不编造经营数据。\",\"dispatched\":true,\"submissionState\":\"rejected\",\"conversationId\":\"70e61fe3-09eb-4e0b-b48c-e608dddb6c8f\"}"
+    }
+  }
+}

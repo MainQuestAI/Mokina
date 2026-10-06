@@ -82,6 +82,10 @@ import { useProjectDuplicateFlow } from './project-actions/useProjectDuplicateFl
 import { useWorkspaceProjectMove } from './project-actions/useWorkspaceProjectMove';
 import type { SharedProjectPredicate } from '../collab/all-projects-list';
 import { acknowledgeProjectCompletion, useProjectRunStatuses } from '../hooks/useProjectRunStatuses';
+import {
+  mokinaArtifactLineFromRecord,
+  useMokinaProjectSummaries,
+} from '../hooks/useMokinaProjectSummaries';
 import { MessageCenter } from './MessageCenter';
 import type { EntrySettingsSection } from './EntrySettingsMenu';
 import type { Project } from '../types';
@@ -296,6 +300,8 @@ interface Props {
   onRenameRecentProject?: (id: string, name: string) => void;
   onDeleteRecentProject?: (id: string) => Promise<boolean | void> | boolean | void;
   onDuplicateRecentProject?: (id: string) => Promise<void> | void;
+  /** T14: export a project's recovery package (ZIP) from the row menu. */
+  onExportRecoveryRecentProject?: (id: string) => void;
   /** The one shared-state answer for a row (see `createSharedProjectPredicate`)
    *  and the hub's projectId → sharing member map; together they decide which
    *  rows the member may mutate and which are already in the team space. */
@@ -405,6 +411,7 @@ function RailRecentSection({
   onRename,
   onDelete,
   onDuplicate,
+  onExportRecovery,
   isShared,
   ownerMemberIds,
   onProjectShared,
@@ -418,6 +425,7 @@ function RailRecentSection({
   onRename?: (id: string, name: string) => void;
   onDelete?: (id: string) => Promise<boolean | void> | boolean | void;
   onDuplicate?: (id: string) => Promise<void> | void;
+  onExportRecovery?: (project: Project) => void;
   isShared?: SharedProjectPredicate;
   ownerMemberIds?: ReadonlyMap<string, string>;
   onProjectShared?: (project: WorkspaceProjectSummary) => void;
@@ -531,6 +539,21 @@ function RailRecentSection({
     enabled: open,
     workspaceContext,
   });
+  // 成果摘要（Spec B1 FR-04）：与 runs 同一个可见行窗口，只读可见行的
+  // 小元数据（files + 每 HTML 条目 versions，全局并发 ≤2，见
+  // useMokinaProjectSummaries）。行外/折叠时不订阅，不预读全列表。
+  // legacy 入口提示取自行项目自带的 metadata（daemon 列表已返回），
+  // 让旧项目行显示「未确认采用」（P2-2）。
+  const { t: recentT } = useI18n();
+  const entryHints = useMemo(
+    () => new Map(projects.map((projectItem) => [projectItem.id, projectItem.metadata?.entryFile ?? null])),
+    [projects],
+  );
+  const summariesByProjectId = useMokinaProjectSummaries(runStatusProjectIds, {
+    enabled: MOKINA_LOCAL_EDITION && open,
+    workspaceContext,
+    entryHints,
+  });
 
   // Opening a project is what spends its ✓ (per product): the finished run on
   // screen is recorded as seen — in the shared feed, so the tab switcher drops
@@ -590,6 +613,8 @@ function RailRecentSection({
                     project={project}
                     workspaceContext={workspaceContext}
                     runStatus={runStatusByProjectId.get(project.id)}
+                    allowNameWrap={MOKINA_LOCAL_EDITION}
+                    artifactLine={MOKINA_LOCAL_EDITION ? mokinaArtifactLineFromRecord(summariesByProjectId.get(project.id), recentT) : null}
                     ownedBySelf={ownedBySelf(project.id)}
                     shared={isSharedProject(project.id)}
                     moveToTeamAvailable={moveToTeamAvailable}
@@ -598,6 +623,7 @@ function RailRecentSection({
                     onOpen={openProject}
                     onRename={onRename}
                     onDuplicate={onDuplicate ? (target) => { void duplicateFlow.duplicate(target); } : undefined}
+                    onExportRecovery={onExportRecovery ? (project) => onExportRecovery(project) : undefined}
                     onMoveToTeam={requestMoveToTeam}
                     onDelete={onDelete ? deleteFlow.request : undefined}
                   />
@@ -1972,6 +1998,7 @@ export function EntryNavRail({
   onRenameRecentProject,
   onDeleteRecentProject,
   onDuplicateRecentProject,
+  onExportRecoveryRecentProject,
   isSharedRecentProject,
   recentProjectOwnerMemberIds,
   onRecentProjectShared,
@@ -2501,6 +2528,7 @@ export function EntryNavRail({
               onRename={onRenameRecentProject}
               onDelete={onDeleteRecentProject}
               onDuplicate={onDuplicateRecentProject}
+              onExportRecovery={onExportRecoveryRecentProject ? (project) => onExportRecoveryRecentProject(project.id) : undefined}
               isShared={isSharedRecentProject}
               ownerMemberIds={recentProjectOwnerMemberIds}
               onProjectShared={onRecentProjectShared}
@@ -2520,6 +2548,17 @@ export function EntryNavRail({
              the two destination lists read the same. The name is historical —
              nothing in it is team-specific. */
           <div className="entry-nav-rail__team-section">
+            {MOKINA_LOCAL_EDITION ? (
+              <NavButton
+                ariaLabel={t('entry.navNewProject')}
+                label={t('entry.navNewProject')}
+                onClick={onNewProject}
+                disabled={newProjectDisabled}
+                testId="entry-nav-new-project"
+              >
+                <Icon name="plus" size={16} />
+              </NavButton>
+            ) : null}
             {/* 项目 is a destination on BOTH branches (OPEND-3140): the local
                 shell's project list is the same page the signed-in 项目 item
                 opens — 草稿 folds to the whole local catalog without a
@@ -2589,6 +2628,7 @@ export function EntryNavRail({
               onRename={onRenameRecentProject}
               onDelete={onDeleteRecentProject}
               onDuplicate={onDuplicateRecentProject}
+              onExportRecovery={onExportRecoveryRecentProject ? (project) => onExportRecoveryRecentProject(project.id) : undefined}
               workspaceContext={null}
               analyticsPage={analyticsPage}
               label={t('recentProjects.title')}

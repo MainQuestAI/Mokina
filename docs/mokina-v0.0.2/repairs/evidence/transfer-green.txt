@@ -1,0 +1,8 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web
+
+
+ Test Files  7 passed (7)
+      Tests  185 passed (185)
+   Start at  19:28:05
+   Duration  9.96s (transform 6.93s, setup 3.09s, import 6.54s, tests 10.40s, environment 2.19s)

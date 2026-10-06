@@ -1,0 +1,87 @@
+;
+    2701|       expect(requests).toHaveLength(1);
+       |                        ^
+    2702|       expect(requests[0]?.events[0]?.payload).toMatchObject({
+    2703|         odRole: 'pm',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/14]⎯
+
+ FAIL  tests/integrations/vela.routes.test.ts > POST /api/integrations/vela/analytics-entry > mirrors OpenDesign onboarding profile snapshots with the header-derived device id
+AssertionError: expected { mirrored: false } to deeply equal { mirrored: true, status: 202 }
+
+- Expected
++ Received
+
+  {
+-   "mirrored": true,
+-   "status": 202,
++   "mirrored": false,
+  }
+
+ ❯ tests/integrations/vela.routes.test.ts:2767:20
+    2765|
+    2766|       expect(status).toBe(202);
+    2767|       expect(body).toEqual({ mirrored: true, status: 202 });
+       |                    ^
+    2768|       expect(requests).toHaveLength(1);
+    2769|       expect(requests[0]).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/14]⎯
+
+ FAIL  tests/runtimes/codex-model-preflight.test.ts > Codex model capability preflight > blocks the known-old stable CLI only with confirmed ChatGPT auth
+AssertionError: expected { status: 'unknown', …(1) } to deeply equal { status: 'incompatible', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "cliVersion": "codex-cli 0.142.5",
+-   "model": "gpt-5.6-terra",
+-   "requiredCliVersion": "0.143.0",
+-   "status": "incompatible",
++   "reason": "managed_config",
++   "status": "unknown",
+  }
+
+ ❯ tests/runtimes/codex-model-preflight.test.ts:110:7
+    108|       requestedModel: 'default',
+    109|       projectRoot: fixture.projectRoot,
+    110|     })).resolves.toEqual({
+       |       ^
+    111|       status: 'incompatible',
+    112|       model: 'gpt-5.6-terra',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/14]⎯
+
+ FAIL  tests/runtimes/codex-model-preflight.test.ts > Codex model capability preflight > fails open for config overlays, API auth, and unconfirmed ChatGPT auth
+AssertionError: expected { status: 'unknown', …(1) } to deeply equal { status: 'unknown', …(1) }
+
+- Expected
++ Received
+
+  {
+-   "reason": "auth_unconfirmed",
++   "reason": "managed_config",
+    "status": "unknown",
+  }
+
+ ❯ tests/runtimes/codex-model-preflight.test.ts:308:7
+    306|       requestedModel: 'default',
+    307|       projectRoot: noChatGpt.projectRoot,
+    308|     })).resolves.toEqual({
+       |       ^
+    309|       status: 'unknown',
+    310|       reason: 'auth_unconfirmed',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/14]⎯
+
+
+ Test Files  5 failed | 897 passed | 3 skipped (905)
+      Tests  14 failed | 11987 passed | 15 skipped (12016)
+   Start at  09:56:25
+   Duration  2037.11s (transform 13.72s, setup 2.40s, import 172.41s, tests 1800.28s, environment 37ms)
+
+JSON report written to /tmp/mokina-rr-daemon-full.json
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/daemon:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --maxWorkers=2 --reporter=default --reporter=json --outputFile=/tmp/mokina-rr-daemon-full.json

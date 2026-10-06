@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "synthetic": true,
+  "recordCount": 8,
+  "currency": "CNY",
+  "timezone": "Asia/Shanghai",
+  "periods": {
+    "A": {
+      "spendCny": 30000,
+      "qualifiedLeads": 565,
+      "salesCny": 83000,
+      "onlineImpressions": 350000,
+      "onlineClicks": 8500,
+      "onlineLeads": 405,
+      "CTR": 0.024285714285714285,
+      "CVR": 0.04764705882352941,
+      "CPL": 53.097345132743364,
+      "ROAS": 2.7666666666666666
+    },
+    "B": {
+      "spendCny": 30000,
+      "qualifiedLeads": 503,
+      "salesCny": 71400,
+      "onlineImpressions": 345000,
+      "onlineClicks": 7050,
+      "onlineLeads": 327,
+      "CTR": 0.02043478260869565,
+      "CVR": 0.04638297872340426,
+      "CPL": 59.642147117296226,
+      "ROAS": 2.38
+    }
+  },
+  "rules": {
+    "CTR": "sum(online clicks)/sum(online impressions)",
+    "CVR": "sum(online leads)/sum(online clicks)",
+    "CPL": "sum(all spend)/sum(all qualified_leads)",
+    "ROAS": "sum(all sales)/sum(all spend)",
+    "zeroClickChannelCvr": null,
+    "missingOfflineImpressionsAndClicks": null
+  },
+  "absoluteTolerance": 1e-08,
+  "leadChange": {
+    "absolute": -62,
+    "relative": -0.10973451327433628,
+    "byChannel": {
+      "搜索": -8,
+      "公众号,自有": 10,
+      "线下门店": 16,
+      "展示广告": -80
+    }
+  },
+  "salesChange": {
+    "absolute": -11600,
+    "relative": -0.13975903614457832
+  }
+}

@@ -1,0 +1,11 @@
+
+> open-design@0.22.1 tools-pack /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design
+> pnpm exec tools-pack mac install --dir /Users/dingcheng/Mokina-PR4-QA --namespace mokina-local --json
+
+{
+  "detached": true,
+  "dmgPath": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/dmg/Mokina-mokina-local.dmg",
+  "installedAppPath": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/install/Applications/Mokina.app",
+  "mountPoint": "/Users/dingcheng/Mokina-PR4-QA/out/mac/namespaces/mokina-local/mount",
+  "namespace": "mokina-local"
+}

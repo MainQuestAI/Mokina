@@ -1,0 +1,70 @@
+{
+  "landing": {
+    "index.html": {
+      "status": 200,
+      "bytes": 18535,
+      "sha256": "42a5aff9f2055a9eed1f69790a3bed3e727a6ccf60891b51da5254fc5776d702",
+      "saved": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/landing-index.html",
+      "textChecks": {
+        "待确认": true,
+        "小山茶馆": true,
+        "300,000": true,
+        "30万": false,
+        "门店": true,
+        "社群": true
+      }
+    },
+    "MOKINA-CONTINUATION.json": {
+      "status": 200,
+      "bytes": 3454,
+      "sha256": "7e433d3c2ad26d8a6e2bcb52394ce9ffbd5e4de15d64b92c0836af764bdda62c",
+      "saved": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/landing-MOKINA-CONTINUATION.json",
+      "payload": {
+        "schemaVersion": 2,
+        "operationId": "5a7940c5-673a-4f15-83b2-d5d9ba869cae",
+        "targetProjectId": "eaa1c205-a26a-484f-8c6b-19185fbcc1c7",
+        "source": {
+          "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+          "fileName": "index.html",
+          "versionId": "6e662d3d-953e-401c-b3c7-fcb9f01bf640",
+          "contentDigest": "a7ecc905c4a34b4cff83200555b3fe9248c3034f747bc78aa76eda4485d738bc",
+          "versionState": "current"
+        },
+        "sections": [
+          {
+            "id": "strategy",
+            "text": "01先建立熟悉感，再促成回访以家庭为邀约单位，用清楚的体验内容和预约时段吸引到店；到店后征得同意再建立社群联系。\n\n第一步 · 认识茶馆把邀请说清楚门店告示和社群邀约统一写明体验内容、时段、人数上限与预约方式。发布前补齐实际地址和开业日期。\n第二步 · 安心体验把每一场接待做好建议设置家庭品茶场次，由店员介绍茶品与饮用方式。每场名额依可用座位和接待能力确定，不超额预约。\n第三步 · 保持联系给出下一次来的理由体验后询问是否愿意入群，发送茶饮知识与后续场次；在首次到店后7天回访一次，记录反馈和复访意向。\n\n\n开业前7—3天店长确认场次、接待上限、体验成本与优惠规则；社群运营建立预约表和来源编号。\n开业前2天至当天门店展示邀约物料，社群分时段预约；开业前一天，社群运营逐户复核预约，并向店长交接；店员逐场核对名单，到店先检查核销状态，同一预约不可重复核销，记录实际到店与付款。\n开业后1—7天社群运营完成首轮回访；店长每日收店后核对核销、费用及未到店原因。\n开业后8—30天每周调整场次和邀约内容；第30天汇总到店、复访、成交与实际支出，决定后续活动。"
+          },
+          {
+            "id": "budget",
+            "text": "0230万元，按用途设上限优先保障到店体验与后续运营。预算是开支上限，按实际活动和凭证使用，不要求花满。\n300,000 元 / 总预算建议分配 · 各项支出不重复归集不包含短视频广告投放\n开业营销预算建议明细用途金额（元）占比支出与验收依据\n门店物料与导引60,00020%邀约单、活动说明、店内导引；按报价、到货数量和实际安装验收。\n家庭品茶体验90,00030%茶品、耗材与活动执行；逐场记录预约数、实际到店数和消耗量。\n社群内容与运营60,00020%邀约内容、预约维护、回访与活动协作；以发布记录、预约表和回访表验收。\n到店及复访权益60,00020%按实际核销成本计账；发布前确定权益内容、有效期、使用条件和单户上限。\n机动预留30,00010%仅用于已确认的补充需求；店长批准后释放，未使用部分保留。\n合计300,000100%门店与社群共同服务同一条到店与复访路径。\n费用控制：付款前登记用途与预算项，付款后留存凭证。每周核对“已支出＋已承诺支出”；达到单项预算80%时复核余量，预计超出上限时暂停新增支出并调整方案。"
+          }
+        ],
+        "background": "小山茶馆社区开业活动页，绿色风格；只使用选定的策略和预算。活动日期、地址、联系方式均写待确认，不编造。立即写可预览的 index.html，包含预约说明与执行步骤。",
+        "productionIntent": "landing-page"
+      }
+    }
+  },
+  "restored": {
+    "recovered-check.html": {
+      "status": 200,
+      "bytes": 11074,
+      "sha256": "d788eed08a1847179a5be1f052c199b404ff5b9633c761461143f1baeef8fd91",
+      "saved": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/restored-recovered-check.html",
+      "textChecks": {
+        "待确认": true,
+        "小山茶馆": true,
+        "300,000": false,
+        "30万": false,
+        "门店": true,
+        "社群": true
+      }
+    },
+    "recovered-frozen.svg": {
+      "status": 200,
+      "bytes": 177,
+      "sha256": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+      "saved": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/restored-recovered-frozen.svg"
+    }
+  }
+}

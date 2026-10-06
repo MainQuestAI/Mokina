@@ -1,0 +1,21 @@
+{
+  "agentId": "codex",
+  "message": "请编辑项目中的文件「传播内容与排期.html」：为每个可修改的顶层章节元素同时添加稳定且唯一的 id 属性与同值的 data-mokina-id 属性（例如 id=\"schedule\" data-mokina-id=\"schedule\"）。要求：1) 只给顶层可修改章节加（章节之间不得嵌套，内部锚点只用普通 id）；2) 属性值用稳定 kebab-case（如 objectives、schedule、channels、measurement、sources）；3) ID 不随标题措辞改变；4) 不改动任何正文内容、样式与结构，只加属性。注意：本项目的章节契约属性名是 data-mokina-id，不是 data-od-id；若文件中已有 data-od-id 属性请保留不动，但章节寻址必须新增 data-mokina-id。改完文件后结束。",
+  "currentPrompt": "请编辑项目中的文件「传播内容与排期.html」：为每个可修改的顶层章节元素同时添加稳定且唯一的 id 属性与同值的 data-mokina-id 属性（详细要求如前述）。",
+  "priorTranscript": "",
+  "projectId": "mokina-b0-replay-1",
+  "conversationId": "cd68d627-0d6d-4a11-9fab-71bf01830fec",
+  "sessionMode": "design",
+  "userMessageId": "b0-replay-3-req-001-user",
+  "assistantMessageId": "b0-replay-3-req-001-assistant",
+  "clientRequestId": "b0-replay-3-req-001",
+  "skillId": "mokina-marketing-plan",
+  "skillIds": [],
+  "designSystemId": null,
+  "attachments": [],
+  "commentAttachments": [],
+  "model": null,
+  "reasoning": null,
+  "serviceTier": null,
+  "locale": "zh-CN"
+}

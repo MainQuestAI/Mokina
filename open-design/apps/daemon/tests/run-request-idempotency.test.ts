@@ -27,6 +27,24 @@ describe('run request idempotency', () => {
     restoreEnv(originalEnv);
   });
 
+  it('RR3 proves a fresh pre-admission refusal has no run and does not misclassify a previously accepted identity', async () => {
+    binDir = await mkdtemp(path.join(os.tmpdir(), 'od-refusal-bin-'));
+    const { bin, invocationPath } = await writeSuccessfulClaude(binDir);
+    started = await startWithFakeClaude(bin);
+    const request = await createRunRequest(started.url);
+    const refuse = () => fetch(`${started!.url}/api/runs`, { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ...request, conversationId: 'no-such-conversation' }) });
+    const refused = await refuse(); expect(refused.status).toBe(404);
+    expect(await refused.json()).toMatchObject({ error: { details: { runAcceptance: 'not-accepted' } } });
+    const runs = await (await fetch(`${started.url}/api/runs?projectId=${request.projectId}`)).json() as { runs: unknown[] };
+    expect(runs.runs).toHaveLength(0);
+    const accepted = await fetch(`${started.url}/api/runs`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(request) });
+    expect(accepted.status).toBe(202);
+    const body = await accepted.json() as { runId: string }; await waitForRun(started.url, body.runId);
+    expect(await (await refuse()).json()).toMatchObject({ error: { details: { runAcceptance: 'unknown' } } });
+    expect((await readFile(invocationPath, 'utf8')).trim().split('\n')).toHaveLength(1);
+  });
+
   it('returns the same logical run when a lost POST /api/runs response is retried', async () => {
     binDir = await mkdtemp(path.join(os.tmpdir(), 'od-idempotency-bin-'));
     const { bin, invocationPath } = await writeSuccessfulClaude(binDir);

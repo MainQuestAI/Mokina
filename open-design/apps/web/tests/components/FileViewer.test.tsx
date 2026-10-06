@@ -7885,7 +7885,7 @@ describe('FileViewer SVG artifacts', () => {
     expect(postMessage).not.toHaveBeenCalled();
   });
 
-  it('hides standalone HTML for historical versions without a dependency snapshot', async () => {
+  it('reports the server conflict when exporting a historical version without its dependency snapshot', async () => {
     const originalCreateObjectUrl = URL.createObjectURL;
     const originalRevokeObjectUrl = URL.revokeObjectURL;
     let capturedBlob: Blob | null = null;
@@ -7986,9 +7986,11 @@ describe('FileViewer SVG artifacts', () => {
         'Export as PDF',
         'Export as image',
         'Download as .zip',
+        'Export as standalone HTML',
       ]);
       expect(menuItems).not.toContain('Save as template…');
-      expect(within(versionDialog).queryByRole('menuitem', { name: 'Export as standalone HTML' })).toBeNull();
+      fireEvent.click(within(versionDialog).getByRole('menuitem', { name: 'Export as standalone HTML' }));
+      await waitFor(() => expect(screen.getByRole('alert').textContent).toContain('standalone HTML cannot export a historical entry'));
       expect(capturedBlob).toBeNull();
       expect(fetchMock.mock.calls.some(([input]) => String(input) === '/api/projects/project-1/files/index.html/versions/v1')).toBe(true);
       const versionRead = fetchMock.mock.calls.find(
@@ -8002,7 +8004,7 @@ describe('FileViewer SVG artifacts', () => {
         ([input]) => String(input) === '/api/projects/project-1/export/html',
       );
       expect(exportCall?.[1]).toMatchObject({ method: 'POST' });
-      expect(within(versionDialog).getByRole('alert').textContent)
+      expect(screen.getByRole('alert').textContent)
         .toContain('standalone HTML cannot export a historical entry');
     } finally {
       if (originalCreateObjectUrl) {

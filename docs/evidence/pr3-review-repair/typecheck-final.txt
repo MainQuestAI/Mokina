@@ -1,0 +1,55 @@
+
+> open-design@0.22.1 typecheck /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design
+> pnpm -r --workspace-concurrency=4 --if-present run typecheck && tsc -p scripts/tsconfig.json --noEmit
+
+Scope: 27 of 28 workspace projects
+packages/components typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/diagnostics typecheck$ tsc -p tsconfig.json --noEmit
+packages/metatool typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/dsh-runtime typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/diagnostics typecheck: Done
+packages/platform typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/metatool typecheck: Done
+packages/registry-protocol typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/dsh-runtime typecheck: Done
+packages/release typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/components typecheck: Done
+packages/platform typecheck: Done
+packages/release typecheck: Done
+packages/registry-protocol typecheck: Done
+packages/download typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/host typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/sidecar typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/contracts typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/host typecheck: Done
+packages/sidecar-proto typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/download typecheck: Done
+tools/serve typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/sidecar typecheck: Done
+packages/sidecar-proto typecheck: Done
+tools/serve typecheck: Done
+packages/contracts typecheck: Done
+e2e typecheck$ tsc -p tsconfig.json --noEmit
+packages/agui-adapter typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/launcher-proto typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+apps/web typecheck$ tsc -b --noEmit
+packages/launcher-proto typecheck: Done
+packages/plugin-runtime typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/agui-adapter typecheck: Done
+packages/standalone typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/standalone typecheck: Done
+tools/dev typecheck$ tsc -p tsconfig.json --noEmit
+packages/plugin-runtime typecheck: Done
+tools/dev typecheck: Done
+apps/web typecheck: src/components/MokinaEntryChooserDialog.tsx(31,14): error TS2540: Cannot assign to 'current' because it is a read-only property.
+apps/web typecheck: tests/components/MokinaEntryChooserDialog.test.tsx(10,60): error TS2322: Type '{ children: Element; initialLocale: string; }' is not assignable to type 'IntrinsicAttributes & ProviderProps'.
+apps/web typecheck:   Property 'initialLocale' does not exist on type 'IntrinsicAttributes & ProviderProps'.
+apps/web typecheck: tests/components/MokinaEntryChooserDialog.test.tsx(21,59): error TS2322: Type '{ children: Element; initialLocale: string; }' is not assignable to type 'IntrinsicAttributes & ProviderProps'.
+apps/web typecheck:   Property 'initialLocale' does not exist on type 'IntrinsicAttributes & ProviderProps'.
+apps/web typecheck: tests/components/MokinaEntryChooserDialog.test.tsx(26,38): error TS2322: Type '{ children: Element; initialLocale: string; }' is not assignable to type 'IntrinsicAttributes & ProviderProps'.
+apps/web typecheck:   Property 'initialLocale' does not exist on type 'IntrinsicAttributes & ProviderProps'.
+apps/web typecheck: Failed
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 typecheck: `tsc -b --noEmit`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

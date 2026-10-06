@@ -1,0 +1,13 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/runtime/send-request-state.test.ts tests/components/ProjectView.retry-gating.test.tsx tests/components/MokinaEntryChooserDialog.test.tsx tests/hooks/mokina-summaries.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+
+ Test Files  4 passed (4)
+      Tests  55 passed (55)
+   Start at  09:59:57
+   Duration  5.80s (transform 5.02s, setup 1.59s, import 5.13s, tests 2.24s, environment 1.57s)
+

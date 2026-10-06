@@ -184,7 +184,7 @@ export interface HomeChatComposerClickProps {
     // Removing a staged context chip above the composer (plugin / MCP /
     // connector / workspace chips). Mirrors the chat_panel composer's
     // `context_remove` so one dashboard counts removals across surfaces.
-    | 'context_remove';
+    | 'context_remove' | 'materials_entry';
   // For `plus_pick` / `plus_add` / `context_remove`: which kind of resource
   // (and its id on pick/remove). `workspace` covers the reference-project /
   // local-code context sources (`resource_id`: 'reference-project' or

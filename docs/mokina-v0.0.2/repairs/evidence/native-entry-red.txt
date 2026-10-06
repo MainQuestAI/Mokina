@@ -1,0 +1,928 @@
+ms
+     × honors the caller gate before opening a recovery import 50ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/EntryNavRail.recent-section.test.tsx > R6 Mokina normal navigation recovery entry > opens the existing project panel from the local catalog without a hidden view
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "New project"
+
+Here are the accessible roles:
+
+  navigation:
+
+  Name "Primary":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"Primary"[39m
+    [33mclass[39m=[32m"entry-nav-rail is-open"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Home":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Home"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-nav-home"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Community":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Community"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-nav-community"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "All projects":
+  [36m<button[39m
+    [33maria-current[39m=[32m"page"[39m
+    [33maria-label[39m=[32m"All projects"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn is-active"[39m
+    [33mdata-testid[39m=[32m"entry-nav-drafts"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Design systems":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Design systems"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-nav-design-systems"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Plugins":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Plugins"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-nav-plugins"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Settings":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Settings"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-settings-button"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Recent projects":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-head"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-toggle"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p1Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p2Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p3Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p4Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p5Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p6Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p7Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p8Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p9Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p10Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Settings":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Settings"[39m
+    [33mclass[39m=[32m"entry-nav-rail__account-trigger"[39m
+    [33mdata-testid[39m=[32m"entry-nav-local-account"[39m
+    [33mtitle[39m=[32m"Settings"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-list"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p1"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p2"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p3"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p4"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p5"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p6"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p7"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p8"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p9"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p10"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<nav[39m
+      [33maria-label[39m=[32m"Primary"[39m
+      [33mclass[39m=[32m"entry-nav-rail is-open"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"entry-nav-rail__panel"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"entry-nav-rail__group"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Home"[39m
+            [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+            [33mdata-testid[39m=[32m"entry-nav-home"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"od-icon"[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mfocusable[39m=[32m"false"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M13 19H19V9.97815L12 4.53371L5 9.97815V19H11V13H13V19ZM21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V9.48907C3 9.18048 3.14247 8.88917 3.38606 8.69972L11.3861 2.47749C11.7472 2.19663 12.2528 2.19663 12.6139 2.47749L20.6139 8.69972C20.8575 8.88917 21 9.18048 21 9.48907V20Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+            [36m>[39m
+              [0mHome[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Community"[39m
+            [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+            [33mdata-testid[39m=[32m"entry-nav-community"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"od-icon"[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mfocusable[39m=[32m"false"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM9.71002 19.6674C8.74743 17.6259 8.15732 15.3742 8.02731 13H4.06189C4.458 16.1765 6.71639 18.7747 9.71002 19.6674ZM10.0307 13C10.1811 15.4388 10.8778 17.7297 12 19.752C13.1222 17.7297 13.8189 15.4388 13.9693 13H10.0307ZM19.9381 13H15.9727C15.8427 15.3742 15.2526 17.6259 14.29 19.6674C17.2836 18.7747 19.542 16.1765 19.9381 13ZM4.06189 11H8.02731C8.15732 8.62577 8.74743 6.37407 9.71002 4.33256C6.71639 5.22533 4.458 7.8235 4.06189 11ZM10.0307 11H13.9693C13.8189 8.56122 13.1222 6.27025 12 4.24799C10.8778 6.27025 10.1811 8.56122 10.0307 11ZM14.29 4.33256C15.2526 6.37407 15.8427 8.62577 15.9727 11H19.9381C19.542 7.8235 17.2836 5.22533 14.29 4.33256Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+            [36m>[39m
+              [0mCommunity[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"entry-nav-rail__team-section"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-current[39m=[32m"page"[39m
+              [33maria-label[39m=[32m"All projects"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn is-active"[39m
+              [33mdata-testid[39m=[32m"entry-nav-drafts"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 2.00318V2H19.9978C20.5513 2 21 2.45531 21 2.9918V21.0082C21 21.556 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5501 3 20.9932V8L9 2.00318ZM5.82918 8H9V4.83086L5.82918 8ZM11 4V9C11 9.55228 10.5523 10 10 10H5V20H19V4H11Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+              [36m>[39m
+                [0mAll projects[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Design systems"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+              [33mdata-testid[39m=[32m"entry-nav-design-systems"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 2C17.5222 2 22 5.97778 22 10.8889C22 13.9556 19.5111 16.4444 16.4444 16.4444H14.4778C13.5556 16.4444 12.8111 17.1889 12.8111 18.1111C12.8111 18.5333 12.9778 18.9222 13.2333 19.2111C13.5 19.5111 13.6667 19.9 13.6667 20.3333C13.6667 21.2556 12.9 22 12 22C6.47778 22 2 17.5222 2 12C2 6.47778 6.47778 2 12 2ZM10.8111 18.1111C10.8111 16.0843 12.451 14.4444 14.4778 14.4444H16.4444C18.40...
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/components/EntryNavRail.recent-section.test.tsx:635:26
+    633|     const onNewProject = vi.fn();
+    634|     renderRail({ context: null, view: 'drafts', onNewProject });
+    635|     const entry = screen.getByRole('button', { name: 'New project' });
+       |                          ^
+    636|     expect(entry.hidden).toBe(false);
+    637|     fireEvent.click(entry);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/components/EntryNavRail.recent-section.test.tsx > R6 Mokina normal navigation recovery entry > honors the caller gate before opening a recovery import
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "New project"
+
+Here are the accessible roles:
+
+  navigation:
+
+  Name "Primary":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"Primary"[39m
+    [33mclass[39m=[32m"entry-nav-rail is-open"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Home":
+  [36m<button[39m
+    [33maria-current[39m=[32m"page"[39m
+    [33maria-label[39m=[32m"Home"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn is-active"[39m
+    [33mdata-testid[39m=[32m"entry-nav-home"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Community":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Community"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-nav-community"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "All projects":
+  [36m<button[39m
+    [33maria-label[39m=[32m"All projects"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-nav-drafts"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Design systems":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Design systems"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-nav-design-systems"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Plugins":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Plugins"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-nav-plugins"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Settings":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Settings"[39m
+    [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+    [33mdata-testid[39m=[32m"entry-settings-button"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Recent projects":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-head"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-toggle"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p1Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p2Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p3Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p4Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p5Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p6Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p7Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p8Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p9Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Project p10Loading artifacts…":
+  [36m<button[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-item"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-item"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More actions":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"More actions"[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-more"[39m
+    [33mdata-testid[39m=[32m"entry-nav-recent-more"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Settings":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Settings"[39m
+    [33mclass[39m=[32m"entry-nav-rail__account-trigger"[39m
+    [33mdata-testid[39m=[32m"entry-nav-local-account"[39m
+    [33mtitle[39m=[32m"Settings"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul[39m
+    [33mclass[39m=[32m"entry-nav-rail__recent-list"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p1"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p2"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p3"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p4"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p5"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p6"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p7"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p8"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p9"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mdata-project-id[39m=[32m"p10"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<nav[39m
+      [33maria-label[39m=[32m"Primary"[39m
+      [33mclass[39m=[32m"entry-nav-rail is-open"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"entry-nav-rail__panel"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"entry-nav-rail__group"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"Home"[39m
+            [33mclass[39m=[32m"entry-nav-rail__btn is-active"[39m
+            [33mdata-testid[39m=[32m"entry-nav-home"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"od-icon"[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mfocusable[39m=[32m"false"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M13 19H19V9.97815L12 4.53371L5 9.97815V19H11V13H13V19ZM21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V9.48907C3 9.18048 3.14247 8.88917 3.38606 8.69972L11.3861 2.47749C11.7472 2.19663 12.2528 2.19663 12.6139 2.47749L20.6139 8.69972C20.8575 8.88917 21 9.18048 21 9.48907V20Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+            [36m>[39m
+              [0mHome[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Community"[39m
+            [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+            [33mdata-testid[39m=[32m"entry-nav-community"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"od-icon"[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mfocusable[39m=[32m"false"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM9.71002 19.6674C8.74743 17.6259 8.15732 15.3742 8.02731 13H4.06189C4.458 16.1765 6.71639 18.7747 9.71002 19.6674ZM10.0307 13C10.1811 15.4388 10.8778 17.7297 12 19.752C13.1222 17.7297 13.8189 15.4388 13.9693 13H10.0307ZM19.9381 13H15.9727C15.8427 15.3742 15.2526 17.6259 14.29 19.6674C17.2836 18.7747 19.542 16.1765 19.9381 13ZM4.06189 11H8.02731C8.15732 8.62577 8.74743 6.37407 9.71002 4.33256C6.71639 5.22533 4.458 7.8235 4.06189 11ZM10.0307 11H13.9693C13.8189 8.56122 13.1222 6.27025 12 4.24799C10.8778 6.27025 10.1811 8.56122 10.0307 11ZM14.29 4.33256C15.2526 6.37407 15.8427 8.62577 15.9727 11H19.9381C19.542 7.8235 17.2836 5.22533 14.29 4.33256Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+            [36m>[39m
+              [0mCommunity[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"entry-nav-rail__team-section"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"All projects"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+              [33mdata-testid[39m=[32m"entry-nav-drafts"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 2.00318V2H19.9978C20.5513 2 21 2.45531 21 2.9918V21.0082C21 21.556 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5501 3 20.9932V8L9 2.00318ZM5.82918 8H9V4.83086L5.82918 8ZM11 4V9C11 9.55228 10.5523 10 10 10H5V20H19V4H11Z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-label"[39m
+              [36m>[39m
+                [0mAll projects[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Design systems"[39m
+              [33mclass[39m=[32m"entry-nav-rail__btn"[39m
+              [33mdata-testid[39m=[32m"entry-nav-design-systems"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"entry-nav-rail__btn-icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"od-icon"[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mfocusable[39m=[32m"false"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 2C17.5222 2 22 5.97778 22 10.8889C22 13.9556 19.5111 16.4444 16.4444 16.4444H14.4778C13.5556 16.4444 12.8111 17.1889 12.8111 18.1111C12.8111 18.5333 12.9778 18.9222 13.2333 19.2111C13.5 19.5111 13.6667 19.9 13.6667 20.3333C13.6667 21.2556 12.9 22 12 22C6.47778 22 2 17.5222 2 12C2 6.47778 6.47778 2 12 2ZM10.8111 18.1111C10.8111 16.0843 12.451 14.4444 14.4778 14.4444H16.4444C18.4065...
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/components/EntryNavRail.recent-section.test.tsx:644:26
+    642|     const onNewProject = vi.fn();
+    643|     renderRail({ context: null, onNewProject, newProjectDisabled: true…
+    644|     const entry = screen.getByRole('button', { name: 'New project' });
+       |                          ^
+    645|     expect(entry.hasAttribute('disabled')).toBe(true);
+    646|     fireEvent.click(entry);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 skipped (25)
+   Start at  21:06:05
+   Duration  2.90s (transform 1.55s, setup 520ms, import 1.48s, tests 175ms, environment 590ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/components/EntryNavRail.recent-section.test.tsx -t R6 Mokina normal navigation

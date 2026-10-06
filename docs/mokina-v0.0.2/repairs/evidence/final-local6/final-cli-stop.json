@@ -1,0 +1,22 @@
+{
+  "gracefulRequested": true,
+  "namespace": "mokina-local",
+  "remainingPids": [],
+  "status": "stopped",
+  "stoppedPids": [
+    14646,
+    14421,
+    13247,
+    13246,
+    13173,
+    13125,
+    14298,
+    14271,
+    13391,
+    13376
+  ],
+  "peerPidsPreserved": true,
+  "globalConfigAndAccountUnchanged": true,
+  "allQARunsTerminalBeforeStop": true,
+  "evidenceType": "tools-pack stops own installed CLI QA instance; native Finder quit pending"
+}

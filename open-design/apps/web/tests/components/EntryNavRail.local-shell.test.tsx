@@ -120,7 +120,8 @@ describe('EntryNavRail local (signed-out) shell', () => {
     const toggle = screen.getByTestId('entry-nav-recent-toggle');
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     const rows = screen.getAllByTestId('entry-nav-recent-item');
-    expect(rows.map((row) => row.textContent)).toEqual(
+    // 行含成果摘要行（G4）；名称断言读名称 span。
+    expect(rows.map((row) => row.querySelector('.entry-nav-rail__recent-name')?.textContent)).toEqual(
       ['p1', 'p2', 'p3', 'p4', 'p5'].map((id) => `Project ${id}`),
     );
     // The same feed and the same display mapping the cloud rail reads.

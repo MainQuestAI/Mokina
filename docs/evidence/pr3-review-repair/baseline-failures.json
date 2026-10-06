@@ -1,0 +1,16 @@
+{
+  "base": "33fa8434d14869ab4310d8b0f570116781d34c8d",
+  "reviewHead": "58dbf1cf717e71d88daf9995195df72fde6ea84c",
+  "baselineMethod": "git archive of exact base source; unchanged installed dependency versions reused via node_modules links; six affected test files, no B1 tests imposed on main",
+  "matchingFailures": {
+    " tests/campaigns/deepseek-v4-flash-ui-contract.test.ts > DeepSeek V4 Flash workbench campaign entry > keeps the built-in campaign entry visible across entry tabs and project detail": "AssertionError: expected '// EntryShell — the centered-hero ent…' to match /topRightSlot=\\{\\s*topRightCampaignAud…/",
+    " tests/campaigns/deepseek-v4-flash-ui-contract.test.ts > DeepSeek V4 Flash workbench campaign entry > keeps every CMS touchpoint host on the home view": "AssertionError: expected 'import { useCallback, useEffect, useL…' to match /\\{route\\.kind === 'home' && route\\.vi…/",
+    " tests/i18n/locales.test.ts > i18n locales > keeps locale dictionaries aligned with English keys and placeholders": "AssertionError: zh-CN.homeHero.title: expected [] to deeply equal [ 'word' ]",
+    " tests/state/config.test.ts > mergeDaemonConfig > defaults reporting on and mints an installationId when the install never opted out": "AssertionError: expected false to be true // Object.is equality",
+    " tests/components/HomeHero.rail.test.tsx > HomeHero intent rail > leads the create group with the Brand Kit chip and its own action discriminator": "AssertionError: expected 'mokina-market-analysis' to be 'create-brand-kit' // Object.is equality",
+    " tests/components/HomeHero.scenario-cards.test.tsx > HomeHero scenario cards > uses the fixed ten-item Home creation hierarchy in product order": "AssertionError: expected [ 'mokina-market-analysis', …(11) ] to deeply equal [ 'prototype', 'deck', …(8) ]",
+    " tests/components/chips.automatic-default.test.ts > create rail chips claim the automatic default > marks every first-level output type as a product-owned automatic scenario": "AssertionError: expected [ 'mokina-market-analysis', …(1) ] to deeply equal []",
+    " tests/components/chips.automatic-default.test.ts > create rail chips claim the automatic default > binds exactly the plugin the daemon re-derives from the chip metadata": "AssertionError: mokina-market-analysis: expected 'example-web-prototype' to be 'mokina-market-analysis' // Object.is equality"
+  },
+  "count": 8
+}

@@ -1,0 +1,13 @@
+{
+  "appVersion": "0.0.2-local.3",
+  "completedImportRetryPosts": 0,
+  "refreshFaultCount": 1,
+  "copyPosts": 1,
+  "oldProjectCount": 1,
+  "copyIdentity": {
+    "operationId": "b32ad8b2-0e63-4e27-8933-df5e8dc2d1c8",
+    "targetProjectId": "b6d7aae0-cec6-40bd-b70e-120d115367b1"
+  },
+  "copyProjectId": "b6d7aae0-cec6-40bd-b70e-120d115367b1",
+  "url": "od://app/projects/b6d7aae0-cec6-40bd-b70e-120d115367b1/conversations/256747af-fdcd-42de-b38a-328089cc7ae9/files/plan.html"
+}

@@ -1,0 +1,27 @@
+{
+  "stagedDigest": "b69e701eeee42b78acd1dce0d096e5dde86c4ba294372523b193035ed4ea281d",
+  "expectedA": "b69e701eeee42b78acd1dce0d096e5dde86c4ba294372523b193035ed4ea281d",
+  "stagedContainsA": true,
+  "originalContainsB": true,
+  "receipt": {
+    "runId": "bcf34edc-d632-44c5-9545-ee5fda3262c2",
+    "snapshotId": "b6b2f54f-392e-4db5-b7fc-e52a3a3d9030",
+    "fingerprint": "5c5324d5e348ec85a5962f98c7ec37b02a8135b5a22bdecee8f8f60e5a835a05",
+    "includedItemIds": [
+      "brief",
+      "logo"
+    ],
+    "itemDelivery": [
+      {
+        "itemId": "brief",
+        "mode": "inline-text"
+      },
+      {
+        "itemId": "logo",
+        "mode": "staged-file"
+      }
+    ],
+    "status": "submitted",
+    "submittedAt": "2026-10-06T02:07:36.507Z"
+  }
+}

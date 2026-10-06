@@ -1,0 +1,14 @@
+
+Running 5 tests using 1 worker
+
+(node:67973) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:67973) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 (11.8s)
+  ✓  2 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 (9.6s)
+  ✓  3 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 (3.8s)
+  ✓  4 [chromium] › ui/mokina-workspace-actions.test.ts:12:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1440x900 (3.6s)
+  ✓  5 [chromium] › ui/mokina-workspace-actions.test.ts:71:1 › [P1] Mokina panel explains historical and chapterless action restrictions (5.7s)
+
+  5 passed (1.1m)

@@ -1,0 +1,21 @@
+{
+  "job": null,
+  "durableJob": {
+    "ok": true,
+    "found": false,
+    "deletedRecordId": "8ec41cc8-49fc-4d26-b3d9-5be3cd8a3f7a"
+  },
+  "draft": {
+    "sectionId": "strategy",
+    "prompt": "仅修订 strategy：在原策略内加入一句“原生 local.6 门店执行清单”，其余章节保持原样，不编造经营数据。"
+  },
+  "durableDraft": {
+    "ok": true,
+    "found": true,
+    "record": {
+      "recordId": "1f6ed747-9101-4edc-a9fd-148bc13ee3b2",
+      "value": "{\"sectionId\":\"strategy\",\"prompt\":\"仅修订 strategy：在原策略内加入一句“原生 local.6 门店执行清单”，其余章节保持原样，不编造经营数据。\"}"
+    }
+  },
+  "evidenceType": "CUA native refresh/reopen/end; requirements retained; durable intent tombstone"
+}

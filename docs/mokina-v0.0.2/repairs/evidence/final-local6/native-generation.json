@@ -1,0 +1,35 @@
+{
+  "id": "2bd8f36e-38b2-401e-ae43-117b88910064",
+  "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+  "conversationId": "282b209d-7ddf-4d29-800f-c2cb7fffe870",
+  "clientRequestId": "f7d9deb1-03b4-42c7-b603-2aae33d9d6f3",
+  "status": "succeeded",
+  "exitCode": 0,
+  "terminalAt": 1791254200455,
+  "mokinaContext": {
+    "runId": "2bd8f36e-38b2-401e-ae43-117b88910064",
+    "snapshotId": "0d1057ed-bf92-4ed0-900a-f08585fc05e9",
+    "fingerprint": "e24fd927fa6677369b1c87d5c29aded3f7c17085ae0ea2480598bfb43e3ce2b5",
+    "includedItemIds": [
+      "S1",
+      "A1"
+    ],
+    "itemDelivery": [
+      {
+        "itemId": "S1",
+        "mode": "inline-text"
+      },
+      {
+        "itemId": "A1",
+        "mode": "staged-file"
+      }
+    ],
+    "status": "submitted",
+    "submittedAt": "2026-10-06T02:32:30.088Z"
+  },
+  "frozenAssetSHA256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+  "originalContainsB": true,
+  "modelOutputContainsA": true,
+  "evidenceType": "Finder native upload/select/freeze/send; real Codex output bytes and durable terminal state",
+  "fixtureNote": "First instruction requested id anchors but omitted data-mokina-id contract; original result retained, follow-up native instruction adds contract markers without content changes."
+}

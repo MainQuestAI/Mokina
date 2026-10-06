@@ -22,4 +22,24 @@ describe("resolvePackagedWindowTitle", () => {
   it("keeps ad hoc namespaces on the default window title", () => {
     expect(resolvePackagedWindowTitle({ appVersion: null, namespace: "beta-local-flow" })).toBe("Open Design");
   });
+
+  it("prefers the baked product name when a product profile is present", () => {
+    expect(
+      resolvePackagedWindowTitle({
+        appVersion: "0.0.2-local.1",
+        namespace: "mokina-local",
+        product: { productName: "Mokina" },
+      }),
+    ).toBe("Mokina");
+  });
+
+  it("ignores a blank product name and keeps the channel identity", () => {
+    expect(
+      resolvePackagedWindowTitle({
+        appVersion: "0.10.0-beta.1",
+        namespace: "release-beta-win",
+        product: { productName: "   " },
+      }),
+    ).toBe("Open Design Beta");
+  });
 });

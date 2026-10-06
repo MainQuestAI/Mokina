@@ -1,0 +1,11 @@
+{
+  "identity": {
+    "operationId": "16750ad4-6ee9-42e7-a47d-3aafea582ee4",
+    "targetProjectId": "a19e298b-3eaa-44f4-afdf-be0f3426caaa"
+  },
+  "projectId": "a19e298b-3eaa-44f4-afdf-be0f3426caaa",
+  "snapshotId": "f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3",
+  "fingerprint": "ef8a96d52352b8b6cb40f131c280b89152e01f0006ffbca1952973c2d7037ba7",
+  "snapshotStatus": 200,
+  "url": "od://app/projects/a19e298b-3eaa-44f4-afdf-be0f3426caaa/conversations/e6c739de-55c7-47ee-8673-36f030aa47d9/files/plan.html"
+}

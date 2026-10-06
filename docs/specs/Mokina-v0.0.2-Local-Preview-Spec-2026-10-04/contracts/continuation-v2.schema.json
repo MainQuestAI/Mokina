@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContinuationV2",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "operationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "targetProjectId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fileName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "versionState": {
+          "enum": [
+            "current",
+            "historical",
+            "candidate"
+          ]
+        }
+      },
+      "required": [
+        "projectId",
+        "fileName",
+        "versionId",
+        "contentDigest",
+        "versionState"
+      ],
+      "additionalProperties": false
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "textDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "textDigest"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "contextSnapshotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "productionIntent": {
+      "enum": [
+        "discuss",
+        "landing-page",
+        "custom"
+      ]
+    },
+    "initialDraft": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "operationId",
+    "targetProjectId",
+    "source",
+    "sections",
+    "contextSnapshotId",
+    "productionIntent",
+    "initialDraft"
+  ],
+  "additionalProperties": false
+}

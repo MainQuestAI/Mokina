@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>渠道两期表现分析</title>
+<style>
+:root {
+  --bg:      oklch(98% 0.005 250);
+  --surface: oklch(100% 0 0);
+  --fg:      oklch(22% 0.02 240);
+  --muted:   oklch(50% 0.018 240);
+  --border:  oklch(90% 0.008 240);
+  --accent:  oklch(58% 0.16 145);
+  --font-display: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 var(--font-body)}main{max-width:1060px;margin:auto;padding:40px 28px}header{border-bottom:2px solid var(--fg);padding-bottom:20px}h1{font:700 30px/1.3 var(--font-display);margin:6px 0 12px}h2{font-size:20px;margin:0 0 12px}p{margin:8px 0}section{padding:24px 0;border-bottom:1px solid var(--border)}.meta,.note{color:var(--muted);font-size:13px}nav{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px}a{color:var(--fg);text-underline-offset:4px}a:hover{background:var(--border)}a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}nav a{display:inline-flex;align-items:center;min-height:44px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:var(--surface);font-variant-numeric:tabular-nums}th,td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}th{font-weight:600}td.num{text-align:right;white-space:nowrap}thead{border-bottom:2px solid var(--fg)}.formula{font:13px/1.6 var(--font-mono)}.lead{font-size:19px;max-width:850px}.tag{font-size:12px;border:1px solid var(--border);padding:2px 6px;margin-right:8px}.positive{font-weight:700}.negative{font-weight:700}summary{cursor:pointer;min-height:44px;display:list-item;padding:10px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 var(--font-mono);padding:16px;background:var(--surface);border:1px solid var(--border)}li{margin-bottom:8px} @media(max-width:600px){main{padding:24px 16px}h1{font-size:26px}th,td{padding:8px}.lead{font-size:17px}}@media print{body{background:white;font-size:12pt}main{padding:0;max-width:none}nav{display:none}section{break-inside:auto}tr,li{break-inside:avoid}h2{break-after:avoid}.table-wrap{overflow:visible}details> :not(summary){display:block!important}pre{font-size:10pt}a{color:inherit}}
+</style></head>
+<body><main>
+<header data-od-id="report-header"><div class="meta">渠道表现复盘 · 金额单位：人民币元</div><h1 data-od-id="report-title">花费持平，线索与收入下降</h1><p>A 期：2026-09-01 至 2026-09-14　｜　B 期：2026-09-15 至 2026-09-28</p><nav aria-label="报告章节" data-od-id="report-nav"><a href="#summary">结论</a><a href="#metrics">指标核算</a><a href="#drivers">渠道贡献</a><a href="#next">下一步</a><a href="#sources">来源</a></nav></header>
+<section id="summary" data-mokina-id="summary" data-od-id="summary"><h2>01 / 核心结论</h2><p class="lead">B 期总花费持平于 30,000 元，总线索下降 10.97%，收入下降 13.98%；CPL 从 53.10 元升至 59.64 元，ROAS 从 2.77 降至 2.38。</p><p><span class="tag">事实</span>线索减少 62 条：展示广告 −80 条、搜索 −8 条，公众号与线下门店分别增加 10 条和 16 条，合计抵消 26 条。<a href="#source-csv">[S1]</a></p><p><span class="tag">推断</span>展示广告是线索下降的主要渠道来源。现有数据只能定位结果变化，无法确定是投放、流量质量还是追踪环节导致。<a href="#source-csv">[S1，计算与推断]</a></p></section>
+<section id="metrics" data-mokina-id="metrics" data-od-id="metrics"><h2>02 / 两期指标与公式</h2><p>共 <strong>8 条数据记录</strong>，每期 4 条；表头及带引号字段内的换行不计为记录。线索使用 <code>qualified_leads</code>，收入使用 <code>sales_cny</code>。<a href="#source-csv">[S1]</a></p>
+<div class="table-wrap"><table data-od-id="metrics-table"><thead><tr><th>指标</th><th>A 期：数值与核算</th><th>B 期：数值与核算</th></tr></thead><tbody>
+<tr><th>记录数</th><td>4 条（A01–A04）</td><td>4 条（B01–B04）</td></tr>
+<tr><th>总花费</th><td>30,000 元<br><span class="formula">10,000 + 5,000 + 8,000 + 7,000</span></td><td>30,000 元<br><span class="formula">12,000 + 4,000 + 8,000 + 6,000</span></td></tr>
+<tr><th>总线索</th><td>565 条<br><span class="formula">200 + 125 + 160 + 80</span></td><td>503 条<br><span class="formula">192 + 135 + 176 + 0</span></td></tr>
+<tr><th>总收入</th><td>83,000 元<br><span class="formula">30,000 + 15,000 + 24,000 + 14,000</span></td><td>71,400 元<br><span class="formula">28,800 + 16,200 + 26,400 + 0</span></td></tr>
+<tr><th>CPL</th><td>53.10 元/条<br><span class="formula">30,000 ÷ 565 = 53.097345…</span></td><td>59.64 元/条<br><span class="formula">30,000 ÷ 503 = 59.642147…</span></td></tr>
+<tr><th>ROAS</th><td>2.766667 倍<br><span class="formula">83,000 ÷ 30,000</span></td><td>2.380000 倍<br><span class="formula">71,400 ÷ 30,000</span></td></tr>
+<tr><th>在线曝光合计</th><td>350,000 次<br><span class="formula">100,000 + 50,000 + 200,000</span></td><td>345,000 次<br><span class="formula">120,000 + 45,000 + 180,000</span></td></tr>
+<tr><th>在线点击合计</th><td>8,500 次<br><span class="formula">4,000 + 2,500 + 2,000</span></td><td>7,050 次<br><span class="formula">4,800 + 2,250 + 0</span></td></tr>
+<tr><th>在线线索合计</th><td>405 条<br><span class="formula">200 + 125 + 80</span></td><td>327 条<br><span class="formula">192 + 135 + 0</span></td></tr>
+<tr><th>CTR</th><td>2.428571%<br><span class="formula">8,500 ÷ 350,000 × 100%</span></td><td>2.043478%<br><span class="formula">7,050 ÷ 345,000 × 100%</span></td></tr>
+<tr><th>CVR</th><td>4.764706%<br><span class="formula">405 ÷ 8,500 × 100%</span></td><td>4.638298%<br><span class="formula">327 ÷ 7,050 × 100%</span></td></tr>
+</tbody></table></div>
+<p class="note">CPL＝总花费/总线索；ROAS＝总收入/总花费。两者包含线下门店。CTR＝在线点击合计/在线曝光合计；CVR＝在线线索合计/在线点击合计。在线仅含搜索、公众号与展示广告，不对渠道比率做简单平均。金额按字段及本次指定口径解释；比率四舍五入，计算使用原始整数。</p>
+<p><strong>空值与零值：</strong>A03、B03 的曝光和点击为空，表示无可比口径，未填成 0；两条线下记录的线索也未进入在线 CVR 分子。B04 的点击、线索、收入均为真实 0；180,000 次曝光仍纳入在线 CTR 分母。B04 的渠道 CVR 为 0/0，无法计算，不能写成 0%。<a href="#source-csv">[S1]</a></p></section>
+<section id="drivers" data-mokina-id="drivers" data-od-id="drivers"><h2>03 / 线索变化：按渠道加减分解</h2><div class="table-wrap"><table data-od-id="drivers-table"><thead><tr><th>渠道</th><th>A 期线索</th><th>B 期线索</th><th>贡献（B−A）</th><th>记录定位</th></tr></thead><tbody><tr><td>搜索</td><td class="num">200</td><td class="num">192</td><td class="num negative">−8</td><td>A01 / B01</td></tr><tr><td>公众号,自有</td><td class="num">125</td><td class="num">135</td><td class="num positive">+10</td><td>A02 / B02</td></tr><tr><td>线下门店</td><td class="num">160</td><td class="num">176</td><td class="num positive">+16</td><td>A03 / B03</td></tr><tr><td>展示广告</td><td class="num">80</td><td class="num">0</td><td class="num negative">−80</td><td>A04 / B04</td></tr><tr><th>合计</th><td class="num">565</td><td class="num">503</td><td class="num">−62</td><td>−8 + 10 + 16 − 80</td></tr></tbody></table></div><p>总线索变化：503 − 565 ＝ −62 条（−10.97%）。展示广告减少 80 条，超过净下降量；因此不能把各渠道变化当作无抵消的份额。<a href="#source-csv">[S1，计算]</a></p><p>搜索花费增加 2,000 元、线索减少 8 条，值得复核流量与转化质量；公众号花费减少 1,000 元、线索增加 10 条，线下花费不变、线索增加 16 条。这些是同期变化，尚不足以证明因果或扩量后的收益。<a href="#source-csv">[S1，事实与推断]</a></p></section>
+<section id="next" data-mokina-id="next" data-od-id="next"><h2>04 / 下一步建议</h2><ol><li><strong>优先核查展示广告：</strong>逐日核对 180,000 次曝光下的零点击、零线索，与投放后台、落地页及追踪记录交叉验证；本报告保留 CSV 的真实零值。</li><li><strong>复核搜索新增花费：</strong>按关键词、受众与落地页拆分，确认花费上升而线索下降的来源，再决定是否调整预算。</li><li><strong>小范围验证增长渠道：</strong>公众号与线下门店先检查线索质量及收入归因，再测试预算调整；不直接外推本期效率。</li></ol><p class="note">局限：仅两期、每期四条渠道汇总；未提供归因窗口、去重规则、日级明细、利润或订单数据。ROAS 为收入/花费，不代表利润回报。</p></section>
+<section id="sources" data-mokina-id="sources" data-od-id="sources"><h2>05 / 来源与可读范围</h2><p id="source-csv"><strong>S1 · channel-performance.csv</strong>：本地完整读取，读取日期 2026-10-05；范围为表头及 A01–B04 全部 8 条记录。未使用联网资料。上述指标为原始字段计算，业务解释标为推断，行动项标为建议。</p><p class="note">物理行定位：表头第 1 行；A01 第 2 行；A02 第 3–4 行；A03 第 5 行；A04 第 6 行；B01 第 7 行；B02 第 8–9 行；B03 第 10 行；B04 第 11 行。公众号备注内换行属于同一条 CSV 记录。</p><details data-od-id="source-details"><summary>展开原文：全部 CSV 内容</summary><pre>record_id,period,date_start,date_end,channel,spend_cny,impressions,clicks,qualified_leads,sales_cny,notes
+A01,A,2026-09-01,2026-09-14,搜索,10000,100000,4000,200,30000,线上
+A02,A,2026-09-01,2026-09-14,"公众号,自有",5000,50000,2500,125,15000,"自有内容
+不含平台返点"
+A03,A,2026-09-01,2026-09-14,线下门店,8000,,,160,24000,线下无可比曝光点击口径
+A04,A,2026-09-01,2026-09-14,展示广告,7000,200000,2000,80,14000,线上
+B01,B,2026-09-15,2026-09-28,搜索,12000,120000,4800,192,28800,线上
+B02,B,2026-09-15,2026-09-28,"公众号,自有",4000,45000,2250,135,16200,"自有内容
+不含平台返点"
+B03,B,2026-09-15,2026-09-28,线下门店,8000,,,176,26400,线下无可比曝光点击口径
+B04,B,2026-09-15,2026-09-28,展示广告,6000,180000,0,0,0,真实零点击、零线索，非缺失
+</pre></details></section>
+</main></body></html>

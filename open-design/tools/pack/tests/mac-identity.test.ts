@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import type { ToolPackConfig } from "@/config/index.js";
-import { resolveMacInstallIdentity } from "@/mac/identity.js";
+import { resolveMacArtifactBaseName, resolveMacInstallIdentity } from "@/mac/identity.js";
 import { resolveMacPaths } from "@/mac/paths.js";
 
 function makeConfig(root: string, namespace: string): ToolPackConfig {
@@ -102,5 +102,26 @@ describe("resolveMacInstallIdentity", () => {
       productName: "Open Design Prerelease",
       publicAppBundleName: "Open Design Prerelease.app",
     });
+  });
+
+  it("uses the Mokina product identity for the mokina-local namespace", () => {
+    const config = makeConfig("/work", "mokina-local");
+
+    expect(resolveMacInstallIdentity(config)).toEqual({
+      appId: "ai.mainquest.mokina.preview",
+      executableName: "Mokina",
+      installerTitle: "Mokina",
+      productName: "Mokina",
+      publicAppBundleName: "Mokina.app",
+      systemAppBundleName: "Mokina.app",
+    });
+    expect(resolveMacArtifactBaseName(config)).toBe("Mokina");
+    expect(resolveMacPaths(config).dmgPath).toMatch(/Mokina-mokina-local\.dmg$/);
+    expect(resolveMacPaths(config).zipPath).toMatch(/Mokina-mokina-local\.zip$/);
+  });
+
+  it("keeps upstream artifact names outside the Mokina namespace", () => {
+    expect(resolveMacArtifactBaseName(makeConfig("/work", "release-stable"))).toBe("Open Design");
+    expect(resolveMacArtifactBaseName(makeConfig("/work", "release-beta"))).toBe("Open Design");
   });
 });

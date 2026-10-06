@@ -146,6 +146,10 @@ interface Props {
   onOpenLiveArtifact: (projectId: string, artifactId: string) => void;
   onDeleteProject: (id: string) => void;
   onDuplicateProject?: (id: string) => Promise<void> | void;
+  onExportRecoveryProject?: (id: string) => Promise<void> | void;
+  onImportMokinaRecovery?: (
+    file: File,
+  ) => Promise<{ ok: boolean; message?: string } | void> | { ok: boolean; message?: string } | void;
   onRenameProject: (id: string, name: string) => void;
   onProjectsRefresh?: () => Promise<void> | void;
   onTeamProjectContentReady?: (
@@ -305,6 +309,8 @@ export function EntryView({
   onOpenLiveArtifact,
   onDeleteProject,
   onDuplicateProject,
+  onExportRecoveryProject,
+  onImportMokinaRecovery,
   onRenameProject,
   onProjectsRefresh,
   onTeamProjectContentReady,
@@ -427,6 +433,8 @@ export function EntryView({
       onAmrBalanceGateBlockChange={onAmrBalanceGateBlockChange}
       onCreatePluginShareProject={onCreatePluginShareProject}
       onImportClaudeDesign={onImportClaudeDesign}
+      onExportRecoveryProject={onExportRecoveryProject}
+      onImportMokinaRecovery={onImportMokinaRecovery}
       {...(onImportFolder ? { onImportFolder } : {})}
       {...(onImportFolderResponse ? { onImportFolderResponse } : {})}
       onOpenProject={onOpenProject}

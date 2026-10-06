@@ -1,0 +1,79 @@
+{
+  "sourceProjectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+  "targetProjectId": "pr4-local5-restored-5b74e61a",
+  "deleteStatus": 200,
+  "sourceStatus": 404,
+  "snapshotStatus": 200,
+  "snapshot": {
+    "snapshot": {
+      "schemaVersion": 1,
+      "snapshotId": "327e60ad-06f6-41ca-a134-7b956d13e2ac",
+      "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+      "createdAt": "2026-10-05T13:46:04.714Z",
+      "parserVersion": "mokina-material/1",
+      "selectionFingerprint": "c9f9c58e0846ec4b6a09fc3d060906dd8defd5afd760657ade72642b601fd204",
+      "items": [
+        {
+          "kind": "material-excerpt",
+          "itemId": "S1",
+          "displayName": "brief.md · 4 个片段",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+            "fileName": "brief.md"
+          },
+          "sourceDigest": "4e7f1b85fa8a5e5fe4774d1e9de43a2808f0066ff3cf6d458431bd7ca7f6343e",
+          "limitations": [],
+          "locators": [
+            "brief.md · 第 1 行",
+            "brief.md · 第 2 行",
+            "brief.md · 第 3 行",
+            "brief.md · 第 4 行"
+          ],
+          "text": "# 合成营销简报\n\n小山茶馆在社区开业，预算30万元。面向附近家庭，主渠道为门店与社群，不投短视频广告。\n\n# 品牌约束\n\n品牌色为绿色，必须使用冻结 logo A，活动页要写明预算与渠道。",
+          "textDigest": "8d4eefda7264ce787de0822936cd34e2217dd116719709947486972499b6b6ff"
+        },
+        {
+          "kind": "asset",
+          "itemId": "A1",
+          "displayName": "final5-logo.svg",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+            "fileName": "final5-logo.svg"
+          },
+          "sourceDigest": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+          "limitations": [
+            "保存图片不等于已完成视觉理解；实际提供方式见运行回执。"
+          ],
+          "blobId": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+          "mimeType": "image/svg+xml",
+          "byteLength": 177,
+          "role": "hero",
+          "usageNote": "使用本轮冻结 LOGO A，复制实际 SVG 字节到交付目录。"
+        }
+      ],
+      "excluded": [],
+      "fingerprint": "c52d530d7a3d0f9159a74010a09ab6dbb3b62556123c223e82e0862d4aeb3c12"
+    }
+  },
+  "request": {
+    "projectId": "pr4-local5-restored-5b74e61a",
+    "conversationId": "3073f8f3-e68b-484d-bb20-c8f82e7f6446",
+    "agentId": "codex",
+    "clientRequestId": "02d41cd3-c837-4f7b-a10c-8bccc101b13b",
+    "message": "源项目已删除，本轮立即继续制作并写实际文件。只用本轮冻结简报和受控素材 A 路径；读取SVG并按原始字节复制为 recovered-frozen.svg，禁止读取 sourceRef 指向的源目录或已替换的 logo 原件。写自包含 recovered-check.html 小山茶馆营销执行页，预算30万元，渠道门店与社群；引用 recovered-frozen.svg。不要修改已有 index.html 或 plan.html；不能只写计划。",
+    "context": {
+      "mokinaSnapshotId": "327e60ad-06f6-41ca-a134-7b956d13e2ac"
+    }
+  },
+  "status": 202,
+  "run": {
+    "runId": "f030c6a6-4476-4506-832f-ac384f46748a",
+    "conversationId": "3073f8f3-e68b-484d-bb20-c8f82e7f6446",
+    "assistantMessageId": "18493828-e4dd-444d-9fa6-17ccb9a45a31",
+    "clientRequestId": "02d41cd3-c837-4f7b-a10c-8bccc101b13b",
+    "reused": false,
+    "resumed": false
+  }
+}

@@ -2136,3 +2136,565 @@ function currentProject(page: Page): { projectId: string } {
   }
   return { projectId };
 }
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720 }]) {
+  test(`[P1] Mokina PR3 lost creation receipt recovers original daemon run at ${viewport.width}`, async ({ page }, testInfo) => {
+    await page.setViewportSize(viewport);
+    await createProject(page, `Mokina PR3 receipt loss ${viewport.width}`);
+    await expectWorkspaceReady(page);
+    const { projectId, conversationId } = await currentProjectContext(page);
+    let postCount = 0;
+    let runId = '';
+    let requestId = '';
+    // Delay acceptance lookup until the user explicitly verifies. Empty GETs
+    // here represent a lookup racing an independently arriving POST.
+    await page.route('**/api/runs?*', async route => {
+      await route.fulfill({ json: { runs: [] } });
+    });
+    await page.route('**/api/runs', async route => {
+      if (route.request().method() !== 'POST') return route.continue();
+      postCount += 1;
+      requestId = route.request().postDataJSON().clientRequestId;
+      const response = await route.fetch();
+      expect(response.ok()).toBe(true);
+      runId = (await response.json()).runId;
+      // The real daemon accepted the original request. Only its receipt is lost.
+      if (viewport.width === 1280) {
+        // A generic structured server error is not proof of refusal either:
+        // the real daemon has already persisted the original run above.
+        await route.fulfill({ status: 500, json: { error: { code: 'INTERNAL_ERROR', message: 'Run preparation failed.' } } });
+      } else await route.abort('failed');
+    });
+    const composer = page.getByTestId('chat-composer-input');
+    await composer.fill('Create a slow reload deterministic smoke artifact');
+    await page.getByTestId('chat-send').click();
+    await expect(page.getByTestId('mokina-pending-send')).toBeVisible({ timeout: T.long });
+    await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
+    await page.getByRole('button', { name: 'Send failed — retry' }).click();
+    await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
+    expect(postCount).toBe(1);
+    // Query the real daemon, bypassing browser route doubles.
+    const receipt = await page.request.get(`/api/runs/${runId}`);
+    expect(receipt.ok()).toBe(true);
+    expect(await receipt.json()).toMatchObject({ id: runId, projectId, conversationId, clientRequestId: requestId });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('mokina-pending-send')).toBeVisible({ timeout: T.long });
+    // A lookup must not overwrite a new draft or submit it.
+    await page.getByTestId('chat-composer-input').fill('Unrelated new draft');
+    await page.unroute('**/api/runs?*');
+    await page.getByTestId('mokina-pending-send').getByRole('button', { name: 'Resend this request' }).click();
+    await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
+    await expect(page.getByTestId('chat-composer-input')).toHaveText('Unrelated new draft');
+    expect(postCount).toBe(1);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto(`/projects/${projectId}/conversations/${conversationId}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('chat-composer-input')).toHaveText('Unrelated new draft');
+    expect(postCount).toBe(1);
+    await testInfo.attach(`pr3-original-run-${viewport.width}`, { body: JSON.stringify({ runId, requestId, projectId, conversationId, postCount }), contentType: 'application/json' });
+    await testInfo.attach(`pr3-recovered-${viewport.width}`, { body: await page.screenshot(), contentType: 'image/png' });
+  });
+}
+
+
+test('[P1] Mokina PR3 Home first send creates one real daemon run', async ({ page }, testInfo) => {
+  await configureFakeAgent(page, 'codex');
+  await installBrowserAgentConfig(page, 'codex');
+  await gotoEntryHome(page);
+  await expectBrowserAgentConfig(page, 'codex');
+  await dismissPrivacyDialog(page);
+  let postCount = 0;
+  page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/runs') postCount += 1; });
+  await page.getByTestId('home-hero-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('home-hero-submit').click();
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  await expect(artifactPreviewFrame(page).getByRole('heading', { name: GENERATED_HEADING })).toBeVisible();
+  const response = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+  const body = await response.json() as { runs: Array<{ id: string; clientRequestId?: string }> };
+  expect(body.runs).toHaveLength(1); expect(body.runs[0]?.clientRequestId).toBeTruthy(); expect(postCount).toBe(1);
+  await testInfo.attach('home-first-send-receipt', { body: JSON.stringify({ projectId, conversationId, run: body.runs[0], postCount }), contentType: 'application/json' });
+});
+
+
+test('[P1] Mokina R2 resend after an empty lookup preserves the original request identity', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina delayed original delivery');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  let originalBody: Record<string, unknown> | null = null; let browserPosts = 0;
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    browserPosts += 1; originalBody = route.request().postDataJSON() as Record<string, unknown>;
+    await route.abort('failed'); // Original body is deliberately not delivered yet.
+  });
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  const pending = page.getByTestId('mokina-pending-send');
+  await expect(pending).toBeVisible({ timeout: T.long });
+  const before = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+  expect((await before.json() as { runs: unknown[] }).runs).toEqual([]);
+  // R2: the explicit resend performs the empty lookup itself and re-POSTs the
+  // exact original identity and payload; the daemon settles it idempotently.
+  const bodies: Array<Record<string, unknown>> = [];
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    browserPosts += 1;
+    bodies.push(route.request().postDataJSON() as Record<string, unknown>);
+    await route.fulfill({ response: await route.fetch() });
+  });
+  await pending.getByRole('button', { name: 'Resend this request' }).click();
+  // The receipt flips to pending (notice hides) before the resend POST lands.
+  const resendResponse = await page.waitForResponse(
+    response => response.request().method() === 'POST' && response.url().includes('/api/runs'),
+    { timeout: T.long },
+  );
+  expect(resendResponse.status()).toBe(202);
+  await expect(pending).toHaveCount(0, { timeout: T.long });
+  expect(browserPosts).toBe(2);
+  expect(bodies[0]!.clientRequestId).toBe((originalBody as Record<string, unknown> | null)?.clientRequestId);
+  const after = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+  const runs = (await after.json() as { runs: Array<{ id: string; clientRequestId: string }> }).runs;
+  expect(runs).toHaveLength(1);
+  expect(runs[0]?.clientRequestId).toBe((originalBody as Record<string, unknown> | null)?.clientRequestId);
+  await testInfo.attach('r2-resend-after-empty-lookup', { body: JSON.stringify({ projectId, conversationId, run: runs[0], browserPosts, requestIds: bodies.map(b => b.clientRequestId) }), contentType: 'application/json' });
+});
+
+// ── R2（PR3 第二轮修复）：「待确认」的显式出口与大小上限 ──
+
+test('[P1] Mokina R2 explicit resend reuses the original request identity when the server never received it', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 resend never received');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  const bodies: Array<Record<string, unknown>> = [];
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    const body = route.request().postDataJSON() as Record<string, unknown>;
+    bodies.push(body);
+    if (bodies.length === 1) {
+      await route.abort('failed'); // The original request is deliberately never delivered.
+      return;
+    }
+    await route.fulfill({ response: await route.fetch() });
+  });
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  const pending = page.getByTestId('mokina-pending-send');
+  await expect(pending).toBeVisible({ timeout: T.long });
+  const before = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+  expect((await before.json() as { runs: unknown[] }).runs).toEqual([]);
+
+  await pending.getByRole('button', { name: 'Resend this request' }).click();
+  await expect(pending).toHaveCount(0, { timeout: T.long });
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  expect(bodies).toHaveLength(2);
+  expect(bodies[1]!.clientRequestId).toBe(bodies[0]!.clientRequestId);
+  const runs = await (await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`)).json() as { runs: Array<{ id: string; clientRequestId?: string }> };
+  expect(runs.runs).toHaveLength(1);
+  expect(runs.runs[0]!.clientRequestId).toBe(bodies[0]!.clientRequestId);
+  const messages = await (await page.request.get(`/api/projects/${projectId}/conversations/${conversationId}/messages`)).json() as { messages: Array<{ role: string; content: string }> };
+  expect(messages.messages.filter(m => m.role === 'user' && m.content === 'Create a deterministic smoke artifact')).toHaveLength(1);
+  await testInfo.attach('r2-resend-never-received', { body: JSON.stringify({ projectId, conversationId, requestIds: bodies.map(b => b.clientRequestId), runIds: runs.runs.map(r => r.id), postCount: bodies.length }), contentType: 'application/json' });
+  await testInfo.attach('r2-resend-never-received-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina R2 resend after the original run already finished creates no second run', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 resend after terminal');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  let postCount = 0;
+  let requestId = '';
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    postCount += 1;
+    if (postCount === 1) {
+      requestId = (route.request().postDataJSON() as Record<string, unknown>).clientRequestId as string;
+      // The real daemon accepts the original request; only the receipt is lost.
+      const response = await route.fetch();
+      expect(response.status()).toBe(202);
+      await route.abort('failed');
+      return;
+    }
+    const response = await route.fetch();
+    expect(response.status()).toBe(202);
+    expect((await response.json() as { reused?: boolean }).reused).toBe(true);
+    await route.fulfill({ response });
+  });
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  const pending = page.getByTestId('mokina-pending-send');
+  await expect(pending).toBeVisible({ timeout: T.long });
+  // The daemon accepted the original request even though the receipt was lost.
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`);
+    return ((await response.json()) as { runs: Array<{ id?: string }> }).runs.length;
+  }, { timeout: T.long }).toBe(1);
+
+  await pending.getByRole('button', { name: 'Resend this request' }).click();
+  await expect(pending).toHaveCount(0, { timeout: T.long });
+  expect(postCount).toBe(1); // The query-first reconcile never re-POSTed.
+  const runs = await (await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`)).json() as { runs: Array<{ id: string; clientRequestId?: string }> };
+  expect(runs.runs).toHaveLength(1);
+  expect(runs.runs[0]!.clientRequestId).toBe(requestId);
+  await testInfo.attach('r2-resend-after-terminal', { body: JSON.stringify({ projectId, conversationId, requestId, runIds: runs.runs.map(r => r.id), postCount }), contentType: 'application/json' });
+  await testInfo.attach('r2-resend-after-terminal-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina R2 discard clears the receipt and unblocks sending', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 discard');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    await route.fulfill({ response: await route.fetch() });
+  });
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    await route.abort('failed'); // First POST never delivered.
+  }, { times: 1 });
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  const pending = page.getByTestId('mokina-pending-send');
+  await expect(pending).toBeVisible({ timeout: T.long });
+
+  await pending.getByRole('button', { name: 'Discard this receipt' }).click();
+  await expect(pending).toHaveCount(0);
+  // A fresh send goes through on the real daemon.
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  const runs = await (await page.request.get(`/api/runs?projectId=${encodeURIComponent(projectId)}&conversationId=${encodeURIComponent(conversationId)}`)).json() as { runs: unknown[] };
+  expect(runs.runs).toHaveLength(1);
+  await testInfo.attach('r2-discard-recovery', { body: JSON.stringify({ projectId, conversationId, runCount: runs.runs.length }), contentType: 'application/json' });
+});
+
+test('[P1] Mokina R2 oversize prompt still sends without a recoverable snapshot', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 oversize');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  let postCount = 0;
+  page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/runs') postCount += 1; });
+  const oversize = 'y'.repeat(100 * 1024);
+  await page.getByTestId('chat-composer-input').fill(oversize);
+  await page.getByTestId('chat-send').click();
+  await expectProjectFilesToContain(page, projectId, ['fake-agent-runtime-codex.html']);
+  expect(postCount).toBe(1);
+  // The run was accepted: no refusal banner, no pending receipt to verify.
+  await expect(page.getByText('Cannot safely save this request')).toHaveCount(0);
+  await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
+  const messages = await (await page.request.get(`/api/projects/${projectId}/conversations/${conversationId}/messages`)).json() as { messages: Array<{ role: string; content: string }> };
+  expect(messages.messages.some(m => m.role === 'user' && m.content.length >= 100 * 1024)).toBe(true);
+  await testInfo.attach('r2-oversize-send', { body: JSON.stringify({ projectId, conversationId, postCount, userContentLength: oversize.length }), contentType: 'application/json' });
+  await testInfo.attach('r2-oversize-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina R2 first generated file auto-opens in an empty project', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 empty first open');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  // Empty project: metadata reads zero formals and zero files; no tab opens.
+  await expect(artifactPreview(page)).toHaveCount(0);
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  // The first generated artifact opens by itself.
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  await expect(artifactPreviewFrame(page).getByRole('heading', { name: GENERATED_HEADING })).toBeVisible({ timeout: T.long });
+  await testInfo.attach('r2-empty-first-open', { body: JSON.stringify({ projectId, conversationId, file: GENERATED_FILE }), contentType: 'application/json' });
+  await testInfo.attach('r2-empty-first-open-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface and a restorable receipt', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina R2 definitive rejection');
+  await expectWorkspaceReady(page);
+  const { projectId, conversationId } = await currentProjectContext(page);
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    await route.fulfill({ status: 404, json: { error: { code: 'NOT_FOUND', message: 'request rejected before acceptance', details: { runAcceptance: 'not-accepted' } } } });
+  });
+  await page.getByTestId('chat-composer-input').fill('Observation draft for definitive rejection');
+  await page.getByTestId('chat-send').click();
+  // A proven refusal keeps the receipt until the user explicitly restores its
+  // draft. Durable transfer then clears it and permits a new request identity.
+  await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
+  await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
+  // Recovery never overwrites occupied input, even when it resembles the receipt.
+  await page.getByTestId('chat-composer-input').fill('');
+  await page.getByTestId('mokina-pending-send').getByRole('button', { name: 'Restore unsent draft' }).click();
+  await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
+  await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
+  await page.unroute('**/api/runs');
+  await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
+  await page.getByTestId('chat-send').click();
+  await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
+  await testInfo.attach('r2-definitive-rejection', { body: JSON.stringify({ projectId, conversationId }), contentType: 'application/json' });
+  await testInfo.attach('r2-definitive-rejection-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina RR3 real daemon refusal survives reload and explicit exit permits a new attempt', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina RR3 refusal');
+  const { projectId } = await currentProjectContext(page);
+  const written = await page.request.post(`/api/projects/${projectId}/files`, {
+    data: { name: 'plan.html', content: '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>原策略</p></section>' },
+  });
+  expect(written.ok()).toBe(true);
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+  let requestId = ''; let childProjectId = ''; let posts = 0;
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    posts++;
+    const body = route.request().postDataJSON(); requestId = body.clientRequestId; childProjectId = body.projectId;
+    const response = await route.fetch({ postData: { ...body, conversationId: 'missing-conversation-rr3' } });
+    expect(response.status()).toBe(404);
+    expect(await response.json()).toMatchObject({ error: { details: { runAcceptance: 'not-accepted' } } });
+    await route.fulfill({ response });
+  });
+  await page.getByRole('button', { name: 'Versions' }).click();
+  let dialog = page.getByRole('dialog', { name: 'Versions' });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await dialog.getByRole('combobox', { name: '要修订的章节' }).selectOption('strategy');
+  await dialog.getByRole('textbox', { name: '章节修改要求' }).fill('拒绝后保留这一条要求');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+  await expect(dialog.getByRole('button', { name: '结束本次未受理修订' })).toBeVisible();
+  expect((await (await page.request.get(`/api/runs?projectId=${childProjectId}`)).json()).runs).toHaveLength(0);
+  await page.reload({ waitUntil: 'domcontentloaded' }); await waitForLoadingToClear(page);
+  await page.getByRole('button', { name: 'Versions' }).click(); dialog = page.getByRole('dialog', { name: 'Versions' });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await expect(dialog.getByRole('textbox', { name: '章节修改要求' })).toHaveValue('拒绝后保留这一条要求');
+  expect(posts).toBe(1);
+  await dialog.getByRole('button', { name: '结束本次未受理修订' }).click();
+  await expect(dialog.getByRole('button', { name: '生成候选（不改当前稿）' })).toBeEnabled();
+  await page.unroute('**/api/runs');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+  const key = `mokina:revision:${projectId}:plan.html`;
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.runId, key), { timeout: T.long }).toBeTruthy();
+  const next = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), key);
+  expect(next.clientRequestId).not.toBe(requestId);
+  await testInfo.attach('rr3-real-refusal', { body: JSON.stringify({ projectId, childProjectId, runCount: 0, rejectedRequestId: requestId, next }), contentType: 'application/json' });
+});
+
+test('[P1] Mokina revision lost POST response recovers the same run and adopts its candidate', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina revision receipt loss');
+  const { projectId, conversationId } = await currentProjectContext(page);
+  const baseHtml = [
+    '<!doctype html><html><body>',
+    '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>原始策略：门店联合活动</p></section>',
+    '<section id="budget" data-mokina-id="budget"><h2>预算</h2><p>原始预算 50 万</p></section>',
+    '</body></html>',
+  ].join('');
+  const written = await page.request.post(`/api/projects/${projectId}/files`, {
+    data: { name: 'plan.html', content: baseHtml },
+  });
+  expect(written.ok()).toBe(true);
+
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+
+  let postCount = 0;
+  let clientRequestId = '';
+  let revisionProjectId = '';
+  let revisionRunId = '';
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    postCount += 1;
+    const body = route.request().postDataJSON() as { clientRequestId?: string; projectId?: string };
+    clientRequestId = body.clientRequestId ?? '';
+    revisionProjectId = body.projectId ?? '';
+    // The real daemon accepts the request first; only the receipt is lost.
+    const response = await route.fetch();
+    expect(response.ok()).toBe(true);
+    revisionRunId = ((await response.json()) as { runId: string }).runId;
+    await route.abort('failed');
+  });
+
+  const versionsButton = page.getByRole('button', { name: 'Versions' });
+  await versionsButton.click();
+  const dialog = page.getByRole('dialog', { name: 'Versions' });
+  await expect(dialog).toBeVisible({ timeout: T.long });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await dialog.getByRole('combobox', { name: '要修订的章节' }).selectOption('strategy');
+  await dialog.getByRole('textbox', { name: '章节修改要求' }).fill('把渠道改为社群为主');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+
+  await expect.poll(() => postCount, { timeout: T.long }).toBe(1);
+  // T11: the POST carries a stable client identity minted before any side effect.
+  expect(clientRequestId.length).toBeGreaterThan(0);
+  expect(revisionProjectId.length).toBeGreaterThan(0);
+  await expect.poll(() => revisionRunId, { timeout: T.long }).toBeTruthy();
+
+  // The daemon accepted exactly one run for the revision project.
+  const runsResponse = await page.request.get(`/api/runs?projectId=${encodeURIComponent(revisionProjectId)}`);
+  expect(runsResponse.ok()).toBe(true);
+  const runsBody = (await runsResponse.json()) as { runs: Array<{ id: string; clientRequestId?: string | null }> };
+  expect(runsBody.runs).toHaveLength(1);
+  expect(runsBody.runs[0]?.clientRequestId).toBe(clientRequestId);
+
+  // The send intent is preserved as unknown instead of being dropped or resent.
+  const intent = await page.evaluate(() => {
+    const keys: string[] = [];
+    for (let index = 0; index < window.localStorage.length; index += 1) {
+      const key = window.localStorage.key(index);
+      if (key && key.startsWith('od:send-request:')) keys.push(window.localStorage.getItem(key) ?? '');
+    }
+    return keys.join('\n');
+  });
+  expect(intent).toContain(clientRequestId);
+  expect(intent).toContain('"unknown"');
+
+  // The current draft is byte-identical: a lost candidate never touches it.
+  const current = await page.request.get(`/api/projects/${projectId}/files/plan.html`);
+  expect(await current.text()).toContain('原始预算 50 万');
+
+  // No automatic resend: waits and a reload keep the single POST.
+  await page.waitForTimeout(2_500);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+  await page.waitForTimeout(2_500);
+  expect(postCount).toBe(1);
+
+  // Recover the original artifact's job, collect a valid replacement and adopt it explicitly.
+  await page.getByRole('button', { name: 'Versions' }).click();
+  const recoveredDialog = page.getByRole('dialog', { name: 'Versions' });
+  await recoveredDialog.getByRole('button', { name: '修订章节' }).click();
+  await expect(recoveredDialog.getByRole('button', { name: /恢复上次修订候选|保存已完成运行的候选/ })).toBeVisible();
+  const job = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), `mokina:revision:${projectId}:plan.html`);
+  expect(job.runId).toBe(revisionRunId);
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/runs/${revisionRunId}`);
+    const body = await response.json(); return body.run?.status ?? body.status;
+  }, { timeout: T.long }).toBe('succeeded');
+  const replacement = await page.request.post(`/api/projects/${revisionProjectId}/files`, {
+    data: { name: 'MOKINA-REPLACEMENT.html', content: '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>新策略：社群为主</p></section>' },
+  });
+  expect(replacement.ok()).toBe(true);
+  // Wait for the replacement write's file events before starting the recovery.
+  await page.waitForTimeout(1000);
+  if (!await recoveredDialog.isVisible()) {
+    await page.getByRole('button', { name: 'Versions' }).click();
+    await recoveredDialog.getByRole('button', { name: '修订章节' }).click();
+  }
+  await recoveredDialog.getByRole('button', { name: /恢复上次修订候选|保存已完成运行的候选/ }).click();
+  let candidate: { id: string; candidate: boolean } | undefined;
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`);
+    const body = await response.json();
+    candidate = body.versions.find((version: { candidate?: boolean }) => version.candidate);
+    return candidate?.id;
+  }, { timeout: T.long }).toBeTruthy();
+  expect(postCount).toBe(1);
+  expect(candidate).toBeTruthy();
+  await expect(recoveredDialog.getByRole('button', { name: '采用候选', exact: true })).toBeVisible();
+  await recoveredDialog.getByRole('button', { name: '采用候选', exact: true }).click();
+  await page.locator('.file-version-restore-confirm').getByRole('button', { name: '采用候选', exact: true }).click();
+  await expect.poll(async () => {
+    const response = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
+    return (await response.text()).includes('新策略：社群为主');
+  }, { timeout: T.long }).toBe(true);
+  const adoptedFile = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
+  expect(await adoptedFile.text()).toContain('新策略：社群为主');
+
+  await testInfo.attach('revision-receipt-loss', {
+    body: JSON.stringify({ projectId, conversationId, revisionProjectId, revisionRunId, clientRequestId, postCount }),
+    contentType: 'application/json',
+  });
+});
+
+test('[P1] Mokina historical version export locks the clicked version and exports once', async ({ page }, testInfo) => {
+  const projectId = `mokina-version-export-${Date.now()}`;
+  const created = await page.request.post('/api/projects', {
+    data: { id: projectId, name: 'Version export lock', skillId: null, designSystemId: null, metadata: { kind: 'prototype' } },
+  });
+  expect(created.ok()).toBe(true);
+  const html = await readFile(join(process.cwd(), '..', '..', 'docs', 'mokina-v0.0.2', 'evidence', 'e2e-plan-export.html'), 'utf8');
+  const written = await page.request.post(`/api/projects/${projectId}/files`, { data: { name: 'plan.html', content: html } });
+  expect(written.ok()).toBe(true);
+
+  const versionsResponse = await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`);
+  expect(versionsResponse.ok()).toBe(true);
+  const { versions } = (await versionsResponse.json()) as { versions: Array<{ id: string; version: number }> };
+  const current = versions.find((version) => version.version === 1) ?? versions[0]!;
+  const edited = await page.request.post(`/api/projects/${projectId}/files`, { data: { name: 'plan.html', content: html.replace('</body>', '<p>Current version marker</p></body>') } });
+  expect(edited.ok()).toBe(true);
+  const updated = await (await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`)).json();
+  expect(updated.versions.find((version: { id: string }) => version.id === current.id).current).toBe(false);
+  expect(updated.versions.find((version: { current: boolean }) => version.current).id).not.toBe(current.id);
+
+  const exportBodies: Array<Record<string, unknown>> = [];
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().includes('/export/html')) {
+      const body = request.postDataJSON() as Record<string, unknown>;
+      // The viewport primes a renderable copy through the same route with the
+      // raw file name as its title; that is a preview read, not the export.
+      if (body.title !== 'plan.html') exportBodies.push(body);
+    }
+  });
+
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2500);
+  await page.getByRole('button', { name: 'Versions' }).click();
+  await page.waitForTimeout(900);
+  // Pick the oldest version row, then export it.
+  const panel = page.locator('.artifact-version-panel');
+  await panel.getByText('Manual edit').last().click();
+  await page.waitForTimeout(900);
+  await page.getByRole('button', { name: 'Download' }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole('menuitem', { name: 'Export as standalone HTML' }).click();
+  await expect.poll(() => exportBodies.length, { timeout: 10000 }).toBe(1);
+
+  // The export carries exactly the version selected in the panel (T13 lock).
+  expect(exportBodies[0]?.versionId).toBe(current.id);
+  await testInfo.attach('version-export-lock', {
+    body: JSON.stringify({ projectId, versionId: current.id, exportBodies }),
+    contentType: 'application/json',
+  });
+});
+
+test('[P1] Mokina reduced transparency degrades materials live and restores', async ({ page }, testInfo) => {
+  await gotoEntryHome(page);
+  await dismissPrivacyDialog(page);
+  await page.waitForTimeout(1200);
+
+  const sample = () => page.evaluate(() => {
+    const surfaces = [...document.querySelectorAll('body *')].filter((el) => {
+      const style = getComputedStyle(el);
+      return (style.backdropFilter && style.backdropFilter !== 'none')
+        || (style.getPropertyValue('-webkit-backdrop-filter') && style.getPropertyValue('-webkit-backdrop-filter') !== 'none');
+    });
+    const root = getComputedStyle(document.documentElement);
+    return {
+      glassSurfaceCount: surfaces.length,
+      materialRegular: root.getPropertyValue('--material-regular').trim(),
+      bgElevated: root.getPropertyValue('--bg-elevated').trim(),
+      reducedMatches: matchMedia('(prefers-reduced-transparency: reduce)').matches,
+      headingVisible: Boolean([...document.querySelectorAll('h1, h2')].find((el) => (el.textContent || '').trim().length > 0)),
+    };
+  });
+
+  const before = await sample();
+  expect(before.reducedMatches).toBe(false);
+
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }],
+  });
+  await page.waitForTimeout(800);
+  const reduced = await sample();
+
+  expect(reduced.reducedMatches).toBe(true);
+  // Tokens collapse to the solid elevated surface: same value, no blur left.
+  expect(reduced.materialRegular).toBe(reduced.bgElevated);
+  expect(reduced.glassSurfaceCount).toBe(0);
+  expect(reduced.headingVisible).toBe(true);
+
+  await cdp.send('Emulation.setEmulatedMedia', { features: [] });
+  await page.waitForTimeout(800);
+  const restored = await sample();
+  expect(restored.reducedMatches).toBe(false);
+  expect(restored.glassSurfaceCount).toBe(before.glassSurfaceCount);
+
+  await testInfo.attach('reduced-transparency', {
+    body: JSON.stringify({ before, reduced, restored }),
+    contentType: 'application/json',
+  });
+});

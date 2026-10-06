@@ -1,0 +1,187 @@
+{
+  "diagnostics": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-10-05T14:18:20.441Z",
+    "product": {
+      "productId": "mokina",
+      "productName": "Mokina",
+      "productVersion": "0.0.2-local.5",
+      "releaseKind": "local-preview",
+      "edition": "local"
+    },
+    "build": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "nodeMajor": 24,
+      "osReleaseRedacted": true
+    },
+    "runtime": {
+      "uptimeSeconds": 47,
+      "daemon": "ok",
+      "codexCli": "detected",
+      "dataRootIsolated": null
+    },
+    "privacy": {
+      "telemetry": "disabled",
+      "updater": "disabled",
+      "omitted": [
+        "credentials and tokens",
+        "prompt and transcript content",
+        "project and file names",
+        "absolute filesystem paths",
+        "run outputs"
+      ]
+    },
+    "network": [
+      {
+        "id": "codex-cli",
+        "kind": "external-tool",
+        "required": true,
+        "summary": "Codex CLI is user-provided; Mokina detects it and its login state but never installs or logs in for you.",
+        "nextAction": "Install the CLI or sign in with the official flow, then re-run the connection check."
+      },
+      {
+        "id": "model-endpoint",
+        "kind": "external-service",
+        "required": true,
+        "summary": "Model calls go to the endpoint the selected agent adapter is configured to use.",
+        "nextAction": "Open Agent settings, pick a configured agent, and verify the connection; offline browsing and editing stay available."
+      },
+      {
+        "id": "web-search",
+        "kind": "external-service",
+        "required": false,
+        "summary": "Search runs only when the user explicitly enables it for a task.",
+        "nextAction": "Ignore unless the task needs fresh sources; results are cited with URL and access time when used."
+      }
+    ]
+  },
+  "url": "od://app/projects/eaa1c205-a26a-484f-8c6b-19185fbcc1c7/conversations/16a27b2e-2d53-4530-ae3c-9ed8fc82eea1/files/index.html",
+  "draft": "【local.5 重启验收草稿】继续检查预约交接说明；此输入尚未发送。",
+  "snapshotStatus": 200,
+  "snapshot": {
+    "snapshot": {
+      "schemaVersion": 1,
+      "snapshotId": "327e60ad-06f6-41ca-a134-7b956d13e2ac",
+      "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+      "createdAt": "2026-10-05T13:46:04.714Z",
+      "parserVersion": "mokina-material/1",
+      "selectionFingerprint": "c9f9c58e0846ec4b6a09fc3d060906dd8defd5afd760657ade72642b601fd204",
+      "items": [
+        {
+          "kind": "material-excerpt",
+          "itemId": "S1",
+          "displayName": "brief.md · 4 个片段",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+            "fileName": "brief.md"
+          },
+          "sourceDigest": "4e7f1b85fa8a5e5fe4774d1e9de43a2808f0066ff3cf6d458431bd7ca7f6343e",
+          "limitations": [],
+          "locators": [
+            "brief.md · 第 1 行",
+            "brief.md · 第 2 行",
+            "brief.md · 第 3 行",
+            "brief.md · 第 4 行"
+          ],
+          "text": "# 合成营销简报\n\n小山茶馆在社区开业，预算30万元。面向附近家庭，主渠道为门店与社群，不投短视频广告。\n\n# 品牌约束\n\n品牌色为绿色，必须使用冻结 logo A，活动页要写明预算与渠道。",
+          "textDigest": "8d4eefda7264ce787de0822936cd34e2217dd116719709947486972499b6b6ff"
+        },
+        {
+          "kind": "asset",
+          "itemId": "A1",
+          "displayName": "final5-logo.svg",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "03982314-6c9b-454a-9980-c0afc04d8daa",
+            "fileName": "final5-logo.svg"
+          },
+          "sourceDigest": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+          "limitations": [
+            "保存图片不等于已完成视觉理解；实际提供方式见运行回执。"
+          ],
+          "blobId": "41c7f9d1f730cbb9b53e44395913ba1a7ee9adf1c60d0f32078e0b4dbcc04857",
+          "mimeType": "image/svg+xml",
+          "byteLength": 177,
+          "role": "hero",
+          "usageNote": "使用本轮冻结 LOGO A，复制实际 SVG 字节到交付目录。"
+        }
+      ],
+      "excluded": [],
+      "fingerprint": "c52d530d7a3d0f9159a74010a09ab6dbb3b62556123c223e82e0862d4aeb3c12"
+    }
+  },
+  "sourceStatus": 404,
+  "versionsStatus": 200,
+  "versions": {
+    "file": {
+      "buffer": {
+        "type": "BufferSummary",
+        "byteLength": 15981,
+        "sha256": "a7ecc905c4a34b4cff83200555b3fe9248c3034f747bc78aa76eda4485d738bc",
+        "note": "Raw bytes retained in original local QA files; compacted for repository evidence."
+      },
+      "name": "index.html",
+      "path": "index.html",
+      "size": 15981,
+      "mtime": 1791209145379.1697,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "artifactKind": "html",
+      "artifactManifest": {
+        "version": 1,
+        "kind": "html",
+        "title": "index.html",
+        "entry": "index.html",
+        "renderer": "html",
+        "status": "complete",
+        "exports": [
+          "html",
+          "pdf",
+          "zip"
+        ],
+        "createdAt": "2026-10-05T13:51:51.833Z",
+        "updatedAt": "2026-10-05T13:51:51.833Z",
+        "metadata": {
+          "inferred": true,
+          "reconciled": true
+        }
+      }
+    },
+    "versions": [
+      {
+        "id": "7bbbf91a-48ef-427f-8fb2-0d2807d5fbe0",
+        "fileName": "index.html",
+        "version": 1,
+        "label": "恢复版本 1",
+        "createdAt": 1791209093304,
+        "source": "restore",
+        "prompt": null,
+        "size": 15846,
+        "mime": "text/html",
+        "kind": "html",
+        "current": false,
+        "contentDigest": "efeeee9a99c5b3e119a08bc0c989a2b58490bb0f6fc562d6b8dc75760f467df7"
+      },
+      {
+        "id": "6e662d3d-953e-401c-b3c7-fcb9f01bf640",
+        "fileName": "index.html",
+        "version": 2,
+        "label": "恢复版本 2",
+        "createdAt": 1791209093304,
+        "source": "restore",
+        "prompt": null,
+        "size": 15981,
+        "mime": "text/html",
+        "kind": "html",
+        "current": true,
+        "contentDigest": "a7ecc905c4a34b4cff83200555b3fe9248c3034f747bc78aa76eda4485d738bc",
+        "baseVersionId": "7bbbf91a-48ef-427f-8fb2-0d2807d5fbe0"
+      }
+    ]
+  },
+  "globalCodexConfigSha256": "91ecdac72efe3dd0699b5c96a27b339cda4d7486321bd21ee0987f566aae767d",
+  "configUnchanged": true,
+  "draftUnchanged": true
+}

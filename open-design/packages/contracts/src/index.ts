@@ -29,6 +29,8 @@ export * from './api/artifact-focus-marker.js';
 export * from './api/done-marker.js';
 export * from './api/export.js';
 export * from './api/files.js';
+export * from './api/mokina-context.js';
+export * from './api/mokina-recovery.js';
 export * from './api/figma.js';
 export * from './api/host-tools.js';
 export * from './api/finalize.js';

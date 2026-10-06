@@ -1,0 +1,15 @@
+{
+  "sourceSHA": "033c57dfe08b1ca42fa8a883bfde522bd3326ed1",
+  "appVersion": "0.0.2-local.5",
+  "engineeringClosed": true,
+  "functionalValidation": "passed with exact BASE failure comparison separately retained",
+  "installationValidation": "passed for this macOS arm64 candidate",
+  "professionalAcceptance": "pending user review",
+  "autoMerged": false,
+  "productShaCI": "https://github.com/MainQuestAI/Mokina/actions/runs/37317607651",
+  "limitations": [
+    "Native PDF test output has no extracted text; searchability/selectability not validated",
+    "Local preview app unsigned and unnotarized; no cross-platform/public-release acceptance",
+    "Web 8 BASE failures; daemon 14 BASE failures plus 2 full-suite-only timing concerns remain separately recorded"
+  ]
+}

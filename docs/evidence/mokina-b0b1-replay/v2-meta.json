@@ -1,0 +1,15 @@
+{
+ "id": "47ecb450-60cd-441f-8b53-597d1e8f34ef",
+ "fileName": "传播内容与排期.html",
+ "version": 2,
+ "label": "Version 2",
+ "createdAt": 1791012845007,
+ "source": "ai",
+ "prompt": "请编辑项目中的文件「传播内容与排期.html」：为每个可修改的顶层章节元素同时添加稳定且唯一的 id 属性与同值的 data-mokina-id 属性（详细要求如前述）。",
+ "size": 15210,
+ "mime": "text/html; charset=utf-8",
+ "kind": "html",
+ "current": false,
+ "promptSource": "message",
+ "contentDigest": "8353a8b77c1525aa5b642d83037417898c6bcfa84d75333388f82ae6be7ffd6d"
+}

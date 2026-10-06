@@ -1,0 +1,10 @@
+
+> @open-design/web@0.22.1 typecheck /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> tsc -b --noEmit
+
+src/components/ChatComposer.tsx(1429,49): error TS2304: Cannot find name 'attachments'.
+src/components/ChatComposer.tsx(1429,100): error TS18048: 'quotes' is possibly 'undefined'.
+src/components/ProjectView.tsx(8489,82): error TS2532: Object is possibly 'undefined'.
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 typecheck: `tsc -b --noEmit`
+Exit status 1

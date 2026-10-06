@@ -1,0 +1,14 @@
+{
+  "mode": "legacy",
+  "projectId": "a19e298b-3eaa-44f4-afdf-be0f3426caaa",
+  "snapshotId": "f1c9ef7d-ea3f-4c1e-9c67-7f05f82d03d3",
+  "status": 202,
+  "run": {
+    "runId": "f418cc93-b6e1-4388-bbc0-4492cd90abe6",
+    "conversationId": "e6c739de-55c7-47ee-8673-36f030aa47d9",
+    "assistantMessageId": "c0c826d1-4476-4008-ad3b-3c04ffb9cd78",
+    "clientRequestId": "c418bf52-1afd-4809-9f26-54f0f6e59d3e",
+    "reused": false,
+    "resumed": false
+  }
+}

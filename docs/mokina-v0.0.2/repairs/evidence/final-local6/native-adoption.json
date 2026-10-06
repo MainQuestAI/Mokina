@@ -1,0 +1,83 @@
+{
+  "versions": {
+    "versions": [
+      {
+        "id": "5b7ceeeb-ada2-4607-90e6-31d64d85b278",
+        "fileName": "index.html",
+        "version": 1,
+        "label": "Version 1",
+        "createdAt": 1791254143229,
+        "source": "manual",
+        "prompt": null,
+        "size": 11664,
+        "mime": "text/html; charset=utf-8",
+        "kind": "html",
+        "current": false,
+        "promptSource": "manual",
+        "contentDigest": "ea1707993a6ff20e0a26e6e294faeaa82e5c481abaed010d575a389a62e6e31a"
+      },
+      {
+        "id": "6f37d508-ffa7-4fbd-9adf-bf5b5350298d",
+        "fileName": "index.html",
+        "version": 2,
+        "label": "Version 2",
+        "createdAt": 1791254200447,
+        "source": "ai",
+        "prompt": "请根据已冻结的资料与品牌标识，生成小山茶馆春季新品体验的营销方案。写入 index.html，页眉引用冻结 LOGO A 的实际字节（复制到 assets/frozen-logo.svg）。至少包含 section id=\"strategy\"（策略）、id=\"budget\"（预算30万元并列分配）、id=\"channels\"（门店与社群）。标注活动日期、地址和联系方式待确认；不得虚构经营数据。页面使用中文，HTML 自包含样式，保证三个章节能够单独修订。直接生成文件，无需提问。",
+        "size": 25195,
+        "mime": "text/html; charset=utf-8",
+        "kind": "html",
+        "current": false,
+        "promptSource": "message",
+        "contentDigest": "81541d8c497a8ec0e2a5182bec2cdd17ad58713eae04a182a510509f2ffe8568"
+      },
+      {
+        "id": "05a0fd31-7b42-4092-a685-c7415c49d4ee",
+        "fileName": "index.html",
+        "version": 3,
+        "label": "Version 3",
+        "createdAt": 1791254284747,
+        "source": "ai",
+        "prompt": "请只修改 index.html 的章节标记：为 id=\"strategy\"、id=\"budget\"、id=\"channels\" 的三个现有顶层 section 分别添加 data-mokina-id=\"strategy\"、data-mokina-id=\"budget\"、data-mokina-id=\"channels\"。保留全部文字、预算、CSS 和 LOGO A，不改其他文件。完成后直接结束。",
+        "size": 25271,
+        "mime": "text/html; charset=utf-8",
+        "kind": "html",
+        "current": false,
+        "promptSource": "message",
+        "contentDigest": "6b37e2f20e8484644557bf8544af86dba593a57e361c3e05d51bb1c2e68426fd"
+      },
+      {
+        "id": "d65d660d-b06a-4ddf-ae9c-1930c9c47842",
+        "fileName": "index.html",
+        "version": 4,
+        "label": "候选：strategy",
+        "createdAt": 1791254431773,
+        "source": "ai",
+        "prompt": "仅修订 strategy：在原策略内加入一句“原生 local.6 门店执行清单”，其余章节保持原样，不编造经营数据。",
+        "size": 25350,
+        "mime": "text/html; charset=utf-8",
+        "kind": "html",
+        "current": true,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "baseVersionId": "05a0fd31-7b42-4092-a685-c7415c49d4ee",
+        "operationId": "b631830c-a43d-4743-95ac-f3358804378f",
+        "adoptionOperationId": "c7877ef7-a74d-4d19-af2a-1f8336d86e3d"
+      }
+    ]
+  },
+  "job": null,
+  "durableJob": {
+    "ok": true,
+    "found": false,
+    "deletedRecordId": "40b7359d-3071-4b6c-8d2b-4394ebcb908e"
+  },
+  "matchingRuns": [
+    {
+      "id": "85d45865-2fc7-4fc3-bb90-44e9d665ea1e",
+      "status": "succeeded",
+      "projectId": "4b654560-671d-47e7-81d8-07c31a0a7f5f",
+      "clientRequestId": "b631830c-a43d-4743-95ac-f3358804378f"
+    }
+  ],
+  "evidenceType": "native candidate collection from same run and explicit adoption; formal version reader"
+}

@@ -1,0 +1,69 @@
+
+> open-design@0.22.1 tools-pack /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design
+> pnpm exec tools-pack mac inspect --dir /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack --namespace mokina-local --json
+
+{
+  "launcher": {
+    "attemptsPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/launcher/channels/stable/namespaces/mokina-local/state/attempt.json",
+    "channel": "stable",
+    "handoffPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/launcher/channels/stable/namespaces/mokina-local/state/desktop-handoff.json",
+    "namespace": "mokina-local",
+    "root": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac",
+    "runtimePath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/launcher/channels/stable/namespaces/mokina-local/runtime.json",
+    "stateRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/launcher/channels/stable/namespaces/mokina-local/state",
+    "versionRoots": [],
+    "versionsRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/launcher/channels/stable/namespaces/mokina-local/versions",
+    "active": {
+      "generation": 0,
+      "version": "0.0.2-local.1"
+    },
+    "attempt": null,
+    "exists": true,
+    "handoff": null,
+    "lastSuccessful": {
+      "generation": 0,
+      "version": "0.0.2-local.1"
+    }
+  },
+  "updateCache": {
+    "cleanupPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/namespaces/mokina-local/updates/state/cleanup.json",
+    "descriptorExists": false,
+    "releaseBytes": 0,
+    "releaseCount": 0,
+    "releasesRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/namespaces/mokina-local/updates/releases",
+    "summary": null,
+    "updateRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/namespaces/mokina-local/updates"
+  },
+  "status": {
+    "executablePath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/out/mac/namespaces/mokina-local/builder/mac-arm64/Mokina.app/Contents/MacOS/Mokina",
+    "pid": 33419,
+    "state": "running",
+    "title": "Mokina",
+    "updatedAt": "2026-10-04T18:15:04.300Z",
+    "url": "od://app/",
+    "windowVisible": true,
+    "capabilities": {
+      "frameRenderer": true
+    },
+    "update": {
+      "arch": "arm64",
+      "capabilities": {
+        "canApplyInPlace": false,
+        "canDownload": false,
+        "canOpenInstaller": false,
+        "requiresManualInstall": false
+      },
+      "channel": "stable",
+      "currentVersion": "0.0.2-local.1",
+      "enabled": false,
+      "mode": "package-launcher",
+      "paths": {
+        "downloadRoot": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/namespaces/mokina-local/updates",
+        "manifestPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/.tmp/mokina-pack/runtime/mac/namespaces/mokina-local/updates/metadata.json"
+      },
+      "platform": "darwin",
+      "state": "idle",
+      "supported": false
+    }
+  }
+}

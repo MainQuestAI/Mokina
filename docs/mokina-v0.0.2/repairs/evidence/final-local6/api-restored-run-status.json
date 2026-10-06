@@ -1,0 +1,31 @@
+{
+  "id": "42eee1d7-9a77-4a84-96ec-fbef08233b79",
+  "projectId": "rr6-restored-bcad1b33-25b4-4a71-8ab2-3f0a8963fcfc",
+  "conversationId": "c93aca29-83a7-40df-aa17-95a3d6b876a2",
+  "clientRequestId": "30cce905-028c-4c74-a2cc-daa233045e04",
+  "status": "succeeded",
+  "exitCode": 0,
+  "terminalAt": 1791252724035,
+  "mokinaContext": {
+    "runId": "42eee1d7-9a77-4a84-96ec-fbef08233b79",
+    "snapshotId": "b6b2f54f-392e-4db5-b7fc-e52a3a3d9030",
+    "fingerprint": "5c5324d5e348ec85a5962f98c7ec37b02a8135b5a22bdecee8f8f60e5a835a05",
+    "includedItemIds": [
+      "brief",
+      "logo"
+    ],
+    "itemDelivery": [
+      {
+        "itemId": "brief",
+        "mode": "inline-text"
+      },
+      {
+        "itemId": "logo",
+        "mode": "staged-file"
+      }
+    ],
+    "status": "submitted",
+    "submittedAt": "2026-10-06T02:11:16.535Z"
+  },
+  "evidenceType": "installed local.6 real Codex run; final durable daemon state"
+}

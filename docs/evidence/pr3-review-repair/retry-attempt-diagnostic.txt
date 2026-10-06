@@ -1,0 +1,65 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/components/ProjectView.retry-gating.test.tsx -t 'known failed run'
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+ ❯ tests/components/ProjectView.retry-gating.test.tsx (32 tests | 1 failed | 31 skipped) 50ms
+     × a known failed run may start a new attempt, but loss of that retry receipt cannot create a third attempt 49ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/ProjectView.retry-gating.test.tsx > Mokina request admission and recovery join the actual host callbacks > a known failed run may start a new attempt, but loss of that retry receipt cannot create a third attempt
+AssertionError: {"clientRequestId":"3fd92e26-ac35-40de-8f17-0e2abc4b9e83","projectId":"project-1","conversationId":"conv-a","authorityKey":"workspace-personal:personal:member-personal:owner:active:active:true:true","promptPreview":"build me a landing page","status":"unknown","phase":"dispatched","snapshot":{"prompt":"build me a landing page","extras":{"attachments":[],"commentAttachments":[],"quotes":[],"context":{"skillIds":[],"mcpServerIds":[],"connectorIds":[],"workspaceItems":[]}},"requiresContextReselection":false,"userMessageId":"user-1","assistantMessageId":"d0aa9081-0b9f-4c31-8814-7ffb16e30cac"},"createdAt":1791082698649}: expected [ { id: 'user-1', …(5) }, …(1) ] to deeply equal ArrayContaining{…}
+
+- Expected
++ Received
+
+- ArrayContaining [
+-   ObjectContaining {
+-     "clientRequestId": "3fd92e26-ac35-40de-8f17-0e2abc4b9e83",
+-     "id": "d0aa9081-0b9f-4c31-8814-7ffb16e30cac",
++ [
++   {
++     "clientRequestId": "accepted-original-request",
++     "content": "build me a landing page",
++     "createdAt": 1,
++     "id": "user-1",
++     "role": "user",
++     "sendFailed": true,
++   },
++   {
++     "agentId": "agent-1",
++     "clientRequestId": "accepted-original-request",
++     "content": "partial work",
++     "createdAt": 2,
++     "events": [
++       {
++         "code": "AGENT_EXECUTION_FAILED",
++         "detail": "upstream said no",
++         "kind": "status",
++         "label": "error",
++       },
++     ],
++     "id": "assistant-failed",
++     "role": "assistant",
++     "runId": "run-1",
+      "runStatus": "failed",
+    },
+  ]
+
+ ❯ tests/components/ProjectView.retry-gating.test.tsx:1331:66
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 31 skipped (32)
+   Start at  10:58:16
+   Duration  2.39s (transform 1.53s, setup 412ms, import 1.54s, tests 50ms, environment 315ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 test: `vitest run -c vitest.config.ts --maxWorkers=2 tests/components/ProjectView.retry-gating.test.tsx -t 'known failed run'`
+Exit status 1

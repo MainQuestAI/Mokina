@@ -1,0 +1,33 @@
+
+> @open-design/web@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+> vitest run -c vitest.config.ts --maxWorkers=2 tests/providers/daemon-run-create-recovery.test.ts tests/components/ProjectView.retry-gating.test.tsx
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web
+
+ ❯ tests/components/ProjectView.retry-gating.test.tsx (32 tests | 1 failed) 783ms
+     × a known failed run may start a new attempt, but loss of that retry receipt cannot create a third attempt 17ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/ProjectView.retry-gating.test.tsx > Mokina request admission and recovery join the actual host callbacks > a known failed run may start a new attempt, but loss of that retry receipt cannot create a third attempt
+AssertionError: expected "vi.fn()" to be called 1 times, but got 2 times
+ ❯ tests/components/ProjectView.retry-gating.test.tsx:1333:29
+    1331|     fireEvent.click(screen.getByTestId('chat-retry'));
+    1332|     await act(async () => {});
+    1333|     expect(streamViaDaemon).toHaveBeenCalledTimes(1);
+       |                             ^
+    1334|     expect(Object.keys(window.localStorage).filter(key => key.startsWi…
+    1335|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 36 passed (37)
+   Start at  10:56:43
+   Duration  3.40s (transform 1.91s, setup 916ms, import 1.66s, tests 792ms, environment 870ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/web@0.22.1 test: `vitest run -c vitest.config.ts --maxWorkers=2 tests/providers/daemon-run-create-recovery.test.ts tests/components/ProjectView.retry-gating.test.tsx`
+Exit status 1

@@ -93,6 +93,32 @@ test('[P1] Mokina panel explains historical and chapterless action restrictions'
   expect(unexpectedWrites).toEqual([]);
 });
 
+test('[P1] Mokina continuation creates an editable fixed-excerpt draft without a run', async ({ page }, testInfo) => {
+  const source = await seedWorkspace(page);
+  const runPosts: string[] = [];
+  page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/runs') runPosts.push(request.url()); });
+  await openArtifact(page, source, 'plan.html');
+  await page.getByRole('button', { name: '继续制作', exact: true }).click();
+  const panel = page.locator('.artifact-version-panel');
+  await panel.getByRole('checkbox', { name: /strategy：/ }).check();
+  await panel.getByLabel('接续背景').fill('只选策略，制作门店传播内容。');
+  await panel.getByRole('button', { name: '创建接续项目（不发送）', exact: true }).click();
+  await expect(page).not.toHaveURL(new RegExp(source.projectId));
+  const input = page.getByTestId('chat-composer-input');
+  await expect(input).toContainText('【strategy】', { timeout: T.long });
+  await expect(input).toContainText('只选策略，制作门店传播内容。');
+  await expect(input).not.toContainText('【budget】');
+  const projectId = new URL(page.url()).pathname.split('/')[2]!;
+  const snapshot = await page.request.get(`/api/projects/${projectId}/files/MOKINA-CONTINUATION.json`);
+  expect(snapshot.ok()).toBe(true);
+  expect(await snapshot.json()).toMatchObject({ source: { projectId: source.projectId, fileName: 'plan.html' }, sections: [{ id: 'strategy' }], background: '只选策略，制作门店传播内容。' });
+  await input.fill('Edited continuation draft');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(input).toHaveText('Edited continuation draft');
+  expect(runPosts).toEqual([]);
+  await testInfo.attach('continuation-editable-draft', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
 async function seedWorkspace(page: Page) {
   const projectId = `mokina-actions-${randomUUID()}`;
   const created = await page.request.post('/api/projects', {

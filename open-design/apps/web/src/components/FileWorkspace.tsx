@@ -249,7 +249,7 @@ interface Props {
   // tabs in one commit — a finished turn's artifacts (OPEND-2588). `name` is
   // still the one that ends up active, and is opened whether or not the batch
   // names it.
-  openRequest?: { name: string; nonce: number; openBatch?: readonly string[] } | null;
+  openRequest?: { name: string; nonce: number; versionId?: string; openBatch?: readonly string[] } | null;
   browserOpenRequest?: BrowserOpenRequest | null;
   // Browser tab whose <webview> must stay mounted even while another workspace
   // tab is active. Set for programmatic brand extraction: the chat "Continue
@@ -1316,66 +1316,16 @@ interface WorkspaceActionToast {
 
 const MOKINA_MATERIAL_EXTENSIONS = /\.(?:txt|md|csv|pdf|docx|xlsx|pptx)$/i;
 
-type MokinaSelectionGroup = {
-  key: string;
-  name: string;
-  label: string;
-  sections: ProjectMaterialExtraction['sections'];
-  chars: number;
-};
+import {
+  buildMokinaMaterialSnapshot,
+  groupMokinaMaterialSections,
+} from '../runtime/mokina/material-selection';
+import type { MokinaSelectionGroup } from '../runtime/mokina/material-selection';
+import { MokinaContextPanel } from './mokina/MokinaContextPanel';
 
-export function groupMokinaMaterialSections(materials: ProjectMaterialExtraction[]): MokinaSelectionGroup[] {
-  const groups: MokinaSelectionGroup[] = [];
-  for (const material of materials) {
-    let previousId = '';
-    let part = 0;
-    let current: MokinaSelectionGroup | null = null;
-    for (const section of material.sections) {
-      const id = section.groupId ?? section.location;
-      if (id !== previousId) part = 0;
-      if (!current || id !== previousId || current.chars + section.text.length > 8_000) {
-        if (id === previousId) part++;
-        current = {
-          key: `${material.name}:${material.contentDigest}:${id}:${part}`,
-          name: material.name,
-          label: `${section.groupLabel ?? section.location}${part ? ` / 片段 ${part + 1}` : ''}`,
-          sections: [],
-          chars: 0,
-        };
-        groups.push(current);
-      }
-      current.sections.push(section);
-      current.chars += section.text.length;
-      previousId = id;
-    }
-  }
-  return groups;
-}
-
-export function buildMokinaMaterialSnapshot(
-  materials: ProjectMaterialExtraction[],
-  groups: MokinaSelectionGroup[],
-  selectedKeys: string[],
-): string {
-  const chosen = groups.filter(group => selectedKeys.includes(group.key));
-  return [
-    '# 本次选入资料的固定摘录',
-    '以下仅包含用户本次勾选的资料段落；位置指向当次提取的原件。未勾选内容不在此工作空间中。',
-    ...materials.filter(material => chosen.some(group => group.name === material.name)).map(material => [
-      `## ${material.name}`,
-      `提取状态：${material.status === 'partial' ? '部分读取' : '已读取'}`,
-      ...material.limitations.map(value => `读取限制：${value}`),
-      ...(material.groupLimitations ?? [])
-        .filter(limitation => chosen
-          .filter(group => group.name === material.name)
-          .some(group => group.sections.some(section => section.groupId === limitation.groupId
-            || section.groupId?.startsWith(`${limitation.groupId}:part:`))))
-        .map(limitation => `读取限制：${limitation.location}：${limitation.message}`),
-      ...chosen.filter(group => group.name === material.name).flatMap(group =>
-        group.sections.map(section => `### ${section.location}\n${section.text}`)),
-    ].join('\n\n')),
-  ].join('\n\n');
-}
+// Re-exported so existing importers keep the historical FileWorkspace surface.
+export { buildMokinaMaterialSnapshot, groupMokinaMaterialSections };
+export type { MokinaSelectionGroup };
 
 function MokinaMaterialPicker({ projectName, projectId, files }: {
   projectName: string;
@@ -3630,6 +3580,7 @@ export function FileWorkspace({
       projectId={projectId}
       projectKind={projectKind}
       file={file}
+      versionOpenRequest={openRequest?.name === file.name && openRequest.versionId ? { id: openRequest.versionId, nonce: openRequest.nonce } : null}
       filesRefreshKey={filesRefreshKey}
       isDeck={isDeck}
       streaming={streaming}
@@ -4462,7 +4413,10 @@ export function FileWorkspace({
         </div>
       ) : null}
       {!viewerOnly && !designSystemProject && !initialMaterializationPending ? (
-        <MokinaMaterialPicker projectId={projectId} projectName={projectName || '市场工作'} files={files} />
+        <>
+          <MokinaMaterialPicker projectId={projectId} projectName={projectName || '市场工作'} files={files} />
+          <MokinaContextPanel projectId={projectId} files={files} />
+        </>
       ) : null}
       <div className="ws-body">
         {/* Banner moved into DesignFilesPanel for the Design Files tab so

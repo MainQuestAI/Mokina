@@ -1,0 +1,37 @@
+{
+  "pending": false,
+  "identity": {
+    "operationId": "6232b63e-647b-4aa7-ad63-b2c24f2a2c98",
+    "targetProjectId": "d0baee72-f67e-4939-a97e-385584b56a95"
+  },
+  "results": [
+    {
+      "status": 200,
+      "body": {
+        "projectId": "d0baee72-f67e-4939-a97e-385584b56a95",
+        "warnings": []
+      }
+    },
+    {
+      "status": 200,
+      "body": {
+        "projectId": "d0baee72-f67e-4939-a97e-385584b56a95",
+        "warnings": []
+      }
+    },
+    {
+      "status": 200,
+      "body": {
+        "projectId": "d0baee72-f67e-4939-a97e-385584b56a95",
+        "warnings": []
+      }
+    },
+    {
+      "status": 200,
+      "body": {
+        "projectId": "d0baee72-f67e-4939-a97e-385584b56a95",
+        "warnings": []
+      }
+    }
+  ]
+}

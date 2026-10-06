@@ -62,6 +62,9 @@ function resolveHeadlessConfig(): PackagedConfig {
     namespace,
     namespaceBaseRoot,
     nodeCommand: null,
+    // Linux headless installs are upstream-compatibility mode; the Mokina
+    // product profile comes from the baked mac local-preview config.
+    product: null,
     resourceRoot,
     telemetryRelayUrl:
       process.env.OPEN_DESIGN_TELEMETRY_RELAY_URL?.trim() || null,

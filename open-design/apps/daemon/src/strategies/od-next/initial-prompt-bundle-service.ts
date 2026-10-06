@@ -39,7 +39,11 @@ import {
   resolveOdNextRequestUserPrompt,
   resolveResearchCommandContract,
 } from '../../runtimes/chat-prompt-inputs.js';
-import { renderRunContextPrompt } from '../../runtimes/chat-run-context.js';
+import {
+  renderRunContextPrompt,
+  resolveMokinaSnapshotForRun,
+} from '../../runtimes/chat-run-context.js';
+import { buildMokinaContextPromptBlock } from '../../mokina/context-store.js';
 import type { RunWorkspaceScope } from '../../runtimes/project-amr-trace-env.js';
 import type { RuntimeAgentDef } from '../../runtimes/types.js';
 import type { DetectedRuntimeVersions } from '../../runtimes/detection.js';
@@ -357,7 +361,27 @@ export function createOdNextInitialPromptBundleService(
       taskInputSnapshot,
       path.join(deps.runtimeDataDir, 'od-next-task-inputs'),
     );
-    const runContextPrompt = renderRunContextPrompt(context, project?.metadata);
+    let runContextPrompt = renderRunContextPrompt(context, project?.metadata);
+    // T06: fold the frozen Mokina context block into the prepared bundle. A
+    // snapshot that cannot be re-verified aborts this preparation so the run
+    // falls back instead of silently losing the selected material.
+    const mokinaSnapshotBinding = await resolveMokinaSnapshotForRun({
+      projectsRoot: deps.projectsDir,
+      projectId,
+      context,
+    });
+    if (mokinaSnapshotBinding.status === 'error') {
+      throw new Error(`${mokinaSnapshotBinding.code}: ${mokinaSnapshotBinding.message}`);
+    }
+    if (mokinaSnapshotBinding.status === 'bound') {
+      const staged = Object.fromEntries(mokinaSnapshotBinding.snapshot.items.filter(item => item.kind === 'asset').map(item => {
+        const index = loadedTaskInputs.files.findIndex(file => file.sha256 === (item as { blobId: string }).blobId);
+        if (index < 0) throw new Error(`冻结素材未进入任务输入：${item.displayName}`);
+        return [item.itemId, { path: loadedTaskInputs.attachmentReferences[index]!, digest: loadedTaskInputs.files[index]!.sha256 }];
+      }));
+      const block = buildMokinaContextPromptBlock(mokinaSnapshotBinding.snapshot, staged);
+      runContextPrompt = runContextPrompt.length > 0 ? `${runContextPrompt}\n\n${block}` : block;
+    }
     const runtimeToolPrompt = deps.createAgentRuntimeToolPrompt(
       deps.daemonUrl,
       projectRoot && projectId ? { token: 'available' } : null,

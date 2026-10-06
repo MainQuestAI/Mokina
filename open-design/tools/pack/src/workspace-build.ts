@@ -47,7 +47,7 @@ export const WORKSPACE_BUILD_COMMANDS = [
   { args: ["--filter", "@open-design/packaged", "run", "build"] },
 ] as const;
 
-export const WORKSPACE_BUILD_CACHE_SCHEMA_VERSION = 11;
+export const WORKSPACE_BUILD_CACHE_SCHEMA_VERSION = 12;
 
 /**
  * V8 old-space ceiling (MB) for the packaged closure build, the stage that runs
@@ -81,6 +81,7 @@ export type WorkspaceBuildCacheKeyInputs = {
   platform: ToolPackConfig["platform"];
   pnpmLock: string;
   pnpmWorkspace: string;
+  pdfRuntimeManifestSha256?: string;
   schemaVersion: number;
   webOutputMode: ToolPackConfig["webOutputMode"];
 };
@@ -147,6 +148,9 @@ export async function createWorkspaceBuildCacheKey(config: ToolPackConfig): Prom
     packageHashes,
     packageManager: await readPackageManager(config.workspaceRoot),
     platform: config.platform,
+    ...(config.platform === 'mac' ? { pdfRuntimeManifestSha256: await hashPath(
+      join(config.workspaceRoot, 'tools', 'pack', 'resources', 'pdf', `mac-${process.arch}`, 'manifest.json'),
+    ).catch(() => 'missing') } : {}),
     pnpmLock: await hashPath(join(config.workspaceRoot, "pnpm-lock.yaml")),
     pnpmWorkspace: await hashPath(join(config.workspaceRoot, "pnpm-workspace.yaml")),
     schemaVersion: WORKSPACE_BUILD_CACHE_SCHEMA_VERSION,

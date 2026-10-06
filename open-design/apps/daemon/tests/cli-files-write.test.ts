@@ -111,6 +111,12 @@ describe('od files write / upload (ESM require regression)', () => {
     stub.requests.length = 0;
   });
 
+  it('`files versions --read-only` forwards the existing GET query without any mutation', async () => {
+    const result = await runCli(['files', 'versions', 'proj-1', 'legacy.html', '--read-only', '--json', '--daemon-url', stub.baseUrl]);
+    expect(result.code, result.stderr).toBe(0);
+    expect(stub.requests).toEqual([{ method: 'GET', url: '/api/projects/proj-1/files/legacy.html/versions?readOnly=true', body: '' }]);
+  });
+
   it('`files version-create` rejects an invalid --source before sending a request', async () => {
     const result = await runCli([
       'files',

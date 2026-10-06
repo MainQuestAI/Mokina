@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>预算分配与渠道优先级｜晨光茶饮</title>
+<style>
+:root {
+  --bg:      oklch(98% 0.005 250);
+  --surface: oklch(100% 0 0);
+  --fg:      oklch(22% 0.02 240);
+  --muted:   oklch(50% 0.018 240);
+  --border:  oklch(90% 0.008 240);
+  --accent:  oklch(58% 0.16 145);
+  --font-display: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.8 var(--font-body);font-variant-numeric:tabular-nums}main{max-width:1080px;margin:40px auto;padding:48px 56px;background:var(--surface);border:1px solid var(--border)}header{border-bottom:2px solid var(--fg);padding-bottom:28px}.eyebrow{font-size:13px;letter-spacing:.12em;color:var(--muted);margin:0 0 12px}h1{font-family:var(--font-display);font-size:clamp(28px,4vw,40px);line-height:1.3;margin:0 0 20px;letter-spacing:-.035em}h2{font-size:23px;margin:0 0 14px;line-height:1.45}h3{font-size:18px;margin:0 0 7px;line-height:1.5}p{margin:0 0 12px}section{margin-top:34px}.lead{max-width:830px;margin:0}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:28px}.fact{border-top:1px solid var(--border);padding-top:14px}.fact strong{display:block;font-size:28px;line-height:1.4}.fact:first-child strong{color:var(--accent)}.fact span{font-size:14px}.note{font-size:14px;color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:15px;table-layout:fixed}th,td{padding:13px 10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;overflow-wrap:anywhere}th{font-size:13px;color:var(--muted);font-weight:600;border-top:1px solid var(--fg)}th:nth-child(1){width:24%}th:nth-child(2){width:16%}th:nth-child(3){width:12%}th:nth-child(4){width:48%}.num{text-align:right}tfoot td{font-weight:700;border-bottom:2px solid var(--fg)}.ranking{padding:0;margin:0;list-style:none}.ranking li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:20px 0;border-bottom:1px solid var(--border)}.rank{font:20px/1.5 var(--font-mono);color:var(--muted)}.ranking p{margin:0}.rules{display:grid;grid-template-columns:1fr 1fr;gap:26px}.rule{border-top:1px solid var(--fg);padding-top:15px}footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--border);font-size:13px;color:var(--muted)}@media(max-width:680px){main{margin:0;padding:28px 18px;border:0}.facts{gap:12px}.fact strong{font-size:24px}.fact span{font-size:12px}.rules{grid-template-columns:1fr;gap:16px}th,td{padding:10px 5px;font-size:13px}th:nth-child(1){width:23%}th:nth-child(2){width:19%}th:nth-child(3){width:13%}th:nth-child(4){width:45%}.ranking li{grid-template-columns:30px 1fr;gap:8px}}@media print{body{background:var(--surface);font-size:12pt}main{margin:0;padding:0;border:0;max-width:none}th,td,.note,footer{font-size:12pt}.ranking li,.rule{break-inside:avoid}h2,h3{break-after:avoid}}
+</style>
+</head>
+<body>
+<main data-od-id="budget-chapter">
+<header data-od-id="chapter-header">
+<p class="eyebrow">晨光茶饮 · 本季营销方案</p>
+<h1 data-od-id="chapter-title">预算分配与渠道优先级</h1>
+<p class="lead">优先承接到店购买需求，再推动会员复购；以可核验的白领女性人群覆盖为前提，控制拉新测试规模。资源围绕“清晨第一杯新鲜”，连接通勤、办公与门店消费场景。</p>
+<div class="facts" data-od-id="budget-constraints">
+<div class="fact"><strong>50 万元</strong><span>本季预算上限 · 人民币</span></div>
+<div class="fact"><strong>≥60%</strong><span>目标人群占比 · 本季要求</span></div>
+<div class="fact"><strong>0 元</strong><span>小红书信息流广告 · 禁止投放</span></div>
+</div>
+</header>
+<section data-od-id="allocation-section">
+<h2 data-od-id="allocation-title">预算分配：成交与复购优先</h2>
+<p class="note">以下为建议预算，非已发生费用。各项均按含税全包上限管理，服务、制作及优惠补贴不得重复计费。</p>
+<table data-od-id="budget-table" aria-label="本季营销预算分配表">
+<thead><tr><th scope="col">投入项目</th><th scope="col" class="num">金额（元）</th><th scope="col" class="num">占比</th><th scope="col">主要用途与边界</th></tr></thead>
+<tbody>
+<tr><td>美团点评</td><td class="num">200,000</td><td class="num">40%</td><td>门店周边搜索及交易场景推广、团购承接；覆盖一二线城市实际营业门店服务范围。</td></tr>
+<tr><td>微信私域与小程序</td><td class="num">100,000</td><td class="num">20%</td><td>会员召回、复购券及社群运营；优惠补贴按实际核销控制，与晨光卡权益核算后使用。</td></tr>
+<tr><td>抖音信息流</td><td class="num">90,000</td><td class="num">18%</td><td>围绕通勤及办公场景测试拉新素材，关联可追踪门店券；优先限定城市、年龄及女性人群。</td></tr>
+<tr><td>写字楼定点合作</td><td class="num">60,000</td><td class="num">12%</td><td>物业合作、午间试饮与专属领券；包含场地、执行和试饮成本，不做大范围梯媒采购。</td></tr>
+<tr><td>共用内容制作</td><td class="num">30,000</td><td class="num">6%</td><td>产品实拍、短视频与门店物料，供上述渠道复用；不含任何小红书信息流投放。</td></tr>
+<tr><td>数据监测与人群核验</td><td class="num">20,000</td><td class="num">4%</td><td>渠道码、核销对账、自愿人群调查与复盘；统一归因口径并监测目标人群占比。</td></tr>
+<tr><td>小红书信息流广告</td><td class="num">0</td><td class="num">0%</td><td>禁止投放；代理商采购、达人合作及内容加热均不得绕道购买该广告资源。</td></tr>
+</tbody>
+<tfoot><tr><td>合计</td><td class="num">500,000</td><td class="num">100%</td><td>渠道投入 45 万元，制作与监测 5 万元。</td></tr></tfoot>
+</table>
+</section>
+<section data-od-id="priority-section">
+<h2 data-od-id="priority-title">渠道优先级：先验证效率，再扩大投入</h2>
+<ol class="ranking">
+<li data-od-id="priority-meituan"><span class="rank">01</span><div><h3>美团点评｜优先承接购买需求</h3><p>资料中上季 ROI 为 2.1，高于抖音信息流的 1.4 与线下梯媒的 0.9，因此获得最大预算。主推销量占比 42% 的晨光青提（22 元），以门店服务范围内的有效核销与投入产出作为主要评估依据。</p></div></li>
+<li data-od-id="priority-wechat"><span class="rank">02</span><div><h3>微信私域与小程序｜支撑复购目标</h3><p>小程序复购率从 31% 提升至 35% 是本季明确目标。按新客、活跃会员及沉默会员安排触达和优惠，复购统计沿用历史口径；晨光卡“储值 200 送 30”需核算权益成本，不将储值到账直接视为新增消费收入。</p></div></li>
+<li data-od-id="priority-douyin"><span class="rank">03</span><div><h3>抖音信息流｜有边界地测试拉新</h3><p>上季 ROI 为 1.4，低于美团点评，故控制投入并分批释放。以晨光青提和轻云茉莉（19 元）制作办公场景素材；桂花酿（26 元）仅在 9–11 月且门店有货时推广。以新客核销成本、目标人群占比和退款后成交评估扩量。</p></div></li>
+<li data-od-id="priority-office"><span class="rank">04</span><div><h3>写字楼定点合作｜补充高相关场景触达</h3><p>选择门店周边、目标人群集中的办公楼，使用楼宇专属码追踪领券与核销。历史梯媒 ROI 仅 0.9，本季不安排梯媒预算；定点合作属于待验证的新测试，不能沿用梯媒结果证明其效果。</p></div></li>
+</ol>
+<p class="note" style="margin-top:14px">排序依据为现有资料与本季目标，历史 ROI 不代表本季收益承诺。内容制作及监测属于共用支持费用，不作为独立获客渠道排序。</p>
+</section>
+<section data-od-id="execution-section">
+<h2 data-od-id="execution-title">执行约束与预算释放条件</h2>
+<div class="rules">
+<div class="rule" data-od-id="audience-rule"><h3>人群占比：按完整条件核验</h3><p>核心目标为“一二线城市、25–35 岁、白领、女性”四项同时满足的人群，占比不得低于 60%。启动前锁定城市清单与统计周期，以当季去重、有效领券或入会用户为核验人群，结合自愿填写资料确认职业等属性；未知属性不计入目标人群分子。</p><p>平台可用定向配合办公场景选点，不能仅凭女性定向推断白领身份。每周报告目标人群占比与资料完整率；低于 60% 时暂停不达标渠道扩量，调整定向、点位或素材。该指标为执行要求，当前资料尚不能证明已达标。</p></div>
+<div class="rule" data-od-id="release-rule"><h3>分批释放：效果与人群同时达标</h3><p>建议先释放各渠道预算的 20% 作为首轮额度，至少观察两周并等待核销数据完整后复盘，其余 80% 按周安排。统一核销、退款、归因周期及成本口径，再比较渠道表现；未完整归因的订单不重复计功。</p><p>仅在人群要求达标、且核销成本符合财务确认的单杯贡献毛利边界后扩量。渠道间调拨须同步更新预算表，总额始终不超过 50 万元，小红书信息流始终为零。未达标额度可暂缓使用，不为花完预算强行投放。</p></div>
+</div>
+</section>
+<footer data-od-id="source-note">资料依据：《晨光茶饮-品牌与产品资料.md》（项目提供的合成资料）。产品价格、销量占比、历史 ROI 及复购率来自该文件；预算金额、渠道排序与执行办法为本章节建议。人群统计口径需在上线前与业务方锁定。</footer>
+</main>
+</body>
+</html>

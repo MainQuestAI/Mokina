@@ -1,0 +1,79 @@
+
+Running 2 tests using 1 worker
+
+(node:53672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:53672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 (17.2s)
+(node:56630) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56630) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 (17.0s)
+
+
+  1) [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('[data-user-action-card="run-recovery"]').last()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('[data-user-action-card="run-recovery"]').last()[22m
+
+
+      2166 |     await page.getByTestId('chat-send').click();
+      2167 |     await expect(page.getByTestId('mokina-pending-send')).toBeVisible({ timeout: T.long });
+    > 2168 |     await expect(runErrorCard(page)).toBeVisible();
+           |                                      ^
+      2169 |     await runErrorCard(page).getByRole('button', { name: /^Retry$/ }).click();
+      2170 |     await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
+      2171 |     expect(postCount).toBe(1);
+        at /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/ui/real-daemon-run.test.ts:2168:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ui/reports/test-results/real-daemon-run--P1-Mokina-b51a8-original-daemon-run-at-1440-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ui/reports/test-results/real-daemon-run--P1-Mokina-b51a8-original-daemon-run-at-1440-chromium/error-context.md
+
+  2) [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('[data-user-action-card="run-recovery"]').last()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('[data-user-action-card="run-recovery"]').last()[22m
+
+
+      2166 |     await page.getByTestId('chat-send').click();
+      2167 |     await expect(page.getByTestId('mokina-pending-send')).toBeVisible({ timeout: T.long });
+    > 2168 |     await expect(runErrorCard(page)).toBeVisible();
+           |                                      ^
+      2169 |     await runErrorCard(page).getByRole('button', { name: /^Retry$/ }).click();
+      2170 |     await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
+      2171 |     expect(postCount).toBe(1);
+        at /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e/ui/real-daemon-run.test.ts:2168:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ui/reports/test-results/real-daemon-run--P1-Mokina-63dba-original-daemon-run-at-1280-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ui/reports/test-results/real-daemon-run--P1-Mokina-63dba-original-daemon-run-at-1280-chromium/error-context.md
+
+  2 failed
+    [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1440 
+    [chromium] › ui/real-daemon-run.test.ts:2141:3 › [P1] Mokina PR3 lost creation receipt recovers original daemon run at 1280 
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-b0-b1/open-design/e2e:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test -c playwright.config.ts ui/real-daemon-run.test.ts --grep Mokina PR3 --workers=1

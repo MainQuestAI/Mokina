@@ -1,6 +1,10 @@
 import { access, readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
+import {
+  parseMokinaPackagedProduct,
+  type MokinaPackagedProduct,
+} from "@open-design/release";
 import { SIDECAR_DEFAULTS, normalizeNamespace } from "@open-design/sidecar-proto";
 
 // `electron` is loaded lazily so this module can also be imported from the
@@ -30,6 +34,9 @@ export type RawPackagedConfig = {
   daemonSidecarEntryRelative?: string;
   namespace?: string;
   namespaceBaseRoot?: string;
+  // Baked by tools/pack when the build carries a product profile (Mokina
+  // local preview). Upstream builds leave it absent and are unaffected.
+  product?: unknown;
   nodeCommandRelative?: string;
   resourceRoot?: string;
   // Baked by tools/pack from OPEN_DESIGN_TELEMETRY_RELAY_URL and forwarded to
@@ -65,6 +72,7 @@ export type PackagedConfig = {
   namespace: string;
   namespaceBaseRoot: string;
   nodeCommand: string | null;
+  product: MokinaPackagedProduct | null;
   resourceRoot: string;
   telemetryRelayUrl: string | null;
   updateMetadataUrl: string | null;
@@ -224,6 +232,7 @@ export async function readPackagedConfig(): Promise<PackagedConfig> {
     namespace,
     namespaceBaseRoot,
     nodeCommand,
+    product: raw.product == null ? null : parseMokinaPackagedProduct(raw.product),
     resourceRoot,
     telemetryRelayUrl: cleanOptionalString(raw.telemetryRelayUrl),
     updateMetadataUrl: cleanOptionalString(raw.updateMetadataUrl),

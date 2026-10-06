@@ -621,6 +621,39 @@ describe('project preview containment routes', () => {
     expect(await text.text()).not.toContain('data-od-preview-build-focus');
   });
 
+  it('refuses a preview scope minted for one project when requested through another project path', async () => {
+    const projectA = await createProject();
+    const projectB = await createProject();
+    await writeProjectFile(projectA, 'index.html', '<!doctype html><title>A</title>');
+    await writeProjectFile(projectB, 'index.html', '<!doctype html><title>B</title>');
+
+    const minted = await fetch(
+      `${baseUrl}/api/projects/${projectA}/preview-url?file=${encodeURIComponent('index.html')}`,
+    );
+    expect(minted.ok).toBe(true);
+    const body = await minted.json() as { url: string };
+    const scope = body.url.match(/\/preview\/([^/]+)\//u)?.[1];
+    expect(scope).toBeTruthy();
+
+    // The scope is bound to project A; project B's route must not honour it.
+    const crossProject = await fetch(
+      `${baseUrl}/api/projects/${projectB}/preview/${scope}/index.html`,
+      { headers: { Origin: 'null' } },
+    );
+    expect([403, 404]).toContain(crossProject.status);
+
+    // A later attacker-controlled asset name cannot escape into B either.
+    const crossTraversal = await fetch(
+      `${baseUrl}/api/projects/${projectB}/preview/${scope}/..%2Findex.html`,
+      { headers: { Origin: 'null' } },
+    );
+    expect([400, 403, 404]).toContain(crossTraversal.status);
+
+    // The same scope still serves its own project.
+    const ownProject = await fetch(`${baseUrl}${body.url}`, { headers: { Origin: 'null' } });
+    expect(ownProject.status).toBe(200);
+  });
+
   it('rejects invalid preview scopes and escaping preview-url paths', async () => {
     const projectId = await createProject();
     await writeProjectFile(projectId, 'index.html', '<!doctype html>');

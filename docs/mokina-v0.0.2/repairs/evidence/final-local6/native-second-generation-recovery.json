@@ -1,0 +1,67 @@
+{
+  "status": 200,
+  "imported": {
+    "projectId": "529956e4-f9f5-4cbd-83cf-2cbfebbabaa1",
+    "warnings": []
+  },
+  "readerStatus": 200,
+  "snapshot": {
+    "snapshot": {
+      "schemaVersion": 1,
+      "snapshotId": "0d1057ed-bf92-4ed0-900a-f08585fc05e9",
+      "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+      "createdAt": "2026-10-06T02:31:48.778Z",
+      "parserVersion": "mokina-material/1",
+      "selectionFingerprint": "48b06fffb17c67002d73a235c6ebda0aa9a3dd208852ca821ebff118d41bffff",
+      "items": [
+        {
+          "kind": "material-excerpt",
+          "itemId": "S1",
+          "displayName": "资料说明.md · 4 个片段",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+            "fileName": "资料说明.md"
+          },
+          "sourceDigest": "f32265710cdf51cb0b5d7cd000eb558aeb76a1880ee6eaa78b2982c44a10f089",
+          "limitations": [],
+          "locators": [
+            "资料说明.md · 第 1 行",
+            "资料说明.md · 第 2 行",
+            "资料说明.md · 第 3 行",
+            "资料说明.md · 第 4 行"
+          ],
+          "text": "# 品牌\n\n小山茶馆。预算30万元，渠道门店与社群，绿色风格。禁止虚构历史经营数据。\n\n# 活动\n\n春季新品体验，预约留资后门店接待；日期、门店地址和联系方式待用户确认。",
+          "textDigest": "95910281c98bf87f2fca2526a9e916a9f0a891474f9192ac45215da080ed5b0d"
+        },
+        {
+          "kind": "asset",
+          "itemId": "A1",
+          "displayName": "品牌-logo.svg",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "60198b4d-1e0f-4491-886d-032f04cadf37",
+            "fileName": "品牌-logo.svg"
+          },
+          "sourceDigest": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+          "limitations": [
+            "保存图片不等于已完成视觉理解；实际提供方式见运行回执。"
+          ],
+          "blobId": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+          "mimeType": "image/svg+xml",
+          "byteLength": 161,
+          "role": "logo",
+          "usageNote": "页眉采用冻结的 LOGO A，保留绿色品牌风格"
+        }
+      ],
+      "excluded": [],
+      "fingerprint": "e24fd927fa6677369b1c87d5c29aded3f7c17085ae0ea2480598bfb43e3ce2b5"
+    }
+  },
+  "targetProjectId": "529956e4-f9f5-4cbd-83cf-2cbfebbabaa1",
+  "operationId": "f750a74b-7ebd-4521-94df-132847a83021",
+  "archiveSHA256": "0eca70edc613966b627e9f531355fdcd1a32b4f96dc914d1e8cfaf204a3d5b02",
+  "archiveByteLength": 174377,
+  "evidenceType": "native re-export after source deletion; installed formal API imports and reads second generation",
+  "fixtureCorrection": "earlier helper performed unsafe substring replacement in JS source causing syntax error before request; fixed structured JSON input"
+}

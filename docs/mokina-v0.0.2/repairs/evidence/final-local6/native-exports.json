@@ -1,0 +1,137 @@
+{
+  "evidenceType": "CUA native version selection and Save As/cancel; selected-version contents verified; external native Chrome and Preview opened all artifacts",
+  "rows": [
+    {
+      "version": 2,
+      "kind": "historical",
+      "format": "html",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/historical-v2.html",
+      "byteLength": 25415,
+      "sha256": "0fdd73bb653e69ef64e9dfd2305fd37d8ec92606116d05f0df8df7325cf3d0c7",
+      "hasCandidateMarker": false,
+      "hasMokinaMarkers": false,
+      "inlineAssetCount": 1
+    },
+    {
+      "version": 2,
+      "kind": "historical",
+      "format": "zip",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/historical-v2.zip",
+      "byteLength": 73056,
+      "sha256": "1366c59770ec3638a72ab244cc547b908bdafb35c559e05bda44568b8b8c3549",
+      "zipEntries": [
+        "index-v2-historical/index.html",
+        "index-v2-historical/DESIGN-HANDOFF.md",
+        "index-v2-historical/DESIGN-MANIFEST.json"
+      ],
+      "hasCandidateMarker": false
+    },
+    {
+      "version": 2,
+      "kind": "historical",
+      "format": "pdf",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/historical-v2.pdf",
+      "byteLength": 970944,
+      "sha256": "406c360751908005b4f1f1e619de33411ae8318abfc5c57d6a389ab58e0b3296"
+    },
+    {
+      "version": 3,
+      "kind": "current",
+      "format": "html",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/current-v3.html",
+      "byteLength": 25491,
+      "sha256": "b8550c430f48770b445a477c4334676600030a779604de07bedecd92f0c6e688",
+      "hasCandidateMarker": false,
+      "hasMokinaMarkers": true,
+      "inlineAssetCount": 1
+    },
+    {
+      "version": 3,
+      "kind": "current",
+      "format": "zip",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/current-v3.zip",
+      "byteLength": 73020,
+      "sha256": "cacd20007185c91e76668306bb97b8c82408f5047e3d69d05899e526b62b53c5",
+      "zipEntries": [
+        "index/index.html",
+        "index/DESIGN-HANDOFF.md",
+        "index/DESIGN-MANIFEST.json"
+      ],
+      "hasCandidateMarker": false
+    },
+    {
+      "version": 3,
+      "kind": "current",
+      "format": "pdf",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/current-v3.pdf",
+      "byteLength": 970944,
+      "sha256": "05d12291aa88c4715ece3020eaf0278c4c06585e72168574c338f84a8d356dc3"
+    },
+    {
+      "version": 4,
+      "kind": "candidate",
+      "format": "html",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/candidate-v4.html",
+      "byteLength": 25570,
+      "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+      "hasCandidateMarker": true,
+      "hasMokinaMarkers": true,
+      "inlineAssetCount": 1
+    },
+    {
+      "version": 4,
+      "kind": "candidate",
+      "format": "zip",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/candidate-v4.zip",
+      "byteLength": 73203,
+      "sha256": "233e0b77d8646fec71ffd3e5b702319a2657ec68516e6eee1a5820d0a01a4abd",
+      "zipEntries": [
+        "index-v4-candidate/index.html",
+        "index-v4-candidate/DESIGN-HANDOFF.md",
+        "index-v4-candidate/DESIGN-MANIFEST.json"
+      ],
+      "hasCandidateMarker": true
+    },
+    {
+      "version": 4,
+      "kind": "candidate",
+      "format": "pdf",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.6/candidate-v4.pdf",
+      "byteLength": 976440,
+      "sha256": "af217bb88aa4a9533be259c0615a16474a6467557b563d4e56d31b3c93da45d8"
+    }
+  ],
+  "cancelledFilesAbsent": [
+    "cancelled-v4.html",
+    "cancelled-v4.zip",
+    "cancelled-v4.pdf"
+  ],
+  "currentAtExport": 3,
+  "unadoptedAtExport": 4,
+  "verificationFixtureCorrection": "ZIP embeds export root folder; initial inspection wrongly requested root index.html. Read actual nested entry and retain failed inspection in task transcript.",
+  "externalNativeBrowser": {
+    "tool": "CUA native Google Chrome (browser connector timed out twice, native app fallback worked)",
+    "opened": [
+      "candidate-v4.html",
+      "current-v3.html",
+      "historical-v2.html",
+      "historical-v2-unpacked/index-v2-historical/index.html",
+      "current-v3-unpacked/index/index.html",
+      "candidate-v4-unpacked/index-v4-candidate/index.html"
+    ],
+    "logoAVisible": true,
+    "budgetVisible": true,
+    "candidateMarkerOnlyInV4": true
+  },
+  "externalNativePDF": {
+    "tool": "CUA Preview",
+    "opened": [
+      "candidate-v4.pdf",
+      "current-v3.pdf",
+      "historical-v2.pdf"
+    ],
+    "pagesEach": 4,
+    "candidateScreenshot": "CUA transcript: first-page logo, strategy and marker visible; thumbnails all4 pages",
+    "textSearchAndCopyVerified": false
+  }
+}

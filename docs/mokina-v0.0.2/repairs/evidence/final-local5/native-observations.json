@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-05",
+  "evidenceType": "direct native CUA AX observations, plus actual output rendering; no save-dialog stubs",
+  "appVersion": "0.0.2-local.5",
+  "sourceSHA": "033c57dfe08b1ca42fa8a883bfde522bd3326ed1",
+  "visibleImportEntry": "local entry rail 新建项目 -> existing NewProjectModal -> macOS file picker",
+  "nativeFinderInitialLaunchVerifiedBeforeAppBinding": true,
+  "nativeFinderRelaunchEvidence": "finder-restarted-process.json",
+  "nativeExportsEvidence": "native-exports.json",
+  "externalPdfApp": "com.apple.Preview",
+  "externalPdfFiles": [
+    {
+      "version": 1,
+      "observedWindow": "v1.pdf – 页码：1/6",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v1.pdf"
+    },
+    {
+      "version": 3,
+      "observedWindow": "v3.pdf – 页码：1/6",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v3.pdf"
+    },
+    {
+      "version": 4,
+      "observedWindow": "v4.pdf – 页码：1/6",
+      "path": "/Users/dingcheng/Mokina-PR4-QA/exports/native-local.5/v4.pdf"
+    }
+  ],
+  "visualChecks": {
+    "pagesRendered": 18,
+    "budget300000": true,
+    "logoA": true,
+    "historyStrategyDifferent": true,
+    "unadoptedMarkerOnlyVersion4": true,
+    "allPagesContactSheet": "pdf-all-pages.png"
+  },
+  "nativeRestartDraft": "【local.5 重启验收草稿】继续检查预约交接说明；此输入尚未发送。",
+  "pdfTextExtraction": "PDFium textChars=0 for all three; visible content readable in Preview. Searchability/selectability is not asserted."
+}

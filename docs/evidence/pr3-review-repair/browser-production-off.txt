@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+(node:6702) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6702) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ui/mokina-edition-off.test.ts:7:1 › Mokina off production keeps populated recent projects without Mokina summary subscriptions (2.6s)
+  ✓  2 [chromium] › ui/real-daemon-run.test.ts:105:1 › [P0] real daemon run streams, persists, and previews an artifact (4.1s)
+
+  2 passed (13.7s)

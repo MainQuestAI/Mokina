@@ -1,0 +1,33 @@
+{
+  "phase": "after native Cmd Q",
+  "ownedPidsBefore": [
+    35346,
+    35347,
+    35355,
+    35356,
+    35369,
+    35370,
+    35455,
+    35472,
+    35473,
+    35489,
+    36070,
+    40697
+  ],
+  "ownedPidsStillAlive": [],
+  "peerPidsBefore": [
+    3710,
+    3714,
+    3727,
+    3815
+  ],
+  "peerPidsStillAlive": [
+    3710,
+    3714,
+    3727,
+    3815
+  ],
+  "ownDaemonResponds": false,
+  "previousWebChildPid": 35463,
+  "previousWebChildStillAlive": false
+}

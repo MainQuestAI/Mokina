@@ -1,0 +1,55 @@
+{
+  "notice": "测试定义；复用或在仓库模块内生成对应二进制 fixture，本包不声称已经跑过。",
+  "cases": [
+    {
+      "id": "P-TEXT",
+      "format": [
+        "txt",
+        "md",
+        "csv"
+      ],
+      "inputs": "UTF-8中文、标题、带引号逗号、多行单元格",
+      "expected": "定位可解释；CSV统计按8条逻辑记录"
+    },
+    {
+      "id": "P-PDF",
+      "format": [
+        "pdf"
+      ],
+      "inputs": "文本页+纯图页混合；另有纯扫描文件",
+      "expected": "混合partial；扫描unreadable；不宣称OCR"
+    },
+    {
+      "id": "P-DOCX",
+      "format": [
+        "docx"
+      ],
+      "inputs": "正文、2x2表、页眉、图像",
+      "expected": "正文表格有定位；页眉图片列入限制"
+    },
+    {
+      "id": "P-PPTX",
+      "format": [
+        "pptx"
+      ],
+      "inputs": "slide1/slide2文本、图表、备注",
+      "expected": "文本可读；图表/备注不作已识别事实"
+    },
+    {
+      "id": "P-XLSX",
+      "format": [
+        "xlsx"
+      ],
+      "inputs": "数值0、空白、公式缓存10、公式无缓存、日期序列",
+      "expected": "0保留；空白未知；10注明缓存；无缓存partial；日期不猜时区"
+    },
+    {
+      "id": "P-LIMIT",
+      "format": [
+        "all"
+      ],
+      "inputs": "大于10MiB原件、Office解压超限、XML DTD/ENTITY、损坏文件",
+      "expected": "拒绝或明确不可读；无越权写入"
+    }
+  ]
+}

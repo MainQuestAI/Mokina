@@ -185,3 +185,9 @@ extend them.
    - mutating a **known non-input** (for example a package's `dist` tree)
      leaves the key unchanged.
 5. Never introduce prefix or best-effort matching inside the store.
+
+## Mokina Mac PDF runtime
+
+The Mac resource-tree phase is materialized on every build, outside the workspace-build cache. It verifies every file against `tools/pack/resources/pdf/mac-arm64/manifest.json` and copies the complete runtime after every workspace cache hit or miss. PDF resources are not a cached workspace-build output. Changes to binaries, data, notices, or source require updating the resource manifest; a mismatch fails the build.
+
+Mac workspace-build cache schema 12 includes the PDF runtime manifest hash. A different pinned runtime invalidates the corresponding build identity; every materialization also verifies the listed resource bytes.

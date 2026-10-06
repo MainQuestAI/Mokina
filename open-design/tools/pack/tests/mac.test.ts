@@ -342,6 +342,45 @@ describe("renderMacPackagedConfig", () => {
     }
   });
 
+  it("bakes the Mokina product profile and strips upstream cloud/update keys", async () => {
+    const root = await mkdtemp(join(tmpdir(), "open-design-tools-pack-mac-"));
+    try {
+      const config = makeConfig(root, {
+        amrProfile: "feature-test",
+        namespace: "mokina-local",
+        posthogKey: "phc_should_not_ship",
+        telemetryRelayUrl: "https://telemetry.example.invalid",
+        updateMetadataUrl: "http://127.0.0.1:4567/beta/latest/metadata.json",
+        velaWebUrl: "https://vela.example.invalid",
+      });
+
+      const packagedConfig = JSON.parse(
+        renderMacPackagedConfig({
+          appVersion: "0.0.2-local.1",
+          config,
+          usePrebundledStandaloneWeb: true,
+        }),
+      ) as Record<string, unknown>;
+
+      expect(packagedConfig.product).toEqual({
+        productId: "mokina",
+        productName: "Mokina",
+        productVersion: "0.0.2-local.1",
+        releaseKind: "local-preview",
+        automaticUpdates: false,
+        upstreamNews: false,
+        defaultTelemetry: false,
+        requiresUpstreamAccount: false,
+        registersOdScheme: false,
+      });
+      for (const key of ["amrProfile", "posthogKey", "posthogHost", "telemetryRelayUrl", "updateMetadataUrl", "velaWebUrl", "velaWebUrls"]) {
+        expect(packagedConfig).not.toHaveProperty(key);
+      }
+    } finally {
+      await rm(root, { force: true, recursive: true });
+    }
+  });
+
   it("omits the vela web origin when the build was given none", async () => {
     const root = await mkdtemp(join(tmpdir(), "open-design-tools-pack-mac-"));
     try {

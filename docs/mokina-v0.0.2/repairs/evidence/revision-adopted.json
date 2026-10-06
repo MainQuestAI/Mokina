@@ -1,0 +1,31 @@
+{
+  "sourceSHA": "6fe5d5346a0031a2459d04925a53be8e428f4ad9",
+  "appVersion": "0.0.2-local.3",
+  "budgetUnchanged": true,
+  "strategyMentionsRecheck": true,
+  "versions": [
+    {
+      "id": "987268c0-9140-47db-b667-2c89006a5ca1",
+      "version": 1,
+      "current": false
+    },
+    {
+      "id": "a1b87fb9-1a84-4002-a10b-335b114b94a3",
+      "version": 2,
+      "current": false
+    },
+    {
+      "id": "ee67b18e-01c9-4df4-85ce-d872d46416a3",
+      "version": 3,
+      "current": true
+    }
+  ],
+  "originalJobCleared": true,
+  "runs": [
+    {
+      "id": "de8d51cb-2e39-4651-9fee-bf6051905e75",
+      "status": "succeeded",
+      "clientRequestId": "2890a504-2faa-44f3-84cf-8d19bb6e0906"
+    }
+  ]
+}

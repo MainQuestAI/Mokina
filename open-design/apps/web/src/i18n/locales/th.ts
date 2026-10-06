@@ -898,6 +898,7 @@ export const th: Dict = {
   'home.createTimedOut': 'การเตรียมโปรเจกต์หมดเวลาก่อนจะเริ่มได้ โปรดส่งอีกครั้ง',
   'home.amrGateUnavailable': 'ไม่สามารถยืนยันยอดคงเหลือ OpenDesign Cloud ได้ โปรดส่งอีกครั้ง',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': 'อัปโหลด {count} ไฟล์ไม่สำเร็จ จึงไม่รวมในสแนปช็อตบริบท ไฟล์ถูกส่งกลับไปยังที่พักชั่วคราวของหน้าโฮมเพื่อลองใหม่',
   "entry.cloudCalloutBody": "ลงชื่อเข้าใช้เพื่อใช้ OpenDesign Cloud และทำงานร่วมกันบนคลาวด์",
   "entry.localAccountName": "โหมดโลคัล",
   "entry.cloudCalloutDismissAria": "ปิดข้อความ OpenDesign Cloud",

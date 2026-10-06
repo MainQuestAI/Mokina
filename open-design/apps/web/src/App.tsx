@@ -3373,6 +3373,10 @@ function AppInner() {
           current?.projectId === optimisticProjectId ? { ...current, created: true } : current,
         );
         let firstMessageAttachments: ChatAttachment[] = [];
+        // Names of staged files whose upload failed. Read again by the Mokina
+        // snapshot step below so a failed upload drops out of the freeze plan
+        // explicitly instead of making the daemon reject the whole snapshot.
+        let homeUploadFailedNames: Set<string> | null = null;
         if (!workingDirHandoffFailed && pendingFiles.length > 0) {
           // Home composer attaches stay client-side until submit lands a
           // project; the actual upload happens here. v2 doc wants one
@@ -3421,6 +3425,7 @@ function AppInner() {
             // already-mounted dock composer) can retry them instead of the
             // user re-picking every file.
             const failedNames = new Set(failedUploads.map((failure) => failure.name));
+            homeUploadFailedNames = failedNames;
             const failedFiles = pendingFiles.filter((file) => failedNames.has(file.name));
             if (failedFiles.length > 0) {
               stashHomeComposerAttachments(failedFiles);
@@ -3450,12 +3455,22 @@ function AppInner() {
           firstMessageAttachments.length > 0
         ) {
           try {
-            homeMokinaSnapshotId = await prepareHomeMokinaSnapshot({
+            const prepared = await prepareHomeMokinaSnapshot({
               projectId: result.project.id,
               plans: input.mokinaFilePlan,
               stagedFiles,
               workspaceContext: createWorkspaceContext,
+              failedUploadNames: homeUploadFailedNames,
             });
+            homeMokinaSnapshotId = prepared.snapshotId;
+            if (prepared.uploadFailedNames.length > 0) {
+              setRecoveryNotice({
+                message: t('home.mokinaSnapshotExcludedFailedUploads', {
+                  count: prepared.uploadFailedNames.length,
+                }),
+                tone: 'error',
+              });
+            }
           } catch (error) {
             console.warn(
               'Failed to freeze Home Mokina context snapshot; sending attachments without a snapshot',

@@ -18,27 +18,27 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
     // These entry buttons really live in the tab-row portal. Its whole host is
     // intentionally hidden behind the panel; only the in-panel controls can
     // provide an actionable switch with the production shell stylesheet.
-    await expect(page.locator('.ws-tabs-file-actions').getByRole('button', { name: '修订章节', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: '修订章节', exact: true }).click();
+    await expect(page.locator('.ws-tabs-file-actions').getByRole('button', { name: 'Revise section', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Revise section', exact: true }).click();
     const panel = page.locator('.artifact-version-panel');
     await expect(panel).toBeVisible();
     const originalPanel = await panel.elementHandle();
     expect(originalPanel).not.toBeNull();
-    const revision = panel.getByRole('button', { name: '修订章节', exact: true });
-    const continuation = panel.getByRole('button', { name: '继续制作', exact: true });
+    const revision = panel.getByRole('button', { name: 'Revise section', exact: true });
+    const continuation = panel.getByRole('button', { name: 'Continue', exact: true });
     await expect(revision).toBeVisible();
     await expect(continuation).toBeVisible();
-    await expect(panel.getByLabel('要修订的章节')).toBeFocused();
+    await expect(panel.getByLabel('Section to revise')).toBeFocused();
 
-    await panel.getByLabel('要修订的章节').selectOption('budget');
-    await panel.getByLabel('章节修改要求').fill('保留预算上限，补充渠道分配。');
+    await panel.getByLabel('Section to revise').selectOption('budget');
+    await panel.getByLabel('Section change request').fill('保留预算上限，补充渠道分配。');
     const selectedVersion = await panel.getByRole('listbox').getByRole('option', { selected: true }).textContent();
     await continuation.click();
     await expect(panel.getByRole('checkbox').first()).toBeFocused();
     await panel.getByRole('checkbox', { name: /strategy：/ }).check();
-    await panel.getByLabel('接续背景').fill('沿用已选择结论，制作门店传播内容。');
+    await panel.getByLabel('Continuation background').fill('沿用已选择结论，制作门店传播内容。');
     await revision.click();
-    await expect(panel.getByLabel('要修订的章节')).toBeFocused();
+    await expect(panel.getByLabel('Section to revise')).toBeFocused();
 
     // Keyboard activation must use the same mounted panel, too. Playwright's
     // normal press/click actionability is essential: synthetic click dispatch
@@ -46,13 +46,13 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
     await continuation.press('Enter');
     await expect(panel.getByRole('checkbox').first()).toBeFocused();
     await revision.press('Space');
-    await expect(panel.getByLabel('要修订的章节')).toBeFocused();
+    await expect(panel.getByLabel('Section to revise')).toBeFocused();
     expect(await originalPanel!.evaluate((element) => element === document.querySelector('.artifact-version-panel'))).toBe(true);
     await expect(panel.getByRole('listbox').getByRole('option', { selected: true })).toHaveText(selectedVersion!);
-    await expect(panel.getByLabel('要修订的章节')).toHaveValue('budget');
-    await expect(panel.getByLabel('章节修改要求')).toHaveValue('保留预算上限，补充渠道分配。');
+    await expect(panel.getByLabel('Section to revise')).toHaveValue('budget');
+    await expect(panel.getByLabel('Section change request')).toHaveValue('保留预算上限，补充渠道分配。');
     await expect(panel.getByRole('checkbox', { name: /strategy：/ })).toBeChecked();
-    await expect(panel.getByLabel('接续背景')).toHaveValue('沿用已选择结论，制作门店传播内容。');
+    await expect(panel.getByLabel('Continuation background')).toHaveValue('沿用已选择结论，制作门店传播内容。');
 
     await testInfo.attach('panel-with-preserved-drafts', {
       body: await page.screenshot(), contentType: 'image/png',
@@ -72,24 +72,24 @@ test('[P1] Mokina panel explains historical and chapterless action restrictions'
   const project = await seedWorkspace(page);
   const unexpectedWrites = await guardActionSideEffects(page);
   await openArtifact(page, project, 'plan.html');
-  await page.getByRole('button', { name: '继续制作', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
   const panel = page.locator('.artifact-version-panel');
   await panel.getByRole('listbox').getByRole('option').filter({ hasText: '第一稿' }).click();
   await expect(panel.getByRole('checkbox', { name: /strategy：第一稿/ })).toBeVisible();
-  await panel.getByRole('button', { name: '修订章节', exact: true }).click();
-  await expect(panel.getByText('章节修订仅支持当前稿；请先选择当前版本。')).toBeVisible();
-  await expect(panel.getByLabel('要修订的章节')).toHaveCount(0);
-  await panel.getByRole('button', { name: '继续制作', exact: true }).press('Enter');
+  await panel.getByRole('button', { name: 'Revise section', exact: true }).click();
+  await expect(panel.getByText('Section revision only supports the current draft; select the current version first.')).toBeVisible();
+  await expect(panel.getByLabel('Section to revise')).toHaveCount(0);
+  await panel.getByRole('button', { name: 'Continue', exact: true }).press('Enter');
   await expect(panel.getByRole('checkbox').first()).toBeFocused();
   await expect(panel.getByRole('listbox').getByRole('option', { selected: true })).toContainText('第一稿');
 
   await openArtifact(page, project, 'plain.html');
-  await page.getByRole('button', { name: '修订章节', exact: true }).click();
-  await expect(panel.getByText('此版本没有可选择的章节，暂时不能修订或接续。')).toBeVisible();
-  await panel.getByRole('button', { name: '继续制作', exact: true }).click();
-  await expect(panel.getByText('此版本没有可选择的章节，暂时不能修订或接续。')).toBeVisible();
-  await expect(panel.getByLabel('章节修改要求')).toHaveCount(0);
-  await expect(panel.getByLabel('接续背景')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Revise section', exact: true }).click();
+  await expect(panel.getByText('This version has no selectable sections, so it cannot be revised or continued yet.')).toBeVisible();
+  await panel.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect(panel.getByText('This version has no selectable sections, so it cannot be revised or continued yet.')).toBeVisible();
+  await expect(panel.getByLabel('Section change request')).toHaveCount(0);
+  await expect(panel.getByLabel('Continuation background')).toHaveCount(0);
   expect(unexpectedWrites).toEqual([]);
 });
 
@@ -98,11 +98,11 @@ test('[P1] Mokina continuation creates an editable fixed-excerpt draft without a
   const runPosts: string[] = [];
   page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/runs') runPosts.push(request.url()); });
   await openArtifact(page, source, 'plan.html');
-  await page.getByRole('button', { name: '继续制作', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
   const panel = page.locator('.artifact-version-panel');
   await panel.getByRole('checkbox', { name: /strategy：/ }).check();
-  await panel.getByLabel('接续背景').fill('只选策略，制作门店传播内容。');
-  await panel.getByRole('button', { name: 'Create continuation project（不发送）', exact: true }).click();
+  await panel.getByLabel('Continuation background').fill('只选策略，制作门店传播内容。');
+  await panel.getByRole('button', { name: 'Create continuation project (no send)', exact: true }).click();
   await expect(page).not.toHaveURL(new RegExp(source.projectId));
   const input = page.getByTestId('chat-composer-input');
   await expect(input).toContainText('【strategy】', { timeout: T.long });
@@ -151,7 +151,7 @@ async function seedVersion(page: Page, projectId: string, name: string, label: s
 async function openArtifact(page: Page, project: { projectId: string; conversationId: string }, file: string) {
   await page.goto(`/projects/${project.projectId}/conversations/${project.conversationId}/files/${file}`, { waitUntil: 'domcontentloaded' });
   await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long });
-  await expect(page.getByRole('button', { name: '修订章节', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Revise section', exact: true })).toBeEnabled();
 }
 
 async function guardActionSideEffects(page: Page) {

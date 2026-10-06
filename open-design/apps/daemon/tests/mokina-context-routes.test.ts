@@ -1,4 +1,5 @@
 import type http from 'node:http';
+import { createHash } from 'node:crypto';
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -126,6 +127,31 @@ describe('mokina context snapshot routes', () => {
     });
     expect(result.status).toBe(409);
     expect(result.body?.error?.code).toBe('MOKINA_SOURCE_CHANGED');
+  });
+
+  it('freezes a brand source through the detail-route read path (server wiring)', async () => {
+    // N04 review: the snapshot route must resolve brand bytes via the same
+    // read path as GET /api/design-systems/:id. Freezing a built-in brand
+    // end-to-end proves the injected services are wired in server.ts.
+    const projectId = await createProject();
+    const detail = await fetch(`${baseUrl}/api/design-systems/default`);
+    expect(detail.status).toBe(200);
+    const detailBody = await detail.json() as { body: string };
+    const digest = createHash('sha256').update(detailBody.body, 'utf8').digest('hex');
+    const result = await prepareSnapshot(projectId, {
+      snapshotId: randomUUID(),
+      selections: [{
+        itemId: 'B1',
+        mode: 'groups',
+        textKind: 'brand-rule',
+        sourceRef: { kind: 'design-system', designSystemId: 'default' },
+        expectedSourceDigest: digest,
+      }],
+      excluded: [],
+    });
+    expect(result.status).toBe(201);
+    expect(result.body.snapshot.items[0].kind).toBe('brand-rule');
+    expect(result.body.snapshot.items[0].sourceRef).toEqual({ kind: 'design-system', designSystemId: 'default' });
   });
 
   it('publishes a missing snapshot as 404 and enforces the excerpt budget', async () => {

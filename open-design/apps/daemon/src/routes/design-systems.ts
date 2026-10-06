@@ -195,6 +195,15 @@ export interface DesignSystemRouteServices {
     id: string,
     options?: { beforeDelete?: () => Promise<boolean> },
   ) => Promise<boolean>;
+  /**
+   * N04 review: Mokina 快照冻结品牌字节时走与 GET /api/design-systems/:id
+   * 完全相同的读路径——存储解析（含 team-scoped 根与 exactTeam）+ 镜像优先，
+   * 避免「详情能读、冻结报 missing/SOURCE_CHANGED」的双链分叉。
+   */
+  readDesignSystemForFreeze: (
+    req: any,
+    id: string,
+  ) => Promise<{ body: string; displayName: string } | null>;
 }
 
 export function registerDesignSystemRoutes(
@@ -373,6 +382,32 @@ export function registerDesignSystemRoutes(
         : ctx.verifyWorkspaceRequestAuthority,
       { allowNavigationQuery },
     );
+  }
+
+  // N04 review: 与下方 GET /api/design-systems/:id 详情路由同一条读路径
+  // （存储解析含 team-scoped 根与 exactTeam、镜像优先、summary 缺失即不可见），
+  // 供 Mokina 快照冻结品牌字节使用——两条调用链共享此函数，不会再各自回退。
+  async function readDesignSystemForFreeze(
+    req: any,
+    id: string,
+  ): Promise<{ body: string; displayName: string } | null> {
+    const workspaceId = headerValue(req, 'x-od-workspace-id');
+    const workspaceMemberId = headerValue(req, 'x-od-workspace-member-id');
+    const storage = resolveDesignSystemStorage(req, id);
+    const systems = await listAllDesignSystems({
+      workspaceId,
+      workspaceMemberId,
+      exactTeam: storage.exactTeam,
+    });
+    const summary = systems.find((entry) => entry.id === id);
+    const mirror = await readDesignSystemWorkspaceTextFile(db, summary, 'DESIGN.md');
+    const body = mirror ?? await readAvailableDesignSystem(id, {
+      workspaceId,
+      workspaceMemberId,
+      exactTeam: storage.exactTeam,
+    });
+    if (body === null || !summary) return null;
+    return { body, displayName: summary.title ?? id };
   }
 
   async function authorizeDesignSystemMutation(
@@ -1046,7 +1081,7 @@ export function registerDesignSystemRoutes(
     }
   });
 
-  return { authorizeDesignSystemRead, deleteDesignSystemForRequest };
+  return { authorizeDesignSystemRead, deleteDesignSystemForRequest, readDesignSystemForFreeze };
 }
 
 export function rewriteDesignSystemShowcaseAssetUrls(

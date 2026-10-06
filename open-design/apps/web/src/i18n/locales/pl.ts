@@ -898,6 +898,7 @@ export const pl: Dict = {
   'home.createTimedOut': 'Przygotowanie projektu przekroczyło limit czasu i nie zostało rozpoczęte. Wyślij ponownie.',
   'home.amrGateUnavailable': 'Nie udało się potwierdzić salda OpenDesign Cloud. Spróbuj wysłać ponownie.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': 'Nie udało się przesłać plików: {count} — pominięto je w migawce kontekstu. Wróciły do schowka na stronie głównej, można spróbować ponownie.',
   "entry.cloudCalloutBody": "Zaloguj się, aby korzystać z OpenDesign Cloud i współpracować w chmurze",
   "entry.localAccountName": "Tryb lokalny",
   "entry.cloudCalloutDismissAria": "Zamknij powiadomienie OpenDesign Cloud",

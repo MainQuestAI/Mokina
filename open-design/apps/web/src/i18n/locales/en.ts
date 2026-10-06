@@ -898,6 +898,7 @@ export const en: Dict = {
   'home.createTimedOut': 'Project setup timed out before it could start. Try sending again.',
   'home.amrGateUnavailable': 'Couldn\'t confirm your OpenDesign Cloud balance. Try sending again.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count} file(s) failed to upload and were left out of the context snapshot. They are back in the Home stash so you can retry.',
   "entry.cloudCalloutBody": "Sign in to use OpenDesign Cloud and collaborate in the cloud",
   "entry.localAccountName": "Local mode",
   "entry.cloudCalloutDismissAria": "Dismiss OpenDesign Cloud note",

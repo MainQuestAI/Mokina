@@ -898,6 +898,7 @@ export const ar: Dict = {
   'home.createTimedOut': 'انتهت مهلة تجهيز المشروع قبل أن يبدأ. حاول الإرسال مرة أخرى.',
   'home.amrGateUnavailable': 'تعذّر تأكيد رصيد OpenDesign Cloud. حاول الإرسال مرة أخرى.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': 'تعذّر رفع {count} من الملفات فاستُبعدت من لقطة السياق. أُعيدت إلى مسودة الصفحة الرئيسية لإعادة المحاولة.',
   "entry.cloudCalloutBody": "سجّل الدخول لاستخدام OpenDesign Cloud والتعاون عبر السحابة",
   "entry.localAccountName": "الوضع المحلي",
   "entry.cloudCalloutDismissAria": "إغلاق ملاحظة OpenDesign Cloud",

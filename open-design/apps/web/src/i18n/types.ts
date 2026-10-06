@@ -1258,6 +1258,8 @@ export interface Dict {
   'home.createTimedOut': string;
   'home.amrGateUnavailable': string;
   'home.bundledScenarioMissing': string;
+  /** Toast when failed Home uploads drop files out of the Mokina context snapshot. */
+  'home.mokinaSnapshotExcludedFailedUploads': string;
   'entry.cloudCalloutBody': string;
   /** Name of the identity row on the local (signed-out) account dock. */
   'entry.localAccountName': string;

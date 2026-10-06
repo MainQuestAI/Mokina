@@ -898,6 +898,7 @@ export const hu: Dict = {
   'home.createTimedOut': 'A projekt előkészítése túllépte az időkorlátot, és nem indult el. Küldd el újra.',
   'home.amrGateUnavailable': 'Nem sikerült megerősíteni az OpenDesign Cloud egyenleget. Próbáld újra elküldeni.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count} fájl feltöltése nem sikerült, ezért kimaradt a kontextus-pillanatfelvételből. Visszakerültek a kezdőlap várakozójába, újrapróbálhatók.',
   "entry.cloudCalloutBody": "Jelentkezzen be az OpenDesign Cloud használatához és a felhőalapú együttműködéshez",
   "entry.localAccountName": "Helyi mód",
   "entry.cloudCalloutDismissAria": "OpenDesign Cloud értesítés bezárása",

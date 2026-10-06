@@ -898,6 +898,7 @@ export const ptBR: Dict = {
   'home.createTimedOut': 'A preparação do projeto expirou antes de começar. Tente enviar novamente.',
   'home.amrGateUnavailable': 'Não foi possível confirmar seu saldo do OpenDesign Cloud. Tente enviar novamente.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': 'Falha ao enviar {count} arquivo(s); eles ficaram de fora do snapshot de contexto. Voltaram para a bandeja da Home para uma nova tentativa.',
   "entry.cloudCalloutBody": "Entre para usar o OpenDesign Cloud e colaborar na nuvem",
   "entry.localAccountName": "Modo local",
   "entry.cloudCalloutDismissAria": "Dispensar o aviso do OpenDesign Cloud",

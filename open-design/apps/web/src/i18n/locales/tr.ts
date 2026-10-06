@@ -898,6 +898,7 @@ export const tr: Dict = {
   'home.createTimedOut': 'Proje hazırlığı zaman aşımına uğradı ve başlatılamadı. Lütfen yeniden gönderin.',
   'home.amrGateUnavailable': 'OpenDesign Cloud bakiyeniz doğrulanamadı. Tekrar göndermeyi deneyin.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count} dosya yüklenemedi ve bağlam anlık görüntüsüne dahil edilmedi. Yeniden denemeniz için Ana Sayfa taslağına geri konuldu.',
   "entry.cloudCalloutBody": "OpenDesign Cloud'u kullanmak ve bulutta iş birliği yapmak için oturum açın",
   "entry.localAccountName": "Yerel mod",
   "entry.cloudCalloutDismissAria": "OpenDesign Cloud notunu kapat",

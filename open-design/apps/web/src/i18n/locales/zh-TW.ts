@@ -905,6 +905,7 @@ export const zhTW: Dict = {
   'home.createTimedOut': '專案準備逾時，任務尚未開始。請重新傳送。',
   'home.amrGateUnavailable': '暫時無法確認 OpenDesign Cloud 額度，請重新傳送。',
   'home.bundledScenarioMissing': '內建場景「{scenarioId}」未安裝。請重新安裝 OpenDesign，以還原預設外掛。',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count} 個檔案上傳失敗，未納入本次脈絡快照；已退回首頁暫存，可重新上傳。',
   "entry.cloudCalloutBody": "登入即可享受雲端協作",
   "entry.localAccountName": "本機模式",
   "entry.cloudCalloutDismissAria": "關閉 OpenDesign Cloud 版說明",

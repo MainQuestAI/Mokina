@@ -2451,21 +2451,21 @@ test('[P1] Mokina RR3 real daemon refusal survives reload and explicit exit perm
   });
   await page.getByRole('button', { name: 'Versions' }).click();
   let dialog = page.getByRole('dialog', { name: 'Versions' });
-  await dialog.getByRole('button', { name: '修订章节' }).click();
-  await dialog.getByRole('combobox', { name: '要修订的章节' }).selectOption('strategy');
-  await dialog.getByRole('textbox', { name: '章节修改要求' }).fill('拒绝后保留这一条要求');
-  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
-  await expect(dialog.getByRole('button', { name: '结束本次未受理修订' })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Revise section' }).click();
+  await dialog.getByRole('combobox', { name: 'Section to revise' }).selectOption('strategy');
+  await dialog.getByRole('textbox', { name: 'Section change request' }).fill('拒绝后保留这一条要求');
+  await dialog.getByRole('button', { name: 'Generate candidate (current draft unchanged)' }).click();
+  await expect(dialog.getByRole('button', { name: 'End this unaccepted revision' })).toBeVisible();
   expect((await (await page.request.get(`/api/runs?projectId=${childProjectId}`)).json()).runs).toHaveLength(0);
   await page.reload({ waitUntil: 'domcontentloaded' }); await waitForLoadingToClear(page);
   await page.getByRole('button', { name: 'Versions' }).click(); dialog = page.getByRole('dialog', { name: 'Versions' });
-  await dialog.getByRole('button', { name: '修订章节' }).click();
-  await expect(dialog.getByRole('textbox', { name: '章节修改要求' })).toHaveValue('拒绝后保留这一条要求');
+  await dialog.getByRole('button', { name: 'Revise section' }).click();
+  await expect(dialog.getByRole('textbox', { name: 'Section change request' })).toHaveValue('拒绝后保留这一条要求');
   expect(posts).toBe(1);
-  await dialog.getByRole('button', { name: '结束本次未受理修订' }).click();
-  await expect(dialog.getByRole('button', { name: '生成候选（不改当前稿）' })).toBeEnabled();
+  await dialog.getByRole('button', { name: 'End this unaccepted revision' }).click();
+  await expect(dialog.getByRole('button', { name: 'Generate candidate (current draft unchanged)' })).toBeEnabled();
   await page.unroute('**/api/runs');
-  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+  await dialog.getByRole('button', { name: 'Generate candidate (current draft unchanged)' }).click();
   const key = `mokina:revision:${projectId}:plan.html`;
   await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.runId, key), { timeout: T.long }).toBeTruthy();
   const next = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), key);
@@ -2511,10 +2511,10 @@ test('[P1] Mokina revision lost POST response recovers the same run and adopts i
   await versionsButton.click();
   const dialog = page.getByRole('dialog', { name: 'Versions' });
   await expect(dialog).toBeVisible({ timeout: T.long });
-  await dialog.getByRole('button', { name: '修订章节' }).click();
-  await dialog.getByRole('combobox', { name: '要修订的章节' }).selectOption('strategy');
-  await dialog.getByRole('textbox', { name: '章节修改要求' }).fill('把渠道改为社群为主');
-  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+  await dialog.getByRole('button', { name: 'Revise section' }).click();
+  await dialog.getByRole('combobox', { name: 'Section to revise' }).selectOption('strategy');
+  await dialog.getByRole('textbox', { name: 'Section change request' }).fill('把渠道改为社群为主');
+  await dialog.getByRole('button', { name: 'Generate candidate (current draft unchanged)' }).click();
 
   await expect.poll(() => postCount, { timeout: T.long }).toBe(1);
   // T11: the POST carries a stable client identity minted before any side effect.
@@ -2555,8 +2555,8 @@ test('[P1] Mokina revision lost POST response recovers the same run and adopts i
   // Recover the original artifact's job, collect a valid replacement and adopt it explicitly.
   await page.getByRole('button', { name: 'Versions' }).click();
   const recoveredDialog = page.getByRole('dialog', { name: 'Versions' });
-  await recoveredDialog.getByRole('button', { name: '修订章节' }).click();
-  await expect(recoveredDialog.getByRole('button', { name: /恢复上次修订候选|保存已完成运行的候选/ })).toBeVisible();
+  await recoveredDialog.getByRole('button', { name: 'Revise section' }).click();
+  await expect(recoveredDialog.getByRole('button', { name: /Resume last revision candidate|Save candidate from finished run/ })).toBeVisible();
   const job = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), `mokina:revision:${projectId}:plan.html`);
   expect(job.runId).toBe(revisionRunId);
   await expect.poll(async () => {
@@ -2571,9 +2571,9 @@ test('[P1] Mokina revision lost POST response recovers the same run and adopts i
   await page.waitForTimeout(1000);
   if (!await recoveredDialog.isVisible()) {
     await page.getByRole('button', { name: 'Versions' }).click();
-    await recoveredDialog.getByRole('button', { name: '修订章节' }).click();
+    await recoveredDialog.getByRole('button', { name: 'Revise section' }).click();
   }
-  await recoveredDialog.getByRole('button', { name: /恢复上次修订候选|保存已完成运行的候选/ }).click();
+  await recoveredDialog.getByRole('button', { name: /Resume last revision candidate|Save candidate from finished run/ }).click();
   let candidate: { id: string; candidate: boolean } | undefined;
   await expect.poll(async () => {
     const response = await page.request.get(`/api/projects/${projectId}/files/plan.html/versions`);
@@ -2583,9 +2583,9 @@ test('[P1] Mokina revision lost POST response recovers the same run and adopts i
   }, { timeout: T.long }).toBeTruthy();
   expect(postCount).toBe(1);
   expect(candidate).toBeTruthy();
-  await expect(recoveredDialog.getByRole('button', { name: '采用候选', exact: true })).toBeVisible();
-  await recoveredDialog.getByRole('button', { name: '采用候选', exact: true }).click();
-  await page.locator('.file-version-restore-confirm').getByRole('button', { name: '采用候选', exact: true }).click();
+  await expect(recoveredDialog.getByRole('button', { name: 'Adopt candidate', exact: true })).toBeVisible();
+  await recoveredDialog.getByRole('button', { name: 'Adopt candidate', exact: true }).click();
+  await page.locator('.file-version-restore-confirm').getByRole('button', { name: 'Adopt candidate', exact: true }).click();
   await expect.poll(async () => {
     const response = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
     return (await response.text()).includes('新策略：社群为主');

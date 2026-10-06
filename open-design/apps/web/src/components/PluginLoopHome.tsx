@@ -25,6 +25,7 @@ import { Icon } from './Icon';
 import { PluginDetailsModal } from './PluginDetailsModal';
 import { TrustBadge } from './TrustBadge';
 import { authorInitials, derivePluginSourceLinks } from '../runtime/plugin-source';
+import type { HomeMokinaFilePlan } from '../runtime/mokina/home-material-snapshot';
 import { useAnalytics } from '../analytics/provider';
 import { trackPluginLoopClick } from '../analytics/events';
 import { navigate } from '../router';
@@ -81,6 +82,10 @@ export interface PluginLoopSubmit {
   // Files staged on Home before the project exists. App uploads them
   // into the created project's Design Files before the first auto-send.
   attachments?: File[];
+  // N02: files the user marked as Mokina 资料/素材 on Home. App freezes
+  // them into the same context snapshot the in-project panel uses before
+  // the first auto-send, so Home never grows a second storage/send path.
+  mokinaFilePlan?: HomeMokinaFilePlan[] | null;
   examplePromptContext?: { title: string; artifactType: string; brief: Record<string, string> };
 }
 

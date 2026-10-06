@@ -107,6 +107,7 @@ import {
   type HomeHeroSubChip,
 } from './home-hero/sub-chips';
 import { homeHeroChipLabel } from './home-hero/chip-labels';
+import type { HomeMokinaFilePlan } from '../runtime/mokina/home-material-snapshot';
 import type { PlaceholderScenario } from './home-hero/placeholderScenarios';
 import { consumePendingHomeChip, hasPendingHomeChip, HOME_CHIP_INTENT_EVENT } from '../runtime/home-intent';
 import { navigate } from '../router';
@@ -641,6 +642,12 @@ export function HomeView({
   const [stagedFiles, setStagedFiles] = useState<File[]>(() =>
     ownsComposerDraft ? peekHomeComposerAttachments() : [],
   );
+  // N02: per-staged-file Mokina plan (index-parallel with stagedFiles). Null
+  // entries are plain attachments; marking a file 资料/素材 freezes it into
+  // the shared context snapshot after create, exactly like the in-project
+  // panel. Kept in component state like stagedFiles (File handles cannot be
+  // serialized into the persisted prompt draft).
+  const [mokinaFilePlans, setMokinaFilePlans] = useState<Array<HomeMokinaFilePlan | null>>([]);
   useEffect(() => {
     if (ownsComposerDraft) clearHomeComposerAttachments();
   }, [ownsComposerDraft]);
@@ -2143,6 +2150,16 @@ export function HomeView({
 
   function removeStagedFile(index: number) {
     setStagedFiles((current) => current.filter((_, i) => i !== index));
+    setMokinaFilePlans((current) => current.filter((_, i) => i !== index));
+  }
+
+  function setMokinaFilePlan(index: number, plan: HomeMokinaFilePlan | null) {
+    setMokinaFilePlans((current) => {
+      const next = current.slice(0, stagedFiles.length);
+      while (next.length < stagedFiles.length) next.push(null);
+      next[index] = plan;
+      return next;
+    });
   }
 
   function addWorkspaceContext(item: WorkspaceContextItem) {
@@ -3025,6 +3042,9 @@ export function HomeView({
           ? { initialRunContext: { workspaceItems: contextWorkspaceItems } }
           : {}),
         attachments: stagedFiles,
+        ...(mokinaFilePlans.some((plan) => plan != null)
+          ? { mokinaFilePlan: mokinaFilePlans.filter((plan) => plan != null) }
+          : {}),
         ...(workingDir ? { workingDir } : {}),
         ...(workingDirToken ? { workingDirToken } : {}),
         ...(contextLinkedDirs.length > 0 ? { linkedDirs: contextLinkedDirs } : {}),
@@ -3199,6 +3219,8 @@ export function HomeView({
         stagedFiles={stagedFiles}
         onAddFiles={stageFiles}
         onRemoveFile={removeStagedFile}
+        mokinaFilePlans={mokinaFilePlans}
+        onMokinaFilePlanChange={setMokinaFilePlan}
         onImportFigma={() => setFigmaModalOpen(true)}
         pluginOptions={plugins}
         pluginsLoading={

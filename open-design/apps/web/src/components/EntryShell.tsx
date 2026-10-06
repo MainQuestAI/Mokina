@@ -197,6 +197,7 @@ import { NewProjectModal } from './NewProjectModal';
 import { ExtensionsMarketplace } from './PluginsView';
 import type { CreateInput, CreateTab, ImportClaudeDesignOutcome } from './NewProjectPanel';
 import type { PluginLoopSubmit } from './PluginLoopHome';
+import type { HomeMokinaFilePlan } from '../runtime/mokina/home-material-snapshot';
 import {
   duplicatePluginAsProject,
   patchProject,
@@ -358,6 +359,8 @@ type EntryCreateProjectInput = Omit<CreateInput, 'metadata'> & {
   optimisticProjectId?: string;
   requestId?: string;
   pendingFiles?: File[];
+  /** N02: Home-staged files marked as Mokina 资料/素材 (see PluginLoopSubmit). */
+  mokinaFilePlan?: HomeMokinaFilePlan[] | null;
   userWorkingDirToken?: string;
   linkedDirs?: string[] | null;
   onboardingEntry?: OnboardingEntry;
@@ -1698,6 +1701,9 @@ export function EntryShell({
       ...(payload.conversationMode ? { conversationMode: payload.conversationMode } : {}),
       ...(payload.attachments && payload.attachments.length > 0
         ? { pendingFiles: payload.attachments }
+        : {}),
+      ...(payload.mokinaFilePlan && payload.mokinaFilePlan.length > 0
+        ? { mokinaFilePlan: payload.mokinaFilePlan }
         : {}),
       // No `userWorkingDirToken`: linkedDirs grant read-only `--add-dir`
       // access and are validated by the daemon at create time, so they do

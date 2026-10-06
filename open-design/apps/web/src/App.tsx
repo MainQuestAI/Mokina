@@ -73,6 +73,8 @@ import { TooltipLayer } from './components/TooltipLayer';
 import { UpdateDialog } from './components/UpdateDialog';
 import { UpdaterPopup } from './components/UpdaterPopup';
 import { MOKINA_LOCAL_EDITION } from './mokina-edition';
+import { prepareHomeMokinaSnapshot } from './runtime/mokina/home-material-snapshot';
+import type { HomeMokinaFilePlan } from './runtime/mokina/home-material-snapshot';
 import {
   openWorkspaceTab,
   removeWorkspaceProjectTabs,
@@ -304,6 +306,8 @@ type AppCreateProjectInput = Omit<CreateInput, 'metadata'> & {
   optimisticProjectId?: string;
   requestId?: string;
   pendingFiles?: File[];
+  /** N02: Home-staged files marked as Mokina 资料/素材. */
+  mokinaFilePlan?: HomeMokinaFilePlan[] | null;
   userWorkingDirToken?: string;
   linkedDirs?: string[] | null;
   onboardingEntry?: OnboardingEntry;
@@ -3411,6 +3415,16 @@ function AppInner() {
           const partial = failedUploads.length > 0;
           if (partial) {
             console.warn('Some Home attachments failed to upload', failedUploads);
+            // N02: a create that landed must not strand the files that failed
+            // to upload. Hand them back through the same composer stash the
+            // create-failure rollback uses, so the next Home visit (or an
+            // already-mounted dock composer) can retry them instead of the
+            // user re-picking every file.
+            const failedNames = new Set(failedUploads.map((failure) => failure.name));
+            const failedFiles = pendingFiles.filter((file) => failedNames.has(file.name));
+            if (failedFiles.length > 0) {
+              stashHomeComposerAttachments(failedFiles);
+            }
           }
           trackFileUploadResult(analytics.track, {
             page_name: 'home',
@@ -3422,6 +3436,32 @@ function AppInner() {
               ? { error_code: firstUploadError }
               : {}),
           });
+        }
+        // N02: files the user marked as Mokina 资料/素材 on Home freeze into
+        // the SAME context snapshot pipeline the in-project panel uses, before
+        // the auto-send hand-off below records its run context. A failure here
+        // never blocks the send — the run proceeds with plain attachments and
+        // the user can still freeze a curated selection inside the project.
+        let homeMokinaSnapshotId: string | null = null;
+        if (
+          MOKINA_LOCAL_EDITION &&
+          !workingDirHandoffFailed &&
+          input.mokinaFilePlan?.length &&
+          firstMessageAttachments.length > 0
+        ) {
+          try {
+            homeMokinaSnapshotId = await prepareHomeMokinaSnapshot({
+              projectId: result.project.id,
+              plans: input.mokinaFilePlan,
+              stagedFiles,
+              workspaceContext: createWorkspaceContext,
+            });
+          } catch (error) {
+            console.warn(
+              'Failed to freeze Home Mokina context snapshot; sending attachments without a snapshot',
+              error,
+            );
+          }
         }
         trackProjectCreateResult(
           analytics.track,
@@ -3486,10 +3526,14 @@ function AppInner() {
                 `od:auto-send-attachments:${result.project.id}`,
               );
             }
-            if (input.initialRunContext && Object.keys(input.initialRunContext).length > 0) {
+            const autoSendContext = {
+              ...(input.initialRunContext ?? {}),
+              ...(homeMokinaSnapshotId ? { mokinaSnapshotId: homeMokinaSnapshotId } : {}),
+            };
+            if (Object.keys(autoSendContext).length > 0) {
               window.sessionStorage.setItem(
                 `od:auto-send-context:${result.project.id}`,
-                JSON.stringify(input.initialRunContext),
+                JSON.stringify(autoSendContext),
               );
             } else {
               window.sessionStorage.removeItem(

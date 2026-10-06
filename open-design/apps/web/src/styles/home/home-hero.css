@@ -920,6 +920,26 @@
      edge. */
   min-height: var(--home-hero-chip-height);
 }
+/* N02: Mokina 用途/素材角色 controls riding a staged-file chip (Mokina local
+   edition only). Stacked in a compact column so the chip stays a single band
+   row; native controls inherit the chip ink so no new palette is introduced. */
+.home-hero__mokina-plan {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+.home-hero__mokina-plan select,
+.home-hero__mokina-plan input {
+  font-size: 11px;
+  line-height: 1.2;
+  max-width: 96px;
+  padding: 1px 4px;
+  border-radius: var(--radius-small, 4px);
+  border: var(--stroke-thin) solid var(--border-soft);
+  background: var(--bg-canvas, var(--chip-fill));
+  color: var(--text);
+}
 .home-hero__active-chip--image-file {
   gap: var(--spacing-6);
   min-height: 44px;

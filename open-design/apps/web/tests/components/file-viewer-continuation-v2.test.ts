@@ -70,4 +70,23 @@ describe('continuation v2 payload and creation journal', () => {
     });
     expect(payload.productionIntent).toBe('landing-page');
   });
-});
+
+  it('carries an optional contextSnapshotId only when a snapshot was frozen (N05)', async () => {
+    const { buildMokinaContinuationV2, readMokinaContinuationJournal } = await import('../../src/components/FileViewer');
+    const base = {
+      projectId: 'p1', fileName: 'plan.html', versionId: 'v3', versionState: 'current' as const,
+      operationId: 'op-1', targetProjectId: 't-1',
+      sections: [{ id: 'sec-1', text: '结论' }],
+      background: '', productionIntent: 'landing-page' as const,
+    };
+    const without = buildMokinaContinuationV2(base);
+    expect(without.contextSnapshotId).toBeUndefined();
+    const withSnap = buildMokinaContinuationV2({ ...base, contextSnapshotId: 'snap-9' });
+    expect(withSnap.contextSnapshotId).toBe('snap-9');
+    const journal = readMokinaContinuationJournal(JSON.stringify({
+      schemaVersion: 2, operationId: 'op-1', targetProjectId: 't-1',
+      contextSnapshotId: 'snap-9', checkpoint: 'project-created', updatedAt: 'now',
+    }));
+    expect(journal?.contextSnapshotId).toBe('snap-9');
+  });
+});;

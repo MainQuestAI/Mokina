@@ -234,7 +234,7 @@ export function useMokinaProjectSummary(id: string | null | undefined, options?:
   return id ? map.get(id) : undefined;
 }
 export type MokinaArtifactLineState = 'loading' | 'failed' | 'unauthorized' | 'empty' | 'artifacts' | 'truncated';
-type SummaryKey = 'mokina.entrySummary.loading' | 'mokina.entrySummary.failed' | 'mokina.entrySummary.unauthorized' | 'mokina.entrySummary.empty' | 'mokina.entrySummary.legacy' | 'mokina.entrySummary.incomplete' | 'mokina.entrySummary.htmlCount';
+type SummaryKey = 'mokina.entrySummary.loading' | 'mokina.entrySummary.failed' | 'mokina.entrySummary.unauthorized' | 'mokina.entrySummary.empty' | 'mokina.entrySummary.legacy' | 'mokina.entrySummary.incomplete' | 'mokina.entrySummary.htmlCount' | 'mokina.entrySummary.candidates';
 type TranslateFn = (key: SummaryKey, vars?: Record<string, string | number>) => string;
 export function mokinaArtifactLineFromRecord(record: MokinaEntrySummaryRecord | undefined, translate: TranslateFn): { text: string; state: MokinaArtifactLineState } | null {
   if (!record) return null;
@@ -247,8 +247,9 @@ export function mokinaArtifactLineFromRecord(record: MokinaEntrySummaryRecord | 
   if (record.status === 'unauthorized') return { text: translate('mokina.entrySummary.unauthorized'), state: 'unauthorized' };
   if (record.status === 'loading' || !record.summary) return { text: translate('mokina.entrySummary.loading'), state: 'loading' };
   const { summary } = record;
-  if (summary.state === 'empty' || !summary.primary) return { text: summary.legacy ? `${summary.legacy.entry} · ${translate('mokina.entrySummary.legacy')}` : translate('mokina.entrySummary.empty'), state: 'empty' };
+  const candidateSuffix = summary.candidateCount > 0 ? ` ${translate('mokina.entrySummary.candidates', { count: summary.candidateCount })}` : '';
+  if (summary.state === 'empty' || !summary.primary) return { text: (summary.legacy ? `${summary.legacy.entry} · ${translate('mokina.entrySummary.legacy')}` : translate('mokina.entrySummary.empty')) + candidateSuffix, state: 'empty' };
   const primary = summary.primary;
   const line = `${primary.entry} · v${primary.versionNumber}`;
-  return { text: `${record.refreshing ? translate('mokina.entrySummary.loading') + ' · ' : ''}${line}${summary.formalCount > 1 ? ` +${summary.formalCount - 1}` : ''}`, state: 'artifacts' };
+  return { text: `${record.refreshing ? translate('mokina.entrySummary.loading') + ' · ' : ''}${line}${summary.formalCount > 1 ? ` +${summary.formalCount - 1}` : ''}${candidateSuffix}`, state: 'artifacts' };
 }

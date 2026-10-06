@@ -2688,7 +2688,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
       if (typeof rawKey !== "string") return { ok: false, reason: "invalid-key" };
       const result = await mokinaRecoveryStore.get(rawKey);
       if (!result.ok) return { ok: false, reason: result.reason };
-      if (!result.result.found) return { ok: true, found: false };
+      if (!result.result.found) return { ok: true, ...result.result };
       return { ok: true, found: true, record: result.result.record };
     },
   );

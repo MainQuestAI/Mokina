@@ -205,7 +205,7 @@ import {
 } from './runtime/amr-auth-retry-continuation';
 import { installFontRecovery } from './runtime/font-recovery';
 import { prepareMokinaImport, persistMokinaImport } from './runtime/mokina/recovery-import-journal';
-import { isDurableRecoveryAvailable, hydrateDurableRecoveryIntoLocalStorage } from './runtime/persistence/mokina-recovery-store';
+import { isDurableRecoveryAvailable, hydrateDurableRecoveryIntoLocalStorage, LegacyRecoveryConfirmationRequired, resolveLegacyRecoveryRecords } from './runtime/persistence/mokina-recovery-store';
 import {
   exportProjectRecoveryZip,
   importProjectRecoveryZip,
@@ -929,14 +929,27 @@ export async function hydrateReadyTeamProject(
 export function App() {
   const [recoveryReady, setRecoveryReady] = useState(() => !isDurableRecoveryAvailable());
   const [recoveryError, setRecoveryError] = useState<string | null>(null);
+  const [legacyConfirmation, setLegacyConfirmation] = useState(false);
+  const failed = useCallback((error: unknown) => {
+    setLegacyConfirmation(error instanceof LegacyRecoveryConfirmationRequired);
+    setRecoveryError(error instanceof Error ? error.message : '恢复失败');
+  }, []);
   const restore = useCallback(() => {
     setRecoveryError(null);
+    setLegacyConfirmation(false);
     void hydrateDurableRecoveryIntoLocalStorage().then(() => setRecoveryReady(true))
-      .catch(error => setRecoveryError(error instanceof Error ? error.message : '恢复失败'));
-  }, []);
+      .catch(failed);
+  }, [failed]);
+  const resolveLegacy = (choice: 'restore' | 'keep-backup') => {
+    setRecoveryError(null);
+    setLegacyConfirmation(false);
+    void resolveLegacyRecoveryRecords(choice).then(() => setRecoveryReady(true)).catch(failed);
+  };
   useEffect(restore, [restore]);
   if (!recoveryReady) return <div role="status">{recoveryError ?? '正在恢复本地工作…'}
-    {recoveryError ? <button onClick={restore}>重试恢复</button> : null}</div>;
+    {legacyConfirmation ? <><button onClick={() => resolveLegacy('restore')}>恢复这些旧记录</button>
+      <button onClick={() => resolveLegacy('keep-backup')}>保留备份并继续</button></> : null}
+    {recoveryError && !legacyConfirmation ? <button onClick={restore}>重试恢复</button> : null}</div>;
 
   // `reducedMotion="user"` makes every motion/react component honor the OS
   // `prefers-reduced-motion` setting: transform/layout animations are zeroed

@@ -1,0 +1,56 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web
+
+ ❯ tests/runtime/mokina-recovery-store.test.ts (13 tests | 2 failed) 14ms
+     × RR4 returning to origin A does not remigrate its stale cache after origin B deleted the durable binding 2ms
+     × RR4 deletion committed before local cache cleanup still wins at restart 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/runtime/mokina-recovery-store.test.ts > mokina durable recovery facade (web) > RR4 returning to origin A does not remigrate its stale cache after origin B deleted the durable binding
+AssertionError: expected 'frozen A' to be null
+
+- Expected:
+null
+
++ Received:
+"frozen A"
+
+ ❯ tests/runtime/mokina-recovery-store.test.ts:226:39
+    224|     resetDurableRecoveryForTests(); localStorage.setItem(key, originA);
+    225|     await hydrateDurableRecoveryIntoLocalStorage();
+    226|     expect(localStorage.getItem(key)).toBeNull(); expect(store.records…
+       |                                       ^
+    227|   });
+    228|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/runtime/mokina-recovery-store.test.ts > mokina durable recovery facade (web) > RR4 deletion committed before local cache cleanup still wins at restart
+AssertionError: expected 'old intent' to be null
+
+- Expected:
+null
+
++ Received:
+"old intent"
+
+ ❯ tests/runtime/mokina-recovery-store.test.ts:234:39
+    232|     store.get.mockImplementation(async () => ({ ok: true as const, fou…
+    233|     await hydrateDurableRecoveryIntoLocalStorage();
+    234|     expect(localStorage.getItem(key)).toBeNull(); expect(store.put).no…
+       |                                       ^
+    235|   });
+    236|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 11 passed (13)
+   Start at  09:48:32
+   Duration  742ms (transform 266ms, setup 372ms, import 27ms, tests 14ms, environment 261ms)
+
+undefined
+/Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/runtime/mokina-recovery-store.test.ts

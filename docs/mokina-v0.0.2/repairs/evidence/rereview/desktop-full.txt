@@ -1,0 +1,12 @@
+
+> @open-design/desktop@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/desktop
+> vitest run -c vitest.config.ts -- tests/main/mokina-recovery-store.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina-worktrees/v0.0.2-local-preview/open-design/apps/desktop
+
+
+ Test Files  52 passed (52)
+      Tests  507 passed | 1 skipped (508)
+   Start at  09:52:44
+   Duration  12.02s (transform 3.49s, setup 0ms, import 6.30s, tests 25.07s, environment 3ms)

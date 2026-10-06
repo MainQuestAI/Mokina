@@ -11,6 +11,7 @@ const getOpenDesignHost = vi.fn<() => OpenDesignHostBridge | null>(() => null);
 vi.mock('@open-design/host', async () => {
   const actual = await vi.importActual<typeof import('@open-design/host')>('@open-design/host');
   return { ...actual, getOpenDesignHost: () => getOpenDesignHost() };
+
 });
 
 import {
@@ -19,6 +20,8 @@ import {
   mirrorDurableRecord,
   removeDurableRecord,
   resetDurableRecoveryForTests,
+  LegacyRecoveryConfirmationRequired,
+  resolveLegacyRecoveryRecords,
 } from '../../src/runtime/persistence/mokina-recovery-store';
 
 import { persistRecoveredComposerDraft } from '../../src/runtime/chat/composer-draft';
@@ -71,6 +74,36 @@ function installHost(store: FakeStore | null): void {
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe('mokina durable recovery facade (web)', () => {
+  it.each(['restore', 'keep-backup'] as const)('requires an explicit %s decision for ambiguous legacy cache', async choice => {
+    const store = makeFakeStore(); installHost(store);
+    const get = store.get.getMockImplementation()!;
+    store.get.mockImplementation(async key => {
+      const result = await get(key);
+      return result.found ? result : { ...result, legacyMigration: 'confirm' as const };
+    });
+    const key = 'od:revision:draft:p:中文/方案.html';
+    localStorage.setItem(key, '旧要求');
+    await expect(hydrateDurableRecoveryIntoLocalStorage()).rejects.toBeInstanceOf(LegacyRecoveryConfirmationRequired);
+    expect(store.put).not.toHaveBeenCalled();
+    expect(localStorage.getItem(key)).toBe('旧要求');
+    await resolveLegacyRecoveryRecords(choice);
+    if (choice === 'restore') expect(store.records.get(key)?.value).toBe('旧要求');
+    else {
+      expect(store.put).not.toHaveBeenCalled();
+      expect(localStorage.getItem(key)).toBeNull();
+      expect(localStorage.getItem(`mokina:legacy-recovery:${encodeURIComponent(key)}`)).toBe('旧要求');
+    }
+  });
+  it('does not overwrite a competing record when explicit legacy restore conflicts', async () => {
+    const store = makeFakeStore(); installHost(store);
+    store.get.mockResolvedValue({ ok: true, found: false, legacyMigration: 'confirm' } as Awaited<ReturnType<typeof store.get>>);
+    const key = 'od:revision:legacy'; localStorage.setItem(key, '旧要求');
+    await expect(hydrateDurableRecoveryIntoLocalStorage()).rejects.toBeInstanceOf(LegacyRecoveryConfirmationRequired);
+    store.records.set(key, { recordId: 'foreign', value: '另一窗口' });
+    await expect(resolveLegacyRecoveryRecords('restore')).rejects.toThrow('冲突');
+    expect(store.records.get(key)?.value).toBe('另一窗口');
+    expect(localStorage.getItem(key)).toBe('旧要求');
+  });
   beforeEach(() => {
     window.localStorage.clear();
     resetDurableRecoveryForTests();
@@ -208,6 +241,29 @@ describe('mokina durable recovery facade (web)', () => {
     complete({ ok: true, result: 'conflict' });
     expect(await saving).toBe('failed');
     expect(admitted).toBe(false);
+  });
+
+  it('RR4 returning to origin A does not remigrate its stale cache after origin B deleted the durable binding', async () => {
+    const key = 'mokina:context-snapshot:origin';
+    const store = makeFakeStore(); installHost(store);
+    await mirrorDurableRecord(key, 'frozen A'); localStorage.setItem(key, 'frozen A');
+    const originA = localStorage.getItem(key)!;
+    resetDurableRecoveryForTests(); localStorage.clear(); await hydrateDurableRecoveryIntoLocalStorage();
+    await removeDurableRecord(key); localStorage.removeItem(key);
+    store.get.mockImplementation(async candidate => candidate === key
+      ? { ok: true as const, found: false as const, deletedRecordId: 'deleted-in-B' }
+      : { ok: true as const, found: false as const });
+    resetDurableRecoveryForTests(); localStorage.setItem(key, originA);
+    await hydrateDurableRecoveryIntoLocalStorage();
+    expect(localStorage.getItem(key)).toBeNull(); expect(store.records.has(key)).toBe(false);
+  });
+
+  it('RR4 deletion committed before local cache cleanup still wins at restart', async () => {
+    const key = 'mokina:revision:crash'; const store = makeFakeStore(); installHost(store);
+    localStorage.setItem(key, 'old intent');
+    store.get.mockImplementation(async () => ({ ok: true as const, found: false as const, deletedRecordId: 'deleted-before-exit' }));
+    await hydrateDurableRecoveryIntoLocalStorage();
+    expect(localStorage.getItem(key)).toBeNull(); expect(store.put).not.toHaveBeenCalled();
   });
 
 });

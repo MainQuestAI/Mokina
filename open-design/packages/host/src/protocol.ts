@@ -394,7 +394,7 @@ export type OpenDesignHostRecoveryStoreRecord = {
 };
 
 export type OpenDesignHostRecoveryStoreGetResult =
-  | { ok: true; found: false }
+  | { ok: true; found: false; deletedRecordId?: string; legacyMigration?: 'confirm' }
   | { ok: true; found: true; record: OpenDesignHostRecoveryStoreRecord }
   | OpenDesignHostFailure;
 

@@ -123,3 +123,11 @@ Finder 启动 local.4 后，从可见新建项目入口和 macOS 文件选择器
 - 修复后：daemon 四文件 44 项通过，包含 HTTP 重叠请求、真实 CLI 非法目标、生产 reader 及暂存写入失败；daemon typecheck 通过。
 - 夹具纠正：新增 HTTP 版本断言改为与源项目一致（上传已有自动版本）；CLI 临时 ZIP 写入使用 writeLocalFile，避免与 HTTP writeFile helper 同名。首次失败保留，不计为工程通过。
 - 证据：evidence/rereview/a-red.txt、a-green.txt、a-types.txt。类型为服务 / HTTP / 实际 CLI 子进程；尚不代表新安装包验收。
+
+## 2026-10-06 B 组 · RR3 修订拒绝与显式退出
+
+普通发送和修订共用受理失败分类。daemon 只有在无同身份已受理 run、无并行受理且非冲突响应时提供 not-accepted 证明；其他响应保留 unknown。源成果先保存 rejected，再处理子项目 receipt；保存失败继续保留旧身份，外层异常不降级 accepted/rejected。结束未受理修订先保存要求草稿，全部清理成功后解除阻塞；刷新不创建新尝试，显式再次生成使用新身份。
+
+红：修订拒绝未保存、退出入口不存在、裸 409 被误判，3 个失败（b-red.txt）。绿：web 三文件 46 项、daemon 两文件 10 项通过；包含保存失败、清理失败、新尝试、真实 daemon runCount=0、已受理身份以及完成信号控制的并发拒绝。web/daemon 类型检查通过。新增浏览器真实 daemon 拒绝链已编写，安装包及远端 CI 结果后续单列；当前不据此声明工程收口。
+
+B 组浏览器首次运行：13 项通过，普通拒绝用例 1 项失败。用例仍断言 receipt 自动清除，但产品已按既有 crash-safe 语义保留至显式恢复；快照显示 Restore unsent draft。更新断言为先确认保留，再显式恢复并检查清理，新 RR3 真实 daemon 拒绝和丢响应采用链均通过。

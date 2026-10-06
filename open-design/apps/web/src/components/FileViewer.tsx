@@ -106,11 +106,11 @@ import {
   persistDispatchedSendRequest,
   persistClearSendRequest,
   queryRunAccepted,
-  markSendRequestDraft,
-  markSendRequestUnknown,
+  persistSendRequestOutcome,
   persistPendingSendRequest,
 } from '../runtime/chat/send-request-state';
 import { mirrorDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
+import { isDefinitiveRunCreateRefusal } from '../runtime/chat/run-create-failure';
 import type { MokinaContinuationV2 } from '@open-design/contracts';
 import { MokinaCandidateCompare } from './mokina/MokinaCandidateCompare';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
@@ -3448,6 +3448,7 @@ export function buildMokinaContinuationV2(input: {
 }
 
 export type MokinaRevisionJob = {
+  submissionState?: 'prepared' | 'unknown' | 'accepted' | 'rejected';
   runId?: string;
   sourceProjectId?: string;
   sourceFile?: string;
@@ -3461,6 +3462,12 @@ export type MokinaRevisionJob = {
   prompt: string;
   operationId: string;
 };
+
+export function revisionSubmissionState(job: MokinaRevisionJob): NonNullable<MokinaRevisionJob['submissionState']> {
+  if (job.runId) return 'accepted';
+  if (job.submissionState === 'rejected') return 'rejected';
+  return job.dispatched ? 'unknown' : 'prepared';
+}
 
 export function parseMokinaRevisionJob(raw: string | null): MokinaRevisionJob | null {
   if (!raw) return null;
@@ -3523,11 +3530,12 @@ export async function reconcileMokinaRevisionJob(key: string, job: MokinaRevisio
   // that exact intent rather than treating its older in-memory copy as a CAS owner.
   if (sameRevisionIntent(current, job) && current.runId) return current;
   if (job.runId) return job;
+  if (revisionSubmissionState(job) === 'rejected') throw new Error('本次修订未受理；请结束旧意图后重新生成。');
   if (!job.conversationId || !job.clientRequestId) throw new Error('修订尚未提交；可放弃本次准备后重新生成。');
   const run = await queryRunAccepted(job.revisionProjectId, job.conversationId, job.clientRequestId, 10_000,
     job.workspaceContext !== undefined ? job.workspaceContext : context);
   if (!run?.id) throw new Error('受理状态尚未确认，请稍后恢复；当前稿未变化。');
-  const accepted = { ...job, runId: run.id };
+  const accepted: MokinaRevisionJob = { ...job, runId: run.id, submissionState: 'accepted' };
   if (!await persistMokinaRevisionJob(key, accepted, job)) {
     const updated = parseMokinaRevisionJob(localStorage.getItem(key));
     if (!sameRevisionIntent(updated, job) || updated.runId !== run.id) throw new Error('修订运行身份未能安全保存，请稍后恢复。');
@@ -3639,15 +3647,24 @@ function FileVersionManagerModal({
   const [revisionRecoveryLoaded, setRevisionRecoveryLoaded] = useState(false);
   const revisionPanelActiveRef = useRef(true);
   const revisionStorageKey = `mokina:revision:${projectId}:${file.name}`;
+  const revisionDraftKey = `od:revision:draft:${projectId}:${file.name}`;
   const [pendingRevisionJob, setPendingRevisionJob] = useState<MokinaRevisionJob | null>(null);
   useEffect(() => {
     let active = true;
     revisionPanelActiveRef.current = true;
     const savedJob = parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey));
+    let savedDraft: { sectionId?: string; prompt?: string } | null = null;
+    try { savedDraft = JSON.parse(localStorage.getItem(revisionDraftKey) ?? 'null'); } catch { /* Preserve unreadable drafts for inspection. */ }
+    setRevisionSectionId(savedJob?.sectionId ?? savedDraft?.sectionId ?? '');
+    setRevisionRequest(savedJob?.prompt ?? savedDraft?.prompt ?? '');
     setPendingRevisionJob(savedJob);
     setPendingRevisionStatus(savedJob ? 'checking' : null);
     setRevisionRecoveryLoaded(true);
     if (savedJob) {
+      if (revisionSubmissionState(savedJob) === 'rejected') {
+        setPendingRevisionStatus('rejected');
+        return () => { active = false; revisionPanelActiveRef.current = false; };
+      }
       const job = savedJob;
       void reconcileMokinaRevisionJob(revisionStorageKey, job, workspaceContext).then(async resolved => {
         Object.assign(job, resolved);
@@ -3682,7 +3699,7 @@ function FileVersionManagerModal({
         });
     }
     return () => { active = false; revisionPanelActiveRef.current = false; };
-  }, [revisionStorageKey, workspaceContext]);
+  }, [revisionStorageKey, revisionDraftKey, workspaceContext]);
   const [versionImageExportVersionId, setVersionImageExportVersionId] = useState<string | null>(null);
   const [versionImageExportFormat, setVersionImageExportFormat] = useState<ImageExportFormat>('png');
   const [versionImageExportInFlight, setVersionImageExportInFlight] = useState(false);
@@ -3835,7 +3852,11 @@ function FileVersionManagerModal({
     (control ?? target).focus({ preventScroll: true });
   }, [actionRequest, loading, selectedVersion, selectedContentMatchesVersion, actionUnavailable]);
   useEffect(() => { setSelectedContinuationSections([]); }, [selectedId]);
-  useEffect(() => { setRevisionSectionId(''); }, [selectedId]);
+  const previousRevisionVersionRef = useRef(selectedId);
+  useEffect(() => {
+    if (previousRevisionVersionRef.current && previousRevisionVersionRef.current !== selectedId) setRevisionSectionId('');
+    previousRevisionVersionRef.current = selectedId;
+  }, [selectedId]);
   const restoreDisabled =
     viewerOnly || !selectedVersion || selectedVersion.current || restoring || loadingContent || !selectedContentMatchesVersion;
   const selectedRenderableContentMatchesVersion = Boolean(
@@ -4516,6 +4537,22 @@ function FileVersionManagerModal({
     setRevisionCancelBusy(true);
     setError(null);
     try {
+      if (revisionSubmissionState(job) === 'rejected') {
+        const draft = JSON.stringify({ sectionId: job.sectionId, prompt: job.prompt });
+        if (!await mirrorDurableRecord(revisionDraftKey, draft)) throw new Error('修改要求未能安全保存，请重试。');
+        localStorage.setItem(revisionDraftKey, draft);
+        if (job.conversationId && job.clientRequestId
+          && !await persistClearSendRequest(job.revisionProjectId, job.conversationId, job.clientRequestId)) {
+          throw new Error('发送记录清理失败，请重试；修改要求已保留。');
+        }
+        if (!await persistClearMokinaRevisionJob(revisionStorageKey, job)) throw new Error('修订记录清理失败，请重试；修改要求已保留。');
+        if (revisionPanelActiveRef.current) {
+          setPendingRevisionJob(null); setPendingRevisionStatus(null);
+          setRevisionSectionId(job.sectionId); setRevisionRequest(job.prompt);
+          setRevisionProgress('已结束未受理修订；修改要求已保留，可以重新生成。');
+        }
+        return;
+      }
       if (!job.runId && !job.dispatched) {
         if (await persistClearMokinaRevisionJob(revisionStorageKey, job)) {
           setPendingRevisionJob(null); setPendingRevisionStatus(null);
@@ -4632,12 +4669,13 @@ function FileVersionManagerModal({
     let intent: MokinaRevisionJob = {
       operationId, clientRequestId, revisionProjectId: newClientOperationId(),
       sourceProjectId: projectId, sourceFile: file.name, workspaceContext,
-      baseVersionId, sectionId: revisionSectionId, prompt: request, dispatched: false,
+      baseVersionId, sectionId: revisionSectionId, prompt: request, dispatched: false, submissionState: 'prepared',
     };
     setRevisionBusy(true);
     setRevisionProgress('正在创建独立修订工作…');
     setError(null);
     let sendDispatched = false;
+    let definitiveRefusal = false;
     let revisionScope: { projectId: string; conversationId: string } | null = null;
     try {
       if (!await persistMokinaRevisionJob(revisionStorageKey, intent)) throw new Error('修订意图未能安全保存，未创建运行。');
@@ -4699,7 +4737,7 @@ function FileVersionManagerModal({
       if (!dispatched) {
         throw new Error('修订发送身份核对失败，未启动作业；请重试。');
       }
-      const sending = { ...intent, dispatched: true };
+      const sending: MokinaRevisionJob = { ...intent, dispatched: true, submissionState: 'unknown' };
       if (!await persistMokinaRevisionJob(revisionStorageKey, sending, intent)) throw new Error('修订发送身份保存失败，模型尚未运行。');
       intent = sending; setPendingRevisionJob(intent);
       sendDispatched = true;
@@ -4717,24 +4755,25 @@ function FileVersionManagerModal({
         }),
       });
       if (!runResponse.ok) {
-        // 4xx admission refusals are definitive; 5xx may still have been
-        // accepted, so only the definitive branch may drop the record.
-        if (sendDispatched && revisionScope) {
-          if (runResponse.status >= 400 && runResponse.status < 500) {
-            markSendRequestDraft(revisionScope.projectId, revisionScope.conversationId, clientRequestId);
-          } else {
-            markSendRequestUnknown(revisionScope.projectId, revisionScope.conversationId, clientRequestId);
-          }
-        }
         const body = await runResponse.json().catch(() => null) as { error?: { message?: string } } | null;
+        definitiveRefusal = isDefinitiveRunCreateRefusal(runResponse.status, body);
+        if (definitiveRefusal) {
+          const rejected: MokinaRevisionJob = { ...intent, submissionState: 'rejected' };
+          if (!await persistMokinaRevisionJob(revisionStorageKey, rejected, intent)) throw new Error('服务端已拒绝，但拒绝身份保存失败；请保留旧意图后恢复。');
+          intent = rejected;
+          if (revisionPanelActiveRef.current) { setPendingRevisionJob(intent); setPendingRevisionStatus('rejected'); }
+        }
+        if (revisionScope && !await persistSendRequestOutcome(revisionScope.projectId, revisionScope.conversationId, clientRequestId,
+          definitiveRefusal ? 'draft' : 'unknown')) throw new Error('修订发送状态保存失败；源成果意图仍保留。');
         throw new Error(body?.error?.message || `修订运行启动失败（${runResponse.status}）`);
       }
       const created = await runResponse.json() as { runId: string };
       if (!created.runId) throw new Error('修订运行未返回 ID');
-      const job = { ...intent, runId: created.runId };
+      const job: MokinaRevisionJob = { ...intent, runId: created.runId, submissionState: 'accepted' };
       if (!await persistMokinaRevisionJob(revisionStorageKey, job, intent)) {
         throw new Error('已受理修订，但身份交接保存失败；请恢复原任务。');
       }
+      intent = job;
       await persistClearSendRequest(revisionProject.project.id, revisionProject.conversationId, clientRequestId);
       setPendingRevisionJob(job);
       setPendingRevisionStatus('running');
@@ -4742,8 +4781,8 @@ function FileVersionManagerModal({
     } catch (cause) {
       // The POST result is unknown unless a branch above already resolved the
       // record; keep the intent recoverable instead of silently retrying.
-      if (sendDispatched && revisionScope) {
-        markSendRequestUnknown(revisionScope.projectId, revisionScope.conversationId, clientRequestId);
+      if (sendDispatched && revisionScope && !definitiveRefusal && !intent.runId) {
+        await persistSendRequestOutcome(revisionScope.projectId, revisionScope.conversationId, clientRequestId, 'unknown');
       }
       setRevisionProgress('');
       setError(cause instanceof Error ? cause.message : '生成候选失败');
@@ -4964,14 +5003,14 @@ function FileVersionManagerModal({
               onClick={() => { void generateChapterCandidate(); }}>
               {revisionBusy ? '正在生成候选…' : '生成候选（不改当前稿）'}
             </button>
-            {pendingRevisionJob ? <button type="button" disabled={viewerOnly || revisionBusy || revisionAbandonBusy}
+            {pendingRevisionJob && pendingRevisionStatus !== 'rejected' ? <button type="button" disabled={viewerOnly || revisionBusy || revisionAbandonBusy}
               onClick={() => { void resumeChapterCandidate(); }}>
               {pendingRevisionStatus === 'succeeded' ? '保存已完成运行的候选' : '恢复上次修订候选'}
             </button> : null}
             {pendingRevisionJob && pendingRevisionStatus !== 'succeeded' ? <button type="button"
               disabled={viewerOnly || revisionCancelBusy || revisionAbandonBusy}
               onClick={() => { void cancelChapterCandidate(); }}>
-              {revisionCancelBusy ? '正在取消…' : '取消本次修订'}
+              {revisionCancelBusy ? '正在处理…' : pendingRevisionStatus === 'rejected' ? '结束本次未受理修订' : '取消本次修订'}
             </button> : null}
             {pendingRevisionJob && pendingRevisionStatus === 'succeeded' ? (
               <>

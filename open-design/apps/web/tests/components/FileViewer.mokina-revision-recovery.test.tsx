@@ -171,6 +171,69 @@ describe('Mokina revision recovery UI', () => {
     vi.restoreAllMocks();
   });
 
+  it('RR3 persists a definitive refusal on the source intent and exits without looking for a nonexistent run', async () => {
+    const { fetchMock } = setupRecoveryFetch('running');
+    const originalFetch = fetchMock.getMockImplementation()!;
+    fetchMock.mockImplementation(async (input, init) => String(input) === '/api/runs' && init?.method === 'POST'
+      ? Response.json({ error: { code: 'CONVERSATION_NOT_FOUND', message: 'refused before acceptance', details: { runAcceptance: 'not-accepted' } } }, { status: 404 })
+      : originalFetch(input, init));
+    const panel = await openRecoveryPanel();
+    fireEvent.change(within(panel).getByRole('combobox', { name: '要修订的章节' }), { target: { value: 'strategy' } });
+    fireEvent.change(within(panel).getByRole('textbox', { name: '章节修改要求' }), { target: { value: '保留我的拒绝后要求' } });
+    await waitFor(() => expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }));
+    await waitFor(() => expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toMatchObject({ submissionState: 'rejected', prompt: '保留我的拒绝后要求' }));
+    const posts = fetchMock.mock.calls.filter(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST');
+    expect(posts).toHaveLength(1);
+    const firstRequest = JSON.parse(String(posts[0]![1]?.body)).clientRequestId;
+    fireEvent.click(within(panel).getByRole('button', { name: '结束本次未受理修订' }));
+    await waitFor(() => expect(localStorage.getItem(revisionKey)).toBeNull());
+    expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith('/api/runs?') || String(url).endsWith('/cancel'))).toBe(false);
+    cleanup(); await openRecoveryPanel();
+    expect((screen.getByRole('textbox', { name: '章节修改要求' }) as HTMLTextAreaElement).value).toBe('保留我的拒绝后要求');
+    expect((screen.getByRole('combobox', { name: '要修订的章节' }) as HTMLSelectElement).value).toBe('strategy');
+    expect(fetchMock.mock.calls.filter(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toHaveLength(1);
+    await waitFor(() => expect((screen.getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(screen.getByRole('button', { name: '生成候选（不改当前稿）' }));
+    await waitFor(() => expect(fetchMock.mock.calls.filter(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toHaveLength(2));
+    const second = fetchMock.mock.calls.filter(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')[1]!;
+    expect(JSON.parse(String(second[1]?.body)).clientRequestId).not.toBe(firstRequest);
+  });
+
+  it('RR3 keeps the unknown identity recoverable when saving a proven refusal fails', async () => {
+    const { fetchMock } = setupRecoveryFetch('running');
+    const originalFetch = fetchMock.getMockImplementation()!;
+    fetchMock.mockImplementation(async (input, init) => String(input) === '/api/runs' && init?.method === 'POST'
+      ? Response.json({ error: { code: 'NOT_FOUND', details: { runAcceptance: 'not-accepted' } } }, { status: 404 })
+      : originalFetch(input, init));
+    vi.spyOn(recoveryStore, 'mirrorDurableRecord').mockImplementation(async (key, raw) => !(key === revisionKey && JSON.parse(raw).submissionState === 'rejected'));
+    const panel = await openRecoveryPanel();
+    fireEvent.change(within(panel).getByRole('combobox', { name: '要修订的章节' }), { target: { value: 'strategy' } });
+    fireEvent.change(within(panel).getByRole('textbox', { name: '章节修改要求' }), { target: { value: '保存失败仍保留' } });
+    await waitFor(() => expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }));
+    await waitFor(() => expect(screen.getByText(/拒绝身份保存失败/)).toBeTruthy());
+    expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toMatchObject({ submissionState: 'unknown', prompt: '保存失败仍保留' });
+    expect(within(panel).getByRole('button', { name: '恢复上次修订候选' })).toBeTruthy();
+    expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('RR3 refresh preserves rejected requirements and cleanup failure keeps the old intent blocking a new attempt', async () => {
+    localStorage.setItem(revisionKey, JSON.stringify({ ...job('ignored', 'rejected'), runId: undefined,
+      submissionState: 'rejected', dispatched: true, conversationId: 'conversation-a', clientRequestId: 'request-a',
+      sourceProjectId: 'project-1', sourceFile: 'index.html', prompt: '刷新后仍然保留' }));
+    const { fetchMock } = setupRecoveryFetch('running');
+    vi.spyOn(recoveryStore, 'removeDurableRecord').mockResolvedValue(false);
+    const panel = await openRecoveryPanel();
+    const end = await within(panel).findByRole('button', { name: '结束本次未受理修订' });
+    expect((within(panel).getByRole('textbox', { name: '章节修改要求' }) as HTMLTextAreaElement).value).toBe('刷新后仍然保留');
+    fireEvent.click(end);
+    await waitFor(() => expect(screen.getByText(/记录清理失败/)).toBeTruthy());
+    expect(parseMokinaRevisionJob(localStorage.getItem(revisionKey))).toMatchObject({ operationId: 'rejected', submissionState: 'rejected' });
+    expect((within(panel).getByRole('button', { name: '生成候选（不改当前稿）' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith('/api/runs'))).toBe(false);
+  });
+
   it('waits for the continuation identity before creating its project and keeps selections after IPC failure', async () => {
     const { fetchMock } = setupRecoveryFetch('running');
     let finish!: (ok: boolean) => void;

@@ -9,6 +9,29 @@ import {
 } from '../../src/routes/runs.js';
 
 describe('Run creation structured failures', () => {
+  it('keeps overlapping admissions and conflict responses unknown until acceptance can be proved', async () => {
+    const app = express(); app.use(express.json());
+    let release!: () => void;
+    let started!: () => void;
+    const entered = new Promise<void>(resolve => { started = resolve; });
+    const gate = new Promise<void>(resolve => { release = resolve; });
+    registerRunCreateRoute(app, async (req, res) => {
+      if (req.body.hold) { started(); await gate; }
+      return sendApiError(res, req.body.conflict ? 409 : 404, 'NOT_FOUND', 'not admitted');
+    }, sendApiError as Parameters<typeof registerRunCreateRoute>[2], () => false);
+    const server = await new Promise<http.Server>(resolve => { const listening = app.listen(0, '127.0.0.1', () => resolve(listening)); });
+    try {
+      const address = server.address(); if (!address || typeof address === 'string') throw new Error('missing address');
+      const post = (body: unknown) => fetch(`http://127.0.0.1:${address.port}/api/runs`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+      const pending = post({ clientRequestId: 'same', hold: true }); await entered;
+      const overlap = await post({ clientRequestId: 'same' });
+      expect(await overlap.json()).toMatchObject({ error: { details: { runAcceptance: 'unknown' } } });
+      release(); expect(await (await pending).json()).toMatchObject({ error: { details: { runAcceptance: 'not-accepted' } } });
+      expect(await (await post({ clientRequestId: 'other', conflict: true })).json()).toMatchObject({ error: { details: { runAcceptance: 'unknown' } } });
+    } finally {
+      release(); await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+    }
+  });
   it('returns sanitized JSON when preparation throws at the HTTP boundary', async () => {
     const app = express();
     app.use(express.json());

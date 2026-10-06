@@ -2408,22 +2408,66 @@ test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface a
   const { projectId, conversationId } = await currentProjectContext(page);
   await page.route('**/api/runs', async route => {
     if (route.request().method() !== 'POST') return route.continue();
-    await route.fulfill({ status: 409, json: { error: { code: 'IDEMPOTENCY_CONFLICT', message: 'clientRequestId is already associated with a different logical run request' } } });
+    await route.fulfill({ status: 404, json: { error: { code: 'NOT_FOUND', message: 'request rejected before acceptance', details: { runAcceptance: 'not-accepted' } } } });
   });
   await page.getByTestId('chat-composer-input').fill('Observation draft for definitive rejection');
   await page.getByTestId('chat-send').click();
-  // P3-2 observation: a definitive rejection clears the local receipt (the
-  // composer draft is the recovery), keeps the composer text and the failure
-  // card, and a retry with a fresh request identity goes through.
+  // A proven refusal keeps the receipt until the user explicitly restores its
+  // draft. Durable transfer then clears it and permits a new request identity.
   await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
-  await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
+  await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
+  await page.getByTestId('mokina-pending-send').getByRole('button', { name: 'Restore unsent draft' }).click();
+  await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
   await page.unroute('**/api/runs');
   await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');
   await page.getByTestId('chat-send').click();
   await expectProjectFilesToContain(page, projectId, [GENERATED_FILE]);
   await testInfo.attach('r2-definitive-rejection', { body: JSON.stringify({ projectId, conversationId }), contentType: 'application/json' });
   await testInfo.attach('r2-definitive-rejection-shot', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('[P1] Mokina RR3 real daemon refusal survives reload and explicit exit permits a new attempt', async ({ page }, testInfo) => {
+  await createProject(page, 'Mokina RR3 refusal');
+  const { projectId } = await currentProjectContext(page);
+  const written = await page.request.post(`/api/projects/${projectId}/files`, {
+    data: { name: 'plan.html', content: '<section id="strategy" data-mokina-id="strategy"><h2>策略</h2><p>原策略</p></section>' },
+  });
+  expect(written.ok()).toBe(true);
+  await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+  await waitForLoadingToClear(page);
+  let requestId = ''; let childProjectId = ''; let posts = 0;
+  await page.route('**/api/runs', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    posts++;
+    const body = route.request().postDataJSON(); requestId = body.clientRequestId; childProjectId = body.projectId;
+    const response = await route.fetch({ postData: { ...body, conversationId: 'missing-conversation-rr3' } });
+    expect(response.status()).toBe(404);
+    expect(await response.json()).toMatchObject({ error: { details: { runAcceptance: 'not-accepted' } } });
+    await route.fulfill({ response });
+  });
+  await page.getByRole('button', { name: 'Versions' }).click();
+  let dialog = page.getByRole('dialog', { name: 'Versions' });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await dialog.getByRole('combobox', { name: '要修订的章节' }).selectOption('strategy');
+  await dialog.getByRole('textbox', { name: '章节修改要求' }).fill('拒绝后保留这一条要求');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+  await expect(dialog.getByRole('button', { name: '结束本次未受理修订' })).toBeVisible();
+  expect((await (await page.request.get(`/api/runs?projectId=${childProjectId}`)).json()).runs).toHaveLength(0);
+  await page.reload({ waitUntil: 'domcontentloaded' }); await waitForLoadingToClear(page);
+  await page.getByRole('button', { name: 'Versions' }).click(); dialog = page.getByRole('dialog', { name: 'Versions' });
+  await dialog.getByRole('button', { name: '修订章节' }).click();
+  await expect(dialog.getByRole('textbox', { name: '章节修改要求' })).toHaveValue('拒绝后保留这一条要求');
+  expect(posts).toBe(1);
+  await dialog.getByRole('button', { name: '结束本次未受理修订' }).click();
+  await expect(dialog.getByRole('button', { name: '生成候选（不改当前稿）' })).toBeEnabled();
+  await page.unroute('**/api/runs');
+  await dialog.getByRole('button', { name: '生成候选（不改当前稿）' }).click();
+  const key = `mokina:revision:${projectId}:plan.html`;
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.runId, key), { timeout: T.long }).toBeTruthy();
+  const next = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), key);
+  expect(next.clientRequestId).not.toBe(requestId);
+  await testInfo.attach('rr3-real-refusal', { body: JSON.stringify({ projectId, childProjectId, runCount: 0, rejectedRequestId: requestId, next }), contentType: 'application/json' });
 });
 
 test('[P1] Mokina revision lost POST response recovers the same run and adopts its candidate', async ({ page }, testInfo) => {

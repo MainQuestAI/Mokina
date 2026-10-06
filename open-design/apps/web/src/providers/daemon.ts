@@ -10,6 +10,7 @@
  *                 non-zero (tail appended to the error message).
  */
 import type { AgentEvent, ChatCommentAttachment, ChatMessage } from '../types';
+import { isDefinitiveRunCreateRefusal } from '../runtime/chat/run-create-failure';
 import type { AmrEntryAttribution } from '../analytics/amr-attribution';
 import type {
   AmrAuthErrorKind,
@@ -1186,9 +1187,7 @@ export async function streamViaDaemon({
       // Generic INTERNAL_ERROR may occur after prepare() persisted a run. Only
       // explicit pre-admission 503 guards prove refusal among server failures.
       const body = (() => { try { return JSON.parse(text) as ApiErrorResponse; } catch { return null; } })();
-      const refusedBeforeAdmission = createResp.status === 503
-        && (body?.error?.code === 'WORKSPACE_AUTHORITY_UNAVAILABLE' || body?.error?.code === 'UPSTREAM_UNAVAILABLE');
-      await onRunCreateFailed?.({ definitive: createResp.status < 500 || refusedBeforeAdmission });
+      await onRunCreateFailed?.({ definitive: isDefinitiveRunCreateRefusal(createResp.status, body) });
       emitRunStatus('failed');
       handlers.onError(daemonCreateRunError(createResp, text));
       return;

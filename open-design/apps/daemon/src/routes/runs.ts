@@ -937,13 +937,37 @@ export function registerRunCreateRoute(
   app: Express,
   handleRunCreate: (req: ApiRequest, res: ApiResponse) => Promise<unknown>,
   sendApiError: RegisterRunRoutesDeps['http']['sendApiError'],
+  hasAcceptedRequest?: (req: ApiRequest) => boolean,
 ): void {
+  const pendingRequests = new Map<string, number>();
   app.post('/api/runs', async (req: ApiRequest, res: ApiResponse) => {
+    const clientRequestId = typeof req.body?.clientRequestId === 'string' ? req.body.clientRequestId : '';
+    if (clientRequestId) pendingRequests.set(clientRequestId, (pendingRequests.get(clientRequestId) ?? 0) + 1);
+    const json = res.json.bind(res);
+    // A refusal is a proof only when no prior run or competing admission owns
+    // this request. Bare 4xx/proxy errors carry no such proof to clients.
+    if (hasAcceptedRequest) res.json = (body: unknown) => {
+      const record = toJsonRecord(body);
+      const error = toJsonRecord(record.error);
+      const knownUnavailable = res.statusCode === 503 && (error.code === 'WORKSPACE_AUTHORITY_UNAVAILABLE' || error.code === 'UPSTREAM_UNAVAILABLE');
+      if (typeof error.code === 'string' && ((res.statusCode >= 400 && res.statusCode < 500) || knownUnavailable)) {
+        const unaccepted = Boolean(clientRequestId) && res.statusCode !== 409
+          && pendingRequests.get(clientRequestId) === 1 && !hasAcceptedRequest(req);
+        return json({ ...record, error: { ...error, details: { ...toJsonRecord(error.details), runAcceptance: unaccepted ? 'not-accepted' : 'unknown' } } });
+      }
+      return json(body);
+    };
     try {
       return await handleRunCreate(req, res);
     } catch (error) {
       if (res.headersSent) throw error;
       return sendStructuredRunCreateFailure(res, sendApiError, error);
+    } finally {
+      res.json = json;
+      if (clientRequestId) {
+        const remaining = (pendingRequests.get(clientRequestId) ?? 1) - 1;
+        if (remaining > 0) pendingRequests.set(clientRequestId, remaining); else pendingRequests.delete(clientRequestId);
+      }
     }
   });
 }
@@ -3267,7 +3291,10 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     );
   };
 
-  registerRunCreateRoute(app, handleRunCreate, sendApiError);
+  registerRunCreateRoute(app, handleRunCreate, sendApiError, req => {
+    const id = toJsonRecord(req.body).clientRequestId;
+    return typeof id !== 'string' || design.runs.list({}).some(run => run.clientRequestId === id);
+  });
 
   app.get('/api/runs', async (req: ApiRequest, res: ApiResponse) => {
     const { projectId, conversationId, status } = req.query;

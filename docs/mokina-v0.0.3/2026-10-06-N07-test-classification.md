@@ -10,16 +10,16 @@
 
 ## 逐项分类（22 项）
 
-### A. 默认产品差异（Mokina 相对上游的产品决定，非缺陷；不修，N07-验收口径内）— 8 项
+### A. 默认产品差异（Mokina 相对上游的产品决定，非缺陷；不修，N07-验收口径内）— 6 项
 
 | 测试 | 差异原因 |
 |---|---|
 | web …/HomeHero.rail.test.tsx | Mokina 把营销入口排在轨道首位，上游断言 Brand Kit 首位 |
-| web …/HomeHero.scenario-cards.test.tsx | 同上：创建层级以营销入口为首（本轮再加 landing-page 第三项） |
+| web …/HomeHero.scenario-cards.test.tsx | 同上：创建层级以营销入口为首（V0.0.3 起含 landing-page 第三项，属产品层级现状，非新增失败） |
 | web …/chips.automatic-default.test.ts ×2 | 营销 chip 为用户 pin 而非 automatic-default（设计如此） |
 | web …/campaigns/deepseek-v4-flash-ui-contract.test.ts ×2 | 上游 campaign 入口在 Mokina edition 不存在 |
 
-### B. 真实能力/环境问题（非本轮代码可修；不修）— 12 项
+### B. 真实能力/环境问题（非本轮代码可修；不修）— 14 项
 
 | 测试 | 归因 |
 |---|---|

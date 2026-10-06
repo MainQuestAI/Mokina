@@ -2417,7 +2417,10 @@ test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface a
   await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
   await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
+  // Recovery never overwrites occupied input, even when it resembles the receipt.
+  await page.getByTestId('chat-composer-input').fill('');
   await page.getByTestId('mokina-pending-send').getByRole('button', { name: 'Restore unsent draft' }).click();
+  await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
   await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);
   await page.unroute('**/api/runs');
   await page.getByTestId('chat-composer-input').fill('Create a deterministic smoke artifact');

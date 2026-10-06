@@ -106,8 +106,8 @@ describe('MokinaRunEvidence', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     render(<MokinaRunEvidence projectId={PROJECT_ID} runId={RUN_ID} runActive={false} />);
-    const summary = await screen.findByText(/本次运行依据/);
-    expect(summary.textContent).toContain('已提交');
+    const summary = await screen.findByText(/本次运行依据|Run evidence/);
+    expect(summary.textContent).toMatch(/已提交|Submitted/);
     expect(summary.textContent).toContain('codex-cli');
 
     fireEvent.click(summary);
@@ -116,11 +116,11 @@ describe('MokinaRunEvidence', () => {
     ));
     const s1 = await screen.findByTestId('mokina-run-evidence-item-S1');
     expect(s1.textContent).toContain('brief.md · 2 个片段');
-    expect(s1.textContent).toContain('资料摘录');
-    expect(s1.textContent).toContain('摘录内联');
+    expect(s1.textContent).toMatch(/资料摘录|Material excerpt/);
+    expect(s1.textContent).toMatch(/摘录内联|Inline text/);
     expect(s1.textContent).toContain('部分页码未提取');
     const a1 = await screen.findByTestId('mokina-run-evidence-item-A1');
-    expect(a1.textContent).toContain('字节随附');
+    expect(a1.textContent).toMatch(/字节随附|Staged file/);
     expect(screen.getByText(/损坏文件不可读取/)).toBeTruthy();
   });
 
@@ -140,7 +140,7 @@ describe('MokinaRunEvidence', () => {
       },
     });
     render(<MokinaRunEvidence projectId={PROJECT_ID} runId={RUN_ID} runActive={false} />);
-    fireEvent.click(await screen.findByText(/本次运行依据/));
-    expect((await screen.findByText(/未提交原因：暂存失败/)).textContent).toContain('暂存失败');
+    fireEvent.click(await screen.findByText(/本次运行依据|Run evidence/));
+    expect((await screen.findByText(/未提交原因：暂存失败|Not submitted: 暂存失败/)).textContent).toContain('暂存失败');
   });
 });

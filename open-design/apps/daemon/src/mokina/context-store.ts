@@ -207,6 +207,13 @@ async function freezeItem(
   selection: MokinaContextSelection,
   input: PrepareSnapshotInput,
 ): Promise<FrozenItemResult> {
+  if (!selection || typeof selection !== 'object' || !selection.sourceRef || typeof selection.sourceRef.kind !== 'string') {
+    return {
+      ok: false,
+      code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED,
+      message: '选择项缺少 sourceRef，无法冻结。',
+    };
+  }
   if (selection.mode === 'note') {
     const text = selection.text ?? '';
     if (text.trim().length === 0) {
@@ -233,6 +240,13 @@ async function freezeItem(
     // 号，按 user-note 的同一惯例用冻结时的真实内容摘要作为 sourceDigest；
     // 套件后续更新不影响已冻结快照，预览后被改动则 SOURCE_CHANGED。
     const { designSystemId } = selection.sourceRef;
+    if (selection.mode !== 'groups' || selection.textKind !== 'brand-rule') {
+      return {
+        ok: false,
+        code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED,
+        message: '品牌来源选择格式不正确：仅支持 brand-rule 段落选择。',
+      };
+    }
     if (!input.source?.readDesignSystem) {
       return {
         ok: false,

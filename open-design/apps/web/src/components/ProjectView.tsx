@@ -366,7 +366,7 @@ import {
 import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunityPrompt';
 import { CenteredLoader } from './Loading';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
-import { clearPendingMokinaSnapshot } from '../runtime/mokina/pending-context-snapshot';
+import { clearPendingMokinaSnapshotIfCurrent } from '../runtime/mokina/pending-context-snapshot';
 import {
   resolveMokinaProjectEntry,
   type MokinaFormalEntry,
@@ -8489,6 +8489,10 @@ export function ProjectView({
       return next;
     });
     if (!await persistClearSendRequest(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey)) setError(t('mokina.pendingSend.saveFailed'));
+    // N03: 迟到确认证明这一发实际已受理——它引用的快照绑定已被消费，交接清除
+    // （带 id 比对：只清它自己那一份，用户其间新准备的绑定不动）。
+    const reconciledSnapshotId = snapshot?.extras?.context?.mokinaSnapshotId;
+    if (reconciledSnapshotId) void clearPendingMokinaSnapshotIfCurrent(record.projectId, reconciledSnapshotId);
     scheduleConversationMessageRefresh(record.conversationId);
   }, [scheduleConversationMessageRefresh]);
   useEffect(() => {
@@ -8737,7 +8741,9 @@ export function ProjectView({
         onRunCreateAccepted: async () => {
           sendAdmissionRef.current.set(clientRequestId, 'accepted');
           if (!await persistClearSendRequest(project.id, runConversationId, clientRequestId, projectRunAuthorityKey)) setError(t('mokina.pendingSend.saveFailed'));
-          if (submittedMokinaSnapshotId) void clearPendingMokinaSnapshot(project.id);
+          // 仅当 pending 仍是本次引用的那一份才交接清除；恢复草稿/排队期间
+          // 用户新冻结的绑定不能被子代发送静默清掉。
+          if (submittedMokinaSnapshotId) void clearPendingMokinaSnapshotIfCurrent(project.id, submittedMokinaSnapshotId);
           resolveAdmission(true);
         },
         onRunCreateFailed: async ({ definitive }: { definitive: boolean }) => {

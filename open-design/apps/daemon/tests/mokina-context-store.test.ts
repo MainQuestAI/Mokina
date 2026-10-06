@@ -420,3 +420,38 @@ describe('Mokina context store — design-system brand sources (N04)', () => {
     expect(prepared.code).toBe('MOKINA_CONTEXT_LIMIT');
   });
 });
+
+describe('Mokina context store — design-system input guards (review)', () => {
+  it('rejects a design-system selection in a non-brand-rule shape instead of silently freezing', async () => {
+    const projectsRoot = await mkdtemp(path.join(tmpdir(), 'mokina-brand-guard-'));
+    try {
+      const bytes = Buffer.from('# 规范\n', 'utf8');
+      const source: MokinaContextStoreSource = {
+        readProjectFile: async () => ({ error: 'missing' }),
+        readDesignSystem: async () => ({ bytes, displayName: '山茶' }),
+      };
+      const prepared = await prepareMokinaContextSnapshot({
+        projectsRoot,
+        projectId: 'p1',
+        source,
+        request: {
+          snapshotId: 'brand-guard-1',
+          selections: [{
+            itemId: 'B1',
+            mode: 'asset',
+            sourceRef: { kind: 'design-system', designSystemId: 'shancha' },
+            expectedSourceDigest: sha256Hex(bytes),
+            role: 'logo',
+            usageNote: '',
+          } as never],
+          excluded: [],
+        },
+      });
+      expect(prepared.ok).toBe(false);
+      if (prepared.ok) return;
+      expect(prepared.code).toBe('MOKINA_CONTEXT_NOT_SUPPORTED');
+    } finally {
+      await rm(projectsRoot, { force: true, recursive: true });
+    }
+  });
+});

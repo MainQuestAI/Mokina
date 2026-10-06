@@ -51,6 +51,8 @@ describe('MokinaContextPanel — brand kit source (N04)', () => {
           },
         }), { status: 201 });
       }
+      // Review M3: the digest comes from the same detail endpoint bytes the
+      // freeze path mirrors first.
       if (url.includes('/api/design-systems/shancha')) {
         return new Response(JSON.stringify({ id: 'shancha', title: '山茶咖啡', body: BRAND_MD }), { status: 200 });
       }
@@ -60,9 +62,9 @@ describe('MokinaContextPanel — brand kit source (N04)', () => {
     render(<MokinaContextPanel projectId="p-brand" files={[]} projectDesignSystemId="shancha" />);
 
     // Project-bound brand preselects transparently once the catalog loads.
-    const select = await screen.findByLabelText('品牌来源');
+    const select = await screen.findByLabelText(/品牌来源|Brand source/);
     await waitFor(() => expect(select).toHaveValue('shancha'));
-    await screen.findByText(/已选品牌：山茶咖啡/);
+    await screen.findByText(/已选品牌：山茶咖啡|Selected brand: 山茶咖啡/);
 
     fireEvent.click(screen.getByRole('button', { name: /Freeze as task snapshot|冻结为任务快照/ }));
 

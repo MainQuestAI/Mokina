@@ -349,7 +349,7 @@ function assertProjectCreatePreparationWithinDeadline(
   }
 }
 
-export interface RegisterProjectRoutesDeps extends RouteDeps<'db' | 'design' | 'http' | 'paths' | 'projectStore' | 'projectFiles' | 'conversations' | 'templates' | 'status' | 'events' | 'ids' | 'telemetry' | 'appConfig' | 'agents' | 'validation' | 'collabSync'> {
+export interface RegisterProjectRoutesDeps extends RouteDeps<'db' | 'design' | 'http' | 'paths' | 'projectStore' | 'projectFiles' | 'conversations' | 'templates' | 'status' | 'events' | 'ids' | 'telemetry' | 'appConfig' | 'agents' | 'validation' | 'collabSync' | 'designSystems'> {
   /**
    * Request-wide deadline for the read-only preparation POST /api/projects
    * runs before its transaction. Production keeps the 15s default; tests and
@@ -2188,6 +2188,7 @@ function buildDesignSystemCopyPendingPrompt(input: {
 
 export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDeps) {
   const { db, design } = ctx;
+  const { listAllDesignSystems, readDesignSystemWorkspaceTextFile } = ctx.designSystems;
   const projectCreatePreparationTimeoutMs =
     typeof ctx.projectCreatePreparationTimeoutMs === 'number'
     && Number.isFinite(ctx.projectCreatePreparationTimeoutMs)
@@ -7302,6 +7303,25 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
         // brand-kit update never alters an already-frozen snapshot.
         readDesignSystem: async (designSystemId) => {
           try {
+            // N04 review(M3): 与品牌详情同一读源——工作区项目镜像（编辑期
+            // 真身）优先，其次 canonical 根三段回退。面板摘要在详情接口取，
+            // 两侧一致才不会必然 SOURCE_CHANGED。
+            const workspaceId = (req.header('x-od-workspace-id') ?? '').trim() || null;
+            const workspaceMemberId = (req.header('x-od-workspace-member-id') ?? '').trim() || null;
+            if (workspaceId) {
+              try {
+                const systems = await listAllDesignSystems({ workspaceId, workspaceMemberId });
+                const summary = systems.find((entry) => entry.id === designSystemId);
+                if (summary) {
+                  const mirror = await readDesignSystemWorkspaceTextFile(db, summary, 'DESIGN.md');
+                  if (mirror != null) {
+                    return { bytes: Buffer.from(mirror, 'utf8'), displayName: summary.title ?? designSystemId };
+                  }
+                }
+              } catch {
+                // 镜像不可用时退回 canonical 根。
+              }
+            }
             const candidates: Array<{ root: string; options: { idPrefix?: string } }> = [
               { root: DESIGN_SYSTEMS_DIR, options: {} },
               { root: USER_DESIGN_SYSTEMS_DIR, options: {} },

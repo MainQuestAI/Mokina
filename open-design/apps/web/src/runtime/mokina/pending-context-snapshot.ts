@@ -93,6 +93,22 @@ export async function clearPendingMokinaSnapshot(projectId: string | null | unde
 }
 
 /**
+ * N03: consume the pending binding ONLY while it is still the snapshot this
+ * send referenced. A newer freeze prepared after the send was queued (or an
+ * already-consumed slot) must survive — clearing unconditionally would
+ * silently drop binding the user just made.
+ */
+export async function clearPendingMokinaSnapshotIfCurrent(
+  projectId: string | null | undefined,
+  snapshotId: string | null | undefined,
+): Promise<boolean> {
+  if (!projectId || !snapshotId) return false;
+  const pending = readPendingMokinaSnapshot(projectId);
+  if (!pending || pending.snapshotId !== snapshotId) return false;
+  return clearPendingMokinaSnapshot(projectId);
+}
+
+/**
  * Attach the pending snapshot to a run-context object. Pure except for the
  * storage read so the composer can call it inline while assembling send meta.
  */

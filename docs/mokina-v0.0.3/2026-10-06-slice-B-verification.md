@@ -1,5 +1,22 @@
 # 切片 B 验收记录（N03 / N04）· 2026-10-06
 
+## 合并前审查与修复（2026-10-06，独立 subagent 审查 PR #6）
+
+审查结论：无 BLOCKER，5 项 MAJOR 需修复。已全部修复并复验（web 123 项 / daemon 17 项 / typecheck×2 / guard 22 项全过）：
+
+| 级别 | 问题 | 修复 |
+|---|---|---|
+| M1 | 受理即清不比对 snapshotId，会清掉用户新冻结的绑定 | 新增 `clearPendingMokinaSnapshotIfCurrent`（比对后才清），受理点与恢复点共用 |
+| M2 | 迟到确认（unknown→已受理）不清 pending，已消费绑定泄漏给下一发 | reconcile 受理成功按记录里的原 snapshotId 对账清除（同样带比对） |
+| M3 | 面板摘要读工作区镜像、冻结读 canonical 根，项目绑定品牌必然 SOURCE_CHANGED | 冻结端改为与品牌详情同一读源（镜像优先、canonical 三段回退，ctx.designSystems 注入）；面板摘要仍取详情接口，两侧一致 |
+| M4 | 新增用户可见字符串硬编码中文 | 面板 5 键 + 依据卡 18 键全部进 i18n（types.ts + 19 locale） |
+| M5 | N03 核心语义无自动化测试 | helper 3 用例（比对清除/新绑定保留/空槽 no-op）+ daemon 畸形选择拒绝 1 用例 |
+
+附带 MINOR 修复：design-system 分支拒绝非 brand-rule 形态选择、缺 sourceRef 防御（不再 500）；依据卡快照读取带 workspace headers；`itemDelivery`/`includedItemIds` 防御性默认。
+
+记录未修 MINOR（评估后留后续）：team 品牌冻结回退、重选同品牌刷新摘要、预选失败 alert 外溢、依据卡每条消息一次 GET。NIT 从略。
+
+
 分支：`codex/mokina-v0.0.3-b-context-brand`（基线 c860474c = 切片 A 合入后的 main）。
 本文件只记录真实执行结果；命令均在 macOS arm64 本机实际运行。
 

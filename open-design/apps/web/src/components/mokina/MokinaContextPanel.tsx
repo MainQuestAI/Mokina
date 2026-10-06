@@ -94,7 +94,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
       })
       .catch(() => {
         if (cancelled) return;
-        setBrandError('品牌套件目录读取失败。');
+        setBrandError(t('mokina.contextPanel.brandCatalogFailed'));
         setBrandCatalogLoaded(true);
       });
     return () => { cancelled = true; };
@@ -115,6 +115,9 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
       return;
     }
     const summary = designSystems.find((system) => system.id === id);
+    // N04 review(M3): digest 必须取自与冻结端同一读源。冻结端以工作区项目
+    // 镜像（编辑期真身）优先、canonical 根回退；品牌详情接口正是同一顺序，
+    // 因此摘要在详情接口取，而不是从目录 summary（目录不带正文）。
     try {
       const response = await fetch(`/api/design-systems/${encodeURIComponent(id)}`,
         workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
@@ -131,7 +134,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
       });
     } catch {
       setBrand(null);
-      setBrandError(`品牌规则读取失败：${id}`);
+      setBrandError(t('mokina.contextPanel.brandReadFailed', { id }));
     }
   }
 
@@ -296,9 +299,9 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
       <p>{t('mokina.contextPanel.intro')}</p>
       <div className="mokina-context-panel__brand">
         <label>
-          品牌来源
+          {t('mokina.contextPanel.brandSource')}
           <select
-            aria-label="品牌来源"
+            aria-label={t('mokina.contextPanel.brandSource')}
             value={brand?.id ?? ''}
             disabled={busy}
             onChange={(event) => void selectBrand(event.target.value)}
@@ -310,7 +313,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
           </select>
         </label>
         {brand ? (
-          <small>已选品牌：{brand.title} · 约 {brand.chars.toLocaleString()} 字（冻结后原品牌套件更新不影响本快照）</small>
+          <small>{t('mokina.contextPanel.brandSelected', { brand: brand.title, chars: brand.chars.toLocaleString() })}</small>
         ) : null}
         {brandError ? <p role="alert">{brandError}</p> : null}
       </div>

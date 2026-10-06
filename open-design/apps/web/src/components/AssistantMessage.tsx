@@ -1408,6 +1408,7 @@ function AssistantMessageImpl({
             projectId={projectId}
             runId={message.runId}
             runActive={streaming}
+            workspaceContext={workspaceContext}
           />
         ) : null}
         {showCompletionRow ? (

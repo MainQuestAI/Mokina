@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>Mokina · 策略工作区 · 视觉稿</title>
+<style>
+:root{--bg:#f4f3ef;--side:#eeede8;--paper:#fff;--ink:#292832;--muted:#6f6b76;--line:#e4e1e7;--accent:#67529c;--accent-dark:#503b82;--tint:#efebf6;--sage:#43695e;--sage-bg:#eaf1eb;--amber:#816631;--amber-bg:#f7f1e5;--font:"Avenir Next","Hiragino Sans GB","PingFang SC",sans-serif;--serif:"Iowan Old Style","Songti SC",serif;--shadow:0 16px 50px #29283216;--radius:10px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 var(--font)}button,input,textarea,select{font:inherit;color:inherit}button,a,input,select{touch-action:manipulation}button{cursor:pointer;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 11px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background .16s,border-color .16s}button:hover{border-color:#beb5cf;background:var(--tint)}button:disabled{opacity:.45;cursor:default}button.primary{background:var(--accent);color:var(--paper);border-color:var(--accent)}button.primary:hover{background:var(--accent-dark)}button.ghost{background:transparent;border-color:transparent}button.small{padding:5px 8px;font-size:12px}button.icon-btn{padding:7px}a{color:var(--accent);text-decoration:none}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:3px}[hidden]{display:none!important}.icon{width:18px;height:18px;flex:none}.muted{color:var(--muted)}.tiny{font-size:11px}.eyebrow{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent);font-weight:600}.row{display:flex;align-items:center;gap:8px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}.tag{display:inline-flex;padding:3px 7px;font-size:11px;border-radius:5px;background:var(--bg);color:var(--muted);white-space:nowrap}.tag.purple{background:var(--tint);color:var(--accent-dark)}.tag.green{background:var(--sage-bg);color:var(--sage)}.app{height:100vh;min-height:640px;display:grid;grid-template-columns:188px 324px minmax(0,1fr);overflow:hidden}.sidebar{padding:23px 14px 16px;background:var(--side);border-right:1px solid #e2dfdc;display:flex;flex-direction:column;min-height:0}.wordmark{font-family:var(--font);font-size:26px;letter-spacing:-1.4px;font-weight:600;display:flex;align-items:center;gap:9px;padding:0 7px 24px}.mark{width:26px;height:29px;color:var(--accent)}.sidebar button.new{width:100%;justify-content:flex-start;background:#faf9f7;border-color:#dedbd5;padding:9px 11px;margin-bottom:27px}.nav-caption{font-size:11px;letter-spacing:.5px;color:var(--muted);padding:0 9px;margin:0 0 10px}.thread{font-size:13px;padding:11px 10px;border-radius:8px;margin-bottom:5px}.thread.active{background:#fff9;border:1px solid #dfdad0}.thread .sub{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);margin-top:4px}.dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}.dot.dim{background:#aba69e}.sidebar-bottom{margin-top:auto;border-top:1px solid #dedbd5;padding-top:15px}.sidebar-bottom button{width:100%;justify-content:flex-start;font-size:12px;margin:3px 0}.profile{display:flex;gap:9px;align-items:center;font-size:12px;padding:16px 8px 0}.avatar{background:#ded9cc;color:#635845;width:27px;height:27px;border-radius:50%;display:grid;place-items:center;font-size:12px}.chat{display:flex;flex-direction:column;min-height:0;min-width:0;background:#faf9f7;border-right:1px solid var(--line)}.chat-head{height:65px;flex:none;padding:15px 20px;border-bottom:1px solid var(--line)}.chat-head strong{font-weight:600;font-size:13px}.chat-head small{display:block;font-size:10px;color:var(--muted);margin-top:2px}.messages{padding:22px 21px;overflow:auto;flex:1;min-height:0}.message-user{margin:0 0 26px 20px;padding:12px 14px;background:#eeebe5;border-radius:11px 11px 3px 11px;font-size:13px;line-height:1.85}.agent-name{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:600;margin-bottom:14px}.agent-dot{width:20px;height:20px;background:var(--accent);color:white;border-radius:7px;display:grid;place-items:center;font:italic 17px var(--serif)}.messages p{font-size:14px;line-height:1.95;margin:0 0 16px}.messages h3{font-size:12px;margin:18px 0 8px;font-weight:600}.rationale{border-left:2px solid #c9bedc;padding:1px 0 1px 12px;color:var(--muted);font-size:12px;line-height:1.85}.rationale span{display:block;color:var(--accent);font-size:10px;margin-bottom:4px}.next-action{margin:0 17px 14px;padding:11px 12px;border-color:#ddd6e8;background:#f5f1fa;text-align:left;justify-content:space-between;font-size:12px;flex:none}.composer-area{padding:13px 17px 15px;border-top:1px solid var(--line);background:#faf9f7}.selection-label{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:8px}.selection-label b{font-weight:500;color:var(--accent-dark)}.composer{padding:10px;background:white;border:1px solid #cfc7dc;border-radius:12px;box-shadow:0 3px 12px #39304304}.composer textarea{display:block;resize:none;width:100%;height:65px;border:0;background:transparent;font-size:13px;line-height:1.8;padding:0 2px;outline:none}.composer-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.composer select{border:0;background:var(--bg);border-radius:5px;font-size:11px;padding:5px;max-width:120px}.send{width:32px;height:32px;padding:6px;border-radius:8px}.demo-label{font-size:10px;color:var(--muted);text-align:center;margin-top:10px}.action-hint{font-size:11px;background:var(--amber-bg);color:var(--amber);border-radius:5px;padding:7px 9px;margin:8px 0 0}.workspace{background:var(--bg);min-width:0;display:flex;flex-direction:column;min-height:0}.toolbar{height:65px;background:white;border-bottom:1px solid var(--line);padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none}.document-name{font-size:13px;font-weight:600}.toolbar-left,.toolbar-right{display:flex;align-items:center;gap:10px}.segmented{display:flex;background:var(--bg);border-radius:7px;padding:3px;gap:2px}.segmented button{border:0;background:none;font-size:11px;padding:5px 10px;border-radius:5px}.segmented button[aria-pressed=true]{background:white;box-shadow:0 1px 4px #00000009;color:var(--accent-dark);font-weight:600}.toolbar .version-trigger{font-size:11px;border:0;background:none}.context-bar{padding:11px 23px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);background:#fbfaf8;flex:none;flex-wrap:wrap}.context-bar button{font-size:11px;padding:4px 8px;border-color:#e3dfd8;background:white}.context-label{font-size:10px;color:var(--muted);margin-right:4px}.work-scroll,.read-scroll{flex:1;min-height:0;overflow:auto;padding:24px 26px 30px}.section-heading{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.section-heading h1{font-family:var(--serif);font-size:29px;font-weight:600;line-height:1.4;letter-spacing:-.5px;margin:7px 0 10px}.section-heading p{font-size:13px;color:var(--muted);margin:0}.subtabs{display:flex;gap:22px;border-bottom:1px solid var(--line);margin:18px 0 19px}.subtabs button{border:0;background:none;border-bottom:2px solid transparent;border-radius:0;padding:9px 0;font-size:12px;color:var(--muted)}.subtabs button[aria-selected=true]{border-bottom-color:var(--accent);color:var(--accent-dark);font-weight:600}.judgment{background:white;padding:20px 23px;border:1px solid #e2dce9;border-radius:var(--radius);position:relative}.judgment.selected{border-color:#a58cc7;box-shadow:0 0 0 2px #eee7f6}.judgment .number{font-family:var(--serif);font-size:25px;color:#bbb0ca;line-height:1}.judgment h2{font-size:17px;line-height:1.6;margin:9px 0;font-weight:600}.judgment p{font-size:15px;line-height:1.95;margin:0 0 15px}.card-footer{border-top:1px solid var(--line);padding-top:12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.source-label{font-size:10px;color:var(--sage);display:flex;gap:5px;align-items:center}.section-actions{display:flex;gap:6px}.section-actions button{font-size:11px;padding:4px 8px}.strategy-row{padding:18px 1px;border-bottom:1px solid #e1ded8;display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:start}.strategy-row .number{font:21px var(--serif);color:#a59aaa}.strategy-row h3{font-size:14px;margin:0 0 5px}.strategy-row p{font-size:13px;line-height:1.9;margin:0;color:var(--muted)}.strategy-row button{font-size:11px}.bottom-note{font-size:11px;color:var(--muted);padding:16px 0 0;display:flex;align-items:center;gap:7px}.method-inline{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin:17px 0}.method-inline button{font-size:11px;padding:3px 7px}.measurement{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:20px}.measurement h2{font-size:17px;margin:0 0 9px}.measurement p{font-size:14px;line-height:1.9}.metric-line{display:grid;grid-template-columns:100px 1fr;gap:15px;padding:13px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.85}.metric-line strong{font-size:12px}.kpi-form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}.kpi-form label{font-size:11px;color:var(--muted);display:block}.kpi-form input{display:block;width:100%;border:1px solid #d2c9df;border-radius:6px;padding:9px;font-size:17px;font-variant-numeric:tabular-nums;margin-top:5px}.calc-summary{padding:13px 16px;background:var(--tint);font-size:14px;border-radius:7px;line-height:1.85}.path-table{border-collapse:collapse;width:100%;font-size:13px;margin-top:18px}th,td{padding:12px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;line-height:1.8}th{font-weight:500;color:var(--muted);font-size:11px}.error{color:#9d4037;font-size:12px;margin-top:10px}.task-item{padding:18px 0;border-bottom:1px solid var(--line)}.task-item h3{font-size:15px;margin:0 0 7px}.task-item p{font-size:14px;line-height:1.9;margin:0 0 10px}.footer-status{display:flex;justify-content:space-between;align-items:center;font-size:10px;padding:9px 23px;border-top:1px solid var(--line);color:var(--muted);background:#fbfaf8;flex:none}.read-scroll{background:#eeece7;padding:26px 30px}.report-paper{max-width:890px;margin:auto;padding:35px 40px;background:#fffefa;box-shadow:0 4px 18px #30283807;border:1px solid #e2ddd3}.report-kicker{display:flex;justify-content:space-between;font-size:10px;color:var(--accent);letter-spacing:1px}.report-paper h1{font-family:var(--serif);font-size:36px;font-weight:500;line-height:1.5;margin:24px 0 15px;letter-spacing:-1px}.report-paper .abstract{font-size:16px;line-height:1.95;max-width:680px;color:#615b66;margin:0 0 22px}.report-meta{border-top:1px solid #ddd6ca;border-bottom:1px solid #ddd6ca;display:flex;gap:18px;padding:12px 0;font-size:11px;color:var(--muted);flex-wrap:wrap}.report-section{margin-top:27px}.report-section h2{font-family:var(--serif);font-size:23px;font-weight:600;margin:0 0 13px}.report-section p{font-size:15px;line-height:2;margin:0 0 13px}.report-rule{color:var(--accent);font-size:10px;letter-spacing:1px;margin-bottom:8px}.report-point{border-left:2px solid #b6a4ca;padding-left:17px;margin:18px 0}.report-point .quote{font-family:var(--serif);font-size:20px;line-height:1.85}.report-flow{display:flex;border-top:1px solid #ddd6ca;border-bottom:1px solid #ddd6ca;margin:20px 0}.report-flow div{flex:1;padding:16px 12px 16px 0}.report-flow div+div{padding-left:16px;border-left:1px solid #ddd6ca}.report-flow small{font-size:10px;color:var(--muted)}.report-flow strong{display:block;font-size:14px;margin-top:6px}.select-inline{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--accent);margin-top:11px}.select-inline input{accent-color:var(--accent)}.report-end{font-size:10px;color:var(--muted);margin-top:30px;border-top:1px solid #ddd6ca;padding-top:15px}.read-actions{background:white;border-top:1px solid var(--line);padding:12px 23px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex:none}.app.focus{grid-template-columns:minmax(0,1fr)}.app.focus .sidebar,.app.focus .chat{display:none}.app.focus .read-scroll{padding:30px 45px}.app.focus .report-paper{max-width:900px}.app.focus .context-bar{display:none}dialog{width:610px;max-width:calc(100vw - 36px);max-height:85vh;overflow:auto;border:1px solid #ddd5e7;border-radius:15px;box-shadow:var(--shadow);padding:24px;background:#fffefa;color:var(--ink)}dialog::backdrop{background:#24203140;backdrop-filter:blur(2px)}.dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.dialog-head h2{font-size:19px;margin:0}.dialog-body{font-size:14px;line-height:1.9}.dialog-body h3{font-size:13px;margin:18px 0 8px}.dialog-body p{margin:8px 0 13px}.dialog-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}.dialog-body textarea{width:100%;resize:vertical;min-height:120px;border:1px solid #c5b8d7;border-radius:8px;padding:12px;line-height:1.8;background:white}.scope-list{padding:0;list-style:none}.scope-list li{padding:10px 0;border-top:1px solid var(--line)}.scope-list b{display:block;font-size:12px;color:var(--accent-dark)}.version-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}.version-card{border:1px solid var(--line);border-radius:9px;padding:15px}.version-card p{font-size:13px}.version-card strong{font-size:13px}.version-card .changed{background:var(--tint);padding:10px;border-radius:6px}.preview-body{white-space:pre-wrap;font-size:12px;background:var(--bg);padding:15px;border-radius:8px}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:30;background:#332c40;color:white;border-radius:8px;padding:10px 15px;font-size:12px;max-width:600px;box-shadow:var(--shadow)}.live-reply{padding-top:15px;border-top:1px solid var(--line);margin-top:20px}.mobile-note{display:none}
+@media(max-width:1300px){.app{grid-template-columns:176px 300px minmax(0,1fr)}.sidebar{padding:20px 11px}.toolbar{padding:0 18px}.toolbar-left,.toolbar-right{gap:7px}.work-scroll{padding:20px 22px}.section-heading h1{font-size:26px}.context-bar{padding:10px 18px;gap:5px}.chat-head{padding:15px 18px}.messages{padding:19px 18px}.report-paper{padding:28px}.report-paper h1{font-size:31px}.read-scroll{padding:22px}.document-name{font-size:12px}.toolbar .icon-btn{padding:5px}.kpi-form{gap:8px}.judgment{padding:18px 20px}}
+@media(max-width:1050px){.app{grid-template-columns:150px 275px minmax(0,1fr)}.toolbar{flex-wrap:wrap;height:auto;min-height:65px;padding:9px 15px}.toolbar-left{gap:5px}.document-name{font-size:11px}.context-label{display:none}.work-scroll{padding:17px}.section-heading h1{font-size:23px}.judgment p{font-size:14px}.report-paper{padding:24px}.report-flow{flex-direction:column}.report-flow div+div{border-left:0;border-top:1px solid var(--line);padding-left:0}}
+@media(max-width:760px){.app{grid-template-columns:minmax(0,1fr);min-height:560px}.sidebar,.chat{display:none}.mobile-note{display:block;font-size:10px;color:var(--muted)}.work-scroll{padding:18px}.toolbar{min-height:65px}.report-paper{padding:22px}.read-scroll{padding:14px}.app.focus .read-scroll{padding:14px}.context-bar{padding:8px 15px}.version-list{grid-template-columns:1fr}.kpi-form{grid-template-columns:1fr}.report-paper h1{font-size:28px}.toolbar-right{gap:5px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* Context, discussion and direction views share the existing workspace. */
+.artifact-nav{display:flex;gap:6px;padding:9px 20px;border-bottom:1px solid var(--line);background:var(--paper);flex:none;overflow:auto}
+.artifact-nav button{font-size:11px;white-space:nowrap;border-color:transparent;background:transparent}
+.artifact-nav button[aria-current=page]{color:var(--accent-dark);background:var(--tint)}
+.journey-scroll{padding:25px 27px;overflow:auto;flex:1;min-height:0}
+.journey-heading{margin-bottom:22px}.journey-heading h1{font:600 29px/1.5 var(--serif);margin:8px 0}.journey-heading p{color:var(--muted);font-size:13px;margin:0}
+.source-list{display:grid;gap:12px}.source-card{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:16px 19px}
+.source-card header{display:flex;align-items:center;justify-content:space-between;gap:12px}.source-card label{display:flex;align-items:center;gap:9px;font-weight:600}
+.source-card input{accent-color:var(--accent);width:16px;height:16px}.source-card p{font-size:13px;color:var(--muted);margin:10px 0 0}
+.context-goal{width:100%;min-height:74px;resize:vertical;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px;line-height:1.8;margin:7px 0 12px}
+.journey-footer{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:20px;flex-wrap:wrap}.journey-footer p{margin:0;font-size:11px;color:var(--muted)}
+.fit-row{display:grid;grid-template-columns:95px 1fr;gap:22px;border-top:1px solid var(--line);padding:19px 0}.fit-row strong{font-size:12px;color:var(--accent-dark)}.fit-row p{margin:0;font-size:14px;line-height:1.9}
+.fit-conclusion{background:var(--sage-bg);border-left:3px solid var(--sage);padding:17px 20px;margin-top:15px;line-height:1.9}
+.direction-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.direction-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.direction-cover{padding:20px;background:var(--tint);min-height:126px}.direction-card:nth-child(2) .direction-cover{background:var(--sage-bg)}.direction-cover h2{font:600 25px/1.5 var(--serif);margin:12px 0 0}
+.direction-content{padding:18px}.direction-content h3{font-size:13px;margin:0 0 7px}.direction-content p{font-size:13px;line-height:1.9;margin:0 0 17px;color:var(--muted)}.direction-content button{font-size:12px}
+.journey-notice{padding:12px 16px;background:var(--amber-bg);color:var(--amber);font-size:12px;border-radius:7px;margin:15px 0}
+.run-strip{border:1px solid var(--line);border-radius:8px;padding:15px;background:var(--paper);margin-top:15px;display:flex;justify-content:space-between;align-items:center}
+.scope-chips{display:flex;flex-wrap:wrap;gap:6px;margin:15px 0}.scope-chips span{font-size:11px;padding:4px 7px;background:var(--tint);border-radius:5px}
+@media(max-width:1300px){.journey-scroll{padding:21px 22px}.journey-heading h1{font-size:26px}.direction-cover h2{font-size:22px}.direction-content{padding:16px}}
+@media(max-width:900px){.direction-grid{grid-template-columns:1fr}.artifact-nav{padding:8px 12px}.journey-scroll{padding:18px}}
+
+
+.plan-trigger{margin-left:auto!important;color:var(--accent-dark)}
+.plan-panel{margin:0 0 0 auto;height:100vh;max-height:100vh;width:570px;border-radius:0;display:flex;flex-direction:column;padding:23px}
+.plan-panel:not([open]){display:none}.plan-panel .dialog-body{overflow:auto;flex:1;min-height:0;padding:0 3px}
+.plan-panel .dialog-foot{flex:none;border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.plan-panel .dialog-head{flex:none}.plan-summary{color:var(--accent-dark);font-size:12px;background:var(--tint);padding:9px 12px;border-radius:7px}
+.plan-label{display:block;font-size:12px;margin:14px 0}.plan-panel textarea.plan-input{min-height:70px;height:74px;font-size:13px;margin-top:7px}
+.plan-items{margin-top:10px;border-top:1px solid var(--line)}.plan-item{display:flex;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line);font-size:12px}
+.plan-item label{flex:1;display:flex;align-items:center;gap:8px}.plan-item input{accent-color:var(--accent)}
+.plan-source{border-top:1px solid var(--line);padding-top:13px;margin-top:15px}.plan-history{margin-top:15px}
+.single-direction{grid-template-columns:minmax(0,650px)}
+.thread-list{overflow:auto;min-height:0;margin-bottom:15px}.thread-list .thread{display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;gap:0;background:transparent;border:1px solid transparent}.thread-list .thread.active{background:#fff9;border-color:#dfdad0}.thread-title{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.thread-name{width:100%;padding:10px;border:1px solid var(--line);border-radius:7px;background:var(--paper);margin-top:8px}.carry-banner{border-left:3px solid var(--accent);padding:15px 18px;background:var(--tint);margin-bottom:20px}.carry-banner h2{font:600 22px var(--serif);margin:8px 0}.carry-banner p{font-size:12px;color:var(--muted)}.carry-banner button{margin-right:8px}
+</style></head><body>
+<!-- Visual prototype only. Working and reading surfaces render the exact same selected version object. -->
+<div class="app" id="app">
+<aside class="sidebar" aria-label="工作导航"><div class="wordmark"><svg class="mark" viewBox="0 0 30 32" aria-hidden="true"><path d="M3 26V10c0-8 12-8 12 0v16M15 26V10c0-8 12-8 12 0v16" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"/></svg>Mokina</div><button class="new" data-info="new"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>新的工作</button><div class="nav-caption">最近工作</div><div class="thread active">让产品被理解<div class="sub"><span class="dot"></span>正在编辑策略</div></div><div class="thread">下周的内容方向<div class="sub"><span class="dot dim"></span>另一项工作 · 状态示意</div></div><div class="thread">品牌表达备忘录<div class="sub">昨天</div></div><div class="sidebar-bottom"><button class="ghost" data-info="brand"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19C2 8 8 3 20 4c1 12-4 17-15 15zM5 19L16 8" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>品牌背景</button><button class="ghost" data-info="methods"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7l1 2 1-2h7v15h-7l-1 1-1-1H4zM12 6v14" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>方法与模板</button><div class="profile"><span class="avatar">我</span><span>个人空间</span></div></div></aside>
+<section class="chat" aria-label="持续对话"><header class="chat-head"><strong>让产品被理解</strong><small>产品沟通策略 · 继续当前工作</small></header><div class="messages" id="messages"><div class="message-user">沿着 A 深化。产品解释是主线，品牌故事克制一点，先把方向和做法讲清楚。</div><div class="agent-name"><span class="agent-dot">m</span>Mokina<span class="tag purple">策略草案</span></div><p>把原料和使用信息，变成读者能理解的选择理由。</p><p>品牌故事放在具体选择旁边，说明“为什么这样做”，不用另讲一段品牌历史。</p><div class="rationale"><span>与本次品牌要求一致</span>克制表达；先说清事实，不作未经证实的功效承诺。</div><h3>可以从一处开始</h3><p>选中右侧判断，继续追问，或直接修改文字。</p><div id="replies" aria-live="polite"></div></div><button class="next-action" id="next"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>为什么不先讲品牌故事？<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="composer-area"><div class="selection-label"><span>本次对象</span><b id="selected-name">产品信息主线 · v1</b></div><div class="composer"><textarea id="prompt" aria-label="工作消息" placeholder="讨论、调整，或提出下一步目标…"></textarea><div class="composer-bottom"><select id="mode" aria-label="行动模式"><option value="ask">讨论 · Ask</option><option value="plan">规划 · Plan</option><option value="execute">执行</option></select><button id="send" class="primary send" aria-label="发送消息"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div><div class="action-hint" id="action-hint" hidden>已准备修订请求；当前仍为讨论模式。</div><div class="demo-label">交互预览 · 合成示例 · 未连接模型</div></div></section>
+<main class="workspace" aria-label="营销成果"><header class="toolbar"><div class="toolbar-left"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7l1 2 1-2h7v15h-7l-1 1-1-1H4zM12 6v14" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="document-name">产品沟通策略</span><button class="version-trigger" id="versions">v1 · 工作稿 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="toolbar-right"><div class="segmented" aria-label="成果视图"><button id="work-toggle" aria-pressed="true">工作</button><button id="read-toggle" aria-pressed="false">阅读</button></div><button class="icon-btn ghost" id="focus" aria-label="进入专注阅读" title="专注阅读"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="icon-btn ghost" data-info="more" aria-label="更多成果操作"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h.01M12 12h.01M19 12h.01" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></header>
+<div class="context-bar"><span class="context-label">本次背景</span><button data-info="brand"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19C2 8 8 3 20 4c1 12-4 17-15 15zM5 19L16 8" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>品牌 · 克制、有据</button><button data-info="facts"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7l1 2 1-2h7v15h-7l-1 1-1-1H4zM12 6v14" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>产品事实</button><button data-info="research"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 15 6-6M8 16l-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>研究 v2 · 片段</button><button data-info="goal">目标与范围 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+<div class="work-scroll" id="work-scroll">
+<div class="section-heading"><div><span class="eyebrow">Strategy / Direction A</span><h1>把产品讲清楚，让选择有理由。</h1><p id="goal-summary">目标：帮助初次接触品牌的人理解产品。</p></div><span class="tag green">方向 A</span></div>
+<nav class="subtabs" role="tablist" aria-label="工作面内容"><button role="tab" aria-selected="true" data-tab="strategy">策略判断</button><button role="tab" aria-selected="false" data-tab="goals" tabindex="-1">目标与衡量</button><button role="tab" aria-selected="false" data-tab="actions" tabindex="-1">行动安排</button></nav>
+<section id="panel-strategy"><article class="judgment selected" id="primary-judgment"><div class="row between"><span class="number">01</span><span class="tag purple">当前选中</span></div><h2>产品信息做主线</h2><p data-value="product"></p><div class="card-footer"><span class="source-label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>原料与使用说明 · 本轮选用</span><div class="section-actions"><button class="ghost" data-ask="product">讨论</button><button class="small" data-edit="product"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16 12-12 4 4L8 20H4zM13 7l4 4" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>编辑</button></div></div></article><article class="strategy-row"><span class="number">02</span><div><h3>品牌故事解释选择</h3><p data-value="story"></p></div><button class="ghost small" data-pick="story" aria-label="选中品牌故事"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></article><article class="strategy-row"><span class="number">03</span><div><h3>先定表达边界，再制作内容</h3><p data-value="boundary"></p></div><button class="ghost small" data-pick="boundary" aria-label="选中工作范围"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></article><div class="method-inline">本次判断的方法<button class="ghost" data-info="methods">信息分层 / 受众任务拆解 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></section>
+<section id="panel-goals" hidden><div class="row between wrap"><span class="eyebrow">Goals & assumptions</span><button class="small" id="kpi-example">载入有 KPI 的合成示例</button></div><div class="measurement" id="qualitative"><h2>先观察，产品是否被理解</h2><p>本次没有数值 KPI。先定义观察方式，之后再结合实际目标补充。</p><div class="metric-line"><strong>信息理解</strong><span>读者能否复述产品信息，哪些地方仍容易误解。</span></div><div class="metric-line"><strong>选择理由</strong><span>读者说出的选择理由，是否与真实产品信息一致。</span></div><div class="metric-line"><strong>进一步了解</strong><span>记录咨询的问题，区分信息缺口与购买意向。</span></div><div class="bottom-note">口径与基线待讨论。<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg><button class="ghost small" data-ask="goal">讨论目标</button></div></div><div class="measurement" id="quantitative" hidden><div class="row between"><h2>把会员目标拆成可比较的路径</h2><span class="tag purple">合成输入 · 本地计算</span></div><p>示例任务：30 天内新增 300 名有效会员，预算上限 ¥10,000。有效会员定义为完成注册并验证手机号的新增用户。</p><div class="kpi-form"><label>预计有效访问量<input id="visits" type="number" min="1" max="100000000" step="1" value="10000"></label><label>注册完成率假设（%）<input id="rate" type="number" min="0.01" max="100" step="0.01" value="2"></label><label>新增有效会员目标<input id="target" type="number" min="1" max="100000000" step="1" value="300"></label></div><div class="calc-summary" id="calc-summary"></div><p class="error" id="calc-error" hidden></p><table class="path-table" id="path-table"><thead><tr><th>路径</th><th>需要达到什么</th><th>先核实什么</th></tr></thead><tbody id="path-rows"></tbody></table><p class="tiny muted">预算仅是约束；缺少获客成本，暂不判断哪条路径买得起。假设计算不证明转化率能实现，也不是实测业绩。</p><div class="row"><button class="small" id="snapshot-kpi">把本次测算存为讨论快照</button><span class="tiny muted" id="kpi-saved">调整输入后，本地即时重算</span></div></div></section>
+<section id="panel-actions" hidden><div class="task-item"><span class="eyebrow">01 / Prepare</span><h3>整理产品解释要点</h3><p data-value="action1"></p><button class="small" data-ask="action1">讨论这项行动 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="task-item"><span class="eyebrow">02 / Express</span><h3>把品牌选择贴着产品讲</h3><p data-value="action2"></p><button class="small" data-ask="action2">讨论这项行动 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="task-item"><span class="eyebrow">03 / Learn</span><h3>用反馈修正表达</h3><p data-value="action3"></p><button class="small" data-ask="action3">讨论这项行动 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></section>
+</div>
+<div class="read-scroll" id="read-scroll" hidden><article class="report-paper"><div class="report-kicker"><span>MOKINA / STRATEGY NOTE</span><span id="report-version">v1</span></div><h1>每一份选择，<br>都有清楚的理由。</h1><p class="abstract" data-value="position"></p><div class="report-meta"><span>产品沟通策略 · 方向 A</span><span>本轮品牌语气：克制、有据</span><span>合成示例</span></div><section class="report-section"><div class="report-rule">01 / INTENT</div><h2>先理解产品，再形成选择理由</h2><p data-value="goal"></p><div class="report-flow"><div><small>已有事实</small><strong>原料与使用说明</strong></div><div><small>沟通重点</small><strong>解释产品选择</strong></div><div><small>观察变化</small><strong>理解与后续问题</strong></div></div><p data-value="product"></p></section><section class="report-section"><div class="report-rule">02 / EXPRESSION</div><h2>让品牌故事服务于产品理解</h2><div class="report-point"><p class="quote" data-value="story"></p></div><p class="muted">沿用克制表达的品牌要求，不引入未经证实的效果承诺或额外品牌经历。</p><label class="select-inline"><input type="checkbox" value="story" class="report-select">选取这一方向，用于后续工作</label></section><section class="report-section"><div class="report-rule">03 / NEXT ACTIONS</div><h2>从方向走向具体工作</h2><p data-value="action1"></p><label class="select-inline"><input type="checkbox" value="action1" class="report-select">选取产品解释要点</label><p data-value="action2"></p><p data-value="action3"></p></section><section class="report-section"><div class="report-rule">04 / MEASUREMENT</div><h2>观察理解，不预设效果</h2><p>记录读者的复述、选择理由和具体问题，发现哪些信息仍需解释。基线、样本和目标值待实际工作确定。</p><div id="report-kpi" hidden></div></section><section class="report-section"><div class="report-rule">05 / CONTEXT</div><h2>依据与工作边界</h2><p data-value="boundary"></p><p>固定引用：研究 v2 · R-02；本轮提供的产品事实与品牌表达要求。</p><button class="ghost small" data-info="research">查看固定研究原文 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></section><div class="report-end">同一成果的阅读视图 · 当前页面内编辑同步呈现 · 非已验证的市场报告</div></article></div>
+<div class="read-actions" id="read-actions" hidden><span id="read-selection">选取报告中的一部分，继续工作</span><button class="primary small" id="handoff" disabled>带入下一项工作 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+<footer class="footer-status"><span id="save-status">当前工作稿 · 尚无采用决定</span><span class="mobile-note">小屏仅预览成果</span><a href="deepen.html">对照线框</a><span>本页临时状态 · 刷新重置</span></footer>
+</main></div>
+<dialog id="dialog" aria-labelledby="dialog-title"><div class="dialog-head"><h2 id="dialog-title"></h2><button class="ghost icon-btn" id="close-dialog" aria-label="关闭面板"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="dialog-body" id="dialog-body"></div><div class="dialog-foot" id="dialog-foot"></div></dialog><div class="toast" role="status" hidden></div>
+<script>
+(()=>{'use strict';
+const q=s=>document.querySelector(s),all=s=>document.querySelectorAll(s);
+const brandRules=['语气克制，把选择理由讲清楚。','只使用已提供的产品事实，不作未经证实的功效承诺。'];
+let base={position:'把原料与喂养信息，组织成容易理解的选择理由。',goal:'帮助第一次接触品牌的人理解产品，形成清楚的选择理由。',product:'从现有原料与使用说明出发，先解释读者关心的产品信息，再补充品牌为什么这样选择。',story:'用“为什么这样选择”串起品牌故事，让故事服务于产品理解。',boundary:'先把沟通方向与衡量方式讨论清楚，暂不制作成套文案或安排发布。',action1:'从原料与使用说明整理一页产品解释要点，明确产品事实和读者问题。',action2:'把品牌摘录组织成故事结构，每个故事点对应一个真实的产品选择。',action3:'收集读者对解释要点的复述与问题，用于修正表达，不预填效果结论。'};
+let versions={v1:{...base},v2:{...base,story:'品牌相信，每一份选择都应该被讲清楚。回到原料与使用说明，让读者知道这款产品为什么这样选择。'}},names={product:'产品信息主线',story:'品牌故事',boundary:'工作范围',goal:'当前目标',action1:'产品解释要点',action2:'品牌故事结构',action3:'反馈与修订'};
+let view='work',tab='strategy',version='v1',current='v1',adopted=null,selected='product',focus=false,prepared=null,timer,undo=[],kpi=false,kpiSnapshot=null,readSelection=new Set(),transfer=null;
+let viewScroll={work:0,read:0},kpiSnapshots={};
+function el(t,cls,text){const e=document.createElement(t);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
+function btn(text,fn,cls='small'){const b=el('button',cls,text);b.onclick=fn;return b;}
+function toast(s){q('.toast').textContent=s;q('.toast').hidden=false;clearTimeout(timer);timer=setTimeout(()=>q('.toast').hidden=true,3500);}
+function dialog(title,body,buttons=[]){q('#dialog-title').textContent=title;q('#dialog-body').replaceChildren();if(typeof body==='string')q('#dialog-body').append(el('p','',body));else q('#dialog-body').append(body);q('#dialog-foot').replaceChildren(...buttons);if(!q('#dialog').open)q('#dialog').showModal();}
+function close(){q('#dialog').close();}
+function render(){kpiSnapshot=kpiSnapshots[version]||null;all('[data-value]').forEach(e=>e.textContent=versions[version][e.dataset.value]);q('#versions').textContent=version+' · '+(version===current?'工作稿':version==='v1'?'原稿':'候选');q('#report-version').textContent=version+' / '+(version===current?'当前工作稿':version==='v1'?'原稿':'修改建议');q('#selected-name').textContent=(names[selected]||selected)+' · '+version;q('#primary-judgment').classList.toggle('selected',selected==='product');q('#primary-judgment .tag').textContent=selected==='product'?'当前选中':'策略判断';q('#save-status').textContent='查看 '+version+' · 工作稿 '+current+(adopted?' · 已明确采用 '+adopted:' · 尚无采用决定')+(undo.length?' · 有本页编辑':'');q('#report-kpi').hidden=!kpiSnapshot||kpiSnapshot.version!==version;if(kpiSnapshot&&kpiSnapshot.version===version){q('#report-kpi').replaceChildren(el('p','', '另附：会员目标测算快照（独立合成示例，不替换本策略目标）'),el('p','',kpiSnapshot.summary));}q('#read-selection').textContent=readSelection.size?'已选 '+readSelection.size+' 项 · '+version:'选取报告中的一部分，继续工作';q('#handoff').disabled=!readSelection.size;}
+function setView(next){if(next==='work'&&focus){focus=false;q('#app').classList.remove('focus');q('#focus').setAttribute('aria-label','进入专注阅读');q('#focus').title='专注阅读';}viewScroll[view]=q(view==='work'?'#work-scroll':'#read-scroll').scrollTop;view=next;q('#work-scroll').hidden=view!=='work';q('#read-scroll').hidden=view!=='read';q('#read-actions').hidden=view!=='read';q('#work-toggle').setAttribute('aria-pressed',view==='work');q('#read-toggle').setAttribute('aria-pressed',view==='read');q(view==='work'?'#work-scroll':'#read-scroll').scrollTop=viewScroll[view];render();}
+function setTab(next){tab=next;['strategy','goals','actions'].forEach(t=>q('#panel-'+t).hidden=t!==tab);all('[data-tab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.tab===tab);b.tabIndex=b.dataset.tab===tab?0:-1;});}
+all('[data-tab]').forEach(b=>{b.onclick=()=>setTab(b.dataset.tab);b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const t=['strategy','goals','actions'],n=(t.indexOf(tab)+(e.key==='ArrowRight'?1:2))%3;setTab(t[n]);q('[data-tab="'+t[n]+'"]').focus();};});
+q('#work-toggle').onclick=()=>setView('work');q('#read-toggle').onclick=()=>setView('read');q('#focus').onclick=()=>{if(!focus)setView('read');focus=!focus;q('#app').classList.toggle('focus',focus);q('#focus').setAttribute('aria-label',focus?'退出专注阅读':'进入专注阅读');q('#focus').title=focus?'返回三栏工作区':'专注阅读';};
+function pick(id){selected=id;render();}
+function ask(id){pick(id);const text='为什么这样安排“'+names[id]+'”？先解释，不修改。';q('#prompt').value=text;prepared={text,id,version,body:versions[version][id]};q('#action-hint').hidden=true;q('#prompt').focus();}
+all('[data-ask]').forEach(b=>b.onclick=()=>ask(b.dataset.ask));all('[data-pick]').forEach(b=>b.onclick=()=>{pick(b.dataset.pick);const body=el('div');body.append(el('p','',versions[version][selected]));dialog(names[selected],body,[btn('讨论这一处',()=>{close();ask(selected);}),btn('编辑文字',()=>edit(selected),'primary')]);});q('#next').onclick=()=>ask('story');
+function edit(id){pick(id);const v=version,box=el('div'),label=el('label','tiny','仅修改 '+names[id]+' · '+v),input=el('textarea');input.id='edit-text';input.value=versions[v][id];label.htmlFor='edit-text';box.append(label,input,el('p','tiny muted','修改仅保留在当前页面；品牌规则不会随本次编辑改变。'));
+dialog('编辑这段判断',box,[btn('取消',close),btn('应用修改',()=>{const text=input.value.trim();if(!text){input.setCustomValidity('请填写内容或取消。');input.reportValidity();return;}undo.push({version:v,id,before:versions[v][id]});versions[v][id]=text;render();close();toast('已修改这一处，工作和阅读同步。可在更多操作中撤销。');},'primary')]);input.oninput=()=>input.setCustomValidity('');input.focus();}
+all('[data-edit]').forEach(b=>b.onclick=()=>edit(b.dataset.edit));
+q('#mode').onchange=()=>q('#action-hint').hidden=!(prepared?.kind==='revision'&&q('#mode').value==='ask');
+q('#send').onclick=()=>{const text=q('#prompt').value.trim();if(!text){toast('先输入请求，或选中一项继续讨论。');return;}if(!prepared||prepared.text!==text||prepared.version!==version||prepared.body!==versions[version][prepared.id]){toast('请求已保留。当前为交互预览，未运行模型。');return;}if(prepared.kind==='revision'){toast('修改请求尚未执行；请填写具体要求，或使用成果内的编辑按钮。');return;}const textReply=activeDraft?.key==='B'?'这个方向先用已提供的品牌选择建立理解，再紧接产品事实；不是把故事当作效果证明，也没有改变当前稿。':prepared.id==='story'?'本次任务先解决产品理解。品牌故事可以解释产品选择，但不应盖过原料与使用说明；这也符合本轮“克制、有据”的表达要求。':'这个判断来自当前目标、产品事实和本轮品牌要求。你可以继续调整，原研究不会因此被改写。';const box=el('div','live-reply');box.append(el('div','agent-name','示例解释 · '+names[prepared.id]),el('p','',textReply));q('#replies').append(box);box.scrollIntoView({block:'end'});toast('仅显示示例解释，没有修改或采用。');};
+function showVersions(){const stale=JSON.stringify(versions.v1)!==JSON.stringify(base);const body=el('div');if(stale)body.append(el('p','error','v1 已手工编辑；预置 v2 基于初始 v1，未包含这些修改，暂不能采用。'));body.append(el('p','tiny muted','v2 是预置的修订示例，不代表模型已执行。查看与采用分别记录。'));const grid=el('div','version-list');['v1','v2'].forEach(v=>{const card=el('div','version-card');card.append(el('strong','',v+(v===current?' · 当前工作稿':v==='v1'?' · 原稿':' · 修改建议')),el('p',v==='v2'?'changed':'',versions[v].story),btn('查看 '+v,()=>{version=v;readSelection.clear();all('.report-select').forEach(c=>c.checked=false);render();close();}));grid.append(card);});body.append(grid);dialog('版本与局部比较',body,[btn('保留 / 恢复 v1',()=>{current='v1';adopted='v1';render();close();}),btn('采用 v2',()=>{if(stale){toast('请先比较当前编辑；预置候选不能覆盖修改后的工作稿。');return;}current='v2';adopted='v2';version='v2';readSelection.clear();all('.report-select').forEach(c=>c.checked=false);render();close();toast('已选择 v2 为当前工作稿，v1 仍可查看。');},'primary')]);}
+q('#versions').onclick=showVersions;
+const infos={
+brand:['本次品牌背景',()=>{const b=el('div');b.append(el('span','tag purple','示例品牌 · 本轮选用'));const list=el('ul','scope-list');brandRules.forEach((r,i)=>{const l=el('li');l.append(el('b','','品牌约束 '+(i+1)),document.createTextNode(r));list.append(l);});b.append(list,el('h3','','它影响了什么'),el('p','','产品信息做主线，不把故事写成效果保证。修改文案或策略不会自动改写这些品牌要求。'),el('p','tiny muted','当前任务也可以不关联 Brand Kit；此处展示长期品牌上下文如何进入一次工作。'));return b;}],
+facts:['本轮产品事实',()=>{const b=el('div');b.append(el('p','','已载入的合成资料：一款宠物主食产品的原料与使用说明。'),el('p','','没有销售表现、功效验证或竞品优劣数据。'),el('p','tiny muted','产品事实与品牌语气分开；本次不搜索、不额外补写事实。'));return b;}],
+research:['固定研究引用 · v2 / R-02',()=>el('p','','可将“原料与喂养信息是否易于理解”作为一个待验证的沟通方向。这个线索本身，不足以证明市场需求或销售效果。原研究保持不变。')],
+goal:['本次目标与范围',()=>{const b=el('div');b.append(el('h3','','当前目标'),el('p','',versions[version].goal),el('h3','','工作边界'),el('p','',versions[version].boundary),el('p','tiny muted','预算、周期和数值 KPI 尚未提供。目标与衡量中可显式载入独立的有 KPI 合成例子。'));return b;}],
+methods:['为什么这样判断',()=>{const b=el('div');[['受众任务拆解','先问读者要理解什么：产品是什么、为什么这样选择，而不只罗列品牌想说什么。'],['信息分层','把原料、使用方式放在主线，品牌故事解释选择，把未经证实的效果留在范围之外。'],['本轮应用',(activeDraft?.key==='B'?'本稿用品牌选择作为引导，并以产品事实承接。':'本稿以产品信息为主线，配以克制的品牌故事。')+'这里呈现方法解释，未调用真实 Skill。']].forEach(([h,p])=>b.append(el('h3','',h),el('p','',p)));return b;}],
+new:['新的工作',()=>el('p','','本页聚焦策略工作面和阅读视图。完整新建工作流程仍保留在线框对照中，当前不创建真实会话。')],
+more:['更多成果操作',()=>{const b=el('div');b.append(el('p','tiny muted','本页编辑、采用和引用在刷新后重置。'),btn('撤销上一次手工编辑',()=>{const u=undo.pop();if(!u){toast('没有可撤销的编辑。');return;}versions[u.version][u.id]=u.before;render();close();toast('已恢复该段原文。');}),btn('准备修改请求',()=>{const text='请修改“'+names[selected]+'”：〔填写具体要求〕。其余内容不变。';q('#prompt').value=text;prepared={kind:'revision',id:selected,version,text,body:versions[version][selected]};q('#action-hint').textContent='已准备修订请求；当前仍为讨论模式。';q('#action-hint').hidden=q('#mode').value!=='ask';close();}));return b;}]
+};
+all('[data-info]').forEach(b=>b.onclick=()=>{const i=infos[b.dataset.info];dialog(i[0],i[1]());});q('#close-dialog').onclick=close;
+function calculate(){const fields=['visits','rate','target'].map(id=>q('#'+id));const [visits,rate,target]=fields.map(e=>Number(e.value));const valid=fields.every(e=>e.value!==''&&e.checkValidity());q('#calc-error').hidden=valid;q('#path-table').hidden=!valid;q('#snapshot-kpi').disabled=!valid;if(!valid){q('#calc-error').textContent='访问量与会员目标需为正整数，完成率需在 0.01%～100% 之间。';q('#calc-summary').textContent='请先修正输入；不沿用上一次计算结果。';return null;}const estimate=visits*rate/100,gap=Math.max(0,target-estimate),traffic=Math.ceil(target/(rate/100)),conversion=target/visits*100,mixedVisits=Math.ceil(visits*1.2),mixedRate=target/mixedVisits*100;const summary='按当前假设：'+visits.toLocaleString()+' 次有效访问 × '+rate+'% = '+Number(estimate.toFixed(2)).toLocaleString()+' 名会员；距离目标 '+target+' 名，还差 '+Number(gap.toFixed(2))+' 名。';q('#calc-summary').textContent=summary;q('#path-rows').replaceChildren();const rows=estimate>=target?[['当前假设已覆盖目标','先核实有效访问、注册与新增口径','不再强行增加增长动作']]:[['增加有效访问',traffic.toLocaleString()+' 次访问，完成率维持 '+rate+'%','访问来源与获客成本'],['改善注册完成率',conversion<=100?conversion.toFixed(2)+'%，访问量维持 '+visits.toLocaleString():'所需完成率超过 100%，该路径不可行','注册环节与用户意愿'],['组合调整',mixedRate<=100?mixedVisits.toLocaleString()+' 次访问 × '+mixedRate.toFixed(2)+'%':'该组合所需完成率超过 100%','同时改变两项假设的依据']];rows.forEach(r=>{const tr=el('tr');r.forEach(t=>tr.append(el('td','',t)));q('#path-rows').append(tr);});q('#kpi-saved').textContent=kpiSnapshot?'已有快照保留；新输入只影响本次测算':'调整输入后，本地即时重算';return {visits,rate,target,summary,rows};}
+q('#kpi-example').onclick=()=>{kpi=!kpi;q('#qualitative').hidden=kpi;q('#quantitative').hidden=!kpi;q('#kpi-example').textContent=kpi?'返回无数值目标':'载入有 KPI 的合成示例';if(kpi){calculate();toast('已载入独立合成例子，原策略目标未被替换。');}};
+['visits','rate','target'].forEach(id=>q('#'+id).oninput=calculate);q('#snapshot-kpi').onclick=()=>{const c=calculate();if(c){kpiSnapshots[version]=JSON.parse(JSON.stringify({...c,version}));render();q('#kpi-saved').textContent='快照已保留在同版阅读附注；继续测算不改写旧快照';}};
+all('.report-select').forEach(c=>c.onchange=()=>{c.checked?readSelection.add(c.value):readSelection.delete(c.value);render();});
+q('#handoff').onclick=()=>{if(!readSelection.size)return;const snap={version,items:[...readSelection].map(id=>({id,text:versions[version][id]})),goal:versions[version].goal,rules:[...brandRules],source:'研究 v2 · R-02 / 产品事实 / 本轮品牌要求'};const text=['固定引用：产品沟通策略 '+version,'',...snap.items.map(i=>(names[i.id]||i.id)+'：'+i.text),'','必要摘要：'+snap.goal,'','继续生效的品牌要求：',...snap.rules,'','来源说明：'+snap.source].join('\n');const b=el('div');b.append(el('div','preview-body',text),el('p','tiny muted','本稿只准备接续请求，未复制原资料文件，也不会自动制作。'));dialog('带着选中的内容继续',b,[btn('返回调整',close),btn('带入当前对话',()=>{transfer=JSON.parse(JSON.stringify(snap));q('#prompt').value='基于所选的'+snap.items.map(i=>names[i.id]).join('、')+'，继续讨论下一项工作；遵守已带入的品牌要求。';prepared=null;close();if(focus){focus=false;q('#app').classList.remove('focus');q('#focus').setAttribute('aria-label','进入专注阅读');q('#focus').title='专注阅读';}q('#action-hint').hidden=false;q('#action-hint').textContent='已带入 '+snap.items.length+' 项 · 固定 '+snap.version+' · 含品牌要求';toast('引用已带入，尚未发送。');},'primary')]);};
+
+// Finite interaction study: one conversation, explicit actions and frozen inputs.
+const initialBase={...base};
+let catalog={
+ research:{name:'研究报告 v2 · R-02',type:'外部线索 · 合成',text:'可将“原料与喂养信息是否易于理解”作为一个待验证的沟通方向。这个线索本身，不足以证明市场需求或销售效果。'},
+ product:{name:'产品资料',type:'内部事实 · 合成',text:'示例产品是一款宠物主食产品，现有资料提供原料说明和使用说明；没有销量、功效验证或竞品优势数据。'},
+ brand:{name:'品牌摘录与表达要求',type:'品牌背景 · 合成',text:'品牌摘录：把每一份选择讲清楚。表达克制，以已有事实说明选择，不虚构品牌经历，不承诺未经验证的功效。'}
+};
+let context={ids:['product','brand'],goal:'帮助初次接触品牌的人理解产品，形成沟通方向；先不制作成套内容。'};
+let stage='context',discussion=null,directionSet=null,request=null,run=null,runSequence=0,activeDraft=null;
+let drafts=new Map(),directionHistory=new Map(),journeyHistory=[];
+const clone=x=>JSON.parse(JSON.stringify(x));
+const sampleCatalog=clone(catalog),threads=new Map();let threadSequence=1;
+let activeThread={id:'thread-1',title:'让产品被理解',incoming:null,state:null,unread:false};threads.set(activeThread.id,activeThread);
+const fingerprint=()=>JSON.stringify(context);
+const capture=()=>({goal:context.goal,sources:context.ids.map(id=>({id,...catalog[id]})),stamp:fingerprint()});
+const sourceNames=s=>s.sources.map(x=>x.name).join(' / ')||'未选资料';
+const journal=q('#messages');
+journal.replaceChildren(el('div','message-user','已有研究和产品资料，我想先判断哪些线索适合自己，再决定策略方向。'));
+const replies=el('div');replies.id='replies';replies.setAttribute('aria-live','polite');journal.append(replies);
+function message(text,user=false){const node=el('div',user?'message-user':'live-reply');if(!user)node.append(el('div','agent-name','Mokina · 情景演示'));node.append(el('p','',text));journal.append(node);journeyHistory.push({user,text});journal.scrollTop=journal.scrollHeight;}
+message('先选择这次要用的背景。研究只是可选线索；也可以只用产品资料与品牌背景开始。');
+const nav=el('nav','artifact-nav');nav.setAttribute('aria-label','当前工作内容');
+[['context','背景资料'],['notes','讨论笔记'],['directions','方向对照'],['strategy','策略工作稿']].forEach(([id,label])=>{const b=btn(label,()=>showStage(id));b.dataset.stage=id;nav.append(b);});
+q('.workspace').insertBefore(nav,q('.toolbar'));
+const journey=el('section','journey-scroll');journey.id='journey';journey.setAttribute('aria-label','上下文与策略方向');
+q('.workspace').insertBefore(journey,q('#work-scroll'));
+const workSend=q('#send').onclick,workNext=q('#next').onclick;
+function syncJourney(){
+ planButton.disabled=!discussion;
+ renderThreads();
+ all('[data-stage]').forEach(b=>{b.setAttribute('aria-current',b.dataset.stage===stage?'page':'false');b.disabled=(b.dataset.stage==='notes'&&!discussion)||(b.dataset.stage==='directions'&&!directionSet)||(b.dataset.stage==='strategy'&&!activeDraft);});
+ const work=stage==='strategy';journey.hidden=work;
+ q('.toolbar').hidden=!work;q('.context-bar').hidden=!work;
+ if(!work){q('#work-scroll').hidden=true;q('#read-scroll').hidden=true;q('#read-actions').hidden=true;
+ q('#selected-name').textContent=stage==='context'?'本轮背景':stage==='notes'?'讨论笔记 · 未制作': '方向对照 · 示例草案';
+ q('#save-status').textContent='同一工作 · '+(directionSet?'有方向草案':'尚未制作策略');
+ q('#next').textContent=stage==='context'?'先判断这些背景是否适用':stage==='notes'?'形成两个可比较的方向':directionSet?.options.A&&directionSet?.options.B?'组合 A 的信息结构与 B 的故事':'讨论这个方向的依据';
+ }else{q('#next').textContent=activeDraft?.key==='B'?'为什么先讲品牌故事？':'为什么不先讲品牌故事？';}
+}
+function showStage(next){
+ if(next==='notes'&&!discussion||next==='directions'&&!directionSet||next==='strategy'&&!activeDraft)return;
+ if(focus){focus=false;q('#app').classList.remove('focus');q('#focus').setAttribute('aria-label','进入专注阅读');}
+ stage=next;
+ if(stage==='strategy'){setView(view);decorateDraft();}else drawJourney();
+ syncJourney();
+}
+function heading(k,title,sub){const h=el('header','journey-heading');h.append(el('span','eyebrow',k),el('h1','',title),el('p','',sub));journey.append(h);}
+function previewSource(source){if(source.reference){showReference(source.reference);return;}const b=el('div');b.append(el('span','tag purple',source.type),el('p','',source.text));dialog(source.name,b);}
+function chips(snapshot){const row=el('div','scope-chips');snapshot.sources.forEach(s=>row.append(el('span','',s.name)));return row;}
+function prepare(kind,key){
+ if(kind==='deepen'&&drafts.has(directionSet.id+'-'+key)){openDraft(key);return;}
+ const texts={discuss:'结合本轮选用的资料，先判断是否适合我的目标，不制作策略。',directions:'基于已讨论的背景，制作两个不同的沟通方向，保留依据和取舍，暂不制作内容。',combine:'结合 A 的产品信息结构与 B 的品牌故事，深化为一份策略工作稿。',deepen:'沿着方向 '+key+' 深化为策略工作稿，保留依据和边界，先不制作成套内容。',explain:'解释方向 '+key+' 的依据与取舍，不修改、不采用。'};
+ if(kind==='directions'&&(plan||planDraft))texts.directions='按本次计划制作所选方向；先确认保存范围，保留已有成果，不制作成套内容。';
+ const setId=directionSet?.id;q('#prompt').value=texts[kind];request={kind,key,text:texts[kind],stamp:fingerprint(),setId};prepared=null;
+ q('#action-hint').hidden=false;q('#action-hint').textContent=['directions','deepen','combine'].includes(kind)?'请求已填入；请选择执行模式后发送。':'请求已填入，发送前仍可修改。';q('#prompt').focus();
+}
+function drawJourney(){
+ journey.replaceChildren();
+ if(stage==='context'){
+ heading('Context / This work',activeThread.incoming?'从这个判断，继续下一项工作。':'先把自己的背景带进来。','选用本轮需要的部分；不会自动搜索，也不会改写已有成果的依据。');
+ if(activeThread.incoming){const ref=activeThread.incoming,b=el('div','carry-banner');b.append(el('span','eyebrow','Continue / Selected context'),el('h2','','从选中的判断继续'),el('p','',ref.sourceTitle+' · '+ref.version+' · '+ref.items.length+' 个片段'),btn('查看引用正文',()=>showReference(ref)),btn('回到来源版本',()=>openReferenceSource(ref)));journey.append(b);}
+ const label=el('label','tiny','当前目标');label.htmlFor='context-goal';const input=el('textarea','context-goal');input.id='context-goal';input.value=context.goal;
+ input.oninput=()=>{context.goal=input.value;};journey.append(label,input);
+ const list=el('div','source-list');
+ Object.entries(catalog).forEach(([id,s])=>{const card=el('article','source-card'),header=el('header'),label=el('label'),checkbox=el('input');checkbox.type='checkbox';checkbox.checked=context.ids.includes(id);checkbox.setAttribute('aria-label','本轮选用 '+s.name);
+ checkbox.onchange=()=>{context.ids=checkbox.checked?[...context.ids,id]:context.ids.filter(x=>x!==id);q('#context-count').textContent='本轮选用 '+context.ids.length+' 份 · 调整仅影响下一次操作';};
+ label.append(checkbox,document.createTextNode(s.name));header.append(label,btn('查看正文',()=>previewSource(s)));card.append(header,el('p','',s.type+' · '+s.text));list.append(card);});journey.append(list);
+ if(!Object.keys(catalog).some(id=>id==='product'))journey.append(btn('使用合成示例资料',()=>{Object.assign(catalog,clone(sampleCatalog));drawJourney();}));
+ const f=el('div','journey-footer'),count=el('p','','本轮选用 '+context.ids.length+' 份 · 调整仅影响下一次操作');count.id='context-count';f.append(count,btn('准备讨论',()=>prepare('discuss'),'primary'));journey.append(f);
+ }else if(stage==='notes'){
+ heading('Discussion / Context fit','这条线索，对我们意味着什么？','讨论的可视化笔记，不是新生成的策略版本。');
+ journey.append(chips(discussion));
+ const rows=[['本次目标',discussion.goal],['内部条件',discussion.sources.filter(s=>s.id!=='research').map(s=>s.text).join(' ')||'没有选中内部资料，先补充事实，或仅讨论分析方法。'],['外部线索',discussion.sources.some(s=>s.id==='research')?catalog.research.text:'本次未选研究，不用市场趋势替代内部事实。'],['还不能判断','没有销售与受众验证数据，不能把表达方向当作已验证的增长机会。']];
+ const carriedRules=discussion.sources.filter(s=>s.reference).flatMap(s=>s.reference.rules);if(carriedRules.length)rows.splice(2,0,['沿用的约束',carriedRules.join('\n')]);
+ rows.forEach(([title,text])=>{const r=el('div','fit-row');r.append(el('strong','',title),el('p','',text));journey.append(r);});
+ journey.append(el('div','fit-conclusion','下一步可以比较不同的表达重心：先解释产品，或先建立品牌理解。是否制作，仍由你决定。'));
+ if(discussion.stamp!==fingerprint())journey.append(el('p','journey-notice','资料选择或目标已变化。这里保留原讨论；重新讨论后再制作。'));
+ const footer=el('div','journey-footer');footer.append(btn('查看这轮固定依据',()=>showSnapshot(discussion)),btn('准备两个方向',()=>prepare('directions'),'primary'));journey.append(footer);
+ }else{
+ const historyLabel=el('label','tiny','方向草案记录 '),historySelect=el('select');historySelect.setAttribute('aria-label','选择方向草案');[...directionHistory.values()].forEach((entry,i)=>{const o=el('option','','第 '+(i+1)+' 轮 · '+entry.snapshot.sources.length+' 份依据');o.value=entry.id;o.selected=entry.id===directionSet.id;historySelect.append(o);});historySelect.onchange=()=>{directionSet=directionHistory.get(historySelect.value);request=null;drawJourney();};historyLabel.append(historySelect);journey.append(historyLabel);
+ heading('Strategy / Direction study',Object.keys(directionSet.options).length===1?'先把一个方向做清楚。':'同一份背景，两种表达重心。','比较方向、取舍和依据；选择深化不等于采用最终版本。');
+ journey.append(chips(directionSet.snapshot));
+ const grid=el('div','direction-grid');if(Object.keys(directionSet.options).length===1)grid.classList.add('single-direction');
+ Object.entries(directionSet.options).forEach(([key,o])=>{const card=el('article','direction-card'),hero=el('header','direction-cover');hero.append(el('span','eyebrow','方向 '+key),el('h2','',o.title));const body=el('div','direction-content');
+ [['怎样服务目标',o.intent],['依靠什么',o.evidence],['需要接受的取舍',o.tradeoff]].forEach(([h,p])=>body.append(el('h3','',h),el('p','',p)));
+ const actions=el('div','row wrap');actions.append(btn('讨论 '+key,()=>prepare('explain',key)),btn('编辑 '+key,()=>editDirection(key)),btn('深化 '+key,()=>prepare('deepen',key),'primary'));body.append(actions);card.append(hero,body);grid.append(card);});journey.append(grid);
+ const footer=el('div','journey-footer');footer.append(btn('查看固定依据',()=>showSnapshot(directionSet.snapshot)));if(directionSet.options.A&&directionSet.options.B)footer.append(btn('组合 A + B',()=>prepare('combine'),'primary'));journey.append(footer);
+ if(directionSet.snapshot.stamp!==fingerprint())journey.append(el('p','journey-notice','本轮资料选择已变化；方向仍保留原依据。可继续讨论旧方向，使用新背景需先重新讨论。'));
+ }
+}
+function renderRun(){
+ q('.run-strip')?.remove();if(!run)return;
+ const r=el('div','run-strip');r.style.cssText='margin:8px 16px;flex:none';r.setAttribute('role','status');
+ r.append(el('span','','正在展开方向 '+run.keys.join('、')+' 示例…'),btn('取消演示',()=>{run.cancelled=true;run=null;renderRun();renderThreads();message('已取消，本次未新增方向。');}));
+ q('#next').before(r);
+}
+function showSnapshot(s){const b=el('div');b.append(el('h3','','固定目标'),el('p','',s.goal));s.sources.forEach(item=>b.append(el('h3','',item.name),el('p','',item.text)));dialog('这一次的固定依据',b);}
+function editDirection(key){
+ const option=directionSet.options[key],box=el('div'),label=el('label','tiny','方向 '+key+' · 怎样服务目标'),input=el('textarea');input.id='direction-edit';label.htmlFor=input.id;input.value=option.intent;box.append(label,input,el('p','tiny muted','修改只影响这个方向；不会改写资料或已经深化的工作稿。'));
+ dialog('编辑方向 '+key,box,[btn('取消',close),btn('保存这个方向',()=>{if(!input.value.trim()){input.setCustomValidity('请填写内容');input.reportValidity();return;}option.intent=input.value.trim();option.edited=true;close();drawJourney();},'primary')]);input.oninput=()=>input.setCustomValidity('');
+}
+function saveDraft(){
+ if(!activeDraft)return;
+ Object.assign(activeDraft,{versions:clone(versions),base:clone(base),version,current,adopted,undo:clone(undo),kpis:clone(kpiSnapshots)});
+}
+function decorateDraft(){
+ if(!activeDraft)return;
+ const s=activeDraft.snapshot,label=activeDraft.key==='AB'?'A + B':activeDraft.key;
+ q('.document-name').textContent='产品沟通策略 · '+label;
+ q('.section-heading h1').textContent=activeDraft.title;
+ q('.section-heading .tag').textContent='方向 '+label;
+ q('.section-heading .eyebrow').textContent='Strategy / Direction '+label;
+ q('.section-heading p').textContent='目标：'+s.goal;
+ q('#primary-judgment h2').textContent=activeDraft.key==='B'?'品牌叙事做引导':'产品信息做主线';
+ q('.report-paper h1').textContent=activeDraft.title;
+ q('.report-section h2').textContent=activeDraft.key==='B'?'先理解品牌，再连接产品选择':'先理解产品，再形成选择理由';
+ q('.report-flow div:first-child strong').textContent=activeDraft.key==='B'?'品牌摘录与产品说明':'原料与使用说明';
+ q('.report-flow div:nth-child(2) strong').textContent=activeDraft.key==='B'?'品牌选择连接产品':'解释产品选择';
+ q('.context-bar [data-info="research"]').hidden=!s.sources.some(x=>x.id==='research');
+ q('.context-bar [data-info="brand"]').hidden=!s.sources.some(x=>x.id==='brand');
+ q('.source-label').textContent='本轮选用 · '+sourceNames(s);
+ q('.report-meta').textContent='产品沟通策略 · 方向 '+label+' · 合成示例';
+ q('#read-scroll [data-info="research"]').hidden=!s.sources.some(x=>x.id==='research');
+ const sourceParagraph=q('#read-scroll [data-info="research"]').previousElementSibling;sourceParagraph.textContent='固定依据：'+sourceNames(s);
+}
+function openDraft(key){
+ saveDraft();
+ const id=directionSet.id+'-'+key;
+ if(!drafts.has(id)){
+ const option=directionSet.options[key==='AB'?'A':key],s=clone(directionSet.snapshot);
+ const b={...initialBase,goal:s.goal,position:key==='AB'?'用清晰的信息结构，承接克制的品牌故事。':option.intent,product:key==='B'?'先用本轮品牌摘录交代选择的出发点，紧接原料与使用说明，让读者看见故事背后的事实。':option.intent,
+ story:key==='B'?'把“为什么这样选择”作为开头，不补写未经提供的品牌经历。':key==='AB'?'每讲清一个产品信息点，就用品牌的选择理由作简短承接；故事不另起一条主线。':initialBase.story};
+ const title=key==='AB'?'讲清产品，也讲清品牌的选择。':option.title;
+ drafts.set(id,{id,key,title,setId:directionSet.id,threadId:activeThread.id,snapshot:s,base:b,versions:{v1:clone(b),v2:{...b,story:'品牌相信，每一份选择都应该被讲清楚。回到原料与使用说明，让读者知道这款产品为什么这样选择。'}},version:'v1',current:'v1',adopted:null,undo:[],kpis:{}});
+ }
+ activeDraft=drafts.get(id);Object.assign(base,activeDraft.base);
+ Object.keys(versions).forEach(k=>delete versions[k]);Object.assign(versions,clone(activeDraft.versions));
+ Object.keys(kpiSnapshots).forEach(k=>delete kpiSnapshots[k]);Object.assign(kpiSnapshots,clone(activeDraft.kpis));
+ version=activeDraft.version;current=activeDraft.current;adopted=activeDraft.adopted;undo=clone(activeDraft.undo);names.product=key==='B'?'品牌叙事引导':'产品信息主线';
+ readSelection.clear();all('.report-select').forEach(c=>c.checked=false);selected='product';view='work';prepared=null;request=null;q('#action-hint').hidden=true;
+ showStage('strategy');message('已打开方向 '+key+' 的示例工作稿。可以编辑、阅读和比较；其他方向仍保留。');
+}
+function sourceSafe(){
+ if(context.goal.trim()!== '帮助初次接触品牌的人理解产品，形成沟通方向；先不制作成套内容。'){
+ message('你的目标已保留。当前示例只覆盖“理解产品并形成沟通方向”；可继续调整目标，或恢复示例目标后演示制作。');return false;}
+ if(!context.ids.includes('product')||!context.ids.includes('brand')){
+ message('这组双方向示例需要产品资料和品牌摘录。你可以继续讨论已选背景，或补选这两份合成资料后制作；不会用被排除的资料补齐。');return false;}
+ return true;
+}
+
+/* A task-local plan; saving, viewing and executing are separate actions. */
+const defaultPlanBoundary='只制作方向草案；不制作成套内容，不安排发布。';
+let plan=null,planDraft=null;
+let planHistory=[],planDone=new Map(),planResultSets=new Map();
+var planButton=btn('本次计划',()=>openPlan());planButton.className='small plan-trigger';nav.append(planButton);
+function ensurePlanDraft(){
+ if(!discussion){message('先讨论当前背景，再整理本次计划。');return false;}
+ if(!planDraft)planDraft={goal:discussion.goal,boundary:defaultPlanBoundary,snapshot:clone(discussion),items:[{id:'direction-A',key:'A',enabled:true},{id:'direction-B',key:'B',enabled:true}],current:'direction-A'};
+ return true;
+}
+function planPayload(p){return {goal:p.goal,boundary:p.boundary,snapshot:p.snapshot,items:p.items,current:p.current};}
+function planDirty(){return !!planDraft&&(!plan||JSON.stringify(planPayload(planDraft))!==JSON.stringify(planPayload(plan)));}
+function planSignature(p){return JSON.stringify([p.goal,p.boundary,p.snapshot.stamp]);}
+function itemDone(p,item){return planDone.get(planSignature(p)+'/'+item.id);}
+function planProblem(p){
+ if(!p.goal.trim())return '请填写本次目标。';
+ if(!p.items.some(i=>i.enabled))return '至少选择一个方向，或关闭计划继续讨论。';
+ if(p.goal!==p.snapshot.goal)return '目标已人工调整；当前示例只覆盖讨论时的目标。可以保存，需恢复该目标或重新讨论后制作。';
+ if(p.boundary!==defaultPlanBoundary)return '本次范围超出预置演示。可以保存；制作前请恢复示例范围，不会照旧生成默认稿。';
+ if(p.snapshot.stamp!==fingerprint()||discussion?.stamp!==p.snapshot.stamp)return '背景已变化。请重新讨论，再在计划中使用最新讨论依据。';
+ if(!p.snapshot.sources.some(s=>s.id==='product')||!p.snapshot.sources.some(s=>s.id==='brand'))return '此方向示例需要产品资料和品牌摘录；被排除的资料不会自动补齐。';
+ if(context.goal.trim()!=='帮助初次接触品牌的人理解产品，形成沟通方向；先不制作成套内容。')return '当前自定义目标不在预置方向示例范围内；保留计划，不自动套稿。';
+ return '';
+}
+function savePlan(){
+ if(!planDraft.goal.trim()||!planDraft.items.some(i=>i.enabled)){showPlanNotice('请填写目标，并至少选择一个方向。');return false;}
+ if(planDirty()){
+ plan={...clone(planPayload(planDraft)),id:'current-direction-plan',version:(plan?.version||0)+1};
+ planHistory.push(clone(plan));
+ }
+ request=null;q('#prompt').value='';q('#action-hint').hidden=true;
+ return true;
+}
+function showPlanNotice(text){const n=q('#plan-notice');if(n){n.hidden=false;n.textContent=text;}else toast(text);}
+function openPlan(){
+ if(!ensurePlanDraft())return;
+ const focused=q('#dialog').contains(document.activeElement)?document.activeElement.getAttribute('aria-label'):null;
+ const body=el('div','plan-editor');
+ body.append(el('p','tiny muted','把这次要做的方向和不做的事情定下来；保存不会制作。'));
+ const status=el('p','plan-summary');status.id='plan-state';status.textContent=(plan?'已保存 v'+plan.version:'尚未保存')+(planDirty()?' · 有未保存调整':'');
+ body.append(status);
+ const makeField=(title,key)=>{const label=el('label','plan-label',title),input=el('textarea','plan-input');input.value=planDraft[key];label.append(input);input.setAttribute('aria-label',title);input.oninput=()=>{planDraft[key]=input.value;q('#plan-state').textContent=(plan?'已保存 v'+plan.version:'尚未保存')+' · 有未保存调整';showPlanNotice(planProblem(planDraft)||'调整将用于下一次制作；保存不制作。');};body.append(label);};
+ makeField('本次目标','goal');
+ const itemHead=el('div','row between');itemHead.append(el('strong','','本次交付'),el('span','tiny muted','勾选制作范围 · 圆点选择当前项'));body.append(itemHead);
+ const items=el('div','plan-items');
+ planDraft.items.forEach((item,index)=>{
+ const row=el('div','plan-item'),choice=el('label'),checkbox=el('input');checkbox.type='checkbox';checkbox.checked=item.enabled;checkbox.setAttribute('aria-label','计划选用方向 '+item.key);
+ checkbox.onchange=()=>{item.enabled=checkbox.checked;openPlan();};choice.append(checkbox,document.createTextNode(item.key==='A'?'A · 产品解释方向':'B · 品牌叙事方向'));
+ const sub=el('span','tiny muted',item.enabled?(itemDone(planDraft,item)?'已有成果':'未制作'):'本轮不做');
+ const current=el('input');current.type='radio';current.name='plan-current';current.checked=planDraft.current===item.id;current.setAttribute('aria-label','设为当前项 '+item.key);current.onchange=()=>{planDraft.current=item.id;openPlan();};
+ const up=btn('上移',()=>{[planDraft.items[index-1],planDraft.items[index]]=[item,planDraft.items[index-1]];openPlan();});up.setAttribute('aria-label','上移方向 '+item.key);up.disabled=index===0;
+ row.append(choice,sub,current,up);items.append(row);
+ });body.append(items);makeField('不做的事情','boundary');
+ const notice=el('p','journey-notice',planProblem(planDraft));notice.id='plan-notice';notice.hidden=!notice.textContent;body.append(notice);
+ const source=el('div','plan-source');source.append(el('strong','tiny','计划使用的讨论依据'),chips(planDraft.snapshot),btn('查看依据正文',()=>{showSnapshot(planDraft.snapshot);q('#dialog-foot').append(btn('返回计划',openPlan));}),btn('使用最新讨论依据',()=>{
+ if(!discussion||discussion.stamp!==fingerprint()){showPlanNotice('请先返回背景资料重新讨论，计划草稿会保留。');return;}
+ planDraft.snapshot=clone(discussion);planDraft.goal=discussion.goal;openPlan();
+ }));body.append(source);
+ if(planHistory.length){const h=el('details','plan-history'),summary=el('summary','tiny','查看计划保存记录（'+planHistory.length+'）');h.append(summary);planHistory.forEach(p=>h.append(el('p','tiny','v'+p.version+' · '+p.items.filter(i=>i.enabled).map(i=>i.key).join('、')+' · '+p.goal)));body.append(h);}
+ dialog('本次计划',body,[btn('保存计划',()=>{if(savePlan()){openPlan();showPlanNotice('计划已保存 v'+plan.version+'，没有制作成果。');}}),btn('开始当前项',()=>startPlan('current')),btn('全部制作',()=>startPlan('all'),'primary')]);
+ q('#dialog').classList.add('plan-panel');
+ if(focused)[...q('#dialog').querySelectorAll('[aria-label]')].find(e=>e.getAttribute('aria-label')===focused)?.focus();
+}
+q('#dialog').addEventListener('close',()=>{if(!q('#dialog').open)q('#dialog').classList.remove('plan-panel');});
+function startPlan(scope,force=false){
+ if(run){showPlanNotice('已有演示正在运行，请先完成或取消。');return;}
+ if(planDirty()){
+ const b=el('div');b.append(el('p','','计划面板有未保存调整。选择保存这些调整，或使用上次保存的范围；草稿都会保留。'));
+ const describe=(title,p)=>{const card=el('div','plan-source');card.append(el('strong','',title));if(!p){card.append(el('p','muted','还没有已保存的计划。'));return card;}card.append(el('p','','本次将检查：'+p.items.filter(i=>i.enabled&&(scope==='all'||i.id===p.current)).map(i=>'方向 '+i.key).join('、')),el('p','tiny',p.goal),el('p','tiny muted',p.boundary),chips(p.snapshot));return card;};
+ b.append(describe(plan?'已保存 v'+plan.version:'已保存范围',plan),describe('本次调整 · 尚未保存',planDraft),el('p','tiny muted','只执行所选范围中尚未完成的项；已有成果保留。'));
+ const useSaved=btn('使用已保存计划',()=>{close();executePlan(scope,force);});useSaved.disabled=!plan;
+ dialog('开始前，如何处理计划调整？',b,[btn('返回调整',openPlan),useSaved,btn('保存并开始',()=>{if(savePlan()){close();executePlan(scope,force);}},'primary')]);return;
+ }
+ executePlan(scope,force);
+}
+function executePlan(scope,force=false){
+ if(!plan){openPlan();showPlanNotice('先保存计划，或选择保存并开始。');return;}
+ const problem=planProblem(plan);if(problem){openPlan();showPlanNotice(problem);return;}
+ const chosen=plan.items.filter(i=>i.enabled&&(scope==='all'||i.id===plan.current));
+ if(!chosen.length){openPlan();showPlanNotice('当前项未勾选，请选择要制作的当前项。');return;}
+ const pending=chosen.filter(i=>force||!itemDone(plan,i));
+ if(!pending.length){
+ dialog('所选计划项已完成',el('p','','不会重复制作。你可以查看已有方向，或明确另做一轮，保留原成果。'),[btn('返回计划',openPlan),btn('另做一轮',()=>{close();executePlan(scope,true);},'primary')]);return;
+ }
+ const frozen=clone(plan);close();q('#mode').value='execute';request=null;
+ message('开始计划 v'+frozen.version+'：'+pending.map(i=>i.key).join('、')+'。使用已保存范围。',true);
+ launchDirections(frozen.snapshot,pending.map(i=>i.key),frozen,force);
+}
+function launchDirections(snapshot,keys=['A','B'],fromPlan=null,force=false){
+ if(run)return;
+ const sig=fromPlan&&planSignature(fromPlan);
+ const existingId=fromPlan&&!force&&planResultSets.get(sig);
+ const operation={id:++runSequence,owner:activeThread,ownerHistory:directionHistory,ownerDone:planDone,ownerResults:planResultSets,snapshot:clone(snapshot),keys:[...keys],plan:fromPlan&&clone(fromPlan),existingId,cancelled:false};
+ run=operation;request=null;q('#prompt').value='';q('#action-hint').hidden=true;renderRun();renderThreads();
+ setTimeout(()=>{
+ if(operation.cancelled||(activeThread===operation.owner?run:operation.owner.state?.run)!==operation)return;
+ const hasResearch=operation.snapshot.sources.some(s=>s.id==='research');
+ const options={
+ A:{title:'先把产品讲清楚。',intent:'将原料与喂养信息组织成容易理解的选择理由。',evidence:'本轮产品资料中的原料与使用说明。'+(hasResearch?'研究 R-02 仅作为探索线索。':''),tradeoff:'信息直接、易理解；品牌故事与情感表达需要另行补足。'},
+ B:{title:'先让品牌被理解。',intent:'以已提供的品牌故事建立理解，再带出具体的产品理由。',evidence:'本轮品牌摘录与产品资料，不虚构额外品牌经历。',tradeoff:'表达更有情境；要避免只有故事，没有清楚的产品信息。'}
+ };
+ const target=operation.existingId&&operation.ownerHistory.get(operation.existingId);
+ const result=target||{id:'directions-'+operation.id,threadId:operation.owner.id,snapshot:operation.snapshot,options:{},plan:operation.plan&&{id:operation.plan.id,version:operation.plan.version},executions:[]};
+ operation.keys.forEach(key=>{result.options[key]=options[key];});
+ result.executions.push({keys:operation.keys,planVersion:operation.plan?.version||null});
+ operation.ownerHistory.set(result.id,result);
+ if(operation.plan){operation.ownerResults.set(sig,result.id);operation.plan.items.filter(i=>operation.keys.includes(i.key)).forEach(i=>operation.ownerDone.set(sig+'/'+i.id,{resultId:result.id,itemId:i.id,planVersion:operation.plan.version}));}
+ const doneText='方向 '+operation.keys.join('、')+' 示例已就绪；依据与执行范围已固定。';
+ if(activeThread===operation.owner){directionSet=result;run=null;renderRun();message(doneText);if(stage==='notes'||stage==='directions')showStage('directions');else syncJourney();}
+ else{const st=operation.owner.state;st.directionSet=result;st.run=null;if(st.stage==='notes')st.stage='directions';const node=el('div','live-reply');node.append(el('div','agent-name','Mokina · 情景演示'),el('p','',doneText));st.messages.push(node);st.journeyHistory.push({user:false,text:doneText});operation.owner.unread=true;renderThreads();}
+ },1100);
+}
+
+q('#next').onclick=()=>stage==='strategy'?(activeDraft?.key==='B'?ask('product'):workNext()):prepare(stage==='context'?'discuss':stage==='notes'?'directions':directionSet?.options.A&&directionSet?.options.B?'combine':'explain',Object.keys(directionSet?.options||{})[0]);
+q('#send').onclick=()=>{
+ const text=q('#prompt').value.trim();if(!text)return toast('先输入目标或选择建议。');
+ if((plan||planDraft)&&/^(开始制作|开始执行|全部制作|开始当前项)[。！!]?$/u.test(text)){
+ const selectedPlan=planDraft||plan;const remaining=selectedPlan.items.filter(i=>i.enabled&&!itemDone(selectedPlan,i));
+ if(text.startsWith('开始当前项'))startPlan('current');else if(text.startsWith('全部')||remaining.length<=1)startPlan('all');else{openPlan();showPlanNotice('请选择当前项或全部制作；不会猜测多个交付项的范围。');}return;
+ }
+ if(stage==='strategy'){workSend();return;}
+ if(!request||request.text!==text){message(text,true);message('已保留原文。当前有限演示不理解任意改写；可选择下一步建议，或直接编辑目标与方向，不会自动套用示例。');return;}
+ const r=request;
+ if(r.kind==='discuss'){
+ if(!context.goal.trim())return toast('请先写下这次的目标。');
+ message(text,true);discussion=capture();request=null;q('#prompt').value='';q('#action-hint').hidden=true;message('已把所选背景与目标放到右侧讨论笔记，没有制作策略。');showStage('notes');return;
+ }
+ if(r.kind==='explain'){
+ message(text,true);message(directionSet.options[r.key].tradeoff+' 这是方向讨论，不修改策略或采用状态。');request=null;return;
+ }
+ if(q('#mode').value==='plan'&&r.kind==='directions'){openPlan();return;}
+ if(q('#mode').value!=='execute'){q('#action-hint').hidden=false;q('#action-hint').textContent='当前为'+(q('#mode').value==='plan'?'规划':'讨论')+'模式；制作请求已保留，切到执行后再发送。';return;}
+ if(run)return toast('演示正在进行，可以取消。');
+ if(r.kind==='directions'){
+ if(!discussion||discussion.stamp!==fingerprint()||r.stamp!==fingerprint())return message('背景已变化，请重新讨论确认这一轮的依据。');
+ if(!sourceSafe())return;
+ if(plan||planDraft){startPlan('all');return;}
+ message(text,true);launchDirections(discussion);
+ }else{
+ if(r.setId!==directionSet.id)return message('方向已变化，请重新选择要深化的对象。');
+ if(Object.values(directionSet.options).some(o=>o.edited)){
+ message('方向已人工编辑，预置深化稿不会冒充基于这些修改重新生成。原方向已保存，可继续编辑；恢复示例需重新讨论制作。');return;
+ }
+ message(text,true);q('#prompt').value='';openDraft(r.kind==='combine'?'AB':r.key);
+ }
+};
+const originalRender=render;
+render=function(){originalRender();if(activeDraft)decorateDraft();syncJourney();};
+infos.brand=['本次品牌背景',()=>{const sources=activeDraft&&stage==='strategy'?activeDraft.snapshot.sources:capture().sources;return el('p','',sources.flatMap(s=>s.id==='brand'?[s.text]:s.reference?.rules||[]).join('\n')||'当前工作没有选用品牌资料；不自动继承其他工作的品牌要求。');}];
+infos.research=['研究引用 · v2 / R-02',()=>el('p','',stage==='strategy'?(activeDraft?.snapshot.sources.find(s=>s.id==='research')?.text||'本稿未引用研究。'):catalog.research.text)];
+
+/* Local prototype threads share one renderer; no iframe, second app or persistent store. */
+function threadState(){
+ saveDraft();
+ return {catalog,context,stage,discussion,directionSet,request,run,activeDraft,drafts,directionHistory,journeyHistory,
+ plan,planDraft,planHistory,planDone,planResultSets,base,versions,names,view,tab,version,current,adopted,selected,focus,
+ prepared,undo,kpi,kpiSnapshot,kpiSnapshots,readSelection,transfer,viewScroll:{...viewScroll},
+ messages:[...journal.childNodes],prompt:q('#prompt').value,mode:q('#mode').value,
+ hint:q('#action-hint').textContent,hintHidden:q('#action-hint').hidden,
+ inputs:['visits','rate','target'].map(id=>q('#'+id).value),
+ scroll:{chat:journal.scrollTop,journey:journey.scrollTop,work:q('#work-scroll').scrollTop,read:q('#read-scroll').scrollTop}};
+}
+function stashThread(){activeThread.state=threadState();}
+function blankThreadState(ref){
+ const b=clone(initialBase),sources=ref?{carry:{name:ref.sourceTitle+' · '+ref.version+' · 所选片段',type:'固定成果引用 · 合成',text:ref.items.map(i=>i.label+'：'+i.text).join('\n'),reference:clone(ref)}}:{};
+ return {catalog:sources,context:{ids:ref?['carry']:[],goal:ref?.nextGoal||''},stage:'context',discussion:null,directionSet:null,request:null,run:null,activeDraft:null,
+ drafts:new Map(),directionHistory:new Map(),journeyHistory:[],plan:null,planDraft:null,planHistory:[],planDone:new Map(),planResultSets:new Map(),
+ base:b,versions:{v1:clone(b),v2:clone(b)},names:{...names,product:'产品信息主线'},view:'work',tab:'strategy',version:'v1',current:'v1',adopted:null,selected:'product',focus:false,
+ prepared:null,undo:[],kpi:false,kpiSnapshot:null,kpiSnapshots:{},readSelection:new Set(),transfer:ref&&clone(ref),viewScroll:{work:0,read:0},
+ messages:[],prompt:'',mode:'ask',hint:'',hintHidden:true,inputs:['10000','2','300'],scroll:{chat:0,journey:0,work:0,read:0}};
+}
+function restoreThread(t){
+ const s=t.state;
+ ({catalog,context,stage,discussion,directionSet,request,run,activeDraft,drafts,directionHistory,journeyHistory,
+ plan,planDraft,planHistory,planDone,planResultSets,base,versions,names,view,tab,version,current,adopted,selected,focus,
+ prepared,undo,kpi,kpiSnapshot,kpiSnapshots,readSelection,transfer,viewScroll}=s);
+ journal.replaceChildren(...s.messages);
+ if(!q('#replies')){const r=el('div');r.id='replies';r.setAttribute('aria-live','polite');journal.append(r);}
+ q('.chat-head strong').textContent=t.title;q('.chat-head small').textContent=t.incoming?'基于所选成果继续 · 独立工作':'当前工作 · 自由讨论';
+ q('#prompt').value=s.prompt;q('#mode').value=s.mode;q('#action-hint').textContent=s.hint;q('#action-hint').hidden=s.hintHidden;
+ ['visits','rate','target'].forEach((id,i)=>q('#'+id).value=s.inputs[i]);
+ q('#qualitative').hidden=kpi;q('#quantitative').hidden=!kpi;q('#kpi-example').textContent=kpi?'返回无数值目标':'载入有 KPI 的合成示例';if(kpi)calculate();
+ all('.report-select').forEach(c=>c.checked=readSelection.has(c.value));
+ q('#app').classList.toggle('focus',focus);q('#focus').setAttribute('aria-label',focus?'退出专注阅读':'进入专注阅读');
+ setTab(tab);
+ if(stage==='strategy'){setView(view);decorateDraft();}else{drawJourney();render();}
+ syncJourney();renderRun();
+ journal.scrollTop=s.scroll.chat;journey.scrollTop=s.scroll.journey;q('#work-scroll').scrollTop=s.scroll.work;q('#read-scroll').scrollTop=s.scroll.read;
+ viewScroll={...s.viewScroll};clearTimeout(timer);q('.toast').hidden=true;
+}
+function switchThread(id){
+ const t=threads.get(id);if(!t||t===activeThread)return;
+ close();stashThread();activeThread=t;t.unread=false;restoreThread(t);
+}
+function renderThreads(){
+ const list=q('#thread-list');if(!list)return;
+ // Preserve existing button nodes so a background completion never steals keyboard focus.
+ for(const t of threads.values()){
+ let b=list.querySelector('[data-thread-id="'+t.id+'"]');
+ if(!b){b=btn('',()=>switchThread(t.id),'thread');b.dataset.threadId=t.id;b.append(el('span','thread-title'),el('span','sub'));list.append(b);}
+ const st=t===activeThread?{stage,run,directionSet}:t.state;
+ b.classList.toggle('active',t===activeThread);b.setAttribute('aria-current',t===activeThread?'page':'false');b.setAttribute('aria-label','切换工作：'+t.title);
+ b.querySelector('.thread-title').textContent=t.title;
+ b.querySelector('.sub').textContent=st?.run?'正在展开示例':t.unread?'新成果已就绪':st?.stage==='strategy'?'正在编辑策略':st?.directionSet?'有方向草案':st?.stage==='notes'?'讨论中':t.incoming?'待继续 · 已带入引用':'待讨论';
+ }
+}
+function createThread(title,ref=null){
+ stashThread();const t={id:'thread-'+(++threadSequence),title,incoming:ref&&clone(ref),unread:false,state:blankThreadState(ref)};threads.set(t.id,t);
+ activeThread=t;close();restoreThread(t);
+ message(ref?'已带入选中的 '+ref.items.length+' 个片段及必要背景，没有复制整份报告，也没有开始制作。':'这是独立工作。可以直接写目标；不必先建项目或 Brand Kit。');
+ if(ref){q('#prompt').value='结合本轮选用的资料，先判断是否适合我的目标，不制作策略。';request={kind:'discuss',text:q('#prompt').value,stamp:fingerprint()};q('#action-hint').hidden=false;q('#action-hint').textContent='已准备讨论 · 尚未发送';}
+ q('#prompt').focus();renderThreads();
+}
+function newThreadDialog(){
+ const body=el('div'),label=el('label','plan-label','工作名称'),input=el('input','thread-name');input.setAttribute('aria-label','工作名称');input.placeholder='例如：下周的内容方向';label.append(input);
+ body.append(label,el('p','tiny muted','只创建当前页面里的独立工作，不会带入其他工作的资料或执行结果。'));
+ dialog('新的工作',body,[btn('取消',close),btn('创建工作',()=>{const name=input.value.trim();if(!name){input.setCustomValidity('请填写工作名称');input.reportValidity();return;}createThread(name);},'primary')]);input.oninput=()=>input.setCustomValidity('');input.focus();
+}
+function referenceSource(ref){
+ const t=threads.get(ref.threadId);const d=t===activeThread?drafts.get(ref.draftId):t?.state?.drafts.get(ref.draftId);
+ const values=t===activeThread&&activeDraft?.id===ref.draftId?versions[ref.version]:d?.versions[ref.version];
+ return {t,d,values};
+}
+function showReference(ref){
+ const b=el('div'),live=referenceSource(ref),changed=live.values&&ref.items.some(i=>live.values[i.id]!==i.text);
+ b.append(el('p','tag purple',ref.sourceTitle+' · '+ref.version+' · 引用时正文'));
+ ref.items.forEach(i=>b.append(el('h3','',i.label),el('p','',i.text)));
+ b.append(el('h3','','必要背景'),el('p','',ref.goal),el('p','tiny muted',ref.rules.join('\n')||'本次没有额外带入品牌要求。'));
+ if(!live.values)b.append(el('p','journey-notice','原工作或版本不可用。这里只展示已固定的引用正文。'));
+ else if(changed)b.append(el('p','journey-notice','来源版本后来有编辑；本次引用保留当时正文，不会自动同步。'));
+ const back=btn('回到来源版本',()=>openReferenceSource(ref));back.disabled=!live.values;
+ dialog('所选内容与来源',b,[btn('关闭',close),back]);
+}
+function openReferenceSource(ref){
+ const {t,d,values}=referenceSource(ref);if(!t||!d||!values)return toast('原工作或版本不可用，固定引用仍保留。');
+ const changed=ref.items.some(i=>values[i.id]!==i.text);close();if(t!==activeThread)switchThread(t.id);
+ directionSet=directionHistory.get(d.setId);if(!directionSet)return toast('来源方向不可用，固定引用仍保留。');
+ openDraft(d.key);version=ref.version;readSelection=new Set(ref.items.map(i=>i.id));all('.report-select').forEach(c=>c.checked=readSelection.has(c.value));setView('read');
+ if(changed)toast('原版本后来有编辑；接续工作中的引用仍保留当时正文。');
+}
+function selectedReference(){
+ if(!activeDraft||!readSelection.size)return null;
+ return {threadId:activeThread.id,draftId:activeDraft.id,version,sourceTitle:'产品沟通策略 · '+activeDraft.key,
+ items:[...readSelection].map(id=>({id,label:names[id]||id,text:versions[version][id]})),
+ goal:versions[version].goal,rules:activeDraft.snapshot.sources.filter(s=>s.id==='brand').map(s=>s.text),
+ source:sourceNames(activeDraft.snapshot)};
+}
+q('#handoff').onclick=()=>{
+ const ref=selectedReference();if(!ref)return;
+ const body=el('div');body.append(el('div','preview-body',[ref.sourceTitle+' · 固定 '+ref.version,...ref.items.map(i=>i.label+'：'+i.text),'必要摘要：'+ref.goal,'品牌要求：'+(ref.rules.join('\n')||'无额外带入'),'来源说明：'+ref.source].join('\n\n')));
+ const label=el('label','plan-label','下一项工作想解决什么？'),goal=el('textarea');goal.setAttribute('aria-label','下一项工作目标');goal.value='围绕所选'+ref.items.map(i=>i.label).join('、')+'，讨论具体的沟通做法。';label.append(goal);body.append(label,el('p','tiny muted','只带所选片段、固定版本和上述必要背景；新工作不自动制作。'));
+ let committed=false;
+ const next=()=>{if(committed)return null;const v=goal.value.trim();if(!v){goal.setCustomValidity('请先写下下一项工作的目标');goal.reportValidity();return null;}committed=true;return {...clone(ref),nextGoal:v};};goal.oninput=()=>goal.setCustomValidity('');
+ dialog('带着选中的内容继续',body,[btn('返回调整',close),btn('带入当前对话',()=>{const snap=next();if(!snap)return;transfer=snap;prepared=null;request=null;q('#prompt').value=snap.nextGoal;close();if(focus){focus=false;q('#app').classList.remove('focus');}q('#action-hint').hidden=false;q('#action-hint').textContent='已带入 '+snap.items.length+' 项 · 固定 '+snap.version+' · 尚未发送';q('#prompt').focus();}),btn('另开工作',()=>{const snap=next();if(snap)createThread('继续：'+snap.items.map(i=>i.label).join('、'),snap);},'primary')]);
+};
+q('[data-info="new"]').onclick=newThreadDialog;
+const threadList=el('nav','thread-list');threadList.id='thread-list';threadList.setAttribute('aria-label','最近工作');
+q('.sidebar .nav-caption').after(threadList);all('.sidebar > .thread').forEach(e=>e.remove());
+renderThreads();
+window.mokinaThreads={state:()=>({activeId:activeThread.id,threads:[...threads.values()].map(t=>({id:t.id,title:t.title,incoming:t.incoming,unread:t.unread,running:t===activeThread?!!run:!!t.state?.run,directionCount:t===activeThread?directionHistory.size:t.state?.directionHistory.size||0}))})};
+
+window.mokinaJourney={state:()=>clone({stage,context,discussion,directionSet,activeDraftId:activeDraft?.id,run:run&&{id:run.id,cancelled:run.cancelled},history:journeyHistory,draftIds:[...drafts.keys()],directionIds:[...directionHistory.keys()],plan,planDraft,planHistory,planCompleted:[...planDone.values()]})};
+drawJourney();syncJourney();
+
+render();
+window.mokinaVisual={state:()=>JSON.parse(JSON.stringify({view,tab,version,current,adopted,selected,focus,kpi,kpiSnapshot,kpiSnapshots,transfer,values:versions})),setView,setTab};
+})();
+</script></body></html>

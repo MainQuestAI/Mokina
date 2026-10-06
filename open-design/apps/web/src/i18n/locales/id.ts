@@ -898,6 +898,7 @@ export const id: Dict = {
   'home.createTimedOut': 'Persiapan proyek melebihi batas waktu sebelum dimulai. Coba kirim lagi.',
   'home.amrGateUnavailable': 'Saldo OpenDesign Cloud tidak dapat dikonfirmasi. Coba kirim lagi.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count} file gagal diunggah dan dikeluarkan dari snapshot konteks. File dikembalikan ke simpanan Beranda untuk dicoba lagi.',
   "entry.cloudCalloutBody": "Masuk untuk menggunakan OpenDesign Cloud dan berkolaborasi di cloud",
   "entry.localAccountName": "Mode lokal",
   "entry.cloudCalloutDismissAria": "Tutup catatan OpenDesign Cloud",

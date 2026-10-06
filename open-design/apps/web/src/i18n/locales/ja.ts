@@ -898,6 +898,7 @@ export const ja: Dict = {
   'home.createTimedOut': 'プロジェクトの準備がタイムアウトし、開始できませんでした。もう一度送信してください。',
   'home.amrGateUnavailable': 'OpenDesign Cloud の残高を確認できませんでした。もう一度送信してください。',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count} 件のファイルのアップロードに失敗したため、コンテキストスナップショットから除外しました。ホームの一時保存に戻したので、再試行できます。',
   "entry.cloudCalloutBody": "サインインして OpenDesign Cloud を利用し、クラウドでコラボレーションしましょう",
   "entry.localAccountName": "ローカルモード",
   "entry.cloudCalloutDismissAria": "OpenDesign Cloud の案内を閉じる",

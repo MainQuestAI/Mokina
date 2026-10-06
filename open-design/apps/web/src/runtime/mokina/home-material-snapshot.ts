@@ -61,8 +61,17 @@ export function buildHomeMokinaSelections(input: {
   plans: HomeMokinaFilePlan[];
   materials: HomeMokinaMaterialRead[];
   assets: HomeMokinaAssetBytes[];
+  /**
+   * N02 review: files whose upload failed never reached the project, so a
+   * selection referencing one makes the daemon reject the WHOLE snapshot with
+   * a 409 (freeze reads the project file and finds nothing). The caller passes
+   * their names; each is dropped from the selections and reported as excluded
+   * with an explicit reason, matching the 绝不静默丢弃 semantics of the other
+   * exclusion paths.
+   */
+  failedUploadNames?: ReadonlySet<string> | null;
 }): { selections: MokinaContextSelection[]; excluded: MokinaExcludedContextItem[] } | null {
-  const { projectId, plans, materials, assets } = input;
+  const { projectId, plans, materials, assets, failedUploadNames } = input;
   const selections: MokinaContextSelection[] = [];
   const excluded: MokinaExcludedContextItem[] = [];
   let excerptBudget = MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits;
@@ -70,6 +79,14 @@ export function buildHomeMokinaSelections(input: {
   let assetIndex = 0;
 
   for (const plan of plans) {
+    if (failedUploadNames?.has(plan.name)) {
+      excluded.push({
+        displayName: plan.name,
+        reason: 'unavailable',
+        explanation: '文件上传失败，未纳入本次任务；文件已退回首页暂存，可重新上传',
+      });
+      continue;
+    }
     if (plan.kind === 'material') {
       const read = materials.find((item) => item.name === plan.name);
       const extraction = read?.extraction;
@@ -163,22 +180,34 @@ export function buildHomeMokinaSelections(input: {
   return selections.length > 0 ? { selections, excluded } : null;
 }
 
+export interface HomeMokinaSnapshotPreparation {
+  snapshotId: string | null;
+  /** Planned files dropped from the snapshot because their upload failed. */
+  uploadFailedNames: string[];
+}
+
 /**
  * Freeze the home-marked files into the shared context snapshot and bind it as
  * this project's pending snapshot. Returns the snapshotId on success, or null
  * when nothing could be frozen or the API rejected the request — the caller
  * then sends the plain attachments without a snapshot (the user can still
- * freeze a curated selection inside the project).
+ * freeze a curated selection inside the project). Plans whose upload failed
+ * are excluded explicitly instead of poisoning the whole freeze.
  */
 export async function prepareHomeMokinaSnapshot(input: {
   projectId: string;
   plans: HomeMokinaFilePlan[];
   stagedFiles: File[];
   workspaceContext?: WorkspaceCollabContext | null;
-}): Promise<string | null> {
-  const { projectId, plans, stagedFiles } = input;
-  const materialPlans = plans.filter((plan) => plan.kind === 'material');
-  const assetPlans = plans.filter((plan) => plan.kind === 'asset');
+  /** Names of staged files whose upload to the project failed. */
+  failedUploadNames?: ReadonlySet<string> | null;
+}): Promise<HomeMokinaSnapshotPreparation> {
+  const { projectId, plans, stagedFiles, failedUploadNames } = input;
+  const uploadFailedNames = failedUploadNames
+    ? plans.filter((plan) => failedUploadNames.has(plan.name)).map((plan) => plan.name)
+    : [];
+  const materialPlans = plans.filter((plan) => plan.kind === 'material' && !failedUploadNames?.has(plan.name));
+  const assetPlans = plans.filter((plan) => plan.kind === 'asset' && !failedUploadNames?.has(plan.name));
 
   const materials: HomeMokinaMaterialRead[] = await Promise.all(
     materialPlans.map(async (plan) => {
@@ -211,8 +240,8 @@ export async function prepareHomeMokinaSnapshot(input: {
     }),
   );
 
-  const built = buildHomeMokinaSelections({ projectId, plans, materials, assets });
-  if (!built) return null;
+  const built = buildHomeMokinaSelections({ projectId, plans, materials, assets, failedUploadNames });
+  if (!built) return { snapshotId: null, uploadFailedNames };
 
   const snapshotId = randomUUID();
   const response = await fetch(
@@ -234,7 +263,7 @@ export async function prepareHomeMokinaSnapshot(input: {
     snapshot?: { items: Array<{ displayName: string; kind: string; text?: string }> };
     error?: { code?: string; message?: string };
   } | null;
-  if (!response.ok || !body?.snapshot) return null;
+  if (!response.ok || !body?.snapshot) return { snapshotId: null, uploadFailedNames };
 
   const items = body.snapshot.items ?? [];
   await writePendingMokinaSnapshot({
@@ -249,5 +278,5 @@ export async function prepareHomeMokinaSnapshot(input: {
       reason: entry.explanation || entry.reason,
     })),
   });
-  return snapshotId;
+  return { snapshotId, uploadFailedNames };
 }

@@ -59,7 +59,7 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
     const pinnedPanel = page.locator('.artifact-version-panel');
     await expect(pinnedPanel).toBeVisible({ timeout: T.long });
     await expect(pinnedPanel.getByRole('listbox').getByRole('option', { selected: true })).toContainText('v1');
-    await expect(pinnedPanel.getByText('所选：v1 · 历史稿')).toBeVisible();
+    await expect(pinnedPanel.getByText('Selected: v1 · History')).toBeVisible();
 
     // 深链失效：不静默打开别的成果。
     await page.goto(`/projects/${multi.projectId}/files/ghost.html`, { waitUntil: 'domcontentloaded' });

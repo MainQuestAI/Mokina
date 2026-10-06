@@ -898,6 +898,7 @@ export const de: Dict = {
   'home.createTimedOut': 'Die Projektvorbereitung hat zu lange gedauert und wurde nicht gestartet. Bitte erneut senden.',
   'home.amrGateUnavailable': 'Das OpenDesign-Cloud-Guthaben konnte nicht bestätigt werden. Bitte erneut senden.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count} Datei(en) konnten nicht hochgeladen werden und wurden aus dem Kontext-Snapshot ausgelassen. Sie liegen wieder im Home-Zwischenspeicher und können erneut hochgeladen werden.',
   "entry.cloudCalloutBody": "Melden Sie sich an, um OpenDesign Cloud zu nutzen und in der Cloud zusammenzuarbeiten",
   "entry.localAccountName": "Lokaler Modus",
   "entry.cloudCalloutDismissAria": "OpenDesign Cloud-Hinweis schließen",

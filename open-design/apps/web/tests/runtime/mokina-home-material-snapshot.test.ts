@@ -163,4 +163,46 @@ describe('buildHomeMokinaSelections', () => {
     });
     expect(built).toBeNull();
   });
+
+  it('drops failed uploads from selections and reports them as excluded instead of poisoning the freeze', () => {
+    // N02 review: a failed upload means the file never reached the project, so
+    // a selection referencing it makes the daemon reject the whole snapshot
+    // with a 409. The failed file must fall out of the selections and land in
+    // excluded with an explicit reason.
+    const built = buildHomeMokinaSelections({
+      projectId: PROJECT_ID,
+      plans: [
+        materialPlan('brief.md'),
+        { name: 'logo.png', size: 2048, kind: 'asset', role: 'logo' },
+      ],
+      materials: [{ name: 'brief.md', extraction: extraction('brief.md', [{ text: '段落', groupId: 'intro' }]) }],
+      // The failed asset still has local staged bytes and a valid digest —
+      // filtering must key on failedUploadNames, not on missing bytes.
+      assets: [{ name: 'logo.png', byteLength: 2048, digest: 'asset-digest' }],
+      failedUploadNames: new Set(['logo.png']),
+    });
+    expect(built).not.toBeNull();
+    expect(built!.selections).toHaveLength(1);
+    expect(built!.selections[0]!.sourceRef).toEqual({
+      kind: 'project-file',
+      projectId: PROJECT_ID,
+      fileName: 'brief.md',
+    });
+    expect(built!.excluded).toHaveLength(1);
+    expect(built!.excluded[0]).toMatchObject({ displayName: 'logo.png', reason: 'unavailable' });
+    expect(built!.excluded[0]!.explanation).toContain('上传失败');
+  });
+
+  it('excludes a failed-upload material without reading it, and returns null when nothing else can freeze', () => {
+    const built = buildHomeMokinaSelections({
+      projectId: PROJECT_ID,
+      plans: [materialPlan('brief.md')],
+      // No extraction was fetched for the failed upload; the exclusion must
+      // not depend on a material read that never happened.
+      materials: [],
+      assets: [],
+      failedUploadNames: new Set(['brief.md']),
+    });
+    expect(built).toBeNull();
+  });
 });

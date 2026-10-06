@@ -898,6 +898,7 @@ export const ko: Dict = {
   'home.createTimedOut': '프로젝트 준비 시간이 초과되어 시작하지 못했습니다. 다시 보내 주세요.',
   'home.amrGateUnavailable': 'OpenDesign Cloud 잔액을 확인하지 못했습니다. 다시 보내 주세요.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count}개 파일을 업로드하지 못해 컨텍스트 스냅샷에서 제외했습니다. 홈 임시 보관함에 되돌려 놓았으니 다시 시도하세요.',
   "entry.cloudCalloutBody": "로그인하여 OpenDesign Cloud를 사용하고 클라우드에서 협업하세요",
   "entry.localAccountName": "로컬 모드",
   "entry.cloudCalloutDismissAria": "OpenDesign Cloud 안내 닫기",

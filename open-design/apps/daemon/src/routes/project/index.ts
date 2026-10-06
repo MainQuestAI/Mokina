@@ -93,7 +93,6 @@ import {
   deleteUserDesignSystem,
   linkUserDesignSystemProject,
   listDesignSystems,
-  readDesignSystem,
   propagateWorkspaceProjectRename,
   resolveWorkspaceProjectDesignSystemRoot,
   type DesignSystemSummary,
@@ -5807,22 +5806,20 @@ export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' |
   verifyWorkspaceRequestAuthority?: VerifyWorkspaceRequestAuthority;
   authorizeProjectRequest?: AuthorizeProjectRequest;
   /**
-   * N04: brand-kit reads for Mokina context snapshots. Same read order as the
-   * design-system detail route (workspace project mirror first, then
-   * canonical roots). Optional: callers that never freeze a brand source can
-   * omit it.
+   * N04: brand-kit reads for Mokina context snapshots. Both functions come
+   * from `registerDesignSystemRoutes`' returned services, so freezing a brand
+   * shares the design-system detail route's exact read path (workspace
+   * project mirror first, then storage-resolved roots incl. the team-scoped
+   * root and exactTeam) AND its read authorization — project write access
+   * alone never exfiltrates a design system the caller may not read.
+   * Optional: callers that never freeze a brand source can omit it.
    */
   mokinaBrandDesignSystems?: {
-    listAllDesignSystems: (options?: {
-      workspaceId?: string | null;
-      workspaceMemberId?: string | null;
-      exactTeam?: boolean;
-    }) => Promise<Array<{ id: string; title?: string | null }>>;
-    readDesignSystemWorkspaceTextFile: (
-      dbHandle: unknown,
-      summary: unknown,
-      filePath: string,
-    ) => Promise<string | null>;
+    authorizeDesignSystemRead: (req: any, res: any, id: string) => Promise<boolean>;
+    readDesignSystemForFreeze: (
+      req: any,
+      id: string,
+    ) => Promise<{ body: string; displayName: string } | null>;
   };
   /** Startup-hydrated O(1) quarantine lookup for stale Team mirrors. */
   isProjectRevoked?: (projectId: string) => boolean;
@@ -5831,7 +5828,7 @@ export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' |
 }
 
 export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFileRoutesDeps) {
-  const { listAllDesignSystems, readDesignSystemWorkspaceTextFile } = ctx.mokinaBrandDesignSystems ?? {};
+  const mokinaBrandDesignSystems = ctx.mokinaBrandDesignSystems;
   const { db } = ctx;
   const { sendApiError, sendMulterError } = ctx.http;
   // The design-token suggestion route reads the design-system roots to resolve
@@ -7294,6 +7291,25 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
       if (!body || typeof body !== 'object' || typeof body.snapshotId !== 'string' || !Array.isArray(body.selections)) {
         return sendApiError(res, 400, 'BAD_REQUEST', 'snapshotId and selections are required');
       }
+      // N04 review: freezing a brand copies its bytes into the project
+      // snapshot, so every referenced design system must pass the same read
+      // authorization as the design-system detail route — project write
+      // access alone must not exfiltrate a brand the caller may not read.
+      const brandIds = [...new Set(
+        body.selections
+          .map((selection) => selection?.sourceRef)
+          .filter((ref): ref is { kind: 'design-system'; designSystemId: string } =>
+            ref?.kind === 'design-system' && typeof ref.designSystemId === 'string')
+          .map((ref) => ref.designSystemId),
+      )];
+      if (brandIds.length > 0) {
+        if (!mokinaBrandDesignSystems) {
+          return sendApiError(res, 400, 'BAD_REQUEST', 'brand sources are not available');
+        }
+        for (const brandId of brandIds) {
+          if (!await mokinaBrandDesignSystems.authorizeDesignSystemRead(req, res, brandId)) return;
+        }
+      }
       // Server re-reads every source; the client can only reference and
       // pre-digest, never submit "verified" text of its own.
       const source: MokinaContextStoreSource = {
@@ -7315,52 +7331,21 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
             return { error: error?.code === 'ENOENT' ? 'missing' : 'unavailable' };
           }
         },
-        // N04: brand-kit sources resolve with the same three-step fallback the
-        // design-token suggestions use (built-in root -> user root -> user:
-        // prefix). The frozen bytes are the brand's DESIGN.md, so a later
-        // brand-kit update never alters an already-frozen snapshot.
+        // N04 review: brand freeze reads go through the design-system detail
+        // route's exact read path (mirror first, then storage-resolved roots
+        // incl. the team-scoped root and exactTeam) via the injected
+        // readDesignSystemForFreeze; every referenced brand id already passed
+        // authorizeDesignSystemRead above. The frozen bytes are the brand's
+        // DESIGN.md, so a later brand-kit update never alters an
+        // already-frozen snapshot.
         readDesignSystem: async (designSystemId) => {
           try {
-            // N04 review(M3): 与品牌详情同一读源——工作区项目镜像（编辑期
-            // 真身）优先，其次 canonical 根三段回退。面板摘要在详情接口取，
-            // 两侧一致才不会必然 SOURCE_CHANGED。
-            const workspaceId = (req.header('x-od-workspace-id') ?? '').trim() || null;
-            const workspaceMemberId = (req.header('x-od-workspace-member-id') ?? '').trim() || null;
-            if (workspaceId && listAllDesignSystems && readDesignSystemWorkspaceTextFile) {
-              try {
-                const systems = await listAllDesignSystems({ workspaceId, workspaceMemberId });
-                const summary = systems.find((entry) => entry.id === designSystemId);
-                if (summary) {
-                  const mirror = await readDesignSystemWorkspaceTextFile(db, summary, 'DESIGN.md');
-                  if (mirror != null) {
-                    return { bytes: Buffer.from(mirror, 'utf8'), displayName: summary.title ?? designSystemId };
-                  }
-                }
-              } catch {
-                // 镜像不可用时退回 canonical 根。
-              }
-            }
-            const candidates: Array<{ root: string; options: { idPrefix?: string } }> = [
-              { root: DESIGN_SYSTEMS_DIR, options: {} },
-              { root: USER_DESIGN_SYSTEMS_DIR, options: {} },
-              { root: USER_DESIGN_SYSTEMS_DIR, options: { idPrefix: 'user:' } },
-            ];
-            for (const candidate of candidates) {
-              const body = await readDesignSystem(candidate.root, designSystemId, candidate.options);
-              if (body == null) continue;
-              let displayName = designSystemId;
-              try {
-                const summaries = await listDesignSystems(candidate.root);
-                const found = summaries.find((summary) => summary.id === designSystemId);
-                if (found?.title) displayName = found.title;
-              } catch {
-                // 名称只是展示层；读不到就退回 id。
-              }
-              return { bytes: Buffer.from(body, 'utf8'), displayName };
-            }
-            return { error: 'missing' };
+            if (!mokinaBrandDesignSystems) return { error: 'unavailable' as const };
+            const result = await mokinaBrandDesignSystems.readDesignSystemForFreeze(req, designSystemId);
+            if (!result) return { error: 'missing' as const };
+            return { bytes: Buffer.from(result.body, 'utf8'), displayName: result.displayName };
           } catch {
-            return { error: 'unavailable' };
+            return { error: 'unavailable' as const };
           }
         },
       };

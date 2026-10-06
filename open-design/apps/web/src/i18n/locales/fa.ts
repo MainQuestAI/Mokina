@@ -898,6 +898,7 @@ export const fa: Dict = {
   'home.createTimedOut': 'آماده‌سازی پروژه پیش از شروع به پایان مهلت رسید. دوباره ارسال کنید.',
   'home.amrGateUnavailable': 'تأیید موجودی OpenDesign Cloud ممکن نشد. دوباره ارسال کنید.',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
+  'home.mokinaSnapshotExcludedFailedUploads': 'بارگذاری {count} فایل ناموفق بود و از اسنپ‌شات زمینه کنار گذاشته شد. برای تلاش دوباره به صف خانه برگردانده شده‌اند.',
   "entry.cloudCalloutBody": "برای استفاده از OpenDesign Cloud و همکاری در فضای ابری وارد شوید",
   "entry.localAccountName": "حالت محلی",
   "entry.cloudCalloutDismissAria": "بستن یادداشت OpenDesign Cloud",

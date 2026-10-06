@@ -898,6 +898,7 @@ export const fr: Dict = {
   'home.createFailed': 'Impossible de démarrer la tâche. Réessayez.',
   'home.daemonRecovering': 'Connexion au service local interrompue. Reconnexion automatique en cours…',
   'home.bundledScenarioMissing': 'Le scénario intégré « {scenarioId} » n’est pas installé. Réinstallez le daemon pour restaurer les plugins par défaut.',
+  'home.mokinaSnapshotExcludedFailedUploads': '{count} fichier(s) n’ont pas pu être téléversés et ont été exclus de l’instantané de contexte. Ils sont de retour dans la réserve de l’accueil pour une nouvelle tentative.',
   "entry.cloudCalloutBody": "Connectez-vous pour utiliser OpenDesign Cloud et collaborer dans le cloud",
   "entry.localAccountName": "Mode local",
   "entry.cloudCalloutDismissAria": "Fermer la note OpenDesign Cloud",

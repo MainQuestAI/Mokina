@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
+import { chmod, readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
@@ -44,5 +44,46 @@ export async function createMokinaStorageFault(recoveryRoot: string) {
       locked.clear();
       await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
     },
+  };
+}
+
+/** A real readdir failure, restricted to UUID project directories in the
+ * opt-in test namespace. Restore permissions before persistence or restart. */
+export async function createMokinaDirectoryReadFault(projectsRoot: string) {
+  if (!/^\/private\/tmp\/.+\/runtime\/mac\/namespaces\/mokina-local-[^/]+\/data\/projects$/.test(projectsRoot)) {
+    throw new Error('directory fault requires an isolated tools-pack project root');
+  }
+  const modes = new Map<string, number>();
+  const evidence: unknown[] = [];
+  async function restore() {
+    for (const [directory, mode] of modes) await chmod(directory, mode);
+    modes.clear();
+  }
+  const server = createServer(async (request, response) => {
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    try {
+      const url = new URL(request.url!, 'http://fixture');
+      if (url.pathname === '/restore') await restore();
+      else {
+        const projectId = url.searchParams.get('projectId') ?? '';
+        if (!/^[0-9a-f-]{36}$/u.test(projectId)) throw new Error('invalid actual target identity');
+        const directory = join(projectsRoot, projectId);
+        const info = await stat(directory);
+        if (!info.isDirectory()) throw new Error('target is not an actual project directory');
+        const mode = info.mode & 0o777;
+        modes.set(directory, mode);
+        await chmod(directory, 0);
+        evidence.push({ projectId, directory, originalMode: mode, injectedMode: 0 });
+      }
+      response.writeHead(200, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify({ armed: modes.size > 0 }));
+    } catch (error) { response.writeHead(500); response.end(String(error)); }
+  });
+  await new Promise<void>((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
+  const address = server.address();
+  if (!address || typeof address === 'string') throw new Error('missing directory fixture listener');
+  return {
+    url: `http://127.0.0.1:${address.port}`, evidence, unlock: restore,
+    async close() { await restore(); await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve())); },
   };
 }

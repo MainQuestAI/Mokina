@@ -45,7 +45,7 @@ import { resolvePackagedSmokeNamespace } from '@/vitest/suite';
 import { startToolsServeUpdaterFixture, type ToolsServeUpdaterFixture } from '@/vitest/tools-serve-updater-fixture';
 import { createDesktopHarness, STORAGE_KEY, waitFor } from '../lib/desktop/desktop-test-helpers.ts';
 import { installMokinaInterruptionExpression, mokinaInterruptionStateExpression } from '@/vitest/mokina-native-interruption';
-import { createMokinaStorageFault } from '@/vitest/mokina-storage-fault';
+import { createMokinaDirectoryReadFault, createMokinaStorageFault } from '@/vitest/mokina-storage-fault';
 
 const execFileAsync = promisify(execFile);
 const e2eRoot = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -450,12 +450,13 @@ mokinaRecoveryDescribe('Mokina recovery native interruption', () => {
   }, 120_000);
   afterAll(async () => { await runToolsPackJson('stop'); }, 60_000);
 
-  for (const { point, variant } of [1, 2, 3, 4, 5, 6, 7, 8].map(point => ({ point, variant: 'resume' })).concat([
+  for (const { point, variant } of [1, 2, 3, 4, 5, 6, 7, 8, 11].map(point => ({ point, variant: 'resume' })).concat([
     { point: 3, variant: 'missing-source' }, { point: 6, variant: 'edited-target' },
   ])) {
     test(`[P1] Mokina recovery native interruption ${point} ${variant} preserves real intent without overwriting`, async () => {
       const report = (await createPackagedSmokeReport('mac')).report;
-      const storageFault = point === 8 ? await createMokinaStorageFault(join(runtimeNamespaceRoot, 'user-data', 'mokina-recovery')) : null;
+      const storageFault = point === 8 ? await createMokinaStorageFault(join(runtimeNamespaceRoot, 'user-data', 'mokina-recovery'))
+        : point === 11 ? await createMokinaDirectoryReadFault(join(runtimeNamespaceRoot, 'data', 'projects')) : null;
       try {
       const source = await inspectMokina<{ projectId: string; conversationId: string }>(`(async () => {
         const created = await fetch('/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:crypto.randomUUID(),name:'Native fault ${point}',skillId:null,designSystemId:null,metadata:{kind:'prototype'}})});
@@ -495,6 +496,14 @@ mokinaRecoveryDescribe('Mokina recovery native interruption', () => {
       const durable = await inspectMokina(`window.__od__.recoveryStore.get(${JSON.stringify(key)})`);
       const evidenceName = `interruption-${point}-${variant}`;
       await report.json(`mokina/${evidenceName}-hit.json`, { source, interrupted, durable });
+      if (point === 11) {
+        expect((interrupted!.hit as unknown as { status: number }).status).toBeGreaterThanOrEqual(400);
+        await waitFor(async () => { expect(await inspectMokina<string>('document.body.innerText')).toContain('Project files request failed'); }, 30_000);
+        expect(await inspectMokina<string>('location.pathname')).toContain(source.projectId);
+        expect(journal).toMatchObject({ checkpoint: 'snapshot-saved' });
+        expect(storageFault!.evidence).toHaveLength(1);
+        await report.json('mokina/interruption-11-directory-failure.json', storageFault!.evidence);
+      }
       if ([2, 4, 5, 6].includes(point)) expect(interrupted!.effects.length).toBeGreaterThan(0);
       if ([3, 4].includes(point)) expect(journal.copiedAssets?.['asset-1']).toMatchObject({ path: 'asset-1.svg', uploaded: false });
       if (point === 7) {

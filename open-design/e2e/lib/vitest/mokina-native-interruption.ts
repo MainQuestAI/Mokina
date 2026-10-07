@@ -25,6 +25,18 @@ export function installMokinaInterruptionExpression(point: number, sourceProject
       const target = journal?.targetProjectId;
       if (!state.hit && point === 1 && target && path === '/api/projects/'+target && method === 'GET') await hold('before-create',path,method);
       if (!state.hit && point === 3 && target && path === '/api/projects/'+target+'/upload' && method === 'POST') await hold('before-copy',path,method);
+      if (!state.hit && point === 11 && journal?.checkpoint === 'snapshot-saved' && target && path === '/api/projects/'+target+'/files' && method === 'GET') {
+        const armed = await originalFetch(storageFaultUrl+'/arm?projectId='+encodeURIComponent(target));
+        if (!armed.ok) throw new Error('actual directory read fault failed to arm: '+await armed.text());
+        try {
+          const response = await originalFetch(input,options);
+          state.hit={phase:'actual-target-list-read-failure',path,method,status:response.status,body:await response.clone().text(),journals:journals()};
+          return response;
+        } finally {
+          const restored=await originalFetch(storageFaultUrl+'/restore');
+          if(!restored.ok) throw new Error('test directory permissions could not be restored');
+        }
+      }
       const response = await originalFetch(input,options);
       if (method === 'POST' && response.ok) {
         const body = await response.clone().text();

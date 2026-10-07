@@ -2406,19 +2406,26 @@ test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface a
   await createProject(page, 'Mokina R2 definitive rejection');
   await expectWorkspaceReady(page);
   const { projectId, conversationId } = await currentProjectContext(page);
+  const prompt = 'Observation draft for definitive rejection';
+  let submittedPrompt = '';
   await page.route('**/api/runs', async route => {
     if (route.request().method() !== 'POST') return route.continue();
+    submittedPrompt = route.request().postDataJSON().currentPrompt;
     await route.fulfill({ status: 404, json: { error: { code: 'NOT_FOUND', message: 'request rejected before acceptance', details: { runAcceptance: 'not-accepted' } } } });
   });
-  await page.getByTestId('chat-composer-input').fill('Observation draft for definitive rejection');
+  await page.getByTestId('chat-composer-input').fill(prompt);
+  await expect(page.getByTestId('chat-composer-input')).toHaveText(prompt);
+  await expect(page.getByTestId('chat-send')).toBeEnabled();
   await page.getByTestId('chat-send').click();
   // A proven refusal keeps the receipt until the user explicitly restores its
   // draft. Durable transfer then clears it and permits a new request identity.
   await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
   await expect(page.getByTestId('mokina-pending-send')).toBeVisible();
+  expect(submittedPrompt).toBe(prompt);
   await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
   // Recovery never overwrites occupied input, even when it resembles the receipt.
   await page.getByTestId('chat-composer-input').fill('');
+  await expect(page.getByTestId('chat-composer-input')).toHaveText('');
   await page.getByTestId('mokina-pending-send').getByRole('button', { name: 'Restore unsent draft' }).click();
   await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');
   await expect(page.getByTestId('mokina-pending-send')).toHaveCount(0);

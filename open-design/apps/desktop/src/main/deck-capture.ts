@@ -8,7 +8,7 @@ import { BrowserWindow, nativeImage } from "electron";
 import type { DesktopRenderSlidesInput, DesktopRenderSlidesResult } from "@open-design/sidecar-proto";
 
 import { waitForPrintableContent } from "./pdf-export.js";
-import { bgraBitmapHasPaint, FROZEN_MOTION_CSS } from "./static-capture.js";
+import { bgraBitmapHasPaint, PAGE_CAPTURE_CSS } from "./static-capture.js";
 import { findRealTagEnd, findRealTagOffset, HTML_TAG_PATTERNS } from '@open-design/contracts/runtime/html-injection-points';
 
 // Re-exported so the long-standing import site (and its tests) keep working
@@ -1657,7 +1657,7 @@ async function preparePageForCapture(window: BrowserWindow): Promise<void> {
     // the page actually paints, so we keep the CSS and accept that a genuinely
     // fixed bar may appear in more than one viewport.
     await window.webContents.executeJavaScript(
-      `(function(){try{var s=document.createElement('style');s.setAttribute('data-od-capture','1');s.textContent=${JSON.stringify(FROZEN_MOTION_CSS)};(document.head||document.documentElement).appendChild(s);}catch(e){}})()`,
+      `(function(){try{var s=document.createElement('style');s.setAttribute('data-od-capture','1');s.textContent=${JSON.stringify(PAGE_CAPTURE_CSS)};(document.head||document.documentElement).appendChild(s);}catch(e){}})()`,
       true,
     );
     await window.webContents.executeJavaScript(

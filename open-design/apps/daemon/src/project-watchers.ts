@@ -80,6 +80,10 @@ function createWatcher(
     // path ignore predicate keeps emitted events project-scoped, an unhandled
     // symlink would still cost descriptors and surface external FS activity.
     followSymlinks: false,
+    // Project roots are resolved literal directories, never glob patterns.
+    // Besides watching names containing braces correctly, this avoids feeding
+    // user-selected roots into chokidar 3's recursive braces parser.
+    disableGlobbing: true,
     usePolling,
     ...(usePolling ? { interval: 100, binaryInterval: 300 } : {}),
   };

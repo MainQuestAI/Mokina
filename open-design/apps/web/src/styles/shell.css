@@ -1349,6 +1349,20 @@ body:has(.artifact-version-panel) .ws-tabs-file-actions-before {
   font-size: 12px;
 }
 .artifact-version-panel__continuation > p { margin: 0; color: var(--text-muted); line-height: 1.4; }
+.artifact-version-panel__continuation fieldset {
+  min-inline-size: 0;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+.artifact-version-panel__continuation select,
+.artifact-version-panel__continuation textarea,
+.artifact-version-panel__continuation input:not([type="checkbox"]):not([type="radio"]) {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 .artifact-version-panel__continuation label { display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
 .artifact-version-panel__continuation label > input { flex: 0 0 16px; width: 16px; height: 16px; margin: 1px 0 0; }
 .artifact-version-panel__continuation label > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

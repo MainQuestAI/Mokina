@@ -5100,7 +5100,7 @@ function FileVersionManagerModal({
                             ? [...current.filter((entry) => entry.name !== name), { name, role: 'supporting', usageNote: '' }]
                             : current.filter((entry) => entry.name !== name))}
                         />
-                        <span>{name}</span>
+                        <span title={name}>{name}</span>
                       </label>
                       {asset ? (
                         <>

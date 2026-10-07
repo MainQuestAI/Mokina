@@ -42,6 +42,13 @@ jobs:
         run: |
           pnpm --filter @open-design/daemon build
           pnpm --filter @open-design/e2e exec playwright install --with-deps chromium
+      - name: Capture and dependency owner regression
+        run: |
+          pnpm --filter @open-design/web exec vitest run tests/runtime/mermaid-owner-security.test.ts
+          pnpm --filter @open-design/daemon exec vitest run tests/image-parser-security.test.ts tests/project-watchers.test.ts
+          pnpm --filter @open-design/tools-pack exec vitest run tests/resources/download-cache-security.test.ts
+          pnpm --filter @open-design/desktop build
+          pnpm --filter @open-design/desktop exec vitest run tests/main/page-pdf-capture.test.ts
       - name: Real daemon request recovery
         env:
           OD_PLAYWRIGHT_WORKERS: '1'

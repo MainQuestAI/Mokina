@@ -45,3 +45,13 @@ SHA-256：baseline `2deaef824a9b26e655fbf19d1e62276eae848afcf97606293051bf76f84f
 安装失败/中断、离线缺口及最终日志分别保留。原有 DeepSeek peer 警告和未批准的可选 build scripts 保持单列，不归因到本轮导出修复，也不隐去。
 
 最终环境实测：Node `v24.15.0`、ABI `137`、better-sqlite3 `12.10.0`、内存 SQLite `3.53.1`。guard、typecheck、i18n 均 exit 0。完整输入/恢复/导出回归及真实 standalone 打包与包内版本核对，详见本轮执行记录；没有把原基线 CI 复用为新 head 证明。
+
+## 5. 真实打包发现的 pin 缺口
+
+local.6 在 `assembled-app` 阶段生成的真实 `package.json` 仍明确声明 `sharp: 0.35.3`，而工作区 HyperFrames 已解析到 0.35.5。原因是 `tools/pack/src/mac/prebundle.ts` 有独立运行依赖 pin，单改 pnpm override 不会同步它。
+
+新增真实依赖身份回归：从 HyperFrames 的实际 require resolution 读取 Sharp manifest，与候选组装 pin 对照。修复前为 **expected 0.35.5 / received 0.35.3**，1 failed / 13 passed，exit 1；先前测试 metadata 子路径未被 exports 暴露的取路径失败也单独保留，不充当这个 red。
+
+最小修复仅把 macOS pin 同步到 0.35.5，并更新旧固定值断言。九个打包套件 75 tests passed、tools-pack typecheck/build exit 0；新身份回归进入根 CI。没有顺带修改 Windows pin或新增打包进程框架。
+
+local.6 构建已停止，exit 1（SIGTERM），真实清单与 `local6-build.log` 保留；没有产出或安装 local.6 成功包，也没有运行原生验收。修复后的候选递增为 `0.0.3-local.7`，必须重新核对实际包内 Sharp，不能用单元 green 替代。

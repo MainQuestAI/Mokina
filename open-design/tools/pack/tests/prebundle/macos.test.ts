@@ -1,4 +1,6 @@
+import { readFileSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -101,12 +103,21 @@ describe("mac standalone prebundle policy", () => {
       "blake3-wasm": "2.1.5",
       "hyperframes": "0.8.1",
       "node-pty": "1.1.0",
-      "sharp": "0.35.3",
+      "sharp": "0.35.5",
     });
     expect(MAC_PREBUNDLE_COPIED_RUNTIME_DEPENDENCIES).toEqual({ "fsevents": "2.3.3" });
     expect(MAC_PREBUNDLED_DAEMON_CLI_RELATIVE_PATH).toBe("app/prebundled/daemon/daemon-cli.mjs");
     expect(MAC_PREBUNDLED_DAEMON_SIDECAR_RELATIVE_PATH).toBe("app/prebundled/daemon/daemon-sidecar.mjs");
     expect(MAC_PREBUNDLED_WEB_SIDECAR_RELATIVE_PATH).toBe("app/prebundled/web-sidecar.mjs");
+  });
+
+  it("ships the same verified Sharp version as HyperFrames instead of reinstalling an older native runtime", () => {
+    const workspaceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
+    const daemonRequire = createRequire(join(workspaceRoot, "apps", "daemon", "package.json"));
+    const hyperframesRequire = createRequire(daemonRequire.resolve("hyperframes/package.json"));
+    const manifestPath = join(dirname(hyperframesRequire.resolve("sharp")), "..", "package.json");
+    const installed = JSON.parse(readFileSync(manifestPath, "utf8")) as { version: string };
+    expect(MAC_PREBUNDLE_RUNTIME_DEPENDENCIES.sharp).toBe(installed.version);
   });
 
   it.skipIf(process.platform !== "darwin")(

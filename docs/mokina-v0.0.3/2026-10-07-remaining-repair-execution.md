@@ -57,11 +57,19 @@ Overrides 的移除条件：对应 owner 的锁定依赖自行解析到安全版
 
 代码提交：`d95b14fc`（R4 导出与 CI）、`8b318cbd`（R2 旧接续回归）。最终依赖下已逐条执行根 CI 的工程集合：Web 253 + 导出 115，desktop 19，daemon 42 + 136，PDF runtime 1，合计 566 tests passed，六条命令均 exit 0；完整逐命令结果为 `r1-evidence/ci-regression-final.json`。另有打包 owner 的八个现有套件 61 tests passed，已加入同一 CI 工程步骤，合计本地 627 tests passed。尚需最终依赖提交、新 head CI 与新候选原生结果。
 
+### 真实打包补充
+
+兼容依赖已提交为 `b457026df375a215c721f61d9cf51426ceb0eeb0`，文档 head `46c6482f74f1aa53991b1ebf0b7083bec58c121e` 已推送，二者差异仅三份文档。新 head 的 [CI run 37578541368](https://github.com/MainQuestAI/Mokina/actions/runs/37578541368) 已触发；未完成的步骤不记通过。
+
+local.6 实际组装发现 macOS Sharp pin 仍为 0.35.3，停止构建并保留失败，不覆盖或安装该候选。新增真实依赖身份 red→green 后，仅同步该 macOS pin，未改 Windows 或用户配置。打包集合现为 75 tests passed（含身份测试），替代原 61 项计入合计后，本地对应集合 **641 tests passed**；全套 566 项业务回归没有因为仅改打包 pin 被反复重跑。tools-pack typecheck/build 通过，既有 CLI 已重建。详见安全记录第 5 节。
+
+后续递增到 `0.0.3-local.7`，使用新 product source/validation SHA 和新的 CI，不复用 local.6 的失败记录。
+
 ## 6. 原生及人工验收仍未被工程结果代替
 
 | 项目 | 本轮状态 |
 |---|---|
-| 新 local.6 构建与包内依赖 | 待固定源码后构建；不使用 local.5 代替 |
+| 新 local.7 构建与包内依赖 | local.6 组装发现 pin 缺口已停止；修复后递增，不使用 local.5 代替 |
 | 十个原生中断/响应丢失断点 | 未跑；已有工程覆盖不自动转为原生通过 |
 | 真实旧 Electron pending/journal | 待完整保护副本；合成覆盖只能证明代表性兼容 |
 | 同 profile 双原生业务窗口 | 宿主能力缺口；不扩大 IPC 信任范围 |

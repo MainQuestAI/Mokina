@@ -823,6 +823,33 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
     return result.frozenContent ?? result.content;
   }
 
+  async function prepareHistoricalExport(res: Response, fileName: string, versionId: string, html: string) {
+    const missingResources = (missingDependencies: string[]) => sendApiError(res, 422,
+      'HISTORICAL_RESOURCES_UNAVAILABLE',
+      `This historical version lacks its own saved resources (${missingDependencies.join(', ')}). `
+        + 'Restore it as a new current version in the version panel, check the resources, then export. The original version is unchanged.',
+      { details: { kind: 'missing-version-resources', fileName, versionId,
+        missingDependencies, action: 'restore-as-new-version' } });
+    try {
+      const bundled = await bundleStandaloneHtml({ entryPath: fileName, html, readAsset: async () => null });
+      if (bundled.externalDependencies.length > 0) {
+        missingResources(bundled.externalDependencies);
+        return null;
+      }
+      return bundled;
+    } catch (error) {
+      if (!(error instanceof StandaloneHtmlExportError)) throw error;
+      if (error.kind === 'missing-local-dependency' || error.kind === 'unpersistable-url') {
+        missingResources(error.dependency ? [error.dependency] : []);
+      } else {
+        sendApiError(res, error.kind === 'limit-exceeded' ? 413 : 422,
+          error.kind === 'limit-exceeded' ? 'PAYLOAD_TOO_LARGE' : 'VALIDATION_FAILED', error.message,
+          { details: { kind: error.kind, ...(error.dependency ? { dependency: error.dependency } : {}), chain: error.chain } });
+      }
+      return null;
+    }
+  }
+
   function screenshotRenderClientError(
     rendered: { ok: boolean; error?: string; errorCode?: string },
     format: 'pptx' | 'pdf' | 'image',
@@ -947,15 +974,10 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
           },
         };
       };
-      const bundled = await bundleStandaloneHtml({
-        entryPath: exportSource.relPath,
-        html: exportSource.html,
-        readAsset: assetReader,
-      });
-      if (historical && bundled.externalDependencies.length > 0) {
-        return sendApiError(res, 422, 'VALIDATION_FAILED',
-          'historical HTML still needs external resources and cannot be delivered offline');
-      }
+      const bundled = historical && versionId
+        ? await prepareHistoricalExport(res, fileName, versionId, exportSource.html)
+        : await bundleStandaloneHtml({ entryPath: exportSource.relPath, html: exportSource.html, readAsset: assetReader });
+      if (!bundled) return;
 
       const titleBase = typeof body?.title === 'string' && body.title.trim()
         ? body.title.trim()
@@ -1022,20 +1044,7 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
       const versionId = normalizeExportVersionId(body?.versionId);
       const sourceHtml = await readExportVersionSource(projectId, fileName, versionId, metadata);
       if (versionId && sourceHtml !== undefined) {
-        try {
-          const frozenOnly = await bundleStandaloneHtml({
-            entryPath: fileName,
-            html: sourceHtml,
-            readAsset: async () => null,
-          });
-          if (frozenOnly.externalDependencies.length > 0) {
-            return sendApiError(res, 422, 'VALIDATION_FAILED',
-              'historical HTML has resources outside this version');
-          }
-        } catch (error: any) {
-          return sendApiError(res, 422, 'VALIDATION_FAILED',
-            error?.message || 'historical resources are unavailable');
-        }
+        if (!await prepareHistoricalExport(res, fileName, versionId, sourceHtml)) return;
       }
       if (format === 'image' && imageFormat != null && imageFormat !== 'png' && imageFormat !== 'jpeg') {
         return sendApiError(res, 400, 'BAD_REQUEST', 'imageFormat must be png or jpeg');
@@ -1518,6 +1527,9 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
       const metadata = project?.metadata ?? null;
       const versionId = normalizeExportVersionId(req.body?.versionId);
       const sourceHtml = await readExportVersionSource(req.params.id, fileName, versionId, metadata);
+      if (versionId && sourceHtml !== undefined) {
+        if (!await prepareHistoricalExport(res, fileName, versionId, sourceHtml)) return;
+      }
       const input = await buildDesktopPdfExportInput({
         daemonUrl: daemonUrlRef.current,
         deck: deck === true,
@@ -1837,15 +1849,9 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
       };
 
       if (versionId) {
-        const frozenOnly = await bundleStandaloneHtml({
-          entryPath: relPath,
-          html: ownerHtml,
-          readAsset: async () => null,
-        });
-        if (frozenOnly.externalDependencies.length > 0) {
-          return sendApiError(res, 422, 'VALIDATION_FAILED',
-            'historical HTML has resources outside this version; export a self-contained version instead');
-        }
+        const frozenOnly = await prepareHistoricalExport(res, relPath, versionId, ownerHtml);
+        if (!frozenOnly) return;
+        ownerHtml = frozenOnly.html;
       }
       const exportSource = versionId
         ? { relPath, html: ownerHtml }

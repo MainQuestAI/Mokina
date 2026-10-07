@@ -10,6 +10,8 @@ export const API_ERROR_CODES = [
   'PAYLOAD_TOO_LARGE',
   'UNSUPPORTED_MEDIA_TYPE',
   'VALIDATION_FAILED',
+  // A selected historical version cannot borrow resources from today's file.
+  'HISTORICAL_RESOURCES_UNAVAILABLE',
   'AGENT_UNAVAILABLE',
   'AGENT_AUTH_REQUIRED',
   'AGENT_EXECUTION_FAILED',

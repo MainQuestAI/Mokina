@@ -545,6 +545,19 @@ describe('exportProjectAsPdf', () => {
     expect(fallback).not.toHaveBeenCalled();
   });
 
+  it.each([
+    [422, { error: { code: 'HISTORICAL_RESOURCES_UNAVAILABLE', message: 'Missing saved resources; restore as a new version.' } }],
+    [403, { error: 'forbidden' }],
+    [501, 'renderer unavailable'],
+  ])('does not print unverified historical source after a %s PDF failure', async (status, body) => {
+    const fallback = vi.fn();
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json(body, { status })));
+    await expect(exportProjectAsPdf({ deck: false, fallbackPdf: fallback, filePath: 'index.html',
+      projectId: 'proj-1', title: 'Old draft', versionId: 'v1' })).rejects.toThrow();
+    expect(fallback).not.toHaveBeenCalled();
+  });
+
   it('falls back to browser print when the desktop PDF export API is unavailable', async () => {
     const fallback = vi.fn();
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -679,6 +692,18 @@ describe('exportProjectAsHtml', () => {
     })).rejects.toThrow('missing local dependency: assets/hero.png');
 
     expect(capturedFilename).toBeUndefined();
+    expect(capturedBlob).toBeUndefined();
+  });
+
+  it('preserves the historical recovery code and missing resource details for the caller', async () => {
+    const details = { versionId: 'v1', missingDependencies: ['assets/old.png'], action: 'restore-as-new-version' };
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ error: {
+      code: 'HISTORICAL_RESOURCES_UNAVAILABLE', message: 'Restore as a new current version.', details,
+    } }, { status: 422 })));
+    await expect(fetchProjectVersionHtml({ projectId: 'proj-1', filePath: 'index.html',
+      fallbackTitle: 'Old draft', versionId: 'v1' })).rejects.toMatchObject({
+      code: 'HISTORICAL_RESOURCES_UNAVAILABLE', status: 422, details,
+    });
     expect(capturedBlob).toBeUndefined();
   });
 });
@@ -1088,6 +1113,20 @@ describe('binary project/design-system downloads', () => {
     expect(fetch).toHaveBeenCalledWith('/api/projects/proj%201/export/screens/main%20page.html?inline=1&versionId=v1');
     expect(capturedFilename).toBe('Main-Page-v1.zip');
     expect(capturedBlob?.type).toBe('application/zip');
+  });
+
+  it.each([
+    [422, { error: { code: 'HISTORICAL_RESOURCES_UNAVAILABLE', message: 'Missing saved resources; restore as a new version.' } }],
+    [403, { error: 'forbidden' }],
+    [500, 'non-JSON failure'],
+  ])('does not download a fallback ZIP after a %s historical export refusal', async (status, body) => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.stubGlobal('fetch', vi.fn(async () => typeof body === 'string'
+      ? new Response(body, { status }) : Response.json(body, { status })));
+    await expect(exportProjectAsZip({ projectId: 'proj-1', filePath: 'index.html',
+      fallbackHtml: '<img src="assets/current.png">', fallbackTitle: 'Old draft', versionId: 'v1' })).rejects.toThrow();
+    expect(capturedFilename).toBeUndefined();
+    expect(capturedBlob).toBeUndefined();
   });
 });
 

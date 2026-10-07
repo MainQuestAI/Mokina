@@ -2424,7 +2424,10 @@ test('[P1] Mokina R2 definitive rejection keeps the draft, the failure surface a
   expect(submittedPrompt).toBe(prompt);
   await expect(page.getByRole('button', { name: 'Send failed — retry' })).toBeVisible();
   // Recovery never overwrites occupied input, even when it resembles the receipt.
-  await page.getByTestId('chat-composer-input').fill('');
+  // Exercise the editor's keyboard selection/deletion path. In CI, fill('')
+  // deleted only the final character instead of clearing this Lexical input.
+  await page.getByTestId('chat-composer-input').press('ControlOrMeta+A');
+  await page.getByTestId('chat-composer-input').press('Backspace');
   await expect(page.getByTestId('chat-composer-input')).toHaveText('');
   await page.getByTestId('mokina-pending-send').getByRole('button', { name: 'Restore unsent draft' }).click();
   await expect(page.getByTestId('chat-composer-input')).toHaveText('Observation draft for definitive rejection');

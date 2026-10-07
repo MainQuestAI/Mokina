@@ -524,6 +524,94 @@ mokinaRecoveryDescribe('Mokina recovery native interruption', () => {
     }
   }, 180_000);
 
+  test('[P1] Mokina native source change requires reconfirmation and scopes bindings by conversation', async () => {
+    const report = (await createPackagedSmokeReport('mac')).report;
+    const source = await inspectMokina<{ projectId: string; conversationId: string; secondId: string }>(`(async () => {
+      const created=await fetch('/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:crypto.randomUUID(),name:'Source change and scope QA',metadata:{kind:'prototype'}})});
+      if(!created.ok)throw new Error('create '+created.status);
+      const body=await created.json();const id=body.project.id;
+      const saved=await fetch('/api/projects/'+id+'/files',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'brief.md',content:'ORIGINAL_FACT',versionSource:'manual'})});
+      if(!saved.ok)throw new Error('save '+saved.status);
+      const second=await fetch('/api/projects/'+id+'/conversations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:'Independent second conversation'})});
+      if(!second.ok)throw new Error('conversation '+second.status);
+      return {projectId:id,conversationId:body.conversationId,secondId:(await second.json()).conversation.id};
+    })()`);
+    const openConversation = async (id: string) => {
+      await inspectMokina(`(() => {location.href='/projects/${source.projectId}/conversations/${id}/files/brief.md';return true})()`);
+      await waitFor(async () => {
+        expect(await inspectMokina<boolean>(`Boolean(document.querySelector('.mokina-context-panel .mokina-material-picker__files input'))`)).toBe(true);
+      }, 45_000);
+      await inspectMokina(`(() => {document.querySelector('.mokina-context-panel').open=true;return true})()`);
+    };
+    const readSelection = async (expected: string) => {
+      await waitFor(async () => {
+        const state=await inspectMokina<{ selected: boolean; enabled: boolean; panel: string }>(`(() => {
+          const panel=document.querySelector('.mokina-context-panel');panel.open=true;
+          const input=Array.from(panel.querySelectorAll('.mokina-material-picker__files label')).find(label=>label.textContent.includes('brief.md'))?.querySelector('input');
+          if(input&&!input.checked)input.click();
+          const b=panel.querySelector('.mokina-context-panel__actions button');
+          return {selected:Boolean(input?.checked),enabled:Boolean(b&&!b.disabled),panel:panel.textContent};
+        })()`);
+        expect(state.selected,state.panel).toBe(true);
+        expect(state.enabled,state.panel).toBe(true);
+      }, 10_000);
+      await inspectMokina(`(() => {document.querySelector('.mokina-context-panel__actions button').click();return true})()`);
+      await waitFor(async () => {
+        expect(await inspectMokina<string>(`document.querySelector('.mokina-material-picker__preview')?.textContent??''`)).toContain(expected);
+      }, 30_000);
+      await inspectMokina(`(() => {for(const input of document.querySelectorAll('.mokina-material-picker__preview > label input'))if(!input.checked)input.click();return true})()`);
+      await waitFor(async () => { expect(await inspectMokina<boolean>(`!document.querySelector('.mokina-context-panel__actions button:last-child').disabled`)).toBe(true); }, 10_000);
+    };
+    const freezeSelection = async () => {
+      expect(await inspectMokina<boolean>(`(() => {const b=document.querySelector('.mokina-context-panel__actions button:last-child');if(!b||b.disabled)return false;b.click();return true})()`)).toBe(true);
+    };
+    const readBindings = () => inspectMokina<Array<{ snapshotId: string; conversationId: string; generation: string }>>(`(async () => {
+      const rows=[];for(const key of (await window.__od__.recoveryStore.list('mokina:context-snapshot:')).keys){const row=await window.__od__.recoveryStore.get(key);if(row.ok&&row.found){const v=JSON.parse(row.record.value);if(v.projectId==='${source.projectId}')rows.push(v)}}return rows;
+    })()`);
+    await openConversation(source.conversationId);
+    await inspectMokina(`(() => {
+      const original=window.fetch.bind(window);window.__scopeQA={responses:[],runPosts:0};
+      window.fetch=async(input,options)=>{const path=new URL(typeof input==='string'?input:input.url,location.href).pathname;
+        if(options?.method==='POST'&&path==='/api/runs')window.__scopeQA.runPosts++;
+        const r=await original(input,options);
+        if(options?.method==='POST'&&path.endsWith('/mokina/context-snapshots'))window.__scopeQA.responses.push({status:r.status,body:await r.clone().json()});return r};return true;
+    })()`);
+    await readSelection('ORIGINAL_FACT');
+    expect(await inspectMokina<boolean>(`(async()=>{const r=await fetch('/api/projects/${source.projectId}/files',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'brief.md',content:'UPDATED_FACT',versionSource:'manual'})});return r.ok})()`)).toBe(true);
+    await freezeSelection();
+    await waitFor(async () => {
+      expect(await inspectMokina<string>(`window.__scopeQA.responses[0]?.body?.error?.code??''`)).toBe('MOKINA_SOURCE_CHANGED');
+    }, 30_000);
+    expect(await readBindings()).toEqual([]);
+    expect(await inspectMokina<boolean>(`document.querySelector('.mokina-context-panel__actions button:last-child').disabled`)).toBe(true);
+    await readSelection('UPDATED_FACT');
+    await freezeSelection();
+    await waitFor(async () => { expect(await readBindings()).toHaveLength(1); }, 30_000);
+    const first = (await readBindings())[0]!;
+    expect(first.conversationId).toBe(source.conversationId);
+    const responses = await inspectMokina<{ runPosts: number; responses: Array<{status: number}> }>('window.__scopeQA');
+    expect(responses.runPosts).toBe(0);
+    expect(responses.responses.map(row => row.status)).toEqual([409, 201]);
+    const snapshotPath=join(runtimeNamespaceRoot,'data','projects',source.projectId,'.mokina','contexts',`${first.snapshotId}.json`);
+    const frozenBytes=await readFile(snapshotPath,'utf8');
+    expect(frozenBytes).toContain('UPDATED_FACT');
+    expect(frozenBytes).not.toContain('ORIGINAL_FACT');
+    await openConversation(source.secondId);
+    expect(await inspectMokina<boolean>(`Boolean(document.querySelector('.mokina-context-panel__frozen'))`)).toBe(false);
+    await readSelection('UPDATED_FACT');
+    await freezeSelection();
+    await waitFor(async () => { expect(await readBindings()).toHaveLength(2); }, 30_000);
+    const bindings=await readBindings();
+    expect(bindings.find(row=>row.conversationId===source.conversationId)).toEqual(first);
+    expect(bindings.find(row=>row.conversationId===source.secondId)?.snapshotId).not.toBe(first.snapshotId);
+    expect(await inspectMokina<boolean>(`(async()=>{const r=await fetch('/api/projects/${source.projectId}/files',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'brief.md',content:'LATER_SOURCE',versionSource:'manual'})});return r.ok})()`)).toBe(true);
+    await openConversation(source.conversationId);
+    await waitFor(async () => { expect(await inspectMokina<boolean>(`Boolean(document.querySelector('.mokina-context-panel__frozen'))`)).toBe(true); }, 30_000);
+    expect(await readFile(snapshotPath,'utf8')).toBe(frozenBytes);
+    expect((await readBindings()).find(row=>row.conversationId===source.conversationId)).toEqual(first);
+    await report.json('mokina/source-change-and-conversation-scope.json',{source,responses,bindings,snapshot:JSON.parse(frozenBytes),boundary:'One native window, two conversations; synthetic Markdown, no model run or native file picker.'});
+  }, 180_000);
+
   for (const { point, variant } of [1, 2, 3, 4, 5, 6, 7, 8, 11].map(point => ({ point, variant: 'resume' })).concat([
     { point: 3, variant: 'missing-source' }, { point: 6, variant: 'edited-target' },
   ])) {

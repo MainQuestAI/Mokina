@@ -1,0 +1,57 @@
+{
+  "candidate": {
+    "version": "0.0.3-local.11",
+    "productSHA": "764114a1d75ae6461af61dbb45d20d736e78c91c",
+    "baseValidationSHA": "2b6ded9de759b6a558df3fe5545e0284116b88fd"
+  },
+  "source": {
+    "projectId": "5ef26a13-163b-43f3-bc29-89aef2683394",
+    "conversationId": "cd07107a-c98a-40c6-aa8c-088e3adad330",
+    "secondId": "c2968d79-4b93-4811-ae01-8b64344af5a4"
+  },
+  "httpStatuses": [
+    409,
+    201
+  ],
+  "runPosts": 0,
+  "bindings": [
+    {
+      "workspaceKey": "none",
+      "conversationId": "c2968d79-4b93-4811-ae01-8b64344af5a4",
+      "snapshotId": "c026b057-27d5-475a-9b2a-46dc246dab70",
+      "projectId": "5ef26a13-163b-43f3-bc29-89aef2683394",
+      "itemCount": 1,
+      "charCount": 12,
+      "frozenAt": "2026-10-07T15:07:57.002Z",
+      "itemLabels": [
+        "brief.md · 1 个片段"
+      ],
+      "excluded": [],
+      "schemaVersion": 2,
+      "generation": "27f521d9-2c6f-48ed-b3bc-992b811acec6"
+    },
+    {
+      "workspaceKey": "none",
+      "conversationId": "cd07107a-c98a-40c6-aa8c-088e3adad330",
+      "snapshotId": "4bf12246-b2c5-4e52-b0f1-1bfd287cf32e",
+      "projectId": "5ef26a13-163b-43f3-bc29-89aef2683394",
+      "itemCount": 1,
+      "charCount": 12,
+      "frozenAt": "2026-10-07T15:07:50.653Z",
+      "itemLabels": [
+        "brief.md · 1 个片段"
+      ],
+      "excluded": [],
+      "schemaVersion": 2,
+      "generation": "a713542c-1dc0-4f3e-8101-6103edd84342"
+    }
+  ],
+  "snapshotFingerprint": "21bf6dccb7fdffd2da99e7bf5c82abacb6f2ad40a182a53e9b5cef3cfd578f90",
+  "boundary": "One native window, two conversations; synthetic Markdown, no model run or native file picker.",
+  "combinedRun": {
+    "passed": 15,
+    "filtered": 16,
+    "exitCode": 0,
+    "durationSeconds": 257.07
+  }
+}

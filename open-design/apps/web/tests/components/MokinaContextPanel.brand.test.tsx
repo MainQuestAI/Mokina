@@ -38,6 +38,16 @@ afterEach(() => {
 });
 
 describe('MokinaContextPanel — brand kit source (N04)', () => {
+  it('allows a brand whose actual frozen body is exactly 24,000 units, without adding excerpt separators', async () => {
+    vi.stubGlobal('crypto', webcrypto);
+    fetchDesignSystemsMock.mockResolvedValue([{ id: 'boundary', title: 'Boundary brand' }]);
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ id: 'boundary', title: 'Boundary brand', body: 'x\n'.repeat(12_000) })));
+    render(<MokinaContextPanel projectId="brand-boundary" files={[]} />);
+    fireEvent.click(screen.getByText(/Materials & background/));
+    await screen.findByRole('option', { name: 'Boundary brand' });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Brand source' }), { target: { value: 'boundary' } });
+    await waitFor(() => expect(screen.getByRole('button', { name: /^Freeze as task snapshot/ })).toBeEnabled());
+  });
   it('reports a failed brand catalog and retries it instead of presenting an empty catalog', async () => {
     fetchDesignSystemsMock.mockResolvedValueOnce({ ok: false }).mockResolvedValueOnce([{ id: 'brand', title: 'Recovered brand' }]);
     render(<MokinaContextPanel projectId="catalog" files={[]} />);

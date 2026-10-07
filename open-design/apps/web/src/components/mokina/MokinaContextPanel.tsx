@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@open-design/components';
 
-import { joinMokinaExcerpt, mokinaPlainTextExcerpt, mokinaContextBudgetExceeded, MOKINA_CONTEXT_BUDGETS, type MokinaContextSelection, type ProjectMaterialExtraction } from '@open-design/contracts';
+import { joinMokinaExcerpt, mokinaContextBudgetExceeded, MOKINA_CONTEXT_BUDGETS, type MokinaContextSelection, type ProjectMaterialExtraction } from '@open-design/contracts';
 
 import type { ProjectFile } from '../../types';
 import { randomUUID } from '../../utils/uuid';
@@ -155,7 +155,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         id,
         title: summary?.title ?? id,
         digest,
-        chars: mokinaPlainTextExcerpt(text).length,
+        chars: text.length,
       });
     } catch {
       if (sequence !== brandSequence.current || issuedScope !== scopeRef.current) return;

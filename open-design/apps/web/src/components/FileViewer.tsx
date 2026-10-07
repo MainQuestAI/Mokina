@@ -31,7 +31,7 @@ import {
   type SocialShareResponse,
   type WorkspaceCollabContext,
 } from '@open-design/contracts';
-import { MOKINA_CONTEXT_BUDGETS, mokinaPlainTextExcerpt } from '@open-design/contracts';
+import { MOKINA_CONTEXT_BUDGETS } from '@open-design/contracts';
 import { readMokinaContinuationJournal, persistContinuationJournal, continuationIntentDigest,
   resumeMokinaContinuation, resumeLegacyMokinaContinuation, continuationTextUnits, type ContinuationIntent } from '../runtime/mokina/continuation-recovery';
 import { PREVIEW_OBSERVABILITY_HOST_STATE_MESSAGE_TYPE } from '@open-design/contracts/runtime/preview-observability';
@@ -5143,7 +5143,7 @@ function FileVersionManagerModal({
                           const body = await response.json().catch(() => null) as { body?: string } | null;
                           const text = typeof body?.body === 'string' ? body.body : '';
                           const digest = await mokinaBytesDigest(new TextEncoder().encode(text).buffer as ArrayBuffer);
-                          if (text.trim() && seq === brandPreviewSeqRef.current && scope === continuationScopeRef.current) setContinuationBrandPreview({ title: summary.title, chars: mokinaPlainTextExcerpt(text).length, digest });
+                          if (text.trim() && seq === brandPreviewSeqRef.current && scope === continuationScopeRef.current) setContinuationBrandPreview({ title: summary.title, chars: text.length, digest });
                         })
                         .catch(() => {});
                     }

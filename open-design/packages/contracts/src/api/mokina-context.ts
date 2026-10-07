@@ -193,10 +193,6 @@ export function splitMokinaTextParts(text: string): Array<{ part: number; text: 
   }
   return parts;
 }
-export function mokinaPlainTextExcerpt(text: string) {
-  return joinMokinaExcerpt(text.split(/\r?\n/).flatMap(line => splitMokinaTextParts(line).map(part => part.text)));
-}
-
 export function mokinaContextBudgetExceeded(input: { itemCount: number; excerptUnits: number; assetBytes: number }): boolean {
   return input.itemCount > MOKINA_CONTEXT_BUDGETS.maxItems
     || input.excerptUnits > MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits

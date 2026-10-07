@@ -28,6 +28,7 @@ vi.mock('../../src/collab/collab-context', () => ({
 }));
 
 import { MokinaContextPanel } from '../../src/components/mokina/MokinaContextPanel';
+import { readPendingMokinaSnapshot } from '../../src/runtime/mokina/pending-context-snapshot';
 
 const BRAND_MD = '# 山茶品牌规范\n\n主色 #B3392E。';
 
@@ -38,15 +39,25 @@ afterEach(() => {
 });
 
 describe('MokinaContextPanel — brand kit source (N04)', () => {
-  it('allows a brand whose actual frozen body is exactly 24,000 units, without adding excerpt separators', async () => {
+  it('freezes a brand whose actual body is exactly 24,000 units, without adding excerpt separators', async () => {
     vi.stubGlobal('crypto', webcrypto);
     fetchDesignSystemsMock.mockResolvedValue([{ id: 'boundary', title: 'Boundary brand' }]);
-    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ id: 'boundary', title: 'Boundary brand', body: 'x\n'.repeat(12_000) })));
+    let posted: Record<string, unknown> | null = null;
+    vi.stubGlobal('fetch', vi.fn(async (_url, options) => {
+      if (options?.method === 'POST') {
+        posted = JSON.parse(options.body);
+        return Response.json({ snapshot: { items: [{ displayName: 'Boundary brand', kind: 'brand-rule', text: 'x\n'.repeat(12_000) }] } });
+      }
+      return Response.json({ id: 'boundary', title: 'Boundary brand', body: 'x\n'.repeat(12_000) });
+    }));
     render(<MokinaContextPanel projectId="brand-boundary" files={[]} />);
     fireEvent.click(screen.getByText(/Materials & background/));
     await screen.findByRole('option', { name: 'Boundary brand' });
     fireEvent.change(screen.getByRole('combobox', { name: 'Brand source' }), { target: { value: 'boundary' } });
     await waitFor(() => expect(screen.getByRole('button', { name: /^Freeze as task snapshot/ })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: /^Freeze as task snapshot/ }));
+    await waitFor(() => expect(readPendingMokinaSnapshot('brand-boundary')?.charCount).toBe(24_000));
+    expect(posted).toMatchObject({ selections: [{ mode: 'groups', textKind: 'brand-rule', sourceRef: { kind: 'design-system', designSystemId: 'boundary' } }] });
   });
   it('reports a failed brand catalog and retries it instead of presenting an empty catalog', async () => {
     fetchDesignSystemsMock.mockResolvedValueOnce({ ok: false }).mockResolvedValueOnce([{ id: 'brand', title: 'Recovered brand' }]);

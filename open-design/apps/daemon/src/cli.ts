@@ -2272,13 +2272,19 @@ function parseMokinaContextFlags(rawArgs, { requireSelections, required = ['proj
 
 async function runMokinaContextPrepare(rawArgs) {
   const { flags, projectId, snapshotId } = parseMokinaContextFlags(rawArgs, { requireSelections: true });
-  const selections = safeReadJsonFile(flags.selections);
+  // These two flags advertise inline JSON as well as file/stdin input.
+  // Keep the general file reader unchanged for other CLI commands.
+  const readSelectionArray = (value: string) => {
+    try { return JSON.parse(value); }
+    catch { return safeReadJsonFile(value); }
+  };
+  const selections = readSelectionArray(flags.selections);
   if (!Array.isArray(selections)) {
     console.error('--selections must be a JSON array (or a file/stdin with one)');
     process.exit(2);
   }
   const excluded = typeof flags.excluded === 'string' && flags.excluded.trim()
-    ? safeReadJsonFile(flags.excluded)
+    ? readSelectionArray(flags.excluded)
     : [];
   if (excluded == null || !Array.isArray(excluded)) {
     console.error('--excluded must be a JSON array when provided');

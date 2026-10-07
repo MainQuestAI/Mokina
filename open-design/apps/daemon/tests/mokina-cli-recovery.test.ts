@@ -15,6 +15,13 @@ const server = createServer(async (req, res) => {
   if (req.url?.endsWith('/mokina/recovery-export')) {
     res.setHeader('content-type', 'application/zip');
     res.end(archiveBytes);
+  } else if (req.url?.includes('/projects/invalid-fragments/')) {
+    res.statusCode = 400;
+    res.setHeader('content-type', 'application/json');
+    res.end(JSON.stringify({ error: { code: 'INVALID_SELECTION', message: 'Fragment not found' } }));
+  } else if (req.url?.includes('/mokina/context-snapshots')) {
+    res.setHeader('content-type', 'application/json');
+    res.end(JSON.stringify({ snapshot: { snapshotId: 'cli-snapshot', fingerprint: 'fixed-fingerprint', items: [] } }));
   } else {
     res.setHeader('content-type', 'application/json');
     res.end(JSON.stringify({ projectId: 'cli-target', operationId: 'cli-operation' }));
@@ -76,4 +83,28 @@ it('mints an operation identity when recovery import omits the optional flag', a
   const result = await invoke(['mokina', 'recovery', 'import', '--file', archive, '--target-project', 'cli-target', '--json']);
   expect(result.code, result.stderr + result.stdout).toBe(0);
   expect(requests[0]!.body).toMatch(/name="operationId"\r\n\r\n[0-9a-f-]{36}\r\n/);
+});
+
+it('forwards exact fragments unchanged through context prepare and reads the same snapshot', async () => {
+  const selections = [{ itemId: 'input-1', mode: 'fragments', textKind: 'material',
+    sourceRef: { kind: 'project-file', projectId: 'cli-project', fileName: 'uploads/actual.csv' },
+    fragmentIds: ['fragment:2', 'fragment:4'], expectedParserVersion: 2, expectedSourceDigest: 'digest' }];
+  const result = await invoke(['mokina', 'context', 'prepare', '--project', 'cli-project',
+    '--snapshot', 'cli-snapshot', '--selections', JSON.stringify(selections), '--json']);
+  expect(result.code, result.stderr + result.stdout).toBe(0);
+  expect(JSON.parse(result.stdout).snapshot.snapshotId).toBe('cli-snapshot');
+  expect(requests[0]).toMatchObject({ url: '/api/projects/cli-project/mokina/context-snapshots' });
+  expect(JSON.parse(requests[0]!.body)).toEqual({ snapshotId: 'cli-snapshot', selections, excluded: [] });
+  const read = await invoke(['mokina', 'context', 'get', '--project', 'cli-project', '--snapshot', 'cli-snapshot', '--json']);
+  expect(read.code, read.stderr + read.stdout).toBe(0);
+  expect(JSON.parse(read.stdout).snapshot.fingerprint).toBe('fixed-fingerprint');
+  expect(requests[1]!.url).toBe('/api/projects/cli-project/mokina/context-snapshots/cli-snapshot');
+});
+
+it('reports a rejected exact fragment selection instead of printing a successful snapshot', async () => {
+  const result = await invoke(['mokina', 'context', 'prepare', '--project', 'invalid-fragments',
+    '--snapshot', 'cli-snapshot', '--selections', '[]', '--json']);
+  expect(result.code).toBe(1);
+  expect(result.stderr).toContain('INVALID_SELECTION');
+  expect(result.stdout).not.toContain('"snapshot"');
 });

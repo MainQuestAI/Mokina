@@ -37,7 +37,7 @@ jobs:
           pnpm --filter @open-design/web exec vitest run tests/runtime/exports.test.ts tests/analytics/export-error-code.test.ts --maxWorkers=2
           pnpm --filter @open-design/daemon exec vitest run tests/pdf-export.test.ts tests/screenshot-export-file-handoff.test.ts tests/project-file-versions.test.ts --maxWorkers=2
           pnpm --filter @open-design/daemon exec vitest run tests/mokina-context-store.test.ts tests/mokina-context-routes.test.ts tests/mokina-exact-input.test.ts tests/mokina-recovery-package.test.ts tests/mokina-materials.test.ts tests/mokina-recovery-routes.test.ts tests/export-inline-route.test.ts tests/mokina-cli-recovery.test.ts tests/run-request-idempotency.test.ts tests/routes/runs-structured-errors.test.ts tests/mokina-context-brand-gate.test.ts tests/design-systems/team-resource-consumer-scope.test.ts
-          pnpm --filter @open-design/tools-pack exec vitest run tests/resources/pdf-runtime.test.ts
+          pnpm --filter @open-design/tools-pack exec vitest run tests/resources/pdf-runtime.test.ts tests/mac-paths.test.ts tests/mac-identity.test.ts tests/mac-lifecycle.test.ts tests/workspace-build.test.ts tests/desktop-package-runtime.test.ts tests/web-standalone-after-pack.test.ts tests/prebundle/internal-packages-closure.test.ts tests/resources/runtime-manifest.test.ts --maxWorkers=2
       - name: Browser prerequisites
         run: |
           pnpm --filter @open-design/daemon build

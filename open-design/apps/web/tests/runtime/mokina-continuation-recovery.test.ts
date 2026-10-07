@@ -197,4 +197,50 @@ describe('T14–T17/T34 target-first continuation recovery', () => {
     await expect(resumeLegacyMokinaContinuation(legacy, null)).rejects.toThrow('完整意图');
     expect(createProject).not.toHaveBeenCalled(); expect(writeProjectTextFile).not.toHaveBeenCalled();
   });
+  it('reopens a legacy operation using only its matching saved target and snapshot', async () => {
+    const legacy: MokinaContinuationJournal = { schemaVersion: 2, operationId: 'operation', targetProjectId: 'target',
+      checkpoint: 'snapshot-saved', updatedAt: '' };
+    const original = JSON.stringify(legacy);
+    localStorage.setItem(key, original);
+    fetchProjectFiles.mockResolvedValue([{ name: 'MOKINA-CONTINUATION.json' }]);
+    const network = vi.fn(targetOnlyFetch);
+    vi.stubGlobal('fetch', network);
+    expect(await resumeLegacyMokinaContinuation(legacy, null)).toEqual(legacy);
+    expect(network.mock.calls.map(([url]) => url)).toEqual([
+      '/raw/target/MOKINA-CONTINUATION.json', '/api/projects/target/mokina/context-snapshots/snapshot',
+    ]);
+    expect(createProject).not.toHaveBeenCalled(); expect(uploadProjectFiles).not.toHaveBeenCalled();
+    expect(writeProjectTextFile).not.toHaveBeenCalled();
+    expect(readPendingMokinaSnapshot('target', { conversationId: 'conversation', workspaceKey: 'none' })).toBeNull();
+    expect(localStorage.getItem(key)).toBe(original);
+  });
+  it.each([
+    { operationId: 'another-operation' }, { targetProjectId: 'another-target' }, { contextSnapshotId: '' },
+  ])('preserves a legacy record and both drafts when the saved target identity differs: %j', async changes => {
+    const legacy: MokinaContinuationJournal = { schemaVersion: 2, operationId: 'operation', targetProjectId: 'target',
+      contextSnapshotId: 'snapshot', checkpoint: 'snapshot-saved', updatedAt: '' };
+    const original = JSON.stringify(legacy);
+    localStorage.setItem(key, original);
+    fetchProjectFiles.mockResolvedValue([{ name: 'MOKINA-CONTINUATION.json' }]);
+    const network = vi.fn(async () => json({ schemaVersion: 2, operationId: 'operation', targetProjectId: 'target',
+      contextSnapshotId: 'snapshot', ...changes }));
+    vi.stubGlobal('fetch', network);
+    await expect(resumeLegacyMokinaContinuation(legacy, null)).rejects.toThrow('身份');
+    expect(network).toHaveBeenCalledTimes(1);
+    expect(createProject).not.toHaveBeenCalled(); expect(uploadProjectFiles).not.toHaveBeenCalled();
+    expect(writeProjectTextFile).not.toHaveBeenCalled(); expect(localStorage.getItem(key)).toBe(original);
+  });
+  it.each(['forbidden', 'wrong-project', 'wrong-snapshot'])('retains the legacy operation when target snapshot cannot be trusted: %s', async failure => {
+    const legacy: MokinaContinuationJournal = { schemaVersion: 2, operationId: 'operation', targetProjectId: 'target',
+      contextSnapshotId: 'snapshot', checkpoint: 'snapshot-saved', updatedAt: '' };
+    const original = JSON.stringify(legacy);
+    localStorage.setItem(key, original);
+    fetchProjectFiles.mockResolvedValue([{ name: 'MOKINA-CONTINUATION.json' }]);
+    vi.stubGlobal('fetch', vi.fn(input => input === '/raw/target/MOKINA-CONTINUATION.json' ? targetOnlyFetch(input)
+      : Promise.resolve(failure === 'forbidden' ? json({ error: 'forbidden' }, 403)
+        : json({ snapshot: { ...snapshot, ...(failure === 'wrong-project' ? { projectId: 'other' } : { snapshotId: 'other' }) } }))));
+    await expect(resumeLegacyMokinaContinuation(legacy, null)).rejects.toThrow('快照');
+    expect(createProject).not.toHaveBeenCalled(); expect(uploadProjectFiles).not.toHaveBeenCalled();
+    expect(writeProjectTextFile).not.toHaveBeenCalled(); expect(localStorage.getItem(key)).toBe(original);
+  });
 });

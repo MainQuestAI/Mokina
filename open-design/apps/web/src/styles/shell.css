@@ -288,8 +288,8 @@ html.od-radial-open .workspace-shell {
    CONTENT coordinates (absolute child of the scroll container) so it scrolls
    together with the tabs. All paint lives on the inner __pill; this shell
    only carries transform/width so the glass filter never re-attaches while
-   moving. Sits under every .workspace-tab (they are z-index: 1). The
-   overshoot bezier (y1 > 1) is the elastic "snap" on arrival. */
+   moving. Sits under every .workspace-tab (they are z-index: 1). The shared
+   ease-out curve settles smoothly without overshooting the target tab. */
 .workspace-tabs-glide {
   position: absolute;
   left: 0;
@@ -303,8 +303,8 @@ html.od-radial-open .workspace-shell {
   opacity: 0;
   will-change: transform, width;
   transition:
-    transform 300ms cubic-bezier(0.32, 1.28, 0.36, 1),
-    width 300ms cubic-bezier(0.32, 1.28, 0.36, 1);
+    transform 300ms cubic-bezier(0.23, 1, 0.32, 1),
+    width 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .workspace-tabs-glide[data-ready] {
   opacity: 1;

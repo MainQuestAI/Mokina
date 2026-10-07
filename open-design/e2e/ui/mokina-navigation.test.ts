@@ -84,6 +84,55 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
   });
 }
 
+test('[P1] Mokina workspace indicator settles without overshoot and respects reduced motion', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByTestId('home-hero-input')).toBeVisible({ timeout: T.long });
+  const indicator = page.locator('.workspace-tabs-glide');
+  await expect(indicator).toBeAttached();
+
+  // Sample the real, served indicator's CSS transitions on the browser's
+  // animation clock. No sleep or synthetic copy of the easing function:
+  // project tabs can be hidden by the dock, but their paint contract is shared.
+  const samples = await indicator.evaluate((element) => {
+    const start = Number.parseFloat(getComputedStyle(element).width);
+    element.style.width = `${start + 80}px`;
+    void getComputedStyle(element).width;
+    const animation = element.getAnimations().find((entry) =>
+      entry instanceof CSSTransition && entry.transitionProperty === 'width');
+    if (!animation?.effect) throw new Error('Workspace width transition did not start');
+    animation.pause();
+    const duration = Number(animation.effect.getTiming().duration);
+    const progress = [0, 0.25, 0.5, 0.6, 0.75, 1].map((fraction) => {
+      animation.currentTime = duration * fraction;
+      return (Number.parseFloat(getComputedStyle(element).width) - start) / 80;
+    });
+    animation.finish();
+    return { duration, progress };
+  });
+  expect(samples.duration).toBe(300);
+  let previous = -0.001;
+  for (const progress of samples.progress) {
+    expect(progress).toBeGreaterThanOrEqual(previous);
+    expect(progress).toBeLessThanOrEqual(1.001);
+    previous = progress;
+  }
+  expect(samples.progress.at(-1)).toBeCloseTo(1, 3);
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const reduced = await indicator.evaluate((element) => {
+    const target = Number.parseFloat(getComputedStyle(element).width) + 40;
+    element.style.width = `${target}px`;
+    const width = Number.parseFloat(getComputedStyle(element).width);
+    return { target, width, animations: element.getAnimations().length };
+  });
+  expect(reduced.width).toBeCloseTo(reduced.target, 3);
+  expect(reduced.animations).toBe(0);
+  await testInfo.attach('workspace-motion-browser-samples', {
+    body: JSON.stringify({ samples, reduced }, null, 2), contentType: 'application/json',
+  });
+});
+
 async function seedProject(
   page: Page,
   name: string,

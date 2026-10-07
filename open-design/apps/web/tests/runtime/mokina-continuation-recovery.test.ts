@@ -8,9 +8,10 @@ const { createProject, fetchProjectFiles, uploadProjectFiles, writeProjectTextFi
 vi.mock('../../src/state/projects', () => ({ createProject }));
 vi.mock('../../src/providers/registry', () => ({ fetchProjectFiles, uploadProjectFiles, writeProjectTextFile,
   projectFileUrl: (id: string, name: string) => `/raw/${id}/${name}` }));
-import { continuationIntentDigest, persistContinuationJournal, readMokinaContinuationJournal, resumeMokinaContinuation,
+import { continuationIntentDigest, persistContinuationJournal, readMokinaContinuationJournal, readMokinaContinuationForKey, resumeMokinaContinuation,
   resumeLegacyMokinaContinuation, type ContinuationIntent, type MokinaContinuationJournal } from '../../src/runtime/mokina/continuation-recovery';
 import { resetDurableRecoveryForTests } from '../../src/runtime/persistence/mokina-recovery-store';
+import * as recoveryStore from '../../src/runtime/persistence/mokina-recovery-store';
 import { readPendingMokinaSnapshot, clearPendingMokinaSnapshot } from '../../src/runtime/mokina/pending-context-snapshot';
 const key = 'od:continuation:test';
 const intent: ContinuationIntent = { source: { projectId: 'source', fileName: 'plan.html', versionId: 'v1', versionState: 'historical', contentDigest: 'source-digest' },
@@ -21,6 +22,10 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 function targetOnlyFetch(input: string) {
   if (input === '/api/projects/target') return Promise.resolve(json({ project: { id: 'target' } }));
   if (input.includes('context-snapshots/snapshot')) return Promise.resolve(json({ snapshot }));
+  if (input === '/raw/target/MOKINA-CONTINUATION.json') return Promise.resolve(json({ schemaVersion: 2,
+    operationId: journal.operationId, targetProjectId: 'target', source: journal.intent!.source,
+    sections: journal.intent!.sections, background: journal.intent!.background,
+    productionIntent: journal.intent!.productionIntent, contextSnapshotId: 'snapshot' }));
   if (input.startsWith('/raw/source')) throw new Error('Sources must not be read after freezing');
   throw new Error(`Unexpected request: ${input}`);
 }
@@ -51,7 +56,8 @@ describe('T14–T17/T34 target-first continuation recovery', () => {
     await clearPendingMokinaSnapshot('target', { conversationId: 'conversation', workspaceKey: 'none' });
     await resumeMokinaContinuation(key, ready, null);
     expect(readPendingMokinaSnapshot('target', { conversationId: 'conversation', workspaceKey: 'none' })).toBeNull();
-    expect(readMokinaContinuationJournal(localStorage.getItem(key))?.checkpoint).toBe('draft-ready');
+    expect(localStorage.getItem(key)).toBeNull();
+    expect(readMokinaContinuationForKey(key)).toMatchObject({ checkpoint: 'draft-ready', operationId: 'operation' });
   });
   it('does not treat a failed file listing as empty or overwrite a draft', async () => {
     vi.stubGlobal('fetch', vi.fn(targetOnlyFetch)); fetchProjectFiles.mockRejectedValue(new Error('403'));
@@ -87,6 +93,7 @@ describe('T14–T17/T34 target-first continuation recovery', () => {
       if (input === '/api/projects/target/conversations') return Promise.resolve(json({ conversations: [{ id: 'conversation' }] }));
       if (input.includes('context-snapshots') && options?.method === 'POST') return Promise.resolve(json({ snapshot }));
       if (input.includes('context-snapshots')) return Promise.resolve(json({}, 404));
+      if (input === '/raw/target/MOKINA-CONTINUATION.json') return targetOnlyFetch(input);
       throw new Error(`Unexpected request: ${input}`);
     }));
     await expect(resumeMokinaContinuation(key, journal, null)).rejects.toThrow('create response lost');
@@ -113,6 +120,7 @@ describe('T14–T17/T34 target-first continuation recovery', () => {
       if (input.includes('context-snapshots')) return Promise.resolve(json({}, 404));
       if (input === '/raw/target/asset-1.svg') return Promise.resolve(new Response(bytes, { status: copied ? 200 : 404 }));
       if (input === '/raw/source/original.svg' && !copied) return Promise.resolve(new Response(bytes));
+      if (input === '/raw/target/MOKINA-CONTINUATION.json') return targetOnlyFetch(input);
       throw new Error(`Original source is unavailable: ${input}`);
     });
     vi.stubGlobal('fetch', network);
@@ -122,7 +130,7 @@ describe('T14–T17/T34 target-first continuation recovery', () => {
     expect((await resumeMokinaContinuation(key, saved, null)).checkpoint).toBe('draft-ready');
     expect(uploadProjectFiles).toHaveBeenCalledTimes(1);
     expect(network.mock.calls.filter(([input]) => input === '/raw/source/original.svg')).toHaveLength(1);
-    expect(readMokinaContinuationJournal(localStorage.getItem(key))?.copiedAssets?.['asset-1']).toMatchObject({ path: 'asset-1.svg', digest, uploaded: true });
+    expect(readMokinaContinuationForKey(key)?.copiedAssets?.['asset-1']).toMatchObject({ path: 'asset-1.svg', digest, uploaded: true });
   });
   it.each([json({ error: 'forbidden' }, 403), json({ error: { code: 'SOURCE_CHANGED', message: '品牌已变化' } }, 409), new Response('not JSON', { status: 502 })])
     ('retains original operation after a safe freeze error %#', async response => {
@@ -139,6 +147,50 @@ describe('T14–T17/T34 target-first continuation recovery', () => {
     await persistContinuationJournal(key, changed, 0);
     await expect(persistContinuationJournal(key, { ...journal, revision: 1, lastError: 'stale' }, 0)).rejects.toThrow('冲突');
     expect(readMokinaContinuationJournal(localStorage.getItem(key))?.lastError).toBe('newer');
+  });
+  it('retains the active operation when a successful draft write cannot be read back', async () => {
+    vi.stubGlobal('fetch', vi.fn(input => input === '/raw/target/MOKINA-CONTINUATION.json'
+      ? Promise.resolve(json({}, 503)) : targetOnlyFetch(input)));
+    await expect(resumeMokinaContinuation(key, journal, null)).rejects.toThrow('读回失败');
+    expect(writeProjectTextFile).toHaveBeenCalled();
+    expect(readMokinaContinuationJournal(localStorage.getItem(key))).toMatchObject({ operationId: 'operation', targetProjectId: 'target' });
+    expect(localStorage.getItem(`${key}:completed:operation`)).toBeNull();
+    expect(readPendingMokinaSnapshot('target', { conversationId: 'conversation', workspaceKey: 'none' })).toBeNull();
+  });
+  it('retries failed completion cleanup without a second project or a consumed input rebind', async () => {
+    vi.stubGlobal('fetch', vi.fn(targetOnlyFetch));
+    const mutate = recoveryStore.mutateDurableRecord;
+    const interception = vi.spyOn(recoveryStore, 'mutateDurableRecord').mockImplementation(async (recordKey, change) => {
+      if (recordKey.endsWith(':completed:operation')) return false;
+      return mutate(recordKey, change);
+    });
+    try {
+      await expect(resumeMokinaContinuation(key, journal, null)).rejects.toThrow('完成记录待同步');
+      const saved = readMokinaContinuationJournal(localStorage.getItem(key))!;
+      expect(saved).toMatchObject({ checkpoint: 'draft-ready', targetProjectId: 'target', operationId: 'operation' });
+      await clearPendingMokinaSnapshot('target', { conversationId: 'conversation', workspaceKey: 'none' });
+      interception.mockRestore();
+      await resumeMokinaContinuation(key, saved, null);
+      expect(localStorage.getItem(key)).toBeNull();
+      expect(readMokinaContinuationForKey(key)?.targetProjectId).toBe('target');
+      expect(readPendingMokinaSnapshot('target', { conversationId: 'conversation', workspaceKey: 'none' })).toBeNull();
+      expect(createProject).not.toHaveBeenCalled();
+    } finally { interception.mockRestore(); }
+  });
+  it('never clears a newer operation arriving between completion archive and active cleanup', async () => {
+    vi.stubGlobal('fetch', vi.fn(targetOnlyFetch));
+    const mutate = recoveryStore.mutateDurableRecord;
+    const replacement = { ...journal, operationId: 'new-operation', targetProjectId: 'new-target', revision: 0 };
+    const interception = vi.spyOn(recoveryStore, 'mutateDurableRecord').mockImplementation(async (recordKey, change) => {
+      const result = await mutate(recordKey, change);
+      if (recordKey.endsWith(':completed:operation')) localStorage.setItem(key, JSON.stringify(replacement));
+      return result;
+    });
+    try {
+      await expect(resumeMokinaContinuation(key, journal, null)).rejects.toThrow('活动记录待同步');
+      expect(readMokinaContinuationJournal(localStorage.getItem(key))).toMatchObject({ operationId: 'new-operation', targetProjectId: 'new-target' });
+      expect(readMokinaContinuationJournal(localStorage.getItem(`${key}:completed:operation`))?.targetProjectId).toBe('target');
+    } finally { interception.mockRestore(); }
   });
   it('does not guess incomplete legacy intent or replace its target', async () => {
     const legacy = { ...journal, schemaVersion: 2 as const, intent: undefined };

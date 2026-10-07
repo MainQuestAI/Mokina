@@ -139,6 +139,7 @@ export function MokinaRunEvidence({ projectId, runId, runActive, workspaceContex
                 <small>{item.sourceRef.kind === 'project-file' ? `${item.sourceRef.fileName} · ${item.sourceRef.versionState ?? ''} · ${item.sourceRef.versionId ?? ''}`
                   : item.sourceRef.kind === 'design-system' ? item.sourceRef.designSystemId : t('mokina.runEvidence.kindUserNote')}</small>
                 {item.kind === 'asset' ? <p>{item.role} · {item.usageNote} · {item.byteLength} bytes</p> : <>
+                  {item.continuationOrigin ? <small>{item.continuationOrigin.source.fileName} · {item.continuationOrigin.source.versionState} · {item.continuationOrigin.source.versionId} · {item.continuationOrigin.source.contentDigest}</small> : null}
                   <small>{item.locators.join('；')}</small><pre>{item.text}</pre>
                 </>}
                 <small>{item.sourceDigest}</small>

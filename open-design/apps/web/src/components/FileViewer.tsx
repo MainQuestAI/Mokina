@@ -32,7 +32,7 @@ import {
   type WorkspaceCollabContext,
 } from '@open-design/contracts';
 import { MOKINA_CONTEXT_BUDGETS } from '@open-design/contracts';
-import { readMokinaContinuationJournal, persistContinuationJournal, continuationIntentDigest,
+import { readMokinaContinuationJournal, readMokinaContinuationForKey, persistContinuationJournal, continuationIntentDigest,
   resumeMokinaContinuation, resumeLegacyMokinaContinuation, continuationTextUnits, type ContinuationIntent } from '../runtime/mokina/continuation-recovery';
 import { PREVIEW_OBSERVABILITY_HOST_STATE_MESSAGE_TYPE } from '@open-design/contracts/runtime/preview-observability';
 import { PREVIEW_URL_GUARD_MAX_HTML_BYTES } from '@open-design/contracts/runtime/preview-guards';
@@ -4414,7 +4414,7 @@ function FileVersionManagerModal({
       intent.sections = await Promise.all(intent.sections.map(async section => ({ ...section,
         textDigest: await mokinaBytesDigest(new TextEncoder().encode(section.text).buffer as ArrayBuffer) })));
       const journalKey = `od:continuation:${JSON.stringify([intent.workspaceKey, projectId, file.name, selectedVersion.id])}`;
-      let existing = readMokinaContinuationJournal(window.localStorage.getItem(journalKey));
+      let existing = readMokinaContinuationForKey(journalKey);
       const oldKey = `od:continuation:${projectId}:${file.name}:${selectedVersion.id}`;
       if (!existing && window.localStorage.getItem(oldKey)) {
         const legacy = readMokinaContinuationJournal(window.localStorage.getItem(oldKey));
@@ -4443,7 +4443,13 @@ function FileVersionManagerModal({
         const backup = JSON.stringify(existing);
         if (!await mutateDurableRecord(backupKey, raw => raw === null || raw === backup ? backup : undefined)) throw new Error('原接续记录备份失败，尚未创建副本。');
         const oldOperationId = existing.operationId;
-        if (!await mutateDurableRecord(journalKey, raw => readMokinaContinuationJournal(raw)?.operationId === oldOperationId ? null : undefined)) throw new Error('原接续记录已变化，请重新核对。');
+        const oldRevision = existing.revision;
+        const oldIntentDigest = existing.intentDigest;
+        if (!await mutateDurableRecord(journalKey, raw => {
+          const current = readMokinaContinuationJournal(raw);
+          return raw === null || (current?.operationId === oldOperationId && current.revision === oldRevision
+            && current.intentDigest === oldIntentDigest) ? null : undefined;
+        })) throw new Error('原接续记录已变化，请重新核对。');
         existing = null;
       }
       if (!existing) {
@@ -4454,7 +4460,7 @@ function FileVersionManagerModal({
       }
       const ready = await resumeMokinaContinuation(journalKey, existing, workspaceContext);
       if (issuedScope !== continuationScopeRef.current || !continuationSectionRef.current?.isConnected) return;
-      // Keep the completed recovery record: retry can reopen the same target without losing identity.
+      // The active journal is consumed only after a durable completion record is saved.
       onClose();
       navigate({ kind: 'project', projectId: ready.targetProjectId, conversationId: ready.conversationId, fileName: null });
     } catch (cause) {

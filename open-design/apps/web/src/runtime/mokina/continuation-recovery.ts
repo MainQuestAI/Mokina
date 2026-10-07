@@ -52,6 +52,35 @@ export async function persistContinuationJournal(key: string, journal: MokinaCon
   window.dispatchEvent(new Event(MOKINA_CONTINUATION_CHANGED));
 }
 
+export function readMokinaContinuationForKey(key: string): MokinaContinuationJournal | null {
+  const active = readMokinaContinuationJournal(window.localStorage.getItem(key));
+  if (active || window.localStorage.getItem(key)) return active;
+  return Object.keys(window.localStorage).filter(candidate => candidate.startsWith(`${key}:completed:`))
+    .map(candidate => readMokinaContinuationJournal(window.localStorage.getItem(candidate)))
+    .filter((row): row is MokinaContinuationJournal => row?.checkpoint === 'draft-ready')
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0] ?? null;
+}
+
+async function completeContinuationJournal(key: string, journal: MokinaContinuationJournal) {
+  if (key.endsWith(`:completed:${journal.operationId}`)) return;
+  const completionKey = `${key}:completed:${journal.operationId}`;
+  const archived = await mutateDurableRecord(completionKey, raw => {
+    const current = readMokinaContinuationJournal(raw);
+    if (raw && (!current || current.operationId !== journal.operationId || current.intentDigest !== journal.intentDigest
+      || (current.revision ?? 0) > (journal.revision ?? 0))) return undefined;
+    return JSON.stringify(journal);
+  });
+  if (!archived) throw new Error('接续稿已保存，完成记录待同步；原操作已保留。');
+  const consumed = await mutateDurableRecord(key, raw => {
+    if (raw === null) return null;
+    const current = readMokinaContinuationJournal(raw);
+    return current?.operationId === journal.operationId && current.intentDigest === journal.intentDigest
+      && current.revision === journal.revision ? null : undefined;
+  });
+  if (!consumed) throw new Error('接续稿已保存，活动记录待同步；不会重新创建目标。');
+  window.dispatchEvent(new Event(MOKINA_CONTINUATION_CHANGED));
+}
+
 /** Resume from target-owned data first; each network side effect keeps the same identities. */
 export async function resumeMokinaContinuation(key: string, initial: MokinaContinuationJournal, workspaceContext: WorkspaceCollabContext | null) {
   if (!initial.intent || initial.schemaVersion !== 3) throw new Error('旧接续记录缺少完整意图，请保留原稿并重新确认。');
@@ -97,6 +126,8 @@ export async function resumeMokinaContinuation(key: string, initial: MokinaConti
       for (const [index, section] of intent.sections.entries()) {
         const item = snapshot.items.find(item => item.itemId === `section-${index + 1}`);
         if (!item || item.kind === 'asset' || item.text !== `【${section.id}】\n${section.text}`) throw new Error('目标固定章节与原接续意图不符。');
+        if (item.continuationOrigin && (JSON.stringify(item.continuationOrigin.source) !== JSON.stringify(intent.source)
+          || item.continuationOrigin.sectionId !== section.id)) throw new Error('目标固定章节来源与原接续意图不符。');
       }
       const background = snapshot.items.find(item => item.itemId === 'background');
       if (intent.background.trim() && (!background || background.kind === 'asset' || background.text !== intent.background)) throw new Error('目标补充要求与原接续意图不符。');
@@ -112,6 +143,7 @@ export async function resumeMokinaContinuation(key: string, initial: MokinaConti
       if (journal.snapshotFingerprint) throw new Error('已固定的快照丢失，不能重新读取源替代。');
       const selections: MokinaContextSelection[] = intent.sections.map((section, index) => ({
         itemId: `section-${index + 1}`, mode: 'note', sourceRef: { kind: 'user-note' }, text: `【${section.id}】\n${section.text}`,
+        continuationOrigin: { source: intent.source, sectionId: section.id },
       }));
       if (intent.background.trim()) selections.push({ itemId: 'background', mode: 'note', sourceRef: { kind: 'user-note' }, text: intent.background });
       // A failed listing is not an empty directory. It must never authorize re-upload.
@@ -168,7 +200,13 @@ export async function resumeMokinaContinuation(key: string, initial: MokinaConti
     } else if (!await writeProjectTextFile(targetId, 'MOKINA-CONTINUATION.json', JSON.stringify(fixed, null, 2), undefined, workspaceContext)) {
       throw new Error('接续稿保存失败，可恢复至同一目标。');
     }
-    if (initial.checkpoint === 'draft-ready') return journal;
+    // Successful writes alone do not prove that the draft can be read back.
+    const draftRead = await fetch(projectFileUrl(targetId, 'MOKINA-CONTINUATION.json', workspaceContext), { cache: 'no-store' });
+    if (!draftRead.ok || JSON.stringify(await draftRead.json()) !== JSON.stringify(fixed)) throw new Error('接续稿读回失败或内容不符，保留原恢复记录。');
+    if (initial.checkpoint === 'draft-ready') {
+      await completeContinuationJournal(key, journal);
+      return journal;
+    }
     const pendingScope = { conversationId: journal.conversationId!, workspaceKey: intent.workspaceKey };
     const pending = readPendingMokinaSnapshot(targetId, pendingScope);
     if (pending && pending.snapshotId !== snapshotId) throw new Error('目标已有其他待发送资料，停止覆盖；原接续记录已保留。');
@@ -176,7 +214,10 @@ export async function resumeMokinaContinuation(key: string, initial: MokinaConti
       workspaceKey: intent.workspaceKey, itemCount: snapshot.items.length,
       charCount: snapshot.items.reduce((sum, item) => sum + (item.kind === 'asset' ? 0 : item.text.length), 0),
       frozenAt: snapshot.createdAt, itemLabels: snapshot.items.map(item => item.displayName), excluded: [] }, { generation: null });
+    const verifiedBinding = readPendingMokinaSnapshot(targetId, pendingScope);
+    if (!verifiedBinding || verifiedBinding.snapshotId !== snapshotId) throw new Error('接续资料绑定读回失败，原恢复记录已保留。');
     await update({ checkpoint: 'draft-ready', lastError: undefined });
+    await completeContinuationJournal(key, journal);
     return journal;
   } catch (cause) {
     try { await update({ lastError: cause instanceof Error ? cause.message : '接续失败' }); }

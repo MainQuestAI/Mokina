@@ -154,6 +154,14 @@ export type RestoredMokinaContext = {
   ownerProjectId: string;
   originalSnapshot: MokinaContextSnapshot;
 };
+function validContinuationOrigin(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const origin = value as { source?: { projectId?: unknown; fileName?: unknown; versionId?: unknown; versionState?: unknown; contentDigest?: unknown }; sectionId?: unknown };
+  return typeof origin.sectionId === 'string' && !!origin.sectionId && !!origin.source
+    && [origin.source.projectId, origin.source.fileName, origin.source.versionId].every(v => typeof v === 'string' && !!v)
+    && ['current', 'historical', 'candidate'].includes(origin.source.versionState as string)
+    && typeof origin.source.contentDigest === 'string' && /^[a-f0-9]{64}$/.test(origin.source.contentDigest);
+}
 /** Validate the production snapshot, including its content identity, before any reader consumes it. */
 export function validateMokinaSnapshot(value: unknown): value is MokinaContextSnapshot {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
@@ -180,6 +188,7 @@ export function validateMokinaSnapshot(value: unknown): value is MokinaContextSn
       if (!['material-excerpt', 'brand-rule', 'artifact-section', 'user-note'].includes(item.kind)
         || !text(item.text) || !digest(item.textDigest) || sha256Hex(item.text) !== item.textDigest
         || !Array.isArray(item.locators) || !item.locators.every(text)) return false;
+      if (item.continuationOrigin !== undefined && !validContinuationOrigin(item.continuationOrigin)) return false;
     }
   }
   if (!row.excluded.every(item => item && text(item.displayName) && text(item.explanation)
@@ -221,18 +230,23 @@ async function freezeItem(
     if (text.trim().length === 0) {
       return { ok: false, code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED, message: '补充说明为空。' };
     }
+    const origin = selection.continuationOrigin;
+    if (origin !== undefined && !validContinuationOrigin(origin)) {
+      return { ok: false, code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED, message: '接续来源身份不完整，无法冻结。' };
+    }
     return {
       ok: true,
       item: {
         kind: 'user-note',
         itemId: selection.itemId,
-        displayName: '用户补充说明',
+        displayName: origin ? `${origin.source.fileName} · ${origin.sectionId}` : '用户补充说明',
         sourceRef: { kind: 'user-note' },
         sourceDigest: sha256Hex(Buffer.from(text, 'utf8')),
-        limitations: ['用户陈述，不是外部已验证事实。'],
-        locators: [],
+        limitations: origin ? ['接续确认时固定的摘录；来源身份由用户确认，未重新读取或批准源版本。'] : ['用户陈述，不是外部已验证事实。'],
+        locators: origin ? [`${origin.source.fileName} · ${origin.source.versionState} · ${origin.source.versionId} · ${origin.sectionId}`] : [],
         text,
         textDigest: sha256Hex(Buffer.from(text, 'utf8')),
+        ...(origin ? { continuationOrigin: origin } : {}),
       },
     };
   }

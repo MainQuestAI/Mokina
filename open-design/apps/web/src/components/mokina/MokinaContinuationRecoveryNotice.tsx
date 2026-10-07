@@ -19,7 +19,7 @@ export function MokinaContinuationRecoveryNotice({ projectId, workspaceContext, 
   const refresh = () => setRecords(Object.keys(window.localStorage).filter(key => key.startsWith('od:continuation:')).flatMap(key => {
     const journal = readMokinaContinuationJournal(window.localStorage.getItem(key));
     return journal?.intent?.source.projectId === projectId && journal.intent.workspaceKey === workspaceKey ? [{ key, journal }] : [];
-  }));
+  }).filter((row, index, rows) => rows.findIndex(candidate => candidate.journal.operationId === row.journal.operationId) === index));
   useEffect(() => {
     identityRef.current = identity; setBusy(false); setError(''); refresh();
     window.addEventListener(MOKINA_CONTINUATION_CHANGED, refresh); window.addEventListener('storage', refresh);

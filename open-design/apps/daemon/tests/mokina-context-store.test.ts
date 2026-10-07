@@ -59,6 +59,25 @@ describe('Mokina context store', () => {
     expect(canonicalJson({ b: 1, a: [2, { d: 4, c: 3 }] })).toBe('{"a":[2,{"c":3,"d":4}],"b":1}');
   });
 
+  it('freezes continuation candidate provenance without re-reading a deleted source', async () => {
+    const origin = { source: { projectId: 'deleted-source', fileName: 'plan.html', versionId: 'candidate-1',
+      versionState: 'candidate' as const, contentDigest: sha256Hex('original source') }, sectionId: 'budget' };
+    const result = await prepareMokinaContextSnapshot({ projectsRoot, projectId: 'target',
+      request: { snapshotId: 'continuation-origin', excluded: [], selections: [{ itemId: 'section-1', mode: 'note',
+        sourceRef: { kind: 'user-note' }, text: '【budget】\n预算 100', continuationOrigin: origin }] } });
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error(result.message);
+    expect(result.snapshot.items[0]).toMatchObject({ text: '【budget】\n预算 100', continuationOrigin: origin,
+      locators: ['plan.html · candidate · candidate-1 · budget'] });
+    expect(result.snapshot.items[0]!.limitations.join('')).toContain('未重新读取或批准');
+    const read = await readMokinaContextSnapshot(projectsRoot, 'target', 'continuation-origin');
+    expect(read.ok && read.snapshot.fingerprint).toBe(result.snapshot.fingerprint);
+    const invalid = await prepareMokinaContextSnapshot({ projectsRoot, projectId: 'target',
+      request: { snapshotId: 'invalid-origin', excluded: [], selections: [{ itemId: 'section-1', mode: 'note',
+        sourceRef: { kind: 'user-note' }, text: 'fixed', continuationOrigin: { ...origin, source: { ...origin.source, contentDigest: 'invalid' } } }] } });
+    expect(invalid.ok).toBe(false);
+  });
+
   it('freezes a note-only snapshot with a verifiable fingerprint', async () => {
     const result = await prepareMokinaContextSnapshot({
       projectsRoot,

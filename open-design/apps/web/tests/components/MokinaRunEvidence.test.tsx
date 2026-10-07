@@ -97,6 +97,23 @@ describe('MokinaRunEvidence', () => {
     expect(await screen.findByText(/Run evidence|本次运行依据/)).toBeTruthy();
     expect(fetchChatRunStatus).toHaveBeenCalledTimes(2);
   });
+  it('shows fixed continuation source identity without calling a candidate approved', async () => {
+    fetchChatRunStatus.mockResolvedValue(receipt(RUN_ID, 'snap-1'));
+    const fixed: MokinaContextSnapshot = { ...SNAPSHOT, items: [{ itemId: 'S1', kind: 'user-note', displayName: 'plan.html · budget',
+      sourceRef: { kind: 'user-note' }, sourceDigest: 'fixed-note-digest', text: '预算 100', textDigest: 'text-digest',
+      locators: ['plan.html · candidate · source-version · budget'], limitations: ['未重新读取或批准源版本。'],
+      continuationOrigin: { source: { projectId: 'deleted-source', fileName: 'plan.html', versionId: 'source-version',
+        versionState: 'candidate', contentDigest: 'original-source-digest' }, sectionId: 'budget' } }] };
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ snapshot: fixed }))));
+    render(<MokinaRunEvidence projectId={PROJECT_ID} runId={RUN_ID} runActive={false} />);
+    fireEvent.click(await screen.findByText(/Run evidence|本次运行依据/));
+    expect(await screen.findByText('预算 100')).toBeTruthy();
+    const entry = screen.getByTestId('mokina-run-evidence-item-S1');
+    expect(entry.textContent).toContain('candidate');
+    expect(entry.textContent).toContain('source-version');
+    expect(entry.textContent).toContain('original-source-digest');
+    expect(entry.textContent).toContain('未重新读取或批准');
+  });
   it('renders nothing when the run has no delivery receipt', async () => {
     fetchChatRunStatus.mockResolvedValue({ id: RUN_ID, status: 'finished', agentId: 'codex', mokinaContext: null });
     const { container } = render(

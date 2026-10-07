@@ -54,6 +54,8 @@ export interface MokinaTextSnapshotItem extends MokinaCommonSnapshotItem {
   text: string;
   /** Digest of the frozen excerpt UTF-8 bytes; never equal to sourceDigest. */
   textDigest: MokinaSha256;
+  /** Source identity captured at continuation confirmation, not re-read at freeze time. */
+  continuationOrigin?: { source: MokinaContinuationV2['source']; sectionId: string };
 }
 
 export interface MokinaAssetSnapshotItem extends MokinaCommonSnapshotItem {
@@ -101,7 +103,8 @@ export type MokinaContextSelection =
     })
   | (MokinaResourceSelection & { mode: 'sections'; sectionIds: string[] })
   | (MokinaResourceSelection & { mode: 'asset'; role: MokinaAssetRole; usageNote: string })
-  | { itemId: string; mode: 'note'; sourceRef: { kind: 'user-note' }; text: string };
+  | { itemId: string; mode: 'note'; sourceRef: { kind: 'user-note' }; text: string;
+      continuationOrigin?: MokinaTextSnapshotItem['continuationOrigin'] };
 
 export interface PrepareMokinaContextRequest {
   snapshotId: string;

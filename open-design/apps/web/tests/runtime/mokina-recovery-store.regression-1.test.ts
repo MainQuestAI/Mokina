@@ -122,6 +122,6 @@ describe('late recovery cache publication', () => {
     store.get.mockImplementationOnce(async candidate => { const captured = await get(candidate); entered.resolve(); await release.promise; return captured; });
     const task = hydrateDurableRecoveryIntoLocalStorage(); await entered.promise;
     rows.set(key, { recordId: 'B', value: binding('B') }); localStorage.setItem(key, binding('B'));
-    release.resolve(); await task.catch(() => undefined); assertSuccessor(rows);
+    release.resolve(); await expect(task).rejects.toThrow('并发更新'); assertSuccessor(rows);
   });
 });

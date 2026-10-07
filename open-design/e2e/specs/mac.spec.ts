@@ -46,6 +46,7 @@ import { startToolsServeUpdaterFixture, type ToolsServeUpdaterFixture } from '@/
 import { createDesktopHarness, STORAGE_KEY, waitFor } from '../lib/desktop/desktop-test-helpers.ts';
 import { installMokinaInterruptionExpression, mokinaInterruptionStateExpression } from '@/vitest/mokina-native-interruption';
 import { createMokinaDirectoryReadFault, createMokinaStorageFault } from '@/vitest/mokina-storage-fault';
+import { MOKINA_DOCX_SELECTION_FIXTURE } from '../resources/mokina-docx.ts';
 
 const execFileAsync = promisify(execFile);
 const e2eRoot = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -449,6 +450,79 @@ mokinaRecoveryDescribe('Mokina recovery native interruption', () => {
     await waitForHealthyDesktop();
   }, 120_000);
   afterAll(async () => { await runToolsPackJson('stop'); }, 60_000);
+
+  test('[P1] Mokina native DOCX exact selection freezes only the chosen paragraphs', async () => {
+    const report = (await createPackagedSmokeReport('mac')).report;
+    for (const mode of ['front', 'back', 'both'] as const) {
+      const expectedIds = mode === 'both' ? ['fragment:1', 'fragment:3'] : [mode === 'front' ? 'fragment:1' : 'fragment:3'];
+      const expectedText = mode === 'both' ? 'before table\n\nafter table' : mode === 'front' ? 'before table' : 'after table';
+      const source = await inspectMokina<{ projectId: string; conversationId: string }>(`(async () => {
+        const created = await fetch('/api/projects', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:crypto.randomUUID(),name:'DOCX precise ${mode}',metadata:{kind:'prototype'}})});
+        if(!created.ok) throw new Error('DOCX project create '+created.status);
+        const body=await created.json();const id=body.project.id;
+        const bytes=Uint8Array.from(atob(${JSON.stringify(MOKINA_DOCX_SELECTION_FIXTURE)}),char=>char.charCodeAt(0));
+        const form=new FormData();form.append('files',new File([bytes],'sample.docx',{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}));
+        const upload=await fetch('/api/projects/'+id+'/upload',{method:'POST',body:form});
+        if(!upload.ok) throw new Error('DOCX upload '+upload.status);
+        return {projectId:id,conversationId:body.conversationId};
+      })()`);
+      await inspectMokina(`(() => {location.href='/projects/${source.projectId}/conversations/${source.conversationId}/files/sample.docx';return true})()`);
+      await waitFor(async () => {
+        expect(await inspectMokina<boolean>(`(() => {
+          const panel=document.querySelector('.mokina-context-panel');if(!panel)return false;
+          panel.open=true;const input=Array.from(panel.querySelectorAll('.mokina-material-picker__files label')).find(label=>label.textContent.includes('sample.docx'))?.querySelector('input');
+          if(!input)return false;if(!input.checked)input.click();return true;
+        })()`)).toBe(true);
+      }, 45_000);
+      // Observe real requests only; never supply a fabricated server snapshot.
+      await inspectMokina(`(() => {
+        const original=window.fetch.bind(window);window.__docxRequests=[];
+        window.fetch=async(input,options)=>{
+          const path=new URL(typeof input==='string'?input:input.url,location.href).pathname;
+          if(options?.method==='POST'&&path.endsWith('/mokina/context-snapshots'))window.__docxRequests.push(JSON.parse(options.body));
+          return original(input,options);
+        };
+        const button=document.querySelector('.mokina-context-panel__actions button');if(!button||button.disabled)return false;button.click();return true;
+      })()`);
+      await waitFor(async () => {
+        expect(await inspectMokina<number>(`document.querySelectorAll('.mokina-material-picker__preview > label').length`)).toBe(3);
+      }, 30_000);
+      expect(await inspectMokina<boolean>(`(() => {
+        const labels=Array.from(document.querySelectorAll('.mokina-material-picker__preview > label'));
+        for(const label of labels) {
+          const input=label.querySelector('input');const selected=${JSON.stringify(mode)}==='both'?/before table|after table/.test(label.textContent):label.textContent.includes(${JSON.stringify(mode === 'front' ? 'before table' : 'after table')});
+          if(input.checked!==selected)input.click();
+        }
+        const button=document.querySelector('.mokina-context-panel__actions button:last-child');if(!button||button.disabled)return false;button.click();return true;
+      })()`)).toBe(true);
+      let result!: { requests: Array<{ snapshotId: string; selections: Array<{ mode: string; fragmentIds: string[] }> }>; snapshot: { items: Array<{ text: string }>; fingerprint: string }; binding: { snapshotId: string; generation: string }; locks: boolean };
+      await waitFor(async () => {
+        result = await inspectMokina(`(async () => {
+          const requests=window.__docxRequests;const request=requests?.[0];if(!request)return null;
+          const response=await fetch('/api/projects/${source.projectId}/mokina/context-snapshots/'+request.snapshotId);if(!response.ok)return null;
+          const snapshot=(await response.json()).snapshot;
+          const keys=(await window.__od__.recoveryStore.list('mokina:context-snapshot:')).keys;
+          let binding=null;for(const key of keys){const row=await window.__od__.recoveryStore.get(key);if(row.ok&&row.found){const value=JSON.parse(row.record.value);if(value.projectId==='${source.projectId}')binding=value;}}
+          return {requests,snapshot,binding,locks:Boolean(navigator.locks)};
+        })()`);
+        expect(result?.binding?.snapshotId).toBe(result?.requests?.[0]?.snapshotId);
+        expect(result?.binding?.generation).toBeTruthy();
+      }, 30_000);
+      expect(result.locks).toBe(true);
+      expect(result.requests).toHaveLength(1);
+      expect(result.requests[0]!.selections).toEqual([expect.objectContaining({mode:'fragments',fragmentIds:expectedIds})]);
+      expect(result.snapshot.items.map(item=>item.text)).toEqual([expectedText]);
+      // Read persisted bytes independently of the HTTP response body.
+      const disk = JSON.parse(await readFile(join(runtimeNamespaceRoot,'data','projects',source.projectId,'.mokina','contexts',`${result.binding.snapshotId}.json`),'utf8'));
+      expect(disk.items.map((item: { text: string }) => item.text)).toEqual([expectedText]);
+      expect(disk.fingerprint).toBe(result.snapshot.fingerprint);
+      const screenshot = join(toolsPackDir, 'screenshots', `docx-${mode}-selection.png`);
+      await mkdir(dirname(screenshot), { recursive: true });
+      await runToolsPackJson('inspect', ['--path', screenshot]);
+      await report.save(`screenshots/docx-${mode}-selection.png`, await readFile(screenshot));
+      await report.json(`mokina/docx-${mode}-selection.json`, { source, ...result, disk });
+    }
+  }, 180_000);
 
   for (const { point, variant } of [1, 2, 3, 4, 5, 6, 7, 8, 11].map(point => ({ point, variant: 'resume' })).concat([
     { point: 3, variant: 'missing-source' }, { point: 6, variant: 'edited-target' },

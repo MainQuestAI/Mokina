@@ -55,3 +55,11 @@ local.6 在 `assembled-app` 阶段生成的真实 `package.json` 仍明确声明
 最小修复仅把 macOS pin 同步到 0.35.5，并更新旧固定值断言。九个打包套件 75 tests passed、tools-pack typecheck/build exit 0；新身份回归进入根 CI。没有顺带修改 Windows pin或新增打包进程框架。
 
 local.6 构建已停止，exit 1（SIGTERM），真实清单与 `local6-build.log` 保留；没有产出或安装 local.6 成功包，也没有运行原生验收。修复后的候选递增为 `0.0.3-local.7`，必须重新核对实际包内 Sharp，不能用单元 green 替代。
+
+## 6. local.7 实际包内核对
+
+source/validation SHA `4cf68e9c7feda8cc5222825ba209f179490cabbf`，本包构建 exit 0 并从源码目录外安装/启动。实际 Resources 中 Sharp **0.35.5**、adm-zip **0.6.1**、Next **16.3.6**；外置 NPM 树 PostCSS **8.5.29**，不同于工作区锁定 8.5.23，解析差异已记录。15,295 文件的实际资源清单和包摘要见 [local.7 原生记录](./2026-10-07-local7-native-verification.md)。该源码 [CI run 37579971288](https://github.com/MainQuestAI/Mokina/actions/runs/37579971288) 实际 `success`，含 owner 身份回归，不借用旧 head 结果。
+
+从实际组装的 `package.json` 与真实 `node_modules/.package-lock.json` 在隔离目录运行 `npm audit --omit=dev --json`，exit 1。203 个外置生产依赖中，**0 critical / 0 high / 5 moderate affected packages**；当前 moderate 报告沿 `hyperframes → onnxruntime-node → global-agent → roarr → sprintf-js`。原报告 `r1-evidence/local7-external-runtime-audit.json` 保留。
+
+NPM 的受影响包计数与 pnpm 的告警数口径不同，不能相减。外置树不覆盖编译进 Web/daemon 的全部依赖，也不覆盖构建工具链；工作区 **7 high / 4 moderate / 1 low** 和上节逐项剩余处置继续开放，未宣称发布安全完成。

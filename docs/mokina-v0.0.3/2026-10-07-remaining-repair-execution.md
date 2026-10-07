@@ -28,7 +28,7 @@
 
 Overrides 的移除条件：对应 owner 的锁定依赖自行解析到安全版本后，删除对应 override 并复验。本轮不把 nanoid 4 或 image-size 1 强制改成不兼容主版本。没有补丁的告警保持开放。
 
-最终实际 audit 为 critical 0 / high 7 / moderate 4 / low 1，exit 1。安装及完整 postinstall 已成功，guard、typecheck、i18n 均 exit 0；剩余项未关闭。[升级版本、完整报告摘要与逐项剩余风险](./2026-10-07-security-repair-results.md) 单独记录。安装包中的实际版本与风险条件尚需核对。
+最终实际 audit 为 critical 0 / high 7 / moderate 4 / low 1，exit 1。安装及完整 postinstall 已成功，guard、typecheck、i18n 均 exit 0；剩余项未关闭。[升级版本、完整报告摘要与逐项剩余风险](./2026-10-07-security-repair-results.md) 单独记录。local.7 实际包内版本与外置 NPM 树核对完成，仍不以该子集 audit 清除编译进 Web/daemon 或工具链的告警。
 
 ## 4. R2：旧接续工程覆盖与原生边界
 
@@ -59,25 +59,30 @@ Overrides 的移除条件：对应 owner 的锁定依赖自行解析到安全版
 
 ### 真实打包补充
 
-兼容依赖已提交为 `b457026df375a215c721f61d9cf51426ceb0eeb0`，文档 head `46c6482f74f1aa53991b1ebf0b7083bec58c121e` 已推送，二者差异仅三份文档。新 head 的 [CI run 37578541368](https://github.com/MainQuestAI/Mokina/actions/runs/37578541368) 已触发；未完成的步骤不记通过。
+兼容依赖已提交为 `b457026df375a215c721f61d9cf51426ceb0eeb0`，文档 head `46c6482f74f1aa53991b1ebf0b7083bec58c121e` 已推送，二者差异仅三份文档。该 head 的 [CI run 37578541368](https://github.com/MainQuestAI/Mokina/actions/runs/37578541368) 实际 `success`。
 
 local.6 实际组装发现 macOS Sharp pin 仍为 0.35.3，停止构建并保留失败，不覆盖或安装该候选。新增真实依赖身份 red→green 后，仅同步该 macOS pin，未改 Windows 或用户配置。打包集合现为 75 tests passed（含身份测试），替代原 61 项计入合计后，本地对应集合 **641 tests passed**；全套 566 项业务回归没有因为仅改打包 pin 被反复重跑。tools-pack typecheck/build 通过，既有 CLI 已重建。详见安全记录第 5 节。
 
-后续递增到 `0.0.3-local.7`，使用新 product source/validation SHA 和新的 CI，不复用 local.6 的失败记录。
+Sharp 修复提交 `4cf68e9c7feda8cc5222825ba209f179490cabbf` 已推送。递增到 `0.0.3-local.7`，source/validation 均固定在该 SHA；实际构建 exit 0、源码目录外安装和启动。该源码的 [CI run 37579971288](https://github.com/MainQuestAI/Mokina/actions/runs/37579971288) 实际 `success`，未复用 local.6 失败或旧基线的 CI。
+
+同包干净配置完成连接、文字直发、原生 CSV 精确选择/固定/提交/依据读回及退出重开。代表性 QA 升级副本完成历史资源缺失的 ZIP/PDF 拦截、显式恢复 v5、current/historical/candidate × HTML/ZIP/PDF 九份实际文件、取消和正式恢复 ZIP 导入；完成后源素材缺失的原目标恢复/重开和明确新副本生成页面也实际核对。进一步同包重跑两预算/禁投，六个片段正文一致、两组实际金额/比例/零支出独立核对通过。详情、包摘要、实际请求身份、首轮结果和证据见 [local.7 原生记录](./2026-10-07-local7-native-verification.md)。新包不被描述为完整原生签收。
 
 ## 6. 原生及人工验收仍未被工程结果代替
 
 | 项目 | 本轮状态 |
 |---|---|
-| 新 local.7 构建与包内依赖 | local.6 组装发现 pin 缺口已停止；修复后递增，不使用 local.5 代替 |
+| 新 local.7 构建与包内依赖 | 构建/安装/启动完成，Sharp 0.35.5 实读；641 对应本地工程测试及该源码 CI 通过；安全剩余项单列 |
 | 十个原生中断/响应丢失断点 | 未跑；已有工程覆盖不自动转为原生通过 |
 | 真实旧 Electron pending/journal | 待完整保护副本；合成覆盖只能证明代表性兼容 |
 | 同 profile 双原生业务窗口 | 宿主能力缺口；不扩大 IPC 信任范围 |
-| 历史导出失败及显式恢复原生入口 | 待新候选复验 |
-| 新候选九份实际导出/正式恢复 ZIP | 待同包重跑受影响交付链 |
+| 历史导出失败及显式恢复原生入口 | local.7 ZIP/PDF 明确拦截，不伪成功；显式恢复为新 v5，旧稿与候选保留 |
+| 新候选九份实际导出/正式恢复 ZIP | local.7 九份 actual 文件与 PDF 12 页核对；恢复 ZIP 44 成员摘要、正式导入后的 21 原始文件/11 版本核对完成 |
+| 已完成接续的源素材缺失/重开 | local.7 原目标/会话/快照/草稿/字节保持；不自动运行。新意图确认副本后在缺源期间实际生成自包含 LOGO B 页面；中途断点仍未跑 |
+| PDF 滚动条与长路径接续布局 | 已观察，开放质量项；未确认产品根因前不预先修复或冒领两尺寸通过 |
 | HTML/解压 ZIP 的应用外浏览器打开 | 用户手动待验；工具明确限制，不绕过 |
 | 真实业务品牌 A/B | 待授权输入；公开合成/参考品牌不能关闭 T33 |
-| 原生中文输入及两尺寸入口 | 待新候选及人工输入核验 |
+| 原生中文输入及两尺寸入口 | local.7 英文输入完成；中文驱动失真需人工核验，两尺寸原生完整入口未跑 |
+| 同包两预算/禁投 | local.7 两实际任务完成、同正文、独立复算通过；专业评语另列，不拼包 |
 | 专业结果与用户签收 | 待评/待签；不替用户批准 |
 | 卡加载/白屏 D1 | 按用户明确决定：未复现，暂时跳过 |
 

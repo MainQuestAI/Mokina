@@ -1,282 +1,177 @@
 import {
-  MOKINA_CONTEXT_BUDGETS,
-  type MokinaAssetRole,
-  type MokinaContextSelection,
-  type MokinaExcludedContextItem,
-  type ProjectMaterialExtraction,
-  type WorkspaceCollabContext,
+  joinMokinaExcerpt, mokinaContextBudgetExceeded,
+  type MokinaAssetRole, type MokinaContextSelection, type MokinaExcludedContextItem,
+  type ProjectMaterialExtraction, type WorkspaceCollabContext,
 } from '@open-design/contracts';
-
 import { fetchProjectMaterial } from '../../providers/registry';
-import { workspaceProjectHeaders } from '../../collab/workspace-identity';
+import { workspaceProjectHeaders, workspaceIdentityCacheKey } from '../../collab/workspace-identity';
 import { randomUUID } from '../../utils/uuid';
-import { baseMokinaGroupId, groupMokinaMaterialSections } from './material-selection';
 import { mokinaBytesDigest } from './digest';
-import { writePendingMokinaSnapshot } from './pending-context-snapshot';
-
-/**
- * N02 — Home 到首个真实任务：把首页暂存附件中标为 Mokina 资料/素材的文件，
- * 在项目创建后冻结成与项目内「资料与背景」面板完全同一套的上下文快照
- * （同一个 daemon API、同一条 pending-context-snapshot 绑定、同一种
- * context.mokinaSnapshotId 发送引用）。首页因此没有第二套存储或发送路径：
- * 选择发生在首页，冻结与引用复用项目内机制。
- *
- * 首页没有 projectId，所以选择本身只记为 plan（文件名 + 种类 + 素材角色），
- * 延迟到 `POST /api/projects` 成功、附件上传完成之后才真正冻结——这与
- * 「项目上下文需要 ID 时复用现有创建机制延迟准备」的产品语义一致。
- */
+import { readPendingMokinaSnapshot, writePendingMokinaSnapshot } from './pending-context-snapshot';
+import { mutateDurableRecord } from '../persistence/mokina-recovery-store';
 
 export type HomeMokinaFileKind = 'material' | 'asset';
-
 export interface HomeMokinaFilePlan {
+  inputId?: string;
+  uploadOrder?: number;
   name: string;
   size: number;
+  path?: string;
+  digest?: string;
   kind: HomeMokinaFileKind;
   role?: MokinaAssetRole;
   usageNote?: string;
 }
+export interface HomeMokinaMaterialRead { name: string; inputId?: string; extraction: ProjectMaterialExtraction }
+export interface HomeMokinaAssetBytes { name: string; inputId?: string; byteLength: number; digest: string }
 
-export interface HomeMokinaMaterialRead {
-  name: string;
-  extraction: ProjectMaterialExtraction;
-}
-
-export interface HomeMokinaAssetBytes {
-  name: string;
-  byteLength: number;
-  digest: string;
-}
-
-/**
- * Build the selection payload for the shared snapshot API from post-upload
- * reads. Pure so the budget/exclusion behaviour is unit-testable:
- * - 资料文件：纳入全部稳定段落组，按 24,000 UTF-16 预算顺序累计，超出的组
- *   以 budget 原因显式排除（绝不静默截断）；
- * - 不可读资料：以 unreadable 原因排除（保留原件，不作为依据）；
- * - 素材：冻结原始字节摘要，单素材超过 30 MiB 预算时以 budget 原因排除。
- * 没有任何可选入项时返回 null（调用方退回纯附件发送）。
- */
+/** Exclusions require explicit acceptance before any run can be created. */
 export function buildHomeMokinaSelections(input: {
-  projectId: string;
-  plans: HomeMokinaFilePlan[];
-  materials: HomeMokinaMaterialRead[];
-  assets: HomeMokinaAssetBytes[];
-  /**
-   * N02 review: files whose upload failed never reached the project, so a
-   * selection referencing one makes the daemon reject the WHOLE snapshot with
-   * a 409 (freeze reads the project file and finds nothing). The caller passes
-   * their names; each is dropped from the selections and reported as excluded
-   * with an explicit reason, matching the 绝不静默丢弃 semantics of the other
-   * exclusion paths.
-   */
-  failedUploadNames?: ReadonlySet<string> | null;
-}): { selections: MokinaContextSelection[]; excluded: MokinaExcludedContextItem[] } | null {
-  const { projectId, plans, materials, assets, failedUploadNames } = input;
+  projectId: string; plans: HomeMokinaFilePlan[]; materials: HomeMokinaMaterialRead[];
+  assets: HomeMokinaAssetBytes[]; failedUploadNames?: ReadonlySet<string> | null;
+}): { selections: MokinaContextSelection[]; excluded: MokinaExcludedContextItem[] } {
   const selections: MokinaContextSelection[] = [];
   const excluded: MokinaExcludedContextItem[] = [];
-  let excerptBudget = MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits;
-  let materialIndex = 0;
-  let assetIndex = 0;
-
-  for (const plan of plans) {
-    if (failedUploadNames?.has(plan.name)) {
-      excluded.push({
-        displayName: plan.name,
-        reason: 'unavailable',
-        explanation: '文件上传失败，未纳入本次任务；文件已退回首页暂存，可重新上传',
-      });
-      continue;
-    }
+  let excerptUnits = 0;
+  let assetBytes = 0;
+  for (const [index, plan] of input.plans.entries()) {
+    const omit = (reason: MokinaExcludedContextItem['reason'], explanation: string) => {
+      excluded.push({ displayName: plan.name, reason, explanation });
+    };
+    if (input.failedUploadNames?.has(plan.name)) { omit('unavailable', '文件上传失败，请重新选择文件或明确排除。'); continue; }
     if (plan.kind === 'material') {
-      const read = materials.find((item) => item.name === plan.name);
-      const extraction = read?.extraction;
-      if (!extraction || extraction.status === 'unreadable') {
-        excluded.push({
-          displayName: plan.name,
-          reason: 'unreadable',
-          explanation: !extraction
-            ? '资料读取失败'
-            : extraction.limitations.join('；') || '无法读取',
-        });
-        continue;
+      const material = input.materials.find(item => plan.inputId ? item.inputId === plan.inputId : item.name === plan.name)?.extraction;
+      if (!material || material.status === 'unreadable') { omit('unreadable', material?.limitations.join('；') || '资料读取失败'); continue; }
+      if (!material.parserVersion || material.sections.some(section => !section.fragmentId)) {
+        omit('unavailable', '资料选择协议已更新，请重新读取。'); continue;
       }
-      const groups = groupMokinaMaterialSections([extraction]);
-      const chosenGroupIds = new Set<string>();
-      const chosenLabels: string[] = [];
-      const overflowLabels: string[] = [];
-      let chosenChars = 0;
-      for (const group of groups) {
-        if (chosenChars + group.chars <= excerptBudget) {
-          for (const section of group.sections) {
-            const baseId = section.groupId ? baseMokinaGroupId(section.groupId) : '';
-            // 与面板同一规则：无 groupId 的段落（理论上仅 location）不进服务端
-            // 选择，避免用位置冒充稳定标识。
-            if (baseId) chosenGroupIds.add(baseId);
-          }
-          chosenChars += group.chars;
-          chosenLabels.push(group.label);
-        } else {
-          overflowLabels.push(group.label);
-        }
+      const text = joinMokinaExcerpt(material.sections.map(section => section.text));
+      if (!text.trim()) { omit('unreadable', '没有可冻结的内容'); continue; }
+      if (mokinaContextBudgetExceeded({ itemCount: selections.length + 1, excerptUnits: excerptUnits + text.length, assetBytes })) {
+        omit('budget', '所选内容超过本次预算，请在资料面板精选或明确排除此文件。'); continue;
       }
-      excerptBudget -= chosenChars;
-      if (chosenGroupIds.size === 0) {
-        excluded.push({
-          displayName: plan.name,
-          reason: 'budget',
-          explanation: overflowLabels.length > 0
-            ? `可用段落均超出本次摘录预算（${MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits.toLocaleString()} 字），未纳入本次任务`
-            : '没有可冻结的稳定段落',
-        });
-        continue;
+      excerptUnits += text.length;
+      selections.push({ itemId: plan.inputId ?? `S${index + 1}`, mode: 'fragments', textKind: 'material-excerpt',
+        sourceRef: { kind: 'project-file', projectId: input.projectId, fileName: plan.path ?? plan.name },
+        expectedSourceDigest: material.contentDigest, expectedParserVersion: material.parserVersion,
+        fragmentIds: material.sections.map(section => section.fragmentId!) });
+    } else {
+      const asset = input.assets.find(item => plan.inputId ? item.inputId === plan.inputId : item.name === plan.name && item.byteLength === plan.size);
+      if (!asset?.digest) { omit('unavailable', '素材字节缺失，请重新选择文件。'); continue; }
+      if (mokinaContextBudgetExceeded({ itemCount: selections.length + 1, excerptUnits, assetBytes: assetBytes + asset.byteLength })) {
+        omit('budget', '所选素材超过单次 30 MiB 或 20 项预算。'); continue;
       }
-      materialIndex += 1;
-      selections.push({
-        itemId: `S${materialIndex}`,
-        mode: 'groups',
-        textKind: 'material-excerpt',
-        sourceRef: { kind: 'project-file', projectId, fileName: plan.name },
-        expectedSourceDigest: extraction.contentDigest,
-        groupIds: [...chosenGroupIds],
-      });
-      for (const label of overflowLabels) {
-        excluded.push({
-          displayName: `${plan.name} · ${label}`,
-          reason: 'budget',
-          explanation: '超出本次摘录预算，未纳入本次任务；可在项目内「资料与背景」重新精选',
-        });
-      }
-      continue;
+      assetBytes += asset.byteLength;
+      selections.push({ itemId: plan.inputId ?? `A${index + 1}`, mode: 'asset',
+        sourceRef: { kind: 'project-file', projectId: input.projectId, fileName: plan.path ?? plan.name },
+        expectedSourceDigest: asset.digest, role: plan.role ?? 'supporting', usageNote: plan.usageNote ?? '' });
     }
-
-    const asset = assets.find((item) => item.name === plan.name && item.byteLength === plan.size);
-    if (!asset || !asset.digest) {
-      excluded.push({
-        displayName: plan.name,
-        reason: 'unavailable',
-        explanation: '素材字节缺失，未纳入本次任务',
-      });
-      continue;
-    }
-    if (asset.byteLength > MOKINA_CONTEXT_BUDGETS.maxAssetBytes) {
-      excluded.push({
-        displayName: plan.name,
-        reason: 'budget',
-        explanation: `素材超过单次 ${Math.round(MOKINA_CONTEXT_BUDGETS.maxAssetBytes / 1024 / 1024)} MiB 预算，未纳入本次任务`,
-      });
-      continue;
-    }
-    assetIndex += 1;
-    selections.push({
-      itemId: `A${assetIndex}`,
-      mode: 'asset',
-      sourceRef: { kind: 'project-file', projectId, fileName: plan.name },
-      expectedSourceDigest: asset.digest,
-      role: plan.role ?? 'supporting',
-      usageNote: plan.usageNote ?? '',
-    });
   }
-
-  return selections.length > 0 ? { selections, excluded } : null;
+  return { selections, excluded };
 }
 
-export interface HomeMokinaSnapshotPreparation {
-  snapshotId: string | null;
-  /** Planned files dropped from the snapshot because their upload failed. */
-  uploadFailedNames: string[];
+export function mokinaResponseError(body: unknown, fallback: string): { code: string; message: string } {
+  if (!body || typeof body !== 'object') return { code: '', message: fallback };
+  const error = (body as { error?: unknown }).error;
+  if (typeof error === 'string') return { code: '', message: error };
+  if (!error || typeof error !== 'object') return { code: '', message: fallback };
+  const value = error as { code?: unknown; message?: unknown };
+  return { code: typeof value.code === 'string' ? value.code : '', message: typeof value.message === 'string' ? value.message : fallback };
 }
 
-/**
- * Freeze the home-marked files into the shared context snapshot and bind it as
- * this project's pending snapshot. Returns the snapshotId on success, or null
- * when nothing could be frozen or the API rejected the request — the caller
- * then sends the plain attachments without a snapshot (the user can still
- * freeze a curated selection inside the project). Plans whose upload failed
- * are excluded explicitly instead of poisoning the whole freeze.
- */
+export type HomeMokinaSnapshotPreparation =
+  | { status: 'ready'; snapshotId: string | null; generation?: string; excluded: MokinaExcludedContextItem[] }
+  | { status: 'needs-input'; snapshotId: null; message: string; excluded: MokinaExcludedContextItem[] };
+
+export type HomeMokinaPreparationRecord = {
+  schemaVersion: 1; projectId: string; conversationId: string; workspaceKey: string;
+  revision?: number; recordVersion?: string;
+  snapshotId: string; bindingSnapshotId?: string; bindingGeneration?: string; plans: HomeMokinaFilePlan[]; prompt: string;
+  fixedSelection?: { selections: MokinaContextSelection[]; excluded: MokinaExcludedContextItem[] };
+  status: 'preparing' | 'needs-input' | 'ready'; message?: string;
+  excluded: MokinaExcludedContextItem[];
+};
+export const HOME_MOKINA_PREPARATION_CHANGED = 'mokina:home-preparation-changed';
+function preparationKey(projectId: string, conversationId: string, workspaceKey: string) {
+  return `od:composer-draft:mokina-home:${JSON.stringify([workspaceKey, projectId, conversationId])}`;
+}
+export function readHomeMokinaPreparation(projectId: string, conversationId: string, workspaceKey: string): HomeMokinaPreparationRecord | null {
+  try {
+    const row = JSON.parse(window.localStorage.getItem(preparationKey(projectId, conversationId, workspaceKey)) ?? 'null');
+    return row?.schemaVersion === 1 && row.projectId === projectId && row.conversationId === conversationId
+      && row.workspaceKey === workspaceKey && Array.isArray(row.plans) ? row : null;
+  } catch { return null; }
+}
+export async function saveHomeMokinaPreparation(record: HomeMokinaPreparationRecord) {
+  const key = preparationKey(record.projectId, record.conversationId, record.workspaceKey);
+  const next = { ...record, revision: (record.revision ?? 0) + 1, recordVersion: randomUUID() };
+  const raw = JSON.stringify(next);
+  if (!await mutateDurableRecord(key, current => {
+    if (current) {
+      const previous = JSON.parse(current);
+      if (previous.snapshotId !== record.snapshotId || (previous.revision ?? 0) !== (record.revision ?? 0)) return undefined;
+    } else if (record.revision) return undefined;
+    return raw;
+  })) throw new Error('资料准备记录保存失败，请重试。');
+  window.dispatchEvent(new Event(HOME_MOKINA_PREPARATION_CHANGED));
+  if (readHomeMokinaPreparation(record.projectId, record.conversationId, record.workspaceKey)?.recordVersion !== next.recordVersion) throw new Error('资料准备记录已由另一窗口更新，请核对后重试。');
+  return next;
+}
+export async function clearHomeMokinaPreparation(record: HomeMokinaPreparationRecord) {
+  const key = preparationKey(record.projectId, record.conversationId, record.workspaceKey);
+  if (!await mutateDurableRecord(key, raw => {
+    const current = raw ? JSON.parse(raw) : null;
+    return current?.snapshotId === record.snapshotId && current?.recordVersion === record.recordVersion ? null : raw;
+  })) throw new Error('资料准备记录清理失败，请重试。');
+  window.dispatchEvent(new Event(HOME_MOKINA_PREPARATION_CHANGED));
+}
+
 export async function prepareHomeMokinaSnapshot(input: {
-  projectId: string;
-  plans: HomeMokinaFilePlan[];
-  stagedFiles: File[];
-  workspaceContext?: WorkspaceCollabContext | null;
-  /** Names of staged files whose upload to the project failed. */
-  failedUploadNames?: ReadonlySet<string> | null;
+  projectId: string; conversationId?: string; snapshotId?: string; plans: HomeMokinaFilePlan[];
+  stagedFiles?: File[]; workspaceContext?: WorkspaceCollabContext | null;
+  failedUploadNames?: ReadonlySet<string> | null; acceptExclusions?: boolean;
+  fixedSelection?: HomeMokinaPreparationRecord['fixedSelection'];
+  onPrepared?: (selection: NonNullable<HomeMokinaPreparationRecord['fixedSelection']>) => Promise<void>;
 }): Promise<HomeMokinaSnapshotPreparation> {
-  const { projectId, plans, stagedFiles, failedUploadNames } = input;
-  const uploadFailedNames = failedUploadNames
-    ? plans.filter((plan) => failedUploadNames.has(plan.name)).map((plan) => plan.name)
-    : [];
-  const materialPlans = plans.filter((plan) => plan.kind === 'material' && !failedUploadNames?.has(plan.name));
-  const assetPlans = plans.filter((plan) => plan.kind === 'asset' && !failedUploadNames?.has(plan.name));
-
-  const materials: HomeMokinaMaterialRead[] = await Promise.all(
-    materialPlans.map(async (plan) => {
-      const result = await fetchProjectMaterial(projectId, plan.name, input.workspaceContext);
-      if ('error' in result) {
-        // 读取失败不是资料正文：保留原件并显式排除（与面板同一语义）。
-        return {
-          name: plan.name,
-          extraction: {
-            name: plan.name,
-            contentDigest: '',
-            status: 'unreadable',
-            limitations: [result.error],
-            sections: [],
-          } satisfies ProjectMaterialExtraction,
-        };
+  if (!input.plans.length) return { status: 'ready', snapshotId: null, excluded: [] };
+  const pendingScope = { conversationId: input.conversationId ?? 'draft:first', workspaceKey: workspaceIdentityCacheKey(input.workspaceContext ?? null) };
+  const capturedGeneration = readPendingMokinaSnapshot(input.projectId, pendingScope)?.generation ?? null;
+  try {
+    const materials: HomeMokinaMaterialRead[] = [];
+    const assets: HomeMokinaAssetBytes[] = [];
+    for (const plan of input.fixedSelection ? [] : input.plans) {
+      if (!plan.path) continue;
+      if (plan.kind === 'material') {
+        const result = await fetchProjectMaterial(input.projectId, plan.path, input.workspaceContext);
+        if (!('error' in result)) materials.push({ name: plan.name, inputId: plan.inputId, extraction: result });
+      } else {
+        const file = input.stagedFiles?.[plan.uploadOrder ?? -1];
+        const digest = plan.digest ?? (file ? await mokinaBytesDigest(await file.arrayBuffer()) : '');
+        assets.push({ name: plan.name, inputId: plan.inputId, digest, byteLength: plan.size });
       }
-      return { name: plan.name, extraction: result };
-    }),
-  );
-  const assets: HomeMokinaAssetBytes[] = await Promise.all(
-    assetPlans.map(async (plan) => {
-      const file = stagedFiles.find((item) => item.name === plan.name && item.size === plan.size);
-      if (!file) return { name: plan.name, byteLength: 0, digest: '' };
-      return {
-        name: plan.name,
-        byteLength: file.size,
-        digest: await mokinaBytesDigest(await file.arrayBuffer()),
-      };
-    }),
-  );
-
-  const built = buildHomeMokinaSelections({ projectId, plans, materials, assets, failedUploadNames });
-  if (!built) return { snapshotId: null, uploadFailedNames };
-
-  const snapshotId = randomUUID();
-  const response = await fetch(
-    `/api/projects/${encodeURIComponent(projectId)}/mokina/context-snapshots`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(input.workspaceContext ? workspaceProjectHeaders(input.workspaceContext) : {}),
-      },
-      body: JSON.stringify({
-        snapshotId,
-        selections: built.selections,
-        excluded: built.excluded,
-      }),
-    },
-  );
-  const body = await response.json().catch(() => null) as {
-    snapshot?: { items: Array<{ displayName: string; kind: string; text?: string }> };
-    error?: { code?: string; message?: string };
-  } | null;
-  if (!response.ok || !body?.snapshot) return { snapshotId: null, uploadFailedNames };
-
-  const items = body.snapshot.items ?? [];
-  await writePendingMokinaSnapshot({
-    snapshotId,
-    projectId,
-    itemCount: items.length,
-    charCount: items.reduce((sum, item) => sum + (item.text?.length ?? 0), 0),
-    frozenAt: new Date().toISOString(),
-    itemLabels: items.map((item) => item.displayName).slice(0, 20),
-    excluded: built.excluded.map((entry) => ({
-      displayName: entry.displayName,
-      reason: entry.explanation || entry.reason,
-    })),
-  });
-  return { snapshotId, uploadFailedNames };
+    }
+    const built = input.fixedSelection ?? buildHomeMokinaSelections({ ...input, materials, assets });
+    if (built.excluded.length && !input.acceptExclusions) return { status: 'needs-input', snapshotId: null, excluded: built.excluded, message: '资料尚未准备完成，请重试、调整选择或明确排除失败项。' };
+    if (!built.selections.length) {
+      return input.acceptExclusions
+        ? { status: 'ready', snapshotId: null, excluded: built.excluded }
+        : { status: 'needs-input', snapshotId: null, excluded: built.excluded, message: '没有可用的资料，任务尚未发送。' };
+    }
+    const snapshotId = input.snapshotId ?? randomUUID();
+    await input.onPrepared?.(built);
+    const response = await fetch(`/api/projects/${encodeURIComponent(input.projectId)}/mokina/context-snapshots`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...(input.workspaceContext ? workspaceProjectHeaders(input.workspaceContext) : {}) },
+      body: JSON.stringify({ snapshotId, selections: built.selections, excluded: built.excluded }),
+    });
+    const body = await response.json().catch(() => null);
+    if (!response.ok || !body?.snapshot) throw new Error(mokinaResponseError(body, `资料冻结失败（${response.status}），任务尚未发送。`).message);
+    const items: Array<{ displayName: string; text?: string }> = body.snapshot.items;
+    const binding = await writePendingMokinaSnapshot({ snapshotId, projectId: input.projectId,
+      conversationId: input.conversationId, workspaceKey: workspaceIdentityCacheKey(input.workspaceContext ?? null),
+      itemCount: items.length, charCount: items.reduce((sum, item) => sum + (item.text?.length ?? 0), 0), frozenAt: new Date().toISOString(),
+      itemLabels: items.map(item => item.displayName), excluded: built.excluded.map(entry => ({ displayName: entry.displayName, reason: entry.explanation })) }, { generation: capturedGeneration });
+    return { status: 'ready', snapshotId, generation: binding.generation, excluded: built.excluded };
+  } catch (cause) {
+    return { status: 'needs-input', snapshotId: null, excluded: [], message: cause instanceof Error ? cause.message : '资料准备失败，任务尚未发送。' };
+  }
 }

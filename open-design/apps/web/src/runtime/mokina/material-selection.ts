@@ -1,4 +1,4 @@
-import type { ProjectMaterialExtraction } from '@open-design/contracts';
+import { joinMokinaExcerpt, type ProjectMaterialExtraction } from '@open-design/contracts';
 
 /** Pure grouping/rendering helpers shared by the material picker surfaces. */
 
@@ -33,7 +33,7 @@ export function groupMokinaMaterialSections(materials: ProjectMaterialExtraction
     for (const section of material.sections) {
       const id = section.groupId ?? section.location;
       if (id !== previousId) part = 0;
-      if (!current || id !== previousId || current.chars + section.text.length > 8_000) {
+      if (!current || id !== previousId || current.chars + section.text.length + 2 > 8_000) {
         if (id === previousId) part++;
         current = {
           key: `${material.name}:${material.contentDigest}:${id}:${part}`,
@@ -45,7 +45,7 @@ export function groupMokinaMaterialSections(materials: ProjectMaterialExtraction
         groups.push(current);
       }
       current.sections.push(section);
-      current.chars += section.text.length;
+      current.chars = joinMokinaExcerpt(current.sections.map(fragment => fragment.text)).length;
       previousId = id;
     }
   }

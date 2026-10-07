@@ -5,6 +5,7 @@ import path from 'node:path';
 import JSZip from 'jszip';
 import { load } from 'cheerio';
 import type { ProjectMaterialExtraction } from '@open-design/contracts';
+import { splitMokinaTextParts } from '@open-design/contracts';
 import { runPdftotext } from '../pdftotext.js';
 
 export type MokinaMaterial = ProjectMaterialExtraction;
@@ -15,7 +16,7 @@ export type MokinaMaterial = ProjectMaterialExtraction;
  * snapshots keyed by sourceDigest+parserVersion instead of silently reusing
  * the old text).
  */
-export const MOKINA_MATERIAL_PARSER_VERSION = 'mokina-material/1';
+export const MOKINA_MATERIAL_PARSER_VERSION = 'mokina-material/2';
 
 export async function readMokinaMaterial(name: string, buffer: Buffer): Promise<MokinaMaterial> {
   const result: MokinaMaterial = { name, contentDigest: createHash('sha256').update(buffer).digest('hex'), parserVersion: MOKINA_MATERIAL_PARSER_VERSION, status: 'read', limitations: [], groupLimitations: [], sections: [] };
@@ -25,11 +26,10 @@ export async function readMokinaMaterial(name: string, buffer: Buffer): Promise<
     if (!text.trim()) return;
     // A single PDF page or Office paragraph can exceed the whole selection
     // budget. Split it without losing its original location.
-    for (let offset = 0, part = 1; offset < text.length; offset += 8_000, part++) {
-      const fragment = text.slice(offset, offset + 8_000);
-      if (!fragment.trim()) continue;
+    for (const { part, text: fragment } of splitMokinaTextParts(text)) {
       const suffix = text.length > 8_000 ? ` / 片段 ${part}` : '';
       result.sections.push({
+        fragmentId: `fragment:${result.sections.length + 1}`,
         location: `${location}${suffix}`, text: fragment,
         groupId: `${groupId}${suffix ? `:part:${part}` : ''}`,
         groupLabel: `${groupLabel}${suffix}`,

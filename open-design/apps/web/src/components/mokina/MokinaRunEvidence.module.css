@@ -30,6 +30,15 @@
   opacity: 0.75;
 }
 
+.items pre {
+  margin: 6px 0;
+  max-height: 240px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: inherit;
+}
+
 .limitations {
   font-style: italic;
 }

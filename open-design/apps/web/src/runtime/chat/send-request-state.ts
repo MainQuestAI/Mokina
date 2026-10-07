@@ -18,7 +18,7 @@ export interface SendRequestRecord {
   readonly conversationId: string;
   readonly authorityKey?: string;
   readonly promptPreview: string;
-  status: 'pending' | 'unknown' | 'draft';
+  status: 'pending' | 'unknown' | 'draft' | 'submitted';
   /** Absent on old records: conservatively treat them as dispatched. */
   phase?: 'prepared' | 'dispatched';
   snapshot?: SendRequestSnapshot;
@@ -46,7 +46,7 @@ function valid(r: unknown, p: string, c: string): r is SendRequestRecord {
   if (!r || typeof r !== 'object') return false;
   const row = r as SendRequestRecord;
   return row.projectId === p && row.conversationId === c && typeof row.clientRequestId === 'string'
-    && ['pending', 'unknown', 'draft'].includes(row.status);
+    && ['pending', 'unknown', 'draft', 'submitted'].includes(row.status);
 }
 export function loadSendRequestRecords(p: string, c: string, authorityKey = 'none'): SendRequestRecord[] {
   if (typeof window === 'undefined') return [];
@@ -184,7 +184,7 @@ export async function persistClearSendRequest(p: string, c: string, id: string, 
     owners.delete(key); changed(); return true;
   } catch { return false; }
 }
-export async function persistSendRequestOutcome(p: string, c: string, id: string, status: 'draft' | 'unknown', authorityKey?: string): Promise<boolean> {
+export async function persistSendRequestOutcome(p: string, c: string, id: string, status: 'draft' | 'unknown' | 'submitted', authorityKey?: string): Promise<boolean> {
   const r = find(p, c, id, authorityKey);
   if (!r) return false;
   owners.delete(recordKey(r));

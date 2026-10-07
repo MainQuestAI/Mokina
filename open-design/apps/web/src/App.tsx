@@ -73,7 +73,9 @@ import { TooltipLayer } from './components/TooltipLayer';
 import { UpdateDialog } from './components/UpdateDialog';
 import { UpdaterPopup } from './components/UpdaterPopup';
 import { MOKINA_LOCAL_EDITION } from './mokina-edition';
-import { prepareHomeMokinaSnapshot } from './runtime/mokina/home-material-snapshot';
+import { prepareHomeMokinaSnapshot, saveHomeMokinaPreparation, type HomeMokinaPreparationRecord } from './runtime/mokina/home-material-snapshot';
+import { mokinaBytesDigest } from './runtime/mokina/digest';
+import { readPendingMokinaSnapshot } from './runtime/mokina/pending-context-snapshot';
 import type { HomeMokinaFilePlan } from './runtime/mokina/home-material-snapshot';
 import {
   openWorkspaceTab,
@@ -3369,14 +3371,19 @@ function AppInner() {
         if (!workingDirHandoffFailed) {
           beginHomeAttachmentUploads(result.project.id, pendingFiles);
         }
+        let homePreparation: HomeMokinaPreparationRecord | null = null;
+        if (MOKINA_LOCAL_EDITION && input.mokinaFilePlan?.length && !workingDirHandoffFailed) {
+          homePreparation = {
+            schemaVersion: 1, projectId: result.project.id, conversationId: result.conversationId,
+            workspaceKey: workspaceIdentityCacheKey(createWorkspaceContext), snapshotId: randomUUID(),
+            plans: input.mokinaFilePlan, prompt: derivedPendingPrompt ?? '', status: 'preparing', excluded: [],
+          };
+          homePreparation = await saveHomeMokinaPreparation(homePreparation);
+        }
         setPendingProjectCreation((current) =>
           current?.projectId === optimisticProjectId ? { ...current, created: true } : current,
         );
         let firstMessageAttachments: ChatAttachment[] = [];
-        // Names of staged files whose upload failed. Read again by the Mokina
-        // snapshot step below so a failed upload drops out of the freeze plan
-        // explicitly instead of making the daemon reject the whole snapshot.
-        let homeUploadFailedNames: Set<string> | null = null;
         if (!workingDirHandoffFailed && pendingFiles.length > 0) {
           // Home composer attaches stay client-side until submit lands a
           // project; the actual upload happens here. v2 doc wants one
@@ -3412,8 +3419,19 @@ function AppInner() {
           // `runWithConcurrency` answers in input order, so the first message
           // keeps the order the user picked, not the order the uploads landed.
           const dismissedOrders = dismissedHomeAttachmentOrders(result.project.id);
+          if (homePreparation) {
+            const plans = await Promise.all(homePreparation.plans.filter(plan => !dismissedOrders.has(plan.uploadOrder ?? -1)).map(async plan => {
+              const index = plan.uploadOrder ?? pendingFiles.findIndex(file => file.name === plan.name && file.size === plan.size);
+              const path = outcomes[index]?.uploaded[0]?.path;
+              const file = pendingFiles[index];
+              return { ...plan, uploadOrder: index, path,
+                ...(plan.kind === 'asset' && file ? { digest: await mokinaBytesDigest(await file.arrayBuffer()) } : {}) };
+            }));
+            homePreparation = { ...homePreparation, plans };
+            homePreparation = await saveHomeMokinaPreparation(homePreparation);
+          }
           firstMessageAttachments = outcomes.flatMap((outcome, index) =>
-            dismissedOrders.has(index) ? [] : outcome.uploaded);
+            dismissedOrders.has(index) || homePreparation?.plans.some(plan => plan.uploadOrder === index) ? [] : outcome.uploaded);
           const failedUploads = outcomes.flatMap((outcome) => outcome.failed);
           const firstUploadError = outcomes.find((outcome) => outcome.error)?.error;
           const partial = failedUploads.length > 0;
@@ -3424,9 +3442,7 @@ function AppInner() {
             // create-failure rollback uses, so the next Home visit (or an
             // already-mounted dock composer) can retry them instead of the
             // user re-picking every file.
-            const failedNames = new Set(failedUploads.map((failure) => failure.name));
-            homeUploadFailedNames = failedNames;
-            const failedFiles = pendingFiles.filter((file) => failedNames.has(file.name));
+            const failedFiles = pendingFiles.filter((_, index) => !dismissedOrders.has(index) && (outcomes[index]?.failed.length ?? 0) > 0);
             if (failedFiles.length > 0) {
               stashHomeComposerAttachments(failedFiles);
             }
@@ -3445,37 +3461,40 @@ function AppInner() {
         // N02: files the user marked as Mokina 资料/素材 on Home freeze into
         // the SAME context snapshot pipeline the in-project panel uses, before
         // the auto-send hand-off below records its run context. A failure here
-        // never blocks the send — the run proceeds with plain attachments and
-        // the user can still freeze a curated selection inside the project.
+        // Readable input is not send-ready until freezing and durable binding
+        // succeed. Failures keep the original draft and never fall back to raw attachments.
         let homeMokinaSnapshotId: string | null = null;
-        if (
-          MOKINA_LOCAL_EDITION &&
-          !workingDirHandoffFailed &&
-          input.mokinaFilePlan?.length &&
-          firstMessageAttachments.length > 0
-        ) {
+        let homeMokinaGeneration: string | undefined;
+        let homePreparationBlocked = false;
+        if (homePreparation) {
           try {
             const prepared = await prepareHomeMokinaSnapshot({
               projectId: result.project.id,
-              plans: input.mokinaFilePlan,
+              conversationId: homePreparation.conversationId,
+              snapshotId: homePreparation.snapshotId,
+              plans: homePreparation.plans,
               stagedFiles,
               workspaceContext: createWorkspaceContext,
-              failedUploadNames: homeUploadFailedNames,
+              onPrepared: async fixedSelection => {
+                homePreparation = { ...homePreparation!, fixedSelection };
+                homePreparation = await saveHomeMokinaPreparation(homePreparation);
+              },
             });
             homeMokinaSnapshotId = prepared.snapshotId;
-            if (prepared.uploadFailedNames.length > 0) {
+            homeMokinaGeneration = prepared.status === 'ready' ? prepared.generation : undefined;
+            homePreparationBlocked = prepared.status !== 'ready';
+            homePreparation = { ...homePreparation, status: prepared.status, excluded: prepared.excluded, bindingGeneration: prepared.status === 'ready' ? prepared.generation : undefined,
+              message: prepared.status === 'needs-input' ? prepared.message : undefined };
+            homePreparation = await saveHomeMokinaPreparation(homePreparation);
+            if (homePreparationBlocked) {
               setRecoveryNotice({
-                message: t('home.mokinaSnapshotExcludedFailedUploads', {
-                  count: prepared.uploadFailedNames.length,
-                }),
+                message: homePreparation.message ?? '资料准备失败，任务尚未发送。',
                 tone: 'error',
               });
             }
           } catch (error) {
-            console.warn(
-              'Failed to freeze Home Mokina context snapshot; sending attachments without a snapshot',
-              error,
-            );
+            homePreparationBlocked = true;
+            setRecoveryNotice({ message: error instanceof Error ? error.message : '资料准备失败，任务尚未发送。', tone: 'error' });
           }
         }
         trackProjectCreateResult(
@@ -3500,6 +3519,16 @@ function AppInner() {
         // reload after the run has started does not refire.
         if (
           !workingDirHandoffFailed &&
+          !homePreparationBlocked &&
+          (!homePreparation || (
+            routeRef.current.kind === 'project' && routeRef.current.projectId === result.project.id
+            && (routeRef.current.conversationId == null || routeRef.current.conversationId === result.conversationId)
+            && workspaceIdentityCacheKey(workspaceResourceReadContext(workspaceContextStateRef.current)) === homePreparation.workspaceKey
+            && (homeMokinaSnapshotId === null
+              ? !readPendingMokinaSnapshot(project.id, { conversationId: result.conversationId, workspaceKey: homePreparation.workspaceKey })
+              : readPendingMokinaSnapshot(project.id, { conversationId: result.conversationId, workspaceKey: homePreparation.workspaceKey })?.generation === homeMokinaGeneration
+                && readPendingMokinaSnapshot(project.id, { conversationId: result.conversationId, workspaceKey: homePreparation.workspaceKey })?.snapshotId === homeMokinaSnapshotId)
+          )) &&
           input.autoSendFirstMessage &&
           (derivedPendingPrompt !== undefined || firstMessageAttachments.length > 0)
         ) {
@@ -3543,7 +3572,8 @@ function AppInner() {
             }
             const autoSendContext = {
               ...(input.initialRunContext ?? {}),
-              ...(homeMokinaSnapshotId ? { mokinaSnapshotId: homeMokinaSnapshotId } : {}),
+              ...(homeMokinaSnapshotId ? { mokinaSnapshotId: homeMokinaSnapshotId,
+                mokinaSnapshotGeneration: homeMokinaGeneration } : {}),
             };
             if (Object.keys(autoSendContext).length > 0) {
               window.sessionStorage.setItem(

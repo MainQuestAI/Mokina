@@ -10,6 +10,9 @@ import {
   readPendingMokinaSnapshot,
   withPendingMokinaSnapshot,
   writePendingMokinaSnapshot,
+  clearPendingMokinaSnapshotIfCurrent,
+  settleSubmittedMokinaSnapshot,
+  claimLegacyPendingMokinaSnapshot,
 } from '../../src/runtime/mokina/pending-context-snapshot';
 
 describe('pending mokina context snapshot', () => {
@@ -66,8 +69,38 @@ describe('pending mokina context snapshot', () => {
     expect(withPendingMokinaSnapshot({ skillIds: ['s1'] }, 'p1')).toEqual({
       skillIds: ['s1'],
       mokinaSnapshotId: 'snap-2',
+      mokinaSnapshotGeneration: expect.any(String),
     });
     expect(withPendingMokinaSnapshot({ skillIds: ['s1'] }, 'p2')).toEqual({ skillIds: ['s1'] });
+  });
+  it('isolates two conversations and workspaces within one project', async () => {
+    const value = { snapshotId: 'a', projectId: 'p', itemCount: 1, charCount: 1, frozenAt: '', itemLabels: [], excluded: [] };
+    await writePendingMokinaSnapshot({ ...value, conversationId: 'c1', workspaceKey: 'w1' });
+    await writePendingMokinaSnapshot({ ...value, snapshotId: 'b', conversationId: 'c2', workspaceKey: 'w1' });
+    expect(readPendingMokinaSnapshot('p', { conversationId: 'c1', workspaceKey: 'w2' })).toBeNull();
+    await clearPendingMokinaSnapshot('p', { conversationId: 'c1', workspaceKey: 'w1' });
+    expect(readPendingMokinaSnapshot('p', { conversationId: 'c2', workspaceKey: 'w1' })?.snapshotId).toBe('b');
+  });
+  it('allows only one conversation to claim a legacy project-only binding', async () => {
+    localStorage.setItem('mokina:context-snapshot:p', JSON.stringify({ snapshotId: 'legacy', projectId: 'p', itemCount: 1, charCount: 1, frozenAt: '', itemLabels: [], excluded: [] }));
+    const a = claimLegacyPendingMokinaSnapshot('p', { conversationId: 'a', workspaceKey: 'w' });
+    const b = claimLegacyPendingMokinaSnapshot('p', { conversationId: 'b', workspaceKey: 'w' });
+    const outcomes = await Promise.allSettled([a, b]);
+    expect(outcomes.map(outcome => outcome.status)).toEqual(['fulfilled', 'rejected']);
+    expect(readPendingMokinaSnapshot('p', { conversationId: 'a', workspaceKey: 'w' })?.snapshotId).toBe('legacy');
+    expect(readPendingMokinaSnapshot('p', { conversationId: 'b', workspaceKey: 'w' })).toBeNull();
+    expect(localStorage.getItem('mokina:context-snapshot:p')).not.toBeNull();
+  });
+  it('captures A before queueing cleanup, so delayed cleanup never deletes B with the same snapshot ID', async () => {
+    const value = { snapshotId: 'same-snapshot', projectId: 'p', itemCount: 1, charCount: 1, frozenAt: '', itemLabels: [], excluded: [] };
+    await writePendingMokinaSnapshot({ ...value, generation: 'A' });
+    const writingB = writePendingMokinaSnapshot({ ...value, generation: 'B' });
+    const clearingA = clearPendingMokinaSnapshotIfCurrent('p', 'same-snapshot');
+    await writingB;
+    expect(await clearingA).toBe(false);
+    expect(readPendingMokinaSnapshot('p')?.generation).toBe('B');
+    expect(await settleSubmittedMokinaSnapshot('p', 'same-snapshot', { conversationId: 'draft:first', workspaceKey: 'none' }, 'A')).toBe(true);
+    expect(readPendingMokinaSnapshot('p')?.generation).toBe('B');
   });
 });
 

@@ -3,10 +3,11 @@
 // N03 运行依据：一轮带快照的 run 结束后，用户能核对实际注入了什么。
 // 没有回执的 run 保持零噪音（不渲染任何内容）。
 
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { MokinaContextSnapshot } from '@open-design/contracts';
+import type { MokinaContextSnapshot, WorkspaceCollabContext } from '@open-design/contracts';
+import { workspaceProjectHeaders } from '../../src/collab/workspace-identity';
 
 // The web vitest config opts the Mokina edition out globally; this suite
 // exercises Mokina-only UI, so pin the edition module on directly.
@@ -66,12 +67,42 @@ afterEach(() => {
 });
 
 describe('MokinaRunEvidence', () => {
+  const receipt = (runId: string, snapshotId: string) => ({ id: runId, status: 'finished', mokinaContext: { runId, snapshotId, fingerprint: 'fp', includedItemIds: ['S1'], itemDelivery: [], status: 'submitted' } });
+  const workspace = (id: string) => ({ workspaceId: id, workspaceType: 'team', workspaceMemberId: `${id}-member`, role: 'owner', lifecycleState: 'active', memberStatus: 'active', permissions: { canShareProjects: true, canWriteSyncedFiles: true } }) as WorkspaceCollabContext;
+  it('T32 scopes both queries and rejects a late snapshot from the previous workspace', async () => {
+    fetchChatRunStatus.mockImplementation(async (id: string) => receipt(id, id === 'run-a' ? 'snap-a' : 'snap-b'));
+    let resolveOld!: (response: Response) => void;
+    const oldResponse = new Promise<Response>(resolve => { resolveOld = resolve; });
+    const network = vi.fn((url: string) => url.endsWith('snap-a') ? oldResponse : Promise.resolve(new Response(JSON.stringify({ snapshot: { ...SNAPSHOT, snapshotId: 'snap-b', items: [{ ...SNAPSHOT.items[0], text: 'B fixed body' }] } }))));
+    vi.stubGlobal('fetch', network);
+    const a = workspace('a'), b = workspace('b');
+    const view = render(<MokinaRunEvidence projectId={PROJECT_ID} runId="run-a" runActive={false} workspaceContext={a} />);
+    fireEvent.click(await screen.findByText(/Run evidence|本次运行依据/));
+    await waitFor(() => expect(network).toHaveBeenCalledWith(`/api/projects/${PROJECT_ID}/mokina/context-snapshots/snap-a`, { headers: workspaceProjectHeaders(a) }));
+    view.rerender(<MokinaRunEvidence projectId={PROJECT_ID} runId="run-b" runActive={false} workspaceContext={b} />);
+    await waitFor(() => expect(fetchChatRunStatus).toHaveBeenCalledWith('run-b', b));
+    await act(async () => { resolveOld(new Response(JSON.stringify({ snapshot: { ...SNAPSHOT, snapshotId: 'snap-a', items: [{ ...SNAPSHOT.items[0], text: 'A private body' }] } }))); });
+    expect(screen.queryByText('A private body')).toBeNull();
+    fireEvent.click(await screen.findByText(/Run evidence|本次运行依据/));
+    expect(await screen.findByText('B fixed body')).toBeTruthy();
+    expect(network).toHaveBeenLastCalledWith(`/api/projects/${PROJECT_ID}/mokina/context-snapshots/snap-b`, { headers: workspaceProjectHeaders(b) });
+    expect(fetchChatRunStatus).toHaveBeenCalledWith('run-a', a);
+    expect(screen.getByText(/transmission only|只证明资料已传输/)).toBeTruthy();
+  });
+  it('T32 retries a failed receipt and does not label it as no receipt', async () => {
+    fetchChatRunStatus.mockRejectedValueOnce(new Error('403')).mockResolvedValueOnce(receipt(RUN_ID, 'snap-1'));
+    render(<MokinaRunEvidence projectId={PROJECT_ID} runId={RUN_ID} runActive={false} />);
+    expect(await screen.findByText(/Failed to read the run receipt|运行依据读取失败/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /Retry|重试/ }));
+    expect(await screen.findByText(/Run evidence|本次运行依据/)).toBeTruthy();
+    expect(fetchChatRunStatus).toHaveBeenCalledTimes(2);
+  });
   it('renders nothing when the run has no delivery receipt', async () => {
     fetchChatRunStatus.mockResolvedValue({ id: RUN_ID, status: 'finished', agentId: 'codex', mokinaContext: null });
     const { container } = render(
       <MokinaRunEvidence projectId={PROJECT_ID} runId={RUN_ID} runActive={false} />,
     );
-    await waitFor(() => expect(fetchChatRunStatus).toHaveBeenCalledWith(RUN_ID));
+    await waitFor(() => expect(fetchChatRunStatus).toHaveBeenCalledWith(RUN_ID, undefined));
     expect(container.firstChild).toBeNull();
     expect(screen.queryByTestId('mokina-run-evidence')).toBeNull();
   });

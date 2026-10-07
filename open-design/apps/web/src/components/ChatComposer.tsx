@@ -151,6 +151,7 @@ import {
 } from '../runtime/chat/composer-draft';
 import { mirrorDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
 import { withPendingMokinaSnapshot } from '../runtime/mokina/pending-context-snapshot';
+import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
 import { QuotedRefs } from './chat/QuotedRefs';
 
 type TranslateFn = (key: keyof Dict, vars?: Record<string, string | number>) => string;
@@ -623,7 +624,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
   ) {
     const { locale, t } = useI18n();
     const analytics = useAnalytics();
-    const { workspaceContext } = useProjectCollabContext();
+    const { workspaceContext, conversationId: mokinaConversationId } = useProjectCollabContext();
     const activeFileContext =
       projectMetadata?.importedFrom === 'folder' && activeProjectFileName
         ? activeProjectFileName
@@ -915,6 +916,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
     // pending key happens to hold now. Cleared with the rest of the composer
     // state once the restored turn is actually sent.
     const restoredMokinaSnapshotRef = useRef<string | null>(null);
+    const restoredMokinaGenerationRef = useRef<string | undefined>(undefined);
     const petEnabled = Boolean(onAdoptPet && onTogglePet);
     const [recentDirs, setRecentDirs] = useState<string[]>([]);
     useEffect(() => {
@@ -1470,6 +1472,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
           // plugin is restored from its full snapshot, so it needs no lookup.
           const ctx = meta?.context;
           restoredMokinaSnapshotRef.current = ctx?.mokinaSnapshotId ?? null;
+          restoredMokinaGenerationRef.current = ctx?.mokinaSnapshotGeneration;
           // 队列这条路径是**一次性**解析:点「编辑」时懒加载的列表早就回来了,
           // 对不上就是真的没了。刷新那条路径首屏列表还是空的,处理方式不同 ——
           // 见 `pendingRestoredContextRef`。
@@ -1554,6 +1557,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
       setStagedConnectors([]);
       setStagedWorkspaceContexts(linkedWorkspaceContexts);
       restoredMokinaSnapshotRef.current = null;
+      restoredMokinaGenerationRef.current = undefined;
       setWorkspaceLinkedDirAdds(nextWorkspaceLinkedDirAdds);
       if (
         promotedWorkspaceContextDir &&
@@ -1599,8 +1603,10 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
       // instead of silently re-binding the project's current pending snapshot.
       const restoredMokinaSnapshotId = restoredMokinaSnapshotRef.current;
       const context = restoredMokinaSnapshotId
-        ? { ...baseContext, mokinaSnapshotId: restoredMokinaSnapshotId }
-        : withPendingMokinaSnapshot(baseContext, projectId);
+        ? { ...baseContext, mokinaSnapshotId: restoredMokinaSnapshotId, mokinaSnapshotGeneration: restoredMokinaGenerationRef.current }
+        : withPendingMokinaSnapshot(baseContext, projectId, {
+            conversationId: mokinaConversationId ?? 'draft:first', workspaceKey: workspaceIdentityCacheKey(workspaceContext),
+          });
       const meta: ChatSendMeta = {
         ...(skillIds.length > 0 ? { skillIds } : {}),
         ...(activeAppliedPlugin

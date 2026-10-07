@@ -37,6 +37,19 @@ afterEach(() => {
 // powers the project composer be exercised under jsdom on the homepage.
 
 if (typeof window !== 'undefined') {
+  // jsdom lacks the Web Locks API. Model its per-name FIFO semantics, rather
+  // than bypassing the browser fallback's required synchronization.
+  if (!navigator.locks) {
+    const queues = new Map<string, Promise<unknown>>();
+    Object.defineProperty(navigator, 'locks', { configurable: true, value: {
+      request: async (name: string, optionsOrCallback: unknown, suppliedCallback?: () => unknown) => {
+        const callback = typeof optionsOrCallback === 'function' ? optionsOrCallback as () => unknown : suppliedCallback!;
+        const next = (queues.get(name) ?? Promise.resolve()).then(callback, callback);
+        queues.set(name, next);
+        try { return await next; } finally { if (queues.get(name) === next) queues.delete(name); }
+      },
+    } });
+  }
   const zeroRect = (): DOMRect => ({
     x: 0,
     y: 0,

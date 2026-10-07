@@ -5,6 +5,8 @@ import path from 'node:path';
 import {
   MOKINA_CONTEXT_BUDGETS,
   MOKINA_CONTEXT_ERROR_CODES,
+  joinMokinaExcerpt,
+  mokinaContextBudgetExceeded,
   type MokinaContextDeliveryReceipt,
   type MokinaContextErrorCode,
   type MokinaContextSelection,
@@ -426,8 +428,23 @@ async function freezeItem(
       message: `无法读取资料内容，不能作为依据：${fileName}（${material.limitations.join('；')}）`,
     };
   }
-  const groupIds = new Set(selection.groupIds ?? []);
+  if (selection.mode !== 'groups' && selection.mode !== 'fragments') {
+    return { ok: false, code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED, message: '资料选择格式不正确。' };
+  }
+  if (selection.mode === 'fragments' && selection.expectedParserVersion !== material.parserVersion) {
+    return { ok: false, code: MOKINA_CONTEXT_ERROR_CODES.SOURCE_CHANGED, message: '资料解析规则已变化，请重新读取并确认选择。' };
+  }
+  if (selection.mode === 'fragments' && !Array.isArray(selection.fragmentIds)) {
+    return { ok: false, code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED, message: '片段选择无效，请重新读取。' };
+  }
+  const fragmentIds = new Set(selection.mode === 'fragments' ? selection.fragmentIds : []);
+  if (selection.mode === 'fragments' && (!fragmentIds.size || [...fragmentIds].some(id =>
+    typeof id !== 'string' || !material.sections.some(section => section.fragmentId === id)))) {
+    return { ok: false, code: MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED, message: '所选片段已不存在，请重新确认。' };
+  }
+  const groupIds = new Set(selection.mode === 'groups' ? selection.groupIds : []);
   const matched = material.sections.filter((section) => {
+    if (selection.mode === 'fragments') return fragmentIds.has(section.fragmentId ?? '');
     const groupId = section.groupId ?? '';
     if (groupIds.has(groupId)) return true;
     for (const wanted of groupIds) {
@@ -442,7 +459,7 @@ async function freezeItem(
       message: `所选内容为空或已不存在：${fileName}`,
     };
   }
-  const excerpt = matched.map((section) => section.text).join('\n\n');
+  const excerpt = joinMokinaExcerpt(matched.map((section) => section.text));
   const limitations = [...material.limitations];
   for (const limitation of material.groupLimitations ?? []) {
     if (limitations.length >= 8) break;
@@ -483,7 +500,7 @@ export async function prepareMokinaContextSnapshot(input: PrepareSnapshotInput):
   if (!Array.isArray(request.selections) || request.selections.length === 0) {
     return errorResult(400, MOKINA_CONTEXT_ERROR_CODES.CONTEXT_NOT_SUPPORTED, '没有可冻结的选择项。');
   }
-  if (request.selections.length > MOKINA_CONTEXT_BUDGETS.maxItems) {
+  if (mokinaContextBudgetExceeded({ itemCount: request.selections.length, excerptUnits: 0, assetBytes: 0 })) {
     return errorResult(413, MOKINA_CONTEXT_ERROR_CODES.CONTEXT_LIMIT, `最多 ${MOKINA_CONTEXT_BUDGETS.maxItems} 个选择项。`);
   }
   const selectionFingerprint = computeSelectionFingerprint(request.selections, request.excluded ?? []);
@@ -515,12 +532,12 @@ export async function prepareMokinaContextSnapshot(input: PrepareSnapshotInput):
     }
     if (frozen.item.kind === 'asset') {
       assetBytes += frozen.item.byteLength;
-      if (assetBytes > MOKINA_CONTEXT_BUDGETS.maxAssetBytes) {
+      if (mokinaContextBudgetExceeded({ itemCount: 0, excerptUnits: 0, assetBytes })) {
         return errorResult(413, MOKINA_CONTEXT_ERROR_CODES.CONTEXT_LIMIT, '冻结素材总量超过 30MiB 上限，请减少选择。');
       }
     } else {
       excerptUnits += utf16CodeUnits(frozen.item.text);
-      if (excerptUnits > MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits) {
+      if (mokinaContextBudgetExceeded({ itemCount: 0, excerptUnits, assetBytes: 0 })) {
         return errorResult(413, MOKINA_CONTEXT_ERROR_CODES.CONTEXT_LIMIT, '摘录文本超过 24,000 字符上限，请缩小选择。');
       }
     }

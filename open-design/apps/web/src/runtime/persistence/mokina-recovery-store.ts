@@ -25,6 +25,63 @@ function enqueue(key: string, work: () => Promise<boolean>): Promise<boolean> {
   tails.set(key, next);
   return next;
 }
+/** Read, validate, CAS and publish one business mutation without changing its expected identity. */
+export function mutateDurableRecord(key: string, update: (raw: string | null) => string | null | undefined): Promise<boolean> {
+  return enqueue(key, async () => {
+    const store = hostRecoveryStore();
+    const mutate = async () => {
+      const current = store ? await store.get(key) : null;
+      if (current && !current.ok) return false;
+      const raw = current?.ok && current.found ? current.record.value as string : store ? null : window.localStorage.getItem(key);
+      const next = update(raw);
+      if (next === undefined) {
+        // Keep the UI cache honest even when business identity rejects this mutation.
+        if (raw === null) window.localStorage.removeItem(key);
+        else window.localStorage.setItem(key, raw);
+        return false;
+      }
+      if (next === raw) {
+        if (raw === null) window.localStorage.removeItem(key);
+        else window.localStorage.setItem(key, raw);
+        return true;
+      }
+      if (store && current?.ok) {
+        const expected = current.found ? current.record.recordId : current.deletedRecordId;
+        if (next === null) {
+          if (!current.found) return false;
+          const deleted = await store.delete(key, current.record.recordId);
+          if (!deleted.ok || deleted.result !== 'deleted') return false;
+          deletedKeys.add(key);
+        } else {
+          const recordId = crypto.randomUUID();
+          const put = await store.put(key, { recordId, value: next }, expected);
+          if (!put.ok || put.result !== 'stored') return false;
+          identities.set(key, recordId); deletedKeys.delete(key);
+        }
+        // Another window may have advanced the record immediately after CAS.
+        // Publish the authoritative generation, never our superseded value.
+        const readBack = await store.get(key);
+        if (!readBack.ok) return false;
+        identities.set(key, readBack.found ? readBack.record.recordId : readBack.deletedRecordId);
+        if (readBack.found) {
+          deletedKeys.delete(key);
+          window.localStorage.setItem(key, readBack.record.value as string);
+        } else {
+          deletedKeys.add(key);
+          window.localStorage.removeItem(key);
+        }
+        return true;
+      }
+      // Publication is part of this queue, never a delayed callback outside it.
+      if (next === null) window.localStorage.removeItem(key);
+      else window.localStorage.setItem(key, next);
+      return true;
+    };
+    if (store) return mutate();
+    if (!navigator.locks) return false;
+    return navigator.locks.request(`mokina-recovery:${key}`, mutate);
+  });
+}
 /** Serialize the whole read/CAS/write. A conflict never authorizes an overwrite. */
 export function mirrorDurableRecord(key: string | undefined, raw: string): Promise<boolean> {
   if (!key) return Promise.resolve(false);

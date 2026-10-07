@@ -30,8 +30,13 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
       const checkbox = panel.getByRole('checkbox', { name, exact: true });
       await checkbox.check();
     }
-    const geometry = await panel.evaluate(element => ({ width: element.clientWidth, scrollWidth: element.scrollWidth,
-      regions: Array.from(element.querySelectorAll('.artifact-version-panel__continuation, fieldset')).map(node => ({ width: node.clientWidth, scrollWidth: node.scrollWidth })) }));
+    const geometry = await panel.evaluate(element => {
+      const body = element.querySelector('.artifact-version-list')?.parentElement;
+      const regions = Array.from(element.querySelectorAll('.artifact-version-panel__continuation, fieldset'));
+      if (body) regions.push(body);
+      return { width: element.clientWidth, scrollWidth: element.scrollWidth,
+        regions: regions.map(node => ({ width: node.clientWidth, scrollWidth: node.scrollWidth, className: node.className })) };
+    });
     expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.width + 1);
     for (const region of geometry.regions) expect(region.scrollWidth).toBeLessThanOrEqual(region.width + 1);
     const usages = panel.locator('.artifact-version-panel__continuation-assets input:not([type="checkbox"])');

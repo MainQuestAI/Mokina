@@ -44,6 +44,8 @@ import {
 import { resolvePackagedSmokeNamespace } from '@/vitest/suite';
 import { startToolsServeUpdaterFixture, type ToolsServeUpdaterFixture } from '@/vitest/tools-serve-updater-fixture';
 import { createDesktopHarness, STORAGE_KEY, waitFor } from '../lib/desktop/desktop-test-helpers.ts';
+import { installMokinaInterruptionExpression, mokinaInterruptionStateExpression } from '@/vitest/mokina-native-interruption';
+import { createMokinaStorageFault } from '@/vitest/mokina-storage-fault';
 
 const execFileAsync = promisify(execFile);
 const e2eRoot = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -52,7 +54,8 @@ const toolsPackDir = resolveFromWorkspace(process.env.OD_PACKAGED_E2E_TOOLS_PACK
 const namespace = resolvePackagedSmokeNamespace('mac');
 const releaseChannel = process.env.OD_PACKAGED_E2E_RELEASE_CHANNEL;
 const releaseVersion = process.env.OD_PACKAGED_E2E_RELEASE_VERSION;
-const updateScenario = resolvePackagedUpdateScenario({ releaseChannel, releaseVersion });
+// Mokina local candidates do not exercise public-channel updater fixtures.
+const updateScenario = resolvePackagedUpdateScenario(process.env.OD_PACKAGED_E2E_MOKINA_RECOVERY === '1' ? {} : { releaseChannel, releaseVersion });
 const toolsPackReleaseVersionArgs = releaseAppVersionArgs(releaseVersion);
 const pnpmCommand = process.env.OD_E2E_PNPM_COMMAND ?? 'pnpm';
 const screenshotPath = join(toolsPackDir, 'screenshots', `${namespace}.png`);
@@ -430,6 +433,223 @@ const shouldRunPackagedMacOnboardingSmoke =
 const macOnboardingDescribe = shouldRunPackagedMacOnboardingSmoke ? describe : describe.skip;
 const shouldRunDesktopMacSmoke = process.platform === 'darwin' && process.env.OD_DESKTOP_SMOKE === '1';
 const desktopMacDescribe = shouldRunDesktopMacSmoke ? describe : describe.skip;
+
+const mokinaRecoveryDescribe = process.platform === 'darwin' && process.env.OD_PACKAGED_E2E_MOKINA_RECOVERY === '1' ? describe : describe.skip;
+mokinaRecoveryDescribe('Mokina recovery native interruption', () => {
+  beforeAll(async () => {
+    // Opt-in only, in an explicitly isolated Mokina tools-pack namespace. Never
+    // reset a user's profile or manufacture a continuation record for a test.
+    expect(namespace).toMatch(/^mokina-local-/u);
+    expect(isAbsolute(toolsPackDir)).toBe(true);
+    expect(toolsPackDir.startsWith(workspaceRoot)).toBe(false);
+    await runToolsPackJson('install');
+    const agents = await createFakeAgentRuntimes({ root: join(toolsPackDir, 'fixtures', 'mokina-fault-agent'), runtimeIds: ['codex'], recordInvocations: true });
+    await seedPackagedHomeFirstRunConfig(agents.codex.env);
+    await runToolsPackJson('start');
+    await waitForHealthyDesktop();
+  }, 120_000);
+  afterAll(async () => { await runToolsPackJson('stop'); }, 60_000);
+
+  for (const { point, variant } of [1, 2, 3, 4, 5, 6, 7, 8].map(point => ({ point, variant: 'resume' })).concat([
+    { point: 3, variant: 'missing-source' }, { point: 6, variant: 'edited-target' },
+  ])) {
+    test(`[P1] Mokina recovery native interruption ${point} ${variant} preserves real intent without overwriting`, async () => {
+      const report = (await createPackagedSmokeReport('mac')).report;
+      const storageFault = point === 8 ? await createMokinaStorageFault(join(runtimeNamespaceRoot, 'user-data', 'mokina-recovery')) : null;
+      try {
+      const source = await inspectMokina<{ projectId: string; conversationId: string }>(`(async () => {
+        const created = await fetch('/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:crypto.randomUUID(),name:'Native fault ${point}',skillId:null,designSystemId:null,metadata:{kind:'prototype'}})});
+        if(!created.ok) throw new Error('source create '+created.status);
+        const body=await created.json(); const id=body.project.id;
+        for(const [name,content] of [['plan.html','<!doctype html><html><body><section id="strategy" data-mokina-id="strategy"><h2>Strategy</h2><p>Fixed native excerpt ${point}</p></section><section id="budget" data-mokina-id="budget"><h2>Budget</h2><p>Unselected budget</p></section></body></html>'],['logo.svg','<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="red"/></svg>']]) {
+          const saved=await fetch('/api/projects/'+id+'/files',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,content,versionSource:'manual'})});
+          if(!saved.ok) throw new Error('source file '+saved.status);
+        }
+        return {projectId:id,conversationId:body.conversationId};
+      })()`);
+      await openMokinaSource(source);
+      await waitFor(async () => {
+        expect(await inspectMokina<boolean>(`(() => {
+          const button=Array.from(document.querySelectorAll('button')).find(b=>/^(Continue|继续制作|从这里接续|接续)$/.test(b.textContent.trim()));
+          if(!button||button.disabled)return false;button.click();return true;
+        })()`)).toBe(true);
+      }, 30_000);
+      await waitFor(async () => {
+        expect(await inspectMokina<boolean>(`(() => {
+          const panel=document.querySelector('.artifact-version-panel');if(!panel)return false;
+          const labels=Array.from(panel.querySelectorAll('label'));const strategy=labels.find(l=>l.textContent.includes('strategy：'));
+          const asset=labels.find(l=>l.textContent.trim()==='logo.svg');if(!strategy||!asset)return false;
+          for(const label of [strategy,asset]) {const input=label.querySelector('input[type=checkbox]');if(!input.checked)input.click();}
+          return true;
+        })()`)).toBe(true);
+      }, 30_000);
+      await inspectMokina(installMokinaInterruptionExpression(point, source.projectId, storageFault?.url));
+      expect(await inspectMokina<boolean>(`(() => {const b=document.querySelector('.artifact-version-panel__continuation:not(.artifact-version-panel__continuation--revision) > button');if(!b||b.disabled)return false;b.click();return true})()`)).toBe(true);
+      let interrupted: { hit: { journals: Array<{ key: string; journal: { operationId: string; targetProjectId: string; contextSnapshotId: string; copiedAssets?: Record<string, { path: string; digest: string; uploaded: boolean }> } }>; key?: string; value?: string }; effects: Array<{ path: string; body: string }>; requests: Array<{ path: string; method: string }> } | undefined;
+      await waitFor(async () => {
+        interrupted = await inspectMokina(mokinaInterruptionStateExpression);
+        expect(interrupted?.hit).toBeTruthy();
+      }, 30_000);
+      const { key, journal } = interrupted!.hit.journals[0]!;
+      expect(journal.operationId).toBeTruthy(); expect(journal.targetProjectId).toBeTruthy();
+      const durable = await inspectMokina(`window.__od__.recoveryStore.get(${JSON.stringify(key)})`);
+      const evidenceName = `interruption-${point}-${variant}`;
+      await report.json(`mokina/${evidenceName}-hit.json`, { source, interrupted, durable });
+      if ([2, 4, 5, 6].includes(point)) expect(interrupted!.effects.length).toBeGreaterThan(0);
+      if ([3, 4].includes(point)) expect(journal.copiedAssets?.['asset-1']).toMatchObject({ path: 'asset-1.svg', uploaded: false });
+      if (point === 7) {
+        const persisted = await inspectMokina<{ ok: boolean; found: boolean; record: { value: string } }>(`window.__od__.recoveryStore.get(${JSON.stringify(interrupted!.hit.key)})`);
+        expect(persisted.ok && persisted.found).toBe(true);
+        expect(JSON.parse(persisted.record.value).snapshotId).toBe(journal.contextSnapshotId);
+      }
+      if (point === 8) {
+        await waitFor(async () => {
+          expect(await inspectMokina<string>('document.body.innerText')).toContain('活动记录待同步');
+        }, 30_000);
+        expect(storageFault!.evidence).toHaveLength(1);
+        await report.json('mokina/interruption-8-storage-failure.json', storageFault!.evidence);
+        await storageFault!.unlock();
+      }
+      // Only synthetic source fixtures are removed. These mutations happen
+      // after a confirmed real checkpoint, never by editing its journal.
+      if ([4, 5].includes(point) || variant === 'missing-source') {
+        expect(await inspectMokina<number>(`fetch('/api/projects/${source.projectId}/raw/logo.svg',{method:'DELETE'}).then(r=>r.status)`)).toBe(200);
+      }
+      let fingerprint: string | undefined;
+      if (point === 5) {
+        fingerprint = await inspectMokina<string>(`fetch('/api/projects/${journal.targetProjectId}/mokina/context-snapshots/${journal.contextSnapshotId}').then(r=>r.json()).then(b=>b.snapshot.fingerprint)`);
+        expect(fingerprint).toBeTruthy();
+      }
+      if (variant === 'edited-target') {
+        expect(await inspectMokina<boolean>(`(async()=>{const r=await fetch('/api/projects/${journal.targetProjectId}/files',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'MOKINA-CONTINUATION.json',content:JSON.stringify({userEdited:true,content:'Keep my target draft'}),versionSource:'manual'})});return r.ok})()`)).toBe(true);
+      }
+      await runToolsPackJson('stop');
+      await runToolsPackJson('start');
+      await waitForHealthyDesktop();
+      await openMokinaSource(source);
+      await inspectMokina(installMokinaInterruptionExpression(0, source.projectId));
+      await waitFor(async () => {
+        expect(await inspectMokina<boolean>(`(() => {const b=document.querySelector('[data-testid="mokina-continuation-recovery"] button');if(!b||b.disabled)return false;b.click();return true})()`)).toBe(true);
+      }, 30_000);
+      if (variant !== 'resume') {
+        const expectedError = variant === 'missing-source' ? '素材读取失败' : '目标接续稿已被修改';
+        await waitFor(async () => { expect(await inspectMokina<string>('document.body.innerText')).toContain(expectedError); }, 30_000);
+        const failure = await inspectMokina<{ journal: { operationId: string; targetProjectId: string }; draft: unknown; requests: Array<{ path: string; method: string }> }>(`(async()=>{
+          const record=await window.__od__.recoveryStore.get(${JSON.stringify(key)});
+          const draft=await fetch('/api/projects/${journal.targetProjectId}/files/MOKINA-CONTINUATION.json');
+          return {journal:JSON.parse(record.record.value),draft:draft.ok?await draft.json():null,requests:window.__mokinaFault.requests};
+        })()`);
+        expect(failure.journal).toMatchObject({ operationId: journal.operationId, targetProjectId: journal.targetProjectId });
+        expect(await inspectMokina<string>('location.pathname')).toContain(source.projectId);
+        expect(failure.requests.filter(r => r.method === 'POST' && (r.path === '/api/projects' || r.path === '/api/runs'))).toEqual([]);
+        if (variant === 'edited-target') expect(failure.draft).toEqual({ userEdited: true, content: 'Keep my target draft' });
+        await report.json(`mokina/${evidenceName}-blocked.json`, failure);
+        return;
+      }
+      await waitFor(async () => {
+        expect(await inspectMokina<string>('location.pathname')).toContain(journal.targetProjectId);
+      }, 45_000);
+      const recovered = await inspectMokina(`(async () => {
+        const target=${JSON.stringify(journal.targetProjectId)}, snapshotId=${JSON.stringify(journal.contextSnapshotId)};
+        const draft=await fetch('/api/projects/'+target+'/files/MOKINA-CONTINUATION.json');
+        const snapshot=await fetch('/api/projects/'+target+'/mokina/context-snapshots/'+snapshotId);
+        const keys=await window.__od__.recoveryStore.list('mokina:context-snapshot:');
+        const bindings=await Promise.all(keys.keys.map(key=>window.__od__.recoveryStore.get(key)));
+        const traces=window.__mokinaFault;
+        return {draft:await draft.json(),snapshot:await snapshot.json(),bindings,requests:traces.requests,effects:traces.effects,prompt:document.querySelector('[data-testid="chat-composer-input"]')?.textContent};
+      })()`);
+      const result = recovered as { draft: { operationId: string; contextSnapshotId: string; sections: Array<{ id: string }> }; snapshot: { snapshot: { snapshotId: string; fingerprint: string } }; requests: Array<{ path: string; method: string }>; prompt: string };
+      expect(result.draft).toMatchObject({ operationId: journal.operationId, contextSnapshotId: journal.contextSnapshotId });
+      expect(result.draft.sections.map(section => section.id)).toEqual(['strategy']);
+      expect(result.snapshot.snapshot.snapshotId).toBe(journal.contextSnapshotId);
+      if (fingerprint) expect(result.snapshot.snapshot.fingerprint).toBe(fingerprint);
+      expect(result.prompt).toContain(`Fixed native excerpt ${point}`);
+      expect(result.prompt).not.toContain('Unselected budget');
+      expect(result.requests.filter(request => request.method === 'POST' && request.path === '/api/runs')).toEqual([]);
+      if (point > 1) expect(result.requests.filter(request => request.method === 'POST' && request.path === '/api/projects')).toEqual([]);
+      if (point === 4) expect(result.requests.filter(request => request.method === 'POST' && request.path.endsWith('/upload'))).toEqual([]);
+      if (point >= 5) expect(result.requests.filter(request => request.method === 'POST' && request.path.endsWith('/mokina/context-snapshots'))).toEqual([]);
+      await report.json(`mokina/${evidenceName}-recovered.json`, recovered);
+      } finally { await storageFault?.close(); }
+    }, 180_000);
+  }
+  for (const point of [9, 10]) {
+    test(`[P1] Mokina recovery native interruption ${point} reconciles one accepted request without resending`, async () => {
+      const report = (await createPackagedSmokeReport('mac')).report;
+      const fault = point === 10 ? await createMokinaStorageFault(join(runtimeNamespaceRoot, 'user-data', 'mokina-recovery')) : null;
+      try {
+        const source = await inspectMokina<{ projectId: string; conversationId: string }>(`(async()=>{
+          const r=await fetch('/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:crypto.randomUUID(),name:'Native send fault ${point}',metadata:{kind:'prototype'},skillId:null,designSystemId:null})});
+          if(!r.ok)throw new Error('create source '+r.status);const b=await r.json();
+          const saved=await fetch('/api/projects/'+b.project.id+'/files',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'plan.html',content:'<!doctype html><section id="strategy" data-mokina-id="strategy"><h2>Strategy</h2><p>Deterministic native send ${point}</p></section>',versionSource:'manual'})});
+          if(!saved.ok)throw new Error('write source '+saved.status);return {projectId:b.project.id,conversationId:b.conversationId};
+        })()`);
+        await openMokinaSource(source);
+        await waitFor(async () => {
+          expect(await inspectMokina<boolean>(`(()=>{const b=Array.from(document.querySelectorAll('button')).find(b=>/^(Continue|继续制作)$/.test(b.textContent.trim()));if(!b||b.disabled)return false;b.click();return true})()`)).toBe(true);
+        }, 30_000);
+        await waitFor(async () => {
+          expect(await inspectMokina<boolean>(`(()=>{const c=document.querySelector('.artifact-version-panel__continuation input[type=checkbox]');if(!c)return false;if(!c.checked)c.click();return true})()`)).toBe(true);
+        }, 30_000);
+        await inspectMokina(`(()=>{document.querySelector('.artifact-version-panel__continuation:not(.artifact-version-panel__continuation--revision) > button').click();return true})()`);
+        await waitFor(async () => { expect(await inspectMokina<string>('location.pathname')).not.toContain(source.projectId); }, 45_000);
+        const scope = await inspectMokina<{ projectId: string; conversationId: string; bindings: Array<{ key: string; value: string }> }>(`(()=>{
+          const parts=location.pathname.split('/');const projectId=parts[2],conversationId=parts[4];
+          return {projectId,conversationId,bindings:Object.keys(localStorage).filter(k=>k.startsWith('mokina:context-snapshot:')&&JSON.parse(localStorage.getItem(k)??'null')?.projectId===projectId).map(key=>({key,value:localStorage.getItem(key)}))};
+        })()`);
+        expect(scope.bindings).toHaveLength(1);
+        const binding = JSON.parse(scope.bindings[0]!.value) as { generation: string; snapshotId: string };
+        await inspectMokina(installMokinaInterruptionExpression(point, source.projectId, fault?.url));
+        await waitFor(async () => {
+          expect(await inspectMokina<boolean>(`(()=>{const b=document.querySelector('[data-testid="chat-send"]');if(!b||b.disabled)return false;b.click();return true})()`)).toBe(true);
+        }, 30_000);
+        let state: { hit: unknown; effects: Array<{ path: string; body: string; requestBody: string }> } | undefined;
+        await waitFor(async () => { state = await inspectMokina(mokinaInterruptionStateExpression); expect(state?.hit).toBeTruthy(); }, 45_000);
+        const acceptance = state!.effects.find(effect => effect.path === '/api/runs')!;
+        const request = JSON.parse(acceptance.requestBody) as { clientRequestId: string };
+        expect(request.clientRequestId).toBeTruthy();
+        const before = await inspectMokina<{ runs: Array<{ id: string; clientRequestId: string }> }>(`fetch('/api/runs?projectId=${scope.projectId}&conversationId=${scope.conversationId}').then(r=>r.json())`);
+        expect(before.runs.filter(run => run.clientRequestId === request.clientRequestId)).toHaveLength(1);
+        if (point === 10) {
+          await waitFor(async () => { expect(await inspectMokina<string>('document.body.innerText')).toContain('任务已提交，资料状态待同步'); }, 30_000);
+          const pending = await inspectMokina<{ found: boolean; record: { value: string } }>(`window.__od__.recoveryStore.get(${JSON.stringify(scope.bindings[0]!.key)})`);
+          expect(pending.found).toBe(true); expect(JSON.parse(pending.record.value).generation).toBe(binding.generation);
+          expect(fault!.evidence).toHaveLength(1);
+          await report.json('mokina/interruption-10-storage-failure.json', fault!.evidence);
+          await fault!.unlock();
+        }
+        await report.json(`mokina/interruption-${point}-hit.json`, { scope, binding, state, before });
+        await runToolsPackJson('stop'); await runToolsPackJson('start'); await waitForHealthyDesktop();
+        // Gate navigation until an observer is installed, so automatic scoped
+        // lookup/cleanup on mount is recorded instead of inferred afterward.
+        await inspectMokina('(()=>{location.href="/";return true})()');
+        await waitFor(async () => { expect(await inspectMokina<boolean>('Boolean(document.querySelector("[data-testid=home-hero-submit]"))')).toBe(true); }, 30_000);
+        await inspectMokina(installMokinaInterruptionExpression(0, source.projectId));
+        await inspectMokina(`(()=>{history.pushState({},'', '/projects/${scope.projectId}/conversations/${scope.conversationId}');window.dispatchEvent(new PopStateEvent('popstate'));return true})()`);
+        await waitFor(async () => {
+          const pending = await inspectMokina<{ ok: boolean; found: boolean }>(`window.__od__.recoveryStore.get(${JSON.stringify(scope.bindings[0]!.key)})`);
+          expect(pending.ok && !pending.found).toBe(true);
+        }, 45_000);
+        const after = await inspectMokina<{ runs: Array<{ id: string; clientRequestId: string }>; requests: Array<{ path: string; method: string }> }>(`(async()=>{
+          const r=await fetch('/api/runs?projectId=${scope.projectId}&conversationId=${scope.conversationId}');return {...await r.json(),requests:window.__mokinaFault.requests};
+        })()`);
+        expect(after.runs.filter(run => run.clientRequestId === request.clientRequestId).map(run => run.id)).toEqual(before.runs.filter(run => run.clientRequestId === request.clientRequestId).map(run => run.id));
+        expect(after.requests.filter(r => r.path === '/api/runs' && r.method === 'POST')).toEqual([]);
+        await report.json(`mokina/interruption-${point}-recovered.json`, after);
+      } finally { await fault?.close(); }
+    }, 180_000);
+  }
+});
+
+async function inspectMokina<T = unknown>(expression: string): Promise<T> {
+  const result = await runToolsPackJson<MacInspectResult>('inspect', ['--expr', expression]);
+  expect(result.eval?.ok, result.eval?.error).toBe(true);
+  return result.eval?.value as T;
+}
+async function openMokinaSource(source: { projectId: string; conversationId: string }): Promise<void> {
+  await inspectMokina(`(() => {location.href='/projects/${source.projectId}/conversations/${source.conversationId}/files/plan.html';return true})()`);
+  await waitFor(async () => { expect(await inspectMokina<boolean>(`Boolean(document.querySelector('[data-testid="file-workspace"]'))`)).toBe(true); }, 45_000);
+}
 
 macDescribe('packaged mac runtime smoke', () => {
   let installedAppPath: string | null = null;

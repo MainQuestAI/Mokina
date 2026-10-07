@@ -26,10 +26,14 @@ Overrides 移除条件：owner 自身依赖正常解析至安全版本，删除�
 
 ## 本地检查与 CI
 
-Node 24.15.0 / pnpm 10.33.2。guard、完整 typecheck 通过；类型检查和 i18n 首次沙箱运行的 tsx IPC EPERM 单列为环境限制，不算产品红证据。Web 107、daemon 27、真实 watcher 14、浏览器六项及真实 Electron PDF 一项通过。下载 owner、打包资源和 pin 回归单列日志；新增 owner 和真实捕获集合已进入根 CI。新 head 远端 CI 尚待运行，不借用原 success。
+Node 24.15.0 / pnpm 10.33.2。guard、完整 typecheck 通过；类型检查和 i18n 首次沙箱运行的 tsx IPC EPERM 单列为环境限制，不算产品红证据。Web 107、daemon 27、真实 watcher 14、浏览器六项及真实 Electron PDF 一项通过。下载 owner、打包资源和 pin 回归单列日志；新增 owner 和真实捕获集合已进入根 CI。源码 `cc0b0ba8f65c54ab7fcbc698160a6bbb4f695087` 的 [CI run 37591494788](https://github.com/MainQuestAI/Mokina/actions/runs/37591494788) 全部成功。
 
 ## 原生和人工门槛
 
-当前十个原生断点仍待实际命中。已只读确认宿主 bridge 不可覆写、recoveryStore 冻结；测试不得伪造持久 journal 或放宽 IPC。将沿既有 tools-pack 安装/启动/inspect/停止入口控制真实请求和隔离存储错误，逐项保留准备、命中、持久状态、中断、重开证据。
+已通过 tools-pack 原入口在源码目录外安装 local.8。十个原生断点全部实际命中：1–8 恢复通过；9/10 失败。请求丢失先读取成功响应并核对服务端副作用；存储故障锁定隔离 profile 中已真实保存的记录，不伪造 journal、不修改宿主 bridge 或 IPC 权限。完整命中与持久化记录保存在私有 QA 根的 native-report/mokina；响应原文不进入公开证据。
 
-local.8 尚未构建和验收。真实完整旧 profile、授权品牌 A/B、应用外 HTML/ZIP、中文人工输入、专业评审与用户签收继续待验；单业务窗口宿主能力缺口不算双窗口通过。D1 未复现按用户意见暂时跳过，保持未关闭。
+local.8 由上述固定源码构建，DMG SHA-256 `6f3f89a59691a82d7c722e6c3438836385409b2b228d24685708672bb7a6afa0`，ZIP `0afa030c15745c418bc4ca718720674ef287eba77cab3ca8aeb75d1b42cdad49`。安装资源清单 15,301 文件 / 746,078,443 字节 / 11 symlink，清单摘要 `1aef29fbe361927a1641cfd9606b1e2a55ae1328294f2277fcf262474730dd6e`。此包因原生 9/10 失败不计为完整验收通过，保留包、profile 和失败日志。
+
+根因：ProjectView 保存发送回执时仅保存 snapshotId，漏存已存在的 generation 字段。重开通过原 requestId 查到唯一 run，但保守清理无法证明绑定归属，清掉发送记录后仍留下已提交的 pending。实际组件新增重挂对账回归也在相同字段缺失处失败；补齐原字段后，组件/绑定/发送状态 63 项通过。没有变更公开接口或恢复 schema，也不授权旧无 generation 回执认领新绑定。运行代码变化必须递增为 local.9，不拼接 local.8 的验收结果。
+
+真实完整旧 profile、授权品牌 A/B、应用外 HTML/ZIP、中文人工输入、专业评审与用户签收继续待验；单业务窗口宿主能力缺口不算双窗口通过。D1 未复现按用户意见暂时跳过，保持未关闭。

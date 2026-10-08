@@ -1,0 +1,15 @@
+{
+  "status": "原 A 第二轮精修候选，待用户最终确认",
+  "source": "/Users/dingcheng/.gstack/projects/MainQuestAI-Mokina/designs/abstract-logo-20261005/svg-A-refined",
+  "files": {
+    "mokina-horizontal-black.svg": {
+      "sha256": "d152f2e64a9ed8f25c09f2a13ce5ff6ba07c9ca953361934516c1358e0475ad9"
+    },
+    "mokina-icon-black.svg": {
+      "sha256": "857b1c745e40f2f3f01190ecf6f2ac11e1f0933f6b0a0dc2269c55c6c83d2836"
+    },
+    "mokina-icon-white.svg": {
+      "sha256": "1dc5a1c50705e1594b15ab4b2c9fcc959d2ed8e443199406bf15636b1d2ab710"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mokina · 营销工作空间</title>
+  <link rel="icon" type="image/svg+xml" href="assets/mokina-brand/mokina-icon-black.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/svg+xml" href="assets/mokina-brand/mokina-icon-white.svg" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="glass.css">
+  <link rel="stylesheet" href="stage-two.css">
+  <link rel="stylesheet" href="design-system/mokina-system.css?v=composer-20260928">
+
+  <style id="workspace-composer-refinement">
+    /* Local refinement: only the marked plan workspace composer and its children. */
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"] {
+      padding:12px;
+      border-radius:var(--mk-radius);
+      background:transparent;
+      border:1px solid var(--mk-edge);
+      box-shadow:var(--mk-shadow);
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"]>.glass-face {
+      /* Keep the lens band free of a second blurred white surface. */
+      inset:9px;
+      border-radius:calc(var(--mk-radius) - 9px);
+      background:var(--mk-glass-fill);
+      backdrop-filter:blur(var(--mk-control-blur)) saturate(1.02);
+      -webkit-backdrop-filter:blur(var(--mk-control-blur)) saturate(1.02);
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"]>.glass-rim {
+      background:radial-gradient(ellipse 60% 55% at var(--light-x) var(--light-y),oklch(1 0 0 / .28),transparent 80%);
+      /* Existing geometry-bound backdrop displacement and mask remain active. */
+      box-shadow:none;
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"] #project-draft {
+      display:block;width:100%;padding:4px 4px 8px;
+      border:0;border-radius:var(--mk-control-radius);
+      background:transparent;color:var(--mk-ink);
+      font:400 15px/1.7 var(--font-body);
+      caret-color:var(--mk-action);
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"] #project-draft::placeholder {
+      color:var(--mk-secondary);opacity:1;
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"]:focus-within {
+      border-color:var(--mk-action);
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"] #project-draft:focus-visible {
+      outline:2px solid var(--mk-action);outline-offset:-2px;
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"] .composer-foot {
+      gap:8px;padding:8px 0 0;border:0;background:transparent;
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"] .composer-foot .small {
+      color:var(--mk-secondary);font-size:13px;line-height:1.7;
+    }
+    .material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"] .composer-foot .btn {
+      border-radius:var(--mk-control-radius);box-shadow:none;
+    }
+  </style>
+
+  <style id="home-clean-background">
+    /* Home only: clean canvas, without ambient gray patches. */
+    body:has([data-od-id="p01-home"]) { background:var(--soft); }
+    .shell:has([data-od-id="p01-home"]) {
+      background:var(--surface);
+      box-shadow:var(--mk-shadow);
+    }
+    .shell:has([data-od-id="p01-home"]) .sidebar.glass-plane {
+      background:transparent;
+      box-shadow:var(--mk-shadow);
+    }
+    .shell:has([data-od-id="p01-home"]) .sidebar.glass-plane>.glass-face {
+      background:var(--mk-glass-fill);
+    }
+  </style>
+  <link rel="stylesheet" href="design-system/liquid-workspace.css?v=20261004">
+  <link rel="stylesheet" href="design-system/liquid-pages.css?v=composer-20261007">
+</head>
+<body>
+  <svg aria-hidden="true" class="glass-filter-defs" width="0" height="0"><defs>
+    <filter id="glass-toolbar-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".013 .045" numOctaves="1" seed="6" result="field"/><feGaussianBlur in="SourceGraphic" stdDeviation=".55" edgeMode="duplicate" result="extended"/><feDisplacementMap in="extended" in2="field" scale="15" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <filter id="glass-sidebar-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".013 .045" numOctaves="1" seed="6" result="field"/><feGaussianBlur in="SourceGraphic" stdDeviation=".55" edgeMode="duplicate" result="extended"/><feDisplacementMap in="extended" in2="field" scale="8" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <filter id="glass-menu-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".013 .045" numOctaves="1" seed="6" result="field"/><feGaussianBlur in="SourceGraphic" stdDeviation=".55" edgeMode="duplicate" result="extended"/><feDisplacementMap in="extended" in2="field" scale="10" xChannelSelector="R" yChannelSelector="G"/></filter>
+  </defs></svg>
+  <div id="app" data-od-id="app-root"></div>
+  <div id="overlay-root"></div>
+  <script src="glass-material.js?v=composer-20260928" defer></script>
+  <script src="design-system/mokina-icons.js" defer></script>
+  <script src="design-system/mokina-layout.js?v=composer-20260928" defer></script>
+  <script src="app.js?v=composer-20261007" defer></script>
+</body>
+</html>

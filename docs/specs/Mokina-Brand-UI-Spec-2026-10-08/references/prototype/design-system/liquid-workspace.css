@@ -1,0 +1,113 @@
+/* Liquid Glass · 方案工作区。色值来自已指定色板；光学数值仅为 Web 实现。 */
+body.material-stage-one {
+ --bg:oklch(1 0 0);--surface:oklch(1 0 0);--fg:oklch(0 0 0);
+ --muted:oklch(.44 0 0);--border:oklch(0.891431 0.000000 0.0000);--soft:oklch(0.970151 0.000000 0.0000);--wash:oklch(.94 0 0);
+ --accent:oklch(0.669028 0.180780 251.8396);--accent-deep:oklch(0.562923 0.193329 256.1557);--accent-strong:oklch(.46 .17 257);
+ --mk-ink:var(--fg);--mk-secondary:var(--muted);--mk-paper:var(--surface);--mk-line:var(--border);--mk-action:var(--accent-deep);
+ --mk-selection:oklch(1 0 0 / .88);--mk-glass-fill:oklch(1 0 0 / .38);--mk-control-fill:oklch(1 0 0 / .64);
+ --mk-edge:oklch(1 0 0 / .85);--mk-shadow:0 4px 18px oklch(0 0 0 / .055);--mk-radius:20px;
+ --side:192px;--font-display:"SF Pro SC",system-ui,-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+ --font-body:var(--font-display);--font-mono:"SFMono-Regular",Menlo,Consolas,monospace;
+ --success:var(--fg);--success-wash:var(--soft);--warning:var(--fg);--warning-wash:var(--soft);--danger:var(--fg);--danger-wash:var(--soft);
+ --warning-bg:var(--soft);--warning-line:var(--border);--danger-bg:var(--soft);--danger-line:var(--border);--success-bg:var(--soft);--success-line:var(--border);
+ --accent-wash:var(--soft);--accent-glow:none;--hover-wash:oklch(1 0 0 / .78);--btn-active:oklch(.9 0 0);--btn-hover-line:oklch(.6 0 0);
+ background:var(--soft);
+}
+.material-stage-one .shell {width:100%;height:100dvh;margin:0;padding:16px;gap:16px;border:0;border-radius:0;box-shadow:none;background:var(--soft);min-height:0}
+.material-stage-one .sidebar.glass-plane {padding:28px 8px 16px;border-radius:24px;box-shadow:var(--mk-shadow);background:transparent}
+.material-stage-one .sidebar .brand {font-size:26px;letter-spacing:-.035em;margin:0 16px 34px}
+.material-stage-one .side-title {padding:30px 12px 12px;font-weight:500;letter-spacing:0}
+.material-stage-one .side-button {border-radius:12px;font-size:14px;gap:10px}
+.material-stage-one .recent-item {padding:13px 10px;border-radius:12px;gap:8px}
+.material-stage-one .recent-item strong {font-size:13px;line-height:1.55;font-weight:600}
+.material-stage-one .recent-item small {font-size:12px;line-height:1.6;margin-top:4px}
+.material-stage-one .recent-item .icon {width:16px;height:16px;margin-top:3px}
+.material-stage-one .side-footer {border:0;padding-top:24px}
+.material-stage-one .prototype-label {font-size:11px;line-height:1.7}
+.material-stage-one .stage {border-radius:0}
+.material-stage-one .work {grid-template-columns:minmax(316px,var(--collab)) 16px minmax(0,1fr);gap:0}
+.material-stage-one .collab {border-radius:20px;background:var(--surface);overflow:visible;min-height:0}
+.material-stage-one .collab-head {padding:22px 20px 18px;position:relative;z-index:8}
+.material-stage-one .collab-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.material-stage-one .collab-head h1 {font-size:18px;line-height:1.4;margin:0}
+.material-stage-one .collab-head .source-link {font-size:12px;line-height:1.7;gap:4px 8px}
+.material-stage-one .collab-head .source-link button {color:var(--fg);text-decoration-color:var(--border);text-underline-offset:4px}
+.material-stage-one .collab-head .source-link button:hover {text-decoration-color:var(--fg)}
+.material-stage-one .badge {font-size:11px;font-weight:500;color:var(--fg);background:var(--soft)}
+.material-stage-one .collab-body {padding:26px 20px 180px;overscroll-behavior:contain}
+.material-stage-one .chat-line {gap:10px;margin-bottom:30px}
+.material-stage-one .chat-line>div {min-width:0}
+.material-stage-one .avatar {width:26px;height:26px;font-size:11px;background:var(--soft);color:var(--fg)}
+.material-stage-one .avatar.mokina {background:var(--fg);color:var(--surface)}
+.material-stage-one .chat-meta {font-size:12px;line-height:1.7;margin-bottom:8px}
+.material-stage-one .chat-meta time {font-size:11px}
+.material-stage-one .chat-bubble {font-size:14px;line-height:1.8;overflow-wrap:anywhere}
+.material-stage-one .chat-line:first-child .chat-bubble {background:var(--soft);padding:12px;border-radius:4px 14px 14px 14px}
+.material-stage-one .collab-body details {margin-top:28px!important}
+.material-stage-one .collab-body summary {font-weight:500;color:var(--muted)}
+.material-stage-one .collab-compose {padding:12px}
+.material-stage-one [data-od-id="p03-workspace"] [data-od-id="collaboration-composer"] {border-radius:20px;padding:14px;background:transparent}
+.material-stage-one [data-od-id="p03-workspace"] #project-draft {font-size:14px;min-height:72px;max-height:140px}
+.material-stage-one .composer-foot .small {font-size:11px!important}
+.material-stage-one .composer-foot .btn {border-radius:50%;width:44px;height:44px;padding:0}
+.material-stage-one .resize-handle:after {left:6px;width:3px;height:36px;background:var(--border)}
+.material-stage-one .resize-handle:hover {background:oklch(.91 0 0);border-radius:8px}
+.material-stage-one .result {border-radius:20px;background:var(--surface)}
+.material-stage-one .result-toolbar.glass-plane {position:sticky;top:12px;left:auto;right:auto;margin:12px 12px 0;padding:16px 18px;min-height:0;display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px;border-radius:18px;z-index:5}
+.material-stage-one .result-toolbar>div:first-of-type {flex:1 1 160px;min-width:0}
+.material-stage-one .result-toolbar .title {font-size:17px;line-height:1.4;font-weight:650}
+.material-stage-one .result-toolbar .subtitle {font-size:12px;line-height:1.6;margin-top:4px}
+.material-stage-one .toolbar-actions {gap:4px;display:flex;flex-wrap:wrap;width:auto}
+.material-stage-one .toolbar-actions .btn {padding:8px 12px;min-height:44px;font-size:13px;font-weight:500;flex:0 1 auto;border-radius:10px}
+.material-stage-one .toolbar-actions .btn:first-child {background:var(--fg);color:var(--surface)}
+.material-stage-one .toolbar-actions .btn:first-child:hover {background:oklch(.23 0 0);color:var(--surface)}
+.material-stage-one .toolbar-actions .btn .icon {width:16px;height:16px}
+.material-stage-one .result-tabs {padding:20px 32px 0;gap:24px;flex-wrap:wrap;overflow:visible}
+.material-stage-one .result-tabs button {font-size:12px;min-height:44px;padding-bottom:12px;color:var(--muted)}
+.material-stage-one .result-tabs button:hover,.material-stage-one .result-tabs button.active {color:var(--fg)}
+.material-stage-one .result-tabs button.active {border-color:var(--fg)}
+.material-stage-one .result-content {padding:30px clamp(24px,3vw,52px) 72px;min-height:0}
+.material-stage-one .document {max-width:760px}
+.material-stage-one .document .document-identity {font-size:12px;letter-spacing:0;font-weight:400;margin-bottom:16px}
+.material-stage-one .document h1 {font-size:clamp(25px,2.3vw,34px);line-height:1.4;letter-spacing:0;margin-bottom:20px}
+.material-stage-one .document .lead {font-size:16px;font-weight:400;line-height:1.8;margin-bottom:32px;color:var(--fg)}
+.material-stage-one .document h2 {font-size:19px;line-height:1.4;margin:32px 0 14px;padding-top:24px;border-top:1px solid var(--border)}
+.material-stage-one .document p,.material-stage-one .document li {font-size:15px;line-height:1.8}
+.material-stage-one .document .note {font-size:12px;color:var(--muted);margin-top:36px}
+.material-stage-one .document td,.material-stage-one .document th {font-size:13px;padding:12px;line-height:1.7;overflow-wrap:anywhere}
+.material-stage-one .btn:hover {color:var(--fg);background:oklch(.91 0 0)}
+.material-stage-one .btn.primary:hover {color:var(--surface);background:var(--accent-strong)}
+.material-stage-one .workspace-options {position:relative;border:0;padding:0;background:none}
+.material-stage-one .workspace-options summary {display:grid;place-items:center;list-style:none;width:44px;height:44px;border-radius:50%;cursor:pointer;background:var(--soft)}
+.material-stage-one .workspace-options summary::-webkit-details-marker {display:none}
+.material-stage-one .workspace-options summary:hover {background:oklch(.9 0 0);color:var(--fg)}
+.material-stage-one .workspace-menu {position:absolute;right:0;top:52px;z-index:12;min-width:200px;padding:6px;border-radius:16px;background:oklch(1 0 0 / .84);box-shadow:0 12px 32px oklch(0 0 0 / .13)}
+.material-stage-one .workspace-menu .btn {width:100%;min-height:44px;justify-content:flex-start;font-weight:400;font-size:13px}
+.material-stage-one .workspace-menu>.glass-face {background:oklch(1 0 0 / .6)}
+.material-stage-one :is(button,a,textarea,input,summary,[tabindex]):focus-visible {outline:2px solid var(--accent-deep);outline-offset:3px}
+.material-stage-one .revision-main {border-radius:20px;overflow:hidden}
+.material-stage-one .revision-header h1 {font-size:24px}
+body.reduce-transparency.material-stage-one .glass-plane>.glass-face {background:var(--surface)}
+@media(prefers-reduced-transparency:reduce){.material-stage-one .glass-plane>.glass-face{background:var(--surface)}}
+@media(prefers-contrast:more){body.material-stage-one{--muted:var(--fg);--border:oklch(.44 0 0);--mk-glass-fill:var(--surface);--mk-control-fill:var(--surface)}.material-stage-one .glass-plane>.glass-rim{display:none}}
+@media(max-width:1200px){.material-stage-one .shell{--side:168px;padding:10px;gap:10px}.material-stage-one .work{grid-template-columns:minmax(316px,var(--collab)) 10px minmax(0,1fr)}.material-stage-one .recent-item strong{font-size:12px}.material-stage-one .result-tabs{padding-left:24px;gap:18px}.material-stage-one .toolbar-actions .btn{padding:8px}.material-stage-one .result-toolbar.glass-plane{padding:14px}}
+@media(max-width:960px) and (min-width:761px){.material-stage-one .shell{--side:64px}.material-stage-one .sidebar .brand,.material-stage-one .sidebar .side-title,.material-stage-one .sidebar .recent-list,.material-stage-one .sidebar .side-footer,.material-stage-one .side-button span{display:none}.material-stage-one .side-button{padding:10px;justify-content:center}.material-stage-one .sidebar.glass-plane{padding:12px 4px}}
+@media(max-width:760px){.material-stage-one .shell{display:block;padding:8px;height:100dvh}.material-stage-one .sidebar.glass-plane{display:none}.material-stage-one .stage{height:100%;overflow:auto}.material-stage-one .work{display:flex;flex-direction:column;height:auto;overflow:visible;gap:12px}.material-stage-one .result{order:0;overflow:visible;min-height:70dvh}.material-stage-one .collab{order:1;display:flex;min-height:460px;overflow:hidden}.material-stage-one .collab-body{max-height:430px}.material-stage-one .resize-handle{display:none}.material-stage-one .result-scroll{overflow:visible}.material-stage-one .result-toolbar.glass-plane{top:8px}.material-stage-one .result-content{padding:28px 20px 40px}.material-stage-one .result-tabs{padding:16px 20px 0;gap:16px}.material-stage-one .document h1{font-size:26px}.material-stage-one .document table{min-width:400px}.material-stage-one .workspace-menu{right:0;top:52px}.material-stage-one .revision-main{order:0}.material-stage-one .work.revision-work.is-wide>.collab{display:none}}
+
+/* Let the reading flex item shrink to its actual column, including long tables. */
+.material-stage-one .result-scroll{min-width:0;width:100%}
+.material-stage-one .result-content,.material-stage-one .document{min-width:0;max-width:100%}
+.material-stage-one .document{width:min(100%,760px)}
+/* Keep the explicit full-width revision mode above responsive grid rules. */
+.material-stage-one .revision-work.is-wide{grid-template-columns:minmax(0,1fr)}
+
+/* Refinement: neutral optics and reliable foreground contrast. */
+.material-stage-one .glass-plane>.glass-rim{border-color:oklch(1 0 0 / .72)}
+.material-stage-one .side-button:hover,.material-stage-one .recent-item:hover{color:var(--fg);background:oklch(.93 0 0)}
+.material-stage-one .workspace-options[open]>summary{background:oklch(.9 0 0);color:var(--fg)}
+.material-stage-one .workspace-menu .btn:hover{background:oklch(.9 0 0);color:var(--fg)}
+.material-stage-one .document h1,.material-stage-one .document h2{overflow-wrap:anywhere}
+.material-stage-one .collab-head{flex-shrink:0}
+@media(max-width:760px){.material-stage-one .result-toolbar>div:first-of-type{flex-basis:100%}.material-stage-one .toolbar-actions{gap:2px}.material-stage-one .toolbar-actions .btn{padding:8px;font-size:12px}.material-stage-one .collab{height:540px;min-height:0;flex:none}.material-stage-one .collab-body{max-height:none}.material-stage-one .document td,.material-stage-one .document th{font-size:13px}}
+.material-stage-one .btn{min-height:44px}
+.material-stage-one .collab-head .source-link button{min-height:44px}

@@ -1,0 +1,62 @@
+/* Mokina design system v0.1. Scoped workspace integration, no business-state changes. */
+:root{
+ --mk-ink:oklch(.18 .02 260);--mk-secondary:oklch(.43 .025 255);
+ --mk-paper:oklch(.995 .002 255);--mk-line:oklch(.89 .012 255);
+ --mk-action:oklch(.43 .12 210);--mk-selection:oklch(.92 .004 255 / .65);
+ --mk-glass-fill:oklch(1 0 0 / .32);--mk-control-fill:oklch(.995 .002 255 / .58);--mk-control-blur:7px;--mk-edge:oklch(1 0 0 / .52);
+ --mk-shadow:0 5px 16px oklch(.24 .01 255 / .075);
+ --mk-radius:16px;--mk-control-radius:8px;--mk-target:44px;
+ --mk-icon-stroke:1.65;--mk-duration:160ms;
+}
+.icon{stroke-width:var(--mk-icon-stroke);width:20px;height:20px;stroke-linecap:round;stroke-linejoin:round}
+.btn .icon,.toolbar-actions .btn .icon{width:20px;height:20px}
+.material-stage-one .shell{padding:12px;gap:12px;background:linear-gradient(115deg,oklch(.94 .003 255),oklch(.985 .002 255) 48%,oklch(.955 .003 255));min-height:0}
+.material-stage-one .sidebar.glass-plane{margin:0;border-radius:var(--mk-radius);border-color:var(--mk-edge);box-shadow:var(--mk-shadow);padding:22px 10px 14px}
+.material-stage-one .sidebar .window-dots{display:none}
+.material-stage-one .sidebar .brand{margin-bottom:26px}
+.material-stage-one .sidebar.glass-plane>.glass-face{background:var(--mk-glass-fill)}
+.material-stage-one .side-button.active,.material-stage-one .recent-item.active{background:var(--mk-selection)}
+.material-stage-one .side-button.active:before,.material-stage-one .recent-item.active:before{display:none}
+.material-stage-one .stage{border-radius:var(--mk-radius)}
+.material-stage-one .work{gap:0;background:transparent}
+.material-stage-one .collab{position:relative;border:0;background:oklch(.982 .002 255);border-radius:var(--mk-radius);overflow:hidden}
+.material-stage-one .collab-head{padding:22px 22px 16px;border-color:var(--mk-line)}
+.material-stage-one .collab-head h1{font-size:20px;font-weight:650}
+.material-stage-one .collab-body{min-height:0;padding:24px 22px 152px;scroll-padding-bottom:var(--composer-clearance,176px)}
+.material-stage-one .chat-bubble{background:transparent;padding:0;border-radius:0;font-size:15px;line-height:1.7}
+.material-stage-one .chat-line:first-child .chat-bubble{background:oklch(.948 .004 255);padding:12px 14px;border-radius:12px}
+.material-stage-one .avatar.mokina{background:oklch(.91 .004 255);color:var(--mk-ink)}
+.material-stage-one .collab-body details{border:0;background:transparent;padding:0}
+.material-stage-one .collab-body summary{min-height:44px;align-content:center}
+.material-stage-one .collab-compose{position:absolute;bottom:0;left:0;right:0;padding:12px;z-index:3;pointer-events:none}
+.material-stage-one .collab-compose .composer{pointer-events:auto;position:relative;border-radius:var(--mk-radius);padding:14px;background:oklch(1 0 0 / .08);backdrop-filter:none;-webkit-backdrop-filter:none;border:1px solid var(--mk-edge);box-shadow:var(--mk-shadow)}
+.material-stage-one .collab-compose textarea{background:transparent;resize:vertical;max-height:160px;font-size:15px}
+.material-stage-one .composer-foot{border:0;padding-top:8px}
+.material-stage-one .collab-compose .btn{min-width:44px;min-height:44px;box-shadow:none}
+.material-stage-one .resize-handle{background:transparent}
+.material-stage-one .result{border-radius:var(--mk-radius);background:var(--mk-paper)}
+.material-stage-one .result-toolbar.glass-plane{top:10px;left:10px;right:10px;border-radius:var(--mk-radius);box-shadow:var(--mk-shadow);border-color:var(--mk-edge)}
+.material-stage-one .result-toolbar .title{font-weight:650}
+.material-stage-one .result-toolbar .btn{font-weight:500;border-radius:var(--mk-control-radius)}
+.material-stage-one .result-content{padding-left:clamp(24px,3vw,48px);padding-right:clamp(24px,3vw,48px)}
+.material-stage-one :is(button,a,textarea,input,summary):focus-visible{outline:2px solid var(--mk-action);outline-offset:3px}
+body.reduce-transparency.material-stage-one .collab-compose .composer{background:var(--mk-paper);backdrop-filter:none;-webkit-backdrop-filter:none;border-color:var(--mk-line)}
+@media(prefers-reduced-transparency:reduce){.material-stage-one .collab-compose .composer{background:var(--mk-paper);backdrop-filter:none;-webkit-backdrop-filter:none;border-color:var(--mk-line)}}
+@media(max-width:1100px){.material-stage-one .result-toolbar.glass-plane{gap:6px}.material-stage-one .result-tabs{padding-top:154px}}
+@media(max-width:760px){.material-stage-one .shell{padding:6px;gap:6px}.material-stage-one .sidebar.glass-plane{padding:12px 4px}.material-stage-one .result-toolbar .toolbar-actions{flex-wrap:wrap}}
+/* Finishing: one edge highlight, no second opaque inner frame. */
+.material-stage-one .glass-plane>.glass-rim{background:radial-gradient(ellipse 38% 40% at var(--light-x) var(--light-y),oklch(1 0 0 / .12),transparent 85%)}
+.material-stage-one .report-lead,.material-stage-one .recent-item small{text-wrap:pretty}
+.material-stage-one textarea::placeholder{color:var(--mk-secondary);opacity:1}
+
+/* Composer and result controls are one optical variant; only foreground is editable. */
+.material-stage-one :is(.collab-compose .composer,.result-toolbar).glass-plane>.glass-face{
+ background:var(--mk-control-fill);backdrop-filter:blur(var(--mk-control-blur)) saturate(1.02);
+ -webkit-backdrop-filter:blur(var(--mk-control-blur)) saturate(1.02);
+}
+.material-stage-one .collab-compose .composer>.sr-only{position:absolute}
+.material-stage-one .collab-compose .composer textarea:focus-visible{outline-offset:4px}
+.material-stage-one .collab-compose .composer:focus-within{border-color:var(--mk-line)}
+.material-stage-one .collab-compose .composer .btn{backdrop-filter:none;-webkit-backdrop-filter:none}
+.material-stage-one .glass-plane:hover>.glass-rim{box-shadow:none}
+.material-stage-one .glass-plane:active>.glass-rim{opacity:.74}

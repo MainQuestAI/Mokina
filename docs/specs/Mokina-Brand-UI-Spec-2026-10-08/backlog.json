@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "baseline": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
   "packages": [
     {
       "id": "S01",
@@ -202,5 +202,9 @@
         "S07-AC02"
       ]
     }
-  ]
+  ],
+  "functional_baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "spec_revision": "1.1",
+  "development_version": "0.0.3",
+  "baseline_pr": 12
 }

@@ -1,6 +1,6 @@
 {
   "captured": "2026-10-08",
-  "remote_main": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "remote_main": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
   "inspected_head": "8243d0fd2dc3184c88a02f484c451686edcee855",
   "pr": "https://github.com/MainQuestAI/Mokina/pull/11",
   "pr_state": "MERGED",
@@ -85,5 +85,29 @@
     "open-design/apps/web/src/runtime/mokina/continuation-recovery.ts",
     "open-design/apps/web/src/runtime/persistence/mokina-recovery-store.ts",
     "open-design/apps/web/src/runtime/exports.ts"
-  ]
+  ],
+  "original_review": {
+    "captured": "2026-10-08",
+    "remote_main": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+    "inspected_head": "8243d0fd2dc3184c88a02f484c451686edcee855",
+    "pr": "https://github.com/MainQuestAI/Mokina/pull/11",
+    "pr_state": "MERGED",
+    "ci": "SUCCESS per live gh query; not rerun"
+  },
+  "development_baseline": {
+    "version": "0.0.3",
+    "main_sha": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
+    "branch": "codex/mokina-v0.0.3-brand-ui",
+    "merge_pr": "https://github.com/MainQuestAI/Mokina/pull/12",
+    "merge_time_utc": "2026-10-08T08:10:14Z",
+    "ci": "https://github.com/MainQuestAI/Mokina/actions/runs/37746517804",
+    "ci_head": "810ca2e65b370896f486f5d198e0804e02024051",
+    "ci_conclusion": "success",
+    "same_git_tree_as_passed_pr_head": true,
+    "functional_baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+    "functional_source_changed": false,
+    "target_files_verified": 41,
+    "acceptance_status": "19 not_run",
+    "implementation_started": false
+  }
 }

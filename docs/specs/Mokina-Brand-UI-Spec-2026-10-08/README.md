@@ -1,6 +1,6 @@
 # Mokina 品牌与 UI 开发 Spec 包
 
-2026-10-08 · v1 · 状态：方案与开发规格已整理，未实施，未取得视觉发布签收。
+2026-10-08 · v1.1 · 状态：v0.0.3 开发基线已固定，方案与开发规格已整理，未实施，未取得视觉发布签收。
 
 以已合并 PR11 为功能基线，沿用原 A 抽象 Logo 与中性玻璃方向，更新首页、对话、成果、资料、修订、恢复、绘画和桌面身份。每包可独立开发和审查；本包不授权提交、发布或修改用户内容。
 
@@ -23,6 +23,15 @@
 开发对象是 `open-design/` 下的真实应用；仓库根的 marketing-desktop 演示工程不是迁移目标。正式实施前读取各目标目录 AGENTS.md，并重新核对 main 是否已前移。不得直接在当前旧功能分支上堆叠本次换新。
 
 本包可用性校验：`python3 docs/specs/Mokina-Brand-UI-Spec-2026-10-08/scripts/validate_spec.py`。此命令只检查规格完整性，不验证产品。
+
+
+## v0.0.3 开发基线复核
+
+PR [#12](https://github.com/MainQuestAI/Mokina/pull/12) 的最终 head `810ca2e6` 已通过 [CI 37746517804](https://github.com/MainQuestAI/Mokina/actions/runs/37746517804)，合并后的 main 为 `52219d8c8f71460d3776a96b9ebe84fa9ce65501`。它与已检查 PR head 的 Git tree 完全一致；相对 PR11 功能基线 `9a6ba583df35c01f6b34a41fdbb8d414377ba513`，仅增加规格、参照及治理文档，没有产品源码或资源变化。
+
+`backlog.json.baseline` 已更新为合并后的 main；PR11 原始源码审查身份保存在 `sources.json.original_review`，不追溯改写历史。后续开发分支为 `codex/mokina-v0.0.3-brand-ui`；实施时仍复核 main 前移并记录实际 base。v0.0.3 在此表示源码开发基线，安装候选和正式发布身份仍需各自验证。
+
+复核确认41个现有目标文件均可定位，七包依赖、19条AC、B01–B20覆盖及现有行为保护要求仍适用。无需重开已确认设计决策；S01–S07保持not_started，19条AC保持not_run。v1.1只同步开发基线、历史身份与执行说明，不构成产品实施或视觉签收。ZIP与SHA256SUMS随本版重新生成。
 
 
 ## 工程审查范围记录

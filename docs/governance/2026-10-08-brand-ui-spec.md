@@ -48,3 +48,7 @@ git fetch output/branch-governance-2026-10-08/merged-branches.bundle \
 包级脚本通过：7 包、19 条 AC、B01–B20 覆盖、依赖无环、8 个候选 SVG 可解析、包内文件哈希一致。ZIP 与目录全部文件逐字节一致。提交前检查没有产品源码变更；原未跟踪文件逐文件哈希用于核对内容保留。
 
 19 条 AC 全部仍为 `not_run`。设计审查完成指规格决策完成；工程审查的 11 项实施/验证工作已映射、0 待决，仍为 `ENG NOT CLEARED`。品牌候选尚待最终视觉签收。本次提交不等于实现、浏览器/native 验收、安装包签收或发布完成；新 PR 的远端 CI 结果需独立查看。
+
+## 后续文件归档
+
+用户随后授权整理未跟踪文件并再次提交。历史证据与本轮恢复 bundle 已移至仓库同级的 `Mokina-archives/2026-10-08-history-closeout/payload/`，原 `output/` 路径保留本地兼容链接，因此上文恢复命令仍可用。Git 内正式结论、完整文件清单及恢复覆盖边界见[历史证据归档记录](2026-10-08-evidence-archive.md)。这次归档没有再次删除分支或处理其他 worktree。

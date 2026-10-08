@@ -1,4 +1,4 @@
-import type { ProjectMaterialExtraction } from '@open-design/contracts';
+import { joinMokinaExcerpt, type ProjectMaterialExtraction } from '@open-design/contracts';
 
 /** Pure grouping/rendering helpers shared by the material picker surfaces. */
 
@@ -30,13 +30,18 @@ export function groupMokinaMaterialSections(materials: ProjectMaterialExtraction
     let previousId = '';
     let part = 0;
     let current: MokinaSelectionGroup | null = null;
-    for (const section of material.sections) {
+    for (const [sourceIndex, section] of material.sections.entries()) {
       const id = section.groupId ?? section.location;
       if (id !== previousId) part = 0;
-      if (!current || id !== previousId || current.chars + section.text.length > 8_000) {
+      if (!current || id !== previousId || current.chars + section.text.length + 2 > 8_000) {
         if (id === previousId) part++;
         current = {
-          key: `${material.name}:${material.contentDigest}:${id}:${part}`,
+          // Display groups may recur after a table. Anchor each selectable range
+          // to its first source fragment, not its repeated heading/part label.
+          // Legacy extractions have no fragment IDs; their source index is only
+          // a render identity, never a migration of an ambiguous old selection.
+          key: JSON.stringify([material.name, material.contentDigest, material.parserVersion ?? null,
+            section.fragmentId ?? `legacy:${sourceIndex}`]),
           name: material.name,
           label: `${section.groupLabel ?? section.location}${part ? ` / 片段 ${part + 1}` : ''}`,
           sections: [],
@@ -45,7 +50,7 @@ export function groupMokinaMaterialSections(materials: ProjectMaterialExtraction
         groups.push(current);
       }
       current.sections.push(section);
-      current.chars += section.text.length;
+      current.chars = joinMokinaExcerpt(current.sections.map(fragment => fragment.text)).length;
       previousId = id;
     }
   }

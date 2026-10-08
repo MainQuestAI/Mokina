@@ -237,7 +237,13 @@ describe('Mokina revision recovery UI', () => {
   it('waits for the continuation identity before creating its project and keeps selections after IPC failure', async () => {
     const { fetchMock } = setupRecoveryFetch('running');
     let finish!: (ok: boolean) => void;
-    vi.spyOn(recoveryStore, 'mirrorDurableRecord').mockImplementation(() => new Promise(resolve => { finish = resolve; }));
+    const mutate = recoveryStore.mutateDurableRecord;
+    let savedIntent: Record<string, unknown> | null = null;
+    vi.spyOn(recoveryStore, 'mutateDurableRecord').mockImplementation((key, update) => {
+      if (!key.startsWith('od:continuation:')) return mutate(key, update);
+      savedIntent = JSON.parse(update(null) ?? 'null');
+      return new Promise(resolve => { finish = resolve; });
+    });
     const panel = await openRecoveryPanel();
     fireEvent.click(within(panel).getByRole('button', { name: 'Continue' }));
     const continuation = screen.getByRole('region', { name: 'Selective continuation' });
@@ -248,7 +254,8 @@ describe('Mokina revision recovery UI', () => {
     await waitFor(() => expect(finish).toBeTypeOf('function'));
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);
     await act(async () => finish(false));
-    await waitFor(() => expect(screen.getByText(/接续身份未能安全保存/)).toBeTruthy());
+    await waitFor(() => expect(screen.getByText(/接续恢复记录发生冲突或无法保存/)).toBeTruthy());
+    expect(savedIntent).toMatchObject({ schemaVersion: 3, intent: { background: '保留我的背景', sections: [{ id: 'strategy' }] } });
     expect(selected.checked).toBe(true);
     expect((within(continuation).getByRole('textbox', { name: 'Continuation background' }) as HTMLTextAreaElement).value).toBe('保留我的背景');
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);

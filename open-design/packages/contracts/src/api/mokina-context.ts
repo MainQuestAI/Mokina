@@ -54,6 +54,8 @@ export interface MokinaTextSnapshotItem extends MokinaCommonSnapshotItem {
   text: string;
   /** Digest of the frozen excerpt UTF-8 bytes; never equal to sourceDigest. */
   textDigest: MokinaSha256;
+  /** Source identity captured at continuation confirmation, not re-read at freeze time. */
+  continuationOrigin?: { source: MokinaContinuationV2['source']; sectionId: string };
 }
 
 export interface MokinaAssetSnapshotItem extends MokinaCommonSnapshotItem {
@@ -89,13 +91,20 @@ type MokinaResourceSelection = {
 
 export type MokinaContextSelection =
   | (MokinaResourceSelection & {
+      mode: 'fragments';
+      textKind: 'material-excerpt' | 'brand-rule';
+      fragmentIds: string[];
+      expectedParserVersion: string;
+    })
+  | (MokinaResourceSelection & {
       mode: 'groups';
       textKind: 'material-excerpt' | 'brand-rule';
       groupIds: string[];
     })
   | (MokinaResourceSelection & { mode: 'sections'; sectionIds: string[] })
   | (MokinaResourceSelection & { mode: 'asset'; role: MokinaAssetRole; usageNote: string })
-  | { itemId: string; mode: 'note'; sourceRef: { kind: 'user-note' }; text: string };
+  | { itemId: string; mode: 'note'; sourceRef: { kind: 'user-note' }; text: string;
+      continuationOrigin?: MokinaTextSnapshotItem['continuationOrigin'] };
 
 export interface PrepareMokinaContextRequest {
   snapshotId: string;
@@ -172,3 +181,23 @@ export const MOKINA_CONTEXT_BUDGETS = Object.freeze({
   maxSourceBytes: 10 * 1024 * 1024,
   maxDeliveryRunsPerProject: 500,
 } as const);
+
+/** The exact text frozen inside one item; separators count toward its budget. */
+export function joinMokinaExcerpt(fragments: readonly string[]): string {
+  return fragments.join('\n\n');
+}
+
+/** Shared text segmentation used by the parser and plain-text brand budget preview. */
+export function splitMokinaTextParts(text: string): Array<{ part: number; text: string }> {
+  const parts: Array<{ part: number; text: string }> = [];
+  for (let offset = 0, part = 1; offset < text.length; offset += 8_000, part++) {
+    const fragment = text.slice(offset, offset + 8_000);
+    if (fragment.trim()) parts.push({ part, text: fragment });
+  }
+  return parts;
+}
+export function mokinaContextBudgetExceeded(input: { itemCount: number; excerptUnits: number; assetBytes: number }): boolean {
+  return input.itemCount > MOKINA_CONTEXT_BUDGETS.maxItems
+    || input.excerptUnits > MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits
+    || input.assetBytes > MOKINA_CONTEXT_BUDGETS.maxAssetBytes;
+}

@@ -1,0 +1,1458 @@
+{
+  "productSourceSha": "7ced0cf93b14387b9dd3740a218aac5b4e8bdbce",
+  "verificationSha": "1527f6aad9f8f468a37cf1eab3ce976789185bd1",
+  "verificationDifference": "historical local9 documentation and evidence only; no product code/resource changes",
+  "candidate": "0.0.3-local.10",
+  "sourceCi": {
+    "url": "https://github.com/MainQuestAI/Mokina/actions/runs/37603369750",
+    "headSha": "7ced0cf93b14387b9dd3740a218aac5b4e8bdbce",
+    "conclusion": "success"
+  },
+  "packageSha256": {
+    "dmg": "c84d1a12071e5fa2ae818457eebf40f6d85ff7ddf828ea7c60d4a43273e8858b",
+    "zip": "c86ddf3c7cc5cf2ca9c046fe1a9e70a9496972dcd05ed3faf21aa850c3190de0",
+    "payload": "7acf6e7194401514d1d1c071821001d61acffe2fe76e64fd7aa1dca2a740b7e2"
+  },
+  "installedResourceInventory": {
+    "fileCount": 15295,
+    "bytes": 746041304,
+    "symlinkCount": 11,
+    "sha256": "ab5894c09cb6daf81b34f05b09da75b307067496c08c2563391ccefb3937fbfc",
+    "trackedOwners": [
+      {
+        "path": "app/node_modules/adm-zip/package.json",
+        "name": "adm-zip",
+        "version": "0.6.1"
+      },
+      {
+        "path": "app/node_modules/nanoid/package.json",
+        "name": "nanoid",
+        "version": "3.3.20"
+      },
+      {
+        "path": "app/node_modules/postcss/package.json",
+        "name": "postcss",
+        "version": "8.5.29"
+      },
+      {
+        "path": "app/node_modules/sharp/package.json",
+        "name": "sharp",
+        "version": "0.35.5"
+      },
+      {
+        "path": "open-design-web-standalone/apps/web/node_modules/next/package.json",
+        "name": "next",
+        "version": "16.3.6"
+      },
+      {
+        "path": "open-design-web-standalone/node_modules/.pnpm/next@16.3.6_@opentelemetry+api@1.9.1_@playwright+test@1.60.0_@types+node@20.19.39_react_0a424e9e8b713025368bf53160f71776/node_modules/next/package.json",
+        "name": "next",
+        "version": "16.3.6"
+      },
+      {
+        "path": "open-design-web-standalone/node_modules/.pnpm/node_modules/next/package.json",
+        "name": "next",
+        "version": "16.3.6"
+      }
+    ]
+  },
+  "nativeMatrix": {
+    "passed": 13,
+    "corePoints": 10,
+    "targetListFailure": 1,
+    "sourceMissingAndConflict": 2,
+    "filteredNonselected": 16,
+    "seconds": 306.11,
+    "scope": "same actual installed local10; deterministic fake CLI only for interruption cases",
+    "cases": [
+      {
+        "point": 1,
+        "result": "passed",
+        "operationId": "a3796f77-3870-4578-8d0d-2dca6eb65f8c",
+        "targetProjectId": "60970d7a-b848-4f4f-b228-08adbd24886f",
+        "snapshotId": "0b285fa2-71f2-4c08-8afe-912bac5fcce5",
+        "snapshotFingerprint": "436b64f3d72f5149c22550191f3feceb28ccf006aa2ac2eb6f19b03c54628aed",
+        "evidence": [
+          {
+            "file": "interruption-1-resume-hit.json",
+            "sha256": "70cd452e1ddc4240e691c5accf513a2d125dd7689a162ce5ddd635903568c8e0"
+          },
+          {
+            "file": "interruption-1-resume-recovered.json",
+            "sha256": "9e5bf8b946da79b73819b2a3b3be08d9581677c8e34c9e28d84eeceb3ddccfec"
+          }
+        ]
+      },
+      {
+        "point": 2,
+        "result": "passed",
+        "operationId": "c1fdc91b-fb56-4a80-83f6-99f9ed2665af",
+        "targetProjectId": "ad1c3408-bfca-4cf7-b2b2-c764ac297333",
+        "snapshotId": "4d794a98-c84d-42df-a13a-5c4f62500342",
+        "snapshotFingerprint": "3c339a6584ef5f751e16d8340e325118436d1acc221e388a7c1b18fa90ca74a4",
+        "evidence": [
+          {
+            "file": "interruption-2-resume-hit.json",
+            "sha256": "10042e4caac37c9db8f206302eaba1b3260d6d6618dc6bbda9a4c0ccbdd6845a"
+          },
+          {
+            "file": "interruption-2-resume-recovered.json",
+            "sha256": "e6d73d6990e436fd5ee7f17ee3029e8deb539129c719fa0a4e1ad1c118c93760"
+          }
+        ]
+      },
+      {
+        "point": 3,
+        "result": "passed",
+        "operationId": "7e58b253-b5a7-497b-ab18-e7625c334149",
+        "targetProjectId": "a0e6c740-3107-442f-a687-d7262fa5c453",
+        "snapshotId": "55a361eb-691b-4144-9017-c3ac880fd479",
+        "snapshotFingerprint": "0608f1966f6cb881706a7d461a4cb05d0040ddd613b5ab226f9cf668dcd0771c",
+        "evidence": [
+          {
+            "file": "interruption-3-resume-hit.json",
+            "sha256": "c2a4c72287b2d65c9b673d44b576d03c52dd726cbe2d4f7c6e05383c67f07b02"
+          },
+          {
+            "file": "interruption-3-resume-recovered.json",
+            "sha256": "8a0691ee2f45793a618581a6ed938de3e749ce9cf6b8bfcb7e7b61938b026493"
+          }
+        ]
+      },
+      {
+        "point": 4,
+        "result": "passed",
+        "operationId": "d6c73cab-7754-4468-af69-9e6c385b4b88",
+        "targetProjectId": "43d131db-806e-4383-a2b0-daa74e130913",
+        "snapshotId": "2f24190e-3377-45b2-80b7-3b403680bb08",
+        "snapshotFingerprint": "0fb2a2a71f3210839e9ee493679412e9d6aa5d67338b4d1e860cf0f2ced68efc",
+        "evidence": [
+          {
+            "file": "interruption-4-resume-hit.json",
+            "sha256": "ebc05921e5623c6f1e9a6625870dae0e47bded84889409cbae1eb002f4361b9c"
+          },
+          {
+            "file": "interruption-4-resume-recovered.json",
+            "sha256": "f1dedf7c2374c1156779c8407948b922bb1bb9ffa9cf3e865de0e0e1bb5eb4d3"
+          }
+        ]
+      },
+      {
+        "point": 5,
+        "result": "passed",
+        "operationId": "64948452-4895-4fc8-8d05-f0dbd58ba8e9",
+        "targetProjectId": "f6bbf19d-b7e5-493d-949b-ba904737fab7",
+        "snapshotId": "2a4e94f2-ccb1-4964-9caf-aa1f09db2413",
+        "snapshotFingerprint": "75498f166e2b3a9d54633aad8a3139d7253a09083317be5d60edb576967844d7",
+        "evidence": [
+          {
+            "file": "interruption-5-resume-hit.json",
+            "sha256": "cff01b779b5ccb5dcb1a9102e64f29d48af3265b5c9a48e875f0ca8a924f0aa5"
+          },
+          {
+            "file": "interruption-5-resume-recovered.json",
+            "sha256": "8d122c4f459474486bdfd822fdeda6ca85a01bbafcded4cd018a19f008802a37"
+          }
+        ]
+      },
+      {
+        "point": 6,
+        "result": "passed",
+        "operationId": "df7e704f-dae8-4fcd-954d-8c52c5c0794b",
+        "targetProjectId": "e45d5d28-3fd5-43e3-ac2c-72c41ad00d74",
+        "snapshotId": "0d330930-fa56-449d-be15-e0b13c8a8ae8",
+        "snapshotFingerprint": "e02c3110654b88d38a0ce768733da8350584e79a12a37926642602a51abe2c08",
+        "evidence": [
+          {
+            "file": "interruption-6-resume-hit.json",
+            "sha256": "64050d43ad253d64ad7227a85aac4bf3ad9380a535bedc8fedeaf4d29d388ea7"
+          },
+          {
+            "file": "interruption-6-resume-recovered.json",
+            "sha256": "2bb88fb83bd4091d48a5d18130f18ba9fb049da620c01f090b5779fecf3f656c"
+          }
+        ]
+      },
+      {
+        "point": 7,
+        "result": "passed",
+        "operationId": "42160ab5-0c39-41ff-a3c4-f7e8d536d833",
+        "targetProjectId": "d64c637f-e74a-494b-b31d-0d3c9b2936e3",
+        "snapshotId": "a2f1c23f-e6c5-4c91-8362-822bf23ea5c9",
+        "snapshotFingerprint": "4de3f28bc56a714fce1fc385f06c1b1a864ef774f9f0b5248c3d4b74b7020914",
+        "evidence": [
+          {
+            "file": "interruption-7-resume-hit.json",
+            "sha256": "913cc9a1dc0075e8d26b520261272d9ec9d1337fa29db0199209387cd4d61f3e"
+          },
+          {
+            "file": "interruption-7-resume-recovered.json",
+            "sha256": "9011b15486d87282f1e5a322f8efa9df3f494c04c7ad5ada9f8be9491a7e8fe4"
+          }
+        ]
+      },
+      {
+        "point": 8,
+        "result": "passed",
+        "operationId": "18e475dd-d440-486c-931b-3cd13d807c21",
+        "targetProjectId": "50827732-c93f-4e33-b8a2-735f923d2400",
+        "snapshotId": "1e48fbc7-2090-4dab-b48f-81c50bb919a2",
+        "snapshotFingerprint": "7d957b6f67196e89ce31bc9af726ac252edb2b050b6ebe4d027a8f9afd4da427",
+        "evidence": [
+          {
+            "file": "interruption-8-resume-hit.json",
+            "sha256": "9bfca6b23004e4686a80cf9360fc3e5119c14dc5ab134a6d125c471f8a1377b4"
+          },
+          {
+            "file": "interruption-8-resume-recovered.json",
+            "sha256": "a10c9f7c07a0121a1c9a35a222d437d42cc39fd8a567149c982b30c9fdb453c3"
+          }
+        ]
+      },
+      {
+        "point": 9,
+        "result": "passed",
+        "runs": [
+          {
+            "id": "c9a8a607-cd08-4aca-b970-efbc190b637f",
+            "requestId": "17a31811-74cd-43fe-98ad-8a8141becb10",
+            "status": "succeeded"
+          }
+        ],
+        "evidence": [
+          {
+            "file": "interruption-9-hit.json",
+            "sha256": "f9841d4170e7a58ecb76664d96f6554bf3a49272ef48acfd18225a6e29d0900e"
+          },
+          {
+            "file": "interruption-9-recovered.json",
+            "sha256": "b066db3161a9bba2551eae4b2611335a9cb0a1afb0a19b9c002cffbda8282c1d"
+          }
+        ]
+      },
+      {
+        "point": 10,
+        "result": "passed",
+        "runs": [
+          {
+            "id": "60bfe57c-c303-493b-b2f4-4d293293469a",
+            "requestId": "2876e586-18a8-40f7-88a1-f9b961a2a652",
+            "status": "succeeded"
+          }
+        ],
+        "evidence": [
+          {
+            "file": "interruption-10-hit.json",
+            "sha256": "d0a0e0c76cf283864b969a4d606060aa1cf5548302e7dcc72e7b68f70ebd4459"
+          },
+          {
+            "file": "interruption-10-recovered.json",
+            "sha256": "9d1040d47fe8141e2df08794d5d10c2899b83666397ab05c0ca1e4ec72633435"
+          }
+        ]
+      },
+      {
+        "point": 11,
+        "result": "passed",
+        "operationId": "cb86cede-bdd0-47d3-b723-8c825cf94810",
+        "targetProjectId": "70855494-4b46-43bc-a164-1643e08e40a0",
+        "snapshotId": "3f138611-63aa-484f-9c66-3ec6b533e355",
+        "snapshotFingerprint": "c6b4575d03a0fdcdd90b117b07ef3d8de5cbf4dd1de29221f18e6841352c5578",
+        "evidence": [
+          {
+            "file": "interruption-11-resume-hit.json",
+            "sha256": "35a5d909c3b648d532bf5fc2b3fd1b40c7d7c060f02d3edb672c895e79732a5f"
+          },
+          {
+            "file": "interruption-11-resume-recovered.json",
+            "sha256": "e13fa4aa931c271715e16ad60e8bc64aebdcd19ba83ed276842aa1fa3b12d6f6"
+          }
+        ]
+      },
+      {
+        "negative": "interruption-3-missing-source",
+        "result": "blocked safely",
+        "evidence": [
+          {
+            "file": "interruption-3-missing-source-hit.json",
+            "sha256": "8288fab6627d5db5670efc44b8cc07a2ea15ee2451cf673663403f4db7909d9d"
+          },
+          {
+            "file": "interruption-3-missing-source-blocked.json",
+            "sha256": "fb8f7668a534746a31b8b4191c9bc62682b3968ac4c77ce87060d5ebb1394970"
+          }
+        ]
+      },
+      {
+        "negative": "interruption-6-edited-target",
+        "result": "blocked safely",
+        "evidence": [
+          {
+            "file": "interruption-6-edited-target-hit.json",
+            "sha256": "fb991664316b393e9a0810aaf6ce94b9157712e5492330e49aa8ef2266fa50a1"
+          },
+          {
+            "file": "interruption-6-edited-target-blocked.json",
+            "sha256": "451d7da8268a99934710a8290e5720a7f2b5d094177e44de393652c525087634"
+          }
+        ]
+      }
+    ],
+    "logSha256": "ce986ea847e4ce80a710db35d53336f7055153c4e72e3bf70de4aa6871eab2bc"
+  },
+  "nativeLongPath": {
+    "overallQuality": "passed including ancestor",
+    "viewports": [
+      {
+        "width": 1280,
+        "height": 720,
+        "clientWidth": 328,
+        "scrollWidth": 328,
+        "fieldsets": [
+          {
+            "width": 304,
+            "scrollWidth": 304,
+            "minInlineSize": "0px"
+          },
+          {
+            "width": 304,
+            "scrollWidth": 304,
+            "minInlineSize": "0px"
+          }
+        ],
+        "selectedAssetCount": 3,
+        "fullPathTitles": [
+          "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/assets/frozen-logo.svg",
+          "品牌-logo.svg",
+          "assets/recovered-logo.svg",
+          "assets/recovered-frozen-logo.svg",
+          "assets/frozen-logo.svg"
+        ],
+        "selectedSections": [
+          true
+        ],
+        "focused": true,
+        "buttonVisible": true,
+        "buttonDisabled": false,
+        "outerBody": {
+          "clientWidth": 345,
+          "scrollWidth": 345
+        }
+      },
+      {
+        "width": 1440,
+        "height": 900,
+        "clientWidth": 328,
+        "scrollWidth": 328,
+        "fieldsets": [
+          {
+            "width": 304,
+            "scrollWidth": 304,
+            "minInlineSize": "0px"
+          },
+          {
+            "width": 304,
+            "scrollWidth": 304,
+            "minInlineSize": "0px"
+          }
+        ],
+        "selectedAssetCount": 3,
+        "fullPathTitles": [
+          "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/assets/frozen-logo.svg",
+          "品牌-logo.svg",
+          "assets/recovered-logo.svg",
+          "assets/recovered-frozen-logo.svg",
+          "assets/frozen-logo.svg"
+        ],
+        "selectedSections": [
+          true
+        ],
+        "focused": true,
+        "buttonVisible": true,
+        "buttonDisabled": false,
+        "outerBody": {
+          "clientWidth": 345,
+          "scrollWidth": 345
+        }
+      }
+    ],
+    "operationId": "8671a41a-485d-4be4-8e49-b4667af4c465",
+    "targetProjectId": "7a43cd6f-d726-42d4-9f3f-06cc64e54dcb",
+    "conversationId": "5dd10f2f-f013-4640-b5ea-09bd3119913c",
+    "snapshotId": "5aeac727-a89b-45bb-a4bc-e2482dc02862",
+    "snapshotFingerprint": "54e84c14fb2e241675c915abb4e5ccbefa5976c49dcc2f022daadb76a5a21fc0",
+    "bindingRecordId": "d7463234-cc26-455c-b609-fb32d4c53df7",
+    "generation": "31f91c49-25ea-4d7e-a63c-40fafc59e344",
+    "selectedSections": [
+      "strategy"
+    ],
+    "frozenAssets": [
+      {
+        "itemId": "asset-1",
+        "path": "asset-1.svg",
+        "digest": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "role": "supporting"
+      },
+      {
+        "itemId": "asset-2",
+        "path": "asset-2.svg",
+        "digest": "fef79a73e0fadcb72ecc8225ff11be8a6960587a54f045e66dba1738ccb1dbf7",
+        "role": "supporting"
+      },
+      {
+        "itemId": "asset-3",
+        "path": "asset-3.svg",
+        "digest": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "role": "supporting"
+      }
+    ],
+    "keyboardCreateConfirmed": true,
+    "reopened": true,
+    "runCount": 0
+  },
+  "allInputsUnavailable": {
+    "projectId": "67e17cf1-9095-4a76-9573-2348938679af",
+    "freezeResponses": [
+      {
+        "status": 409,
+        "body": {
+          "error": {
+            "code": "MOKINA_CONTEXT_NOT_SUPPORTED",
+            "message": "文件不存在：native9-sales.csv"
+          }
+        }
+      }
+    ],
+    "runPostCount": 0,
+    "runCount": 0,
+    "retainedDraft": "Use only this CSV. Do not send if its fixed preparation fails. Keep this draft.",
+    "errorVisible": true,
+    "originalAndUploadedCsvPreserved": true
+  },
+  "explicitExclusion": {
+    "originalOperationId": "0dc1b9eb-969f-4aa6-a7d4-7e238a814f43",
+    "originalTargetProjectId": "60abbccd-da8b-4cfb-9c27-e787932f5b81",
+    "originalSnapshotId": "5e03d61f-6fb2-402f-8a43-16beaf5e8424",
+    "newOperationId": "7085b627-a6b9-436c-a038-ead9e8b32736",
+    "newTargetProjectId": "a9214bcc-6b44-4177-b225-22d4e41b39bd",
+    "newSnapshotId": "f6cc6a57-8282-4dc3-bcd6-6be34d6df536",
+    "newAssetCount": 0,
+    "originalJournalIdentityAndIntentPreserved": true,
+    "originalTargetPreserved": true,
+    "runCount": 0
+  },
+  "artifactVerification": {
+    "sourceSha": "7ced0cf93b14387b9dd3740a218aac5b4e8bdbce",
+    "candidate": "0.0.3-local.10",
+    "importedProjectId": "eb63eb99-7b96-40bf-b7dc-14ac55c7d8cc",
+    "currentVersion": 5,
+    "candidateStillUnadopted": true,
+    "versions": [
+      {
+        "fileName": "recovered-frozen-check.html",
+        "version": 1,
+        "id": "a22ece6d-f49a-4f3c-8cbe-15a82b97879e",
+        "current": true,
+        "candidate": false,
+        "contentDigest": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7"
+      },
+      {
+        "fileName": "index.html",
+        "version": 1,
+        "id": "5b7ceeeb-ada2-4607-90e6-31d64d85b278",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "ea1707993a6ff20e0a26e6e294faeaa82e5c481abaed010d575a389a62e6e31a"
+      },
+      {
+        "fileName": "index.html",
+        "version": 2,
+        "id": "6f37d508-ffa7-4fbd-9adf-bf5b5350298d",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "81541d8c497a8ec0e2a5182bec2cdd17ad58713eae04a182a510509f2ffe8568"
+      },
+      {
+        "fileName": "index.html",
+        "version": 3,
+        "id": "05a0fd31-7b42-4092-a685-c7415c49d4ee",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "6b37e2f20e8484644557bf8544af86dba593a57e361c3e05d51bb1c2e68426fd"
+      },
+      {
+        "fileName": "index.html",
+        "version": 4,
+        "id": "d65d660d-b06a-4ddf-ae9c-1930c9c47842",
+        "current": true,
+        "candidate": false,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 1,
+        "id": "46911c92-21ad-4805-a0ac-470b826e197b",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 2,
+        "id": "2756f19d-44ef-422e-86b4-334284bd1157",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 3,
+        "id": "a61a07d4-4392-463d-ac13-b10c2bd1f726",
+        "current": false,
+        "candidate": true,
+        "contentDigest": "be8e75e00088c7d078181f4a489d50b207c85569b82a7af820cd8dcff9837a40"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 4,
+        "id": "cd977297-1e9f-442b-a3e4-023d7a4e0ba3",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 5,
+        "id": "c0646e80-88d8-4ed7-a7b1-006715217663",
+        "current": true,
+        "candidate": false,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+      },
+      {
+        "fileName": "recovered-check.html",
+        "version": 1,
+        "id": "0d5e9716-595a-4eee-ac6e-c2dc37e418c3",
+        "current": true,
+        "candidate": false,
+        "contentDigest": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655"
+      }
+    ],
+    "files": [
+      {
+        "name": "current-v5.html",
+        "bytes": 25570,
+        "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+        "candidateMarker": false,
+        "budget30": true,
+        "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "unresolvedLocalLogo": false
+      },
+      {
+        "name": "current-v5.zip",
+        "bytes": 73859,
+        "sha256": "84f9dd9d1336c4deb4663e3952bdadb9cdc26dfec7b5c8dee85c694c00dcb6f0",
+        "candidateMarker": false,
+        "budget30": true,
+        "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "unresolvedLocalLogo": false,
+        "entryBodyTextDigest": "e145acf14a2b510b11c41a9f744a323d834b895b4f4dd0a907bb2435dc891b34",
+        "frozenBodyTextDigest": "e145acf14a2b510b11c41a9f744a323d834b895b4f4dd0a907bb2435dc891b34",
+        "deliveryShape": "self-contained version export",
+        "previewTransportBridge": true,
+        "members": [
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/index.html",
+            "bytes": 60822,
+            "sha256": "f27d8d50ffe517410a35daa6ea7ada46ceaa5da9a82b2b194127e5b5ec2f3953"
+          },
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-HANDOFF.md",
+            "bytes": 7104,
+            "sha256": "a59d28d384e88225face1668890b2fa18b47cfb79df280c526a026657a1fc00a"
+          },
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-MANIFEST.json",
+            "bytes": 5223,
+            "sha256": "3b2629e6be882f79db45358de7131ebc94b45d2a4d00310ef16e4955fbefea28"
+          }
+        ],
+        "title": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案"
+      },
+      {
+        "name": "current-v5.pdf",
+        "bytes": 960013,
+        "sha256": "2c78777c98ee67b82f76047ed0d696615ddd2719404d8503caa2f9c3dfbc515d"
+      },
+      {
+        "name": "historical-v2.html",
+        "bytes": 25571,
+        "sha256": "aeb72e4892313040a483cb925b190906d7793237d6dd8fd7b3c54acd11cb08dd",
+        "candidateMarker": false,
+        "budget30": true,
+        "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "unresolvedLocalLogo": false
+      },
+      {
+        "name": "historical-v2.zip",
+        "bytes": 73888,
+        "sha256": "bd67f412b13f97360fe093163f0ce454b7c0099a0cac47322bfdd1bdc57215b0",
+        "candidateMarker": false,
+        "budget30": true,
+        "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "unresolvedLocalLogo": false,
+        "entryBodyTextDigest": "e145acf14a2b510b11c41a9f744a323d834b895b4f4dd0a907bb2435dc891b34",
+        "frozenBodyTextDigest": "e145acf14a2b510b11c41a9f744a323d834b895b4f4dd0a907bb2435dc891b34",
+        "deliveryShape": "self-contained version export",
+        "previewTransportBridge": true,
+        "members": [
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/index.html",
+            "bytes": 60823,
+            "sha256": "bdc483b13494207824d7d69c0441ab37c350fbade3f3fc48ff16202485ff2cff"
+          },
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-HANDOFF.md",
+            "bytes": 7118,
+            "sha256": "b18414f0c1a93c287c29519b69f7086ff12ffc7318a986efb93208768d6594d2"
+          },
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-MANIFEST.json",
+            "bytes": 5237,
+            "sha256": "b7012a1f301059389df59bdf2f948cac1e594cf003e16952e471dc074bcc3ebe"
+          }
+        ],
+        "title": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案-v2-historical"
+      },
+      {
+        "name": "historical-v2.pdf",
+        "bytes": 960012,
+        "sha256": "dcd0c5e98ffdb3af412cdfa2f75de852faaa2608e9c75cb3a081f11b5c2d492c"
+      },
+      {
+        "name": "candidate-v3.html",
+        "bytes": 25650,
+        "sha256": "7e7411e37d3739eb9e7be3b0c10c4dfb6571caa752975ad7eac3e6bfa9c067ae",
+        "candidateMarker": true,
+        "budget30": true,
+        "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "unresolvedLocalLogo": false
+      },
+      {
+        "name": "candidate-v3.zip",
+        "bytes": 73965,
+        "sha256": "8618d8be58d496a5f2fb26d741b912c47aa3594028d47ac7633ebfb6bd750d34",
+        "candidateMarker": true,
+        "budget30": true,
+        "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "unresolvedLocalLogo": false,
+        "entryBodyTextDigest": "04a29d7937ab637deec1ab6abba49ad61830f34dd5935015dd09610aa940e87c",
+        "frozenBodyTextDigest": "04a29d7937ab637deec1ab6abba49ad61830f34dd5935015dd09610aa940e87c",
+        "deliveryShape": "self-contained version export",
+        "previewTransportBridge": true,
+        "members": [
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/index.html",
+            "bytes": 60902,
+            "sha256": "5740b3a7b7e4cc1cef12c8183f16986492c7084da0a9b9aab89bac8a9ed89a0f"
+          },
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-HANDOFF.md",
+            "bytes": 7117,
+            "sha256": "5d65bf98168c9d85cda06c2c6d8d49b198a8c0afcdb26bf91fe697d2332b5ec6"
+          },
+          {
+            "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-MANIFEST.json",
+            "bytes": 5236,
+            "sha256": "e1bb0767f535d1ccc116e3cd63b46934f0c0608ac8976f571898cccbb51c392e"
+          }
+        ],
+        "title": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案-v3-candidate"
+      },
+      {
+        "name": "candidate-v3.pdf",
+        "bytes": 968059,
+        "sha256": "6977ec7fbf4314c502e00d1b36a2c12cff4ee1e187cc6061ceb906ba4c767e83"
+      }
+    ],
+    "recovery": {
+      "sha256": "ba56fdf1790f899f4dd47d1ce6a8f28a9e278f6f7da54066a7e34304cb920928",
+      "bytes": 219224,
+      "schema": "mokina.project-recovery.v1",
+      "exportId": "82f516c9-b132-4a1f-a027-114789cf4861",
+      "memberCount": 44,
+      "originalCount": 21,
+      "versionCount": 11,
+      "members": [
+        {
+          "path": ".od-skills/web-prototype-989c5495eb/SKILL.md",
+          "kind": "original",
+          "bytes": 5865,
+          "sha256": "a67a89159dc0182fdf58895067c95e68dd828afd38857f410bca41de7843778d",
+          "matched": true
+        },
+        {
+          "path": ".od-skills/web-prototype-989c5495eb/assets/template.html",
+          "kind": "original",
+          "bytes": 16603,
+          "sha256": "2927248194e18bb57ad0d30ad822b1c8e6e3162d27543c0e6934ed3403b55031",
+          "matched": true
+        },
+        {
+          "path": ".od-skills/web-prototype-989c5495eb/example.html",
+          "kind": "original",
+          "bytes": 4217,
+          "sha256": "512b0831cfb992defbd1ca4eeaf1cc003b095e62f4fba8bf1e7e8303212b25b8",
+          "matched": true
+        },
+        {
+          "path": ".od-skills/web-prototype-989c5495eb/open-design.json",
+          "kind": "original",
+          "bytes": 9637,
+          "sha256": "d191159294d39cc8b45d404d2ba04f659757cf20505b3f313ff05ffea606a54b",
+          "matched": true
+        },
+        {
+          "path": ".od-skills/web-prototype-989c5495eb/references/checklist.md",
+          "kind": "original",
+          "bytes": 4679,
+          "sha256": "c052dd57859e3448c4fca368188198d67cbc1e19350c6360069b49d10616f006",
+          "matched": true
+        },
+        {
+          "path": ".od-skills/web-prototype-989c5495eb/references/layouts.md",
+          "kind": "original",
+          "bytes": 10995,
+          "sha256": "8f6d97fcc2d29a7298cccb4f117c6979604a4ce4e452a1d44b0ee97fae23302b",
+          "matched": true
+        },
+        {
+          "path": "assets/frozen-logo.svg",
+          "kind": "original",
+          "bytes": 161,
+          "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+          "matched": true
+        },
+        {
+          "path": "assets/recovered-frozen-logo.svg",
+          "kind": "original",
+          "bytes": 161,
+          "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+          "matched": true
+        },
+        {
+          "path": "assets/recovered-logo.svg",
+          "kind": "original",
+          "bytes": 161,
+          "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+          "matched": true
+        },
+        {
+          "path": "brand-spec.md",
+          "kind": "original",
+          "bytes": 852,
+          "sha256": "462413463346fe876635e1a05690901ef753cdd8b072e26cad8177defb6ae9cb",
+          "matched": true
+        },
+        {
+          "path": "index.html",
+          "kind": "original",
+          "bytes": 25350,
+          "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+          "matched": true
+        },
+        {
+          "path": "index.html.artifact.json",
+          "kind": "original",
+          "bytes": 337,
+          "sha256": "e6a52d029cd5990bd9872abbb4a1b82636c78d9ebdfea3857f88f1b78994e806",
+          "matched": true
+        },
+        {
+          "path": "recovered-check.html",
+          "kind": "original",
+          "bytes": 19757,
+          "sha256": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655",
+          "matched": true
+        },
+        {
+          "path": "recovered-check.html.artifact.json",
+          "kind": "original",
+          "bytes": 357,
+          "sha256": "916a62b461fd1a16dd90ec09f75ed93f300f3b01ef3a2bf539512ca4efd35b83",
+          "matched": true
+        },
+        {
+          "path": "recovered-frozen-check.html",
+          "kind": "original",
+          "bytes": 3871,
+          "sha256": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7",
+          "matched": true
+        },
+        {
+          "path": "recovered-frozen-check.html.artifact.json",
+          "kind": "original",
+          "bytes": 371,
+          "sha256": "798f088149c2e337fa86a8b5b6027cfb14ace5e3cc6d56f04a05e6c9a7c6811c",
+          "matched": true
+        },
+        {
+          "path": "品牌-logo.svg",
+          "kind": "original",
+          "bytes": 161,
+          "sha256": "fef79a73e0fadcb72ecc8225ff11be8a6960587a54f045e66dba1738ccb1dbf7",
+          "matched": true
+        },
+        {
+          "path": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/assets/frozen-logo.svg",
+          "kind": "original",
+          "bytes": 161,
+          "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+          "matched": true
+        },
+        {
+          "path": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+          "kind": "original",
+          "bytes": 25351,
+          "sha256": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953",
+          "matched": true
+        },
+        {
+          "path": "资料/中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销-方案.html",
+          "kind": "original",
+          "bytes": 25350,
+          "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+          "matched": true
+        },
+        {
+          "path": "资料说明.md",
+          "kind": "original",
+          "bytes": 229,
+          "sha256": "f32265710cdf51cb0b5d7cd000eb558aeb76a1880ee6eaa78b2982c44a10f089",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/009f1a525a4d06ff79ecb0c4/0001-a22ece6d-f49a-4f3c-8cbe-15a82b97879e.html",
+          "kind": "version",
+          "bytes": 3871,
+          "sha256": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/009f1a525a4d06ff79ecb0c4/0001-a22ece6d-f49a-4f3c-8cbe-15a82b97879e-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 3871,
+          "sha256": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/0eb547304658805aad788d32/0001-5b7ceeeb-ada2-4607-90e6-31d64d85b278.html",
+          "kind": "version",
+          "bytes": 11664,
+          "sha256": "ea1707993a6ff20e0a26e6e294faeaa82e5c481abaed010d575a389a62e6e31a",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/0eb547304658805aad788d32/0001-5b7ceeeb-ada2-4607-90e6-31d64d85b278-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 11884,
+          "sha256": "cadc3481cca57babe3a71bf616bb3585946798019b7e173185a69f3c1df5480b",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/0eb547304658805aad788d32/0002-6f37d508-ffa7-4fbd-9adf-bf5b5350298d.html",
+          "kind": "version",
+          "bytes": 25195,
+          "sha256": "81541d8c497a8ec0e2a5182bec2cdd17ad58713eae04a182a510509f2ffe8568",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/0eb547304658805aad788d32/0002-6f37d508-ffa7-4fbd-9adf-bf5b5350298d-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 25415,
+          "sha256": "0fdd73bb653e69ef64e9dfd2305fd37d8ec92606116d05f0df8df7325cf3d0c7",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/0eb547304658805aad788d32/0003-05a0fd31-7b42-4092-a685-c7415c49d4ee.html",
+          "kind": "version",
+          "bytes": 25271,
+          "sha256": "6b37e2f20e8484644557bf8544af86dba593a57e361c3e05d51bb1c2e68426fd",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/0eb547304658805aad788d32/0003-05a0fd31-7b42-4092-a685-c7415c49d4ee-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 25491,
+          "sha256": "b8550c430f48770b445a477c4334676600030a779604de07bedecd92f0c6e688",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/0eb547304658805aad788d32/0004-d65d660d-b06a-4ddf-ae9c-1930c9c47842.html",
+          "kind": "version",
+          "bytes": 25350,
+          "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/0eb547304658805aad788d32/0004-d65d660d-b06a-4ddf-ae9c-1930c9c47842-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 25570,
+          "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0001-46911c92-21ad-4805-a0ac-470b826e197b.html",
+          "kind": "version",
+          "bytes": 25350,
+          "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0002-2756f19d-44ef-422e-86b4-334284bd1157.html",
+          "kind": "version",
+          "bytes": 25351,
+          "sha256": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0002-2756f19d-44ef-422e-86b4-334284bd1157-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 25571,
+          "sha256": "aeb72e4892313040a483cb925b190906d7793237d6dd8fd7b3c54acd11cb08dd",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0003-a61a07d4-4392-463d-ac13-b10c2bd1f726.html",
+          "kind": "version",
+          "bytes": 25430,
+          "sha256": "be8e75e00088c7d078181f4a489d50b207c85569b82a7af820cd8dcff9837a40",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0003-a61a07d4-4392-463d-ac13-b10c2bd1f726-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 25650,
+          "sha256": "7e7411e37d3739eb9e7be3b0c10c4dfb6571caa752975ad7eac3e6bfa9c067ae",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0004-cd977297-1e9f-442b-a3e4-023d7a4e0ba3.html",
+          "kind": "version",
+          "bytes": 25350,
+          "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0004-cd977297-1e9f-442b-a3e4-023d7a4e0ba3-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 25570,
+          "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0005-c0646e80-88d8-4ed7-a7b1-006715217663.html",
+          "kind": "version",
+          "bytes": 25350,
+          "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0005-c0646e80-88d8-4ed7-a7b1-006715217663-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 25570,
+          "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/83050490542eaa779c0146e6/0001-0d5e9716-595a-4eee-ac6e-c2dc37e418c3.html",
+          "kind": "version",
+          "bytes": 19757,
+          "sha256": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655",
+          "matched": true
+        },
+        {
+          "path": ".file-versions/83050490542eaa779c0146e6/0001-0d5e9716-595a-4eee-ac6e-c2dc37e418c3-frozen.html",
+          "kind": "frozen-version",
+          "bytes": 19757,
+          "sha256": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655",
+          "matched": true
+        },
+        {
+          "path": ".mokina/contexts/0d1057ed-bf92-4ed0-900a-f08585fc05e9.json",
+          "kind": "context-snapshot",
+          "bytes": 1840,
+          "sha256": "1597f0d6befe347a83035f611b4e18134d36b3e3991ef9553c5795cbf2480806",
+          "matched": true
+        },
+        {
+          "path": ".mokina/blobs/49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+          "kind": "asset",
+          "bytes": 161,
+          "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+          "matched": true
+        }
+      ]
+    },
+    "cancelledFileExists": false
+  },
+  "pdfVisualInspection": {
+    "actualElectronExports": 3,
+    "pagesRenderedAndViewed": 12,
+    "scrollbar": false,
+    "clippedGlyphs": false,
+    "repeatedOrMissingParagraphs": false,
+    "frozenLogoCorrect": true,
+    "candidateOnlyMarker": true,
+    "externalHtmlZipManual": "pending"
+  },
+  "business": {
+    "candidate": "0.0.3-local.10",
+    "budgets": [
+      {
+        "label": "A",
+        "projectId": "39ad0563-d0f9-4adc-ac24-3da9a7378da0",
+        "conversationId": "dd37b36e-5117-449a-a72d-755cb7cc1712",
+        "runId": "2db14bad-5edd-426a-b20e-94d3beb88744",
+        "requestId": "home-auto-send-2was6y35dvevh",
+        "snapshotId": "21776ed8-c24e-4d6a-96e7-4a344fac58a9",
+        "sourceDigest": "18d9462995e6860705c30343458f00572edc23245e17b3dda0de8f70320a45dd",
+        "budget": 300000,
+        "allocation": [
+          {
+            "category": "店内品鉴材料与接待",
+            "amount": 90000,
+            "percent": 30
+          },
+          {
+            "category": "自有社群运营",
+            "amount": 60000,
+            "percent": 20
+          },
+          {
+            "category": "内容与视觉材料",
+            "amount": 48000,
+            "percent": 16
+          },
+          {
+            "category": "预约与名单管理",
+            "amount": 36000,
+            "percent": 12
+          },
+          {
+            "category": "反馈与评估",
+            "amount": 24000,
+            "percent": 8
+          },
+          {
+            "category": "预备金",
+            "amount": 42000,
+            "percent": 14
+          }
+        ],
+        "banned": [
+          {
+            "category": "付费搜索广告",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "付费社交广告",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "达人赞助",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "购买个人联系方式名单",
+            "amount": 0,
+            "percent": 0
+          }
+        ],
+        "producedFiles": 0,
+        "professionalReview": "pending",
+        "prompt": "Use only the selected synthetic brief. Budget A: CNY 300000. Give a proposed six-category allocation in a Markdown table with amounts and percentages. All four forbidden paid categories must be zero. Show total arithmetic and explain tradeoffs, missing facts and execution steps. No HTML or other files; do not read other projects.",
+        "reply": "\n我先核对所选 brief 的可读内容与约束，再给出可独立加总的预算表、取舍、缺失信息和执行步骤。<od-done key=\"8a5e4291018465b6\"/>\n\n以下仅依据 `budget-brief.md` 第 1–11 行。预算为建议分配，不代表实际支出、供应商报价或商业效果承诺。\n\n### 已知事实\n\n- 总预算：CNY 300,000。\n- 目标：通过自有渠道邀请用户参加春季茶品鉴。\n- 可使用六类费用；付费搜索、付费社交广告、达人赞助、购买个人联系方式均禁止。\n- 当前任务未禁止店内活动，因此保留品鉴材料与接待预算。\n\n### 建议分配\n\n| 费用类别 | 建议金额（CNY） | 占比 | 使用边界 |\n|---|---:|---:|---|\n| 店内品鉴材料与接待 | 90,000 | 30% | 茶品、器具、现场物料及必要接待；须在场次和容量确认后细化 |\n| 自有社群运营 | 60,000 | 20% | 自有社群内容组织、讨论维护和活动通知，不得转作付费投放 |\n| 内容与视觉材料 | 48,000 | 16% | 教育内容、邀请素材和活动说明，不含达人赞助 |\n| 预约与名单管理 | 36,000 | 12% | 预约流程、名单整理、提醒和候补管理，仅处理经同意的信息 |\n| 反馈与评估 | 24,000 | 8% | 反馈收集、整理和活动复盘，不虚构转化或收益指标 |\n| 预备金 | 42,000 | 14% | 仅用于上述允许类别的合理增量，不得为禁投项目兜底 |\n| **合计** | **300,000** | **100%** | — |\n\n金额验算：\n\n`90,000 + 60,000 + 48,000 + 36,000 + 24,000 + 42,000 = 300,000`\n\n比例验算：\n\n`30% + 20% + 16% + 12% + 8% + 14% = 100%`\n\n### 禁止费用控制\n\n| 禁止类别 | 金额（CNY） | 占比 |\n|---|---:|---:|\n| 付费搜索广告 | 0 | 0% |\n| 付费社交广告 | 0 | 0% |\n| 达人赞助 | 0 | 0% |\n| 购买个人联系方式名单 | 0 | 0% |\n\n四项合计：`0 + 0 + 0 + 0 = CNY 0`，不占用预算。\n\n### 主要取舍\n\n- 将最大份额放在品鉴材料与接待，是因为活动体验本身是目标载体；但金额需随场次和接待容量调整。\n- 自有社群运营与内容合计占 36%，支持活动前沟通、教育内容和持续讨论，同时严格排除任何付费流量采购。\n- 预约管理单列，避免名单收集、同意流程和现场容量控制混在一般运营费用中。\n- 保留 14% 预备金，是为了应对允许类别中的合理变化；使用时需要明确对应类别，不能成为禁投费用的隐蔽入口。\n- 反馈评估只用于收集和复盘，不预设收入、转化率、ROI 或活动效果。\n\n### 仍需确认的信息\n\n- 品鉴日期、场次数量和每场接待容量；\n- 门店地址及现场可用条件；\n- 活动是否收费及具体价格；\n- 报名、信息使用和后续联系的同意流程；\n- 可投入的门店与社群运营人员容量；\n- 各项采购单价、供应商报价及现有可复用物料。\n\n### 建议执行步骤\n\n1. 先确认日期、地址、收费方式、接待容量和同意流程。\n2. 根据场次与人数拆分品鉴材料、接待和预约管理预算。\n3. 制定自有社群内容计划，包括活动说明、茶知识内容、报名提醒和候补通知。\n4. 建立经同意的预约名单，设置容量上限、取消和候补规则。\n5. 在报价可核对后采购品鉴及视觉物料，逐项记录预算归属。\n6. 活动完成后收集反馈并复盘，实际支出与建议预算分别记录。\n7. 仅在允许类别出现已说明的增量时启用预备金，并保留调拨依据。\n\n"
+      },
+      {
+        "label": "B",
+        "projectId": "455f9fcb-98eb-451e-bff7-afcbd73c264a",
+        "conversationId": "8e54e6ce-1922-49f1-9fb6-4d20aa4a05bc",
+        "runId": "7df5870c-2abe-4595-9e10-7645ad1b0003",
+        "requestId": "home-auto-send-1hw7z72tiix5z",
+        "snapshotId": "b822cc7e-243a-40fc-a464-47a4188a6887",
+        "sourceDigest": "18d9462995e6860705c30343458f00572edc23245e17b3dda0de8f70320a45dd",
+        "budget": 180000,
+        "allocation": [
+          {
+            "category": "store tasting materials and reception（店内品鉴材料与接待）",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "owned-community operations（私域社群运营）",
+            "amount": 54000,
+            "percent": 30
+          },
+          {
+            "category": "content and visual materials（内容与视觉材料）",
+            "amount": 45000,
+            "percent": 25
+          },
+          {
+            "category": "booking and list management（预约与名单管理）",
+            "amount": 36000,
+            "percent": 20
+          },
+          {
+            "category": "feedback and evaluation（反馈与评估）",
+            "amount": 27000,
+            "percent": 15
+          },
+          {
+            "category": "contingency（预备金）",
+            "amount": 18000,
+            "percent": 10
+          }
+        ],
+        "banned": [
+          {
+            "category": "paid search ads",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "paid social ads",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "influencer sponsorship",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "purchased personal-contact lists",
+            "amount": 0,
+            "percent": 0
+          }
+        ],
+        "producedFiles": 0,
+        "professionalReview": "pending",
+        "prompt": "Use only the selected synthetic brief. Budget B: CNY 180000. Additional prohibition: no in-store event, tasting or reception spending and no event execution steps. Give a six-category Markdown budget table with amounts and percentages. Store cost and the four forbidden paid categories must be zero; do not relabel them. Show total arithmetic, tradeoffs, missing facts and owned-community steps. No HTML or other files; do not read other projects.",
+        "reply": "\n我会按“市场与营销分析”技能核对所选 brief，只输出讨论文本；重点把事实、建议、缺失信息和禁投项明确分开。预算约束已锁定：六类允许科目中店内品鉴与接待为零；四项付费禁投另列为零，不并入或伪装进其他科目。当前只剩对五类允许用途的建议性分配。<od-done key=\"68e05a30a259103e\"/>\n当前禁令使原定“春季品鉴邀请”目标无法执行。本预算只能用于私域社群讨论、教育内容、合规名单管理和已同意的后续沟通，不包含任何活动筹备或现场执行。\n\n依据仅为 `budget-brief.md` 第 1–11 行及本次附加禁令。\n\n### 建议预算\n\n| 六类预算科目 | 金额（CNY） | 占比 | 使用边界 |\n|---|---:|---:|---|\n| store tasting materials and reception（店内品鉴材料与接待） | 0 | 0% | 禁止店内活动、品鉴和接待支出 |\n| owned-community operations（私域社群运营） | 54,000 | 30% | 社群话题策划、日常维护和合规沟通 |\n| content and visual materials（内容与视觉材料） | 45,000 | 25% | 春茶教育内容及配套视觉，不发布活动邀请 |\n| booking and list management（预约与名单管理） | 36,000 | 20% | 仅用于同意记录、名单去重和退订管理；不开放品鉴预约 |\n| feedback and evaluation（反馈与评估） | 27,000 | 15% | 收集内容反馈和社群讨论意见，不承诺商业结果 |\n| contingency（预备金） | 18,000 | 10% | 仅补充上述允许用途，不得吸收或伪装禁投支出 |\n| **合计** | **180,000** | **100%** | 建议分配，并非实际支出或供应商报价 |\n\n金额校验：`0 + 54,000 + 45,000 + 36,000 + 27,000 + 18,000 = 180,000`  \n比例校验：`0% + 30% + 25% + 20% + 15% + 10% = 100%`\n\n### 禁投项归零核对\n\n| 禁投项 | 金额（CNY） | 占比 |\n|---|---:|---:|\n| paid search ads | 0 | 0% |\n| paid social ads | 0 | 0% |\n| influencer sponsorship | 0 | 0% |\n| purchased personal-contact lists | 0 | 0% |\n\n这些项目不得改名后计入内容、运营或预备金。\n\n### 主要取舍\n\n- 30%用于私域社群运营，重点是持续讨论和合规沟通；代价是不能通过付费渠道扩大触达。\n- 25%用于教育内容，能够支持春茶主题传播，但不能包装成品鉴活动预热或邀请。\n- 20%用于名单管理，是因为同意流程尚未明确；当前不包含预约上线或活动报名。\n- 15%用于反馈评估，只用于了解内容和讨论反应，不能据此承诺转化、收入或 ROI。\n- 10%预备金保留调整空间，但使用范围仍受全部禁令约束。\n\n### 私域社群步骤\n\n1. 核实现有私域渠道、成员范围和工作人员承载能力。\n2. 建立明确的同意、退订和联系记录，不导入购买名单。\n3. 发布春茶知识、冲泡方法等教育内容，不出现品鉴日期、地址、价格或报名入口。\n4. 通过提问、投票和主题讨论收集兴趣与内容偏好，不组织活动。\n5. 仅向明确同意接收后续信息的成员跟进，并记录反馈和退订状态。\n6. 定期复核支出，确保店内活动和四项付费禁投始终为零。\n\n### 尚缺事实\n\n预算周期、具体日期、价格、地址、同意流程和人员容量均未提供；历史收入、转化率、ROI 和受众规模也没有数据。即使补齐日期、价格和地址，在“禁止店内活动、品鉴及活动执行”未解除前，也不能转为活动邀请或执行计划。\n\n"
+      }
+    ],
+    "csv": {
+      "projectId": "9d7f4be2-b986-48ad-bf2d-9b69d6b5e413",
+      "conversationId": "f4ae2400-9e00-4145-8b21-7b94000c26fc",
+      "runId": "a06b0720-4004-4622-ad6c-eb6b276de172",
+      "requestId": "home-auto-send-1bbx6m6u68i1y",
+      "snapshotId": "fa2ce171-2d7f-44fa-82b8-4ee3b7e504eb",
+      "fingerprint": "57c199f5eb797b8a7e0b89ef8b94ccee35b79a9ef4c16b635538d661fd2c4c76",
+      "sourceDigest": "a009436b7f2f9995fbd0ed5f513a7ecbbc9d2d03cac17d197dfdd6aff567524a",
+      "textDigest": "2927ffe5ef1b1538d5f6a810ee5d4246b0c5c37f8206f8d7f1c82b61bf9f5748",
+      "locators": [
+        "native9-sales.csv · 第 1 行",
+        "native9-sales.csv · 第 2 行",
+        "native9-sales.csv · 第 3 行",
+        "native9-sales.csv · 第 4 行",
+        "native9-sales.csv · 第 5 行",
+        "native9-sales.csv · 第 6 行",
+        "native9-sales.csv · 第 7 行",
+        "native9-sales.csv · 第 8 行",
+        "native9-sales.csv · 第 9 行",
+        "native9-sales.csv · 第 10 行"
+      ],
+      "text": "month,channel,sales\n\n2026-04,Tmall,42000\n\n2026-04,JD,18000\n\n2026-04,Offline,9000\n\n2026-05,Tmall,46000\n\n2026-05,JD,22000\n\n2026-05,Offline,14000\n\n2026-06,Tmall,41000\n\n2026-06,JD,27000\n\n2026-06,Offline,20000",
+      "independent": {
+        "monthly": {
+          "2026-04": 69000,
+          "2026-05": 82000,
+          "2026-06": 88000
+        },
+        "total": 239000,
+        "mayGrowth": 18.840579710144922,
+        "juneGrowth": 7.317073170731714,
+        "aprilTmallShare": 60.86956521739131,
+        "juneTmallShare": 46.590909090909086
+      },
+      "prompt": "Use only the selected CSV. Do not create files or read other projects. Calculate monthly totals, total sales, May and June growth, and Tmall share in April and June. Show arithmetic.",
+      "reply": "\n<od-done key=\"3fb979d0cd04a060\"/>\n仅依据所选 CSV，数值单位保持原样。\n\n- 4 月合计：42,000 + 18,000 + 9,000 = **69,000**\n- 5 月合计：46,000 + 22,000 + 14,000 = **82,000**\n- 6 月合计：41,000 + 27,000 + 20,000 = **88,000**\n\n总销售额：\n\n69,000 + 82,000 + 88,000 = **239,000**\n\n环比增长：\n\n- 5 月较 4 月增长：(82,000 − 69,000) ÷ 69,000 × 100% = **18.84%**\n- 6 月较 5 月增长：(88,000 − 82,000) ÷ 82,000 × 100% = **7.32%**\n\nTmall 销售占比：\n\n- 4 月：42,000 ÷ 69,000 × 100% = **60.87%**\n- 6 月：41,000 ÷ 88,000 × 100% = **46.59%**",
+      "producedFiles": 0
+    }
+  },
+  "mermaid": {
+    "first": {
+      "candidate": "0.0.3-local.10",
+      "phase": "first",
+      "projectId": "7053d5e8-63d0-4c8f-8f99-524593696302",
+      "conversationId": "d15ff65a-7a0d-44e2-af6a-1e0b9a92fc7f",
+      "fileName": "sketch-2026-10-07T10-30-12.sketch.json",
+      "elementCount": 14,
+      "referenceCount": 20,
+      "uniqueIds": [
+        "vkWddVTFkEqJ_DTBtjX3o",
+        "b-x5vm8mg6AHj1mY1h_zX",
+        "FF8luRveUig19QpZyT9MP",
+        "Z7oXjL1Zs0svw_6YK6R6z",
+        "uRq8vfguDDk3l49617bsO",
+        "KWZAD4LE17d91_cwBcwFJ",
+        "1khpfePE0V0D1DHgTWRBR",
+        "6oMyt4457-S0A_wdxvAig",
+        "gqUxpL44ErbE-rtUfj1_U",
+        "cv3braQ3WTK7PU6nAJfTJ",
+        "sU6LbXwzF4rBPI_Doxw7G",
+        "URYQ76j5QYeNl2HZ2tsFT",
+        "kL9eYRfmMIYnlCA0aPtub",
+        "yAnqZdlmS7DSmPHRcnNUE"
+      ],
+      "sha256": "c67238aa29c78a2f363cf41608e68ef18140ba4c5eea45e69408be115b0f568f",
+      "texts": [
+        "Brief",
+        "Brief",
+        "Plan",
+        "Plan",
+        "Exact selected inputs",
+        "Frozen response"
+      ]
+    },
+    "second": {
+      "candidate": "0.0.3-local.10",
+      "phase": "second",
+      "projectId": "7053d5e8-63d0-4c8f-8f99-524593696302",
+      "conversationId": "d15ff65a-7a0d-44e2-af6a-1e0b9a92fc7f",
+      "fileName": "sketch-2026-10-07T10-30-12.sketch.json",
+      "elementCount": 28,
+      "referenceCount": 40,
+      "uniqueIds": [
+        "vkWddVTFkEqJ_DTBtjX3o",
+        "b-x5vm8mg6AHj1mY1h_zX",
+        "FF8luRveUig19QpZyT9MP",
+        "Z7oXjL1Zs0svw_6YK6R6z",
+        "uRq8vfguDDk3l49617bsO",
+        "KWZAD4LE17d91_cwBcwFJ",
+        "1khpfePE0V0D1DHgTWRBR",
+        "6oMyt4457-S0A_wdxvAig",
+        "gqUxpL44ErbE-rtUfj1_U",
+        "cv3braQ3WTK7PU6nAJfTJ",
+        "sU6LbXwzF4rBPI_Doxw7G",
+        "URYQ76j5QYeNl2HZ2tsFT",
+        "kL9eYRfmMIYnlCA0aPtub",
+        "yAnqZdlmS7DSmPHRcnNUE",
+        "bGzxTZOOwa5UlJAF6ibE5",
+        "UzB6_qRQV6tM7ZUB-BBe-",
+        "K5veV9_eHC11DoV03W6vG",
+        "sz1DTtTRppJTX8X5Dv1FT",
+        "twO2uNMDQGL2fc8rBHiM8",
+        "S2WNYro4q8Sw81MUCjS_B",
+        "L9Y59SpFZZnpbhWKyVc1y",
+        "m0Qm5yTTWnEiOzNftRN5i",
+        "AnguqQwsxm5bcPORuu5kW",
+        "-_ZubsJZNdLov2yXVXvFu",
+        "WZWX78YDxzAyQkL3RwPTZ",
+        "IsAgy79UTf2TUfjW9NCVy",
+        "cYWibo3jvDybURsYYIXmn",
+        "KaAOhjOY3QCO4M-1_vM-P"
+      ],
+      "sha256": "490649ea44fd9202ccc1d9714f57b4bfbd53e6027905dbc8f58e6156849e733c",
+      "texts": [
+        "Brief",
+        "Brief",
+        "Plan",
+        "Plan",
+        "Exact selected inputs",
+        "Frozen response",
+        "Brief",
+        "Brief",
+        "Plan",
+        "Plan",
+        "Exact selected inputs",
+        "Frozen response"
+      ]
+    },
+    "reopened": {
+      "candidate": "0.0.3-local.10",
+      "phase": "reopened",
+      "projectId": "7053d5e8-63d0-4c8f-8f99-524593696302",
+      "conversationId": "d15ff65a-7a0d-44e2-af6a-1e0b9a92fc7f",
+      "fileName": "sketch-2026-10-07T10-30-12.sketch.json",
+      "elementCount": 28,
+      "referenceCount": 40,
+      "uniqueIds": [
+        "vkWddVTFkEqJ_DTBtjX3o",
+        "b-x5vm8mg6AHj1mY1h_zX",
+        "FF8luRveUig19QpZyT9MP",
+        "Z7oXjL1Zs0svw_6YK6R6z",
+        "uRq8vfguDDk3l49617bsO",
+        "KWZAD4LE17d91_cwBcwFJ",
+        "1khpfePE0V0D1DHgTWRBR",
+        "6oMyt4457-S0A_wdxvAig",
+        "gqUxpL44ErbE-rtUfj1_U",
+        "cv3braQ3WTK7PU6nAJfTJ",
+        "sU6LbXwzF4rBPI_Doxw7G",
+        "URYQ76j5QYeNl2HZ2tsFT",
+        "kL9eYRfmMIYnlCA0aPtub",
+        "yAnqZdlmS7DSmPHRcnNUE",
+        "bGzxTZOOwa5UlJAF6ibE5",
+        "UzB6_qRQV6tM7ZUB-BBe-",
+        "K5veV9_eHC11DoV03W6vG",
+        "sz1DTtTRppJTX8X5Dv1FT",
+        "twO2uNMDQGL2fc8rBHiM8",
+        "S2WNYro4q8Sw81MUCjS_B",
+        "L9Y59SpFZZnpbhWKyVc1y",
+        "m0Qm5yTTWnEiOzNftRN5i",
+        "AnguqQwsxm5bcPORuu5kW",
+        "-_ZubsJZNdLov2yXVXvFu",
+        "WZWX78YDxzAyQkL3RwPTZ",
+        "IsAgy79UTf2TUfjW9NCVy",
+        "cYWibo3jvDybURsYYIXmn",
+        "KaAOhjOY3QCO4M-1_vM-P"
+      ],
+      "sha256": "490649ea44fd9202ccc1d9714f57b4bfbd53e6027905dbc8f58e6156849e733c",
+      "texts": [
+        "Brief",
+        "Brief",
+        "Plan",
+        "Plan",
+        "Exact selected inputs",
+        "Frozen response",
+        "Brief",
+        "Brief",
+        "Plan",
+        "Plan",
+        "Exact selected inputs",
+        "Frozen response"
+      ]
+    },
+    "layoutQuality": "not acceptance: repeated insertion uses overlapping default position"
+  },
+  "realTasksReopened": {
+    "csv": true,
+    "budgetA": true,
+    "budgetB": true,
+    "sameRunIdsAndSnapshots": true,
+    "logicalRuns": 3,
+    "additionalRuns": 0,
+    "producedFiles": 0
+  },
+  "security": {
+    "auditExitCode": 1,
+    "rawReportSha256": "ca870b1b2848f8a9e6eaccd1101686999bcd1fa0fd886b19e2c42641cce52f25",
+    "counts": {
+      "info": 0,
+      "low": 1,
+      "moderate": 3,
+      "high": 2,
+      "critical": 0
+    },
+    "openAdvisories": [
+      {
+        "ghsa": "GHSA-8988-4f7v-96qf",
+        "module": "@opentelemetry/core",
+        "severity": "moderate",
+        "findings": [
+          {
+            "version": "2.2.0",
+            "paths": [
+              "apps__web>posthog-js>@opentelemetry/exporter-logs-otlp-http>@opentelemetry/core"
+            ]
+          },
+          {
+            "version": "2.7.1",
+            "paths": [
+              "apps__web>posthog-js>@opentelemetry/resources>@opentelemetry/core"
+            ]
+          }
+        ],
+        "patchedVersions": ">=2.8.0"
+      },
+      {
+        "ghsa": "GHSA-ch52-4w7c-c8xp",
+        "module": "http-cache-semantics",
+        "severity": "high",
+        "findings": [
+          {
+            "version": "4.2.0",
+            "paths": [
+              "tools__pack>electron-builder>app-builder-lib>@electron/get>got>cacheable-request>http-cache-semantics"
+            ]
+          }
+        ],
+        "patchedVersions": "<0.0.0"
+      },
+      {
+        "ghsa": "GHSA-vfj7-8cjw-p6xm",
+        "module": "braces",
+        "severity": "high",
+        "findings": [
+          {
+            "version": "3.0.3",
+            "paths": [
+              "apps__daemon>chokidar>braces"
+            ]
+          }
+        ],
+        "patchedVersions": "<0.0.0"
+      },
+      {
+        "ghsa": "GHSA-hp3w-g68c-fv3c",
+        "module": "sprintf-js",
+        "severity": "moderate",
+        "findings": [
+          {
+            "version": "1.1.3",
+            "paths": [
+              "apps__daemon>hyperframes>onnxruntime-node>global-agent>roarr>sprintf-js"
+            ]
+          }
+        ],
+        "patchedVersions": "<0.0.0"
+      },
+      {
+        "ghsa": "GHSA-238p-pmpm-9mq7",
+        "module": "katex",
+        "severity": "low",
+        "findings": [
+          {
+            "version": "0.16.47",
+            "paths": [
+              "apps__web>@excalidraw/excalidraw>@excalidraw/mermaid-to-excalidraw>mermaid>katex"
+            ]
+          }
+        ],
+        "patchedVersions": ">=0.18.2"
+      }
+    ],
+    "highMitigatedNotFixed": [
+      "braces actual-directory watcher only",
+      "http-cache-semantics default @electron/get HTTP cache disabled"
+    ],
+    "overrides": {
+      "@excalidraw/mermaid-to-excalidraw>nanoid": "5.1.16",
+      "pptxgenjs>image-size": "2.0.3"
+    },
+    "overrideRemoval": "safe version from owner without override plus actual feature regression and refreshed audit"
+  },
+  "preservedFailures": {
+    "local8": "native accepted send receipt omitted generation; actual9/10 failed",
+    "local9": "outer version body 345/355 overflow, not final candidate",
+    "ci37600100543": "failure retained; input readiness and actual request oracle strengthened, final CI success",
+    "ci37602793383": "cancelled by concurrency, not passed"
+  },
+  "acceptance": {
+    "engineering": "incomplete: security disposition and required real-data/manual/native formats outstanding",
+    "security": "2 high open; no risk acceptance or public release",
+    "professional": "pending",
+    "user": "pending",
+    "realOldProfile": "found, original app still running; consistent protected copy and upgrade unverified",
+    "realAuthorizedBrands": "pending source material and allowed model destination",
+    "native403StringNonJson": "unverified; component coverage not replacement",
+    "nativeDualBusinessWindow": "host capability gap",
+    "whiteScreen": "not reproduced; skipped by user direction, unclosed",
+    "externalHtmlZipAndChineseIme": "manual pending",
+    "mergedOrReleased": false
+  }
+}

@@ -31,8 +31,9 @@ import {
   type SocialShareResponse,
   type WorkspaceCollabContext,
 } from '@open-design/contracts';
-import type { MokinaContextSelection, MokinaExcludedContextItem } from '@open-design/contracts';
 import { MOKINA_CONTEXT_BUDGETS } from '@open-design/contracts';
+import { readMokinaContinuationJournal, readMokinaContinuationForKey, persistContinuationJournal, continuationIntentDigest,
+  resumeMokinaContinuation, resumeLegacyMokinaContinuation, continuationTextUnits, type ContinuationIntent } from '../runtime/mokina/continuation-recovery';
 import { PREVIEW_OBSERVABILITY_HOST_STATE_MESSAGE_TYPE } from '@open-design/contracts/runtime/preview-observability';
 import { PREVIEW_URL_GUARD_MAX_HTML_BYTES } from '@open-design/contracts/runtime/preview-guards';
 import {
@@ -3378,35 +3379,8 @@ type ExportToastState = {
  * operation/target project, mirrored into the durable desktop store so a reload
  * resumes the SAME target instead of minting a second project.
  */
-export type MokinaContinuationJournal = {
-  schemaVersion: 2;
-  operationId: string;
-  targetProjectId: string;
-  /** N05: stable snapshot id so a retry after failure reuses the idempotent prepare. */
-  contextSnapshotId?: string;
-  checkpoint: 'prepared' | 'project-created' | 'snapshot-saved' | 'draft-ready';
-  updatedAt: string;
-};
-
-export function readMokinaContinuationJournal(raw: string | null): MokinaContinuationJournal | null {
-  if (!raw) return null;
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (!parsed || typeof parsed !== 'object') return null;
-    const row = parsed as Record<string, unknown>;
-    if (
-      row.schemaVersion !== 2
-      || typeof row.operationId !== 'string' || row.operationId.length === 0
-      || typeof row.targetProjectId !== 'string' || row.targetProjectId.length === 0
-      || typeof row.checkpoint !== 'string'
-    ) {
-      return null;
-    }
-    return parsed as MokinaContinuationJournal;
-  } catch {
-    return null;
-  }
-}
+export { readMokinaContinuationJournal } from '../runtime/mokina/continuation-recovery';
+export type { MokinaContinuationJournal } from '../runtime/mokina/continuation-recovery';
 
 export type MokinaContinuationIntent = 'discuss' | 'landing-page';
 
@@ -3652,10 +3626,14 @@ function FileVersionManagerModal({
   // source project changes.
   const [continuationAssets, setContinuationAssets] = useState<Array<{ name: string; role: 'logo' | 'hero' | 'supporting'; usageNote: string }>>([]);
   const [continuationBrandId, setContinuationBrandId] = useState('');
-  const [continuationBrandPreview, setContinuationBrandPreview] = useState<{ title: string; chars: number } | null>(null);
+  const [continuationBrandPreview, setContinuationBrandPreview] = useState<{ title: string; chars: number; digest: string } | null>(null);
   const [continuationDesignSystems, setContinuationDesignSystems] = useState<Array<{ id: string; title: string }>>([]);
   const [continuationAssetCandidates, setContinuationAssetCandidates] = useState<string[]>([]);
   const brandPreviewSeqRef = useRef(0);
+  const continuationScope = JSON.stringify([workspaceIdentityCacheKey(workspaceContext), projectId, file.name]);
+  const continuationScopeRef = useRef(continuationScope);
+  continuationScopeRef.current = continuationScope;
+  useEffect(() => { brandPreviewSeqRef.current++; setContinuationBrandId(''); setContinuationBrandPreview(null); }, [continuationScope]);
   const [continuationBusy, setContinuationBusy] = useState(false);
   const [revisionSectionId, setRevisionSectionId] = useState('');
   const [revisionRequest, setRevisionRequest] = useState('');
@@ -4414,198 +4392,80 @@ function FileVersionManagerModal({
   }
 
   async function continueFromSelectedSections() {
+    const issuedScope = continuationScope;
     if (!selectedVersion || !selectedContentMatchesVersion || continuationBusy) return;
-    const chosen = continuationSections.filter((section) => selectedContinuationSections.includes(section.id));
-    if (chosen.length === 0) { setError('请先选择至少一个章节。'); return; }
-    const total = chosen.reduce((sum, section) => sum + section.text.length, 0);
-    if (total > 24_000) { setError('选定章节超过 24,000 字符；请缩小选择。'); return; }
-    if (continuationBrandPreview && total + continuationBrandPreview.chars > MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits) {
-      setError(t('fileViewer.mokina.continuationBudgetExceeded'));
-      return;
-    }
-    setContinuationBusy(true);
-    setError(null);
-    const journalKey = `od:continuation:${projectId}:${file.name}:${selectedVersion.id}`;
-    const storeJournal = async (journal: MokinaContinuationJournal) => {
-      const encoded = JSON.stringify(journal);
-      if (!await mirrorDurableRecord(journalKey, encoded)) throw new Error('接续身份未能安全保存，请重试。');
-      window.localStorage.setItem(journalKey, encoded);
-    };
-    const clearJournal = async () => {
-      if (!await removeDurableRecord(journalKey)) throw new Error('接续项目已保存，恢复记录清理失败；重试将沿用同一项目。');
-      window.localStorage.removeItem(journalKey);
-    };
+    const chosen = continuationSections.filter(section => selectedContinuationSections.includes(section.id));
+    if (!chosen.length) { setError('请先选择至少一个章节。'); return; }
+    if (continuationBrandId && !continuationBrandPreview?.digest) { setError('品牌规则尚未读取完成，请重新选择品牌后重试。'); return; }
+    setContinuationBusy(true); setError(null);
     try {
-      const existingJournal = readMokinaContinuationJournal(
-        (() => { try { return window.localStorage.getItem(journalKey); } catch { return null; } })(),
-      );
-      const operationId = existingJournal?.operationId ?? newClientOperationId();
-      const targetProjectId = existingJournal?.targetProjectId ?? newClientOperationId();
-      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, ...(existingJournal?.contextSnapshotId ? { contextSnapshotId: existingJournal.contextSnapshotId } : {}), checkpoint: 'prepared', updatedAt: new Date().toISOString() });
-      const target = resolveMokinaContinuationTarget(continuationIntent);
-      const prompt = [
-        target.promptLead,
-        '只使用下列摘录和我补充的背景；不要读取或推断原项目的其他资料。',
-        ...chosen.map((section) => `【${section.id}】\n${section.text}`),
-        continuationBackground.trim() ? `【补充背景】\n${continuationBackground.trim()}` : '',
-      ].filter(Boolean).join('\n\n');
-      const project = await createProject({
-        id: targetProjectId,
-        name: `${file.name.replace(/\.html?$/iu, '')} · 接续`,
-        skillId: null,
-        designSystemId: null,
-        metadata: { kind: 'other', intent: 'marketing' },
-        pluginId: target.pluginId,
-        pendingPrompt: prompt,
-        workspaceContext,
-      });
-      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, ...(existingJournal?.contextSnapshotId ? { contextSnapshotId: existingJournal.contextSnapshotId } : {}), checkpoint: 'project-created', updatedAt: new Date().toISOString() });
-      // N05: freeze the selected assets (bytes uploaded to the target project)
-      // and the chosen brand rules into the TARGET project's context snapshot,
-      // then bind it as that project's pending snapshot so the first explicit
-      // send references it. The continuation JSON is written only after the
-      // snapshot exists — contextSnapshotId never appears without frozen bytes.
-      let contextSnapshotId: string | undefined;
-      if (continuationAssets.length > 0 || continuationBrandId) {
-        const snapshotId = existingJournal?.contextSnapshotId ?? newClientOperationId();
-        // Persist the id before any network work: the prepare API is idempotent
-        // per snapshotId, so a retry after failure reuses it exactly.
-        await storeJournal({ schemaVersion: 2, operationId, targetProjectId, contextSnapshotId: snapshotId, checkpoint: 'project-created', updatedAt: new Date().toISOString() });
-        const selections: MokinaContextSelection[] = [];
-        const excluded: MokinaExcludedContextItem[] = [];
-        // Idempotent retry: a previous attempt may already have uploaded some
-        // assets into the target project. Re-uploading would make the daemon
-        // rename duplicates (hero-1.png) and pollute the draft, so skip names
-        // the target already has — the daemon re-verifies digests at freeze.
-        const targetFiles = await fetchProjectFiles(project.project.id, { workspaceContext }).catch(() => []);
-        const targetNames = new Set(targetFiles.map((entry) => entry.name));
-        for (const [index, asset] of continuationAssets.entries()) {
-          const raw = await fetch(projectFileUrl(projectId, asset.name, workspaceContext), { cache: 'no-store' });
-          if (!raw.ok) {
-            excluded.push({ displayName: asset.name, reason: 'unavailable', explanation: t('fileViewer.mokina.continuationAssetReadFailed') });
-            continue;
-          }
-          const bytes = await raw.arrayBuffer();
-          if (bytes.byteLength > MOKINA_CONTEXT_BUDGETS.maxAssetBytes) {
-            excluded.push({ displayName: asset.name, reason: 'budget', explanation: t('fileViewer.mokina.continuationAssetTooLarge') });
-            continue;
-          }
-          const digest = await mokinaBytesDigest(bytes);
-          if (!targetNames.has(asset.name)) {
-            const uploaded = await uploadProjectFiles(project.project.id, [new File([bytes], asset.name)], undefined, workspaceContext);
-            const failure = uploaded.failed.find((entry) => entry.name === asset.name) ?? uploaded.failed[0];
-            if (failure) throw new Error(failure.error || t('fileViewer.mokina.continuationAssetReadFailed'));
-            targetNames.add(asset.name);
-          }
-          selections.push({
-            itemId: `A${index + 1}`,
-            mode: 'asset',
-            sourceRef: { kind: 'project-file', projectId: project.project.id, fileName: asset.name },
-            expectedSourceDigest: digest,
-            role: asset.role,
-            usageNote: asset.usageNote,
-          });
-        }
-        if (continuationBrandId) {
-          try {
-            const detail = await fetch(`/api/design-systems/${encodeURIComponent(continuationBrandId)}`,
-              workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
-            if (!detail.ok) throw new Error(String(detail.status));
-            const body = await detail.json() as { body?: string };
-            const text = typeof body.body === 'string' ? body.body : '';
-            if (!text.trim()) throw new Error('empty');
-            const digest = await mokinaBytesDigest(new TextEncoder().encode(text).buffer as ArrayBuffer);
-            selections.push({
-              itemId: `B${selections.length + 1}`,
-              mode: 'groups',
-              textKind: 'brand-rule',
-              sourceRef: { kind: 'design-system', designSystemId: continuationBrandId },
-              expectedSourceDigest: digest,
-              groupIds: [],
-            });
-          } catch {
-            excluded.push({ displayName: continuationBrandId, reason: 'unavailable', explanation: t('fileViewer.mokina.continuationBrandReadFailed') });
-          }
-        }
-        if (selections.length > 0) {
-          const response = await fetch(
-            `/api/projects/${encodeURIComponent(project.project.id)}/mokina/context-snapshots`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
-              },
-              body: JSON.stringify({ snapshotId, selections, excluded }),
-            },
-          );
-          const body = await response.json().catch(() => null) as {
-            snapshot?: { items: Array<{ displayName: string; kind: string; text?: string }> };
-            error?: { message?: string };
-          } | null;
-          if (!response.ok || !body?.snapshot) {
-            if (body?.error && 'code' in body.error && body.error.code === 'MOKINA_SNAPSHOT_CONFLICT') {
-              // The selection changed under a pinned snapshotId; the journal can
-              // never succeed. Clear it so the next attempt mints fresh ids.
-              await clearJournal().catch(() => {});
-              throw new Error(t('fileViewer.mokina.continuationSelectionChanged'));
-            }
-            // The journal keeps checkpoint 'project-created' with the same
-            // snapshotId; retrying reuses the target and the idempotent id.
-            throw new Error(body?.error?.message ?? t('fileViewer.mokina.continuationSnapshotFailed'));
-          }
-          const items = body.snapshot.items ?? [];
-          await writePendingMokinaSnapshot({
-            snapshotId,
-            projectId: project.project.id,
-            itemCount: items.length,
-            charCount: items.reduce((sum, item) => sum + (item.text?.length ?? 0), 0),
-            frozenAt: new Date().toISOString(),
-            itemLabels: items.map((item) => item.displayName).slice(0, 20),
-            excluded: excluded.map((entry) => ({ displayName: entry.displayName, reason: entry.explanation || entry.reason })),
-          });
-          contextSnapshotId = snapshotId;
-        }
-        if (excluded.length > 0) {
-          setError(t('fileViewer.mokina.continuationExcluded', { names: excluded.map((entry) => entry.displayName).join('、') }));
-        }
-      }
-      const fixed = buildMokinaContinuationV2({
-        projectId,
-        fileName: file.name,
-        versionId: selectedVersion.id,
-        versionState: selectedVersion.candidate ? 'candidate' : selectedVersion.current ? 'current' : 'historical',
-        ...(selectedVersion.contentDigest ? { contentDigest: selectedVersion.contentDigest } : {}),
-        operationId,
-        targetProjectId,
-        sections: chosen.map((section) => ({ id: section.id, text: section.text })),
-        background: continuationBackground.trim(),
-        productionIntent: continuationIntent,
-        ...(contextSnapshotId ? { contextSnapshotId } : {}),
-      });
-      const saved = await writeProjectTextFile(
-        project.project.id,
-        'MOKINA-CONTINUATION.json',
-        JSON.stringify(fixed, null, 2),
-        undefined,
-        workspaceContext,
-      );
-      if (!saved) throw new Error(t('fileViewer.mokina.continuationDraftKept'));
-      await storeJournal({ schemaVersion: 2, operationId, targetProjectId, checkpoint: 'snapshot-saved', updatedAt: new Date().toISOString() });
-      if (!continuationSectionRef.current?.isConnected) {
-        // The user moved on while the creation was in flight: the project and
-        // the journal stay ready (a retry reuses the same target), but a late
-        // result must not yank navigation or quietly clear the record.
+      const intent: ContinuationIntent = {
+        source: { projectId, fileName: file.name, versionId: selectedVersion.id,
+          versionState: selectedVersion.candidate ? 'candidate' : selectedVersion.current ? 'current' : 'historical',
+          ...(selectedVersion.contentDigest ? { contentDigest: selectedVersion.contentDigest } : {}) },
+        sections: chosen.map(section => ({ id: section.id, text: section.text })),
+        background: continuationBackground.trim(), productionIntent: continuationIntent,
+        ...resolveMokinaContinuationTarget(continuationIntent),
+        workspaceKey: workspaceIdentityCacheKey(workspaceContext),
+        ...(continuationBrandId && continuationBrandPreview ? { brand: { id: continuationBrandId, digest: continuationBrandPreview.digest } } : {}),
+        assets: continuationAssets.map((asset, index) => ({ ...asset, inputId: `asset-${index + 1}` })),
+      };
+      intent.source.contentDigest ??= await mokinaBytesDigest(new TextEncoder().encode(selectedContent ?? '').buffer as ArrayBuffer);
+      intent.sections = await Promise.all(intent.sections.map(async section => ({ ...section,
+        textDigest: await mokinaBytesDigest(new TextEncoder().encode(section.text).buffer as ArrayBuffer) })));
+      const journalKey = `od:continuation:${JSON.stringify([intent.workspaceKey, projectId, file.name, selectedVersion.id])}`;
+      let existing = readMokinaContinuationForKey(journalKey);
+      const oldKey = `od:continuation:${projectId}:${file.name}:${selectedVersion.id}`;
+      if (!existing && window.localStorage.getItem(oldKey)) {
+        const legacy = readMokinaContinuationJournal(window.localStorage.getItem(oldKey));
+        if (!legacy) throw new Error('旧接续记录无法读取，已保留原记录。');
+        const ready = await resumeLegacyMokinaContinuation(legacy, workspaceContext);
+        if (issuedScope !== continuationScopeRef.current || !continuationSectionRef.current?.isConnected) return;
+        onClose(); navigate({ kind: 'project', projectId: ready.targetProjectId, conversationId: ready.conversationId, fileName: null });
         return;
       }
-      await clearJournal();
+      for (const asset of intent.assets) {
+        const saved = existing?.intent?.assets.find(item => item.inputId === asset.inputId && item.name === asset.name);
+        if (saved?.digest) { asset.digest = saved.digest; asset.byteLength = saved.byteLength; continue; }
+        const response = await fetch(projectFileUrl(projectId, asset.name, workspaceContext), { cache: 'no-store' });
+        if (!response.ok) throw new Error(`素材读取失败：${asset.name}，尚未创建接续项目。`);
+        const bytes = await response.arrayBuffer();
+        asset.digest = await mokinaBytesDigest(bytes); asset.byteLength = bytes.byteLength;
+      }
+      if (continuationTextUnits(intent) + (continuationBrandPreview?.chars ?? 0) > MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits
+        || intent.assets.reduce((sum, asset) => sum + (asset.byteLength ?? 0), 0) > MOKINA_CONTEXT_BUDGETS.maxAssetBytes
+        || intent.sections.length + intent.assets.length + (intent.background ? 1 : 0) + (intent.brand ? 1 : 0) > MOKINA_CONTEXT_BUDGETS.maxItems) throw new Error('接续输入超出预算，请调整选择。');
+      const intentDigest = await continuationIntentDigest(intent);
+      if (existing && existing.intentDigest !== intentDigest) {
+        if (!window.confirm('选择已改变。新建接续副本，并保留原稿和原恢复记录？')) return;
+        const backupKey = `${journalKey}:operation:${existing.operationId}`;
+        const { mutateDurableRecord } = await import('../runtime/persistence/mokina-recovery-store');
+        const backup = JSON.stringify(existing);
+        if (!await mutateDurableRecord(backupKey, raw => raw === null || raw === backup ? backup : undefined)) throw new Error('原接续记录备份失败，尚未创建副本。');
+        const oldOperationId = existing.operationId;
+        const oldRevision = existing.revision;
+        const oldIntentDigest = existing.intentDigest;
+        if (!await mutateDurableRecord(journalKey, raw => {
+          const current = readMokinaContinuationJournal(raw);
+          return raw === null || (current?.operationId === oldOperationId && current.revision === oldRevision
+            && current.intentDigest === oldIntentDigest) ? null : undefined;
+        })) throw new Error('原接续记录已变化，请重新核对。');
+        existing = null;
+      }
+      if (!existing) {
+        existing = { schemaVersion: 3, operationId: newClientOperationId(), targetProjectId: newClientOperationId(),
+          contextSnapshotId: newClientOperationId(), checkpoint: 'prepared', updatedAt: new Date().toISOString(),
+          revision: 0, intentDigest, intent, copiedAssets: {} };
+        await persistContinuationJournal(journalKey, existing);
+      }
+      const ready = await resumeMokinaContinuation(journalKey, existing, workspaceContext);
+      if (issuedScope !== continuationScopeRef.current || !continuationSectionRef.current?.isConnected) return;
+      // The active journal is consumed only after a durable completion record is saved.
       onClose();
-      navigate({ kind: 'project', projectId: project.project.id, conversationId: project.conversationId, fileName: null });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '接续创建失败');
-    } finally {
-      setContinuationBusy(false);
-    }
+      navigate({ kind: 'project', projectId: ready.targetProjectId, conversationId: ready.conversationId, fileName: null });
+    } catch (cause) {
+      if (issuedScope === continuationScopeRef.current) setError(cause instanceof Error ? cause.message : '接续创建失败');
+    } finally { if (issuedScope === continuationScopeRef.current) setContinuationBusy(false); }
   }
 
   async function finishChapterCandidate(job: MokinaRevisionJob): Promise<boolean> {
@@ -5240,7 +5100,7 @@ function FileVersionManagerModal({
                             ? [...current.filter((entry) => entry.name !== name), { name, role: 'supporting', usageNote: '' }]
                             : current.filter((entry) => entry.name !== name))}
                         />
-                        <span>{name}</span>
+                        <span title={name}>{name}</span>
                       </label>
                       {asset ? (
                         <>
@@ -5279,7 +5139,8 @@ function FileVersionManagerModal({
                     setContinuationBrandId(id);
                     const summary = continuationDesignSystems.find((system) => system.id === id);
                     const seq = ++brandPreviewSeqRef.current;
-                    setContinuationBrandPreview(id && summary ? { title: summary.title, chars: 0 } : null);
+                    const scope = continuationScope;
+                    setContinuationBrandPreview(null);
                     if (id && summary) {
                       void fetch(`/api/design-systems/${encodeURIComponent(id)}`,
                         workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined)
@@ -5287,7 +5148,8 @@ function FileVersionManagerModal({
                           if (!response.ok || seq !== brandPreviewSeqRef.current) return;
                           const body = await response.json().catch(() => null) as { body?: string } | null;
                           const text = typeof body?.body === 'string' ? body.body : '';
-                          if (text.trim() && seq === brandPreviewSeqRef.current) setContinuationBrandPreview({ title: summary.title, chars: text.length });
+                          const digest = await mokinaBytesDigest(new TextEncoder().encode(text).buffer as ArrayBuffer);
+                          if (text.trim() && seq === brandPreviewSeqRef.current && scope === continuationScopeRef.current) setContinuationBrandPreview({ title: summary.title, chars: text.length, digest });
                         })
                         .catch(() => {});
                     }

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import { Button } from '@open-design/components';
 
 import type { MokinaContextDeliveryReceipt, MokinaContextSnapshot } from '@open-design/contracts';
 
 import type { WorkspaceCollabContext } from '@open-design/contracts';
 
 import { fetchChatRunStatus } from '../../providers/daemon';
-import { workspaceProjectHeaders } from '../../collab/workspace-identity';
+import { workspaceProjectHeaders, workspaceIdentityCacheKey } from '../../collab/workspace-identity';
 import { MOKINA_LOCAL_EDITION } from '../../mokina-edition';
 import { useT } from '../../i18n';
 import type { Dict } from '../../i18n/types';
@@ -53,23 +54,32 @@ export function MokinaRunEvidence({ projectId, runId, runActive, workspaceContex
   const [snapshot, setSnapshot] = useState<MokinaContextSnapshot | null>(null);
   const [snapshotError, setSnapshotError] = useState(false);
   const [open, setOpen] = useState(false);
+  const identity = JSON.stringify([projectId, runId, workspaceIdentityCacheKey(workspaceContext)]);
+  const [receiptIdentity, setReceiptIdentity] = useState('');
+  const [receiptError, setReceiptError] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
+  const [snapshotRetry, setSnapshotRetry] = useState(0);
   const t = useT();
 
   useEffect(() => {
+    setReceipt(null); setAgentLabel(null); setSnapshot(null); setSnapshotError(false); setReceiptError(false); setOpen(false);
     if (!MOKINA_LOCAL_EDITION || runActive) return;
     let cancelled = false;
-    void fetchChatRunStatus(runId).then((status) => {
-      if (cancelled || !status) return;
+    void fetchChatRunStatus(runId, workspaceContext).then((status) => {
+      if (cancelled) return;
+      if (!status) { setReceiptError(true); return; }
+      setReceiptIdentity(identity);
       setAgentLabel(status.agentId ?? null);
       setReceipt(status.mokinaContext ?? null);
-    });
+    }).catch(() => { if (!cancelled) setReceiptError(true); });
     return () => {
       cancelled = true;
     };
-  }, [runId, runActive]);
+  }, [identity, runActive, retryNonce]);
 
   useEffect(() => {
-    if (!open || snapshot || snapshotError || !receipt) return;
+    setSnapshot(null); setSnapshotError(false);
+    if (!open || !receipt || receiptIdentity !== identity) return;
     let cancelled = false;
     fetch(
       `/api/projects/${encodeURIComponent(projectId)}/mokina/context-snapshots/${encodeURIComponent(receipt.snapshotId)}`,
@@ -82,6 +92,9 @@ export function MokinaRunEvidence({ projectId, runId, runActive, workspaceContex
           return;
         }
         const body = await response.json().catch(() => null) as { snapshot?: MokinaContextSnapshot } | null;
+        if (cancelled) return;
+        if (!body?.snapshot || body.snapshot.snapshotId !== receipt.snapshotId || body.snapshot.projectId !== projectId
+          || body.snapshot.fingerprint !== receipt.fingerprint) { setSnapshotError(true); return; }
         setSnapshot(body?.snapshot ?? null);
       })
       .catch(() => {
@@ -90,9 +103,11 @@ export function MokinaRunEvidence({ projectId, runId, runActive, workspaceContex
     return () => {
       cancelled = true;
     };
-  }, [open, snapshot, snapshotError, receipt, projectId, workspaceContext]);
+  }, [open, receipt, identity, receiptIdentity, snapshotRetry]);
 
-  if (!MOKINA_LOCAL_EDITION || !receipt) return null;
+  if (!MOKINA_LOCAL_EDITION) return null;
+  if (receiptError) return <p role="status">{t('mokina.runEvidence.receiptReadFailed')}<Button onClick={() => setRetryNonce(value => value + 1)}>{t('preview.retry')}</Button></p>;
+  if (!receipt || receiptIdentity !== identity) return null;
 
   const itemsById = new Map((snapshot?.items ?? []).map((item) => [item.itemId, item]));
   const deliveryById = new Map((receipt.itemDelivery ?? []).map((delivery) => [delivery.itemId, delivery]));
@@ -108,6 +123,7 @@ export function MokinaRunEvidence({ projectId, runId, runActive, workspaceContex
         {receipt.submittedAt ? t('mokina.runEvidence.time', { time: new Date(receipt.submittedAt).toLocaleString() }) : ''}
         {agentLabel ? t('mokina.runEvidence.agent', { agent: agentLabel }) : ''}
       </summary>
+      {receipt.status === 'submitted' ? <p>{t('mokina.runEvidence.transmissionOnly')}</p> : null}
       <ul className={styles.items}>
         {(receipt.includedItemIds ?? []).map((itemId) => {
           const item = itemsById.get(itemId);
@@ -119,7 +135,16 @@ export function MokinaRunEvidence({ projectId, runId, runActive, workspaceContex
                 {item ? `${t(KIND_LABEL_KEY[item.kind] ?? 'mokina.runEvidence.kindMaterial')} · ` : ''}
                 {delivery ? t(MODE_LABEL_KEY[delivery.mode] ?? 'mokina.runEvidence.modeInlineText') : ''}
               </small>
-              {item && item.kind !== 'asset' && item.limitations.length > 0 ? (
+              {item ? <>
+                <small>{item.sourceRef.kind === 'project-file' ? `${item.sourceRef.fileName} · ${item.sourceRef.versionState ?? ''} · ${item.sourceRef.versionId ?? ''}`
+                  : item.sourceRef.kind === 'design-system' ? item.sourceRef.designSystemId : t('mokina.runEvidence.kindUserNote')}</small>
+                {item.kind === 'asset' ? <p>{item.role} · {item.usageNote} · {item.byteLength} bytes</p> : <>
+                  {item.continuationOrigin ? <small>{item.continuationOrigin.source.fileName} · {item.continuationOrigin.source.versionState} · {item.continuationOrigin.source.versionId} · {item.continuationOrigin.source.contentDigest}</small> : null}
+                  <small>{item.locators.join('；')}</small><pre>{item.text}</pre>
+                </>}
+                <small>{item.sourceDigest}</small>
+              </> : null}
+              {item && item.limitations.length > 0 ? (
                 <small className={styles.limitations}>
                   {t('mokina.runEvidence.limitations', { limitations: item.limitations.join('；') })}
                 </small>
@@ -134,7 +159,8 @@ export function MokinaRunEvidence({ projectId, runId, runActive, workspaceContex
           </li>
         ))}
       </ul>
-      {snapshotError ? <p className={styles.error}>{t('mokina.runEvidence.snapshotReadFailed')}</p> : null}
+      <small>{runId} · {receipt.snapshotId} · {receipt.fingerprint}</small>
+      {snapshotError ? <p className={styles.error}>{t('mokina.runEvidence.snapshotReadFailed')}<Button onClick={() => setSnapshotRetry(value => value + 1)}>{t('preview.retry')}</Button></p> : null}
       {receipt.status === 'not-submitted' && receipt.reason ? (
         <p className={styles.error}>{t('mokina.runEvidence.reason', { reason: receipt.reason })}</p>
       ) : null}

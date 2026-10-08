@@ -8,7 +8,7 @@
 // textarea can live centered in the hero.
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Dialog, DialogFooter, DialogTitle } from '@open-design/components';
+import { Button, Dialog, DialogFooter, DialogTitle } from '@open-design/components';
 import type {
   ApplyResult,
   ChatSessionMode,
@@ -108,6 +108,8 @@ import {
 } from './home-hero/sub-chips';
 import { homeHeroChipLabel } from './home-hero/chip-labels';
 import type { HomeMokinaFilePlan } from '../runtime/mokina/home-material-snapshot';
+import { homeInputIdentity, readStagedInputDraft, saveStagedInputDraft, clearStagedInputDraft, type StagedInputDraft, type StagedInputMetadata } from '../runtime/mokina/staged-input-draft';
+import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
 import type { PlaceholderScenario } from './home-hero/placeholderScenarios';
 import { consumePendingHomeChip, hasPendingHomeChip, HOME_CHIP_INTENT_EVENT } from '../runtime/home-intent';
 import { navigate } from '../router';
@@ -648,6 +650,32 @@ export function HomeView({
   // panel. Kept in component state like stagedFiles (File handles cannot be
   // serialized into the persisted prompt draft).
   const [mokinaFilePlans, setMokinaFilePlans] = useState<Array<HomeMokinaFilePlan | null>>([]);
+  const inputWorkspaceKey = workspaceIdentityCacheKey(workspaceContext);
+  const inputDraftsRef = useRef(new Map<string, StagedInputDraft | null>());
+  const inputSavesRef = useRef(Promise.resolve(true));
+  const [missingInputs, setMissingInputs] = useState<{ workspaceKey: string; inputs: StagedInputMetadata[] }>({ workspaceKey: '', inputs: [] });
+  useEffect(() => {
+    if (!MOKINA_LOCAL_EDITION || !ownsComposerDraft || workspaceContextState.identityChangePending) return;
+    const draft = readStagedInputDraft(inputWorkspaceKey);
+    inputDraftsRef.current.set(inputWorkspaceKey, draft);
+    const present = new Set(stagedFiles.map(file => homeInputIdentity(file)));
+    setMissingInputs({ workspaceKey: inputWorkspaceKey, inputs: draft?.inputs.filter(item => !present.has(item.inputId)) ?? [] });
+    if (draft && stagedFiles.length) setMokinaFilePlans(current => stagedFiles.map((file, index) => current[index]
+      ?? draft.inputs.find(item => item.inputId === homeInputIdentity(file))?.plan ?? null));
+  }, [inputWorkspaceKey, ownsComposerDraft, workspaceContextState.identityChangePending]);
+  useEffect(() => {
+    if (!MOKINA_LOCAL_EDITION || !ownsComposerDraft || missingInputs.workspaceKey !== inputWorkspaceKey
+      || workspaceContextState.identityChangePending) return;
+    const inputs = [...missingInputs.inputs, ...stagedFiles.map((file, index) => ({
+      inputId: homeInputIdentity(file), name: file.name, size: file.size, plan: mokinaFilePlans[index] ?? null,
+    }))];
+    inputSavesRef.current = inputSavesRef.current.catch(() => false).then(async () => {
+      try {
+        const saved = await saveStagedInputDraft(inputWorkspaceKey, inputs, inputDraftsRef.current.get(inputWorkspaceKey) ?? null);
+        inputDraftsRef.current.set(inputWorkspaceKey, saved); return true;
+      } catch (cause) { setError(cause instanceof Error ? cause.message : t('mokina.pendingSend.saveFailed')); return false; }
+    });
+  }, [inputWorkspaceKey, missingInputs, stagedFiles, mokinaFilePlans, ownsComposerDraft, workspaceContextState.identityChangePending, t]);
   useEffect(() => {
     if (ownsComposerDraft) clearHomeComposerAttachments();
   }, [ownsComposerDraft]);
@@ -2143,6 +2171,7 @@ export function HomeView({
 
   function stageFiles(files: File[]) {
     if (files.length === 0) return;
+    files.forEach(file => homeInputIdentity(file));
     setStagedFiles((current) => [...current, ...files]);
     setError(null);
     focusPromptAtEnd();
@@ -2157,7 +2186,7 @@ export function HomeView({
     setMokinaFilePlans((current) => {
       const next = current.slice(0, stagedFiles.length);
       while (next.length < stagedFiles.length) next.push(null);
-      next[index] = plan;
+      next[index] = plan ? { ...plan, inputId: homeInputIdentity(stagedFiles[index]!), uploadOrder: index } : null;
       return next;
     });
   }
@@ -2808,6 +2837,9 @@ export function HomeView({
     // The send button disables itself while sending, but the Enter-to-send
     // path lands here directly — swallow re-entry during the in-flight window.
     if (sending || defaultTypePending) return;
+    if (MOKINA_LOCAL_EDITION && ownsComposerDraft) {
+      if (missingInputs.workspaceKey === inputWorkspaceKey && missingInputs.inputs.length) { setError(t('mokina.repair.reselectFiles')); return; }
+    }
     const trimmed = prompt.trim();
     if (!trimmed && stagedFiles.length === 0) return;
     // P0 ui_click area=chat_composer element=send_button. Fires before the
@@ -2858,6 +2890,7 @@ export function HomeView({
     // a second click could otherwise re-enter.
     setSending(true);
     try {
+      if (MOKINA_LOCAL_EDITION && ownsComposerDraft && !await inputSavesRef.current) { setError(t('mokina.pendingSend.saveFailed')); return; }
       const defaultInputs = { prompt: trimmed };
       // The persistent picker is the single source of truth for the new project's
       // design system, so every product kind (not just prototype/deck) carries
@@ -3043,7 +3076,7 @@ export function HomeView({
           : {}),
         attachments: stagedFiles,
         ...(mokinaFilePlans.some((plan) => plan != null)
-          ? { mokinaFilePlan: mokinaFilePlans.filter((plan) => plan != null) }
+          ? { mokinaFilePlan: mokinaFilePlans.flatMap((plan, index) => plan ? [{ ...plan, uploadOrder: index }] : []) }
           : {}),
         ...(workingDir ? { workingDir } : {}),
         ...(workingDirToken ? { workingDirToken } : {}),
@@ -3064,6 +3097,11 @@ export function HomeView({
       // navigation unmounts us) so the sent prompt + pick don't reappear the
       // next time the Home tab mounts.
       if (ownsComposerDraft) clearHomeComposerDraft();
+      if (MOKINA_LOCAL_EDITION && ownsComposerDraft) {
+        await clearStagedInputDraft(inputWorkspaceKey, inputDraftsRef.current.get(inputWorkspaceKey) ?? null);
+        inputDraftsRef.current.set(inputWorkspaceKey, null);
+        setStagedFiles([]); setMokinaFilePlans([]);
+      }
       // Only drop the staged contexts once the run actually started — a
       // rejected creation keeps them so the retry sends the same payload.
       setSelectedPluginContexts([]);
@@ -3160,6 +3198,21 @@ export function HomeView({
           installationId={deepSeekV4FlashCampaignInstallationId}
         />
       )}
+      {MOKINA_LOCAL_EDITION && missingInputs.workspaceKey === inputWorkspaceKey && missingInputs.inputs.length > 0 ? <div role="status" className="mokina-material-picker" data-testid="mokina-missing-inputs">
+        <p>{t('mokina.repair.reselectFiles')}</p>
+        {missingInputs.inputs.map(item => <div key={item.inputId}>
+          <span>{item.name} · {item.plan?.kind ?? 'attachment'} {item.plan?.role} {item.plan?.usageNote}</span>
+          <label>{t('mokina.repair.reselectFile')}<input type="file" onChange={event => {
+            const file = event.target.files?.[0]; if (!file) return;
+            homeInputIdentity(file, item.inputId);
+            setStagedFiles(current => [...current, file]);
+            setMokinaFilePlans(current => [...Array.from({ length: stagedFiles.length }, (_, index) => current[index] ?? null),
+              item.plan ? { ...item.plan, inputId: item.inputId, name: file.name, size: file.size } : null]);
+            setMissingInputs(current => ({ ...current, inputs: current.inputs.filter(input => input.inputId !== item.inputId) }));
+          }} /></label>
+          <Button onClick={() => setMissingInputs(current => ({ ...current, inputs: current.inputs.filter(input => input.inputId !== item.inputId) }))}>{t('mokina.repair.excludeInput')}</Button>
+        </div>)}
+      </div> : null}
       <HomeHero
         variant={variant}
         collapseSignal={collapseSignal}

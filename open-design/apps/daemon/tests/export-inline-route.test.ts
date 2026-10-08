@@ -1,10 +1,13 @@
 import type http from 'node:http';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import type { ApiErrorResponse, RestoreProjectFileVersionResponse } from '@open-design/contracts';
 
 import { inlineRelativeAssets, type InlineAssetReader } from '../src/inline-assets.js';
 import { startServer } from '../src/server.js';
+import { createProjectFileVersion, readProjectFileVersion } from '../src/project-file-versions.js';
 
 // ---------------------------------------------------------------------------
 // Unit — inlineRelativeAssets pure helper
@@ -760,9 +763,14 @@ describe('POST /api/projects/:id/export/html route', () => {
   let baseUrl: string;
   let projectsRoot: string;
   const projectId = 'proj-standalone-html-test';
+  let legacyVersionId = '';
+  let selfContainedVersionId = '';
+  let pdfRendererCalls = 0;
 
   beforeAll(async () => {
-    const started = (await startServer({ port: 0, returnServer: true })) as {
+    const started = (await startServer({ port: 0, returnServer: true,
+      desktopPdfExporter: async () => { pdfRendererCalls++; return { ok: true, canceled: true }; },
+    })) as {
       url: string;
       server: http.Server;
     };
@@ -828,6 +836,18 @@ describe('POST /api/projects/:id/export/html route', () => {
       path.join(root, 'pages', 'vite-dist-read-error.html'),
       '<!doctype html><script type="module" src="/src/main.tsx"></script>',
     );
+    legacyVersionId = (await createProjectFileVersion(projectsRoot, projectId, 'pages/legacy.html',
+      '<!doctype html><main>Old body</main><img src="../assets/later.svg">')).id;
+    // This asset exists today, but was not saved by the selected version.
+    await writeFile(path.join(root, 'assets', 'later.svg'), '<svg><text>NEW ASSET</text></svg>');
+    selfContainedVersionId = (await createProjectFileVersion(projectsRoot, projectId, 'pages/self-contained.html',
+      '<!doctype html><main>Old self-contained body</main>')).id;
+    // Representative pre-freezing manifest: absence of frozenContent alone must not block export.
+    const versionKey = createHash('sha256').update('pages/self-contained.html').digest('hex').slice(0, 24);
+    const manifestPath = path.join(root, '.file-versions', versionKey, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    for (const entry of manifest.entries) delete entry.frozenContentPath;
+    await writeFile(manifestPath, JSON.stringify(manifest));
   });
 
   afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
@@ -902,5 +922,59 @@ describe('POST /api/projects/:id/export/html route', () => {
     expect(response.status).toBe(404);
     const body = (await response.json()) as { error: { code: string } };
     expect(body.error.code).toBe('VERSION_NOT_FOUND');
+  });
+
+  it('exports self-contained legacy HTML without requiring a frozen resource field', async () => {
+    const before = await readProjectFileVersion(projectsRoot, projectId, 'pages/self-contained.html', selfContainedVersionId);
+    expect(before.frozenContent).toBeUndefined();
+    const response = await postExport({ fileName: 'pages/self-contained.html', versionId: selfContainedVersionId });
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain('Old self-contained body');
+    expect(await readProjectFileVersion(projectsRoot, projectId, 'pages/self-contained.html', selfContainedVersionId)).toEqual(before);
+  });
+
+  it.each(['html', 'pdf-image', 'pdf'])('blocks incomplete historical %s before download or rendering, with a new-version recovery action', async (format) => {
+    const before = await readProjectFileVersion(projectsRoot, projectId, 'pages/legacy.html', legacyVersionId);
+    const rendererBefore = pdfRendererCalls;
+    const response = await fetch(`${baseUrl}/api/projects/${projectId}/export/${format}`, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ fileName: 'pages/legacy.html', versionId: legacyVersionId }),
+    });
+    expect(response.status).toBe(422);
+    const body = await response.json() as ApiErrorResponse;
+    expect(body.error.code).toBe('HISTORICAL_RESOURCES_UNAVAILABLE');
+    expect(body.error.details).toMatchObject({ fileName: 'pages/legacy.html', versionId: legacyVersionId,
+      missingDependencies: ['assets/later.svg'], action: 'restore-as-new-version' });
+    expect(pdfRendererCalls).toBe(rendererBefore);
+    expect(await readProjectFileVersion(projectsRoot, projectId, 'pages/legacy.html', legacyVersionId)).toEqual(before);
+  });
+
+  it('blocks historical ZIP source with the same resource identity instead of reading today’s asset', async () => {
+    const response = await fetch(`${baseUrl}/api/projects/${projectId}/export/pages/legacy.html?inline=1&versionId=${legacyVersionId}`);
+    expect(response.status).toBe(422);
+    const body = await response.json() as ApiErrorResponse;
+    expect(body.error.code).toBe('HISTORICAL_RESOURCES_UNAVAILABLE');
+    expect(body.error.details).toMatchObject({ missingDependencies: ['assets/later.svg'] });
+  });
+
+  it('restores explicitly into a new exportable version without repairing or replacing the original', async () => {
+    const before = await readProjectFileVersion(projectsRoot, projectId, 'pages/legacy.html', legacyVersionId);
+    const restored = await fetch(`${baseUrl}/api/projects/${projectId}/files/pages/legacy.html/versions/${legacyVersionId}/restore`, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}',
+    });
+    expect(restored.status).toBe(200);
+    const { version } = await restored.json() as RestoreProjectFileVersionResponse;
+    expect(version).not.toBeNull();
+    if (!version) throw new Error('Expected a newly restored version');
+    expect(version.id).not.toBe(legacyVersionId);
+    expect(version.restoreFromVersionId).toBe(legacyVersionId);
+    const response = await postExport({ fileName: 'pages/legacy.html', versionId: version.id });
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain(Buffer.from('<svg><text>NEW ASSET</text></svg>').toString('base64'));
+    const original = await readProjectFileVersion(projectsRoot, projectId, 'pages/legacy.html', legacyVersionId);
+    expect(original.content).toBe(before.content);
+    expect(original.frozenContent).toBeUndefined();
+    expect(original.version.id).toBe(legacyVersionId);
+    expect((await postExport({ fileName: 'pages/legacy.html', versionId: legacyVersionId })).status).toBe(422);
   });
 });

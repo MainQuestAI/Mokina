@@ -39,13 +39,13 @@ function extraction(overrides: Record<string, unknown> = {}) {
   return {
     name: 'brief.md',
     contentDigest: 'a'.repeat(64),
-    parserVersion: 'mokina-material/1',
+    parserVersion: 'mokina-material/2',
     status: 'read',
     limitations: ['保留 CSV 原始字段与行号；不自动推断数值单位或日期。'],
     sections: [
-      { location: '第 1 行', text: '晨光茶饮禁止投放短视频', groupId: 'heading:1', groupLabel: '品牌' },
-      { location: '第 2 行 / 片段 1', text: '甲'.repeat(50), groupId: 'heading:1:part:1', groupLabel: '品牌 / 片段 1' },
-      { location: '第 3 行', text: '总预算 50 万', groupId: 'heading:2', groupLabel: '预算' },
+      { fragmentId: 'fragment:1', location: '第 1 行', text: '晨光茶饮禁止投放短视频', groupId: 'heading:1', groupLabel: '品牌' },
+      { fragmentId: 'fragment:2', location: '第 2 行 / 片段 1', text: '甲'.repeat(50), groupId: 'heading:1:part:1', groupLabel: '品牌 / 片段 1' },
+      { fragmentId: 'fragment:3', location: '第 3 行', text: '总预算 50 万', groupId: 'heading:2', groupLabel: '预算' },
     ],
     ...overrides,
   };
@@ -82,16 +82,16 @@ describe('MokinaContextPanel', () => {
     vi.unstubAllGlobals();
   });
 
-  it('shows the three layers and freezes a snapshot with base group ids', async () => {
+  it('freezes exactly the checked fragment, not the rest of its group', async () => {
     fetchProjectMaterialMock.mockResolvedValue(extraction());
     const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
       const url = typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
       expect(url).toBe('/api/projects/p1/mokina/context-snapshots');
-      const body = JSON.parse(String(init?.body)) as { snapshotId: string; selections: Array<{ groupIds: string[]; expectedSourceDigest: string }>; excluded: unknown[] };
+      const body = JSON.parse(String(init?.body)) as { snapshotId: string; selections: Array<{ fragmentIds: string[]; expectedParserVersion: string; expectedSourceDigest: string }>; excluded: unknown[] };
       expect(typeof body.snapshotId).toBe('string');
       expect(body.selections[0]?.expectedSourceDigest).toBe('a'.repeat(64));
-      // base ids only: the `:part:` suffix is expanded server-side
-      expect(body.selections[0]?.groupIds).toEqual(['heading:1']);
+      expect(body.selections[0]?.fragmentIds).toEqual(['fragment:1']);
+      expect(body.selections[0]?.expectedParserVersion).toBe('mokina-material/2');
       return new Response(JSON.stringify({
         snapshot: {
           items: [

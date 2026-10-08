@@ -366,7 +366,10 @@ import {
 import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunityPrompt';
 import { CenteredLoader } from './Loading';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
-import { clearPendingMokinaSnapshotIfCurrent } from '../runtime/mokina/pending-context-snapshot';
+import { settleSubmittedMokinaSnapshot } from '../runtime/mokina/pending-context-snapshot';
+import { readHomeMokinaPreparation, clearHomeMokinaPreparation } from '../runtime/mokina/home-material-snapshot';
+import { MokinaHomePreparationNotice } from './mokina/MokinaHomePreparationNotice';
+import { MokinaContinuationRecoveryNotice } from './mokina/MokinaContinuationRecoveryNotice';
 import {
   resolveMokinaProjectEntry,
   type MokinaFormalEntry,
@@ -2178,6 +2181,8 @@ export function ProjectView({
   onCreationHandoffSettled,
 }: Props) {
   const { locale, t } = useI18n();
+  const recoveryTranslateRef = useRef(t);
+  recoveryTranslateRef.current = t;
   const amrAuthRetryMountIdRef = useRef<string | null>(null);
   if (amrAuthRetryMountIdRef.current === null) {
     amrAuthRetryMountIdRef.current = randomUUID();
@@ -2632,6 +2637,7 @@ export function ProjectView({
   const collabValue = useMemo<CollabContextValue>(
     () => ({
       ...projectCollab,
+      conversationId: activeConversationId,
       workspaceContext: projectRunWorkspaceContext,
       workspaceContextLoading: projectWorkspaceScopeState.loading,
       projectResourceAuthority,
@@ -2639,6 +2645,7 @@ export function ProjectView({
     }),
     [
       projectCollab,
+      activeConversationId,
       projectRunWorkspaceContext,
       projectWorkspaceScopeState.loading,
       projectResourceAuthority,
@@ -8471,6 +8478,21 @@ export function ProjectView({
   const [pendingSendRecords, setPendingSendRecords] = useState<SendRequestRecord[]>([]);
   const [pendingSendVerifyNonce, setPendingSendVerifyNonce] = useState(0);
   const [sendRecoveryRequest, setSendRecoveryRequest] = useState<{ id: string; snapshot: SendRequestSnapshot } | null>(null);
+  const cleanupAcceptedSend = useCallback(async (projectId: string, conversationId: string, requestId: string, authorityKey: string | undefined,
+    context: Pick<RunContextSelection, 'mokinaSnapshotId' | 'mokinaSnapshotGeneration'> | undefined) => {
+    if (!await persistSendRequestOutcome(projectId, conversationId, requestId, 'submitted', authorityKey)) { setError(recoveryTranslateRef.current('mokina.pendingSend.submittedSync')); return; }
+    const workspaceKey = workspaceIdentityCacheKey(projectRunWorkspaceContext);
+    const cleared = !context?.mokinaSnapshotId || await settleSubmittedMokinaSnapshot(projectId, context.mokinaSnapshotId,
+      { conversationId, workspaceKey }, context.mokinaSnapshotGeneration);
+    if (!cleared) { setError(recoveryTranslateRef.current('mokina.pendingSend.submittedSync')); return; }
+    const preparation = readHomeMokinaPreparation(projectId, conversationId, workspaceKey);
+    if (preparation && ((!context?.mokinaSnapshotId && preparation.status === 'ready' && !preparation.bindingGeneration)
+      || (preparation.bindingSnapshotId ?? preparation.snapshotId) === context?.mokinaSnapshotId && preparation.bindingGeneration === context?.mokinaSnapshotGeneration)) {
+      try { await clearHomeMokinaPreparation(preparation); }
+      catch { setError(recoveryTranslateRef.current('mokina.pendingSend.submittedSync')); return; }
+    }
+    if (!await persistClearSendRequest(projectId, conversationId, requestId, authorityKey)) setError(recoveryTranslateRef.current('mokina.pendingSend.submittedSync'));
+  }, [projectRunWorkspaceContext]);
   /** 查明受理后的统一恢复（Spec FR-08）：按快照 user/assistant 身份回接原 run、
    * 清除本机待确认记录。挂载对账与显式重发前的核对共用这一段。 */
   const reconcileAcceptedSendRun = useCallback(async (record: SendRequestRecord, run: ChatRunStatusResponse) => {
@@ -8488,13 +8510,11 @@ export function ProjectView({
       else next.push(recovered);
       return next;
     });
-    if (!await persistClearSendRequest(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey)) setError(t('mokina.pendingSend.saveFailed'));
     // N03: 迟到确认证明这一发实际已受理——它引用的快照绑定已被消费，交接清除
     // （带 id 比对：只清它自己那一份，用户其间新准备的绑定不动）。
-    const reconciledSnapshotId = snapshot?.extras?.context?.mokinaSnapshotId;
-    if (reconciledSnapshotId) void clearPendingMokinaSnapshotIfCurrent(record.projectId, reconciledSnapshotId);
+    await cleanupAcceptedSend(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey, snapshot?.extras?.context);
     scheduleConversationMessageRefresh(record.conversationId);
-  }, [scheduleConversationMessageRefresh]);
+  }, [scheduleConversationMessageRefresh, cleanupAcceptedSend]);
   useEffect(() => {
     if (!MOKINA_LOCAL_EDITION || !activeConversationId) return undefined;
     const read = () => loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
@@ -8506,7 +8526,7 @@ export function ProjectView({
     window.addEventListener('storage', update);
     const controller = new AbortController();
     void (async () => {
-      for (const record of read().filter(record => record.status === 'unknown')) {
+      for (const record of read().filter(record => record.status === 'unknown' || record.status === 'submitted')) {
         const run = await queryRunAccepted(project.id, activeConversationId, record.clientRequestId,
           10_000, projectRunWorkspaceContext, controller.signal);
         if (controller.signal.aborted) return;
@@ -8529,12 +8549,19 @@ export function ProjectView({
       baseMessages?: ChatMessage[],
     ) => {
       if (projectMutationReadOnly) return false;
-      const clientRequestId = meta?.clientRequestId ?? randomUUID();
+      const homePreparation = MOKINA_LOCAL_EDITION && activeConversationId ? readHomeMokinaPreparation(project.id, activeConversationId,
+        workspaceIdentityCacheKey(projectRunWorkspaceContext)) : null;
+      const clientRequestId = meta?.clientRequestId ?? (homePreparation && homePreparation.prompt.trim() === prompt.trim()
+        ? homeAutoSendIdentity(project.id).clientRequestId! : randomUUID());
       const retainComposerDraft = (): false => {
         if (MOKINA_LOCAL_EDITION && meta?.composerOwnedDraft) sendAdmissionRef.current.set(clientRequestId, 'restore-draft');
         return false;
       };
       if (!activeConversationId) return retainComposerDraft();
+      if (homePreparation && homePreparation.status !== 'ready') {
+        setError(homePreparation.message ?? '资料尚未准备完成，任务尚未发送。');
+        return retainComposerDraft();
+      }
       if (messagesConversationIdRef.current !== activeConversationId) return retainComposerDraft();
       meta = {
         ...(meta ?? {}),
@@ -8740,10 +8767,7 @@ export function ProjectView({
         },
         onRunCreateAccepted: async () => {
           sendAdmissionRef.current.set(clientRequestId, 'accepted');
-          if (!await persistClearSendRequest(project.id, runConversationId, clientRequestId, projectRunAuthorityKey)) setError(t('mokina.pendingSend.saveFailed'));
-          // 仅当 pending 仍是本次引用的那一份才交接清除；恢复草稿/排队期间
-          // 用户新冻结的绑定不能被子代发送静默清掉。
-          if (submittedMokinaSnapshotId) void clearPendingMokinaSnapshotIfCurrent(project.id, submittedMokinaSnapshotId);
+          await cleanupAcceptedSend(project.id, runConversationId, clientRequestId, projectRunAuthorityKey, runContext);
           resolveAdmission(true);
         },
         onRunCreateFailed: async ({ definitive }: { definitive: boolean }) => {
@@ -9163,6 +9187,7 @@ export function ProjectView({
             connectorIds: runContext?.connectorIds ?? [],
             workspaceItems: runContext?.workspaceItems ?? [],
             ...(runContext?.mokinaSnapshotId ? { mokinaSnapshotId: runContext.mokinaSnapshotId } : {}),
+            ...(runContext?.mokinaSnapshotGeneration ? { mokinaSnapshotGeneration: runContext.mokinaSnapshotGeneration } : {}),
           },
         };
         mokinaSendRecord = await persistPendingSendRequest({ projectId: project.id,
@@ -10852,6 +10877,7 @@ export function ProjectView({
     },
     [
       attachedComments,
+      cleanupAcceptedSend,
       supersedeRetriedError,
       activeConversationId,
       activeSessionMode,
@@ -13846,7 +13872,7 @@ export function ProjectView({
           && !!record.snapshot && !record.snapshot.requiresContextReselection;
         return (
           <div key={record.clientRequestId}>
-            <span className="mokina-pending-send__text">{t(record.status === 'draft' ? 'mokina.pendingSend.restore' : 'mokina.pendingSend.title')}：{record.promptPreview}</span>
+            <span className="mokina-pending-send__text">{t(record.status === 'submitted' ? 'mokina.pendingSend.submittedSync' : record.status === 'draft' ? 'mokina.pendingSend.restore' : 'mokina.pendingSend.title')}：{record.promptPreview}</span>
             {record.snapshot?.requiresContextReselection ? <span>{t('mokina.pendingSend.reselect')}</span> : null}
             {record.status === 'unknown' ? <span className="mokina-pending-send__text">{t('mokina.pendingSend.discardNotice')}</span> : null}
             {record.status === 'draft' && record.snapshot ? (
@@ -13854,10 +13880,10 @@ export function ProjectView({
             ) : null}
             {canResend ? (
               <button type="button" className="mokina-pending-send__verify" data-testid="mokina-pending-send-resend" onClick={() => void resendPendingSendRecord(record)}>{t('mokina.pendingSend.resend')}</button>
-            ) : record.status === 'unknown' ? (
+            ) : record.status === 'unknown' || record.status === 'submitted' ? (
               <button type="button" className="mokina-pending-send__verify" data-testid="mokina-pending-send-verify" onClick={() => setPendingSendVerifyNonce(nonce => nonce + 1)}>{t('mokina.pendingSend.verify')}</button>
             ) : null}
-            {record.status !== 'pending' ? (
+            {record.status !== 'pending' && record.status !== 'submitted' ? (
               <button type="button" className="mokina-pending-send__verify" data-testid="mokina-pending-send-discard" onClick={() => discardPendingSendRecord(record)}>{t('mokina.pendingSend.discard')}</button>
             ) : null}
           </div>
@@ -14283,6 +14309,13 @@ export function ProjectView({
               composerFooterAccessory={(
                 <>
                   {pendingSendNotice}
+                  {MOKINA_LOCAL_EDITION ? <MokinaContinuationRecoveryNotice projectId={project.id} workspaceContext={projectRunWorkspaceContext}
+                    onOpen={(projectId, conversationId) => navigate({ kind: 'project', projectId, conversationId, fileName: null })} /> : null}
+                  {MOKINA_LOCAL_EDITION && activeConversationId ? <MokinaHomePreparationNotice projectId={project.id}
+                    conversationId={activeConversationId} workspaceContext={projectRunWorkspaceContext}
+                    onRestorePrompt={prompt => setSendRecoveryRequest({ id: `home:${activeConversationId}`, snapshot: {
+                      prompt, extras: { attachments: [], commentAttachments: [], quotes: [], context: { skillIds: [], mcpServerIds: [], connectorIds: [], workspaceItems: [] } },
+                    } })} /> : null}
                   {executionControls}
                 </>
               )}

@@ -32,15 +32,30 @@ jobs:
       - run: pnpm i18n:check
       - name: Recovery and input regression
         run: |
-          pnpm --filter @open-design/web exec vitest run tests/runtime/mokina-recovery-store.test.ts tests/runtime/send-request-state.test.ts tests/providers/daemon-run-create-recovery.test.ts tests/runtime/mokina-pending-context-snapshot.test.ts tests/runtime/mokina-recovery-import-journal.test.ts tests/runtime/mokina-recovery-package-client.test.ts tests/components/MokinaContextPanel.test.tsx tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/ProjectView.retry-gating.test.tsx tests/components/EntryNavRail.recent-section.test.tsx
+          pnpm --filter @open-design/web exec vitest run tests/runtime/mokina-recovery-store.test.ts tests/runtime/send-request-state.test.ts tests/providers/daemon-run-create-recovery.test.ts tests/runtime/mokina-pending-context-snapshot.test.ts tests/runtime/mokina-recovery-import-journal.test.ts tests/runtime/mokina-recovery-package-client.test.ts tests/runtime/mokina-home-material-snapshot.test.ts tests/runtime/mokina-staged-input-draft.test.ts tests/runtime/mokina-continuation-recovery.test.ts tests/components/MokinaContextPanel.test.tsx tests/components/MokinaContextPanel.brand.test.tsx tests/components/MokinaRunEvidence.test.tsx tests/components/file-viewer-continuation-v2.test.ts tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/ProjectView.pendingPrompt.test.tsx tests/components/ProjectView.retry-gating.test.tsx tests/components/ChatComposer.home-upload-tray.test.tsx tests/components/HomeView.attachment-stash.test.tsx tests/hooks/mokina-summaries.test.tsx tests/components/EntryNavRail.recent-section.test.tsx --maxWorkers=2
+          pnpm --filter @open-design/web exec vitest run tests/components/MokinaContextPanel.regression-1.test.tsx tests/components/FileWorkspace.test.tsx --maxWorkers=2
+          pnpm --filter @open-design/web exec vitest run tests/runtime/mokina-recovery-store.regression-1.test.ts --maxWorkers=2
           pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-recovery-store.test.ts
-          pnpm --filter @open-design/daemon exec vitest run tests/mokina-context-store.test.ts tests/mokina-context-routes.test.ts tests/mokina-recovery-package.test.ts tests/mokina-materials.test.ts tests/mokina-recovery-routes.test.ts tests/export-inline-route.test.ts tests/mokina-cli-recovery.test.ts tests/run-request-idempotency.test.ts tests/routes/runs-structured-errors.test.ts
-          pnpm --filter @open-design/tools-pack exec vitest run tests/resources/pdf-runtime.test.ts
+          pnpm --filter @open-design/web exec vitest run tests/runtime/exports.test.ts tests/analytics/export-error-code.test.ts --maxWorkers=2
+          pnpm --filter @open-design/daemon exec vitest run tests/pdf-export.test.ts tests/screenshot-export-file-handoff.test.ts tests/project-file-versions.test.ts --maxWorkers=2
+          pnpm --filter @open-design/daemon exec vitest run tests/mokina-context-store.test.ts tests/mokina-context-routes.test.ts tests/mokina-exact-input.test.ts tests/mokina-recovery-package.test.ts tests/mokina-materials.test.ts tests/mokina-recovery-routes.test.ts tests/export-inline-route.test.ts tests/mokina-cli-recovery.test.ts tests/run-request-idempotency.test.ts tests/routes/runs-structured-errors.test.ts tests/mokina-context-brand-gate.test.ts tests/design-systems/team-resource-consumer-scope.test.ts
+          pnpm --filter @open-design/tools-pack exec vitest run tests/resources/pdf-runtime.test.ts tests/mac-paths.test.ts tests/mac-identity.test.ts tests/mac-lifecycle.test.ts tests/workspace-build.test.ts tests/desktop-package-runtime.test.ts tests/web-standalone-after-pack.test.ts tests/prebundle/macos.test.ts tests/prebundle/internal-packages-closure.test.ts tests/resources/runtime-manifest.test.ts --maxWorkers=2
       - name: Browser prerequisites
         run: |
           pnpm --filter @open-design/daemon build
           pnpm --filter @open-design/e2e exec playwright install --with-deps chromium
+      - name: Capture and dependency owner regression
+        run: |
+          pnpm --filter @open-design/web exec vitest run tests/runtime/mermaid-owner-security.test.ts
+          pnpm --filter @open-design/daemon exec vitest run tests/image-parser-security.test.ts tests/project-watchers.test.ts
+          pnpm --filter @open-design/tools-pack exec vitest run tests/resources/download-cache-security.test.ts
+          pnpm --filter @open-design/desktop build
+          pnpm --filter @open-design/desktop exec vitest run tests/main/page-pdf-capture.test.ts
       - name: Real daemon request recovery
         env:
           OD_PLAYWRIGHT_WORKERS: '1'
         run: pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/real-daemon-run.test.ts --grep 'Mokina' --workers=1
+      - name: Mokina input, continuation and navigation
+        env:
+          OD_PLAYWRIGHT_WORKERS: '1'
+        run: pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-input-preparation.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts --workers=1

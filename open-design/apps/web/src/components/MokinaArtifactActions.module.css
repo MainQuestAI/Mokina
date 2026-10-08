@@ -43,6 +43,12 @@
   flex-shrink: 0;
 }
 
+/* This wrapper owns its scrollbar lane. The list's old negative gutter
+   compensation would otherwise extend beyond the wrapper's content width. */
+.body > :global(.artifact-version-list) {
+  margin-right: 0;
+}
+
 .passthrough {
   display: contents;
 }

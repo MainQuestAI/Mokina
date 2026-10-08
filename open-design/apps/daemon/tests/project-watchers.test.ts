@@ -1,4 +1,4 @@
-import { lstat, mkdir, mkdtemp, readdir, rm, symlink, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, mkdtemp, readdir, rename, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { EventEmitter } from 'node:events';
@@ -37,6 +37,35 @@ let factoryCloses = 0;
 const FAST_WATCH_OPTIONS: ProjectWatcherOptions = { awaitWriteFinish: false };
 const REAL_WATCHER_TEST_TIMEOUT_MS = 20_000;
 const REAL_WATCHER_WAIT_TIMEOUT_MS = 8_000;
+
+it('watches literal brace directories through add, change, rename and delete', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'od-literal-{draft,review}-'));
+  const projectId = 'project-literal';
+  const relative = 'nested/{a,b}/{c,d}/brief.txt';
+  const folder = path.join(root, projectId, 'nested/{a,b}/{c,d}');
+  await mkdir(folder, { recursive: true });
+  const events: ProjectWatchEvent[] = [];
+  const sub = subscribe(root, projectId, recordEvent(events), FAST_WATCH_OPTIONS);
+  try {
+    await sub.ready;
+    const observed = (kind: ProjectWatchEvent['kind'], name: string) => waitFor(
+      () => events.some(event => event.kind === kind && event.path === name),
+      { timeout: REAL_WATCHER_WAIT_TIMEOUT_MS, debug: () => debugEvents(events) },
+    );
+    await writeFile(path.join(folder, 'brief.txt'), 'first');
+    await observed('add', relative);
+    await writeFile(path.join(folder, 'brief.txt'), 'changed');
+    await observed('change', relative);
+    await rename(path.join(folder, 'brief.txt'), path.join(folder, 'renamed.txt'));
+    await observed('unlink', relative);
+    await observed('add', relative.replace('brief.txt', 'renamed.txt'));
+    await rm(path.join(folder, 'renamed.txt'));
+    await observed('unlink', relative.replace('brief.txt', 'renamed.txt'));
+  } finally {
+    await sub.unsubscribe();
+    await rm(root, { recursive: true, force: true });
+  }
+}, REAL_WATCHER_TEST_TIMEOUT_MS);
 
 afterEach(async () => {
   await _resetForTests();

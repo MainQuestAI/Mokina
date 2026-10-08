@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Button } from '@open-design/components';
 
-import { MOKINA_CONTEXT_BUDGETS, type MokinaContextSelection, type ProjectMaterialExtraction } from '@open-design/contracts';
+import { joinMokinaExcerpt, mokinaContextBudgetExceeded, MOKINA_CONTEXT_BUDGETS, type MokinaContextSelection, type ProjectMaterialExtraction } from '@open-design/contracts';
 
 import type { ProjectFile } from '../../types';
 import { randomUUID } from '../../utils/uuid';
 import { useT } from '../../i18n';
 import { useProjectCollabContext } from '../../collab/collab-context';
-import { workspaceProjectHeaders } from '../../collab/workspace-identity';
+import { workspaceProjectHeaders, workspaceIdentityCacheKey } from '../../collab/workspace-identity';
 import { fetchProjectMaterial } from '../../providers/registry';
-import { fetchDesignSystems } from '../../providers/registry';
+import { fetchDesignSystemsResult } from '../../providers/registry';
 import {
-  baseMokinaGroupId,
   groupMokinaMaterialSections,
   MOKINA_ASSET_FILE_PATTERN,
   MOKINA_MATERIAL_FILE_PATTERN,
@@ -20,10 +20,12 @@ import {
   clearPendingMokinaSnapshot,
   readPendingMokinaSnapshot,
   writePendingMokinaSnapshot,
+  readLegacyPendingMokinaSnapshot, claimLegacyPendingMokinaSnapshot,
   type PendingMokinaContextSnapshot,
 } from '../../runtime/mokina/pending-context-snapshot';
 
 import { mokinaBytesDigest } from '../../runtime/mokina/digest';
+import { mokinaResponseError } from '../../runtime/mokina/home-material-snapshot';
 import type { DesignSystemSummary } from '@open-design/contracts';
 
 type BrandSelection = {
@@ -55,7 +57,16 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
   projectDesignSystemId?: string | null;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const { workspaceContext, conversationId } = useProjectCollabContext();
+  const workspaceKey = workspaceIdentityCacheKey(workspaceContext);
+  const scope = useMemo(() => ({ workspaceKey, conversationId: conversationId ?? 'draft:first' }), [workspaceKey, conversationId]);
+  const scopeIdentity = JSON.stringify([projectId, workspaceKey, conversationId]);
+  const scopeRef = useRef(scopeIdentity);
+  scopeRef.current = scopeIdentity;
+  const brandSequence = useRef(0);
+  const [brandId, setBrandId] = useState('');
+  const [brandLoading, setBrandLoading] = useState(false);
+  const [acceptUnreadable, setAcceptUnreadable] = useState(false);
   const candidates = useMemo(
     () => files.filter((file) => file.name !== 'MOKINA-CONTINUATION.json' && (MOKINA_MATERIAL_EXTENSIONS.test(file.name) || MOKINA_ASSET_EXTENSIONS.test(file.name))),
     [files],
@@ -65,41 +76,50 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
   const [assets, setAssets] = useState<Array<{ name: string; digest: string; role: 'logo' | 'hero' | 'supporting'; usageNote: string }>>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [frozen, setFrozen] = useState<PendingMokinaContextSnapshot | null>(
-    () => readPendingMokinaSnapshot(projectId),
+    () => readPendingMokinaSnapshot(projectId, scope),
   );
   // N03: a send consumes the binding in ProjectView; refresh this surface when
   // the pending record changes underneath us (freeze / consume / clear).
   useEffect(() => {
     function onChanged() {
-      setFrozen(readPendingMokinaSnapshot(projectId));
+      setFrozen(readPendingMokinaSnapshot(projectId, scope));
     }
     window.addEventListener(PENDING_MOKINA_SNAPSHOT_CHANGED_EVENT, onChanged);
-    return () => window.removeEventListener(PENDING_MOKINA_SNAPSHOT_CHANGED_EVENT, onChanged);
-  }, [projectId]);
+    window.addEventListener('storage', onChanged);
+    onChanged();
+    return () => { window.removeEventListener(PENDING_MOKINA_SNAPSHOT_CHANGED_EVENT, onChanged); window.removeEventListener('storage', onChanged); };
+  }, [projectId, scope]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // N04: brand-kit source. The same catalog the Home design-system picker
   // uses; selecting one freezes the brand's DESIGN.md as a brand-rule item.
   const [designSystems, setDesignSystems] = useState<DesignSystemSummary[]>([]);
   const [brandCatalogLoaded, setBrandCatalogLoaded] = useState(false);
+  const [brandCatalogError, setBrandCatalogError] = useState(false);
+  const [catalogRetry, setCatalogRetry] = useState(0);
   const [brand, setBrand] = useState<BrandSelection | null>(null);
   const [brandError, setBrandError] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
-    void fetchDesignSystems(workspaceContext)
-      .then((systems) => {
+    brandSequence.current++;
+    setBrand(null); setBrandId(''); setBrandLoading(false); setBrandError(null);
+    setResults(null); setAssets([]); setSelected([]); setSelectedGroups([]); setBusy(false); setAcceptUnreadable(false);
+    setDesignSystems([]); setBrandCatalogLoaded(false); setBrandCatalogError(false);
+    void fetchDesignSystemsResult(workspaceContext)
+      .then((result) => {
         if (cancelled) return;
-        setDesignSystems(systems);
+        if (result.ok) setDesignSystems(result.designSystems);
+        else setBrandCatalogError(true);
         setBrandCatalogLoaded(true);
       })
       .catch(() => {
         if (cancelled) return;
-        setBrandError(t('mokina.contextPanel.brandCatalogFailed'));
+        setBrandCatalogError(true);
         setBrandCatalogLoaded(true);
       });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [scopeIdentity, catalogRetry]);
   useEffect(() => {
     // 项目已绑定品牌套件时透明预选；用户可改为不使用品牌。
     if (brand || !projectDesignSystemId) return;
@@ -109,6 +129,9 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
   }, [designSystems, projectDesignSystemId]);
 
   async function selectBrand(id: string) {
+    const sequence = ++brandSequence.current;
+    const issuedScope = scopeIdentity;
+    setBrandId(id); setBrand(null); setBrandLoading(!!id);
     setBrandError(null);
     if (!id) {
       setBrand(null);
@@ -126,15 +149,20 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
       const text = typeof body.body === 'string' ? body.body : '';
       if (!text.trim()) throw new Error('empty');
       const bytes = new TextEncoder().encode(text);
+      const digest = await mokinaBytesDigest(bytes.buffer as ArrayBuffer);
+      if (sequence !== brandSequence.current || issuedScope !== scopeRef.current) return;
       setBrand({
         id,
         title: summary?.title ?? id,
-        digest: await mokinaBytesDigest(bytes.buffer as ArrayBuffer),
+        digest,
         chars: text.length,
       });
     } catch {
+      if (sequence !== brandSequence.current || issuedScope !== scopeRef.current) return;
       setBrand(null);
       setBrandError(t('mokina.contextPanel.brandReadFailed', { id }));
+    } finally {
+      if (sequence === brandSequence.current && issuedScope === scopeRef.current) setBrandLoading(false);
     }
   }
 
@@ -144,10 +172,12 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
   );
   const groups = useMemo(() => groupMokinaMaterialSections(readableMaterials), [readableMaterials]);
   const chosenGroups = groups.filter((group) => selectedGroups.includes(group.key));
-  const chosenChars = chosenGroups.reduce((sum, group) => sum + group.chars, 0) + (brand?.chars ?? 0);
+  const chosenChars = readableMaterials.reduce((sum, material) => sum + joinMokinaExcerpt(chosenGroups
+    .filter(group => group.name === material.name).flatMap(group => group.sections.map(section => section.text))).length, 0) + (brand?.chars ?? 0);
   const budget = MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits;
 
   async function previewSelected() {
+    const issuedScope = scopeIdentity;
     if (busy) return;
     if (!selected.length) {
       setError(t('mokina.contextPanel.selectFile'));
@@ -183,43 +213,48 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         }
         return { material: result, unreadable: result.status === 'unreadable' };
       });
-      setResults(next);
+      if (issuedScope !== scopeRef.current) return;
+      setAcceptUnreadable(false); setResults(next);
       setAssets(next.filter(item => !item.unreadable && MOKINA_ASSET_EXTENSIONS.test(item.material.name)).map(item => ({
         name: item.material.name, digest: item.material.contentDigest, role: 'supporting', usageNote: '' })));
       setSelectedGroups([]);
     } catch (cause) {
+      if (issuedScope !== scopeRef.current) return;
       setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.readFailed'));
     } finally {
-      setBusy(false);
+      if (issuedScope === scopeRef.current) setBusy(false);
     }
   }
 
   async function freezeSnapshot() {
-    if (busy || (!brand && !results)) return;
+    const issuedScope = scopeIdentity;
+    const capturedGeneration = readPendingMokinaSnapshot(projectId, scope)?.generation ?? null;
+    if (busy || brandLoading || (!brand && !results)) return;
+    if (results?.some(item => item.unreadable) && !acceptUnreadable) { setError('请明确确认排除无法读取的文件。'); return; }
     if (chosenGroups.length === 0 && assets.length === 0 && !brand) {
       setError(t('mokina.contextPanel.selectGroup'));
       return;
     }
     const snapshotId = randomUUID();
-    const byFile = new Map<string, { digest: string; groupIds: Set<string> }>();
+    const byFile = new Map<string, { digest: string; parserVersion: string; fragmentIds: Set<string> }>();
     for (const group of chosenGroups) {
       const material = readableMaterials.find((item) => item.name === group.name);
       if (!material) continue;
-      const entry = byFile.get(group.name) ?? { digest: material.contentDigest, groupIds: new Set<string>() };
+      const entry = byFile.get(group.name) ?? { digest: material.contentDigest, parserVersion: material.parserVersion ?? '', fragmentIds: new Set<string>() };
       for (const section of group.sections) {
-        const baseId = section.groupId ? baseMokinaGroupId(section.groupId) : '';
-        // 无 groupId 的段落（理论上仅 location）不进入服务端选择，避免用位置冒充稳定标识。
-        if (baseId) entry.groupIds.add(baseId);
+        if (!section.fragmentId || !entry.parserVersion) { setError('资料选择协议已更新，请重新读取。'); return; }
+        entry.fragmentIds.add(section.fragmentId);
       }
       byFile.set(group.name, entry);
     }
     const selections: MokinaContextSelection[] = [...byFile.entries()].map(([fileName, entry], index) => ({
       itemId: `S${index + 1}`,
-      mode: 'groups' as const,
+      mode: 'fragments' as const,
       textKind: 'material-excerpt' as const,
       sourceRef: { kind: 'project-file' as const, projectId, fileName },
       expectedSourceDigest: entry.digest,
-      groupIds: [...entry.groupIds],
+      expectedParserVersion: entry.parserVersion,
+      fragmentIds: [...entry.fragmentIds],
     }));
     selections.push(...assets.map((asset, index) => ({ itemId: `A${index + 1}`, mode: 'asset' as const,
       sourceRef: { kind: 'project-file' as const, projectId, fileName: asset.name }, expectedSourceDigest: asset.digest,
@@ -237,6 +272,10 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
     if (selections.length === 0) {
       setError(t('mokina.contextPanel.noStableGroup'));
       return;
+    }
+    if (mokinaContextBudgetExceeded({ itemCount: selections.length, excerptUnits: chosenChars,
+      assetBytes: assets.reduce((sum, asset) => sum + (candidates.find(file => file.name === asset.name)?.size ?? 0), 0) })) {
+      setError(t('mokina.contextPanel.budgetExceeded')); return;
     }
     const excluded = (results ?? [])
       .filter((item) => item.unreadable)
@@ -259,20 +298,25 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         snapshot?: { items: Array<{ displayName: string; kind: string; text?: string }> };
         error?: { code?: string; message?: string };
       } | null;
+      if (issuedScope !== scopeRef.current) return;
       if (!response.ok || !body?.snapshot) {
-        const code = body?.error?.code ?? '';
+        const failure = mokinaResponseError(body, t('mokina.contextPanel.freezeFailedStatus', { status: response.status }));
+        const code = failure.code;
         if (code === 'MOKINA_SOURCE_CHANGED') {
           setResults(null);
           setSelectedGroups([]);
+          setBrand(null);
+          setBrandError(brandId ? t('mokina.contextPanel.sourceChanged') : null);
           throw new Error(t('mokina.contextPanel.sourceChanged'));
         }
         if (code === 'MOKINA_CONTEXT_LIMIT') {
-          throw new Error(body?.error?.message ?? t('mokina.contextPanel.budgetExceeded'));
+          throw new Error(failure.message);
         }
-        throw new Error(body?.error?.message ?? t('mokina.contextPanel.freezeFailedStatus', { status: response.status }));
+        throw new Error(failure.message);
       }
       const items = body.snapshot.items ?? [];
       const record: PendingMokinaContextSnapshot = {
+        ...scope,
         snapshotId,
         projectId,
         itemCount: items.length,
@@ -281,17 +325,20 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         itemLabels: items.map((item) => item.displayName).slice(0, 20),
         excluded: excluded.map((entry) => ({ displayName: entry.displayName, reason: '无法读取' })),
       };
-      await writePendingMokinaSnapshot(record);
-      setFrozen(record);
+      if (issuedScope !== scopeRef.current) return;
+      const persisted = await writePendingMokinaSnapshot(record, { generation: capturedGeneration });
+      if (issuedScope !== scopeRef.current) return;
+      setFrozen(persisted);
     } catch (cause) {
+      if (issuedScope !== scopeRef.current) return;
       setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.freezeFailed'));
     } finally {
-      setBusy(false);
+      if (issuedScope === scopeRef.current) setBusy(false);
     }
   }
 
   // 没有资料文件、且品牌目录确认也为空时，这个面板没有可做的事。
-  if (candidates.length === 0 && brandCatalogLoaded && designSystems.length === 0) return null;
+  if (candidates.length === 0 && brandCatalogLoaded && !brandCatalogError && designSystems.length === 0) return null;
 
   return (
     <details className="mokina-material-picker mokina-context-panel">
@@ -302,7 +349,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
           {t('mokina.contextPanel.brandSource')}
           <select
             aria-label={t('mokina.contextPanel.brandSource')}
-            value={brand?.id ?? ''}
+            value={brandId}
             disabled={busy}
             onChange={(event) => void selectBrand(event.target.value)}
           >
@@ -315,7 +362,9 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         {brand ? (
           <small>{t('mokina.contextPanel.brandSelected', { brand: brand.title, chars: brand.chars.toLocaleString() })}</small>
         ) : null}
+        {brandCatalogError ? <p role="alert">{t('mokina.contextPanel.brandCatalogFailed')}<Button onClick={() => setCatalogRetry(value => value + 1)}>{t('preview.retry')}</Button></p> : null}
         {brandError ? <p role="alert">{brandError}</p> : null}
+        {brandId && brandError ? <Button disabled={brandLoading} onClick={() => void selectBrand(brandId)}>{t('mokina.repair.refreshBrand')}</Button> : null}
       </div>
       {frozen ? (
         <div role="status" className="mokina-context-panel__frozen">
@@ -337,7 +386,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
           <button type="button" disabled={busy} onClick={async () => {
             setBusy(true);
             try {
-              if (await clearPendingMokinaSnapshot(projectId)) setFrozen(null);
+              if (await clearPendingMokinaSnapshot(projectId, scope)) setFrozen(null);
               else setError(t('mokina.contextPanel.clearFailed'));
             } finally { setBusy(false); }
           }}>
@@ -414,6 +463,12 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         </div>
       ) : null}
       {error ? <p role="alert">{error}</p> : null}
+      {results?.some(item => item.unreadable) ? <label><input type="checkbox" checked={acceptUnreadable}
+        onChange={event => setAcceptUnreadable(event.target.checked)} />{t('mokina.repair.acceptUnreadable')}</label> : null}
+      {readLegacyPendingMokinaSnapshot(projectId) && !frozen ? <Button onClick={async () => {
+        try { await claimLegacyPendingMokinaSnapshot(projectId, scope); setFrozen(readPendingMokinaSnapshot(projectId, scope)); }
+        catch (cause) { setError(cause instanceof Error ? cause.message : '恢复失败'); }
+      }}>{t('mokina.repair.claimLegacy')}</Button> : null}
       <div className="mokina-context-panel__actions">
         <button
           type="button"
@@ -424,7 +479,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         </button>
         <button
           type="button"
-          disabled={busy || (!brand && (!results || (chosenGroups.length === 0 && assets.length === 0)))}
+          disabled={busy || brandLoading || (!!brandId && !!brandError) || (!brand && (!results || (chosenGroups.length === 0 && assets.length === 0)))}
           onClick={() => void freezeSnapshot()}
         >
           {busy ? t('mokina.contextPanel.busy') : t('mokina.contextPanel.freezeAction', { count: chosenGroups.length + assets.length + (brand ? 1 : 0) })}

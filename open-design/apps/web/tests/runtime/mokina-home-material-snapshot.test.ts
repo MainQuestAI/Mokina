@@ -1,208 +1,98 @@
 // @vitest-environment jsdom
-//
-// N02: Home-staged files marked as Mokina 资料/素材 freeze into the SAME
-// context snapshot pipeline the in-project panel uses. These tests pin the
-// pure selection builder: budget accounting, explicit exclusions (never
-// silent truncation), and base-group-id normalization.
+import { webcrypto } from 'node:crypto';
+import { afterEach, expect, it, vi } from 'vitest';
+import { buildHomeMokinaSelections, prepareHomeMokinaSnapshot, mokinaResponseError, saveHomeMokinaPreparation, clearHomeMokinaPreparation, readHomeMokinaPreparation, type HomeMokinaPreparationRecord } from '../../src/runtime/mokina/home-material-snapshot';
+const { readMaterial } = vi.hoisted(() => ({ readMaterial: vi.fn() }));
+vi.mock('../../src/providers/registry', () => ({ fetchProjectMaterial: readMaterial }));
+afterEach(() => { readMaterial.mockReset(); vi.unstubAllGlobals(); localStorage.clear(); });
+const extraction = (text: string) => ({ name: 'visible.md', contentDigest: 'd', parserVersion: 'mokina-material/2',
+  status: 'read' as const, limitations: [], sections: [{ fragmentId: 'fragment:1', location: 'line 1', text, groupId: 'same' }] });
+it('keeps real paths and exact fragments even when display names collide', () => {
+  const plans = [0, 1].map(i => ({ inputId: `input-${i}`, name: 'same.md', size: 1, kind: 'material' as const, path: `stored-${i}.md` }));
+  const built = buildHomeMokinaSelections({ projectId: 'p', plans, assets: [],
+    materials: plans.map(plan => ({ name: plan.name, inputId: plan.inputId, extraction: extraction(plan.inputId) })) });
+  expect(built.selections.map(selection => selection.sourceRef)).toEqual([
+    { kind: 'project-file', projectId: 'p', fileName: 'stored-0.md' },
+    { kind: 'project-file', projectId: 'p', fileName: 'stored-1.md' },
+  ]);
+  expect(built.selections[0]).toMatchObject({ mode: 'fragments', fragmentIds: ['fragment:1'], expectedParserVersion: 'mokina-material/2' });
+});
+it('counts separators at 24k and requires visible exclusions instead of silently truncating', () => {
+  const material = extraction('a'.repeat(23_999));
+  material.sections.push({ fragmentId: 'fragment:2', location: 'line 2', text: 'b', groupId: 'same' });
+  const built = buildHomeMokinaSelections({ projectId: 'p', plans: [{ name: 'x.md', size: 1, kind: 'material' }],
+    materials: [{ name: 'x.md', extraction: material }], assets: [] });
+  expect(built.selections).toEqual([]);
+  expect(built.excluded).toMatchObject([{ displayName: 'x.md', reason: 'budget' }]);
+});
+it('enforces cumulative asset and selection-count limits', () => {
+  const plans = [0, 1].map(i => ({ name: `${i}.png`, size: 20 * 1024 * 1024, kind: 'asset' as const }));
+  const built = buildHomeMokinaSelections({ projectId: 'p', plans, materials: [],
+    assets: plans.map(plan => ({ name: plan.name, byteLength: plan.size, digest: 'd' })) });
+  expect(built.selections).toHaveLength(1);
+  expect(built.excluded[0]?.reason).toBe('budget');
+  const small = Array.from({ length: 21 }, (_, i) => ({ name: `${i}.png`, size: 1, kind: 'asset' as const }));
+  const many = buildHomeMokinaSelections({ projectId: 'p', plans: small, materials: [],
+    assets: small.map(plan => ({ name: plan.name, byteLength: 1, digest: 'd' })) });
+  expect(many.selections).toHaveLength(20);
+  expect(many.excluded).toHaveLength(1);
+});
+it('blocks all-failed uploads and only accepts exclusion after explicit confirmation', async () => {
+  const input = { projectId: 'p', plans: [{ name: 'missing.md', size: 1, kind: 'material' as const }] };
+  expect(await prepareHomeMokinaSnapshot(input)).toMatchObject({ status: 'needs-input', snapshotId: null });
+  expect(await prepareHomeMokinaSnapshot({ ...input, acceptExclusions: true })).toMatchObject({ status: 'ready', snapshotId: null });
+  expect(readMaterial).not.toHaveBeenCalled();
+});
+it.each([409, 413, 403])('blocks rejected snapshot %i while retaining input', async status => {
+  vi.stubGlobal('crypto', webcrypto);
+  readMaterial.mockResolvedValue(extraction('selected'));
+  vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ error: 'denied' }), { status })));
+  const plan = { inputId: 'input', name: 'visible.md', path: 'stored.md', size: 1, kind: 'material' as const };
+  const result = await prepareHomeMokinaSnapshot({ projectId: 'p', plans: [plan] });
+  expect(readMaterial).toHaveBeenCalledWith('p', 'stored.md', undefined);
+  expect(result).toMatchObject({ status: 'needs-input', message: 'denied', snapshotId: null });
+  expect(plan.path).toBe('stored.md');
+});
+it('supports string, structured and invalid error bodies', () => {
+  expect(mokinaResponseError({ error: 'permission' }, 'fallback').message).toBe('permission');
+  expect(mokinaResponseError({ error: { code: 'x', message: 'changed' } }, 'fallback')).toEqual({ code: 'x', message: 'changed' });
+  expect(mokinaResponseError(null, 'fallback').message).toBe('fallback');
+});
+it('retries a lost freeze response with the original fixed selection, even after source deletion', async () => {
+  vi.stubGlobal('crypto', webcrypto);
+  readMaterial.mockResolvedValue(extraction('fixed input'));
+  const network = vi.fn().mockRejectedValueOnce(new Error('response lost')).mockResolvedValueOnce(new Response(JSON.stringify({ snapshot: { items: [{ displayName: 'fixed', text: 'fixed input' }] } })));
+  vi.stubGlobal('fetch', network);
+  let fixedSelection: HomeMokinaPreparationRecord['fixedSelection'];
+  const input = { projectId: 'p', conversationId: 'c', snapshotId: 'original-snapshot', plans: [{ inputId: 'input', name: 'visible.md', path: 'stored.md', size: 1, kind: 'material' as const }] };
+  expect(await prepareHomeMokinaSnapshot({ ...input, onPrepared: async selection => { fixedSelection = selection; } })).toMatchObject({ status: 'needs-input' });
+  readMaterial.mockRejectedValue(new Error('source deleted'));
+  expect(await prepareHomeMokinaSnapshot({ ...input, fixedSelection })).toMatchObject({ status: 'ready', snapshotId: 'original-snapshot' });
+  expect(readMaterial).toHaveBeenCalledTimes(1);
+  expect(network.mock.calls[0]?.[1].body).toBe(network.mock.calls[1]?.[1].body);
+});
+it('rejects late preparation updates and does not clear a newer selection', async () => {
+  const original: HomeMokinaPreparationRecord = { schemaVersion: 1, projectId: 'p', conversationId: 'c', workspaceKey: 'none', snapshotId: 's', plans: [], prompt: 'original', status: 'preparing', excluded: [] };
+  const preparing = await saveHomeMokinaPreparation(original);
+  const adjusted = await saveHomeMokinaPreparation({ ...preparing, bindingSnapshotId: 'adjusted', status: 'ready' });
+  await expect(saveHomeMokinaPreparation({ ...preparing, status: 'needs-input' })).rejects.toThrow('保存失败');
+  await clearHomeMokinaPreparation(preparing);
+  expect(readHomeMokinaPreparation('p', 'c', 'none')).toEqual(adjusted);
+});
 
-import { describe, expect, it } from 'vitest';
-
-import type { ProjectMaterialExtraction } from '@open-design/contracts';
-
-import {
-  buildHomeMokinaSelections,
-  type HomeMokinaFilePlan,
-} from '../../src/runtime/mokina/home-material-snapshot';
-
-const PROJECT_ID = 'project-home-1';
-
-function extraction(name: string, sections: Array<{ text: string; groupId?: string }>): ProjectMaterialExtraction {
-  return {
-    name,
-    contentDigest: `digest-${name}`,
-    status: 'read',
-    limitations: [],
-    sections: sections.map((section, index) => ({
-      location: `${name}#${index + 1}`,
-      text: section.text,
-      groupId: section.groupId,
-      groupLabel: section.groupId ?? undefined,
-    })),
-  };
-}
-
-function materialPlan(name: string): HomeMokinaFilePlan {
-  return { name, size: 1, kind: 'material' };
-}
-
-describe('buildHomeMokinaSelections', () => {
-  it('freezes every stable group of a readable material as one groups selection', () => {
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [materialPlan('brief.md')],
-      materials: [{ name: 'brief.md', extraction: extraction('brief.md', [
-        { text: '第一段', groupId: 'intro' },
-        { text: '第二段', groupId: 'intro' },
-        { text: '结论', groupId: 'outro' },
-      ]) }],
-      assets: [],
-    });
-    expect(built).not.toBeNull();
-    expect(built!.selections).toHaveLength(1);
-    const selection = built!.selections[0]!;
-    expect(selection.mode).toBe('groups');
-    if (selection.mode !== 'groups') throw new Error('unreachable');
-    expect(selection.textKind).toBe('material-excerpt');
-    expect(selection.sourceRef).toEqual({ kind: 'project-file', projectId: PROJECT_ID, fileName: 'brief.md' });
-    expect(selection.expectedSourceDigest).toBe('digest-brief.md');
-    expect(selection.groupIds.sort()).toEqual(['intro', 'outro']);
-    expect(built!.excluded).toEqual([]);
+it('reuses the initial preparation after its write committed but the acknowledgement failed', async () => {
+  const original: HomeMokinaPreparationRecord = { schemaVersion: 1, projectId: 'p', conversationId: 'c', workspaceKey: 'none', snapshotId: 's', plans: [], prompt: 'keep', status: 'preparing', excluded: [] };
+  const setItem = Storage.prototype.setItem;
+  const fault = vi.spyOn(Storage.prototype, 'setItem').mockImplementationOnce(function (this: Storage, key, value) {
+    setItem.call(this, key, value);
+    throw new Error('acknowledgement lost after write');
   });
-
-  it('normalizes part-split groupIds to their base id', () => {
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [materialPlan('notes.md')],
-      materials: [{ name: 'notes.md', extraction: extraction('notes.md', [
-        { text: '片段一', groupId: 'g1:part:1' },
-        { text: '片段二', groupId: 'g1:part:2' },
-      ]) }],
-      assets: [],
-    });
-    const selection = built!.selections[0]!;
-    if (selection.mode !== 'groups') throw new Error('unreachable');
-    expect(selection.groupIds).toEqual(['g1']);
-  });
-
-  it('keeps materials inside the shared 24,000-unit excerpt budget and excludes the overflow with reason budget', () => {
-    const big = '字'.repeat(20_000);
-    const big2 = '字'.repeat(10_000);
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [materialPlan('big-a.md'), materialPlan('big-b.md')],
-      materials: [
-        { name: 'big-a.md', extraction: extraction('big-a.md', [{ text: big, groupId: 'a' }]) },
-        { name: 'big-b.md', extraction: extraction('big-b.md', [{ text: big2, groupId: 'b' }]) },
-      ],
-      assets: [],
-    });
-    expect(built!.selections).toHaveLength(1);
-    const selection = built!.selections[0]!;
-    if (selection.mode !== 'groups') throw new Error('unreachable');
-    expect(selection.groupIds).toEqual(['a']);
-    // Whole groups only (panel granularity): the 10,000-unit group no longer
-    // fits the 4,000-unit remainder, so the whole file is excluded with the
-    // budget reason rather than silently truncated.
-    expect(built!.excluded).toHaveLength(1);
-    expect(built!.excluded[0]).toMatchObject({ displayName: 'big-b.md', reason: 'budget' });
-    expect(built!.excluded[0]!.explanation).toContain('预算');
-  });
-
-  it('excludes unreadable materials with reason unreadable and freezes nothing for them', () => {
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [materialPlan('broken.pdf')],
-      materials: [{
-        name: 'broken.pdf',
-        extraction: {
-          name: 'broken.pdf',
-          contentDigest: '',
-          status: 'unreadable',
-          limitations: ['损坏文件不可读取'],
-          sections: [],
-        },
-      }],
-      assets: [],
-    });
-    expect(built).toBeNull();
-  });
-
-  it('freezes an in-budget asset with its role and usage note', () => {
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [{ name: 'logo.png', size: 2048, kind: 'asset', role: 'logo', usageNote: '页头标识' }],
-      materials: [],
-      assets: [{ name: 'logo.png', byteLength: 2048, digest: 'asset-digest' }],
-    });
-    expect(built!.selections).toHaveLength(1);
-    const selection = built!.selections[0]!;
-    expect(selection.mode).toBe('asset');
-    if (selection.mode !== 'asset') throw new Error('unreachable');
-    expect(selection.expectedSourceDigest).toBe('asset-digest');
-    expect(selection.role).toBe('logo');
-    expect(selection.usageNote).toBe('页头标识');
-  });
-
-  it('defaults an asset role to supporting and excludes over-30MiB assets with reason budget', () => {
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [
-        { name: 'hero.png', size: 1024, kind: 'asset' },
-        { name: 'huge.png', size: 31 * 1024 * 1024, kind: 'asset' },
-      ],
-      materials: [],
-      assets: [
-        { name: 'hero.png', byteLength: 1024, digest: 'hero-digest' },
-        { name: 'huge.png', byteLength: 31 * 1024 * 1024, digest: 'huge-digest' },
-      ],
-    });
-    expect(built!.selections).toHaveLength(1);
-    const selection = built!.selections[0]!;
-    if (selection.mode !== 'asset') throw new Error('unreachable');
-    expect(selection.role).toBe('supporting');
-    expect(built!.excluded).toHaveLength(1);
-    expect(built!.excluded[0]).toMatchObject({ displayName: 'huge.png', reason: 'budget' });
-  });
-
-  it('returns null when nothing can be frozen', () => {
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [materialPlan('empty.md')],
-      materials: [{ name: 'empty.md', extraction: extraction('empty.md', []) }],
-      assets: [],
-    });
-    expect(built).toBeNull();
-  });
-
-  it('drops failed uploads from selections and reports them as excluded instead of poisoning the freeze', () => {
-    // N02 review: a failed upload means the file never reached the project, so
-    // a selection referencing it makes the daemon reject the whole snapshot
-    // with a 409. The failed file must fall out of the selections and land in
-    // excluded with an explicit reason.
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [
-        materialPlan('brief.md'),
-        { name: 'logo.png', size: 2048, kind: 'asset', role: 'logo' },
-      ],
-      materials: [{ name: 'brief.md', extraction: extraction('brief.md', [{ text: '段落', groupId: 'intro' }]) }],
-      // The failed asset still has local staged bytes and a valid digest —
-      // filtering must key on failedUploadNames, not on missing bytes.
-      assets: [{ name: 'logo.png', byteLength: 2048, digest: 'asset-digest' }],
-      failedUploadNames: new Set(['logo.png']),
-    });
-    expect(built).not.toBeNull();
-    expect(built!.selections).toHaveLength(1);
-    expect(built!.selections[0]!.sourceRef).toEqual({
-      kind: 'project-file',
-      projectId: PROJECT_ID,
-      fileName: 'brief.md',
-    });
-    expect(built!.excluded).toHaveLength(1);
-    expect(built!.excluded[0]).toMatchObject({ displayName: 'logo.png', reason: 'unavailable' });
-    expect(built!.excluded[0]!.explanation).toContain('上传失败');
-  });
-
-  it('excludes a failed-upload material without reading it, and returns null when nothing else can freeze', () => {
-    const built = buildHomeMokinaSelections({
-      projectId: PROJECT_ID,
-      plans: [materialPlan('brief.md')],
-      // No extraction was fetched for the failed upload; the exclusion must
-      // not depend on a material read that never happened.
-      materials: [],
-      assets: [],
-      failedUploadNames: new Set(['brief.md']),
-    });
-    expect(built).toBeNull();
-  });
+  try {
+    await expect(saveHomeMokinaPreparation(original)).rejects.toThrow('保存失败');
+    const committed = readHomeMokinaPreparation('p', 'c', 'none');
+    expect(committed).toMatchObject({ revision: 1, snapshotId: 's' });
+    expect(await saveHomeMokinaPreparation(original)).toEqual(committed);
+    await expect(saveHomeMokinaPreparation({ ...original, prompt: 'different intent' })).rejects.toThrow('保存失败');
+    expect(readHomeMokinaPreparation('p', 'c', 'none')).toEqual(committed);
+  } finally { fault.mockRestore(); }
 });

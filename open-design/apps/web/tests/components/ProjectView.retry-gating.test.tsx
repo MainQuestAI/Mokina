@@ -9,6 +9,8 @@ import type { ChatPane as ChatPaneComponent } from '../../src/components/ChatPan
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProjectView } from '../../src/components/ProjectView';
+import { workspaceIdentityCacheKey } from '../../src/collab/workspace-identity';
+import { pendingMokinaSnapshotKey } from '../../src/runtime/mokina/pending-context-snapshot';
 import type { ProjectWorkspaceScopeState } from '../../src/collab/useProjectWorkspaceScope';
 import type { WorkspaceCollabContext } from '@open-design/contracts';
 import type {
@@ -36,6 +38,7 @@ const saveMessage = vi.fn();
 const createConversation = vi.fn();
 const checkAmrBalanceGate = vi.fn();
 const fetchBrands = vi.fn();
+const queryRunByClientRequest = vi.fn().mockResolvedValue(null);
 
 /** What each composer send was told to do with its draft. */
 const sendOutcomes: unknown[] = [];
@@ -147,7 +150,7 @@ vi.mock('../../src/collab/useProjectCollab', async (importOriginal) => ({
 vi.mock('../../src/providers/daemon', () => ({
   GENERIC_DAEMON_DISCONNECT_CODE: 'GENERIC_DAEMON_DISCONNECT',
   GENERIC_DAEMON_DISCONNECT_MESSAGE: 'daemon stream disconnected before run completed',
-  queryRunByClientRequest: vi.fn().mockResolvedValue(null),
+  queryRunByClientRequest: (...args: unknown[]) => queryRunByClientRequest(...args),
   fetchChatRunStatus: (...args: unknown[]) => fetchChatRunStatus(...args),
   listActiveChatRuns: (...args: unknown[]) => listActiveChatRuns(...args),
   listProjectRuns: (...args: unknown[]) => listProjectRuns(...args),
@@ -498,6 +501,7 @@ beforeEach(() => {
   fetchBrands.mockResolvedValue([]);
   loadTabs.mockResolvedValue({ tabs: [], active: null });
   fetchChatRunStatus.mockResolvedValue(null);
+  queryRunByClientRequest.mockResolvedValue(null);
   listActiveChatRuns.mockResolvedValue([]);
   listProjectRuns.mockResolvedValue([]);
   saveMessage.mockResolvedValue(null);
@@ -1312,6 +1316,49 @@ describe('2026-09-14 retry replaces the old error surface without erasing histor
 
 describe('Mokina request admission and recovery join the actual host callbacks', () => {
   beforeEach(() => { mokinaEdition.on = true; });
+  it('an accepted request recovered after remount consumes its captured binding without sending again', async () => {
+    conversationMessages = [];
+    const workspaceKey = workspaceIdentityCacheKey(workspaceScopeMocks.personalContext());
+    const key = pendingMokinaSnapshotKey('project-1', { conversationId: 'conv-a', workspaceKey });
+    const binding = { schemaVersion: 2, projectId: 'project-1', conversationId: 'conv-a', workspaceKey,
+      snapshotId: 'frozen-original', generation: 'generation-original', itemCount: 1, charCount: 24,
+      frozenAt: '2026-10-07T00:00:00Z', itemLabels: ['selected excerpt'], excluded: [] };
+    window.localStorage.setItem(key, JSON.stringify(binding));
+    const locks = Object.getOwnPropertyDescriptor(navigator, 'locks');
+    Object.defineProperty(navigator, 'locks', { configurable: true, value: {
+      request: async (_key: string, workOrOptions: unknown, callback?: () => unknown) =>
+        (callback ?? workOrOptions as () => unknown)(),
+    } });
+    try {
+      streamViaDaemon.mockImplementation(async options => {
+        expect(await options.onBeforeRunCreate()).toBe(true);
+        options.onRunCreateFailed({ definitive: false });
+        options.handlers.onError(new Error('accepted response lost'));
+      });
+      const first = renderProjectView(localConfig); await waitForConversation();
+      await waitFor(() => expect((screen.getByTestId('send-message') as HTMLButtonElement).disabled).toBe(false));
+      await act(async () => { await chatSurface.props!.onSend('a fresh prompt', [], [], {
+        context: { mokinaSnapshotId: binding.snapshotId, mokinaSnapshotGeneration: binding.generation },
+      }); });
+      await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
+      const receiptKey = Object.keys(localStorage).find(k => k.startsWith('od:send-request:v2:'))!;
+      const receipt = JSON.parse(localStorage.getItem(receiptKey)!);
+      expect(receipt.snapshot.extras.context).toMatchObject({ mokinaSnapshotId: binding.snapshotId,
+        mokinaSnapshotGeneration: binding.generation });
+      first.unmount();
+      queryRunByClientRequest.mockResolvedValue({ id: 'accepted-run', status: 'succeeded', createdAt: 1,
+        projectId: 'project-1', conversationId: 'conv-a', clientRequestId: receipt.clientRequestId,
+        assistantMessageId: receipt.snapshot.assistantMessageId });
+      renderProjectView(localConfig); await waitForConversation();
+      await waitFor(() => expect(localStorage.getItem(key)).toBeNull());
+      await waitFor(() => expect(localStorage.getItem(receiptKey)).toBeNull());
+      expect(queryRunByClientRequest.mock.calls.some(call => call.includes(receipt.clientRequestId))).toBe(true);
+      expect(streamViaDaemon).toHaveBeenCalledTimes(1);
+    } finally {
+      if (locks) Object.defineProperty(navigator, 'locks', locks);
+      else Reflect.deleteProperty(navigator, 'locks');
+    }
+  });
   it('a known failed run may start a new attempt, but loss of that retry receipt cannot create a third attempt', async () => {
     conversationMessages = conversationMessages.map(message => ({ ...message, clientRequestId: 'accepted-original-request' }));
     streamViaDaemon.mockImplementation(async options => {

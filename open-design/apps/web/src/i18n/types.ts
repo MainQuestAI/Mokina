@@ -30,6 +30,27 @@ export const LOCALE_LABEL: Record<Locale, string> = {
 // flat (not deeply nested) so missing-key TS errors point straight at the
 // offending string instead of a generic object mismatch.
 export interface Dict {
+  'mokina.runEvidence.receiptReadFailed': string;
+  'mokina.runEvidence.transmissionOnly': string;
+  'mokina.repair.reselectFiles': string;
+  'mokina.repair.reselectFile': string;
+  'mokina.repair.excludeInput': string;
+  'mokina.pendingSend.submittedSync': string;
+  'mokina.repair.homeReady': string;
+  'mokina.repair.homePreparing': string;
+  'mokina.repair.restorePrompt': string;
+  'mokina.repair.retryPreparation': string;
+  'mokina.repair.excludeContinue': string;
+  'mokina.repair.adjustFirst': string;
+  'mokina.repair.adoptAdjusted': string;
+  'mokina.repair.continuationSaved': string;
+  'mokina.repair.continuationPending': string;
+  'mokina.repair.recordChanged': string;
+  'mokina.repair.continuationFailed': string;
+  'mokina.repair.resumeOriginal': string;
+  'mokina.repair.refreshBrand': string;
+  'mokina.repair.acceptUnreadable': string;
+  'mokina.repair.claimLegacy': string;
   // Mokina 行摘要（Spec B1 FR-04：recent 行成果摘要与五态占位）
   'mokina.entrySummary.loading': string;
   'mokina.entrySummary.failed': string;

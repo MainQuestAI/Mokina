@@ -99,6 +99,25 @@ export async function exportProjectAsHtml(opts: {
   triggerDownload(blob, filename);
 }
 
+async function exportResponseError(resp: Response, fallback: string): Promise<Error> {
+  let message = `${fallback} (${resp.status})`;
+  let code: string | undefined;
+  let details: unknown;
+  try {
+    const text = await resp.text();
+    let body: unknown;
+    try { body = JSON.parse(text); } catch { body = text; }
+    const failure = typeof body === 'object' && body !== null && 'error' in body ? body.error : body;
+    if (typeof failure === 'string' && failure.trim()) message = failure.slice(0, 2000);
+    else if (typeof failure === 'object' && failure !== null) {
+      if ('message' in failure && typeof failure.message === 'string') message = failure.message;
+      if ('code' in failure && typeof failure.code === 'string') code = failure.code;
+      if ('details' in failure) details = failure.details;
+    }
+  } catch { /* Keep the HTTP fallback when the body cannot be read. */ }
+  return Object.assign(new Error(message), { status: resp.status, ...(code ? { code } : {}), ...(details ? { details } : {}) });
+}
+
 export async function fetchProjectVersionHtml(opts: {
   projectId: string;
   filePath: string;
@@ -120,14 +139,7 @@ export async function fetchProjectVersionHtml(opts: {
     }),
   });
   if (!resp.ok) {
-    let message = `html export request failed (${resp.status})`;
-    try {
-      const body = await resp.json();
-      if (body?.error?.message) message = String(body.error.message);
-    } catch {
-      // Keep the status-based fallback when the response is not JSON.
-    }
-    throw new Error(message);
+    throw await exportResponseError(resp, 'html export request failed');
   }
   const blob = await resp.blob();
   const filename = filenameFromContentDisposition(resp)
@@ -814,12 +826,15 @@ export async function exportProjectAsPdf(opts: {
       },
       method: 'POST',
     });
-    if (!resp.ok) throw new Error(`desktop PDF export unavailable (${resp.status})`);
+    if (!resp.ok) throw await exportResponseError(resp, 'desktop PDF export unavailable');
     const body = await resp.json().catch(() => ({}));
     if (body?.canceled === true) return 'cancelled';
     if (body && body.ok === false) throw new Error(body.error || 'desktop PDF export failed');
     return 'desktop';
   } catch (err) {
+    // A historical body is not proof that its resources are deliverable.
+    // Never bypass the version-specific server check by printing raw source.
+    if (opts.versionId) throw err;
     console.warn('[exportProjectAsPdf] falling back to programmatic PDF:', err);
     await opts.fallbackPdf();
     return 'fallback';
@@ -897,21 +912,13 @@ export async function exportProjectAsZip(opts: {
       .map((segment) => encodeURIComponent(segment))
       .join('/');
     const query = new URLSearchParams({ inline: '1', versionId: opts.versionId });
-    try {
-      const url = `/api/projects/${encodeURIComponent(opts.projectId)}/export/${segments}?${query.toString()}`;
-      const resp = opts.workspaceContext
-        ? await fetch(url, {
-            headers: workspaceProjectHeaders(opts.workspaceContext),
-          })
-        : await fetch(url);
-      if (!resp.ok) throw new Error(`version html export request failed (${resp.status})`);
-      exportAsZip(await resp.text(), opts.fallbackTitle);
-      return;
-    } catch (err) {
-      console.warn('[exportProjectAsZip] falling back to single-file ZIP:', err);
-      exportAsZip(opts.fallbackHtml, opts.fallbackTitle);
-      return;
-    }
+    const url = `/api/projects/${encodeURIComponent(opts.projectId)}/export/${segments}?${query.toString()}`;
+    const resp = opts.workspaceContext
+      ? await fetch(url, { headers: workspaceProjectHeaders(opts.workspaceContext) })
+      : await fetch(url);
+    if (!resp.ok) throw await exportResponseError(resp, 'version html export request failed');
+    exportAsZip(await resp.text(), opts.fallbackTitle);
+    return;
   }
   const root = archiveRootFromFilePath(opts.filePath);
   const url = `/api/projects/${encodeURIComponent(opts.projectId)}/archive${

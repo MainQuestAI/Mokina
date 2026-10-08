@@ -10,6 +10,8 @@ export interface RunContextSelection {
    * omit it and keep working.
    */
   mokinaSnapshotId?: string;
+  /** Local one-send binding identity; receipt cleanup must retain this generation. */
+  mokinaSnapshotGeneration?: string;
 }
 
 export type WorkspaceContextKind =

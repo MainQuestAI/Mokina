@@ -1,0 +1,533 @@
+{
+  "sourceSha": "4cf68e9c7feda8cc5222825ba209f179490cabbf",
+  "version": "0.0.3-local.7",
+  "generatedAt": "2026-10-07T07:07:28.395Z",
+  "runs": [
+    {
+      "id": "7edb7bba-ce60-476f-80cd-eb667ebb24c5",
+      "projectId": "5af3f31a-843d-4005-9e27-b0686bed79dd",
+      "conversationId": "b5a2bb68-eec9-4992-ac31-75d4362d98ed",
+      "clientRequestId": "9a9140d5-effd-4cae-bdac-7417e37dbe4f",
+      "appVersionInfo": {
+        "version": "0.0.3-local.7",
+        "channel": "local",
+        "packaged": true,
+        "platform": "darwin",
+        "arch": "arm64"
+      },
+      "status": "succeeded",
+      "artifactCount": 0,
+      "error": null,
+      "createdAt": "2026-10-07T06:35:11.098Z",
+      "terminalAt": "2026-10-07T06:36:13.657Z",
+      "userPrompt": "请基于以下固定结论继续工作。先讨论方向；我明确要求交付时再生成方案。\n\n只使用选定摘录和补充背景；其他原项目资料不作为输入。\n\n【strategy】\n01 / 策略先预约，再接待，再回访\n建议以“春日第一席新茶”为传播主题，优先面向门店周边顾客与现有社群成员。围绕新品风味和现场体验沟通，不预设销售增长或到店人数。\n原生 local.6 门店执行清单\n\n给顾客一个明确的到店理由邀请顾客现场体验春季新品，了解风味与适饮场景。新品名称、体验内容、是否收费及可售价格确认后，再写入对外物料。\n把兴趣转成可安排的预约由门店和社群导向同一预约入口，建议收集称呼、联系方式、到店时段与人数；说明信息用途并取得同意，门店确认后完成预约。\n用真实反馈判断下一步到店后记录接待与体验反馈，经顾客同意再跟进。汇总有效预约、实际到店与新品偏好，为后续推广提供依据。\n\n评估口径：本次活动从真实记录开始有效预约按联系方式去重，并以门店确认记录为准；到店率＝实际到店预约人数 ÷ 已确认预约人数。分别记录门店与社群来源，分母为零时不计算比率。效果目标待门店容量与排期明确后制定。\n长路径中文空格修订验收成功\n\nNative brand-reference continuation B. Use the selected candidate strategy, Vercel repository style reference, and the explicitly chosen LOGO A synthetic asset. The logo is test input, not a Vercel official mark. Prepare an editable draft only; do not send or generate automatically.",
+      "receipt": {
+        "runId": "7edb7bba-ce60-476f-80cd-eb667ebb24c5",
+        "snapshotId": "2e92a8a7-fc2d-4b17-b448-46326ae6b04e",
+        "fingerprint": "7c486efc2e9da259c5b70287ed3848df2003f0e72643d2e33301c9ae54a2b4e8",
+        "includedItemIds": [
+          "section-1",
+          "background",
+          "asset-1",
+          "brand"
+        ],
+        "itemDelivery": [
+          {
+            "itemId": "section-1",
+            "mode": "inline-text"
+          },
+          {
+            "itemId": "background",
+            "mode": "inline-text"
+          },
+          {
+            "itemId": "asset-1",
+            "mode": "staged-file"
+          },
+          {
+            "itemId": "brand",
+            "mode": "inline-text"
+          }
+        ],
+        "status": "submitted",
+        "submittedAt": "2026-10-07T06:35:11.121Z"
+      },
+      "modelText": "\n我会按“可操作营销方案”先把目标、路径、物料结构和验证口径讨论清楚；本轮只使用你锁定的摘录、补充背景与已选 LOGO A，不读取其他原项目资料，也不生成文件。方向本身已足够明确：以“预约—接待—回访”为主链路，视觉上用克制的黑白系统承载，不把活动包装成促销战役。当前只需先核对一个会影响后续交付的素材身份：文字锁定为 LOGO A，但所选 SVG 画面内标注为 “LOGO B”。<od-done key=\"f22285d7feb637e6\"/>\n结论：建议把它定位为一场“可预约、可接待、可复盘的春季新品体验”，而不是促销活动。核心价值是给顾客明确的到店理由，并通过真实预约、到店和反馈记录判断后续动作。\n\n方向建议：\n\n- 主题保持“春日第一席新茶”，不承诺销售增长或到店规模。\n- 受众仅聚焦门店周边顾客和现有社群成员。\n- 门店与社群使用同一预约入口，避免形成两套口径。\n- 主流程固定为：了解体验内容 → 提交预约 → 门店确认 → 到店体验 → 同意后回访。\n- 对外物料暂不写新品名称、收费方式和价格，等待这些信息确认。\n- 评估只呈现有效预约、实际到店、新品偏好及渠道来源；到店率按既定公式计算，分母为零时不展示比率。\n- 预算、日期、门店容量和效果目标均保留为“待确认”，不补写假设数字。\n\n视觉上建议采用 Vercel 参考中的黑白精密感，但不复刻其品牌界面：大面积白底、紧凑标题、克制线框和轻量阴影，用流程与记录表体现执行感。LOGO 只作为活动识别，不包装成 Vercel 官方关联，也不额外加入装饰性色彩。\n\n未来明确要求交付时，可将可编辑 HTML 组织为：活动目标、目标顾客、策略方向、执行清单、预算待确认项、评估口径、来源与假设七部分。\n\n目前有一个必须先解决的素材冲突：文字结论指定“LOGO A”，但选定的 `asset-1.svg` 及其原始输入文件内容完全一致，画面实际标注为“LOGO B”。后续应以哪个为准：文字结论中的 LOGO A，还是当前选定 SVG？本轮未生成或修改任何方案文件。"
+    },
+    {
+      "id": "ddd74d38-fc67-4802-94fa-3d86c737baa7",
+      "projectId": "5e8f703b-2a47-48e0-a7be-1e2b1e07c8e4",
+      "conversationId": "882f4a39-439c-4654-9749-6394c9c153bc",
+      "clientRequestId": "25257161-34d1-47b1-a277-87cb91144147",
+      "appVersionInfo": {
+        "version": "0.0.3-local.7",
+        "channel": "local",
+        "packaged": true,
+        "platform": "darwin",
+        "arch": "arm64"
+      },
+      "status": "succeeded",
+      "artifactCount": 0,
+      "error": null,
+      "createdAt": "2026-10-07T06:50:34.894Z",
+      "terminalAt": "2026-10-07T06:51:38.899Z",
+      "userPrompt": "请基于以下固定结论制作一页活动页。先确认页面结构；我明确要求时再生成自包含 HTML。\n\n只使用选定摘录和补充背景；其他原项目资料不作为输入。\n\n【strategy】\n01 / 策略先预约，再接待，再回访\n建议以“春日第一席新茶”为传播主题，优先面向门店周边顾客与现有社群成员。围绕新品风味和现场体验沟通，不预设销售增长或到店人数。\n原生 local.6 门店执行清单\n\n给顾客一个明确的到店理由邀请顾客现场体验春季新品，了解风味与适饮场景。新品名称、体验内容、是否收费及可售价格确认后，再写入对外物料。\n把兴趣转成可安排的预约由门店和社群导向同一预约入口，建议收集称呼、联系方式、到店时段与人数；说明信息用途并取得同意，门店确认后完成预约。\n用真实反馈判断下一步到店后记录接待与体验反馈，经顾客同意再跟进。汇总有效预约、实际到店与新品偏好，为后续推广提供依据。\n\n评估口径：本次活动从真实记录开始有效预约按联系方式去重，并以门店确认记录为准；到店率＝实际到店预约人数 ÷ 已确认预约人数。分别记录门店与社群来源，分母为零时不计算比率。效果目标待门店容量与排期明确后制定。\n长路径中文空格修订验收成功\n\nNative local.7 downstream acceptance. On my explicit Send, generate one self-contained HTML named local7-continuation-result.html from the selected strategy only, the frozen Vercel style reference, and the selected synthetic LOGO B (not LOGO A). The selected SVG is authoritative and is not a Vercel official mark. Inline its bytes. Do not borrow unselected budget or channel sections; mark budget and missing business details as unconfirmed. Do not read the source project, publish, or install packages. Preserve the original continuation files.",
+      "receipt": {
+        "runId": "ddd74d38-fc67-4802-94fa-3d86c737baa7",
+        "snapshotId": "5180326c-ad56-4fb8-b964-e4d3908c21e9",
+        "fingerprint": "e17e073835d162dfa572a24023bfb042199097ac4e3dfa931f1a9568e39a9232",
+        "includedItemIds": [
+          "section-1",
+          "background",
+          "asset-1",
+          "brand"
+        ],
+        "itemDelivery": [
+          {
+            "itemId": "section-1",
+            "mode": "inline-text"
+          },
+          {
+            "itemId": "background",
+            "mode": "inline-text"
+          },
+          {
+            "itemId": "asset-1",
+            "mode": "staged-file"
+          },
+          {
+            "itemId": "brand",
+            "mode": "inline-text"
+          }
+        ],
+        "status": "submitted",
+        "submittedAt": "2026-10-07T06:50:34.902Z"
+      },
+      "modelText": "\n\n本页将采用克制的黑白背景、紧凑标题字形与大留白，以“预约—接待—回访”作为贯穿全页的信息骨架；当前只确认结构，不生成或修改文件。<od-done key=\"eca06ffe34e8ba0e\"/>\n页面结构确认如下：制作成响应式单页，以“预约 → 接待 → 回访”为唯一叙事主线。\n\n1. `hero`｜活动主张  \n   放置选定的合成 LOGO B，并明确它不是 Vercel 官方标志。主标题为“春日第一席新茶”，说明面向门店周边顾客与现有社群成员，不承诺销量或到店人数。\n\n2. `value`｜为什么值得到店  \n   聚焦春季新品的风味、适饮场景和现场体验，只表达已确认的体验价值。\n\n3. `journey`｜三步体验流程  \n   依次呈现“先预约、再接待、再回访”：统一预约入口、门店确认、到店记录、经同意后的反馈跟进。\n\n4. `details`｜已确认与待确认  \n   清楚区分两类信息。新品名称、具体体验内容、是否收费、可售价格、门店容量、排期、效果目标和预算均标注“待确认”，不补写推测内容。\n\n5. `proof`｜活动如何评估  \n   展示有效预约的去重与确认口径、到店率公式、门店与社群来源分别记录，以及分母为零时不计算比率。\n\n6. `cta`｜预约行动入口  \n   页面只保留一个主 CTA。由于尚未提供正式预约地址，生成时将明确标记为“预览交互”，不会模拟提交成功或真实转化；同时说明拟收集的信息及用途，并强调需取得顾客同意。\n\n7. `footer`｜边界说明  \n   简要注明页面依据固定策略摘录制作，未引用其他项目资料，预算和缺失业务信息尚未确认。\n\n视觉采用冻结的 Vercel 风格参考：黑白精密排版、紧凑标题、大留白和阴影式边界；不会复制 Vercel 标志或将 LOGO B 描述为官方资产。当前未创建或修改任何文件，等你明确要求生成后，再输出 `local7-continuation-result.html`。"
+    },
+    {
+      "id": "e88e5ca1-ab42-4cd0-8678-ff1503da549d",
+      "projectId": "5e8f703b-2a47-48e0-a7be-1e2b1e07c8e4",
+      "conversationId": "882f4a39-439c-4654-9749-6394c9c153bc",
+      "clientRequestId": "7c491e86-f089-4102-9039-926996923538",
+      "appVersionInfo": {
+        "version": "0.0.3-local.7",
+        "channel": "local",
+        "packaged": true,
+        "platform": "darwin",
+        "arch": "arm64"
+      },
+      "status": "succeeded",
+      "artifactCount": 1,
+      "error": null,
+      "createdAt": "2026-10-07T06:52:13.370Z",
+      "terminalAt": "2026-10-07T07:02:05.102Z",
+      "userPrompt": "I explicitly confirm: generate local7-continuation-result.html now as one self-contained page using the already submitted fixed strategy, Vercel style reference, and synthetic LOGO B. Read the target staged asset only, inline its exact SVG bytes, keep unselected budget as unconfirmed, and do not read the source project or modify the original continuation records. Do not ask for another structure confirmation.",
+      "receipt": null,
+      "modelText": "我将按“活动页制作”技能落实已确认结构，只读取活动页契约与 `asset-1.svg`，并保持原续写记录不变。页面采用白色画布、近黑文字、紧凑标题、阴影式边界和大留白；布局按“到店理由—预约—接待—回访—评估”纵向展开，移动端改为单列。\n\n设计质量钩子标记了两处低对比度风险。我会按 Impeccable 的检查规则定位并修正真实问题，再完成页面验证；不会用忽略规则掩盖可修复的对比度问题。对比度问题已经修复。剩余两类检测警告来自已锁定的 Vercel 风格：Geist 字体与紧凑展示字距；它们是用户明确指定的视觉依据，我会仅对这两个值做窄范围豁免，不改变页面风格。<od-done key=\"34a0e5ef7c1d3de3\"/>\n已生成自包含活动页：[local7-continuation-result.html]([QA_ROOT]/runtime/mac/namespaces/mokina-local-repair-v003-7/data/projects/5e8f703b-2a47-48e0-a7be-1e2b1e07c8e4/local7-continuation-result.html)。\n\n页面已完成：\n\n- 精确内联 161 字节的合成 LOGO B，未修改 SVG 内容。\n- 只采用固定策略和冻结的 Vercel 风格参考。\n- 明确标注预算、价格、排期等信息待确认。\n- 预约区为预览交互，不发送数据、不虚构提交成功或发布状态。\n- 完成响应式、章节契约、标签闭合、外部依赖及完整渲染检查。\n- 原始续写记录和 `asset-1.svg` 均未修改。\n\n设计检查中修复了低对比度文字和过度缩放的负字距；仅对用户已确认的 Geist、Geist Mono 字体警告做了精确豁免，没有遗留未处理告警。\n\n"
+    },
+    {
+      "id": "7f2675a8-b7f1-406d-8819-098ba25be330",
+      "projectId": "2163ea62-6a81-4299-a7a4-7cbd980ce48c",
+      "conversationId": "69a8485e-4289-41a5-9180-40e102ed15e8",
+      "clientRequestId": "home-auto-send-17wb4d8449gw8",
+      "appVersionInfo": {
+        "version": "0.0.3-local.7",
+        "channel": "local",
+        "packaged": true,
+        "platform": "darwin",
+        "arch": "arm64"
+      },
+      "status": "succeeded",
+      "artifactCount": 0,
+      "error": null,
+      "createdAt": "2026-10-07T07:02:53.256Z",
+      "terminalAt": "2026-10-07T07:04:07.585Z",
+      "userPrompt": "Budget acceptance A: Use only the selected brief. Total budget CNY 300000. All default forbidden channels must have zero spend. Produce discussion text only, no HTML and no file edits. Give an allocation table with every amount, percentage, arithmetic total and forbidden zero rows. Give executable store/community steps, distinguish source facts/recommendations/missing facts, and explain why these allocations fit this task. No ROI or conversion promises.",
+      "receipt": {
+        "runId": "7f2675a8-b7f1-406d-8819-098ba25be330",
+        "snapshotId": "6bb52d4f-de24-46cc-bd6d-f6ab40f210a9",
+        "fingerprint": "8d474bdefd380a68f42d6d596b6c3fef280eeffc2d59fbd0f0671d1097707052",
+        "includedItemIds": [
+          "1084e1ed-1279-49c8-83ec-bf372235d349"
+        ],
+        "itemDelivery": [
+          {
+            "itemId": "1084e1ed-1279-49c8-83ec-bf372235d349",
+            "mode": "inline-text"
+          }
+        ],
+        "status": "submitted",
+        "submittedAt": "2026-10-07T07:02:53.266Z"
+      },
+      "modelText": "\n<od-done key=\"aecb7fe0b5e02a53\"/>\n以下仅依据 `budget-brief.md` 第 1–11 行，不使用外部资料。所有金额均为建议分配，不代表实际支出或供应商报价。\n\n### 一、资料事实\n\n- Mountain Tea 是虚构的社区茶店，本任务是合成验收材料，不代表真实业务表现。\n- 目标是通过自有渠道邀请用户参加春季茶品鉴。\n- 总预算由本次任务确定为 CNY 300,000。\n- 允许的费用包括：门店品鉴与接待、自有社群运营、内容与视觉材料、预约与名单管理、反馈评估、预备金。\n- 付费搜索广告、付费社交广告、达人赞助、购买个人联系名单默认禁止，必须为零。\n- 没有历史收入、转化率、ROI、受众规模等数据，不能据此承诺效率或商业结果。\n\n### 二、建议预算分配\n\n| 预算项目 | 金额（CNY） | 占比 | 建议用途 |\n|---|---:|---:|---|\n| 门店品鉴材料与接待 | 105,000 | 35% | 茶样、冲泡与饮用物料、卫生耗材、现场标识、接待准备及活动执行所需物品 |\n| 自有社群运营 | 60,000 | 20% | 社群内容排期、成员答疑、活动通知、提醒及经同意后的后续沟通 |\n| 内容与视觉材料 | 45,000 | 15% | 品鉴说明、教育内容、邀请物料、门店与社群所需视觉材料 |\n| 预约与名单管理 | 30,000 | 10% | 预约表单、时段与容量管理、名单去重、确认与提醒 |\n| 反馈与评估 | 30,000 | 10% | 反馈表设计、资料整理、活动复盘和问题归类 |\n| 预备金 | 30,000 | 10% | 已允许范围内的临时补充；启用时必须说明用途并重新归类 |\n| 付费搜索广告 | 0 | 0% | 禁止投放 |\n| 付费社交广告 | 0 | 0% | 禁止投放及付费加热 |\n| 达人赞助 | 0 | 0% | 禁止付费合作、置换赞助或变相植入 |\n| 购买个人联系名单 | 0 | 0% | 禁止购买、租用或交换个人联系方式 |\n| **合计** | **300,000** | **100%** | — |\n\n金额校验：\n\n`105,000 + 60,000 + 45,000 + 30,000 + 30,000 + 30,000 + 0 + 0 + 0 + 0 = 300,000`\n\n比例校验：\n\n`35% + 20% + 15% + 10% + 10% + 10% + 0% + 0% + 0% + 0% = 100%`\n\n### 三、可执行步骤\n\n1. **先锁定发布条件**  \n   确认活动日期、时段、门店地址、是否收费、单场容量、员工接待能力和个人信息同意流程。在这些信息确认前，只准备内容和物料，不对外发布含具体承诺的邀请。\n\n2. **准备门店品鉴**  \n   根据确认后的场次和容量建立物料清单，包括茶样、冲泡用品、饮用与卫生耗材、现场指引和反馈入口。所有采购按实际需求核价，累计不得超过 CNY 105,000。\n\n3. **形成现场流程**  \n   固定为“预约核验—信息确认—品鉴说明—分段试饮—问题交流—自愿反馈”。活动前完成一次内部走查，检查物料数量、动线、员工分工和超额预约处理方式。\n\n4. **通过自有社群邀请**  \n   只在品牌已有且可合法使用的社群和自有内容渠道发布。内容分为茶知识介绍、活动说明、预约提醒三类，不购买流量、不付费加热，也不通过达人赞助扩大触达。\n\n5. **管理预约与名单**  \n   使用预约表单收集必要信息，按场次设置容量上限，执行名单去重、预约确认和活动提醒。活动联系与后续营销同意应分别说明，不默认勾选。\n\n6. **执行经同意的后续沟通**  \n   活动结束后，仅向明确同意接收后续信息的参与者发送感谢、教育内容或反馈邀请。未同意者不进入持续运营名单。\n\n7. **完成反馈与复盘**  \n   汇总到场情况、物料消耗、参与者反馈和现场问题。这里记录的是执行事实，不将到场、反馈或社群互动直接解释为收入、转化或ROI。\n\n8. **控制预备金**  \n   预备金只能用于上述允许类别。每次启用都记录金额、原因和最终所属类别；不得用于任何禁止渠道，也不得通过改名规避限制。\n\n### 四、分配理由\n\n门店品鉴是活动的实际体验载体，因此将最大比例用于可直接支撑现场执行的材料与接待。自有社群是指定邀请渠道，需要持续内容发布、答疑和提醒，但不包含任何付费媒体费用。\n\n内容与视觉预算用于把品鉴信息讲清楚；预约、名单和反馈各自保留独立预算，避免把用户同意、容量控制和活动复盘挤压成附带工作。10%的预备金用于应对实际场次和物料需求在确认后的调整，但不能扩大到禁止渠道。\n\n这一分配强调活动可执行性、名单合规和过程可核对，不代表对到场人数、转化率、收入或投资回报的预测。\n\n### 五、仍需确认的事实\n\n- 活动日期、时间及场次数量\n- 门店地址和可用空间\n- 单场人数上限及员工接待能力\n- 活动免费还是收费；如收费，具体价格\n- 现有自有社群的范围和可触达人数\n- 预约工具及个人信息保存方式\n- 联系同意、退出和数据删除流程\n- 现有物料库存及需要采购的实际数量\n- 预算是否含税，以及内部审批与采购规则\n\n这些信息会影响各类别内部明细，但在未获得新事实前，不应据此增加金额、预测效果或承诺商业结果。\n\n",
+      "allocations": [
+        {
+          "category": "门店品鉴材料与接待",
+          "amount": 105000,
+          "percentage": 35
+        },
+        {
+          "category": "自有社群运营",
+          "amount": 60000,
+          "percentage": 20
+        },
+        {
+          "category": "内容与视觉材料",
+          "amount": 45000,
+          "percentage": 15
+        },
+        {
+          "category": "预约与名单管理",
+          "amount": 30000,
+          "percentage": 10
+        },
+        {
+          "category": "反馈与评估",
+          "amount": 30000,
+          "percentage": 10
+        },
+        {
+          "category": "预备金",
+          "amount": 30000,
+          "percentage": 10
+        },
+        {
+          "category": "付费搜索广告",
+          "amount": 0,
+          "percentage": 0
+        },
+        {
+          "category": "付费社交广告",
+          "amount": 0,
+          "percentage": 0
+        },
+        {
+          "category": "达人赞助",
+          "amount": 0,
+          "percentage": 0
+        },
+        {
+          "category": "购买个人联系名单",
+          "amount": 0,
+          "percentage": 0
+        }
+      ],
+      "independentCalculation": {
+        "expected": 300000,
+        "amountSum": 300000,
+        "percentageSum": 100,
+        "eachRowCorrect": true
+      }
+    },
+    {
+      "id": "7a3eda92-6c42-4a98-b524-0e7db7354c5c",
+      "projectId": "f3e87488-1775-486c-af8a-79a7f7e2eb70",
+      "conversationId": "332fc444-dfd9-40cb-8ff2-a9e62875a63c",
+      "clientRequestId": "home-auto-send-2xsq9rirqk7o7",
+      "appVersionInfo": {
+        "version": "0.0.3-local.7",
+        "channel": "local",
+        "packaged": true,
+        "platform": "darwin",
+        "arch": "arm64"
+      },
+      "status": "succeeded",
+      "artifactCount": 0,
+      "error": null,
+      "createdAt": "2026-10-07T07:04:47.646Z",
+      "terminalAt": "2026-10-07T07:06:17.701Z",
+      "userPrompt": "Budget acceptance B: Use only the selected brief. Total budget CNY 180000. All default forbidden channels must have zero spend. ADDITIONAL prohibition: no in-store tasting or offline events; store tasting materials/reception must be zero and absent from the execution plan. Produce discussion text only, no HTML and no file edits. Give an allocation table with every amount, percentage, arithmetic total and forbidden zero rows. Give executable owned-community/content/consented follow-up steps and explain why this allocation changes for the extra prohibition. Separate source facts, recommendations and missing facts. No ROI or conversion promises.",
+      "receipt": {
+        "runId": "7a3eda92-6c42-4a98-b524-0e7db7354c5c",
+        "snapshotId": "03f14be7-4325-45ca-961b-9a09228ead4e",
+        "fingerprint": "cf1f2c0815407e11894740d12680c8e6219ea9dbac205b3852d1b15e823aad1c",
+        "includedItemIds": [
+          "f209a7e9-9a51-46b1-a471-ad8b8bfffd25"
+        ],
+        "itemDelivery": [
+          {
+            "itemId": "f209a7e9-9a51-46b1-a471-ad8b8bfffd25",
+            "mode": "inline-text"
+          }
+        ],
+        "status": "submitted",
+        "submittedAt": "2026-10-07T07:04:47.649Z"
+      },
+      "modelText": "\n<od-done key=\"1c07de3a85906e57\"/>\n结论：18万元全部用于自有社群、教育内容、同意后的用户跟进及其支持工作。线下活动相关费用与全部默认禁投渠道均为零。由于没有历史数据或供应商报价，本表是待确认的预算建议，不代表实际支出，也不承诺转化、收入或 ROI。\n\n### 一、来源事实\n\n- 项目为虚构的 Mountain Tea 营销验收案例，不是客户真实业务或历史业绩。\n- 本次总预算为 CNY 180,000。\n- 允许讨论的成本类别包括：门店品鉴与接待、自有社群运营、内容与视觉材料、预约与名单管理、反馈与评估、预备金。\n- 默认禁止付费搜索、付费社交广告、达人赞助和购买个人联系方式名单。\n- 本次增加限制：不得开展门店品鉴或其他线下活动。因此，门店品鉴与接待必须为零，也不得出现在执行步骤中。\n- 当前只允许自有社群讨论、教育内容和取得同意后的跟进。\n- 材料没有提供历史收入、转化率、ROI、受众规模、活动日期、价格、地址、同意流程或人员容量。\n\n### 二、建议预算分配\n\n| 类别 | 金额（CNY） | 占比 | 使用边界 |\n|---|---:|---:|---|\n| 自有社群运营 | 54,000 | 30% | 社群内容发布、讨论维护、问题整理、用户响应 |\n| 内容与视觉材料 | 63,000 | 35% | 春茶知识、冲泡教育、常见问题、图文及短视频制作 |\n| 预约与名单管理 | 27,000 | 15% | 仅用于内容订阅、用户同意记录、偏好与退订管理；不用于线下活动预约 |\n| 反馈与评估 | 18,000 | 10% | 反馈收集、问题归类、内容复盘和基础数据整理 |\n| 预备金 | 18,000 | 10% | 仅补充上述获准项目，不得转用于任何禁止渠道或线下活动 |\n| 门店品鉴材料与接待 | 0 | 0% | 本次额外禁止 |\n| 付费搜索广告 | 0 | 0% | 默认禁止 |\n| 付费社交广告 | 0 | 0% | 默认禁止 |\n| 达人或博主赞助 | 0 | 0% | 默认禁止 |\n| 购买个人联系方式名单 | 0 | 0% | 默认禁止 |\n| **允许类别小计** | **180,000** | **100%** | — |\n| **禁止类别小计** | **0** | **0%** | — |\n| **预算总计** | **180,000** | **100%** | — |\n\n算术校验：\n\n- 金额：54,000 + 63,000 + 27,000 + 18,000 + 18,000 + 0 + 0 + 0 + 0 + 0 = **180,000**\n- 比例：30% + 35% + 15% + 10% + 10% + 0% + 0% + 0% + 0% + 0% = **100%**\n- 每个非零金额均为总预算的对应比例：180,000 × 30% = 54,000；× 35% = 63,000；× 15% = 27,000；× 10% = 18,000。\n\n### 三、可执行步骤\n\n1. **锁定活动边界**  \n   将所有对外表达调整为春茶教育、社群讨论和自愿订阅，不发布门店品鉴、到店报名、线下签到或现场接待信息。\n\n2. **建立教育内容体系**  \n   围绕春茶基础知识、冲泡方法、保存方式、风味描述和常见问题制作内容。所有事实性内容在发布前完成内部核对，不加入未经材料支持的价格、地点或商业效果表述。\n\n3. **在自有渠道发布与讨论**  \n   仅通过品牌已经拥有并有权使用的社群和内容账号发布。每次发布设置明确讨论主题，由运营人员整理问题、纠正误解，并记录后续内容需求。\n\n4. **取得并记录跟进同意**  \n   在用户主动选择接收后续内容时，记录同意时间、来源渠道、内容偏好及退订状态。不得导入购买名单，也不得把普通社群成员自动视为已同意跟进。\n\n5. **开展同意后的跟进**  \n   仅向已明确同意的用户发送教育内容更新、问题答复和反馈邀请。每次触达提供清晰的停止接收方式，并及时更新名单状态。\n\n6. **收集反馈并复盘**  \n   记录内容是否成功发布、社群提出的问题、明确同意人数、退订情况和用户反馈主题。这些数据只用于过程评估，不推导收入、转化率或 ROI 承诺。\n\n7. **管理预备金**  \n   预备金只能在自有社群、内容制作、同意与名单管理、反馈评估之间调剂。每次调剂应注明原因；禁止用“内容”“运营”或“预备金”名义支付线下活动或禁投渠道费用。\n\n### 四、额外禁令带来的分配变化\n\n本次限制直接取消了门店品鉴材料、现场接待及任何线下执行，相关预算降为零，执行计划中也不保留线下环节。\n\n释放出的预算重点转向三处：持续生产教育内容、维护自有社群讨论，以及建立可核对的同意与退订记录。内容与视觉材料因此成为最大项，自有社群运营次之；名单管理仍保留预算，但用途从活动预约收窄为内容订阅和同意管理。\n\n材料没有提供此前的预算版本，因此不能声称某一类别具体“增加了多少”。能够确认的只是：本方案已按额外禁令重新建立为纯自有渠道方案。\n\n### 五、仍需确认的信息\n\n- 内容发布的起止日期与具体频率；\n- 可使用的自有社群、账号及其实际受众规模；\n- 用户同意、数据保存和退订的正式流程；\n- 可参与社群维护、内容审核和跟进的人员容量；\n- 内容制作范围、验收标准及供应商报价；\n- Mountain Tea 可以公开使用的品牌素材和产品事实；\n- 预备金调剂的审批责任人。\n\n在这些信息确认前，18万元应视为建议额度上限，而不是采购计划、供应商报价或已发生费用。\n\n",
+      "allocations": [
+        {
+          "category": "自有社群运营",
+          "amount": 54000,
+          "percentage": 30
+        },
+        {
+          "category": "内容与视觉材料",
+          "amount": 63000,
+          "percentage": 35
+        },
+        {
+          "category": "预约与名单管理",
+          "amount": 27000,
+          "percentage": 15
+        },
+        {
+          "category": "反馈与评估",
+          "amount": 18000,
+          "percentage": 10
+        },
+        {
+          "category": "预备金",
+          "amount": 18000,
+          "percentage": 10
+        },
+        {
+          "category": "门店品鉴材料与接待",
+          "amount": 0,
+          "percentage": 0
+        },
+        {
+          "category": "付费搜索广告",
+          "amount": 0,
+          "percentage": 0
+        },
+        {
+          "category": "付费社交广告",
+          "amount": 0,
+          "percentage": 0
+        },
+        {
+          "category": "达人或博主赞助",
+          "amount": 0,
+          "percentage": 0
+        },
+        {
+          "category": "购买个人联系方式名单",
+          "amount": 0,
+          "percentage": 0
+        }
+      ],
+      "independentCalculation": {
+        "expected": 180000,
+        "amountSum": 180000,
+        "percentageSum": 100,
+        "eachRowCorrect": true
+      }
+    }
+  ],
+  "snapshots": [
+    {
+      "snapshotId": "03f14be7-4325-45ca-961b-9a09228ead4e",
+      "projectId": "f3e87488-1775-486c-af8a-79a7f7e2eb70",
+      "fingerprint": "cf1f2c0815407e11894740d12680c8e6219ea9dbac205b3852d1b15e823aad1c",
+      "jsonSha256": "85192b39e6ad185b66a696edd1455fe45bb3355526e89af4adb94758d6bed450",
+      "items": [
+        {
+          "itemId": "f209a7e9-9a51-46b1-a471-ad8b8bfffd25",
+          "kind": "material-excerpt",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "f3e87488-1775-486c-af8a-79a7f7e2eb70",
+            "fileName": "budget-brief.md"
+          },
+          "sourceDigest": "18d9462995e6860705c30343458f00572edc23245e17b3dda0de8f70320a45dd",
+          "textDigest": "650d5b768ddab40d7419d4ab794fd6d7fc51ecf3de4f7155acb4760eab1a8ffc",
+          "textUnits": 1405,
+          "locators": [
+            "budget-brief.md · 第 1 行",
+            "budget-brief.md · 第 3 行",
+            "budget-brief.md · 第 5 行",
+            "budget-brief.md · 第 7 行",
+            "budget-brief.md · 第 9 行",
+            "budget-brief.md · 第 11 行"
+          ],
+          "text": "# Synthetic marketing acceptance brief\n\nThis is invented QA material, not a customer brief or actual business performance.\n\nBrand: Mountain Tea, a synthetic neighborhood tea shop. Goal: invite people to a spring tea tasting through owned channels. No historical revenue, conversion rate, ROI or audience size is provided. Dates, prices, address, consent process and staff capacity require confirmation. Do not invent these facts.\n\nAllowed cost categories: store tasting materials and reception; owned-community operations; content and visual materials; booking and list management; feedback and evaluation; contingency. Spending is a proposed allocation, not an actual expense or supplier quote. Percentages and amounts must be independently addable.\n\nForbidden by default: paid search ads, paid social ads, influencer sponsorship, purchased personal-contact lists. Do not disguise forbidden spending as content, operations or contingency. For a task that also prohibits in-store events, store tasting/reception must be zero and removed from execution steps. Only owned-community discussion, educational content and consented follow-up remain allowed.\n\nUse only this brief and the budget/extra prohibitions in the current task. No external research. Output discussion text, not an HTML file. Separate source facts, recommendations and missing information. Make no efficiency or commercial-outcome promise."
+        }
+      ]
+    },
+    {
+      "snapshotId": "2e92a8a7-fc2d-4b17-b448-46326ae6b04e",
+      "projectId": "5af3f31a-843d-4005-9e27-b0686bed79dd",
+      "fingerprint": "7c486efc2e9da259c5b70287ed3848df2003f0e72643d2e33301c9ae54a2b4e8",
+      "jsonSha256": "5b7faee3b887398c1610b8455f3d4651eae1ce0608602378bff8b9c613116959",
+      "items": [
+        {
+          "itemId": "section-1",
+          "kind": "user-note",
+          "sourceRef": {
+            "kind": "user-note"
+          },
+          "sourceDigest": "39a1188f0589dc86102071c246ce60df079842b8df390f641f9365343509fac2",
+          "textDigest": "39a1188f0589dc86102071c246ce60df079842b8df390f641f9365343509fac2",
+          "textUnits": 427,
+          "locators": [
+            "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html · candidate · a61a07d4-4392-463d-ac13-b10c2bd1f726 · strategy"
+          ],
+          "text": "【strategy】\n01 / 策略先预约，再接待，再回访\n建议以“春日第一席新茶”为传播主题，优先面向门店周边顾客与现有社群成员。围绕新品风味和现场体验沟通，不预设销售增长或到店人数。\n原生 local.6 门店执行清单\n\n给顾客一个明确的到店理由邀请顾客现场体验春季新品，了解风味与适饮场景。新品名称、体验内容、是否收费及可售价格确认后，再写入对外物料。\n把兴趣转成可安排的预约由门店和社群导向同一预约入口，建议收集称呼、联系方式、到店时段与人数；说明信息用途并取得同意，门店确认后完成预约。\n用真实反馈判断下一步到店后记录接待与体验反馈，经顾客同意再跟进。汇总有效预约、实际到店与新品偏好，为后续推广提供依据。\n\n评估口径：本次活动从真实记录开始有效预约按联系方式去重，并以门店确认记录为准；到店率＝实际到店预约人数 ÷ 已确认预约人数。分别记录门店与社群来源，分母为零时不计算比率。效果目标待门店容量与排期明确后制定。\n长路径中文空格修订验收成功"
+        },
+        {
+          "itemId": "background",
+          "kind": "user-note",
+          "sourceRef": {
+            "kind": "user-note"
+          },
+          "sourceDigest": "4b823d1298f71df51bb69bde2634d92aaa801813c4249b840a68e0bfc5357c87",
+          "textDigest": "4b823d1298f71df51bb69bde2634d92aaa801813c4249b840a68e0bfc5357c87",
+          "textUnits": 283,
+          "locators": [],
+          "text": "Native brand-reference continuation B. Use the selected candidate strategy, Vercel repository style reference, and the explicitly chosen LOGO A synthetic asset. The logo is test input, not a Vercel official mark. Prepare an editable draft only; do not send or generate automatically."
+        },
+        {
+          "itemId": "asset-1",
+          "kind": "asset",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "5af3f31a-843d-4005-9e27-b0686bed79dd",
+            "fileName": "asset-1.svg"
+          },
+          "sourceDigest": "fef79a73e0fadcb72ecc8225ff11be8a6960587a54f045e66dba1738ccb1dbf7",
+          "role": "supporting",
+          "byteLength": 161,
+          "usageNote": ""
+        },
+        {
+          "itemId": "brand",
+          "kind": "brand-rule",
+          "sourceRef": {
+            "kind": "design-system",
+            "designSystemId": "vercel"
+          },
+          "sourceDigest": "17d533f0ff2e1b5d9be3e69335ab7fc599d1ddf52bc9ac2f2dd36479676cbd3d",
+          "textDigest": "17d533f0ff2e1b5d9be3e69335ab7fc599d1ddf52bc9ac2f2dd36479676cbd3d",
+          "textUnits": 19433,
+          "locators": [
+            "design-system:vercel"
+          ]
+        }
+      ]
+    },
+    {
+      "snapshotId": "6bb52d4f-de24-46cc-bd6d-f6ab40f210a9",
+      "projectId": "2163ea62-6a81-4299-a7a4-7cbd980ce48c",
+      "fingerprint": "8d474bdefd380a68f42d6d596b6c3fef280eeffc2d59fbd0f0671d1097707052",
+      "jsonSha256": "db487aaea4383af4d411ac7fef597ef4db07365a7dde910362dd6129a81b54d4",
+      "items": [
+        {
+          "itemId": "1084e1ed-1279-49c8-83ec-bf372235d349",
+          "kind": "material-excerpt",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "2163ea62-6a81-4299-a7a4-7cbd980ce48c",
+            "fileName": "budget-brief.md"
+          },
+          "sourceDigest": "18d9462995e6860705c30343458f00572edc23245e17b3dda0de8f70320a45dd",
+          "textDigest": "650d5b768ddab40d7419d4ab794fd6d7fc51ecf3de4f7155acb4760eab1a8ffc",
+          "textUnits": 1405,
+          "locators": [
+            "budget-brief.md · 第 1 行",
+            "budget-brief.md · 第 3 行",
+            "budget-brief.md · 第 5 行",
+            "budget-brief.md · 第 7 行",
+            "budget-brief.md · 第 9 行",
+            "budget-brief.md · 第 11 行"
+          ],
+          "text": "# Synthetic marketing acceptance brief\n\nThis is invented QA material, not a customer brief or actual business performance.\n\nBrand: Mountain Tea, a synthetic neighborhood tea shop. Goal: invite people to a spring tea tasting through owned channels. No historical revenue, conversion rate, ROI or audience size is provided. Dates, prices, address, consent process and staff capacity require confirmation. Do not invent these facts.\n\nAllowed cost categories: store tasting materials and reception; owned-community operations; content and visual materials; booking and list management; feedback and evaluation; contingency. Spending is a proposed allocation, not an actual expense or supplier quote. Percentages and amounts must be independently addable.\n\nForbidden by default: paid search ads, paid social ads, influencer sponsorship, purchased personal-contact lists. Do not disguise forbidden spending as content, operations or contingency. For a task that also prohibits in-store events, store tasting/reception must be zero and removed from execution steps. Only owned-community discussion, educational content and consented follow-up remain allowed.\n\nUse only this brief and the budget/extra prohibitions in the current task. No external research. Output discussion text, not an HTML file. Separate source facts, recommendations and missing information. Make no efficiency or commercial-outcome promise."
+        }
+      ]
+    },
+    {
+      "snapshotId": "5180326c-ad56-4fb8-b964-e4d3908c21e9",
+      "projectId": "5e8f703b-2a47-48e0-a7be-1e2b1e07c8e4",
+      "fingerprint": "e17e073835d162dfa572a24023bfb042199097ac4e3dfa931f1a9568e39a9232",
+      "jsonSha256": "b118a7db7cc80c898c984bc87db2208fd605175ec8709da97973cb0c41d49d63",
+      "items": [
+        {
+          "itemId": "section-1",
+          "kind": "user-note",
+          "sourceRef": {
+            "kind": "user-note"
+          },
+          "sourceDigest": "39a1188f0589dc86102071c246ce60df079842b8df390f641f9365343509fac2",
+          "textDigest": "39a1188f0589dc86102071c246ce60df079842b8df390f641f9365343509fac2",
+          "textUnits": 427,
+          "locators": [
+            "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html · candidate · a61a07d4-4392-463d-ac13-b10c2bd1f726 · strategy"
+          ],
+          "text": "【strategy】\n01 / 策略先预约，再接待，再回访\n建议以“春日第一席新茶”为传播主题，优先面向门店周边顾客与现有社群成员。围绕新品风味和现场体验沟通，不预设销售增长或到店人数。\n原生 local.6 门店执行清单\n\n给顾客一个明确的到店理由邀请顾客现场体验春季新品，了解风味与适饮场景。新品名称、体验内容、是否收费及可售价格确认后，再写入对外物料。\n把兴趣转成可安排的预约由门店和社群导向同一预约入口，建议收集称呼、联系方式、到店时段与人数；说明信息用途并取得同意，门店确认后完成预约。\n用真实反馈判断下一步到店后记录接待与体验反馈，经顾客同意再跟进。汇总有效预约、实际到店与新品偏好，为后续推广提供依据。\n\n评估口径：本次活动从真实记录开始有效预约按联系方式去重，并以门店确认记录为准；到店率＝实际到店预约人数 ÷ 已确认预约人数。分别记录门店与社群来源，分母为零时不计算比率。效果目标待门店容量与排期明确后制定。\n长路径中文空格修订验收成功"
+        },
+        {
+          "itemId": "background",
+          "kind": "user-note",
+          "sourceRef": {
+            "kind": "user-note"
+          },
+          "sourceDigest": "72bbb18319d774d9a1198254c04bb674fe89eea3eee405ca74ece6f4f958ad21",
+          "textDigest": "72bbb18319d774d9a1198254c04bb674fe89eea3eee405ca74ece6f4f958ad21",
+          "textUnits": 546,
+          "locators": [],
+          "text": "Native local.7 downstream acceptance. On my explicit Send, generate one self-contained HTML named local7-continuation-result.html from the selected strategy only, the frozen Vercel style reference, and the selected synthetic LOGO B (not LOGO A). The selected SVG is authoritative and is not a Vercel official mark. Inline its bytes. Do not borrow unselected budget or channel sections; mark budget and missing business details as unconfirmed. Do not read the source project, publish, or install packages. Preserve the original continuation files."
+        },
+        {
+          "itemId": "asset-1",
+          "kind": "asset",
+          "sourceRef": {
+            "kind": "project-file",
+            "projectId": "5e8f703b-2a47-48e0-a7be-1e2b1e07c8e4",
+            "fileName": "asset-1.svg"
+          },
+          "sourceDigest": "fef79a73e0fadcb72ecc8225ff11be8a6960587a54f045e66dba1738ccb1dbf7",
+          "role": "logo",
+          "byteLength": 161,
+          "usageNote": "Use this selected synthetic LOGO B. It is not a Vercel official mark."
+        },
+        {
+          "itemId": "brand",
+          "kind": "brand-rule",
+          "sourceRef": {
+            "kind": "design-system",
+            "designSystemId": "vercel"
+          },
+          "sourceDigest": "17d533f0ff2e1b5d9be3e69335ab7fc599d1ddf52bc9ac2f2dd36479676cbd3d",
+          "textDigest": "17d533f0ff2e1b5d9be3e69335ab7fc599d1ddf52bc9ac2f2dd36479676cbd3d",
+          "textUnits": 19433,
+          "locators": [
+            "design-system:vercel"
+          ]
+        }
+      ]
+    }
+  ],
+  "downstream": {
+    "projectId": "5e8f703b-2a47-48e0-a7be-1e2b1e07c8e4",
+    "fileName": "local7-continuation-result.html",
+    "bytes": 31604,
+    "sha256": "899b68e9f78ed344ee08b78eb36a1883fde793934b7aa78ea7ba2212b5cd5d06",
+    "assetBytes": 161,
+    "assetSha256": "fef79a73e0fadcb72ecc8225ff11be8a6960587a54f045e66dba1738ccb1dbf7",
+    "hasByteIdenticalEmbeddedSvg": true,
+    "hasUnselectedThirtyWanBudget": false,
+    "hasLogoA": false,
+    "budgetMentions": [
+      "            <p class=\"section-intro\">这份页面不借用其他预算或渠道方案，也不把空白信息当成零、免费或已确定。</p>",
+      "              <li>效果目标与活动预算</li>",
+      "        <p class=\"footer-copy\">本页仅依据固定策略摘录与选定素材制作。预算及缺失业务信息均待确认；页面未发布，也未接入预约后台。视觉参考采用冻结的 Vercel 风格规则，合成 LOGO B 并非 Vercel 官方标志。</p>"
+    ],
+    "references": [
+      "#hero",
+      "#value",
+      "#journey",
+      "#proof",
+      "#cta",
+      "#details"
+    ],
+    "sourceFileExists": false,
+    "continuationJsonSha256": "3ee9bc18daf35de24a4bc56dee7839212ff25c662958ee42b655d7939b8de51b"
+  },
+  "originals": {
+    "continuation": "f09e6944a5cf3f71af3b1e593dbebb3d32a263da33d8e11c15061cffb218fd88",
+    "snapshot": "5b7faee3b887398c1610b8455f3d4651eae1ce0608602378bff8b9c613116959"
+  },
+  "publicRedactions": [
+    "Visible model links replace this QA root with [QA_ROOT]; unmodified private evidence is retained."
+  ]
+}

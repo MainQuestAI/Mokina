@@ -21,6 +21,11 @@ import type { BrowserWindow } from "electron";
 export const FROZEN_MOTION_CSS =
   "*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition-duration:0s!important;transition-delay:0s!important;scroll-behavior:auto!important}";
 
+// Hide scrollbar paint, retaining its authored width and gutter. Setting its
+// width to zero (or overflow:hidden) reflows text and changes PDF pagination.
+// This style is only installed in the disposable page-export window.
+export const PAGE_CAPTURE_CSS = `${FROZEN_MOTION_CSS}::-webkit-scrollbar,::-webkit-scrollbar-thumb,::-webkit-scrollbar-track,::-webkit-scrollbar-track-piece,::-webkit-scrollbar-corner,::-webkit-scrollbar-button{visibility:hidden!important;background:transparent!important;border-color:transparent!important;box-shadow:none!important}`;
+
 /**
  * Thumbnail-only additions on top of {@link FROZEN_MOTION_CSS}.
  *

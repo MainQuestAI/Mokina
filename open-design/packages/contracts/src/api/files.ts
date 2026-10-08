@@ -69,6 +69,8 @@ export interface ProjectMaterialExtraction {
     message: string;
   }>;
   sections: Array<{
+    /** Exact selectable unit, stable for contentDigest + parserVersion. */
+    fragmentId?: string;
     location: string;
     text: string;
     /** Stable within this extraction; contentDigest identifies the source revision. */

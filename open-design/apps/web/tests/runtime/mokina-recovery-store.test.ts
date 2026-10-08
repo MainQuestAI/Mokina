@@ -22,6 +22,7 @@ import {
   resetDurableRecoveryForTests,
   LegacyRecoveryConfirmationRequired,
   resolveLegacyRecoveryRecords,
+  mutateDurableRecord,
 } from '../../src/runtime/persistence/mokina-recovery-store';
 
 import { persistRecoveredComposerDraft } from '../../src/runtime/chat/composer-draft';
@@ -227,6 +228,28 @@ describe('mokina durable recovery facade (web)', () => {
     store.put.mockResolvedValueOnce({ ok: true, result: 'conflict' });
     await expect(mirrorDurableRecord('mokina:revision:conflict', 'A')).resolves.toBe(false);
     expect(store.put).toHaveBeenCalledTimes(1);
+  });
+  it('publishes the newer durable generation if another window writes immediately after CAS', async () => {
+    const store = makeFakeStore(); installHost(store);
+    const realPut = store.put.getMockImplementation()!;
+    store.put.mockImplementationOnce(async (...args) => {
+      const result = await realPut(...args);
+      store.records.set(args[0], { recordId: 'B', value: 'newer B' });
+      return result;
+    });
+    expect(await mutateDurableRecord('mokina:revision:cas', () => 'older A')).toBe(true);
+    expect(localStorage.getItem('mokina:revision:cas')).toBe('newer B');
+  });
+  it('does not delete the authoritative binding replaced by another window', async () => {
+    const store = makeFakeStore(); installHost(store);
+    const value = { snapshotId: 'snapshot', projectId: 'p', itemCount: 1, charCount: 1, frozenAt: '', itemLabels: [], excluded: [] };
+    await writePendingMokinaSnapshot({ ...value, generation: 'A' });
+    const key = [...store.records.keys()][0]!;
+    const durable = JSON.parse(store.records.get(key)!.value);
+    store.records.set(key, { recordId: 'B', value: JSON.stringify({ ...durable, generation: 'B' }) });
+    expect(await clearPendingMokinaSnapshot('p')).toBe(false);
+    expect(JSON.parse(store.records.get(key)!.value).generation).toBe('B');
+    expect(store.delete).not.toHaveBeenCalled();
   });
 
   it('does not admit sending before durable IPC completes and reports write failure', async () => {

@@ -1,0 +1,521 @@
+{
+  "productSourceSha": "7724f8ad603ad125832f390c2b45916d0111a7b3",
+  "verificationSha": "53f945804424d7bcb34bae5295e08aa664dc0d83",
+  "candidate": "0.0.3-local.9",
+  "sourceCi": "https://github.com/MainQuestAI/Mokina/actions/runs/37594636935",
+  "verificationCi": {
+    "url": "https://github.com/MainQuestAI/Mokina/actions/runs/37600100543",
+    "conclusion": "failure",
+    "failedCase": "definitive rejection draft restore: last character missing; retry workspace not ready",
+    "productDiffFromSource": "none; only native E2E test files"
+  },
+  "verificationCiRerun": {
+    "sha": "53f945804424d7bcb34bae5295e08aa664dc0d83",
+    "url": "https://github.com/MainQuestAI/Mokina/actions/runs/37602793383",
+    "conclusion": "pending",
+    "localNarrowOriginal": "1 passed",
+    "localNarrowWithReadinessAndActualRequestOracle": "3 passed; retries 0",
+    "guard": "passed",
+    "e2eTypecheck": "passed",
+    "runtimeCodeOrResourceChanges": false
+  },
+  "nativeLongPath": {
+    "overallQuality": "failed: outer version body has horizontal overflow; local region assertions omitted ancestor",
+    "outerBodyClientWidth": 345,
+    "outerBodyScrollWidth": 355,
+    "viewports": [
+      { "width": 1280, "height": 720, "panelClientWidth": 328, "panelScrollWidth": 328, "selectedAssets": 3, "createButtonVisibleAndFocused": true },
+      { "width": 1440, "height": 900, "panelClientWidth": 328, "panelScrollWidth": 328, "selectedAssets": 3, "createButtonVisibleAndFocused": true }
+    ],
+    "keyboardCreateConfirmed": true,
+    "returnedSourceCurrentVersion": 5,
+    "returnedSourceCandidateVersion": 3,
+    "operationId": "f222c5a2-e269-4429-9726-955dd1ad4427",
+    "targetProjectId": "e6e6e335-0ad5-44c8-8ae7-e2d611aaf6fd",
+    "conversationId": "536e9fbd-17be-4371-bfa9-a052e0903c7f",
+    "snapshotId": "fa9a2f99-00ce-4c9a-9d35-2567b277df0b",
+    "snapshotFingerprint": "11632d120bbd1b5524e693c64df755ec0a9779e0749f63fa3ac68f8b6fac421b",
+    "selectedSections": ["strategy"],
+    "frozenAssetCount": 3,
+    "distinctTargetPaths": ["asset-1.svg", "asset-2.svg", "asset-3.svg"],
+    "runCount": 0
+  },
+  "explicitExclusion": {
+    "originalOperationId": "b5cd030f-32f1-47ac-a071-000ee50d6c31",
+    "originalTargetProjectId": "c1d0e230-2dfd-4df6-9dd1-533e5d3c2f13",
+    "newOperationId": "f42a48d0-3c99-4071-9fdb-b9a3d4d2e2ba",
+    "newTargetProjectId": "55da2c34-0fac-4555-8e89-3cbc35dd7870",
+    "newSnapshotId": "ae236b88-b8d9-4f17-891a-e787799ea1f3",
+    "newAssetCount": 0,
+    "originalJournalPreserved": true,
+    "originalTargetPreserved": true,
+    "runCount": 0
+  },
+  "nativeMatrix": {
+    "corePoints": 10,
+    "sourceMissingAndConflict": 2,
+    "targetListFailure": 1,
+    "passed": 13,
+    "scope": "actual installed local.9, fake agent only for deterministic fault cases"
+  },
+  "allInputsUnavailable": {
+    "freezeResponses": [
+      {
+        "status": 409,
+        "body": {
+          "error": {
+            "code": "MOKINA_CONTEXT_NOT_SUPPORTED",
+            "message": "文件不存在：native9-sales.csv"
+          }
+        }
+      }
+    ],
+    "runCount": 0,
+    "runPostCount": 0,
+    "retainedDraft": "Use only this CSV. Do not send if its fixed preparation fails. Keep this draft.",
+    "errorVisible": true
+  },
+  "exports": [
+    {
+      "name": "current-v5.html",
+      "bytes": 25571,
+      "sha256": "aeb72e4892313040a483cb925b190906d7793237d6dd8fd7b3c54acd11cb08dd",
+      "candidateMarker": false,
+      "budget30": true,
+      "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+      "unresolvedLocalLogo": false
+    },
+    {
+      "name": "current-v5.zip",
+      "bytes": 31899,
+      "sha256": "a0edec6b87b2541d10202bc9d06a2a22749e229fbcbf313015dedb6c37b5d62d",
+      "entryContentDigest": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953",
+      "frozenContentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+      "onlyDifferenceFromFrozen": "one terminal newline",
+      "relativeLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+      "members": [
+        {
+          "name": "中文 空格目录/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/assets/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/assets/frozen-logo.svg",
+          "bytes": 161,
+          "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896"
+        },
+        {
+          "name": "中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+          "bytes": 25351,
+          "sha256": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953"
+        },
+        {
+          "name": "中文-空格目录/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文-空格目录/revision-continuation-path-00/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销-方案.html",
+          "bytes": 25350,
+          "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+        },
+        {
+          "name": "DESIGN-HANDOFF.md",
+          "bytes": 8572,
+          "sha256": "6aff253a60ec1fa96a56ce9632d7eceb9114bde22aef897355bec51254634b64"
+        },
+        {
+          "name": "DESIGN-MANIFEST.json",
+          "bytes": 7555,
+          "sha256": "c8ad2433b995a130ec6412cb64c7b2038f610efbf04b598f988bac38699943b5"
+        }
+      ],
+      "title": "资料"
+    },
+    {
+      "name": "current-v5.pdf",
+      "bytes": 960012,
+      "sha256": "151295b72af6e99b2cc4e89c2a9bd0822399c58a0d12d23b6ec5b8bf69cd52e1"
+    },
+    {
+      "name": "historical-v2.html",
+      "bytes": 25571,
+      "sha256": "aeb72e4892313040a483cb925b190906d7793237d6dd8fd7b3c54acd11cb08dd",
+      "candidateMarker": false,
+      "budget30": true,
+      "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+      "unresolvedLocalLogo": false
+    },
+    {
+      "name": "historical-v2.zip",
+      "bytes": 73888,
+      "sha256": "e4460e4d626a7ff3c5fd282b353acd11e294cc376ff290d0c3c055b104c1c1fd",
+      "candidateMarker": false,
+      "budget30": true,
+      "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+      "unresolvedLocalLogo": false,
+      "members": [
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/index.html",
+          "bytes": 60823,
+          "sha256": "bdc483b13494207824d7d69c0441ab37c350fbade3f3fc48ff16202485ff2cff"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-HANDOFF.md",
+          "bytes": 7118,
+          "sha256": "b18414f0c1a93c287c29519b69f7086ff12ffc7318a986efb93208768d6594d2"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-MANIFEST.json",
+          "bytes": 5237,
+          "sha256": "b7012a1f301059389df59bdf2f948cac1e594cf003e16952e471dc074bcc3ebe"
+        }
+      ],
+      "title": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案-v2-historical"
+    },
+    {
+      "name": "historical-v2.pdf",
+      "bytes": 960012,
+      "sha256": "e5b7736247ec7726699a7d46a64e2f1c93466f9975855790f8cb17affee8011a"
+    },
+    {
+      "name": "candidate-v3.html",
+      "bytes": 25650,
+      "sha256": "7e7411e37d3739eb9e7be3b0c10c4dfb6571caa752975ad7eac3e6bfa9c067ae",
+      "candidateMarker": true,
+      "budget30": true,
+      "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+      "unresolvedLocalLogo": false
+    },
+    {
+      "name": "candidate-v3.zip",
+      "bytes": 73965,
+      "sha256": "c0e1cf3f15dee4fd94f426b5e107d008dc909ac37c09e790fdbba41655c3be00",
+      "candidateMarker": true,
+      "budget30": true,
+      "inlineLogoSha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+      "unresolvedLocalLogo": false,
+      "members": [
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/index.html",
+          "bytes": 60902,
+          "sha256": "5740b3a7b7e4cc1cef12c8183f16986492c7084da0a9b9aab89bac8a9ed89a0f"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-HANDOFF.md",
+          "bytes": 7117,
+          "sha256": "5d65bf98168c9d85cda06c2c6d8d49b198a8c0afcdb26bf91fe697d2332b5ec6"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-MANIFEST.json",
+          "bytes": 5236,
+          "sha256": "e1bb0767f535d1ccc116e3cd63b46934f0c0608ac8976f571898cccbb51c392e"
+        }
+      ],
+      "title": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案-v3-candidate"
+    },
+    {
+      "name": "candidate-v3.pdf",
+      "bytes": 968059,
+      "sha256": "76b3bd2ae4645115e5b64791e739d6e68941db739a55f889e0ff062b165855d5"
+    }
+  ],
+  "recovery": {
+    "sha256": "ba56fdf1790f899f4dd47d1ce6a8f28a9e278f6f7da54066a7e34304cb920928",
+    "bytes": 219224,
+    "schema": "mokina.project-recovery.v1",
+    "exportId": "82f516c9-b132-4a1f-a027-114789cf4861",
+    "memberCount": 44,
+    "originalCount": 21,
+    "versionCount": 11
+  },
+  "cancelledFileExists": false,
+  "currentVersion": 5,
+  "candidateStillUnadopted": true,
+  "business": {
+    "candidate": "0.0.3-local.9",
+    "budgets": [
+      {
+        "label": "A",
+        "projectId": "d63d30c7-639e-4779-acd9-809776b5d350",
+        "conversationId": "e8c0ab2c-7e4f-4bcc-818b-f24df138e285",
+        "runId": "a006f991-eaaa-4113-a774-1c6de4c2579b",
+        "requestId": "home-auto-send-0y7io232kfs6y",
+        "snapshotId": "711702ed-4e40-42b9-9cac-10ff110f2f36",
+        "sourceDigest": "18d9462995e6860705c30343458f00572edc23245e17b3dda0de8f70320a45dd",
+        "budget": 300000,
+        "allocation": [
+          {
+            "category": "门店品鉴材料与接待",
+            "amount": 90000,
+            "percent": 30
+          },
+          {
+            "category": "自有社群运营",
+            "amount": 66000,
+            "percent": 22
+          },
+          {
+            "category": "内容与视觉物料",
+            "amount": 48000,
+            "percent": 16
+          },
+          {
+            "category": "预约与名单管理",
+            "amount": 36000,
+            "percent": 12
+          },
+          {
+            "category": "反馈与评估",
+            "amount": 24000,
+            "percent": 8
+          },
+          {
+            "category": "预备金",
+            "amount": 36000,
+            "percent": 12
+          }
+        ],
+        "banned": [
+          {
+            "category": "付费搜索广告",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "付费社交广告",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "达人赞助",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "购买个人联系名单",
+            "amount": 0,
+            "percent": 0
+          }
+        ],
+        "producedFiles": 0,
+        "professionalReview": "pending",
+        "prompt": "Use only the selected synthetic brief. Budget A: CNY 300000. Give a proposed six-category allocation in a Markdown table with amounts and percentages. All four forbidden paid categories must be zero. Show total arithmetic and explain tradeoffs, missing facts and execution steps. No HTML or other files; do not read other projects.",
+        "reply": "\n\n我将按“市场与营销分析”流程，仅核对当前选中的 `budget-brief.md`，把来源事实、建议和待确认信息分开；本次只输出讨论文本，不创建或修改文件。\n\n依据范围：仅使用 `budget-brief.md` 第 1–11 行及本次给定的预算 A（CNY 300,000）。这是合成测试材料，以下金额均为建议分配，不代表实际支出、供应商报价或商业结果。\n\n### 来源事实\n\n- 目标：通过自有渠道邀请用户参加春季品茶活动。\n- 允许六类支出：门店品鉴与接待、自有社群运营、内容与视觉物料、预约与名单管理、反馈与评估、预备金。\n- 禁止：付费搜索广告、付费社交广告、达人赞助、购买个人联系名单。\n- 没有历史收入、转化率、ROI 或受众规模数据。\n\n### 建议预算分配\n\n| 类别 | 建议金额（CNY） | 占比 | 主要用途 |\n|---|---:|---:|---|\n| 门店品鉴材料与接待 | 90,000 | 30% | 茶品、合规耗材和现场接待；具体采购量须等待场次与容量确认 |\n| 自有社群运营 | 66,000 | 22% | 社群讨论、活动通知、答疑和已同意接收信息用户的跟进 |\n| 内容与视觉物料 | 48,000 | 16% | 品茶教育内容、活动说明和自有渠道视觉物料 |\n| 预约与名单管理 | 36,000 | 12% | 预约流程、名单维护、到场确认和权限控制 |\n| 反馈与评估 | 24,000 | 8% | 反馈收集、数据整理和活动复盘 |\n| 预备金 | 36,000 | 12% | 仅用于上述允许类别出现的合理增项，不得转用于禁止项目 |\n| **合计** | **300,000** | **100%** | — |\n\n总额验算：\n\n`90,000 + 66,000 + 48,000 + 36,000 + 24,000 + 36,000 = 300,000`\n\n比例验算：\n\n`30% + 22% + 16% + 12% + 8% + 12% = 100%`\n\n### 禁止类别归零\n\n| 禁止类别 | 金额（CNY） | 占预算 A |\n|---|---:|---:|\n| 付费搜索广告 | 0 | 0% |\n| 付费社交广告 | 0 | 0% |\n| 达人赞助 | 0 | 0% |\n| 购买个人联系名单 | 0 | 0% |\n| **合计** | **0** | **0%** |\n\n这些费用不得改名计入内容、社群运营或预备金。\n\n### 主要取舍\n\n门店品鉴与接待占比最高，因为品茶体验是活动本身；但场次和接待容量尚未确认，因此这部分应先锁定预算上限，确认规模后再采购。自有社群运营和内容物料合计占 38%，支持活动前教育、邀请和答疑，但不包含任何付费流量。\n\n预约与名单管理用于减少信息混乱并落实同意机制。反馈预算保持适中，只承担收集和复盘，不预设活动效果。预备金比例较高，是因为日期、价格、地址和人员容量均未确定；它不能被视为可自由使用的推广资金。\n\n### 待确认信息\n\n- 活动日期、场次数量及每场容量；\n- 门店地址及现场空间条件；\n- 品茶是否收费及具体价格；\n- 可接触的自有社群规模；\n- 用户同意、退出和后续联系流程；\n- 可投入的员工数量与接待能力；\n- 茶品、耗材和相关服务的实际报价；\n- 预约截止、取消、候补及数据保存规则。\n\n在这些信息确认前，无法判断各项预算是否充足，也不能承诺到场人数、转化率、收入、ROI 或其他商业结果。\n\n### 建议执行步骤\n\n1. 先确认日期、地址、收费方式、场次容量、人员配置和用户同意规则。\n2. 根据容量确定邀请范围、预约上限、候补和取消机制。\n3. 将六类预算拆成可核验的采购或执行明细，并取得实际报价。\n4. 制作品茶教育内容和活动说明，通过自有社群发布并组织讨论。\n5. 开放预约，维护名单和同意记录，按规则进行确认与提醒。\n6. 按最终预约规模采购品鉴材料并安排现场接待。\n7. 活动后向已同意联系的参与者收集反馈，完成事实性复盘。\n8. 只有允许类别出现有依据的增项时才启用预备金，并记录审批与去向。\n\n"
+      },
+      {
+        "label": "B",
+        "projectId": "57cf97f5-e4c3-47f5-9ffb-af227b8ba3b4",
+        "conversationId": "079208b3-fce8-40ed-abcf-293109cd2c43",
+        "runId": "7841fb67-60b3-4e86-8dfc-9bfab263d020",
+        "requestId": "home-auto-send-1f98xouxu6boj",
+        "snapshotId": "6c7ba099-2515-4c24-a929-c1ecf061d9b8",
+        "sourceDigest": "18d9462995e6860705c30343458f00572edc23245e17b3dda0de8f70320a45dd",
+        "budget": 180000,
+        "allocation": [
+          {
+            "category": "store tasting materials and reception",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "owned-community operations",
+            "amount": 63000,
+            "percent": 35
+          },
+          {
+            "category": "content and visual materials",
+            "amount": 54000,
+            "percent": 30
+          },
+          {
+            "category": "booking and list management",
+            "amount": 27000,
+            "percent": 15
+          },
+          {
+            "category": "feedback and evaluation",
+            "amount": 18000,
+            "percent": 10
+          },
+          {
+            "category": "contingency",
+            "amount": 18000,
+            "percent": 10
+          }
+        ],
+        "banned": [
+          {
+            "category": "paid search ads",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "paid social ads",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "influencer sponsorship",
+            "amount": 0,
+            "percent": 0
+          },
+          {
+            "category": "purchased personal-contact lists",
+            "amount": 0,
+            "percent": 0
+          }
+        ],
+        "producedFiles": 0,
+        "professionalReview": "pending",
+        "prompt": "Use only the selected synthetic brief. Budget B: CNY 180000. Additional prohibition: no in-store event, tasting or reception spending and no event execution steps. Give a six-category Markdown budget table with amounts and percentages. Store cost and the four forbidden paid categories must be zero; do not relabel them. Show total arithmetic, tradeoffs, missing facts and owned-community steps. No HTML or other files; do not read other projects.",
+        "reply": "\n<od-done key=\"68f85158579023be\"/>\n结论：禁止门店活动后，预算目标应调整为自有社群教育、讨论和经同意的后续联系。门店品鉴与接待、四类禁止付费投放全部为零。\n\n### 推荐预算\n\n以下为建议分配，不代表实际支出、供应商报价或效果承诺。\n\n| 类别 | 金额（CNY） | 占比 | 用途边界 |\n|---|---:|---:|---|\n| store tasting materials and reception | 0 | 0% | 禁止门店活动、品鉴、接待及相关执行 |\n| owned-community operations | 63,000 | 35% | 自有社群内容发布、讨论组织、日常运营 |\n| content and visual materials | 54,000 | 30% | 茶知识内容、图文素材及渠道适配 |\n| booking and list management | 27,000 | 15% | 经同意的兴趣登记、名单整理、退订管理；不作为活动预约 |\n| feedback and evaluation | 18,000 | 10% | 社群反馈收集、问卷整理及阶段复盘 |\n| contingency | 18,000 | 10% | 仅用于上述非禁止类别的合理调整；不得包装门店或付费投放支出 |\n| **合计** | **180,000** | **100%** |  |\n\n金额验算：\n\n`0 + 63,000 + 54,000 + 27,000 + 18,000 + 18,000 = 180,000`\n\n比例验算：\n\n`0% + 35% + 30% + 15% + 10% + 10% = 100%`\n\n### 禁止支出校验\n\n以下项目不并入其他类别，也不使用应急预算变相支付：\n\n| 禁止类别 | 金额（CNY） | 占比 |\n|---|---:|---:|\n| paid search ads | 0 | 0% |\n| paid social ads | 0 | 0% |\n| influencer sponsorship | 0 | 0% |\n| purchased personal-contact lists | 0 | 0% |\n\n### 自有社群执行步骤\n\n1. 盘点可使用的自有社群、内容账号和现有联系人权限。\n2. 制定春季茶知识主题与内容节奏，不发布门店品鉴邀请。\n3. 在自有社群发布教育内容，组织讨论、提问和轻量反馈。\n4. 对希望继续了解的成员取得明确同意，再收集联系方式或加入跟进名单。\n5. 对名单去重、记录同意状态，并提供退出后续联系的方式。\n6. 汇总内容反馈和社群问题，用于调整后续主题；不将互动量解释为收入或转化结果。\n\n### 主要取舍\n\n- 增加社群运营与内容预算，可以支撑持续沟通，但不能证明会产生销售、转化或商业回报。\n- 门店体验被完全取消后，无法验证现场品鉴反馈，原有“邀请参加春季茶品鉴”的目标也无法按原定义实现。\n- 名单管理只能覆盖主动同意的联系人，不能通过购买名单补充规模。\n- 应急预算保留了调整空间，但可用范围较窄；如果没有合规需求，应保留未支出，而不是为了用完预算而转投。\n\n### 尚缺信息\n\n- 自有社群和内容账号的数量、现有受众规模及管理权限。\n- 内容发布周期、具体主题数量和需要制作的素材规格。\n- 社群运营、内容审核和同意管理的人员容量与负责人。\n- 联系人同意、信息保存、退出联系和删除记录的具体流程。\n- 反馈评价标准，以及哪些指标只用于过程观察。\n- 原定春季茶品鉴目标在禁止活动后是否正式改为“茶知识教育与意向收集”。\n- 日期、价格和地址仍未确认；在当前无活动方案中不应擅自使用。\n\n"
+      }
+    ],
+    "csv": {
+      "independent": {
+        "monthly": {
+          "2026-04": 69000,
+          "2026-05": 82000,
+          "2026-06": 88000
+        },
+        "total": 239000,
+        "mayGrowth": 18.840579710144922,
+        "juneGrowth": 7.317073170731714,
+        "aprilTmallShare": 60.86956521739131,
+        "juneTmallShare": 46.590909090909086
+      },
+      "reply": "\n<od-done key=\"92dc8020af5c738e\"/>\n仅按所选 CSV 计算；原表未注明数值单位。\n\n- 4 月：42,000 + 18,000 + 9,000 = **69,000**\n- 5 月：46,000 + 22,000 + 14,000 = **82,000**\n- 6 月：41,000 + 27,000 + 20,000 = **88,000**\n\n总销售额：\n\n69,000 + 82,000 + 88,000 = **239,000**\n\n月度增长：\n\n- 5 月较 4 月：  \n  (82,000 − 69,000) ÷ 69,000 = 13,000 ÷ 69,000 = **18.84%**\n- 6 月较 5 月：  \n  (88,000 − 82,000) ÷ 82,000 = 6,000 ÷ 82,000 = **7.32%**\n\nTmall 占比：\n\n- 4 月：42,000 ÷ 69,000 = **60.87%**\n- 6 月：41,000 ÷ 88,000 = **46.59%**",
+      "runId": "0eaae933-4f80-4be6-8d62-5888696ffe36",
+      "producedFiles": 0
+    }
+  },
+  "mermaid": {
+    "candidate": "0.0.3-local.9",
+    "phase": "reopened",
+    "elementCount": 28,
+    "referenceCount": 40,
+    "uniqueIds": [
+      "Dti9ZmQqtUJWs2rny7EFY",
+      "daWCxS3ZpZ9cnqjF2nYCo",
+      "M4KveIEol7okT94aWAgIW",
+      "2bftoj-8600NguIKjh4EZ",
+      "YCmrxgKVD8n45Ng-yKl1f",
+      "s3ddjvYZwcYZvIxIqI8bb",
+      "2F4AmoKRin6DDADqBuWMD",
+      "H6pt73ges1GjRuFVsy7mq",
+      "oWfY_bzV-9ePVYvOm1SLU",
+      "nPBlWYFhihoTlGTNtfW9v",
+      "mkOduUJVzC6IrPre12RaB",
+      "2DXfTLqXXD3aM_eGivv1a",
+      "gGcsZccW1N8O0pomx7Knh",
+      "oi3y6NV608HZJ0xn4YL99",
+      "-WfyDmuZuasMy_yzgrEtn",
+      "7Riurvb1Qj1h8HkUzlZ1J",
+      "xnTcq4WDpuOE4kcUClvCY",
+      "KV6z8v-MRzx0GxB_mW4F4",
+      "P9smJhaOMtkwDZXzbANAi",
+      "tveIKje_VrtJBnv_hwW_e",
+      "qlcdYs-Yrke0_JbIUjVeO",
+      "AiA-hY-Z7wAuPl34o0bU1",
+      "nuAqiUnGtmtGPF-oQ0OTU",
+      "n0dW3mMaC3u02otSX6XWe",
+      "SCYc-jmNc26eEl0KIMEob",
+      "_VVb0jEVtx79taDrndvZG",
+      "_PPnKjeFu_0ksp7yMebee",
+      "Ktc89HI_bGADw44aU4ICP"
+    ],
+    "sha256": "95233b9c47c60c0a0a48f3ddce2a7a5e1c3e1abc33bc323fe350d6c01abbfd1f",
+    "texts": [
+      "Brief",
+      "Brief",
+      "Plan",
+      "Plan",
+      "Exact selected inputs",
+      "Frozen response",
+      "Brief",
+      "Brief",
+      "Plan",
+      "Plan",
+      "Exact selected inputs",
+      "Frozen response"
+    ]
+  },
+  "acceptance": {
+    "engineering": "incomplete",
+    "security": "2 high remain open",
+    "realOldProfile": "found; original app still running; protected consistent copy pending",
+    "authorizedBusinessBrands": "pending",
+    "nativeChineseInput": "manual pending",
+    "nativeTwoSizes": "actual resize and keyboard copy passed, but outer 10px overflow failed; next candidate required; human signoff pending",
+    "externalHtmlZipOpen": "manual pending",
+    "professionalReview": "pending",
+    "userSignoff": "pending",
+    "originalWhiteScreen": "not reproduced; skipped and unclosed"
+  }
+}

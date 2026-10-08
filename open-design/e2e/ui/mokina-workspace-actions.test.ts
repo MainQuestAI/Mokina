@@ -9,6 +9,49 @@ test.beforeEach(async ({ page }) => {
 });
 
 for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900 }]) {
+  test(`[P1] Mokina long-path materials stay inside the continuation panel at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
+    await page.setViewportSize(viewport);
+    const source = await seedWorkspace(page);
+    const paths = [0, 1, 2].map(index => `assets/${'中文目录 with spaces/'.repeat(6)}${index}/同名品牌素材.svg`);
+    const storedPaths: string[] = [];
+    for (const name of paths) {
+      const saved = await page.request.post(`/api/projects/${source.projectId}/files`, {
+        data: { name, content: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="red"/></svg>' },
+      });
+      expect(saved.ok(), await saved.text()).toBe(true);
+      const receipt = await saved.json();
+      expect(receipt.file?.name).toBeTruthy();
+      storedPaths.push(receipt.file.name);
+    }
+    await openArtifact(page, source, 'plan.html');
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    const panel = page.locator('.artifact-version-panel');
+    for (const name of storedPaths) {
+      const checkbox = panel.getByRole('checkbox', { name, exact: true });
+      await checkbox.check();
+    }
+    const geometry = await panel.evaluate(element => {
+      const body = element.querySelector('.artifact-version-list')?.parentElement;
+      const regions = Array.from(element.querySelectorAll('.artifact-version-panel__continuation, fieldset'));
+      if (body) regions.push(body);
+      return { width: element.clientWidth, scrollWidth: element.scrollWidth,
+        regions: regions.map(node => ({ width: node.clientWidth, scrollWidth: node.scrollWidth, className: node.className })) };
+    });
+    expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.width + 1);
+    for (const region of geometry.regions) expect(region.scrollWidth).toBeLessThanOrEqual(region.width + 1);
+    const usages = panel.locator('.artifact-version-panel__continuation-assets input:not([type="checkbox"])');
+    await expect(usages).toHaveCount(3);
+    await usages.last().fill('完整保留中文用途说明');
+    await panel.getByRole('checkbox', { name: /strategy：/ }).check();
+    await panel.getByLabel('Continuation background').fill('长路径素材接续');
+    await testInfo.attach('long-path-continuation', { body: await page.screenshot(), contentType: 'image/png' });
+    await panel.getByRole('button', { name: 'Create continuation project (no send)', exact: true }).click();
+    await expect(page).not.toHaveURL(new RegExp(source.projectId));
+    await expect(page.getByTestId('chat-composer-input')).toContainText('长路径素材接续');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('chat-composer-input')).toContainText('长路径素材接续');
+  });
+
   test(`[P1] Mokina panel actions remain reachable and preserve drafts at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
     await page.setViewportSize(viewport);
     const project = await seedWorkspace(page);

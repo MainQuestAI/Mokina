@@ -1,0 +1,688 @@
+{
+  "sourceSha": "4cf68e9c7feda8cc5222825ba209f179490cabbf",
+  "version": "0.0.3-local.7",
+  "currentVersionId": "c0646e80-88d8-4ed7-a7b1-006715217663",
+  "versions": [
+    {
+      "id": "46911c92-21ad-4805-a0ac-470b826e197b",
+      "version": 1,
+      "candidate": false,
+      "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+      "actualContentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+    },
+    {
+      "id": "2756f19d-44ef-422e-86b4-334284bd1157",
+      "version": 2,
+      "candidate": false,
+      "contentDigest": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953",
+      "actualContentDigest": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953",
+      "frozenContentPath": "0002-2756f19d-44ef-422e-86b4-334284bd1157-frozen.html"
+    },
+    {
+      "id": "a61a07d4-4392-463d-ac13-b10c2bd1f726",
+      "version": 3,
+      "candidate": true,
+      "contentDigest": "be8e75e00088c7d078181f4a489d50b207c85569b82a7af820cd8dcff9837a40",
+      "actualContentDigest": "be8e75e00088c7d078181f4a489d50b207c85569b82a7af820cd8dcff9837a40",
+      "frozenContentPath": "0003-a61a07d4-4392-463d-ac13-b10c2bd1f726-frozen.html"
+    },
+    {
+      "id": "cd977297-1e9f-442b-a3e4-023d7a4e0ba3",
+      "version": 4,
+      "candidate": false,
+      "restoreFromVersionId": "46911c92-21ad-4805-a0ac-470b826e197b",
+      "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+      "actualContentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+      "frozenContentPath": "0004-cd977297-1e9f-442b-a3e4-023d7a4e0ba3-frozen.html"
+    },
+    {
+      "id": "c0646e80-88d8-4ed7-a7b1-006715217663",
+      "version": 5,
+      "candidate": false,
+      "restoreFromVersionId": "46911c92-21ad-4805-a0ac-470b826e197b",
+      "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+      "actualContentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+      "frozenContentPath": "0005-c0646e80-88d8-4ed7-a7b1-006715217663-frozen.html"
+    }
+  ],
+  "files": [
+    {
+      "name": "current-v5.html",
+      "bytes": 25570,
+      "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+      "hasInlineLogo": true,
+      "hasCandidateMarker": false,
+      "hasBudget": true,
+      "hasUnresolvedLocalLogo": false
+    },
+    {
+      "name": "current-v5.zip",
+      "bytes": 73859,
+      "sha256": "4ef8083f9588d4a1200952df40420217b6cdb778d6e5ab66e0d365fb0b2744f6",
+      "members": [
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/index.html",
+          "bytes": 60822,
+          "sha256": "f27d8d50ffe517410a35daa6ea7ada46ceaa5da9a82b2b194127e5b5ec2f3953"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-HANDOFF.md",
+          "bytes": 7104,
+          "sha256": "a59d28d384e88225face1668890b2fa18b47cfb79df280c526a026657a1fc00a"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-MANIFEST.json",
+          "bytes": 5223,
+          "sha256": "3b2629e6be882f79db45358de7131ebc94b45d2a4d00310ef16e4955fbefea28"
+        }
+      ],
+      "hasInlineLogo": true,
+      "hasCandidateMarker": false,
+      "hasHandoff": true,
+      "hasManifest": true
+    },
+    {
+      "name": "current-v5.pdf",
+      "bytes": 976440,
+      "sha256": "d91b18d05b268d1a555e2f2c2467a2212ef222eb3cc9742ce45b6f678b5d45c9"
+    },
+    {
+      "name": "historical-v2.html",
+      "bytes": 25571,
+      "sha256": "aeb72e4892313040a483cb925b190906d7793237d6dd8fd7b3c54acd11cb08dd",
+      "hasInlineLogo": true,
+      "hasCandidateMarker": false,
+      "hasBudget": true,
+      "hasUnresolvedLocalLogo": false
+    },
+    {
+      "name": "historical-v2.zip",
+      "bytes": 73888,
+      "sha256": "2ecd454c3367ee639a6d4d43cee98047f210ffd3926cefcadb85703627a95221",
+      "members": [
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/index.html",
+          "bytes": 60823,
+          "sha256": "bdc483b13494207824d7d69c0441ab37c350fbade3f3fc48ff16202485ff2cff"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-HANDOFF.md",
+          "bytes": 7118,
+          "sha256": "b18414f0c1a93c287c29519b69f7086ff12ffc7318a986efb93208768d6594d2"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-MANIFEST.json",
+          "bytes": 5237,
+          "sha256": "b7012a1f301059389df59bdf2f948cac1e594cf003e16952e471dc074bcc3ebe"
+        }
+      ],
+      "hasInlineLogo": true,
+      "hasCandidateMarker": false,
+      "hasHandoff": true,
+      "hasManifest": true
+    },
+    {
+      "name": "historical-v2.pdf",
+      "bytes": 976440,
+      "sha256": "50179830fbc2a33308bf71f2d647146670a01e40b9c8580c13b0383f0eb02d31"
+    },
+    {
+      "name": "candidate-v3.html",
+      "bytes": 25650,
+      "sha256": "7e7411e37d3739eb9e7be3b0c10c4dfb6571caa752975ad7eac3e6bfa9c067ae",
+      "hasInlineLogo": true,
+      "hasCandidateMarker": true,
+      "hasBudget": true,
+      "hasUnresolvedLocalLogo": false
+    },
+    {
+      "name": "candidate-v3.zip",
+      "bytes": 73965,
+      "sha256": "986a7ec8c7c15ca6ed3372be65a3bbb3d30fce93a127ca9cf0bbc319759388a4",
+      "members": [
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/index.html",
+          "bytes": 60902,
+          "sha256": "5740b3a7b7e4cc1cef12c8183f16986492c7084da0a9b9aab89bac8a9ed89a0f"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-HANDOFF.md",
+          "bytes": 7117,
+          "sha256": "5d65bf98168c9d85cda06c2c6d8d49b198a8c0afcdb26bf91fe697d2332b5ec6"
+        },
+        {
+          "name": "revision-continuation-path-00-revision-continuation-path-01-/DESIGN-MANIFEST.json",
+          "bytes": 5236,
+          "sha256": "e1bb0767f535d1ccc116e3cd63b46934f0c0608ac8976f571898cccbb51c392e"
+        }
+      ],
+      "hasInlineLogo": true,
+      "hasCandidateMarker": true,
+      "hasHandoff": true,
+      "hasManifest": true
+    },
+    {
+      "name": "candidate-v3.pdf",
+      "bytes": 985566,
+      "sha256": "db127babd952348ac51063f04a5dca189e2e7486aaf8d133774f0e83241b2f37"
+    }
+  ],
+  "installedVersions": {
+    "sharp": "0.35.5",
+    "admZip": "0.6.1",
+    "postcss": "8.5.29",
+    "next": "16.3.6",
+    "electron": "0.0.3-local.7"
+  },
+  "cancelledFileExists": false,
+  "recovery": {
+    "bytes": 219224,
+    "sha256": "ba56fdf1790f899f4dd47d1ce6a8f28a9e278f6f7da54066a7e34304cb920928",
+    "schema": "mokina.project-recovery.v1",
+    "exportId": "82f516c9-b132-4a1f-a027-114789cf4861",
+    "sourceProject": {
+      "id": "529956e4-f9f5-4cbd-83cf-2cbfebbabaa1",
+      "name": "PR4 local.6 原生闭环验收（合成资料）"
+    },
+    "versionCount": 11,
+    "contextCount": 1,
+    "files": [
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/SKILL.md",
+        "kind": "original",
+        "byteLength": 5865,
+        "sha256": "a67a89159dc0182fdf58895067c95e68dd828afd38857f410bca41de7843778d",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/assets/template.html",
+        "kind": "original",
+        "byteLength": 16603,
+        "sha256": "2927248194e18bb57ad0d30ad822b1c8e6e3162d27543c0e6934ed3403b55031",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/example.html",
+        "kind": "original",
+        "byteLength": 4217,
+        "sha256": "512b0831cfb992defbd1ca4eeaf1cc003b095e62f4fba8bf1e7e8303212b25b8",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/open-design.json",
+        "kind": "original",
+        "byteLength": 9637,
+        "sha256": "d191159294d39cc8b45d404d2ba04f659757cf20505b3f313ff05ffea606a54b",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/references/checklist.md",
+        "kind": "original",
+        "byteLength": 4679,
+        "sha256": "c052dd57859e3448c4fca368188198d67cbc1e19350c6360069b49d10616f006",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/references/layouts.md",
+        "kind": "original",
+        "byteLength": 10995,
+        "sha256": "8f6d97fcc2d29a7298cccb4f117c6979604a4ce4e452a1d44b0ee97fae23302b",
+        "matches": true
+      },
+      {
+        "path": "assets/frozen-logo.svg",
+        "kind": "original",
+        "byteLength": 161,
+        "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "matches": true
+      },
+      {
+        "path": "assets/recovered-frozen-logo.svg",
+        "kind": "original",
+        "byteLength": 161,
+        "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "matches": true
+      },
+      {
+        "path": "assets/recovered-logo.svg",
+        "kind": "original",
+        "byteLength": 161,
+        "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "matches": true
+      },
+      {
+        "path": "brand-spec.md",
+        "kind": "original",
+        "byteLength": 852,
+        "sha256": "462413463346fe876635e1a05690901ef753cdd8b072e26cad8177defb6ae9cb",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "kind": "original",
+        "byteLength": 25350,
+        "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "matches": true
+      },
+      {
+        "path": "index.html.artifact.json",
+        "kind": "original",
+        "byteLength": 337,
+        "sha256": "e6a52d029cd5990bd9872abbb4a1b82636c78d9ebdfea3857f88f1b78994e806",
+        "matches": true
+      },
+      {
+        "path": "recovered-check.html",
+        "kind": "original",
+        "byteLength": 19757,
+        "sha256": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655",
+        "matches": true
+      },
+      {
+        "path": "recovered-check.html.artifact.json",
+        "kind": "original",
+        "byteLength": 357,
+        "sha256": "916a62b461fd1a16dd90ec09f75ed93f300f3b01ef3a2bf539512ca4efd35b83",
+        "matches": true
+      },
+      {
+        "path": "recovered-frozen-check.html",
+        "kind": "original",
+        "byteLength": 3871,
+        "sha256": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7",
+        "matches": true
+      },
+      {
+        "path": "recovered-frozen-check.html.artifact.json",
+        "kind": "original",
+        "byteLength": 371,
+        "sha256": "798f088149c2e337fa86a8b5b6027cfb14ace5e3cc6d56f04a05e6c9a7c6811c",
+        "matches": true
+      },
+      {
+        "path": "品牌-logo.svg",
+        "kind": "original",
+        "byteLength": 161,
+        "sha256": "fef79a73e0fadcb72ecc8225ff11be8a6960587a54f045e66dba1738ccb1dbf7",
+        "matches": true
+      },
+      {
+        "path": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/assets/frozen-logo.svg",
+        "kind": "original",
+        "byteLength": 161,
+        "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "matches": true
+      },
+      {
+        "path": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "kind": "original",
+        "byteLength": 25351,
+        "sha256": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953",
+        "matches": true
+      },
+      {
+        "path": "资料/中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销-方案.html",
+        "kind": "original",
+        "byteLength": 25350,
+        "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "matches": true
+      },
+      {
+        "path": "资料说明.md",
+        "kind": "original",
+        "byteLength": 229,
+        "sha256": "f32265710cdf51cb0b5d7cd000eb558aeb76a1880ee6eaa78b2982c44a10f089",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/009f1a525a4d06ff79ecb0c4/0001-a22ece6d-f49a-4f3c-8cbe-15a82b97879e.html",
+        "kind": "version",
+        "byteLength": 3871,
+        "sha256": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/009f1a525a4d06ff79ecb0c4/0001-a22ece6d-f49a-4f3c-8cbe-15a82b97879e-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 3871,
+        "sha256": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/0eb547304658805aad788d32/0001-5b7ceeeb-ada2-4607-90e6-31d64d85b278.html",
+        "kind": "version",
+        "byteLength": 11664,
+        "sha256": "ea1707993a6ff20e0a26e6e294faeaa82e5c481abaed010d575a389a62e6e31a",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/0eb547304658805aad788d32/0001-5b7ceeeb-ada2-4607-90e6-31d64d85b278-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 11884,
+        "sha256": "cadc3481cca57babe3a71bf616bb3585946798019b7e173185a69f3c1df5480b",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/0eb547304658805aad788d32/0002-6f37d508-ffa7-4fbd-9adf-bf5b5350298d.html",
+        "kind": "version",
+        "byteLength": 25195,
+        "sha256": "81541d8c497a8ec0e2a5182bec2cdd17ad58713eae04a182a510509f2ffe8568",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/0eb547304658805aad788d32/0002-6f37d508-ffa7-4fbd-9adf-bf5b5350298d-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 25415,
+        "sha256": "0fdd73bb653e69ef64e9dfd2305fd37d8ec92606116d05f0df8df7325cf3d0c7",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/0eb547304658805aad788d32/0003-05a0fd31-7b42-4092-a685-c7415c49d4ee.html",
+        "kind": "version",
+        "byteLength": 25271,
+        "sha256": "6b37e2f20e8484644557bf8544af86dba593a57e361c3e05d51bb1c2e68426fd",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/0eb547304658805aad788d32/0003-05a0fd31-7b42-4092-a685-c7415c49d4ee-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 25491,
+        "sha256": "b8550c430f48770b445a477c4334676600030a779604de07bedecd92f0c6e688",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/0eb547304658805aad788d32/0004-d65d660d-b06a-4ddf-ae9c-1930c9c47842.html",
+        "kind": "version",
+        "byteLength": 25350,
+        "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/0eb547304658805aad788d32/0004-d65d660d-b06a-4ddf-ae9c-1930c9c47842-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 25570,
+        "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0001-46911c92-21ad-4805-a0ac-470b826e197b.html",
+        "kind": "version",
+        "byteLength": 25350,
+        "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0002-2756f19d-44ef-422e-86b4-334284bd1157.html",
+        "kind": "version",
+        "byteLength": 25351,
+        "sha256": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0002-2756f19d-44ef-422e-86b4-334284bd1157-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 25571,
+        "sha256": "aeb72e4892313040a483cb925b190906d7793237d6dd8fd7b3c54acd11cb08dd",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0003-a61a07d4-4392-463d-ac13-b10c2bd1f726.html",
+        "kind": "version",
+        "byteLength": 25430,
+        "sha256": "be8e75e00088c7d078181f4a489d50b207c85569b82a7af820cd8dcff9837a40",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0003-a61a07d4-4392-463d-ac13-b10c2bd1f726-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 25650,
+        "sha256": "7e7411e37d3739eb9e7be3b0c10c4dfb6571caa752975ad7eac3e6bfa9c067ae",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0004-cd977297-1e9f-442b-a3e4-023d7a4e0ba3.html",
+        "kind": "version",
+        "byteLength": 25350,
+        "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0004-cd977297-1e9f-442b-a3e4-023d7a4e0ba3-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 25570,
+        "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0005-c0646e80-88d8-4ed7-a7b1-006715217663.html",
+        "kind": "version",
+        "byteLength": 25350,
+        "sha256": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/3d5aaa1b5aeded3a0b964f8d/0005-c0646e80-88d8-4ed7-a7b1-006715217663-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 25570,
+        "sha256": "b5193db2efb1ac44e9f3360593ce5a557152cf554504781d1dc8b42b0972b577",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/83050490542eaa779c0146e6/0001-0d5e9716-595a-4eee-ac6e-c2dc37e418c3.html",
+        "kind": "version",
+        "byteLength": 19757,
+        "sha256": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655",
+        "matches": true
+      },
+      {
+        "path": ".file-versions/83050490542eaa779c0146e6/0001-0d5e9716-595a-4eee-ac6e-c2dc37e418c3-frozen.html",
+        "kind": "frozen-version",
+        "byteLength": 19757,
+        "sha256": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655",
+        "matches": true
+      },
+      {
+        "path": ".mokina/contexts/0d1057ed-bf92-4ed0-900a-f08585fc05e9.json",
+        "kind": "context-snapshot",
+        "byteLength": 1840,
+        "sha256": "1597f0d6befe347a83035f611b4e18134d36b3e3991ef9553c5795cbf2480806",
+        "matches": true
+      },
+      {
+        "path": ".mokina/blobs/49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "kind": "asset",
+        "byteLength": 161,
+        "sha256": "49a9c2b51589ba476a6b7ec0fda1dd6d19158beabb2e33db214ca01b19235896",
+        "matches": true
+      }
+    ],
+    "importedProjectId": "bc2554bb-ef33-4268-b073-24a22275064f",
+    "importedOriginalFiles": [
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/SKILL.md",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/assets/template.html",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/example.html",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/open-design.json",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/references/checklist.md",
+        "matches": true
+      },
+      {
+        "path": ".od-skills/web-prototype-989c5495eb/references/layouts.md",
+        "matches": true
+      },
+      {
+        "path": "assets/frozen-logo.svg",
+        "matches": true
+      },
+      {
+        "path": "assets/recovered-frozen-logo.svg",
+        "matches": true
+      },
+      {
+        "path": "assets/recovered-logo.svg",
+        "matches": true
+      },
+      {
+        "path": "brand-spec.md",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "matches": true
+      },
+      {
+        "path": "index.html.artifact.json",
+        "matches": true
+      },
+      {
+        "path": "recovered-check.html",
+        "matches": true
+      },
+      {
+        "path": "recovered-check.html.artifact.json",
+        "matches": true
+      },
+      {
+        "path": "recovered-frozen-check.html",
+        "matches": true
+      },
+      {
+        "path": "recovered-frozen-check.html.artifact.json",
+        "matches": true
+      },
+      {
+        "path": "品牌-logo.svg",
+        "matches": true
+      },
+      {
+        "path": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/assets/frozen-logo.svg",
+        "matches": true
+      },
+      {
+        "path": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "matches": true
+      },
+      {
+        "path": "资料/中文-空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销-方案.html",
+        "matches": true
+      },
+      {
+        "path": "资料说明.md",
+        "matches": true
+      }
+    ],
+    "importedVersions": [
+      {
+        "fileName": "recovered-frozen-check.html",
+        "version": 1,
+        "id": "a22ece6d-f49a-4f3c-8cbe-15a82b97879e",
+        "current": true,
+        "candidate": false,
+        "contentDigest": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7",
+        "actualContentDigest": "c5d5e4295043cd60959bcad3f65121adf4eb7fae97a5820254f9a1dc5ae6d4c7"
+      },
+      {
+        "fileName": "index.html",
+        "version": 1,
+        "id": "5b7ceeeb-ada2-4607-90e6-31d64d85b278",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "ea1707993a6ff20e0a26e6e294faeaa82e5c481abaed010d575a389a62e6e31a",
+        "actualContentDigest": "ea1707993a6ff20e0a26e6e294faeaa82e5c481abaed010d575a389a62e6e31a"
+      },
+      {
+        "fileName": "index.html",
+        "version": 2,
+        "id": "6f37d508-ffa7-4fbd-9adf-bf5b5350298d",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "81541d8c497a8ec0e2a5182bec2cdd17ad58713eae04a182a510509f2ffe8568",
+        "actualContentDigest": "81541d8c497a8ec0e2a5182bec2cdd17ad58713eae04a182a510509f2ffe8568"
+      },
+      {
+        "fileName": "index.html",
+        "version": 3,
+        "id": "05a0fd31-7b42-4092-a685-c7415c49d4ee",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "6b37e2f20e8484644557bf8544af86dba593a57e361c3e05d51bb1c2e68426fd",
+        "actualContentDigest": "6b37e2f20e8484644557bf8544af86dba593a57e361c3e05d51bb1c2e68426fd"
+      },
+      {
+        "fileName": "index.html",
+        "version": 4,
+        "id": "d65d660d-b06a-4ddf-ae9c-1930c9c47842",
+        "current": true,
+        "candidate": false,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "actualContentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 1,
+        "id": "46911c92-21ad-4805-a0ac-470b826e197b",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "actualContentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 2,
+        "id": "2756f19d-44ef-422e-86b4-334284bd1157",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953",
+        "actualContentDigest": "a12109dd0bc6e08dd3ae0530c7127bb6ad63458d3a139af3ec0bd9fe64342953"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 3,
+        "id": "a61a07d4-4392-463d-ac13-b10c2bd1f726",
+        "current": false,
+        "candidate": true,
+        "contentDigest": "be8e75e00088c7d078181f4a489d50b207c85569b82a7af820cd8dcff9837a40",
+        "actualContentDigest": "be8e75e00088c7d078181f4a489d50b207c85569b82a7af820cd8dcff9837a40"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 4,
+        "id": "cd977297-1e9f-442b-a3e4-023d7a4e0ba3",
+        "current": false,
+        "candidate": false,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "actualContentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+      },
+      {
+        "fileName": "资料/中文 空格目录/revision-continuation-path-00/revision-continuation-path-01/revision-continuation-path-02/revision-continuation-path-03/revision-continuation-path-04/revision-continuation-path-05/营销 方案.html",
+        "version": 5,
+        "id": "c0646e80-88d8-4ed7-a7b1-006715217663",
+        "current": true,
+        "candidate": false,
+        "contentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d",
+        "actualContentDigest": "98fa7e81db59d5ecd4a709969e980d83af275a43865a07ae4e15f3c307df274d"
+      },
+      {
+        "fileName": "recovered-check.html",
+        "version": 1,
+        "id": "0d5e9716-595a-4eee-ac6e-c2dc37e418c3",
+        "current": true,
+        "candidate": false,
+        "contentDigest": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655",
+        "actualContentDigest": "dda19c683f8d4f8a25b6591ea7ee477af2165f34e4af9f487e77de7215ad5655"
+      }
+    ]
+  }
+}

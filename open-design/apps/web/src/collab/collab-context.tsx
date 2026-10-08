@@ -10,6 +10,7 @@ import type { ProjectCollab } from './useProjectCollab';
 export type ProjectResourceAuthority = 'pending' | 'denied' | 'local' | 'workspace';
 
 export interface CollabContextValue extends ProjectCollab {
+  conversationId?: string | null;
   /** Exact persisted scope of the project being rendered. Never shell navigation state. */
   workspaceContext: WorkspaceCollabContext | null;
   workspaceContextLoading: boolean;

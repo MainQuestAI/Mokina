@@ -4,7 +4,7 @@
 // 品牌单独可用（无项目文件时面板照常渲染）。
 
 import { webcrypto } from 'node:crypto';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const { fetchDesignSystemsMock } = vi.hoisted(() => ({
@@ -15,7 +15,10 @@ vi.mock('../../src/providers/registry', async () => {
   const actual = await vi.importActual<typeof import('../../src/providers/registry')>('../../src/providers/registry');
   return {
     ...actual,
-    fetchDesignSystems: fetchDesignSystemsMock,
+    fetchDesignSystemsResult: async (...args: unknown[]) => {
+      const value = await fetchDesignSystemsMock(...args);
+      return Array.isArray(value) ? { ok: true, designSystems: value } : value;
+    },
     fetchProjectMaterial: vi.fn(),
   };
 });
@@ -25,6 +28,7 @@ vi.mock('../../src/collab/collab-context', () => ({
 }));
 
 import { MokinaContextPanel } from '../../src/components/mokina/MokinaContextPanel';
+import { readPendingMokinaSnapshot } from '../../src/runtime/mokina/pending-context-snapshot';
 
 const BRAND_MD = '# 山茶品牌规范\n\n主色 #B3392E。';
 
@@ -35,6 +39,36 @@ afterEach(() => {
 });
 
 describe('MokinaContextPanel — brand kit source (N04)', () => {
+  it('freezes a brand whose actual body is exactly 24,000 units, without adding excerpt separators', async () => {
+    vi.stubGlobal('crypto', webcrypto);
+    fetchDesignSystemsMock.mockResolvedValue([{ id: 'boundary', title: 'Boundary brand' }]);
+    let posted: Record<string, unknown> | null = null;
+    vi.stubGlobal('fetch', vi.fn(async (_url, options) => {
+      if (options?.method === 'POST') {
+        posted = JSON.parse(options.body);
+        return Response.json({ snapshot: { items: [{ displayName: 'Boundary brand', kind: 'brand-rule', text: 'x\n'.repeat(12_000) }] } });
+      }
+      return Response.json({ id: 'boundary', title: 'Boundary brand', body: 'x\n'.repeat(12_000) });
+    }));
+    render(<MokinaContextPanel projectId="brand-boundary" files={[]} />);
+    fireEvent.click(screen.getByText(/Materials & background/));
+    await screen.findByRole('option', { name: 'Boundary brand' });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Brand source' }), { target: { value: 'boundary' } });
+    await waitFor(() => expect(screen.getByRole('button', { name: /^Freeze as task snapshot/ })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: /^Freeze as task snapshot/ }));
+    await waitFor(() => expect(readPendingMokinaSnapshot('brand-boundary')?.charCount).toBe(24_000));
+    expect(posted).toMatchObject({ selections: [{ mode: 'groups', textKind: 'brand-rule', sourceRef: { kind: 'design-system', designSystemId: 'boundary' } }] });
+  });
+  it('reports a failed brand catalog and retries it instead of presenting an empty catalog', async () => {
+    fetchDesignSystemsMock.mockResolvedValueOnce({ ok: false }).mockResolvedValueOnce([{ id: 'brand', title: 'Recovered brand' }]);
+    render(<MokinaContextPanel projectId="catalog" files={[]} />);
+    fireEvent.click(screen.getByText(/Materials & background/));
+    expect(await screen.findByRole('alert')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    expect(await screen.findByRole('option', { name: 'Recovered brand' })).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(fetchDesignSystemsMock).toHaveBeenCalledTimes(2);
+  });
   it('renders for a brand-only project and freezes the brand as a brand-rule selection', async () => {
     vi.stubGlobal('crypto', webcrypto);
     fetchDesignSystemsMock.mockResolvedValue([
@@ -86,5 +120,27 @@ describe('MokinaContextPanel — brand kit source (N04)', () => {
     await waitFor(() => expect(fetchDesignSystemsMock).toHaveBeenCalled());
     await waitFor(() => expect(container.querySelector('details.mokina-context-panel')).toBeNull());
     expect(container.querySelector('details.mokina-context-panel')).toBeNull();
+  });
+  it('clears old brand details immediately and ignores late A after selecting B or clearing', async () => {
+    vi.stubGlobal('crypto', webcrypto);
+    fetchDesignSystemsMock.mockResolvedValue([{ id: 'A', title: 'Brand A' }, { id: 'B', title: 'Brand B' }]);
+    const resolvers: Record<string, (response: Response) => void> = {};
+    vi.stubGlobal('fetch', vi.fn((url: string) => new Promise<Response>(resolve => { resolvers[url.split('/').at(-1)!] = resolve; })));
+    const { container } = render(<MokinaContextPanel projectId="race" files={[]} />);
+    fireEvent.click(container.querySelector('summary')!);
+    const select = await screen.findByLabelText(/Brand source/);
+    fireEvent.change(select, { target: { value: 'A' } });
+    fireEvent.change(select, { target: { value: 'B' } });
+    expect(screen.getByRole('button', { name: /Freeze as task snapshot/ })).toBeDisabled();
+    await act(async () => { resolvers.B!(new Response(JSON.stringify({ body: 'B only' }))); });
+    await screen.findByText(/Selected brand: Brand B/);
+    await act(async () => { resolvers.A!(new Response(JSON.stringify({ body: 'stale A' }))); });
+    expect(screen.queryByText(/Selected brand: Brand A/)).toBeNull();
+    expect(screen.getByText(/Selected brand: Brand B/)).toBeVisible();
+    fireEvent.change(select, { target: { value: 'A' } });
+    fireEvent.change(select, { target: { value: '' } });
+    await act(async () => { resolvers.A!(new Response(JSON.stringify({ body: 'stale A again' }))); });
+    expect(screen.queryByText(/Selected brand:/)).toBeNull();
+    expect(screen.getByRole('button', { name: /Freeze as task snapshot/ })).toBeDisabled();
   });
 });

@@ -3,7 +3,7 @@
 // 报错卡不泄漏原始错误；专属文案和真实重连行的交接保持不变。
 // OPEND-2807 / G16 覆盖旧恢复阶梯：联系我们、导出日志常驻次级，
 // Cloud 的主动作固定重试，CLI/BYOK 的主动作固定切换到 OpenDesign Cloud。
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { forwardRef } from 'react';
 import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -14,6 +14,9 @@ import {
   GENERIC_DAEMON_DISCONNECT_MESSAGE,
 } from '../../src/providers/daemon';
 import type { AppConfig, ChatMessage } from '../../src/types';
+
+const edition = vi.hoisted(() => ({ mokina: false }));
+vi.mock('../../src/mokina-edition', () => ({ get MOKINA_LOCAL_EDITION() { return edition.mokina; } }));
 
 const translate = (key: string, vars?: Record<string, string | number>) => {
   if (vars && Object.keys(vars).length > 0) {
@@ -49,8 +52,37 @@ vi.mock('../../src/analytics/events', async (importOriginal) => {
 });
 
 afterEach(() => {
+  edition.mokina = false;
   cleanup();
   vi.clearAllMocks();
+});
+
+describe('Mokina recovery adapts the existing classifier without Cloud handoffs', () => {
+  it('explains a saved Cloud failure, opens settings and never retries or switches the model', () => {
+    edition.mokina = true;
+    const onRetry = vi.fn(); const onSwitchToAmrAndRetry = vi.fn(); const onOpenSettings = vi.fn();
+    const message = failedMessage({ agentId: 'amr' });
+    const before = JSON.stringify(message);
+    const { container } = renderChat(message, { onRetry, onSwitchToAmrAndRetry, onOpenSettings });
+    const card = container.querySelector('[data-user-action-card="run-recovery"]')!;
+    expect(card.textContent).toContain('chat.runError.title.generic');
+    expect(card.textContent).toContain('mokina.model.unavailable');
+    expect(screen.queryByTestId('chat-error-retry')).toBeNull();
+    expect(screen.queryByTestId('chat-error-switch-to-cloud')).toBeNull();
+    expect(screen.queryByTestId('chat-error-contact-support')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'avatar.settings' }));
+    expect(onOpenSettings).toHaveBeenCalledWith('execution');
+    expect(onRetry).not.toHaveBeenCalled(); expect(onSwitchToAmrAndRetry).not.toHaveBeenCalled();
+    expect(JSON.stringify(message)).toBe(before);
+  });
+  it('keeps an explicit local retry and removes the Cloud switch', () => {
+    edition.mokina = true;
+    const onRetry = vi.fn(); const onSwitchToAmrAndRetry = vi.fn();
+    renderChat(failedMessage(), { onRetry, onSwitchToAmrAndRetry });
+    fireEvent.click(screen.getByTestId('chat-error-retry'));
+    expect(onRetry).toHaveBeenCalledOnce(); expect(onSwitchToAmrAndRetry).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('chat-error-switch-to-cloud')).toBeNull();
+  });
 });
 
 // 一段真实形状的上游原文:英文、带栈尾。今天它会被原样摊在卡面上。

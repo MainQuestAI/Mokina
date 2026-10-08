@@ -111,6 +111,15 @@ describe('MokinaCandidateCompare', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(onClose).toHaveBeenCalled();
   });
+  it('disables adoption and cancel while an adoption is running', () => {
+    const onAdopt = vi.fn();
+    render(<MokinaCandidateCompare baseVersion={version({ current: true })}
+      candidateVersion={version({ id: 'v2', candidate: true })} baseHtml={baseHtml} candidateHtml={candidateHtml}
+      adopting onClose={() => undefined} onAdopt={onAdopt} />);
+    const adopt = screen.getByRole('button', { name: 'Adopting…' });
+    expect(adopt).toBeDisabled(); expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    fireEvent.click(adopt); expect(onAdopt).not.toHaveBeenCalled();
+  });
   it('contains keyboard navigation and restores the invoking control after closing', () => {
     const origin = document.createElement('button'); origin.textContent = 'Compare'; document.body.append(origin); origin.focus();
     const onClose = vi.fn();

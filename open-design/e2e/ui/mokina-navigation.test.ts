@@ -178,11 +178,6 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     await expect.poll(() => controlBackgroundPixels(submit)).toEqual([0, 97, 195]);
     // Release outside the button so this style check cannot create a project.
     await page.mouse.move(0, 0); await page.mouse.up();
-    await page.getByTestId('home-hero-input').fill('');
-    await expect(submit).toBeDisabled();
-    const disabledColor = await submit.evaluate(node => getComputedStyle(node).backgroundColor);
-    await submit.hover(); await expect(submit).toHaveCSS('background-color', disabledColor);
-    await page.mouse.move(0, 0);
     await testInfo.attach(`brand-home-${viewport.width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
   });
 }

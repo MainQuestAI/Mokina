@@ -4538,7 +4538,7 @@ export function ChatPane({
                    */
                   <RunErrorCard
                     dataKind="run-recovery"
-                    title={displayErrorTitle}
+                    title={MOKINA_LOCAL_EDITION && failedRunUsesCloud && !accessErrorCopy ? t('chat.runError.title.generic') : displayErrorTitle}
                     description={MOKINA_LOCAL_EDITION && failedRunUsesCloud ? t('mokina.model.unavailable') : displayError}
                     actions={(
                       <>

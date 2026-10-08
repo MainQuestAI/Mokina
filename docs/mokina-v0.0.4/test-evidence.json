@@ -14,7 +14,7 @@
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/web-frozen.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 237,
       "skipped": 3,
       "files": 13
@@ -24,7 +24,7 @@
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/recovery-upstream-frozen.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 228,
       "skipped": 0,
       "files": 6
@@ -34,7 +34,7 @@
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/project-retry-frozen.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 33,
       "skipped": 0,
       "files": 1
@@ -44,7 +44,7 @@
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/daemon-frozen.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 63,
       "skipped": 0,
       "files": 7
@@ -54,7 +54,7 @@
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/desktop-frozen.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 40,
       "skipped": 0,
       "files": 7
@@ -64,7 +64,7 @@
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/packaged-frozen.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 30,
       "skipped": 0,
       "files": 4
@@ -74,7 +74,7 @@
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/pack-frozen.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 25,
       "skipped": 0,
       "files": 2
@@ -84,28 +84,28 @@
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/guard-frozen.txt",
-      "commands_source": "commands.txt"
+      "commands_source": "evidence/commands.txt"
     },
     {
       "id": "i18n-frozen",
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/i18n-frozen.txt",
-      "commands_source": "commands.txt"
+      "commands_source": "evidence/commands.txt"
     },
     {
       "id": "typecheck-frozen",
       "status": "pass",
       "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
       "evidence": "evidence/typecheck-frozen.txt",
-      "commands_source": "commands.txt"
+      "commands_source": "evidence/commands.txt"
     },
     {
       "id": "final-copy-tests",
       "status": "pass",
       "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
       "evidence": "evidence/final-copy-tests.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 1,
       "skipped": 0,
       "files": 1
@@ -115,7 +115,7 @@
       "status": "pass",
       "source_sha": "3f2ca17969b6aa5b80b65947b893c7c23c508cc9",
       "evidence": "evidence/off-browser.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "passed": 1,
       "skipped": 0,
       "files": 1,
@@ -126,7 +126,7 @@
       "status": "pass",
       "source_sha": null,
       "evidence": "evidence/e2e-typecheck.txt",
-      "commands_source": "commands.txt",
+      "commands_source": "evidence/commands.txt",
       "revision_note": "Executed after browser-test corrections; exact commit not captured in original command log."
     },
     {

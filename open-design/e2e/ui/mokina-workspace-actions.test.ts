@@ -39,9 +39,18 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 390, height: 844 
       children: Array.from(element.children).map(child => ({ width: child.clientWidth, scrollWidth: child.scrollWidth,
         left: child.getBoundingClientRect().left, right: child.getBoundingClientRect().right,
         children: Array.from(child.children).map(node => ({ name: node.getAttribute('aria-label') ?? node.tagName,
-          width: node.getBoundingClientRect().width, flex: getComputedStyle(node).flex, minWidth: getComputedStyle(node).minWidth })) })) }));
+          width: node.getBoundingClientRect().width, flex: getComputedStyle(node).flex, minWidth: getComputedStyle(node).minWidth })) })),
+      controls: Array.from(element.querySelectorAll('button, input:not([type="file"])')).map(node => ({
+        name: node.getAttribute('aria-label') ?? node.tagName, left: node.getBoundingClientRect().left,
+        right: node.getBoundingClientRect().right, width: node.getBoundingClientRect().width })) }));
     await testInfo.attach(`drawing-geometry-${viewport.width}`, { body: JSON.stringify(geometry, null, 2), contentType: 'application/json' });
-    expect(geometry.scrollWidth, JSON.stringify(geometry)).toBeLessThanOrEqual(geometry.width + 1);
+    // Invisible tooltip pseudo-elements intentionally overflow this toolbar.
+    // Measure actual interactive boxes, rather than counting hidden tooltips
+    // in scrollWidth or clipping the popovers to make that number smaller.
+    for (const control of geometry.controls.filter(control => control.width > 0)) {
+      expect(control.left, `${control.name} left edge`).toBeGreaterThanOrEqual(geometry.left);
+      expect(control.right, `${control.name} right edge`).toBeLessThanOrEqual(geometry.right);
+    }
     expect(geometry.left).toBeGreaterThanOrEqual(0);
     expect(geometry.right).toBeLessThanOrEqual(viewport.width);
     await testInfo.attach(`drawing-controls-${viewport.width}`, { body: await page.screenshot(), contentType: 'image/png' });

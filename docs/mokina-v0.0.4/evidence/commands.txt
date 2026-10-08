@@ -8,8 +8,10 @@ corepack pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-sp
 corepack pnpm --filter @open-design/packaged exec vitest run tests/config.test.ts tests/window-title.test.ts tests/launch.test.ts tests/paths.test.ts
 corepack pnpm --filter @open-design/tools-pack exec vitest run tests/config/config.test.ts tests/resources/mokina-brand.test.ts
 
-# Separately executed current ProjectView retry file (33 passed)
+# ProjectView retry and first-review error/drawing regression
 corepack pnpm --filter @open-design/web exec vitest run tests/components/ProjectView.retry-gating.test.tsx
+corepack pnpm --filter @open-design/web exec vitest run tests/components/ChatPane.error-card-ladder.test.tsx tests/runtime/chat/composer-draft.test.ts tests/runtime/send-request-state.test.ts
+corepack pnpm --filter @open-design/release test
 
 # Current localized copy regression
 corepack pnpm --filter @open-design/web exec vitest run tests/i18n/product-brand.test.ts
@@ -20,7 +22,7 @@ corepack pnpm i18n:check
 corepack pnpm typecheck
 
 # Final Mokina browser checks, after builds/checks finish
-PLAYWRIGHT_BROWSERS_PATH="$PLAYWRIGHT_CACHE" OD_E2E_NAMESPACE=mokina-local-v004-release-source NEXT_PUBLIC_MOKINA_EDITION=on MOKINA_LOCAL_EDITION=on corepack pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-input-preparation.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts --workers=1 --project=chromium
+OD_E2E_NAMESPACE=mokina-local-v004-release-source NEXT_PUBLIC_MOKINA_EDITION=on MOKINA_LOCAL_EDITION=on corepack pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-input-preparation.test.ts ui/mokina-cloud-handoff.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts --workers=1 --project=chromium
 
 # Production standalone build
 NEXT_PUBLIC_MOKINA_EDITION=on OD_WEB_OUTPUT_MODE=standalone OD_WEB_DIST_DIR=.next-v004-validation corepack pnpm --filter @open-design/web build

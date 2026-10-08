@@ -58,6 +58,21 @@ afterEach(() => {
 });
 
 describe('Mokina recovery adapts the existing classifier without Cloud handoffs', () => {
+  it.each([
+    ['read-only', 'chat.runError.title.readOnlyAccess', 'chat.runError.actionBlocked.readOnly'],
+    ['messages-unavailable', 'chat.runError.title.messagesUnavailable', 'chat.runError.actionBlocked.messagesUnavailable'],
+  ] as const)('preserves the %s explanation and does not send users to model settings', (accessError, title, description) => {
+    edition.mokina = true;
+    const onRetry = vi.fn(); const onOpenSettings = vi.fn();
+    const { container } = renderChat(failedMessage({ agentId: 'amr' }), { accessError, onRetry, onOpenSettings });
+    const card = container.querySelector('[data-user-action-card="run-recovery"]')!;
+    expect(card.textContent).toContain(title);
+    expect(screen.getByTestId('chat-run-error-description').textContent).toContain(description);
+    expect(card.textContent).not.toContain('mokina.model.unavailable');
+    expect(screen.queryByRole('button', { name: 'avatar.settings' })).toBeNull();
+    expect(screen.queryByTestId('chat-error-retry')).toBeNull();
+    expect(onOpenSettings).not.toHaveBeenCalled(); expect(onRetry).not.toHaveBeenCalled();
+  });
   it('explains a saved Cloud failure, opens settings and never retries or switches the model', () => {
     edition.mokina = true;
     const onRetry = vi.fn(); const onSwitchToAmrAndRetry = vi.fn(); const onOpenSettings = vi.fn();

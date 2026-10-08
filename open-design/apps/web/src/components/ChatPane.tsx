@@ -4539,7 +4539,7 @@ export function ChatPane({
                   <RunErrorCard
                     dataKind="run-recovery"
                     title={MOKINA_LOCAL_EDITION && failedRunUsesCloud && !accessErrorCopy ? t('chat.runError.title.generic') : displayErrorTitle}
-                    description={MOKINA_LOCAL_EDITION && failedRunUsesCloud ? t('mokina.model.unavailable') : displayError}
+                    description={MOKINA_LOCAL_EDITION && failedRunUsesCloud && !accessErrorCopy ? t('mokina.model.unavailable') : displayError}
                     actions={(
                       <>
                         {/* OPEND-2807: two standing actions and one runtime action. */}
@@ -4557,7 +4557,7 @@ export function ChatPane({
                         </RunErrorCardAction>
                         ) : null}
                         <ExportLogsAction />
-                        {MOKINA_LOCAL_EDITION && failedRunUsesCloud ? <RunErrorCardAction type="button" variant="primary" onClick={() => onOpenSettings?.('execution')}>{t('avatar.settings')}</RunErrorCardAction> : null}
+                        {MOKINA_LOCAL_EDITION && failedRunUsesCloud && !accessErrorCopy ? <RunErrorCardAction type="button" variant="primary" onClick={() => onOpenSettings?.('execution')}>{t('avatar.settings')}</RunErrorCardAction> : null}
                         {showCloudRetry && retryAssistant && onRetry ? (
                           <RunErrorCardAction
                             type="button"

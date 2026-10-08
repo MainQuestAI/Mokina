@@ -367,6 +367,7 @@ import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunity
 import { CenteredLoader } from './Loading';
 import { MokinaLiveStatus } from './mokina/MokinaLiveStatus';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import { sanitizeComposerDraftExtras } from '../runtime/chat/composer-draft';
 import { settleSubmittedMokinaSnapshot } from '../runtime/mokina/pending-context-snapshot';
 import { readHomeMokinaPreparation, clearHomeMokinaPreparation } from '../runtime/mokina/home-material-snapshot';
 import { MokinaHomePreparationNotice } from './mokina/MokinaHomePreparationNotice';
@@ -11288,8 +11289,17 @@ export function ProjectView({
    * 第二个任务。放弃：只清除本机待确认记录并解除重试拦截。
    */
   const discardPendingSendRecord = useCallback(async (record: SendRequestRecord) => {
-    if (!await persistClearSendRequest(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey)) setError(t('mokina.pendingSend.saveFailed'));
-  }, []);
+    if (!await persistClearSendRequest(record.projectId, record.conversationId, record.clientRequestId, record.authorityKey)) {
+      setError(t('mokina.pendingSend.saveFailed'));
+      return;
+    }
+    if (MOKINA_LOCAL_EDITION && record.phase === 'prepared' && record.status === 'draft'
+      && record.clientRequestId === homeAutoSendIdentity(record.projectId).clientRequestId) {
+      // Explicit discard consumes the source too; re-entry must not recreate it.
+      clearAutoSendSession(record.projectId);
+      setSendRecoveryRequest(current => current?.id === record.clientRequestId ? null : current);
+    }
+  }, [t]);
   const resendPendingSendRecord = useCallback(async (record: SendRequestRecord) => {
     const snapshot = record.snapshot;
     if (!snapshot || snapshot.requiresContextReselection) return;
@@ -13040,22 +13050,28 @@ export function ProjectView({
   const autoSendSeedRef = useRef<string | null>(null);
   const autoSendAttachmentsRef = useRef<ChatAttachment[] | null>(null);
   const autoSendContextRef = useRef<RunContextSelection | null>(null);
+  // Capture the unavailable runtime before settings can change. This is a
+  // permanent manual handoff, unlike ordinary transient Home preflight blocks.
+  const homeAutoSendRequiresManualRef = useRef(false);
   const autoSendFirstMessageRef = useRef(false);
   const autoSendAmrGateWitnessRef = useRef<AmrBalanceGateScope | undefined>(
     undefined,
   );
   if (autoSendSeedRef.current === null) {
     let isAutoSend = false;
+    let autoSendFlag: string | null = null;
     let amrGateWitness: AmrBalanceGateScope | undefined;
     try {
-      isAutoSend = Boolean(
-        window.sessionStorage.getItem(autoSendFirstMessageKey(project.id)),
-      );
+      autoSendFlag = window.sessionStorage.getItem(autoSendFirstMessageKey(project.id));
+      isAutoSend = Boolean(autoSendFlag);
       amrGateWitness = readAutoSendAmrGateWitness(project.id);
     } catch {
       /* sessionStorage may be unavailable; treat as manual flow. */
     }
     autoSendFirstMessageRef.current = isAutoSend;
+    homeAutoSendRequiresManualRef.current = MOKINA_LOCAL_EDITION && isAutoSend
+      && (config.mode === 'daemon' && config.agentId === 'amr'
+        || autoSendFlag === 'manual');
     autoSendAmrGateWitnessRef.current = isAutoSend
       ? amrGateWitness
       : undefined;
@@ -13742,7 +13758,6 @@ export function ProjectView({
     // render where the state is ready but the ref has already been invalidated
     // for a fresh scoped reload.
     if (messagesConversationIdRef.current !== activeConversationId) return;
-    if (!projectRunHasBillableAmrPrincipal) return;
     // Wait for the initial listMessages DB read to land. Without this gate
     // the auto-send fires before the in-flight DB response, which then
     // arrives with `setMessages([])` and wipes the freshly-pushed user +
@@ -13795,6 +13810,49 @@ export function ProjectView({
     if (!seed && attachments.length === 0) {
       return;
     }
+    const identity = homeAutoSendIdentity(project.id);
+    const savedManualHandoff = MOKINA_LOCAL_EDITION
+      ? loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
+        .find(record => record.clientRequestId === identity.clientRequestId
+          && record.phase === 'prepared' && record.status === 'draft')
+      : undefined;
+    if (MOKINA_LOCAL_EDITION && (homeAutoSendRequiresManualRef.current
+      || flag === 'manual' || savedManualHandoff
+      || config.mode === 'daemon' && config.agentId === 'amr')) {
+      // Latch BEFORE opening settings or awaiting storage. A model/config
+      // rerender must never turn this blocked intent into a dispatched run.
+      homeAutoSendRequiresManualRef.current = true;
+      autoSentRef.current = true;
+      try { window.sessionStorage.setItem(autoSendFirstMessageKey(project.id), 'manual'); }
+      catch { /* The scoped durable receipt below is the second recovery copy. */ }
+      setError(t('mokina.model.unavailable'));
+      if (config.mode === 'daemon' && config.agentId === 'amr') onOpenSettings('execution');
+      const conversationId = activeConversationId;
+      const lifetime = activeAuthorizationLifetimeRef.current;
+      const snapshot: SendRequestSnapshot = savedManualHandoff?.snapshot ?? {
+        prompt: seed,
+        extras: sanitizeComposerDraftExtras({ attachments, commentAttachments: [], quotes: [], context }),
+        ...(context?.pluginIds?.length ? { requiresContextReselection: true } : {}),
+        userMessageId: identity.userMessageId,
+        assistantMessageId: identity.assistantMessageId,
+      };
+      void (async () => {
+        const saved = savedManualHandoff?.snapshot ? 'saved' : await persistPendingSendRequest({
+          projectId: project.id, conversationId, authorityKey: projectRunAuthorityKey,
+          clientRequestId: identity.clientRequestId!, prompt: seed, snapshot,
+        });
+        const restored = saved === 'saved' && await persistSendRequestOutcome(
+          project.id, conversationId, identity.clientRequestId!, 'draft', projectRunAuthorityKey);
+        if (activeAuthorizationLifetimeRef.current !== lifetime
+          || messagesConversationIdRef.current !== conversationId) return;
+        if (!restored) { setError(t('mokina.pendingSend.saveFailed')); return; }
+        // ChatPane transfers the whole receipt into the durable composer draft;
+        // only its successful acknowledgement may consume the Home source.
+        setSendRecoveryRequest({ id: identity.clientRequestId!, snapshot });
+      })();
+      return;
+    }
+    if (!projectRunHasBillableAmrPrincipal) return;
     const autoSendGateStillMatches =
       autoSendAmrGateWitnessRef.current !== undefined &&
       amrBalanceGateScopesMatch(
@@ -13847,6 +13905,11 @@ export function ProjectView({
     projectRunHasBillableAmrPrincipal,
     projectRunBillingContext,
     projectRunPreflightContext,
+    projectRunAuthorityKey,
+    config.mode,
+    config.agentId,
+    onOpenSettings,
+    t,
     handleSend,
   ]);
 
@@ -14141,6 +14204,10 @@ export function ProjectView({
                 if (activeConversationId && !await persistClearSendRequest(project.id, activeConversationId, id, projectRunAuthorityKey)) {
                   setError(t('mokina.pendingSend.saveFailed'));
                   return;
+                }
+                if (homeAutoSendRequiresManualRef.current && id === homeAutoSendIdentity(project.id).clientRequestId) {
+                  clearAutoSendSession(project.id);
+                  autoSendAttachmentsRef.current = [];
                 }
                 setSendRecoveryRequest(null);
               }}

@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Button } from '@open-design/components';
 
 import { AgentIcon } from './AgentIcon';
 import { ChatComposer } from './ChatComposer';
@@ -25,6 +26,7 @@ interface Props {
   /** The files the user staged on Home. Still local `File` objects here. */
   files?: readonly File[];
   agentId?: string | null;
+  preparationFailure?: { message: string; retry?: () => void };
 }
 
 /** One staged file, resolved to everything the card needs without a request. */
@@ -70,6 +72,7 @@ interface ChatProps {
   /** The files the user staged on Home. Still local `File` objects here. */
   files?: readonly File[];
   agentId?: string | null;
+  preparationFailure?: Props['preparationFailure'];
 }
 
 /**
@@ -88,6 +91,7 @@ export function ProjectCreationPendingChat({
   prompt,
   files,
   agentId,
+  preparationFailure,
 }: ChatProps) {
   const { t } = useI18n();
   const agentName = agentDisplayName(agentId) ?? t('assistant.role');
@@ -183,6 +187,10 @@ export function ProjectCreationPendingChat({
               <span className="role-name">{agentName}</span>
             </div>
             <div className="assistant-flow">
+              {preparationFailure ? <div role="alert">
+                <p>{preparationFailure.message}</p>
+                <Button disabled={!preparationFailure.retry} onClick={preparationFailure.retry}>{t('mokina.repair.retryPreparation')}</Button>
+              </div> : null}
               <div
                 className="assistant-footer"
                 data-streaming="true"
@@ -247,6 +255,7 @@ export function ProjectCreationPendingView({
   prompt,
   files,
   agentId,
+  preparationFailure,
 }: Props) {
   const { t } = useI18n();
   // Same registry ProjectView uses, so WorkspaceTabsBar portals the real strip
@@ -320,6 +329,7 @@ export function ProjectCreationPendingView({
             prompt={prompt}
             files={files}
             agentId={agentId}
+            preparationFailure={preparationFailure}
           />
         </div>
         <div className="split-resize-handle" aria-hidden="true" />

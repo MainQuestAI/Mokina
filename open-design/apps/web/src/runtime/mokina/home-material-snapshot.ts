@@ -104,11 +104,19 @@ export function readHomeMokinaPreparation(projectId: string, conversationId: str
 }
 export async function saveHomeMokinaPreparation(record: HomeMokinaPreparationRecord) {
   const key = preparationKey(record.projectId, record.conversationId, record.workspaceKey);
-  const next = { ...record, revision: (record.revision ?? 0) + 1, recordVersion: randomUUID() };
+  let next = { ...record, revision: (record.revision ?? 0) + 1, recordVersion: randomUUID() };
   const raw = JSON.stringify(next);
   if (!await mutateDurableRecord(key, current => {
     if (current) {
       const previous = JSON.parse(current);
+      // A failed acknowledgement may follow a successful initial write. Reuse
+      // only that exact intent; a newer revision or changed input still conflicts.
+      if (!record.revision && previous.revision === 1 && previous.recordVersion
+        && JSON.stringify({ ...previous, revision: undefined, recordVersion: undefined })
+          === JSON.stringify({ ...record, revision: undefined, recordVersion: undefined })) {
+        next = previous;
+        return current;
+      }
       if (previous.snapshotId !== record.snapshotId || (previous.revision ?? 0) !== (record.revision ?? 0)) return undefined;
     } else if (record.revision) return undefined;
     return raw;

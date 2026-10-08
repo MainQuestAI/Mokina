@@ -79,3 +79,20 @@ it('rejects late preparation updates and does not clear a newer selection', asyn
   await clearHomeMokinaPreparation(preparing);
   expect(readHomeMokinaPreparation('p', 'c', 'none')).toEqual(adjusted);
 });
+
+it('reuses the initial preparation after its write committed but the acknowledgement failed', async () => {
+  const original: HomeMokinaPreparationRecord = { schemaVersion: 1, projectId: 'p', conversationId: 'c', workspaceKey: 'none', snapshotId: 's', plans: [], prompt: 'keep', status: 'preparing', excluded: [] };
+  const setItem = Storage.prototype.setItem;
+  const fault = vi.spyOn(Storage.prototype, 'setItem').mockImplementationOnce(function (this: Storage, key, value) {
+    setItem.call(this, key, value);
+    throw new Error('acknowledgement lost after write');
+  });
+  try {
+    await expect(saveHomeMokinaPreparation(original)).rejects.toThrow('保存失败');
+    const committed = readHomeMokinaPreparation('p', 'c', 'none');
+    expect(committed).toMatchObject({ revision: 1, snapshotId: 's' });
+    expect(await saveHomeMokinaPreparation(original)).toEqual(committed);
+    await expect(saveHomeMokinaPreparation({ ...original, prompt: 'different intent' })).rejects.toThrow('保存失败');
+    expect(readHomeMokinaPreparation('p', 'c', 'none')).toEqual(committed);
+  } finally { fault.mockRestore(); }
+});

@@ -82,3 +82,49 @@ test('[P1] Mokina keeps file purpose after reload but requires file reselection'
   await expect(notice).toHaveCount(0);
   await expect(page.getByLabel('kept.csv Mokina 用途')).toHaveValue('material');
 });
+
+test('[P1] Mokina retains staged input when the initial preparation save fails and retries the same target', async ({ page }) => {
+  const runs = await routeSuccessfulRuns(page);
+  const createdIds: string[] = [];
+  let uploads = 0;
+  page.on('request', request => {
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'POST' && path === '/api/projects') createdIds.push(request.postDataJSON().id);
+    if (request.method() === 'POST' && path.endsWith('/upload')) uploads++;
+  });
+  await page.addInitScript(() => {
+    const original = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (key.startsWith('od:composer-draft:mokina-home:') && !sessionStorage.getItem('mokina-test-preparation-failed')) {
+        sessionStorage.setItem('mokina-test-preparation-failed', '1');
+        throw new Error('Injected initial preparation write failure');
+      }
+      return original.call(this, key, value);
+    };
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByTestId('home-hero-input').fill('只根据本次资料计算金额。');
+  await page.getByTestId('home-hero-file-input').setInputFiles({ name: 'preserved.csv', mimeType: 'text/csv', buffer: Buffer.from('amount\n42') });
+  await page.getByLabel('preserved.csv Mokina 用途').selectOption('material');
+  const readStaged = () => page.evaluate(() => Object.keys(localStorage)
+    .filter(key => key.startsWith('od:composer-draft:mokina-staged:'))
+    .flatMap(key => JSON.parse(localStorage.getItem(key)!).inputs));
+  await expect.poll(readStaged).toMatchObject([{ name: 'preserved.csv', plan: { kind: 'material' } }]);
+  const originalInput = await readStaged();
+  await page.getByTestId('home-hero-submit').click();
+  await expect(page.getByRole('alert').filter({ hasText: '资料准备记录保存失败' })).toBeVisible();
+  expect(await readStaged()).toEqual(originalInput);
+  expect(createdIds).toHaveLength(1);
+  expect(uploads).toBe(0);
+  await runs.expectNone();
+  await page.getByRole('button', { name: 'Retry input preparation', exact: true }).click();
+  await runs.expectCount(1);
+  expect(createdIds).toHaveLength(1);
+  expect(new URL(page.url()).pathname.split('/')[2]).toBe(createdIds[0]);
+  expect(uploads).toBe(1);
+  await expect.poll(readStaged).toEqual([]);
+  const context = runs.bodies[0]!.context as { mokinaSnapshotId: string };
+  const snapshot = await page.request.get(`/api/projects/${createdIds[0]}/mokina/context-snapshots/${context.mokinaSnapshotId}`);
+  expect(snapshot.ok()).toBe(true);
+  expect((await snapshot.json()).snapshot.items[0].text).toBe('amount\n\n42');
+});

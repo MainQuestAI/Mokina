@@ -347,6 +347,7 @@ interface PendingProjectCreation {
    * shows the attachments without reading a project that is not persisted yet.
    */
   files: readonly File[];
+  preparationFailure?: { message: string; retry?: () => void };
 }
 
 const APP_CONFIG_CHANGED_EVENT = 'open-design:app-config-changed';
@@ -1117,6 +1118,7 @@ function AppInner() {
   // effect while the project actually stayed in the managed root.
   const [workingDirError, setWorkingDirError] = useState<string | null>(null);
   const [projectCreateError, setProjectCreateError] = useState<string | null>(null);
+  const [blockedHomePreparations, setBlockedHomePreparations] = useState<Record<string, PendingProjectCreation>>({});
   const [projectOpenError, setProjectOpenError] = useState<string | null>(null);
   const [recoveryNotice, setRecoveryNotice] = useState<{ message: string; tone: 'success' | 'error' } | null>(null);
   const [deepLinkResolutionFailure, setDeepLinkResolutionFailure] = useState<{
@@ -3378,7 +3380,36 @@ function AppInner() {
             workspaceKey: workspaceIdentityCacheKey(createWorkspaceContext), snapshotId: randomUUID(),
             plans: input.mokinaFilePlan, prompt: derivedPendingPrompt ?? '', status: 'preparing', excluded: [],
           };
-          homePreparation = await saveHomeMokinaPreparation(homePreparation);
+          // Keep the original submit unresolved until its inputs are durably
+          // handed off. A project row alone must not let Home clear its draft.
+          // Each retry resumes below createProject, with the same files/IDs.
+          for (;;) {
+            try {
+              homePreparation = await saveHomeMokinaPreparation(homePreparation);
+              setBlockedHomePreparations(current => {
+                const next = { ...current }; delete next[project.id]; return next;
+              });
+              break;
+            } catch (cause) {
+              await new Promise<void>(resolve => {
+                let resumed = false;
+                setBlockedHomePreparations(current => ({ ...current, [project.id]: {
+                  projectId: project.id, name: project.name, prompt: derivedPendingPrompt ?? '', files: pendingFiles,
+                  preparationFailure: {
+                    message: cause instanceof Error ? cause.message : t('mokina.pendingSend.saveFailed'),
+                    retry: () => {
+                      if (resumed) return;
+                      resumed = true;
+                      setBlockedHomePreparations(current => ({ ...current, [project.id]: {
+                        ...current[project.id]!, preparationFailure: undefined,
+                      } }));
+                      resolve();
+                    },
+                  },
+                } }));
+              });
+            }
+          }
         }
         setPendingProjectCreation((current) =>
           current?.projectId === optimisticProjectId ? { ...current, created: true } : current,
@@ -5579,10 +5610,10 @@ function AppInner() {
     // Keyed on the route, not on `activeProject`: the pending frame is built
     // from the creation record alone so it shows on the tick the create request
     // leaves, and survives a list refresh that has not seen the new row yet.
-    const pendingCreation =
+    const pendingCreation = blockedHomePreparations[route.projectId] ?? (
       pendingProjectCreation?.projectId === route.projectId
         ? pendingProjectCreation
-        : null;
+        : null);
     const routeSurfaceState = projectRouteSurfaceState({
       projectsLoading,
       hasActiveProject: activeProject !== null,
@@ -5609,6 +5640,7 @@ function AppInner() {
           prompt={pendingCreation.prompt}
           files={pendingCreation.files}
           agentId={config.agentId}
+          preparationFailure={pendingCreation.preparationFailure}
         />
       </div>
     ) : null;

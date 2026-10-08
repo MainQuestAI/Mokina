@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "packages": [
+    {
+      "id": "S01",
+      "title": "Web品牌与资产",
+      "spec": "specs/S01-Web品牌与资产.md",
+      "depends_on": [],
+      "status": "not_started",
+      "brand_inventory": [
+        "B01",
+        "B02",
+        "B03",
+        "B04",
+        "B08",
+        "B09"
+      ],
+      "source_paths": [
+        "open-design/apps/web/app/layout.tsx",
+        "open-design/apps/web/src/components/HomeHero.tsx",
+        "open-design/apps/web/src/components/EntryNavRail.tsx",
+        "open-design/apps/web/src/components/AssistantMessage.tsx",
+        "open-design/apps/web/src/styles/primitives.css"
+      ],
+      "acceptance": [
+        "S01-AC01",
+        "S01-AC02"
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Tokens图标与公共控件",
+      "spec": "specs/S02-Tokens图标与公共控件.md",
+      "depends_on": [],
+      "status": "not_started",
+      "brand_inventory": [
+        "B10",
+        "B11",
+        "B12",
+        "B13",
+        "B17"
+      ],
+      "source_paths": [
+        "open-design/apps/web/src/styles/tokens.css",
+        "open-design/apps/web/src/styles/shell.css",
+        "open-design/apps/web/src/components/Icon.tsx",
+        "open-design/apps/web/src/components/RemixIcon.tsx",
+        "open-design/apps/web/src/components/FileTypeIcon.tsx",
+        "open-design/apps/web/src/components/MokinaWorkspace.module.css"
+      ],
+      "acceptance": [
+        "S02-AC01",
+        "S02-AC02",
+        "S02-AC03",
+        "S02-AC04"
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "首页导航与统一输入器",
+      "spec": "specs/S03-首页导航与统一输入器.md",
+      "depends_on": [
+        "S01",
+        "S02"
+      ],
+      "status": "not_started",
+      "brand_inventory": [
+        "B03",
+        "B05",
+        "B10"
+      ],
+      "source_paths": [
+        "open-design/apps/web/src/App.tsx",
+        "open-design/apps/web/src/components/HomeView.tsx",
+        "open-design/apps/web/src/components/HomeHero.tsx",
+        "open-design/apps/web/src/components/ChatComposer.tsx",
+        "open-design/apps/web/src/components/ProjectCreationPendingView.tsx",
+        "open-design/apps/web/src/components/mokina/MokinaHomePreparationNotice.tsx",
+        "open-design/apps/web/src/components/SettingsDialog.tsx",
+        "open-design/apps/web/src/i18n/locales/zh-CN.ts"
+      ],
+      "acceptance": [
+        "S03-AC01",
+        "S03-AC02"
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "成果工作台与修订版本",
+      "spec": "specs/S04-成果工作台与修订版本.md",
+      "depends_on": [
+        "S03"
+      ],
+      "status": "not_started",
+      "brand_inventory": [
+        "B17",
+        "B18"
+      ],
+      "source_paths": [
+        "open-design/apps/web/src/components/ProjectView.tsx",
+        "open-design/apps/web/src/components/FileViewer.tsx",
+        "open-design/apps/web/src/components/MokinaWorkspace.module.css",
+        "open-design/apps/web/src/components/mokina/MokinaCandidateCompare.tsx",
+        "open-design/apps/web/src/components/MokinaArtifactActions.module.css"
+      ],
+      "acceptance": [
+        "S04-AC01",
+        "S04-AC02",
+        "S04-AC03",
+        "S04-AC04"
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "精确资料与恢复状态",
+      "spec": "specs/S05-精确资料与恢复状态.md",
+      "depends_on": [
+        "S04"
+      ],
+      "status": "not_started",
+      "brand_inventory": [
+        "B10",
+        "B16",
+        "B17",
+        "B19"
+      ],
+      "source_paths": [
+        "open-design/apps/web/src/components/mokina/MokinaContextPanel.tsx",
+        "open-design/apps/web/src/components/mokina/MokinaContinuationRecoveryNotice.tsx",
+        "open-design/apps/web/src/components/mokina/MokinaRunEvidence.tsx",
+        "open-design/apps/web/src/components/ProjectView.tsx",
+        "open-design/apps/web/src/components/FileViewer.tsx"
+      ],
+      "acceptance": [
+        "S05-AC01",
+        "S05-AC02",
+        "S05-AC03"
+      ]
+    },
+    {
+      "id": "S06",
+      "title": "绘画标注与桌面身份",
+      "spec": "specs/S06-绘画标注与桌面身份.md",
+      "depends_on": [
+        "S01",
+        "S02",
+        "S05"
+      ],
+      "status": "not_started",
+      "brand_inventory": [
+        "B05",
+        "B06",
+        "B07",
+        "B14",
+        "B15",
+        "B18",
+        "B19",
+        "B20"
+      ],
+      "source_paths": [
+        "open-design/apps/web/src/components/SketchEditor.tsx",
+        "open-design/apps/web/src/components/PreviewDrawOverlay.tsx",
+        "open-design/apps/web/src/components/home-hero/PixelScanLogo.tsx",
+        "open-design/apps/web/src/components/home-hero/pixel-scan/engine.ts",
+        "open-design/apps/desktop/src/main/splash-pixel-scan.ts",
+        "open-design/apps/desktop/src/main/runtime.ts",
+        "open-design/tools/pack/src/config/product-profile.ts",
+        "open-design/tools/pack/src/resources/index.ts",
+        "open-design/apps/packaged/src/index.ts",
+        "open-design/apps/packaged/src/config.ts",
+        "open-design/apps/packaged/src/window-title.ts"
+      ],
+      "acceptance": [
+        "S06-AC01",
+        "S06-AC02"
+      ]
+    },
+    {
+      "id": "S07",
+      "title": "集成候选与签收",
+      "spec": "specs/S07-集成候选与签收.md",
+      "depends_on": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06"
+      ],
+      "status": "not_started",
+      "brand_inventory": [],
+      "source_paths": [
+        ".github/workflows/ci.yml",
+        "open-design/e2e/ui/mokina-input-preparation.test.ts",
+        "open-design/e2e/ui/mokina-navigation.test.ts",
+        "open-design/e2e/ui/mokina-workspace-actions.test.ts",
+        "open-design/e2e/specs/mac.spec.ts"
+      ],
+      "acceptance": [
+        "S07-AC01",
+        "S07-AC02"
+      ]
+    }
+  ]
+}

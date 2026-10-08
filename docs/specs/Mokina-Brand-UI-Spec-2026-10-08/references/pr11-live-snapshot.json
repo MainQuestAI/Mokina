@@ -1,0 +1,14 @@
+{
+  "captured_date": "2026-10-08",
+  "method": "gh pr view 11 --repo MainQuestAI/Mokina --json number,title,url,state,headRefOid,baseRefName,mergedAt,mergeCommit,statusCheckRollup",
+  "number": 11,
+  "url": "https://github.com/MainQuestAI/Mokina/pull/11",
+  "state": "MERGED",
+  "headRefOid": "8243d0fd2dc3184c88a02f484c451686edcee855",
+  "baseRefName": "main",
+  "mergeCommit": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "mergedAt": "2026-10-08T01:35:36Z",
+  "validate": "SUCCESS",
+  "check_url": "https://github.com/MainQuestAI/Mokina/actions/runs/37712476336/job/113101332412",
+  "note": "Read-only snapshot; not a new test run."
+}

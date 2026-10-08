@@ -1,0 +1,77 @@
+/* Mokina shared glass material —— 本文件是非 stage-one 表面与对照页/菜单变体的唯一事实来源。
+   分层：结构层 → 光学层 → 状态层。
+   body.material-stage-one 工作区的面层、圆角、阴影与 rim 高光由 design-system/mokina-system.css 接管
+   （它在原样式之后加载，同级冲突以它为准），本文件不再重复那些定义。 */
+
+/* ---------- 结构层：玻璃平面与子层几何 ---------- */
+.glass-plane{--light-x:50%;--light-y:0%;isolation:isolate;overflow:hidden}
+.glass-plane>.glass-face,.glass-plane>.glass-rim{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1}
+
+/* ---------- 光学层 ---------- */
+/* 基础铬面：透射底色、面层柔光、边缘环带（首页侧栏、“更多”菜单、对照页基线列）。 */
+.glass-plane{background:oklch(.96 .003 255/.09);border:1px solid oklch(1 0 0/.79);box-shadow:0 14px 28px oklch(.24 .01 255/.12),0 2px 6px oklch(.24 .01 255/.08),inset 0 1px 0 oklch(1 0 0/.8),inset 0 -1px 0 oklch(.7 .006 255/.2)}
+.glass-plane>.glass-face{background:linear-gradient(145deg,oklch(1 0 0/.30),oklch(.94 .004 255/.13) 55%,oklch(1 0 0/.22));backdrop-filter:blur(7px) saturate(1.04)}
+/* 光斑坐标是注册自定义属性，指针跟随由 CSS 过渡抹平；不支持的浏览器退回即时更新。 */
+@property --light-x{syntax:"<percentage>";inherits:true;initial-value:50%}
+@property --light-y{syntax:"<percentage>";inherits:true;initial-value:0%}
+.glass-plane>.glass-rim{inset:-1px;border:1px solid oklch(1 0 0/.72);background:radial-gradient(ellipse 55% 26% at var(--light-x) var(--light-y),oklch(1 0 0/.38),transparent 75%),linear-gradient(145deg,oklch(1 0 0/.29),transparent 21% 74%,oklch(.66 .006 255/.16));box-shadow:inset 1px 1px 1px oklch(1 0 0/.6),inset -1px -2px 2px oklch(.46 .006 255/.13);backdrop-filter:var(--glass-filter,url(#glass-toolbar-refract));-webkit-backdrop-filter:var(--glass-filter,url(#glass-toolbar-refract));mask-image:var(--rim-mask,url(assets/glass-rim-toolbar.png?v=2));mask-size:100% 100%;mask-repeat:no-repeat;mask-mode:alpha;transition:--light-x var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1),--light-y var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1),box-shadow var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1),opacity 120ms cubic-bezier(.2,.7,.2,1)}
+/* 变体接线：固定 PNG/SVG 只是 JS 几何生成前的回退；eligible 组件随后被生成的 mask/filter 覆盖。 */
+[data-glass="sidebar"]{--glass-filter:url(#glass-sidebar-refract);--rim-mask:url(assets/glass-rim-sidebar.png?v=2)}
+[data-glass="menu"]{--glass-filter:url(#glass-menu-refract);--rim-mask:url(assets/glass-rim-menu.png?v=2)}
+
+/* The shell is a quiet, nonuniform backdrop; opaque page content stays readable. */
+.shell{background:radial-gradient(ellipse 170px 260px at 0 10%,oklch(.985 .002 255),transparent 100%),radial-gradient(ellipse 300px 400px at 15% 88%,oklch(.785 .006 255/.72),transparent 100%),linear-gradient(114deg,oklch(.885 .004 255),oklch(.965 .003 255) 26%,oklch(.89 .004 255) 42%,oklch(.995 .002 255) 53%)}
+.glass-filter-defs{position:absolute;overflow:hidden;pointer-events:none}
+/* 浮层自身不做 backdrop-filter：透射只发生在 face/rim 两层，前景文字图标保持清晰。 */
+.sidebar.glass-plane,.result-toolbar.glass-plane,.popover.glass-plane{backdrop-filter:none;-webkit-backdrop-filter:none;background:oklch(.97 .003 255/.08);border-color:oklch(1 0 0/.77)}
+.sidebar.glass-plane{box-shadow:9px 8px 24px oklch(.28 .014 255/.10),0 2px 5px oklch(.28 .014 255/.08),inset 0 1px 0 oklch(1 0 0/.87)}
+.result{position:relative;min-height:0;overflow:hidden;background:var(--surface)}
+.result-toolbar.glass-plane{position:absolute;top:16px;left:16px;right:16px;z-index:5;margin:0;min-height:74px;box-shadow:0 13px 26px oklch(.27 .015 255/.14),0 2px 6px oklch(.27 .015 255/.08),inset 0 1px 0 oklch(1 0 0/.84)}
+.result-scroll{flex:1;min-height:0;overflow:auto;padding:0;scrollbar-gutter:stable}
+.result-tabs{padding:108px clamp(28px,4vw,64px) 0;background:transparent}
+.result-content{padding:34px clamp(28px,4vw,64px) 70px;min-height:calc(100% - 151px)}
+.toolbar-actions .btn:hover{background:oklch(.84 .007 255/.34);color:var(--fg)}
+.toolbar-actions .btn:active{background:oklch(.78 .008 255/.42);color:var(--fg)}
+/* 弹出菜单（首页“更多”）：menu 变体比工具条更实，保证短菜单可读。 */
+.popover.glass-plane{animation:glass-menu-in .22s cubic-bezier(.2,.8,.26,1) both;transform-origin:85% 0;box-shadow:0 18px 32px oklch(.22 .01 255/.18),0 2px 7px oklch(.22 .01 255/.10)}
+.glass-plane[data-glass="menu"]{background:oklch(.99 .002 255/.82)}
+.glass-plane[data-glass="menu"]>.glass-face{background:oklch(.99 .002 255/.27);backdrop-filter:blur(12px)}
+.popover.glass-plane button{position:relative;min-height:40px}
+.popover.glass-plane button:hover{background:oklch(.83 .006 255/.37);color:var(--fg)}
+@keyframes glass-menu-in{from{opacity:0;transform:translateY(-6px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+/* 退出：app.js 关闭时给现存 popover 挂 .is-closing，过渡结束后再卸载；时长取 --mk-duration。 */
+.popover.glass-plane.is-closing{animation:none;opacity:0;transform:translateY(-6px) scale(.97);transition:opacity var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1),transform var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1)}
+@media(max-width:1350px){.result-toolbar.glass-plane{top:12px;left:12px;right:12px}.result-content{padding:28px 30px 60px}.result-tabs{padding:103px 30px 0}}
+@media(max-width:1100px){.result-tabs{padding-top:145px}}
+@media(max-width:760px){.result-toolbar.glass-plane{top:8px;left:8px;right:8px}.result-content{padding:24px 20px 55px}.result-tabs{padding:151px 20px 0}}
+#lab-grid[data-mode="old"]{grid-template-columns:minmax(0,1fr);max-width:810px}#lab-grid[data-mode="old"] .new,#lab-grid[data-mode="new"] .old{display:none}#lab-grid[data-mode="new"]{grid-template-columns:minmax(0,1fr);max-width:810px}
+
+/* 尺寸适配材质：material-compare 新侧 + 首页“更多”菜单。stage-one 工作区不经过这几条。 */
+.material-lab .new .glass-plane,.task-more .popover.glass-plane{background:oklch(1 0 0/.08);border-color:oklch(1 0 0/.34);box-shadow:0 12px 24px oklch(.25 .01 255/.095),0 2px 5px oklch(.25 .01 255/.055)}
+.material-lab .new .glass-plane>.glass-face,.task-more .popover.glass-plane>.glass-face{z-index:0}
+.material-lab .new .glass-plane>.glass-face{background:linear-gradient(135deg,oklch(1 0 0/.36),oklch(.99 .002 255/.19) 56%,oklch(.93 .003 255/.13));backdrop-filter:blur(5px) saturate(1.02);-webkit-backdrop-filter:blur(5px) saturate(1.02)}
+.material-lab .new .glass-plane>.glass-rim,.task-more .popover.glass-plane>.glass-rim{z-index:0;inset:0;border:0;background:radial-gradient(ellipse 38% 40% at var(--light-x) var(--light-y),oklch(1 0 0/.25),transparent 85%),linear-gradient(145deg,oklch(1 0 0/.13),transparent 35% 70%,oklch(.62 .004 255/.07));box-shadow:none;mask-image:var(--rim-mask);-webkit-mask-image:var(--rim-mask);mask-size:100% 100%;-webkit-mask-size:100% 100%;backdrop-filter:var(--glass-filter);-webkit-backdrop-filter:var(--glass-filter);opacity:0;transition:opacity var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1),background var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1)}
+/* stage-one 工作区只剩几何接线（遮罩、位移滤镜、前景分层）；rim 高光与阴影的 SSOT 是 mokina-system.css。 */
+.material-stage-one .glass-plane>.glass-rim{z-index:0;inset:0;border:0;box-shadow:none;mask-image:var(--rim-mask);-webkit-mask-image:var(--rim-mask);mask-size:100% 100%;-webkit-mask-size:100% 100%;backdrop-filter:var(--glass-filter);-webkit-backdrop-filter:var(--glass-filter);opacity:0;transition:opacity var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1),background var(--mk-duration,160ms) cubic-bezier(.2,.7,.2,1)}
+.material-stage-one .glass-plane[data-glass-ready="true"]>.glass-rim,.material-lab .new .glass-plane[data-glass-ready="true"]>.glass-rim,.task-more .popover.glass-plane[data-glass-ready="true"]>.glass-rim{opacity:1}
+.material-stage-one .glass-plane[data-glass-output="blur-fallback"]>.glass-rim,.material-lab .new .glass-plane[data-glass-output="blur-fallback"]>.glass-rim,.task-more .popover.glass-plane[data-glass-output="blur-fallback"]>.glass-rim{backdrop-filter:none;-webkit-backdrop-filter:none}
+.material-stage-one .glass-plane>*:not(.glass-face):not(.glass-rim),.material-lab .new .glass-plane>*:not(.glass-face):not(.glass-rim),.task-more .popover.glass-plane>*:not(.glass-face):not(.glass-rim){position:relative;z-index:1}
+.material-stage-one .result-toolbar .toolbar-actions .btn{background:transparent;border-color:transparent;box-shadow:none;min-height:44px}
+.material-stage-one .result-toolbar .toolbar-actions .btn:hover{background:oklch(.84 .004 255/.36);color:var(--fg)}
+.material-stage-one .result-toolbar .toolbar-actions .btn:active{background:oklch(.78 .004 255/.42);color:var(--fg)}
+.task-more .popover.glass-plane{background:oklch(.99 .002 255/.54);box-shadow:0 14px 29px oklch(.24 .01 255/.12),0 2px 5px oklch(.24 .01 255/.06)}
+.task-more .popover.glass-plane button{min-height:44px}
+.task-more .popover.glass-plane>.glass-face{background:oklch(.99 .002 255/.24);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#lab-grid[data-refraction="off"] .glass-rim{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* ---------- 状态层 ---------- */
+/* 悬停/按压：非 stage-one 表面；stage-one 工作区的同名状态在 mokina-system.css。 */
+.glass-plane:hover>.glass-rim{box-shadow:inset 1px 1px 2px oklch(1 0 0/.85),inset -2px -3px 3px oklch(.46 .006 255/.18)}
+.glass-plane:active>.glass-rim{opacity:.74}
+@media(prefers-reduced-motion:reduce){.glass-plane>.glass-rim{transition:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+@media(prefers-reduced-transparency:reduce){.glass-plane{background:oklch(.98 .002 255)}.glass-plane>.glass-face,.glass-plane>.glass-rim{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:transparent}}
+body.reduce-motion .glass-plane>.glass-rim{transition:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.reduce-transparency .glass-plane{background:oklch(.98 .002 255)!important}body.reduce-transparency .glass-plane>.glass-face,body.reduce-transparency .glass-plane>.glass-rim{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:transparent!important}
+body.glass-motion-off .material-stage-one .glass-rim,body.glass-motion-off.material-stage-one .glass-rim,body.glass-motion-off.material-lab .new .glass-rim{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transition:none!important}
+body.glass-opacity-off.material-stage-one .glass-plane,body.glass-opacity-off.material-lab .new .glass-plane,body.glass-opacity-off .task-more .popover.glass-plane{background:oklch(.985 .002 255)!important;border-color:oklch(.82 .004 255)!important}
+body.glass-opacity-off.material-stage-one .glass-face,body.glass-opacity-off.material-stage-one .glass-rim,body.glass-opacity-off.material-lab .new .glass-face,body.glass-opacity-off.material-lab .new .glass-rim,body.glass-opacity-off .task-more .popover.glass-plane>.glass-face,body.glass-opacity-off .task-more .popover.glass-plane>.glass-rim{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}

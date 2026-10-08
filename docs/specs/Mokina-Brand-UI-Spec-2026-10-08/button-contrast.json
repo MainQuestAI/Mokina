@@ -1,0 +1,72 @@
+{
+  "method": "sRGB relative luminance; opaque colors; unrounded mix channels",
+  "scope": "Spec numeric check only, not browser computed style or visual acceptance",
+  "results": [
+    {
+      "theme": "light",
+      "state": "default",
+      "background_srgb": [
+        0,
+        113,
+        227
+      ],
+      "foreground": "#ffffff",
+      "contrast": 4.697
+    },
+    {
+      "theme": "light",
+      "state": "hover",
+      "background_srgb": [
+        0.0,
+        103.96000000000001,
+        208.84
+      ],
+      "foreground": "#ffffff",
+      "contrast": 5.388
+    },
+    {
+      "theme": "light",
+      "state": "pressed",
+      "background_srgb": [
+        0.0,
+        97.17999999999999,
+        195.22
+      ],
+      "foreground": "#ffffff",
+      "contrast": 5.989
+    },
+    {
+      "theme": "dark",
+      "state": "default",
+      "background_srgb": [
+        41,
+        151,
+        255
+      ],
+      "foreground": "#111111",
+      "contrast": 6.263
+    },
+    {
+      "theme": "dark",
+      "state": "hover",
+      "background_srgb": [
+        58.120000000000005,
+        159.32000000000002,
+        255.00000000000003
+      ],
+      "foreground": "#111111",
+      "contrast": 6.839
+    },
+    {
+      "theme": "dark",
+      "state": "pressed",
+      "background_srgb": [
+        70.96000000000001,
+        165.56,
+        255.0
+      ],
+      "foreground": "#111111",
+      "contrast": 7.314
+    }
+  ]
+}

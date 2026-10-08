@@ -1,0 +1,27 @@
+/* Approved stage two: preserve the three-column work object while revising. */
+.document .document-identity{font-size:13px;line-height:1.45;color:var(--muted);font-weight:650;letter-spacing:.015em;margin:0 0 13px}
+.document .lead{color:var(--fg);font-size:19px;line-height:1.7;font-weight:520;max-width:730px;margin-bottom:31px}
+.collab-head .source-link{display:flex;align-items:center;gap:6px;min-width:0;flex-wrap:wrap}
+.collab-head .source-link button{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;min-height:30px;vertical-align:middle}
+.result-task-state{margin:16px clamp(28px,4vw,64px) 0;padding:12px 15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;line-height:1.55}
+.result-task-state strong{font-weight:700}.result-task-state p{margin:2px 0 0;color:var(--muted);font-size:13px}.result-task-state .btn{flex:none}
+.revision-work{min-height:0}.revision-work.is-wide{grid-template-columns:minmax(0,1fr)}.revision-work.is-wide>.collab,.revision-work.is-wide>.resize-handle{display:none}
+.revision-main{min-width:0;min-height:0;background:var(--surface);display:flex;flex-direction:column}.revision-scroll{min-width:0;min-height:0;overflow:auto;scrollbar-gutter:stable}
+.revision-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:28px 30px 20px;border-bottom:1px solid var(--border)}
+.revision-header h1{font-size:29px;line-height:1.3;margin:4px 0 7px}.revision-header p{font-size:13px;color:var(--muted);margin:0}.revision-header .btn-row{justify-content:flex-end;flex:none}
+.revision-inner{padding:24px 30px 52px;max-width:1480px;margin:auto}.revision-controls{max-width:880px}.revision-controls .section-picker{margin:12px 0 20px}
+.section-picker button{min-height:44px}.section-picker button[aria-pressed="true"]{border-color:var(--accent-deep);color:var(--accent-deep);background:var(--surface);font-weight:700}
+.revision-prompt{max-width:780px}.revision-prompt textarea{min-height:98px}.revision-prompt .btn-row{margin-top:12px}
+.revision-compare{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:22px}
+.revision-compare .compare-card{display:flex;flex-direction:column;min-width:0}.revision-compare .compare-head{min-height:58px}.revision-compare .compare-body{max-height:none;min-height:360px;overflow:visible;padding:20px}.revision-compare .compare-body p{overflow-wrap:anywhere}
+.revision-compare .table-scroll{max-height:240px}.revision-compare .compare-body .btn-row{margin-top:20px}.revision-compare .compare-body h3{margin-bottom:13px}
+.revision-empty{color:var(--muted);font-size:14px;line-height:1.6}.operation-detail{margin-top:12px;background:transparent;border-color:var(--border)}.operation-detail summary{font-size:12px}.operation-detail p{font-size:12px;overflow-wrap:anywhere}
+.candidate-document{max-height:57vh;overflow:auto;border:1px solid var(--border);border-radius:9px;background:var(--surface);padding:22px 26px}.candidate-document .document{max-width:none}.candidate-document .document h1{font-size:25px}.candidate-document .document .lead{font-size:16px}.candidate-document .document h2{font-size:18px}
+.version-row[aria-pressed="true"]{border-color:var(--accent-deep);box-shadow:0 0 0 2px var(--accent-ring)}.version-selected{color:var(--accent-deep);font-size:12px;font-weight:700}
+@media(max-width:1350px){.result-task-state{margin-left:30px;margin-right:30px}.revision-header{padding:24px 22px 17px}.revision-inner{padding:20px 22px 42px}.revision-compare .compare-body{padding:17px}}
+@media(max-width:1080px){.revision-compare{grid-template-columns:1fr}.revision-compare .compare-body{min-height:0}.revision-header{flex-wrap:wrap}.revision-header .btn-row{justify-content:flex-start}}
+@media(max-width:760px){.result-task-state{margin:12px 20px 0;flex-wrap:wrap}.revision-work.is-wide{grid-template-columns:1fr}.revision-header,.revision-inner{padding-left:18px;padding-right:18px}.revision-compare{grid-template-columns:1fr}}
+.revision-compare .compare-body p{white-space:pre-line}
+.candidate-dialog{width:min(1020px,100%);max-height:min(90vh,900px)}
+.candidate-dialog>.candidate-document{min-height:150px}
+@media(max-width:1100px){.revision-work .collab-head .source-link button{max-width:260px}}

@@ -1,0 +1,3655 @@
+{
+  "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+  "status": "static_pass",
+  "method": "load all supported dictionaries and apply production pre-interpolation branding helper",
+  "locales": [
+    {
+      "locale": "ar",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "de",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "en",
+      "new_keys": 6,
+      "raw_brand_mentions": 180,
+      "translated_product_mentions": 145
+    },
+    {
+      "locale": "es-ES",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "fa",
+      "new_keys": 6,
+      "raw_brand_mentions": 176,
+      "translated_product_mentions": 139
+    },
+    {
+      "locale": "fr",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 142
+    },
+    {
+      "locale": "hu",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "id",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "it",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "ja",
+      "new_keys": 6,
+      "raw_brand_mentions": 177,
+      "translated_product_mentions": 140
+    },
+    {
+      "locale": "ko",
+      "new_keys": 6,
+      "raw_brand_mentions": 176,
+      "translated_product_mentions": 139
+    },
+    {
+      "locale": "pl",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "pt-BR",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "ru",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "th",
+      "new_keys": 6,
+      "raw_brand_mentions": 177,
+      "translated_product_mentions": 140
+    },
+    {
+      "locale": "tr",
+      "new_keys": 6,
+      "raw_brand_mentions": 177,
+      "translated_product_mentions": 140
+    },
+    {
+      "locale": "uk",
+      "new_keys": 6,
+      "raw_brand_mentions": 178,
+      "translated_product_mentions": 141
+    },
+    {
+      "locale": "zh-CN",
+      "new_keys": 6,
+      "raw_brand_mentions": 179,
+      "translated_product_mentions": 142
+    },
+    {
+      "locale": "zh-TW",
+      "new_keys": 6,
+      "raw_brand_mentions": 177,
+      "translated_product_mentions": 142
+    }
+  ],
+  "retained_keys": [
+    "assistant.shareToOpenDesign",
+    "avatar.amrConsole",
+    "chat.amrBalanceGate.benefitsTitle",
+    "chat.amrBalanceGate.signedOutMessage",
+    "chat.amrBalanceGate.signedOutTitle",
+    "chat.amrCard.switchBody",
+    "chat.amrCard.switchCta",
+    "chat.amrCard.switchedResend",
+    "chat.amrError.authMessage",
+    "chat.amrError.balanceMessage",
+    "chat.contextPrompt.referenceProject",
+    "chat.runError.title.signInRequired.amr",
+    "designFiles.usefulInfoTip8",
+    "entry.cloudCalloutBody",
+    "entry.cloudCalloutDismissAria",
+    "entry.cloudCalloutTitle",
+    "entry.followXLabel",
+    "entry.xAria",
+    "handoff.amrWebsite",
+    "handoff.promptIntro",
+    "home.amrGateUnavailable",
+    "library.openDesignSystem",
+    "pluginDetail.officialBadge",
+    "pluginsView.scope.official",
+    "settings.amrAccountStatus",
+    "settings.amrCloud",
+    "settings.amrConsole",
+    "settings.amrLoginErrorCompact",
+    "settings.amrWalletRefreshTitle",
+    "settings.cloudCalloutTitle",
+    "settings.mcpBuildHint",
+    "settings.onboardingAmrCloudAuthorizeAction",
+    "settings.onboardingAmrModelSourceLabel",
+    "settings.onboardingCloudSignIn",
+    "settings.onboardingCloudTitle",
+    "settings.onboardingGateTooltipAmr",
+    "useEverywhere.section.http.footer",
+    "useEverywhere.section.http.intro",
+    "useEverywhere.section.overview.footer"
+  ],
+  "retained_versions": [
+    {
+      "locale": "ar.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "بدِّل إلى خدمة نماذج OpenDesign Cloud الرسمية — لا حاجة لإعداد مفتاح API. بعد تسجيل الدخول والتفويض والشحن، ستُعاد محاولة هذه المهمة تلقائيًا."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "التبديل إلى OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "تم التبديل إلى OpenDesign Cloud. يُرجى إعادة إرسال المهمة."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "حساب OpenDesign Cloud الخاص بك لم يتم تفويضه بعد. فوِّضه وستُعاد محاولة هذه المهمة تلقائيًا."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "نفد رصيد OpenDesign Cloud الخاص بك. اشحن للاستمرار في هذه المهمة."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "ما يقدّمه لك OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "أنت تستخدم وكيل OpenDesign Cloud — سجّل الدخول وستبدأ هذه المهمة فورًا."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "لم يتم تسجيل الدخول إلى Open Design"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "تخويل OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "تسجيل الدخول إلى OpenDesign"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "تسجيل الدخول إلى OpenDesign"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "الخطوات التالية تعمل بالذكاء الاصطناعي — سجّل الدخول إلى OpenDesign Cloud للمتابعة."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "حالة حساب OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "فشل تسجيل الدخول إلى OpenDesign Cloud."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "الملف apps/daemon/dist/cli.js مفقود. شغّل `pnpm --filter @open-design/daemon build` ثم حدّث."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "entry.xAria",
+      "copy": "تابع @OpenDesignHQ لمعرفة كل جديد"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "entry.followXLabel",
+      "copy": "تابع @OpenDesignHQ على X"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "تعذّر تأكيد رصيد OpenDesign Cloud. حاول الإرسال مرة أخرى."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "سجّل الدخول لاستخدام OpenDesign Cloud والتعاون عبر السحابة"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "إغلاق ملاحظة OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "فتح موقع OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "handoff.promptIntro",
+      "copy": "المتابعة من مجلد مشروع OpenDesign المحلي هذا:"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "يكتب الـ daemon إلى `./.od/` (محلي للمشروع) افتراضيًا. عيّن `OD_DATA_DIR=~/.open-design` لمشاركة البيانات عبر المشاريع."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "يخدم الـ daemon المحلي واجهة HTTP API على `http://127.0.0.1:7456` (المنفذ قابل للتهيئة). كل نقطة نهاية تستدعيها واجهة الويب متاحة أيضًا للنصوص البرمجية الخاصة بك. تُصدر نقاط نهاية البثّ (أدوار المحادثة، عمليات تشغيل المشاريع) أحداث Server-Sent Events بأنواع العقود الموجودة في `@open-design/contracts`."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "تتوفر أنواع TypeScript خالصة لكل طلب/استجابة في `@open-design/contracts` — استوردها في سكربتك للحصول على إكمال تلقائي كامل دون تهيئة مُولِّد."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "avatar.amrConsole",
+      "copy": "حساب OpenDesign Cloud"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "تابع @OpenDesignHQ على X لمعرفة آخر المستجدات."
+    },
+    {
+      "locale": "ar.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "المشاركة على OpenDesign"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "ar.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Wechsle zum offiziellen OpenDesign Cloud-Modelldienst von OpenDesign Cloud — kein API-Key-Setup nötig. Nach Anmeldung, Autorisierung und Aufladung wird dieser Lauf automatisch wiederholt."
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Zu OpenDesign Cloud wechseln"
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Zu OpenDesign Cloud gewechselt. Bitte sende die Aufgabe erneut."
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Dein OpenDesign Cloud-Konto ist noch nicht autorisiert. Autorisiere es, und dieser Lauf wird automatisch wiederholt."
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Dein OpenDesign Cloud-Guthaben ist aufgebraucht. Lade auf, um diesen Lauf fortzusetzen."
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Das bietet dir OpenDesign Cloud"
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Du verwendest den OpenDesign Cloud-Agenten — melde dich an und diese Aufgabe kann sofort starten."
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design ist nicht angemeldet"
+    },
+    {
+      "locale": "de.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "OpenDesign Cloud autorisieren"
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Bei OpenDesign anmelden"
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Bei OpenDesign anmelden"
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "Die nächsten Schritte laufen über KI — melde dich bei OpenDesign Cloud an, um fortzufahren."
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "OpenDesign Cloud-Kontostatus"
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "OpenDesign Cloud-Anmeldung fehlgeschlagen."
+    },
+    {
+      "locale": "de.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js fehlt. Führe `pnpm --filter @open-design/daemon build` aus und aktualisiere."
+    },
+    {
+      "locale": "de.ts",
+      "key": "entry.xAria",
+      "copy": "@OpenDesignHQ für Updates folgen"
+    },
+    {
+      "locale": "de.ts",
+      "key": "entry.followXLabel",
+      "copy": "Folge @OpenDesignHQ auf X"
+    },
+    {
+      "locale": "de.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "de.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Das OpenDesign-Cloud-Guthaben konnte nicht bestätigt werden. Bitte erneut senden."
+    },
+    {
+      "locale": "de.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Melden Sie sich an, um OpenDesign Cloud zu nutzen und in der Cloud zusammenzuarbeiten"
+    },
+    {
+      "locale": "de.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "OpenDesign Cloud-Hinweis schließen"
+    },
+    {
+      "locale": "de.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "OpenDesign Cloud-Website öffnen"
+    },
+    {
+      "locale": "de.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Von diesem lokalen OpenDesign-Projektordner fortfahren:"
+    },
+    {
+      "locale": "de.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "de.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "Der Daemon schreibt standardmäßig nach `./.od/` (projektlokal). Setze `OD_DATA_DIR=~/.open-design`, um Daten projektübergreifend zu teilen."
+    },
+    {
+      "locale": "de.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "Der lokale Daemon stellt eine HTTP-API unter `http://127.0.0.1:7456` bereit (Port konfigurierbar). Jeder Endpunkt, den die Web-UI aufruft, steht auch deinen Skripten offen. Streaming-Endpunkte (Chat-Turns, Projektläufe) senden Server-Sent Events mit den Vertragstypen in `@open-design/contracts`."
+    },
+    {
+      "locale": "de.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Reine TypeScript-Typen für jede Anfrage/Antwort befinden sich in `@open-design/contracts` — importiere sie in dein Skript für vollständige Autovervollständigung, ohne einen Generator einzurichten."
+    },
+    {
+      "locale": "de.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud-Konto"
+    },
+    {
+      "locale": "de.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Folge @OpenDesignHQ auf X für Neuigkeiten."
+    },
+    {
+      "locale": "de.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "An OpenDesign teilen"
+    },
+    {
+      "locale": "de.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "de.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Switch to OpenDesign Cloud — no API key setup needed. After you sign in, authorize, and top up, this run retries automatically."
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Switch to OpenDesign Cloud"
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Switched to OpenDesign Cloud. Please resend your task."
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Your OpenDesign Cloud account isn't authorized yet. Authorize it and this run retries automatically."
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Your OpenDesign Cloud allowance has run out. Top up to keep this run going."
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "What you get with OpenDesign Cloud"
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "You're using the OpenDesign Cloud agent — sign in and this task can start right away."
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design is not signed in"
+    },
+    {
+      "locale": "en.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Sign in to OpenDesign"
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Sign in to OpenDesign"
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "The next steps run on AI — sign in to OpenDesign Cloud to continue."
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "OpenDesign Cloud account status"
+    },
+    {
+      "locale": "en.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js is missing. Run `pnpm --filter @open-design/daemon build` and refresh."
+    },
+    {
+      "locale": "en.ts",
+      "key": "entry.xAria",
+      "copy": "Follow @OpenDesignHQ for updates"
+    },
+    {
+      "locale": "en.ts",
+      "key": "entry.followXLabel",
+      "copy": "Follow @OpenDesignHQ on X"
+    },
+    {
+      "locale": "en.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "en.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Couldn't confirm your OpenDesign Cloud balance. Try sending again."
+    },
+    {
+      "locale": "en.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Sign in to use OpenDesign Cloud and collaborate in the cloud"
+    },
+    {
+      "locale": "en.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Dismiss OpenDesign Cloud note"
+    },
+    {
+      "locale": "en.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Visit OpenDesign Cloud"
+    },
+    {
+      "locale": "en.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Continue from this local OpenDesign project folder:"
+    },
+    {
+      "locale": "en.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "en.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "The daemon writes to `./.od/` (project-local) by default. Set `OD_DATA_DIR=~/.open-design` to share data across projects."
+    },
+    {
+      "locale": "en.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "The local daemon serves an HTTP API at `http://127.0.0.1:7456` (port configurable). Every endpoint the web UI calls is also fair game for your scripts. Streaming endpoints (chat turns, project runs) emit Server-Sent Events with the contract types in `@open-design/contracts`."
+    },
+    {
+      "locale": "en.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Pure TypeScript types for every request/response live in `@open-design/contracts` — import them in your script for full autocomplete without wiring a generator."
+    },
+    {
+      "locale": "en.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "en.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Follow @OpenDesignHQ on X for the latest updates."
+    },
+    {
+      "locale": "en.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Share to OpenDesign"
+    },
+    {
+      "locale": "en.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "en.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Cambia al servicio oficial de modelos de OpenDesign Cloud — sin configurar API Key. Tras iniciar sesión, autorizar y recargar, esta ejecución se reintentará automáticamente."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Cambiar a OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Se ha cambiado a OpenDesign Cloud. Vuelve a enviar la tarea."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Tu cuenta de OpenDesign Cloud aún no está autorizada. Autorízala y esta ejecución se reintentará automáticamente."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Tu saldo de OpenDesign Cloud se ha agotado. Recarga para continuar esta ejecución."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Lo que te ofrece OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Estás usando el agente de OpenDesign Cloud: inicia sesión y esta tarea podrá empezar de inmediato."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design no ha iniciado sesión"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "Autorizar OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Inicia sesión en OpenDesign"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Inicia sesión en OpenDesign"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "Los siguientes pasos se ejecutan con IA: inicia sesión en OpenDesign Cloud para continuar."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "Estado de la cuenta OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Error al iniciar sesión en OpenDesign Cloud."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "Falta apps/daemon/dist/cli.js. Ejecuta `pnpm --filter @open-design/daemon build` y actualiza."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "entry.xAria",
+      "copy": "Sigue a @OpenDesignHQ para ver las novedades"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "entry.followXLabel",
+      "copy": "Sigue a @OpenDesignHQ en X"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "No se pudo confirmar tu saldo de OpenDesign Cloud. Vuelve a enviar."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Inicia sesión para usar OpenDesign Cloud y colaborar en la nube"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Cerrar el aviso de OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Abrir el sitio web de OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Continuar desde esta carpeta local del proyecto de OpenDesign:"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "El daemon escribe en `./.od/` (local del proyecto) de forma predeterminada. Define `OD_DATA_DIR=~/.open-design` para compartir datos entre proyectos."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "El daemon local sirve una API HTTP en `http://127.0.0.1:7456` (puerto configurable). Cada endpoint que llama la interfaz web también está disponible para tus scripts. Los endpoints de streaming (turnos de chat, ejecuciones de proyectos) emiten Server-Sent Events con los tipos de contrato de `@open-design/contracts`."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Los tipos de TypeScript puros para cada solicitud/respuesta residen en `@open-design/contracts`: impórtalos en tu script para tener autocompletado completo sin tener que configurar un generador."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "avatar.amrConsole",
+      "copy": "Cuenta OpenDesign Cloud"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Sigue a @OpenDesignHQ en X para conocer las novedades."
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Compartir con OpenDesign"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "es-ES.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "به سرویس رسمی مدل OpenDesign Cloud سوئیچ کنید — بدون نیاز به تنظیم کلید API. پس از ورود، اعطای دسترسی و شارژ، این اجرا به‌طور خودکار دوباره انجام می‌شود."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "سوئیچ به OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "به OpenDesign Cloud تغییر داده شد. لطفاً وظیفه را دوباره ارسال کنید."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "حساب OpenDesign Cloud شما هنوز مجاز نشده است. آن را مجاز کنید تا این اجرا به‌طور خودکار دوباره انجام شود."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "موجودی OpenDesign Cloud شما تمام شده است. برای ادامه این اجرا شارژ کنید."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "آنچه OpenDesign Cloud به شما می‌دهد"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "شما از ایجنت OpenDesign Cloud استفاده می‌کنید — وارد شوید تا این وظیفه بلافاصله شروع شود."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "به Open Design وارد نشده‌اید"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "مجوزدهی OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "ورود به OpenDesign"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "ورود به OpenDesign"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "مراحل بعدی با هوش مصنوعی اجرا می‌شوند — برای ادامه وارد OpenDesign Cloud شوید."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "وضعیت حساب OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "ورود به OpenDesign Cloud ناموفق بود."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js یافت نشد. دستور `pnpm --filter @open-design/daemon build` را اجرا کنید و صفحه را تازه‌سازی کنید."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "entry.xAria",
+      "copy": "برای دیدن قابلیت‌های تازه @OpenDesignHQ را دنبال کنید"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "entry.followXLabel",
+      "copy": "دنبال کردن @OpenDesignHQ در X"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "تأیید موجودی OpenDesign Cloud ممکن نشد. دوباره ارسال کنید."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "برای استفاده از OpenDesign Cloud و همکاری در فضای ابری وارد شوید"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "بستن یادداشت OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "باز کردن وب‌سایت OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "handoff.promptIntro",
+      "copy": "ادامه از این پوشه محلی پروژه OpenDesign:"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "daemon به صورت پیش‌فرض در `./.od/` (محلی پروژه) می‌نویسد. برای اشتراک‌گذاری داده‌ها میان پروژه‌ها، `OD_DATA_DIR=~/.open-design` را تنظیم کنید."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "daemon محلی یک API HTTP را در `http://127.0.0.1:7456` ارائه می‌دهد (پورت قابل پیکربندی است). هر اندپوینتی که رابط کاربری وب فراخوانی می‌کند، برای اسکریپت‌های شما نیز قابل استفاده است. اندپوینت‌های استریمینگ (نوبت‌های گفت‌وگو، اجرای پروژه‌ها) رویدادهای Server-Sent را با انواع قرارداد موجود در `@open-design/contracts` منتشر می‌کنند."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "تایپ‌های خالص TypeScript برای هر درخواست/پاسخ در `@open-design/contracts` قرار دارند — آن‌ها را در اسکریپت خود import کنید تا بدون سیم‌کشی یک generator، تکمیل خودکار کامل داشته باشید."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "avatar.amrConsole",
+      "copy": "حساب OpenDesign Cloud"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "برای آخرین خبرها @OpenDesignHQ را در X دنبال کنید."
+    },
+    {
+      "locale": "fa.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "اشتراک‌گذاری در OpenDesign"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "fa.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Passez au service de modèles OpenDesign Cloud officiel d'OpenDesign Cloud — aucune clé API à configurer. Après connexion, autorisation et recharge, cette exécution sera relancée automatiquement."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Passer à OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Passage à OpenDesign Cloud effectué. Veuillez renvoyer votre tâche."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Votre compte OpenDesign Cloud n'est pas encore autorisé. Autorisez-le et cette exécution sera relancée automatiquement."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Votre solde OpenDesign Cloud est épuisé. Rechargez pour poursuivre cette exécution."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Ce que vous offre OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Vous utilisez l’agent OpenDesign Cloud — connectez-vous et cette tâche pourra démarrer aussitôt."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design n’est pas connecté"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Utilise le projet OpenDesign « {name} » comme contexte de référence. Son chemin local est : {path}. Avant de concevoir ou modifier quoi que ce soit, cherche et lis ce dossier lorsque c’est utile."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "Hébergé par OpenDesign"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "Autoriser OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Se connecter à OpenDesign"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Se connecter à OpenDesign"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "Les étapes suivantes tournent sur IA — connectez-vous à OpenDesign Cloud pour continuer."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Utiliser OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Actualiser le solde du portefeuille OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "Statut du compte OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Échec de la connexion OpenDesign Cloud."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js est introuvable. Exécutez `pnpm --filter @open-design/daemon build`, puis actualisez."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "entry.xAria",
+      "copy": "Suivez @OpenDesignHQ pour les nouveautés"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "entry.followXLabel",
+      "copy": "Suivre @OpenDesignHQ sur X"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Impossible de confirmer votre solde OpenDesign Cloud. Réessayez d'envoyer."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Connectez-vous pour utiliser OpenDesign Cloud et collaborer dans le cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Fermer la note OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Ouvrir le site OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Continuez à partir de ce dossier de projet OpenDesign local :"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "Officiel OpenDesign"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "Par défaut, le daemon écrit dans `./.od/` (local au projet). Définissez `OD_DATA_DIR=~/.open-design` pour partager les données entre projets."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "Le daemon local expose une API HTTP sur `http://127.0.0.1:7456` (port configurable). Tous les endpoints appelés par l’UI web peuvent aussi être utilisés par vos scripts. Les endpoints de streaming (tours de chat, exécutions de projet) émettent des Server-Sent Events avec les types de contrat de `@open-design/contracts`."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Les types TypeScript purs pour chaque requête/réponse vivent dans `@open-design/contracts` — importez-les dans votre script pour profiter de l’autocomplétion sans générateur."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "avatar.amrConsole",
+      "copy": "Compte OpenDesign Cloud"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Suivez @OpenDesignHQ sur X pour suivre les nouveautés."
+    },
+    {
+      "locale": "fr.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Partager avec OpenDesign"
+    },
+    {
+      "locale": "fr.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "Officiel OpenDesign"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Válts az OpenDesign Cloud hivatalos modellszolgáltatására — nincs szükség API-kulcs beállítására. Bejelentkezés, engedélyezés és feltöltés után ez a futtatás automatikusan újraindul."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Váltás OpenDesign Cloud-re"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Átváltottunk az OpenDesign Cloudra. Kérjük, küldd el újra a feladatot."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Az OpenDesign Cloud-fiókod még nincs engedélyezve. Engedélyezd, és ez a futtatás automatikusan újraindul."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Az OpenDesign Cloud-egyenleged elfogyott. Tölts fel a futtatás folytatásához."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Amit az OpenDesign Cloud nyújt"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Az OpenDesign Cloud agentet használod — jelentkezz be, és ez a feladat azonnal indulhat."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Az Open Design nincs bejelentkezve"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "OpenDesign Cloud engedélyezése"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Bejelentkezés az OpenDesignba"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Bejelentkezés az OpenDesignba"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "A következő lépések MI-n futnak — jelentkezz be az OpenDesign Cloud-be a folytatáshoz."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "OpenDesign Cloud fiók állapota"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Az OpenDesign Cloud bejelentkezés sikertelen."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "Az apps/daemon/dist/cli.js hiányzik. Futtasd a `pnpm --filter @open-design/daemon build` parancsot, majd frissíts."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "entry.xAria",
+      "copy": "Kövesd az @OpenDesignHQ-t az újdonságokért"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "entry.followXLabel",
+      "copy": "Kövesd a @OpenDesignHQ fiókot az X-en"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Nem sikerült megerősíteni az OpenDesign Cloud egyenleget. Próbáld újra elküldeni."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Jelentkezzen be az OpenDesign Cloud használatához és a felhőalapú együttműködéshez"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "OpenDesign Cloud értesítés bezárása"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "OpenDesign Cloud webhely megnyitása"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Folytatás ebből a helyi OpenDesign projektmappából:"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "A daemon alapértelmezetten a `./.od/` mappába (projektszintű) ír. Állítsd be az `OD_DATA_DIR=~/.open-design` értéket, hogy az adatokat megoszd a projektek között."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "A helyi daemon egy HTTP API-t szolgál ki a `http://127.0.0.1:7456` címen (a port konfigurálható). Minden végpont, amelyet a webes felület hív, a szkriptjeid számára is elérhető. A streamelő végpontok (chatfordulók, projektfuttatások) Server-Sent Events eseményeket bocsátanak ki a `@open-design/contracts` szerződéstípusaival."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Minden kéréshez/válaszhoz tartozó tiszta TypeScript típusok a `@open-design/contracts` csomagban élnek — importáld őket a szkriptedbe a teljes automatikus kiegészítéshez, generátor bekötése nélkül."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud-fiók"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Kövesd a @OpenDesignHQ fiókot X-en a friss hírekért."
+    },
+    {
+      "locale": "hu.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Megosztás az OpenDesignnal"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "hu.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Beralih ke layanan model resmi OpenDesign Cloud — tanpa perlu mengatur API Key. Setelah masuk, otorisasi, dan isi ulang, proses ini akan dicoba ulang otomatis."
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Beralih ke OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Beralih ke OpenDesign Cloud. Silakan kirim ulang tugas Anda."
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Akun OpenDesign Cloud Anda belum diotorisasi. Otorisasi sekarang dan proses ini akan dicoba ulang otomatis."
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Saldo OpenDesign Cloud Anda habis. Isi ulang untuk melanjutkan proses ini."
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Yang Anda dapatkan dengan OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Anda menggunakan agen OpenDesign Cloud — masuk dan tugas ini bisa langsung dimulai."
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design belum masuk"
+    },
+    {
+      "locale": "id.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "Otorisasi OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Masuk ke OpenDesign"
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Masuk ke OpenDesign"
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "Langkah berikutnya berjalan dengan AI — masuk ke OpenDesign Cloud untuk melanjutkan."
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "Status akun OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Proses masuk OpenDesign Cloud gagal."
+    },
+    {
+      "locale": "id.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js tidak ditemukan. Jalankan `pnpm --filter @open-design/daemon build` dan segarkan."
+    },
+    {
+      "locale": "id.ts",
+      "key": "entry.xAria",
+      "copy": "Ikuti @OpenDesignHQ untuk info terbaru"
+    },
+    {
+      "locale": "id.ts",
+      "key": "entry.followXLabel",
+      "copy": "Ikuti @OpenDesignHQ di X"
+    },
+    {
+      "locale": "id.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Saldo OpenDesign Cloud tidak dapat dikonfirmasi. Coba kirim lagi."
+    },
+    {
+      "locale": "id.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Masuk untuk menggunakan OpenDesign Cloud dan berkolaborasi di cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Tutup catatan OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Buka situs web OpenDesign Cloud"
+    },
+    {
+      "locale": "id.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Lanjutkan dari folder proyek OpenDesign lokal ini:"
+    },
+    {
+      "locale": "id.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "id.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "Daemon menulis ke `./.od/` (lokal proyek) secara default. Atur `OD_DATA_DIR=~/.open-design` untuk berbagi data lintas proyek."
+    },
+    {
+      "locale": "id.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "Daemon lokal menyajikan HTTP API di `http://127.0.0.1:7456` (port dapat dikonfigurasi). Setiap endpoint yang dipanggil web UI juga dapat digunakan untuk skrip Anda. Endpoint streaming (giliran chat, jalannya proyek) memancarkan Server-Sent Events dengan tipe kontrak di `@open-design/contracts`."
+    },
+    {
+      "locale": "id.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Tipe TypeScript murni untuk setiap request/response tersedia di `@open-design/contracts` — impor di skrip Anda untuk autocomplete penuh tanpa perlu menyiapkan generator."
+    },
+    {
+      "locale": "id.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud account"
+    },
+    {
+      "locale": "id.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Ikuti @OpenDesignHQ di X untuk kabar terbaru."
+    },
+    {
+      "locale": "id.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Bagikan ke OpenDesign"
+    },
+    {
+      "locale": "id.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "id.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Passa al servizio modelli OpenDesign Cloud ufficiale di OpenDesign Cloud — nessuna chiave API da configurare. Dopo accesso, autorizzazione e ricarica, questa esecuzione verrà ritentata automaticamente."
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Passa a OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Passaggio a OpenDesign Cloud completato. Invia di nuovo la richiesta."
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Il tuo account OpenDesign Cloud non è ancora autorizzato. Autorizzalo e questa esecuzione verrà ritentata automaticamente."
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Il tuo saldo OpenDesign Cloud è esaurito. Ricarica per continuare questa esecuzione."
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Cosa ti offre OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Stai usando l’agente OpenDesign Cloud: accedi e questa attività potrà partire subito."
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design non ha effettuato l’accesso"
+    },
+    {
+      "locale": "it.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "Autorizza OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Accedi a OpenDesign"
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Accedi a OpenDesign"
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "I passaggi successivi vengono eseguiti tramite IA — accedi a OpenDesign Cloud per continuare."
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "Stato account OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Accesso OpenDesign Cloud non riuscito."
+    },
+    {
+      "locale": "it.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js è mancante. Esegui `pnpm --filter @open-design/daemon build` e aggiorna."
+    },
+    {
+      "locale": "it.ts",
+      "key": "entry.xAria",
+      "copy": "Segui @OpenDesignHQ per gli aggiornamenti"
+    },
+    {
+      "locale": "it.ts",
+      "key": "entry.followXLabel",
+      "copy": "Segui @OpenDesignHQ su X"
+    },
+    {
+      "locale": "it.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Impossibile confermare il saldo OpenDesign Cloud. Riprova a inviare."
+    },
+    {
+      "locale": "it.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Accedi per usare OpenDesign Cloud e collaborare nel cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Chiudi l'avviso di OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Apri il sito OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Continua da questa cartella di progetto locale di OpenDesign:"
+    },
+    {
+      "locale": "it.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "it.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "Per impostazione predefinita, il daemon scrive in `./.od/` (locale al progetto). Imposta `OD_DATA_DIR=~/.open-design` per condividere i dati tra progetti."
+    },
+    {
+      "locale": "it.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "Il daemon locale serve un'API HTTP su `http://127.0.0.1:7456` (porta configurabile). Ogni endpoint chiamato dalla web UI è utilizzabile anche dai tuoi script. Gli endpoint di streaming (turni di chat, esecuzioni di progetto) emettono Server-Sent Events con i tipi di contratto in `@open-design/contracts`."
+    },
+    {
+      "locale": "it.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "I tipi TypeScript puri per ogni richiesta/risposta si trovano in `@open-design/contracts` — importali nel tuo script per il completamento automatico completo senza configurare un generatore."
+    },
+    {
+      "locale": "it.ts",
+      "key": "avatar.amrConsole",
+      "copy": "Account OpenDesign Cloud"
+    },
+    {
+      "locale": "it.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Segui @OpenDesignHQ su X per le ultime novità."
+    },
+    {
+      "locale": "it.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Condividi su OpenDesign"
+    },
+    {
+      "locale": "it.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "it.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "OpenDesign Cloud 公式のモデルサービスに切り替えてください — API キーの設定は不要です。サインイン・認可・チャージが完了すると、このタスクは自動で再試行されます。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "OpenDesign Cloud に切り替える"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "OpenDesign Cloud に切り替えました。タスクを再送信してください。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "OpenDesign Cloud アカウントがまだ認可されていません。認可するとこのタスクは自動で再試行されます。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "OpenDesign Cloud の残高が不足しています。チャージしてこのタスクを続行してください。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "OpenDesign Cloud で得られるもの"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "OpenDesign Cloud エージェントを使用中です。サインインすれば、このタスクをすぐに開始できます。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design にサインインしていません"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "OpenDesign Cloud を認証"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "OpenDesign にサインイン"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "OpenDesign にサインイン"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "この先のステップは AI で実行されます。続けるには OpenDesign Cloud にサインインしてください。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud を使う"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "OpenDesign Cloud アカウントの状態"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "OpenDesign Cloud へのサインインに失敗しました。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js が見つかりません。`pnpm --filter @open-design/daemon build` を実行して更新してください。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "entry.xAria",
+      "copy": "@OpenDesignHQ をフォローして最新情報をチェック"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "entry.followXLabel",
+      "copy": "X で @OpenDesignHQ をフォロー"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "OpenDesign Cloud の残高を確認できませんでした。もう一度送信してください。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "サインインして OpenDesign Cloud を利用し、クラウドでコラボレーションしましょう"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "OpenDesign Cloud の案内を閉じる"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "OpenDesign CloudのWebサイトを開く"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "handoff.promptIntro",
+      "copy": "このローカルのOpenDesignプロジェクトフォルダから続行してください:"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "デーモンはデフォルトで `./.od/`（プロジェクトローカル）に書き込みます。プロジェクト間でデータを共有するには `OD_DATA_DIR=~/.open-design` を設定してください。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "ローカルデーモンは `http://127.0.0.1:7456`（ポートは設定可能）で HTTP API を提供します。web UI が呼び出すすべてのエンドポイントは、あなたのスクリプトからも自由に利用できます。ストリーミングエンドポイント（チャットターン、プロジェクト実行）は、`@open-design/contracts` のコントラクト型を伴う Server-Sent Events を発行します。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "すべてのリクエスト/レスポンスの純粋な TypeScript 型は `@open-design/contracts` にあります — ジェネレーターを組み込まなくても、スクリプトにインポートするだけで完全な補完が得られます。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud アカウント"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "X で @OpenDesignHQ をフォローして最新情報をチェック。"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "OpenDesign に共有"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "ja.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "OpenDesign Cloud 공식 모델 서비스로 전환하세요 — API 키 설정이 필요 없습니다. 로그인・인증・충전이 완료되면 이 작업이 자동으로 재시도됩니다."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "OpenDesign Cloud로 전환"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "OpenDesign Cloud로 전환했습니다. 작업을 다시 보내 주세요."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "OpenDesign Cloud 계정이 아직 인증되지 않았습니다. 인증하면 이 작업이 자동으로 재시도됩니다."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "OpenDesign Cloud 잔액이 부족합니다. 충전하여 이 작업을 계속 진행하세요."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "OpenDesign Cloud이 제공하는 것"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "OpenDesign Cloud 에이전트를 사용 중입니다. 로그인하면 이 작업을 바로 시작할 수 있습니다."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design에 로그인되지 않음"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "OpenDesign Cloud 인증"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "OpenDesign에 로그인"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "OpenDesign에 로그인"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "다음 단계는 AI로 실행됩니다 — 계속하려면 OpenDesign Cloud에 로그인하세요."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud 사용"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "OpenDesign Cloud 계정 상태"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "OpenDesign Cloud 로그인에 실패했습니다."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js가 없습니다. `pnpm --filter @open-design/daemon build`를 실행한 후 새로고침하세요."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "entry.xAria",
+      "copy": "@OpenDesignHQ 팔로우하고 새 소식 받기"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "entry.followXLabel",
+      "copy": "X에서 @OpenDesignHQ 팔로우하기"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "OpenDesign Cloud 잔액을 확인하지 못했습니다. 다시 보내 주세요."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "로그인하여 OpenDesign Cloud를 사용하고 클라우드에서 협업하세요"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "OpenDesign Cloud 안내 닫기"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "OpenDesign Cloud 웹사이트 열기"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "handoff.promptIntro",
+      "copy": "이 로컬 OpenDesign 프로젝트 폴더에서 계속 진행하세요:"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "데몬은 기본적으로 `./.od/`(프로젝트 로컬)에 기록합니다. 프로젝트 간에 데이터를 공유하려면 `OD_DATA_DIR=~/.open-design`을 설정하세요."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "로컬 데몬은 `http://127.0.0.1:7456`에서 HTTP API를 제공합니다(포트 구성 가능). 웹 UI가 호출하는 모든 엔드포인트는 스크립트에서도 마찬가지로 사용할 수 있습니다. 스트리밍 엔드포인트(채팅 턴, 프로젝트 실행)는 `@open-design/contracts`의 계약 타입과 함께 Server-Sent Events를 내보냅니다."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "모든 요청/응답에 대한 순수 TypeScript 타입은 `@open-design/contracts`에 있습니다 — 생성기를 연결하지 않고도 완전한 자동 완성을 위해 스크립트에서 가져오세요."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud 계정"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "X에서 @OpenDesignHQ를 팔로우하고 최신 소식을 받아 보세요."
+    },
+    {
+      "locale": "ko.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "OpenDesign에 공유"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "ko.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Przełącz się na oficjalną usługę modeli OpenDesign Cloud — bez konfigurowania klucza API. Po zalogowaniu, autoryzacji i doładowaniu zadanie zostanie automatycznie ponowione."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Przełącz na OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Przełączono na OpenDesign Cloud. Wyślij zadanie ponownie."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Twoje konto OpenDesign Cloud nie zostało jeszcze autoryzowane. Autoryzuj je, a zadanie zostanie automatycznie ponowione."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Saldo OpenDesign Cloud zostało wyczerpane. Doładuj, aby kontynuować zadanie."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Co daje Ci OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Używasz agenta OpenDesign Cloud — zaloguj się, a to zadanie ruszy od razu."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Nie zalogowano w Open Design"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "Autoryzuj OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Zaloguj się do OpenDesign"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Zaloguj się do OpenDesign"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "Kolejne kroki działają na AI — zaloguj się do OpenDesign Cloud, aby kontynuować."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "Status konta OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Logowanie OpenDesign Cloud nie powiodło się."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "Brakuje apps/daemon/dist/cli.js. Uruchom `pnpm --filter @open-design/daemon build` i odśwież."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "entry.xAria",
+      "copy": "Obserwuj @OpenDesignHQ, aby poznawać nowości"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "entry.followXLabel",
+      "copy": "Obserwuj @OpenDesignHQ na X"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Nie udało się potwierdzić salda OpenDesign Cloud. Spróbuj wysłać ponownie."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Zaloguj się, aby korzystać z OpenDesign Cloud i współpracować w chmurze"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Zamknij powiadomienie OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Otwórz stronę OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Kontynuuj z tego lokalnego folderu projektu OpenDesign:"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "Daemon domyślnie zapisuje do `./.od/` (lokalnie w projekcie). Ustaw `OD_DATA_DIR=~/.open-design`, aby współdzielić dane między projektami."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "Lokalny daemon udostępnia API HTTP pod adresem `http://127.0.0.1:7456` (port konfigurowalny). Każdy punkt końcowy wywoływany przez interfejs web jest również dostępny dla Twoich skryptów. Strumieniowe punkty końcowe (tury czatu, uruchomienia projektów) emitują zdarzenia Server-Sent Events z typami kontraktów z `@open-design/contracts`."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Czyste typy TypeScript dla każdego żądania/odpowiedzi znajdują się w `@open-design/contracts` — zaimportuj je w swoim skrypcie, aby uzyskać pełne autouzupełnianie bez konfigurowania generatora."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "avatar.amrConsole",
+      "copy": "Konto OpenDesign Cloud"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Obserwuj @OpenDesignHQ na X, by śledzić nowości."
+    },
+    {
+      "locale": "pl.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Udostępnij OpenDesign"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "pl.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Mude para o serviço oficial de modelos do OpenDesign Cloud — sem precisar configurar API Key. Após entrar, autorizar e recarregar, esta execução será repetida automaticamente."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Mudar para OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Alterado para o OpenDesign Cloud. Envie a tarefa novamente."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Sua conta OpenDesign Cloud ainda não está autorizada. Autorize-a e esta execução será repetida automaticamente."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Seu saldo OpenDesign Cloud acabou. Recarregue para continuar esta execução."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "O que o OpenDesign Cloud oferece"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Você está usando o agente OpenDesign Cloud — entre e esta tarefa pode começar na hora."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design não está conectado"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "Autorizar OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Entrar no OpenDesign"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Entrar no OpenDesign"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "As próximas etapas rodam em IA — faça login no OpenDesign Cloud para continuar."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "Status da conta OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Falha no login do OpenDesign Cloud."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js está ausente. Execute `pnpm --filter @open-design/daemon build` e atualize."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "entry.xAria",
+      "copy": "Siga @OpenDesignHQ para ver as novidades"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "entry.followXLabel",
+      "copy": "Siga @OpenDesignHQ no X"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Não foi possível confirmar seu saldo do OpenDesign Cloud. Tente enviar novamente."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Entre para usar o OpenDesign Cloud e colaborar na nuvem"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Dispensar o aviso do OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Abrir site da OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Continuar a partir desta pasta de projeto local do OpenDesign:"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "Por padrão, o daemon escreve em `./.od/` (local do projeto). Defina `OD_DATA_DIR=~/.open-design` para compartilhar dados entre projetos."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "O daemon local serve uma API HTTP em `http://127.0.0.1:7456` (porta configurável). Todo endpoint que a UI web chama também está disponível para seus scripts. Endpoints de streaming (turnos de chat, execuções de projeto) emitem Server-Sent Events com os tipos de contrato em `@open-design/contracts`."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Tipos TypeScript puros para cada requisição/resposta ficam em `@open-design/contracts` — importe-os no seu script para autocompletar completo sem configurar um gerador."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "avatar.amrConsole",
+      "copy": "Conta OpenDesign Cloud"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Siga @OpenDesignHQ no X para acompanhar as novidades."
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Compartilhar com OpenDesign"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "pt-BR.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Переключитесь на официальный сервис моделей OpenDesign Cloud — без настройки API-ключа. После входа, авторизации и пополнения это выполнение будет автоматически повторено."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Переключиться на OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Выполнено переключение на OpenDesign Cloud. Отправьте задачу повторно."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Ваш аккаунт OpenDesign Cloud ещё не авторизован. Авторизуйте его, и это выполнение будет автоматически повторено."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Баланс OpenDesign Cloud исчерпан. Пополните, чтобы продолжить это выполнение."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Что даёт OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Вы используете агент OpenDesign Cloud — войдите, и эта задача сразу запустится."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Вход в Open Design не выполнен"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Используйте проект OpenDesign «{name}» как референсный контекст. Его локальный путь: {path}. Перед проектированием или изменениями при необходимости найдите и прочитайте файлы в этой папке."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "Авторизовать OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Войти в OpenDesign"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Войти в OpenDesign"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "Следующие шаги выполняются на ИИ — войдите в OpenDesign Cloud, чтобы продолжить."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Обновить баланс OpenDesign Cloud-кошелька"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "Статус аккаунта OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Не удалось войти в OpenDesign Cloud."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "Файл apps/daemon/dist/cli.js отсутствует. Выполните `pnpm --filter @open-design/daemon build` и обновите."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "entry.xAria",
+      "copy": "Подпишитесь на @OpenDesignHQ, чтобы узнавать о новинках"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "entry.followXLabel",
+      "copy": "Подписаться на @OpenDesignHQ в X"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Не удалось подтвердить баланс OpenDesign Cloud. Отправьте ещё раз."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Войдите, чтобы использовать OpenDesign Cloud и работать совместно в облаке"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Закрыть уведомление OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Открыть сайт OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Продолжить из этой локальной папки проекта OpenDesign:"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "По умолчанию демон пишет в `./.od/` (локально для проекта). Установите `OD_DATA_DIR=~/.open-design`, чтобы использовать общие данные между проектами."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "Локальный демон предоставляет HTTP API по адресу `http://127.0.0.1:7456` (порт настраивается). Любая конечная точка, которую вызывает веб-интерфейс, доступна и для ваших скриптов. Потоковые конечные точки (ходы чата, запуски проектов) отправляют события Server-Sent Events с типами контракта из `@open-design/contracts`."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Чистые типы TypeScript для каждого запроса/ответа находятся в `@open-design/contracts` — импортируйте их в свой скрипт для полного автодополнения без настройки генератора."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "avatar.amrConsole",
+      "copy": "Аккаунт OpenDesign Cloud"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Подписывайтесь на @OpenDesignHQ в X, чтобы не пропустить новинки."
+    },
+    {
+      "locale": "ru.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Поделиться в OpenDesign"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "ru.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "สลับไปยังบริการโมเดล OpenDesign Cloud อย่างเป็นทางการของ OpenDesign Cloud — ไม่ต้องตั้งค่า API Key หลังจากเข้าสู่ระบบ ให้สิทธิ์ และเติมเงินแล้ว งานนี้จะถูกลองใหม่โดยอัตโนมัติ"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "สลับไปยัง OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "เปลี่ยนเป็น OpenDesign Cloud แล้ว โปรดส่งงานอีกครั้ง"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "บัญชี OpenDesign Cloud ของคุณยังไม่ได้รับอนุญาต ให้สิทธิ์แล้วงานนี้จะถูกลองใหม่โดยอัตโนมัติ"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "ยอดเงิน OpenDesign Cloud ของคุณหมดแล้ว เติมเงินเพื่อดำเนินงานนี้ต่อ"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "สิ่งที่คุณได้รับจาก OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "คุณกำลังใช้เอเจนต์ OpenDesign Cloud — ลงชื่อเข้าใช้แล้วงานนี้จะเริ่มได้ทันที"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "ยังไม่ได้ลงชื่อเข้าใช้ Open Design"
+    },
+    {
+      "locale": "th.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "อนุญาต OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "ลงชื่อเข้าใช้ OpenDesign"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "ลงชื่อเข้าใช้ OpenDesign"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "ขั้นตอนต่อไปทำงานด้วย AI — ลงชื่อเข้าใช้ OpenDesign Cloud เพื่อดำเนินการต่อ"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "สถานะบัญชี OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "การลงชื่อเข้าใช้ OpenDesign Cloud ล้มเหลว"
+    },
+    {
+      "locale": "th.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "ไม่พบ apps/daemon/dist/cli.js รัน `pnpm --filter @open-design/daemon build` แล้วรีเฟรช"
+    },
+    {
+      "locale": "th.ts",
+      "key": "entry.xAria",
+      "copy": "ติดตาม @OpenDesignHQ เพื่อดูฟีเจอร์ใหม่"
+    },
+    {
+      "locale": "th.ts",
+      "key": "entry.followXLabel",
+      "copy": "ติดตาม @OpenDesignHQ บน X"
+    },
+    {
+      "locale": "th.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "ไม่สามารถยืนยันยอดคงเหลือ OpenDesign Cloud ได้ โปรดส่งอีกครั้ง"
+    },
+    {
+      "locale": "th.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "ลงชื่อเข้าใช้เพื่อใช้ OpenDesign Cloud และทำงานร่วมกันบนคลาวด์"
+    },
+    {
+      "locale": "th.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "ปิดข้อความ OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "เปิดเว็บไซต์ OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "handoff.promptIntro",
+      "copy": "ดำเนินการต่อจากโฟลเดอร์โปรเจกต์ OpenDesign ในเครื่องนี้:"
+    },
+    {
+      "locale": "th.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "th.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "โดยค่าเริ่มต้น daemon จะเขียนไปที่ `./.od/` (เฉพาะโปรเจกต์) ตั้งค่า `OD_DATA_DIR=~/.open-design` เพื่อแชร์ข้อมูลข้ามโปรเจกต์"
+    },
+    {
+      "locale": "th.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "daemon ในเครื่องให้บริการ HTTP API ที่ `http://127.0.0.1:7456` (กำหนดพอร์ตได้) ทุก endpoint ที่ web UI เรียกใช้สามารถใช้กับสคริปต์ของคุณได้เช่นกัน endpoint แบบสตรีมมิง (chat turn, project run) จะส่ง Server-Sent Events พร้อมชนิดตามสัญญาใน `@open-design/contracts`"
+    },
+    {
+      "locale": "th.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "ไทป์ TypeScript ล้วนสำหรับทุก request/response อยู่ใน `@open-design/contracts` — import เข้าสคริปต์ของคุณเพื่อ autocomplete เต็มรูปแบบโดยไม่ต้องตั้งค่า generator"
+    },
+    {
+      "locale": "th.ts",
+      "key": "avatar.amrConsole",
+      "copy": "บัญชี OpenDesign Cloud"
+    },
+    {
+      "locale": "th.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "ติดตาม @OpenDesignHQ บน X เพื่อรับข่าวสารล่าสุด"
+    },
+    {
+      "locale": "th.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "แชร์ไปยัง OpenDesign"
+    },
+    {
+      "locale": "th.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "th.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "OpenDesign Cloud'ın resmi model hizmetine geçin — API anahtarı yapılandırması gerekmez. Oturum açma, yetkilendirme ve bakiye yükleme sonrası bu çalıştırma otomatik olarak yeniden denenir."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "OpenDesign Cloud'ye geç"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "OpenDesign Cloud’a geçildi. Lütfen görevi yeniden gönderin."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "OpenDesign Cloud hesabınız henüz yetkilendirilmedi. Yetkilendirin ve bu çalıştırma otomatik olarak yeniden denensin."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "OpenDesign Cloud bakiyeniz bitti. Çalıştırmaya devam etmek için bakiye yükleyin."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "OpenDesign Cloud size neler sunar"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "OpenDesign Cloud ajanını kullanıyorsunuz — oturum açın, bu görev hemen başlayabilir."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design oturumu açılmamış"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "OpenDesign Cloud yetkilendir"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "OpenDesign’a giriş yap"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "OpenDesign’a giriş yap"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "Sonraki adımlar yapay zekâ ile çalışır — devam etmek için OpenDesign Cloud’ye giriş yapın."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "OpenDesign Cloud hesap durumu"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "OpenDesign Cloud oturum açma başarısız oldu."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js eksik. `pnpm --filter @open-design/daemon build` komutunu çalıştırın ve yenileyin."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "entry.xAria",
+      "copy": "Yenilikler için @OpenDesignHQ hesabını takip et"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "entry.followXLabel",
+      "copy": "X'te @OpenDesignHQ hesabını takip et"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "OpenDesign Cloud bakiyeniz doğrulanamadı. Tekrar göndermeyi deneyin."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "OpenDesign Cloud'u kullanmak ve bulutta iş birliği yapmak için oturum açın"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "OpenDesign Cloud notunu kapat"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "OpenDesign Cloud web sitesini aç"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Bu yerel OpenDesign proje klasöründen devam edin:"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "Daemon varsayılan olarak `./.od/` dizinine (proje-yerel) yazar. Verileri projeler arasında paylaşmak için `OD_DATA_DIR=~/.open-design` ayarlayın."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "Yerel daemon, `http://127.0.0.1:7456` adresinde bir HTTP API sunar (port yapılandırılabilir). Web arayüzünün çağırdığı her uç nokta betikleriniz için de kullanılabilir. Akış uç noktaları (sohbet turları, proje çalıştırmaları) `@open-design/contracts` içindeki sözleşme türleriyle Server-Sent Events yayar."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Her istek/yanıt için saf TypeScript türleri `@open-design/contracts` içinde bulunur — bir oluşturucu bağlamadan tam otomatik tamamlama için bunları betiğinize aktarın."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud hesabı"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Yenilikler için X üzerinde @OpenDesignHQ hesabını takip edin."
+    },
+    {
+      "locale": "tr.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "OpenDesign'a paylaş"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "tr.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "Перейдіть на офіційний сервіс моделей OpenDesign Cloud — без налаштування API-ключа. Після входу, авторизації та поповнення це виконання буде повторено автоматично."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "Перейти на OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "Перемкнуто на OpenDesign Cloud. Надішліть завдання повторно."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "Ваш обліковий запис OpenDesign Cloud ще не авторизовано. Авторизуйте, і це виконання буде повторено автоматично."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "Баланс OpenDesign Cloud вичерпано. Поповніть, щоб продовжити це виконання."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "Що дає OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "Ви використовуєте агент OpenDesign Cloud — увійдіть, і це завдання одразу запуститься."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Вхід у Open Design не виконано"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "Use the OpenDesign project “{name}” as reference context. Its local path is: {path}. Before designing or modifying anything, search and read this directory when useful."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign Hosted"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "Авторизувати OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "Увійти в OpenDesign"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "Увійти в OpenDesign"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "Наступні кроки виконуються на ШІ — увійдіть в OpenDesign Cloud, щоб продовжити."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "Use OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "Refresh OpenDesign Cloud wallet balance"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "Статус облікового запису OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "Не вдалося ввійти в OpenDesign Cloud."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "Відсутній apps/daemon/dist/cli.js. Виконайте `pnpm --filter @open-design/daemon build` і оновіть."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "entry.xAria",
+      "copy": "Стежте за @OpenDesignHQ, щоб дізнаватися новини"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "entry.followXLabel",
+      "copy": "Стежити за @OpenDesignHQ в X"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "Не вдалося підтвердити баланс OpenDesign Cloud. Надішліть ще раз."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "entry.cloudCalloutBody",
+      "copy": "Увійдіть, щоб використовувати OpenDesign Cloud і співпрацювати в хмарі"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "Закрити повідомлення OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "Відкрити вебсайт OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "handoff.promptIntro",
+      "copy": "Продовжити з цієї локальної папки проєкту OpenDesign:"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "За замовчуванням daemon записує дані в `./.od/` (локально в проєкті). Встановіть `OD_DATA_DIR=~/.open-design`, щоб спільно використовувати дані між проєктами."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "Локальний daemon надає HTTP API за адресою `http://127.0.0.1:7456` (порт можна налаштувати). Кожна кінцева точка, яку викликає веб-інтерфейс, також доступна для ваших скриптів. Потокові кінцеві точки (повідомлення чату, запуски проєктів) надсилають Server-Sent Events із типами контракту з `@open-design/contracts`."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "Чисті типи TypeScript для кожного запиту/відповіді розміщені в `@open-design/contracts` — імпортуйте їх у свій скрипт для повного автодоповнення без налаштування генератора."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "avatar.amrConsole",
+      "copy": "Обліковий запис OpenDesign Cloud"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "Стежте за @OpenDesignHQ в X, щоб дізнаватися про новинки."
+    },
+    {
+      "locale": "uk.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "Поділитися з OpenDesign"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "library.openDesignSystem",
+      "copy": "Open design system"
+    },
+    {
+      "locale": "uk.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "可切换到 OpenDesign Cloud 官方模型服务，无需配置 API Key。完成登录、授权和充值后，将自动重试当前任务。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "切换到 OpenDesign Cloud"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "已切换到 OpenDesign Cloud，请重新发送任务。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "OpenDesign Cloud 账号尚未授权。完成授权后将自动重试当前任务。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "OpenDesign Cloud 额度不足。充值后可继续运行当前任务。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "OpenDesign Cloud 为你提供"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.amrBalanceGate.signedOutTitle",
+      "copy": "登录 OpenDesign Cloud，开始创作"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "当前使用的是 OpenDesign Cloud 智能体，登录后这个任务马上就能开始。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design 尚未登录"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "请把 OpenDesign 项目“{name}”作为参考上下文。它的本地路径是：{path}。在设计或修改前，如有帮助请先搜索并读取这个目录。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign 托管"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.onboardingAmrCloudAuthorizeAction",
+      "copy": "授权 OpenDesign Cloud"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "登录 OpenDesign"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "登录 OpenDesign"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "后续流程由 AI 运行，请先登录 OpenDesign Cloud。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "使用 OpenDesign Cloud"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "刷新 OpenDesign Cloud 钱包余额"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "OpenDesign Cloud 账户状态"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.amrConsole",
+      "copy": "OpenDesign Cloud 管理"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "OpenDesign Cloud 登录失败。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "apps/daemon/dist/cli.js 缺失。请运行 `pnpm --filter @open-design/daemon build` 并刷新。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "entry.xAria",
+      "copy": "关注 @OpenDesignHQ，看新功能"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "entry.followXLabel",
+      "copy": "在 X 上关注 @OpenDesignHQ"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud 版"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "暂时无法确认 OpenDesign Cloud 额度，请重新发送。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "关闭 OpenDesign Cloud 版说明"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "打开 OpenDesign Cloud 官网"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "handoff.promptIntro",
+      "copy": "请基于这个 OpenDesign 项目的本地文件夹继续实现："
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign 官方"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "daemon 默认写入项目本地的 `./.od/`。设置 `OD_DATA_DIR=~/.open-design` 可在多个项目间共享数据。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "本地 daemon 在 `http://127.0.0.1:7456` 提供 HTTP API（端口可配置）。Web UI 调用的每个端点也都可以供你的脚本使用。流式端点（聊天回合、项目运行）会发出 Server-Sent Events，事件类型定义在 `@open-design/contracts` 中。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "每个请求 / 响应的纯 TypeScript 类型都在 `@open-design/contracts` 中；脚本中导入即可获得完整自动补全，无需接入生成器。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud 账户"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "在 X 上关注 @OpenDesignHQ，第一时间了解新功能。"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "分享到 OpenDesign"
+    },
+    {
+      "locale": "zh-CN.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign 官方"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.amrCard.switchBody",
+      "copy": "可切換到 OpenDesign Cloud 官方模型服務，無需設定 API Key。完成登入、授權與儲值後，將自動重試目前任務。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.amrCard.switchCta",
+      "copy": "切換到 OpenDesign Cloud"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.amrCard.switchedResend",
+      "copy": "已切換至 OpenDesign Cloud，請重新傳送任務。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.amrError.authMessage",
+      "copy": "OpenDesign Cloud 帳號尚未授權。完成授權後將自動重試目前任務。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.amrError.balanceMessage",
+      "copy": "OpenDesign Cloud 額度不足。儲值後即可繼續執行目前任務。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.amrBalanceGate.benefitsTitle",
+      "copy": "OpenDesign Cloud 為你提供"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.amrBalanceGate.signedOutTitle",
+      "copy": "登入 OpenDesign Cloud，開始創作"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.amrBalanceGate.signedOutMessage",
+      "copy": "目前使用的是 OpenDesign Cloud 智能體，登入後這個任務馬上就能開始。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.runError.title.signInRequired.amr",
+      "copy": "Open Design 尚未登入"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "chat.contextPrompt.referenceProject",
+      "copy": "請把 OpenDesign 專案「{name}」作為參考上下文。它的本機路徑是：{path}。在設計或修改前，如有幫助請先搜尋並讀取這個目錄。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.onboardingAmrModelSourceLabel",
+      "copy": "OpenDesign 託管"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.onboardingCloudTitle",
+      "copy": "登入 OpenDesign"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.onboardingCloudSignIn",
+      "copy": "登入 OpenDesign 雲端"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.onboardingGateTooltipAmr",
+      "copy": "後續流程由 AI 執行，請先登入 OpenDesign Cloud。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.cloudCalloutTitle",
+      "copy": "使用 OpenDesign Cloud"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.amrCloud",
+      "copy": "OpenDesign Cloud"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.amrWalletRefreshTitle",
+      "copy": "重新整理 OpenDesign Cloud 錢包餘額"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.amrAccountStatus",
+      "copy": "OpenDesign Cloud 帳戶狀態"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.amrLoginErrorCompact",
+      "copy": "OpenDesign Cloud 登入失敗。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "settings.mcpBuildHint",
+      "copy": "缺少 apps/daemon/dist/cli.js。請執行 `pnpm --filter @open-design/daemon build` 後重新整理。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "entry.xAria",
+      "copy": "追蹤 @OpenDesignHQ，掌握新功能"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "entry.followXLabel",
+      "copy": "在 X 上追蹤 @OpenDesignHQ"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "entry.cloudCalloutTitle",
+      "copy": "OpenDesign Cloud 版"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "home.amrGateUnavailable",
+      "copy": "暫時無法確認 OpenDesign Cloud 額度，請重新傳送。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "entry.cloudCalloutDismissAria",
+      "copy": "關閉 OpenDesign Cloud 版說明"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "handoff.amrWebsite",
+      "copy": "開啟 OpenDesign Cloud 官網"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "handoff.promptIntro",
+      "copy": "請基於這個 OpenDesign 專案的本機資料夾繼續實作："
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "pluginsView.scope.official",
+      "copy": "OpenDesign official"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "useEverywhere.section.overview.footer",
+      "copy": "daemon 預設會寫入 `./.od/`（專案本機）。設定 `OD_DATA_DIR=~/.open-design` 即可在多個專案間共用資料。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "useEverywhere.section.http.intro",
+      "copy": "本機 daemon 會在 `http://127.0.0.1:7456` 提供 HTTP API（連接埠可設定）。web UI 呼叫的每個端點，你的指令稿同樣可以使用。串流端點（聊天回合、專案執行）會發出 Server-Sent Events，其合約型別定義於 `@open-design/contracts`。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "useEverywhere.section.http.footer",
+      "copy": "每個請求／回應的純 TypeScript 型別都位於 `@open-design/contracts` 中 — 在您的指令碼中匯入它們，即可享有完整的自動完成，而無需接上產生器。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "avatar.amrConsole",
+      "copy": "OpenDesign Cloud 帳戶"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "designFiles.usefulInfoTip8",
+      "copy": "在 X 上關注 @OpenDesignHQ，第一時間了解新功能。"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "assistant.shareToOpenDesign",
+      "copy": "分享到 OpenDesign"
+    },
+    {
+      "locale": "zh-TW.ts",
+      "key": "pluginDetail.officialBadge",
+      "copy": "OpenDesign 官方"
+    }
+  ],
+  "limits": "Static source classification; not proof of native reachability or VoiceOver output."
+}

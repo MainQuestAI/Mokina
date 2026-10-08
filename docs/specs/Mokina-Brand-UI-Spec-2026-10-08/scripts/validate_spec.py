@@ -21,4 +21,4 @@ for f in svgs:
  assert '<script' not in s and '<image' not in s
 for line in (p/'SHA256SUMS.txt').read_text().splitlines():
  h,name=line.split('  ',1);assert hashlib.sha256((p/name).read_bytes()).hexdigest()==h,name
-print(f'PASS: {len(b)} packages, {len(a)} AC, B01-B20 coverage, dependency graph, 8 SVG and package hashes. Product tests NOT run.')
+print(f'PASS: {len(b)} packages, {len(a)} AC, B01-B20 coverage, dependency graph, 8 SVG and package hashes. Static spec validation only; product results are recorded separately.')

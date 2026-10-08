@@ -1,0 +1,9 @@
+
+ RUN  v4.1.6 $WORKTREE/open-design/apps/daemon
+
+
+ Test Files  7 passed (7)
+      Tests  63 passed (63)
+   Start at  11:13:52
+   Duration  32.59s (transform 18.52s, setup 215ms, import 26.50s, tests 4.56s, environment 1ms)
+

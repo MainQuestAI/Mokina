@@ -1,6 +1,6 @@
 {
   "captured": "2026-10-08",
-  "remote_main": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "remote_main": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
   "inspected_head": "8243d0fd2dc3184c88a02f484c451686edcee855",
   "pr": "https://github.com/MainQuestAI/Mokina/pull/11",
   "pr_state": "MERGED",
@@ -85,5 +85,71 @@
     "open-design/apps/web/src/runtime/mokina/continuation-recovery.ts",
     "open-design/apps/web/src/runtime/persistence/mokina-recovery-store.ts",
     "open-design/apps/web/src/runtime/exports.ts"
-  ]
+  ],
+  "original_review": {
+    "captured": "2026-10-08",
+    "remote_main": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+    "inspected_head": "8243d0fd2dc3184c88a02f484c451686edcee855",
+    "pr": "https://github.com/MainQuestAI/Mokina/pull/11",
+    "pr_state": "MERGED",
+    "ci": "SUCCESS per live gh query; not rerun"
+  },
+  "development_baseline": {
+    "version": "0.0.4",
+    "main_sha": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
+    "branch": "codex/mokina-v0.0.4-brand-ui",
+    "merge_pr": "https://github.com/MainQuestAI/Mokina/pull/12",
+    "merge_time_utc": "2026-10-08T08:10:14Z",
+    "ci": "https://github.com/MainQuestAI/Mokina/actions/runs/37746517804",
+    "ci_head": "810ca2e65b370896f486f5d198e0804e02024051",
+    "ci_conclusion": "success",
+    "same_git_tree_as_passed_pr_head": true,
+    "functional_baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+    "functional_source_changed": true,
+    "target_files_verified": 42,
+    "acceptance_status": "1 boundary passed, 17 partial, 1 blocked; no native candidate",
+    "implementation_started": true,
+    "worktree_created": true,
+    "worktree": "/workspace/work/Mokina-worktrees/v0.0.4-brand-ui",
+    "spec_revision": "1.2",
+    "implementation_source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f"
+  },
+  "spec_package_development_baseline": {
+    "version": "0.0.3",
+    "main_sha": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
+    "branch": "codex/mokina-v0.0.3-brand-ui",
+    "merge_pr": "https://github.com/MainQuestAI/Mokina/pull/12",
+    "merge_time_utc": "2026-10-08T08:10:14Z",
+    "ci": "https://github.com/MainQuestAI/Mokina/actions/runs/37746517804",
+    "ci_head": "810ca2e65b370896f486f5d198e0804e02024051",
+    "ci_conclusion": "success",
+    "same_git_tree_as_passed_pr_head": true,
+    "functional_baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+    "functional_source_changed": false,
+    "target_files_verified": 41,
+    "acceptance_status": "19 not_run",
+    "implementation_started": false
+  },
+  "development_start_review": {
+    "date": "2026-10-08",
+    "remote_verification": "GitHub connector GET /repos/MainQuestAI/Mokina/branches/main",
+    "remote_main_sha": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
+    "uploaded_spec_revision": "1.1",
+    "uploaded_zip_sha256": "17a0ac69cc897f1d52e7df58f7c856d3fa095a821dad48d7bb534186a4055c95",
+    "product_tests_run": false,
+    "product_implementation_started": false,
+    "review_record": "../../mokina-v0.0.4/2026-10-08-development-review.md"
+  },
+  "implementation_execution": {
+    "date": "2026-10-08",
+    "authorization": "User: OK，开始实施，目标是完成本轮的所有开发任务。",
+    "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+    "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+    "product_tests_run": true,
+    "macos_native": "not_run_linux_environment",
+    "voiceover": "not_run_linux_environment",
+    "brand_confirmation": "candidate_not_finally_approved",
+    "native_candidate_version": null,
+    "release_status": "blocked"
+  }
 }

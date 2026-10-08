@@ -1,0 +1,98 @@
+{
+  "target_version": "0.0.4",
+  "spec_revision": "1.2",
+  "created_at_utc": "2026-10-08T09:23:37.069867+00:00",
+  "created_at_shanghai": "2026-10-08T17:23:37.069867+08:00",
+  "repository": "MainQuestAI/Mokina",
+  "remote_main": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
+  "functional_baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "git_tree": "2c25b3e6e69a0f5485fc9aca63ce0ced98242641",
+  "base_sha": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
+  "branch": "codex/mokina-v0.0.4-brand-ui",
+  "worktree": "/workspace/work/Mokina-worktrees/v0.0.4-brand-ui",
+  "original_worktree": "/workspace/Mokina",
+  "original_branch": "work",
+  "remote_verification": {
+    "method": "GitHub connector branches/main",
+    "url": "https://api.github.com/repos/MainQuestAI/Mokina/branches/main",
+    "result_sha": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
+    "git_fetch": "failed: could not connect to environment proxy:8080"
+  },
+  "uploaded_spec": {
+    "name": "Mokina-Brand-UI-Spec-2026-10-08.zip",
+    "revision": "1.1",
+    "sha256": "17a0ac69cc897f1d52e7df58f7c856d3fa095a821dad48d7bb534186a4055c95",
+    "different_files_from_base": [
+      "00-重新审查.md",
+      "Codex-执行提示词.md",
+      "README.md",
+      "SHA256SUMS.txt",
+      "VALIDATION.md",
+      "backlog.json",
+      "sources.json"
+    ]
+  },
+  "authorization_scope": [
+    "development_document_review",
+    "create_local_git_worktree",
+    "document_target_version_and_baseline",
+    "implement_all_development_packages",
+    "run_local_engineering_tests",
+    "write_implementation_records",
+    "local_commits"
+  ],
+  "product_implementation_started": true,
+  "product_tests_run": true,
+  "package_count": 7,
+  "acceptance_count": 19,
+  "acceptance_status": "layered_partial_native_and_user_pending",
+  "main_target_files": 42,
+  "candidate_version": null,
+  "candidate_sha": null,
+  "brand_confirmation": "candidate_not_finally_approved",
+  "dependency_installation": "frozen pnpm@10.33.2 installed in isolated worktree; only exact-version native artifacts reused",
+  "node": "v24.19.0",
+  "package_manager_required": "pnpm@10.33.2 via Corepack",
+  "validation_results": {
+    "uploaded_package_integrity": "pass",
+    "uploaded_prototype_hashes": "11/11 pass",
+    "source_targets": "42/42 exist",
+    "specified_vitest_tests": "14/14 exist",
+    "product_regression": "pass_scoped_suites_see_test_evidence",
+    "browser": "pass22/22_current_source_c79843ba",
+    "macos_native": "not_run_linux_environment",
+    "voiceover": "not_run_linux_environment",
+    "user_visual_signoff": "not_run",
+    "production_web_build": "pass"
+  },
+  "review_time_snapshot": {
+    "authorization_scope": [
+      "development_document_review",
+      "create_local_git_worktree",
+      "document_target_version_and_baseline",
+      "implement_all_development_packages",
+      "run_local_engineering_tests",
+      "write_implementation_records",
+      "local_commits"
+    ],
+    "product_implementation_started": false,
+    "product_tests_run": false,
+    "acceptance_status": "not_run",
+    "dependency_installation": "not_run in new worktree",
+    "validation_results": {
+      "uploaded_package_integrity": "pass",
+      "uploaded_prototype_hashes": "11/11 pass",
+      "source_targets": "42/42 exist",
+      "specified_vitest_tests": "14/14 exist",
+      "product_regression": "pass_scoped_suites_see_test_evidence",
+      "browser": "pass_22_cases_see_frozen_run",
+      "macos_native": "not_run_linux_environment",
+      "voiceover": "not_run_linux_environment",
+      "user_visual_signoff": "not_run",
+      "production_web_build": "pass"
+    }
+  },
+  "implementation_source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+  "implementation_record": "2026-10-08-implementation.md",
+  "implementation_state": "S01-S06 implemented; S07 engineering recorded, native/user pending"
+}

@@ -1,0 +1,435 @@
+[
+  {
+    "ms": 5996,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects"
+  },
+  {
+    "ms": 6207,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects"
+  },
+  {
+    "ms": 7222,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/runs"
+  },
+  {
+    "ms": 7267,
+    "event": "request",
+    "method": "POST",
+    "path": "/api/projects"
+  },
+  {
+    "ms": 7267,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files"
+  },
+  {
+    "ms": 7320,
+    "event": "response",
+    "status": 200,
+    "path": "/api/runs"
+  },
+  {
+    "ms": 7320,
+    "event": "response",
+    "status": 404,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files"
+  },
+  {
+    "ms": 7320,
+    "event": "requestfailed",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files",
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "ms": 7474,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects"
+  },
+  {
+    "ms": 7504,
+    "event": "request",
+    "method": "POST",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/upload"
+  },
+  {
+    "ms": 7638,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/folders"
+  },
+  {
+    "ms": 7645,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/collab/status"
+  },
+  {
+    "ms": 7645,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/workspace-scope"
+  },
+  {
+    "ms": 7645,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 7645,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files"
+  },
+  {
+    "ms": 7645,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations"
+  },
+  {
+    "ms": 7652,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/tabs"
+  },
+  {
+    "ms": 7653,
+    "event": "request",
+    "method": "PATCH",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 7654,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/workspace-scope"
+  },
+  {
+    "ms": 7654,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 7659,
+    "event": "request",
+    "method": "PATCH",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 7659,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/upload"
+  },
+  {
+    "ms": 7659,
+    "event": "requestfailed",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/workspace-scope",
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "ms": 7659,
+    "event": "requestfailed",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954",
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "ms": 7703,
+    "event": "response",
+    "status": 400,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/collab/status"
+  },
+  {
+    "ms": 7707,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files/budget.csv/material"
+  },
+  {
+    "ms": 7745,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations"
+  },
+  {
+    "ms": 7745,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/folders"
+  },
+  {
+    "ms": 7745,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/tabs"
+  },
+  {
+    "ms": 7745,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files"
+  },
+  {
+    "ms": 7745,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 7808,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/comments"
+  },
+  {
+    "ms": 7808,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages"
+  },
+  {
+    "ms": 7967,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 7968,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/workspace-scope"
+  },
+  {
+    "ms": 7969,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 7969,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files/budget.csv/material"
+  },
+  {
+    "ms": 7970,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/comments"
+  },
+  {
+    "ms": 7970,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages"
+  },
+  {
+    "ms": 8175,
+    "event": "request",
+    "method": "POST",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/mokina/context-snapshots"
+  },
+  {
+    "ms": 8242,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/events"
+  },
+  {
+    "ms": 8293,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/events"
+  },
+  {
+    "ms": 8298,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files"
+  },
+  {
+    "ms": 8298,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/comments"
+  },
+  {
+    "ms": 8326,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/comments"
+  },
+  {
+    "ms": 8326,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files"
+  },
+  {
+    "ms": 9557,
+    "event": "response",
+    "status": 201,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/mokina/context-snapshots"
+  },
+  {
+    "ms": 9807,
+    "event": "request",
+    "method": "PATCH",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 9807,
+    "event": "request",
+    "method": "PUT",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-user"
+  },
+  {
+    "ms": 9807,
+    "event": "request",
+    "method": "PATCH",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb"
+  },
+  {
+    "ms": 9807,
+    "event": "request",
+    "method": "POST",
+    "path": "/api/runs"
+  },
+  {
+    "ms": 9958,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954"
+  },
+  {
+    "ms": 9967,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-user"
+  },
+  {
+    "ms": 9967,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb"
+  },
+  {
+    "ms": 9969,
+    "event": "response",
+    "status": 202,
+    "path": "/api/runs"
+  },
+  {
+    "ms": 10077,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files"
+  },
+  {
+    "ms": 10120,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/files"
+  },
+  {
+    "ms": 10124,
+    "event": "request",
+    "method": "PUT",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10124,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/runs/mock-run-1/events"
+  },
+  {
+    "ms": 10189,
+    "event": "request",
+    "method": "PUT",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10189,
+    "event": "request",
+    "method": "PUT",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10197,
+    "event": "response",
+    "status": 200,
+    "path": "/api/runs/mock-run-1/events"
+  },
+  {
+    "ms": 10199,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10200,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/media/tasks"
+  },
+  {
+    "ms": 10205,
+    "event": "request",
+    "method": "GET",
+    "path": "/api/projects"
+  },
+  {
+    "ms": 10272,
+    "event": "request",
+    "method": "PUT",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10272,
+    "event": "request",
+    "method": "PUT",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10272,
+    "event": "request",
+    "method": "PUT",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10272,
+    "event": "request",
+    "method": "PUT",
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10275,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10275,
+    "event": "response",
+    "status": 200,
+    "path": "/api/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb/messages/home-auto-send-3j0enw8339o8p-assistant"
+  },
+  {
+    "ms": 10191,
+    "event": "final-state",
+    "path": "/projects/341243f8-92f3-468c-b16e-deb0f049b954/conversations/30a76539-483a-4861-a9a3-86e011d6dbfb",
+    "preparation": null,
+    "runs": 1
+  }
+]

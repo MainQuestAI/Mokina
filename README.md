@@ -10,11 +10,11 @@ Mokina 是 macOS arm64 桌面营销工作产品（OpenDesign 宿主 + Mokina edi
 |---|---|
 | 已签收安装包 | `Mokina-mokina-local.dmg` / `.zip`，macOS arm64，摘要与 manifest 见 [`docs/mokina-v0.0.2/runbook.md`](./docs/mokina-v0.0.2/runbook.md) |
 | 包产品源码 | `8950986e41e5047c56aab4d3ba9fda900902aa9a` |
-| V0.0.3 本轮修复基线 | `93531732e2e01e6bfdf5153f3685af4bf132f850`（本轮开始时 main；不是 local.6 包源码） |
+| 历史 V0.0.3 修复基线 | `93531732e2e01e6bfdf5153f3685af4bf132f850`（本轮开始时 main；不是 local.6 包源码） |
 | V0.0.2 标签 | 注释标签 `e3e1a7cf`，指向 `e3e8848e` |
 | 支持平台 | 实测 macOS arm64；Windows/Linux、签名、公证、自动更新未纳入 |
-| 开发中版本 | V0.0.3 修复，分支 `codex/mokina-v003-repair-a-input`；641 对应工程测试及 source CI 通过，见 [本轮执行记录](./docs/mokina-v0.0.3/2026-10-07-remaining-repair-execution.md)；未替代 V0.0.2/local.6 签收 |
-| 本轮隔离 QA 候选 | `0.0.3-local.7`，source `4cf68e9c`；[同包原生范围与剩余门槛](./docs/mokina-v0.0.3/2026-10-07-local7-native-verification.md)；未标整体验收或公开发布 |
+| 开发中版本 | v0.0.4 品牌/UI换新，分支 `codex/mokina-v0.0.4-brand-ui`，基线 `52219d8c`；S01–S06 已实施、工程回归通过，见 [本轮实施记录](./docs/mokina-v0.0.4/2026-10-08-implementation.md)；macOS同包候选及用户签收待验 |
+| 历史 V0.0.3 隔离 QA 候选 | `0.0.3-local.7`，source `4cf68e9c`；[同包原生范围与剩余门槛](./docs/mokina-v0.0.3/2026-10-07-local7-native-verification.md)；未标整体验收或公开发布 |
 
 日常打开：从 DMG 安装后在 Finder 打开 `Mokina.app`。app 自带 web、daemon 与 PDF 文本工具；**生成任务需要已登录的 Codex CLI 与模型网络**（外部依赖，不在包内）。首次使用与失败恢复指引见 Runbook「local.6 交付与使用」；连接与前置检查在 app 内「设置 → 连接诊断」。
 

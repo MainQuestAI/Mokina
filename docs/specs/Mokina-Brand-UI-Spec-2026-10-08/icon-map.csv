@@ -1,33 +1,33 @@
-semantic,prototype_key,production_policy,owner
-home,home,复用现有语义入口,S02
-projects,folder,复用现有语义入口,S02
-file,file,保留文件类型差异,S02
-edit,edit,复用现有语义入口,S02
-start,play,仅现有可达动作,S02
-history,clock,配版本身份标签,S04
-export,export,区分下载并标目标版本,S04
-send,send,使用发送语义不使用Logo,S03
-stop,,保留现有停止图形,S03
-expand,chevron,保留方向与展开状态,S02
-back,back,复用现有语义入口,S02
-attach,plus,配添加附件accessible name,S03
-configure,sliders,真实配置入口非演示菜单,S03
-adopt,check,配采用候选文案,S04
-source,link,显示真实来源,S05
-remove,close,区别关闭弹窗与删除附件,S03
-search,search,复用现有语义入口,S02
-more,more,保留菜单键盘行为,S02
-download,download,只用于下载含义,S04
-warning,alert-triangle,配原因及处理动作,S05
-retry,retry,依实际重试门控,S05
-external,external,保留外部打开行为,S04
-running,,沿现有状态图标且减少动态回退,S02
-success,,沿现有语义色与文字,S02
-error,,与unknown及rejected区分,S05
-unknown,,中性待确认标签不使用成功色,S05
-conflict,,警告与重新读取动作,S05
-select hand pen eraser shape arrow text,,Excalidraw自管保留或正规扩展,S06
-undo redo zoom clear save close,,自有工具条统一且引擎图标保留,S06
-Mokina,,唯一产品品牌组件,S01
-agent model editor,,保留真实供应商身份,S01
-customer-brand,,用户内容不替换,S05
+semantic,prototype_key,production_policy,owner,source_paths,handling,verification
+home,home,复用现有语义入口,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+projects,folder,复用现有语义入口,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+file,file,保留文件类型差异,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+edit,edit,复用现有语义入口,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+start,play,仅现有可达动作,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+history,clock,配版本身份标签,S04,apps/web/src/components/FileViewer.tsx;apps/web/src/components/mokina/MokinaCandidateCompare.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+export,export,区分下载并标目标版本,S04,apps/web/src/components/FileViewer.tsx;apps/web/src/components/mokina/MokinaCandidateCompare.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+send,send,使用发送语义不使用Logo,S03,apps/web/src/components/ChatComposer.tsx;apps/web/src/components/HomeView.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+stop,,保留现有停止图形,S03,apps/web/src/components/ChatComposer.tsx;apps/web/src/components/HomeView.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+expand,chevron,保留方向与展开状态,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+back,back,复用现有语义入口,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+attach,plus,配添加附件accessible name,S03,apps/web/src/components/ChatComposer.tsx;apps/web/src/components/HomeView.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+configure,sliders,真实配置入口非演示菜单,S03,apps/web/src/components/ChatComposer.tsx;apps/web/src/components/HomeView.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+adopt,check,配采用候选文案,S04,apps/web/src/components/FileViewer.tsx;apps/web/src/components/mokina/MokinaCandidateCompare.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+source,link,显示真实来源,S05,apps/web/src/components/mokina/MokinaContextPanel.tsx;apps/web/src/components/mokina/MokinaContinuationRecoveryNotice.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+remove,close,区别关闭弹窗与删除附件,S03,apps/web/src/components/ChatComposer.tsx;apps/web/src/components/HomeView.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+search,search,复用现有语义入口,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+more,more,保留菜单键盘行为,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+download,download,只用于下载含义,S04,apps/web/src/components/FileViewer.tsx;apps/web/src/components/mokina/MokinaCandidateCompare.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+warning,alert-triangle,配原因及处理动作,S05,apps/web/src/components/mokina/MokinaContextPanel.tsx;apps/web/src/components/mokina/MokinaContinuationRecoveryNotice.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+retry,retry,依实际重试门控,S05,apps/web/src/components/mokina/MokinaContextPanel.tsx;apps/web/src/components/mokina/MokinaContinuationRecoveryNotice.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+external,external,保留外部打开行为,S04,apps/web/src/components/FileViewer.tsx;apps/web/src/components/mokina/MokinaCandidateCompare.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+running,,沿现有状态图标且减少动态回退,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+success,,沿现有语义色与文字,S02,apps/web/src/styles/mokina.css;apps/web/src/components/Icon.tsx;apps/web/src/components/RemixIcon.tsx;packages/components/src/button.module.css,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+error,,与unknown及rejected区分,S05,apps/web/src/components/mokina/MokinaContextPanel.tsx;apps/web/src/components/mokina/MokinaContinuationRecoveryNotice.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+unknown,,中性待确认标签不使用成功色,S05,apps/web/src/components/mokina/MokinaContextPanel.tsx;apps/web/src/components/mokina/MokinaContinuationRecoveryNotice.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+conflict,,警告与重新读取动作,S05,apps/web/src/components/mokina/MokinaContextPanel.tsx;apps/web/src/components/mokina/MokinaContinuationRecoveryNotice.tsx,复用现有图标引擎和动作语义；Mokina样式按edition作用域,工程回归已执行；逐入口native签收待验
+select hand pen eraser shape arrow text,,Excalidraw自管保留或正规扩展,S06,apps/web/src/components/SketchEditor.tsx;apps/web/src/components/PreviewDrawOverlay.tsx,保留绘画引擎图形，统一工具条交互样式,工程回归已执行；逐入口native签收待验
+undo redo zoom clear save close,,自有工具条统一且引擎图标保留,S06,apps/web/src/components/SketchEditor.tsx;apps/web/src/components/PreviewDrawOverlay.tsx,保留绘画引擎图形，统一工具条交互样式,工程回归已执行；逐入口native签收待验
+Mokina,,唯一产品品牌组件,S01,apps/web/src/components/mokina/MokinaBrand.tsx;apps/web/src/components/AssistantMessage.tsx,候选A品牌组件,工程回归已执行；逐入口native签收待验
+agent model editor,,保留真实供应商身份,S01,apps/web/src/components/mokina/MokinaBrand.tsx;apps/web/src/components/AssistantMessage.tsx,保留实际供应商标识,工程回归已执行；逐入口native签收待验
+customer-brand,,用户内容不替换,S05,apps/web/src/components/mokina/MokinaContextPanel.tsx;apps/web/src/components/mokina/MokinaContinuationRecoveryNotice.tsx,保持客户内容原样,工程回归已执行；逐入口native签收待验

@@ -6,5 +6,11 @@ export function mokinaProductCopy(key: string, copy: string): string {
   // Generation instructions, upstream services and source attribution retain
   // their original identities. Visibility of service entries is edition-gated.
   if (/handoff\.prompt|contextPrompt|mcpBuildHint|cloud|amr|shareTo|community|official|license|sourceCode|openDesignSystem/i.test(key)) return copy;
-  return copy.replace(/\bOpenDesign\b|\bOpen Design\b/gi, 'Mokina');
+  // Hungarian attaches case endings directly to the product name. Preserve
+  // the meaning and use Mokina's accented stem rather than leaving the old
+  // name behind or rewriting source handles such as OpenDesignHQ.
+  const endings: Record<string, string> = { ba: 'ba', ban: 'ban', 'ból': 'ból', gal: 'val', hoz: 'hoz', nak: 'nak', nal: 'val', nek: 'nak', ra: 'ra', t: 't' };
+  return copy.replace(/\baz (?=Open ?Design\b|OpenDesign(?:ba|ban|ból|gal|hoz|nak|nal|nek|ra|t)\b)/g, 'a ')
+    .replace(/\bOpenDesign(ba|ban|ból|gal|hoz|nak|nal|nek|ra|t)\b/gi, (_match, ending: string) => `Mokiná${endings[ending.toLowerCase()]}`)
+    .replace(/\bOpenDesign\b|\bOpen Design\b/gi, 'Mokina');
 }

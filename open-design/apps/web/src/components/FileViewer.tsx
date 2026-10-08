@@ -3982,7 +3982,7 @@ function FileVersionManagerModal({
   // panel. The toolbar entry that toggles the panel is excluded so its own
   // toggle keeps working without a close/reopen race.
   useEffect(() => {
-    if (confirmRestore || downloadMenuVersionId) return;
+    if (confirmRestore || downloadMenuVersionId || candidateCompare) return;
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
@@ -3997,7 +3997,7 @@ function FileVersionManagerModal({
     };
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, [onClose, confirmRestore, downloadMenuVersionId]);
+  }, [onClose, confirmRestore, downloadMenuVersionId, candidateCompare]);
 
   useEffect(() => {
     if (!selectedId) {
@@ -4081,6 +4081,10 @@ function FileVersionManagerModal({
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
+      if (candidateCompare) {
+        setCandidateCompare(null);
+        return;
+      }
       if (versionImageExportVersionId) {
         if (!versionImageExportInFlight) setVersionImageExportVersionId(null);
         return;
@@ -4108,6 +4112,7 @@ function FileVersionManagerModal({
     downloadMenuVersionId,
     versionImageExportVersionId,
     versionImageExportInFlight,
+    candidateCompare,
   ]);
 
   useEffect(() => {

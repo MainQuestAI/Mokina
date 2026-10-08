@@ -60,6 +60,7 @@ import { homeHeroChipLabel } from './home-hero/chip-labels';
 import type { HomeMokinaFilePlan } from '../runtime/mokina/home-material-snapshot';
 import { isMokinaAssetFileName, isMokinaMaterialFileName } from '../runtime/mokina/material-selection';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import { MokinaBrand } from './mokina/MokinaBrand';
 import { RotatingTitleWord } from './home-hero/RotatingTitleWord';
 import { ScenarioArt } from './home-hero/ScenarioArt';
 import { useEdgeAutoScroll, EdgeScrollZones } from './home-hero/EdgeAutoScroll';
@@ -1576,6 +1577,7 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
           headlines (a narrow "?") are left alone. */}
       {isDock ? null : (
         <>
+          {MOKINA_LOCAL_EDITION ? <div className="mokina-home-brand"><MokinaBrand size={56} decorative={false} /></div> : null}
           <h1
             className={
               'home-hero__title' +

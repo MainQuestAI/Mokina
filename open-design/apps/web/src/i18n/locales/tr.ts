@@ -5620,4 +5620,10 @@ export const tr: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "Henüz tamamlanmış sonuç yok",
+  "mokina.empty.description": "Ne yapmak istediğinizi yazın ve başlamak için gönderin.",
+  "mokina.empty.focus": "Gereksinimleri yaz",
+  "mokina.empty.runningTitle": "İlk sonuç hazırlanıyor",
+  "mokina.empty.runningDescription": "Tamamlandığında burada görünecek. İlerlemeyi iş birliği alanından izleyin.",
+  "mokina.model.unavailable": "Bu model Mokina’da kullanılamıyor. Göndermeden önce ayarlardan yerel veya BYOK model seçin.",
 };

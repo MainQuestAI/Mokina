@@ -5620,4 +5620,10 @@ export const uk: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "Готових результатів ще немає",
+  "mokina.empty.description": "Опишіть, що хочете створити, і надішліть, щоб почати.",
+  "mokina.empty.focus": "Вказати вимоги",
+  "mokina.empty.runningTitle": "Створюється перший результат",
+  "mokina.empty.runningDescription": "Він з’явиться тут після завершення. Стежте за поступом у зоні співпраці.",
+  "mokina.model.unavailable": "Ця модель недоступна в Mokina. Перед надсиланням виберіть локальну модель або BYOK у налаштуваннях.",
 };

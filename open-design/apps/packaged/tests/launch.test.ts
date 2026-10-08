@@ -67,7 +67,10 @@ describe("verifyPackagedDataRootWritable", () => {
     }
   });
 
-  it("wraps low-level mkdir/access failures with a user-actionable error", async () => {
+  it.each([
+    { product: null, productName: 'Open Design' },
+    { product: { productId: 'mokina' as const }, productName: 'Mokina' },
+  ])("wraps path failures with the correct product identity: $productName", async ({ product, productName }) => {
     const root = mkdtempSync(join(tmpdir(), "od-packaged-launch-"));
     try {
       const blocker = join(root, "namespaces", "release-beta");
@@ -76,13 +79,14 @@ describe("verifyPackagedDataRootWritable", () => {
 
       let captured: unknown;
       try {
-        await verifyPackagedDataRootWritable({ dataRoot: join(blocker, "data") });
+        await verifyPackagedDataRootWritable({ dataRoot: join(blocker, "data") }, product);
       } catch (error) {
         captured = error;
       }
 
       expect(captured).toBeInstanceOf(PackagedPathAccessError);
-      expect((captured as Error).message).toContain("Open Design could not create or write to:");
+      expect((captured as PackagedPathAccessError).title).toBe(`${productName} cannot access its data folder`);
+      expect((captured as Error).message).toContain(`${productName} could not create or write to:`);
       expect((captured as Error).message).toContain(join(blocker, "data"));
       expect((captured as Error).message).toContain("Current user:");
       expect((captured as Error).message).toContain("Try in Terminal:");

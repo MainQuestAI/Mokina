@@ -48,6 +48,7 @@ export async function requestRendererChatScrollCapture(
 }
 
 export interface DesktopDiagnosticsDeps {
+  product?: { productId: 'mokina' } | null;
   /**
    * Resolve the daemon base URL the bundle is fetched from. Mirrors the
    * app-config base-URL discovery (daemon URL → web URL → sidecar web
@@ -73,7 +74,7 @@ export async function exportDiagnosticsToFile(
   // same slow folder. ponytail: mitigates the trigger; a fully wedged OneDrive
   // shell is an OS-side stall no app option can unblock.
   const dialogOptions = {
-    title: "Export OpenDesign diagnostics",
+    title: deps.product?.productId === 'mokina' ? "Export Mokina diagnostics" : "Export OpenDesign diagnostics",
     defaultPath: filename,
     filters: [{ name: "Zip archive", extensions: ["zip"] }],
     properties: ["dontAddToRecent" as const],

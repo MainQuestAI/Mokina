@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import { MOKINA_LOCAL_EDITION } from '../src/mokina-edition';
 import { I18nProvider } from '../src/i18n';
 import { AnalyticsProvider } from '../src/analytics/provider';
 import '@excalidraw/excalidraw/index.css';
@@ -13,10 +14,10 @@ import '../src/components/HoverTouchpointOverlay.module.css';
 import '../src/components/ProductionCampaignBadge.module.css';
 
 export const metadata: Metadata = {
-  title: 'Mokina',
+  title: MOKINA_LOCAL_EDITION ? 'Mokina' : 'Open Design',
   icons: {
-    icon: '/mokina-icon.svg',
-    apple: '/mokina-icon.svg',
+    icon: MOKINA_LOCAL_EDITION ? '/mokina/mokina-icon-black.svg?v=857b1c745e40' : '/brand-icon.svg',
+    apple: MOKINA_LOCAL_EDITION ? '/mokina/apple-touch-icon.png' : '/brand-icon.svg',
   },
 };
 
@@ -40,7 +41,7 @@ const themeInitScript = `(function(){document.documentElement.setAttribute('data
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='en' data-product={MOKINA_LOCAL_EDITION ? 'mokina' : undefined} suppressHydrationWarning>
       {/* eslint-disable-next-line @next/next/no-sync-scripts */}
       <head>
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: intentional theme-init inline script to prevent FOUC */}

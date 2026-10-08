@@ -731,6 +731,7 @@ export function EntryShell({
     // status and a definitive credential rejection return to the existing
     // Cloud identity gate. Passive reauthentication preserves the saved model
     // source and Home's locally persisted, not-yet-sent draft.
+    if (MOKINA_LOCAL_EDITION) return;
     const selectedCloudIdentityRejected = usesOpenDesignCloud && amrLoggedIn === false;
     if ((!selectedCloudIdentityRejected && !amrAuthRequired) || view === 'onboarding') return;
     navigate({ kind: 'home', view: 'onboarding' }, { replace: true });
@@ -1441,6 +1442,10 @@ export function EntryShell({
   // projectKind='other', so the agent infers the task type and asks only
   // when the brief cannot be routed reliably.
   async function handlePluginLoopSubmit(payload: PluginLoopSubmit) {
+    if (MOKINA_LOCAL_EDITION && usesOpenDesignCloud) {
+      onOpenSettings('execution');
+      return 'blocked' as const;
+    }
     if (amrAuthRequired) {
       navigate({ kind: 'home', view: 'onboarding' }, { replace: true });
       return 'blocked' as const;
@@ -1843,6 +1848,9 @@ export function EntryShell({
 
   return (
     <div className="entry-shell entry-shell--no-header">
+      {MOKINA_LOCAL_EDITION && usesOpenDesignCloud ? <div className="mokina-model-unavailable" role="status">
+        <p>{t('mokina.model.unavailable')}</p><Button onClick={() => onOpenSettings('execution')}>{t('avatar.settings')}</Button>
+      </div> : null}
       <div
         className={`entry${railOpen ? ' entry--rail-open' : ''}`}
         // The team/local shell is a labeled Manus-style rail, so widen the rail
@@ -2059,7 +2067,7 @@ export function EntryShell({
                 onSkillsChanged={onSkillsChanged}
               />
             ) : null}
-            {view === 'community' ? (
+            {view === 'community' && !MOKINA_LOCAL_EDITION ? (
               <CommunityView
                 onRemixTemplate={({ templateId, prompt }) => {
                   // Remix carries the template's PROJECT along, not just its

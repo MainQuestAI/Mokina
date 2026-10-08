@@ -6066,4 +6066,10 @@ export const zhCN: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "网络不可用",
   'settings.mokinaConnection.state.modelUnavailable': "模型不可用",
   'settings.mokinaConnection.state.unknown': "状态未确认",
+  "mokina.empty.title": "还没有正式成果",
+  "mokina.empty.description": "写下这次要完成的内容，发送后开始制作。",
+  "mokina.empty.focus": "填写制作要求",
+  "mokina.empty.runningTitle": "正在制作首份成果",
+  "mokina.empty.runningDescription": "完成后将在这里显示。进度可在协作区查看。",
+  "mokina.model.unavailable": "此模型在 Mokina 中不可用。请在设置中选择本地或自带密钥模型后再发送。",
 };

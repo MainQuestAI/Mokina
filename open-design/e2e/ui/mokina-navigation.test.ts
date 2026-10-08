@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@/playwright/suite';
 import { applyStandardMocks } from '@/playwright/mock-factory';
 import { T } from '@/timeouts';
@@ -154,3 +154,84 @@ async function seedProject(
   }
   return { projectId };
 }
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+  test(`[P1] Mokina brand, action and title styles at ${viewport.width}px`, async ({ page }, testInfo) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('home-hero-input')).toBeVisible({ timeout: T.long });
+    await expect(page.locator('html')).toHaveAttribute('data-product', 'mokina');
+    await expect(page.getByRole('img', { name: 'Mokina', exact: true })).toBeVisible();
+    const title = page.locator('.home-hero__title');
+    const style = await title.evaluate(node => ({ font: parseFloat(getComputedStyle(node).fontSize), line: parseFloat(getComputedStyle(node).lineHeight) }));
+    expect(style.font).toBeCloseTo(viewport.width <= 760 ? 40 : Math.min(68, Math.max(42, viewport.width * 0.0435)), 1);
+    expect(style.line / style.font).toBeCloseTo(1.3, 1);
+    await page.getByTestId('home-hero-input').fill('验证主操作');
+    const submit = page.getByTestId('home-hero-submit');
+    await expect(submit).toBeEnabled();
+    await expect(submit).toHaveCSS('background-color', 'rgb(0, 113, 227)');
+    const box = await submit.boundingBox(); expect(box!.width).toBeGreaterThanOrEqual(44); expect(box!.height).toBeGreaterThanOrEqual(44);
+    // Exercise the real control's cascade and color transition without sending.
+    await submit.hover();
+    await expect.poll(() => controlBackgroundPixels(submit)).toEqual([0, 104, 209]);
+    await page.mouse.down();
+    await expect.poll(() => controlBackgroundPixels(submit)).toEqual([0, 97, 195]);
+    // Release outside the button so this style check cannot create a project.
+    await page.mouse.move(0, 0); await page.mouse.up();
+    await page.getByTestId('home-hero-input').fill('');
+    await expect(submit).toBeDisabled();
+    const disabledColor = await submit.evaluate(node => getComputedStyle(node).backgroundColor);
+    await submit.hover(); await expect(submit).toHaveCSS('background-color', disabledColor);
+    await page.mouse.move(0, 0);
+    await testInfo.attach(`brand-home-${viewport.width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+  });
+}
+
+test('[P1] Mokina empty project focuses its existing composer without writing or sending', async ({ page }, testInfo) => {
+  const project = await seedProject(page, '初始空项目', []);
+  await page.goto(`/projects/${project.projectId}`, { waitUntil: 'domcontentloaded' });
+  const composer = page.getByTestId('chat-composer-input');
+  await expect(composer).toBeVisible({ timeout: T.long });
+  await composer.fill('保留这份草稿');
+  const writes: string[] = [];
+  page.on('request', request => { if (request.method() === 'POST' && /\/api\/(?:runs|projects)$/.test(new URL(request.url()).pathname)) writes.push(request.url()); });
+  await expect(page.getByTestId('mokina-artifact-initial')).toBeVisible({ timeout: T.long });
+  await page.getByRole('button', { name: 'Write your requirements', exact: true }).click();
+  await expect(composer).toBeFocused(); await expect(composer).toContainText('保留这份草稿'); expect(writes).toEqual([]);
+  await testInfo.attach('empty-project', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+async function controlBackgroundPixels(control: Locator) {
+  return control.evaluate(node => {
+    const canvas = document.createElement('canvas'); canvas.width = 1; canvas.height = 1;
+    const context = canvas.getContext('2d')!;
+    context.fillStyle = getComputedStyle(node).backgroundColor; context.fillRect(0, 0, 1, 1);
+    return Array.from(context.getImageData(0, 0, 1, 1).data).slice(0, 3);
+  });
+}
+
+test('[P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change', async ({ page }) => {
+  await page.addInitScript(() => {
+    const config = JSON.parse(localStorage.getItem('open-design:config') || '{}');
+    localStorage.setItem('open-design:config', JSON.stringify({ ...config, agentId: 'amr', mode: 'daemon' }));
+  });
+  await page.route('**/api/app-config**', async route => {
+    if (route.request().method() !== 'GET') { await route.fallback(); return; }
+    await route.fulfill({ json: { config: { onboardingCompleted: true, agentId: 'amr', mode: 'daemon', privacyDecisionAt: 1 } } });
+  });
+  await page.route('**/api/integrations/vela/status*', route => route.fulfill({ json: { loggedIn: false, sessionState: 'signed_out' } }));
+  const writes: string[] = [];
+  page.on('request', request => { if (request.method() === 'POST' && /\/api\/(?:runs|projects|integrations\/vela\/login)$/.test(new URL(request.url()).pathname)) writes.push(request.url()); });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.mokina-model-unavailable')).toContainText('unavailable in Mokina', { timeout: T.long });
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('open-design:config')!).agentId)).toBe('amr');
+  await page.getByTestId('home-hero-input').fill('保留未发送内容');
+  await page.getByTestId('home-hero-submit').click();
+  const settings = page.getByRole('region', { name: /^Settings/ });
+  await expect(settings).toBeVisible({ timeout: T.long });
+  await expect(page.locator('.settings-cloud-signin-callout')).toHaveCount(0);
+  await expect(page.getByTestId('entry-nav-community')).toHaveCount(0);
+  await expect(settings.locator('.amr-auth-anchor')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('open-design:config')!).agentId)).toBe('amr');
+  expect(writes).toEqual([]);
+});

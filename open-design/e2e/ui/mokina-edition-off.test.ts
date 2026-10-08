@@ -15,6 +15,11 @@ test('Mokina off production keeps populated recent projects without Mokina summa
   for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720 }]) {
     await page.setViewportSize(viewport);
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('html')).not.toHaveAttribute('data-product', 'mokina');
+    await expect(page).toHaveTitle('Open Design');
+    await expect(page.locator('.mokina-home-brand')).toHaveCount(0);
+    const actionToken = await page.locator('html').evaluate(element => getComputedStyle(element).getPropertyValue('--mokina-action').trim());
+    expect(actionToken).toBe('');
     await ensureRailOpen(page);
     await expect(page.getByTestId('entry-nav-recent-item').filter({ hasText: 'Existing off project' })).toBeVisible({ timeout: T.long });
     await expect(page.getByTestId('entry-nav-recent-artifact')).toHaveCount(0);

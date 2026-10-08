@@ -5620,4 +5620,10 @@ export const th: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "ยังไม่มีผลงานที่เสร็จสมบูรณ์",
+  "mokina.empty.description": "เขียนสิ่งที่ต้องการทำ แล้วส่งเพื่อเริ่มสร้าง",
+  "mokina.empty.focus": "เขียนข้อกำหนด",
+  "mokina.empty.runningTitle": "กำลังสร้างผลงานแรก",
+  "mokina.empty.runningDescription": "ผลงานจะแสดงที่นี่เมื่อเสร็จ ติดตามความคืบหน้าได้ในพื้นที่ทำงานร่วมกัน",
+  "mokina.model.unavailable": "โมเดลนี้ไม่พร้อมใช้งานใน Mokina เลือกโมเดลในเครื่องหรือ BYOK ในการตั้งค่าก่อนส่ง",
 };

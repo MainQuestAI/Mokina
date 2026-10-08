@@ -5620,4 +5620,10 @@ export const ko: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "아직 완성된 결과가 없습니다",
+  "mokina.empty.description": "만들고 싶은 내용을 입력한 뒤 전송하면 제작을 시작합니다.",
+  "mokina.empty.focus": "제작 요구사항 작성",
+  "mokina.empty.runningTitle": "첫 결과를 만드는 중",
+  "mokina.empty.runningDescription": "완성되면 여기에 표시됩니다. 협업 영역에서 진행 상황을 확인하세요.",
+  "mokina.model.unavailable": "Mokina에서 이 모델을 사용할 수 없습니다. 전송 전에 설정에서 로컬 또는 BYOK 모델을 선택하세요.",
 };

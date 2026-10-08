@@ -5620,4 +5620,10 @@ export const ptBR: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "Ainda não há resultados concluídos",
+  "mokina.empty.description": "Descreva o que deseja criar e envie para começar.",
+  "mokina.empty.focus": "Escrever os requisitos",
+  "mokina.empty.runningTitle": "Criando o primeiro resultado",
+  "mokina.empty.runningDescription": "Ele aparecerá aqui quando estiver pronto. Acompanhe o progresso na área de colaboração.",
+  "mokina.model.unavailable": "Este modelo não está disponível no Mokina. Escolha um modelo local ou BYOK nas configurações antes de enviar.",
 };

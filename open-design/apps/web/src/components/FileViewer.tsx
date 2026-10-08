@@ -3616,6 +3616,7 @@ function FileVersionManagerModal({
   const [downloadMenuVersionId, setDownloadMenuVersionId] = useState<string | null>(null);
   const [candidateCompare, setCandidateCompare] = useState<{ base: ProjectFileVersion; baseHtml: string } | null>(null);
   const [candidateCompareBusy, setCandidateCompareBusy] = useState(false);
+  const candidateCompareTriggerRef = useRef<HTMLButtonElement>(null);
   const [versionExportToast, setVersionExportToast] = useState<ExportToastState | null>(null);
   const [selectedContinuationSections, setSelectedContinuationSections] = useState<string[]>([]);
   const [continuationBackground, setContinuationBackground] = useState('');
@@ -5186,6 +5187,7 @@ function FileVersionManagerModal({
             <button
               type="button"
               className="artifact-version-panel__compare"
+              ref={candidateCompareTriggerRef}
               disabled={candidateCompareBusy}
               onClick={() => { void openCandidateCompare(); }}
             >
@@ -5325,6 +5327,7 @@ function FileVersionManagerModal({
       </aside>
       {candidateCompare && selectedVersion?.candidate && selectedContent ? (
         <MokinaCandidateCompare
+          returnFocusTo={candidateCompareTriggerRef.current}
           baseVersion={candidateCompare.base}
           candidateVersion={selectedVersion}
           baseHtml={candidateCompare.baseHtml}
@@ -21112,7 +21115,7 @@ function MarkdownViewer({
                   {/* Safe by contract: renderMarkdownToSafeHtml escapes raw HTML and rejects unsafe link protocols. */}
                   <article
                     ref={markdownArticleRef}
-                    className="markdown-rendered"
+                    className={`markdown-rendered${MOKINA_LOCAL_EDITION && (file.artifactKind || file.artifactManifest) ? ' mokina-artifact-reader' : ''}`}
                     onClick={(event) => void handleMarkdownBodyClick(event)}
                     dangerouslySetInnerHTML={{ __html: html }}
                   />

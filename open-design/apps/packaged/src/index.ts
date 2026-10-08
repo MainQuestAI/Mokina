@@ -278,7 +278,7 @@ async function main(): Promise<void> {
     ),
   };
 
-  await ensurePackagedNamespacePaths(paths);
+  await ensurePackagedNamespacePaths(paths, activeConfig.product);
   const convergedStamp = launchStamp;
   registerSidecarProcess(convergedStamp, {
     dataRoot: paths.dataRoot,
@@ -318,7 +318,7 @@ async function main(): Promise<void> {
   // real app has mounted (see createDesktopRuntime). The handle carries the
   // creation timestamp so the runtime's minimum-hold timer counts from here —
   // BEFORE the sidecar boot below — rather than re-adding the delay afterwards.
-  const splash = createSplashWindow();
+  const splash = createSplashWindow(activeConfig.product);
 
   const runtime = {
     app: APP_KEYS.DESKTOP,
@@ -440,6 +440,7 @@ async function main(): Promise<void> {
       }
     },
     windowTitle: resolvePackagedWindowTitle(activeConfig),
+    product: activeConfig.product,
     inviteProtocolClientPath:
       process.platform === "win32" ? launcherRuntime.installedLaunchPath : null,
     async onExternalShow() {

@@ -9,7 +9,7 @@ import {
   assertNodePtyRuntime,
   resolveNodePtyRuntimeArch,
 } from "../node-pty-runtime.js";
-import { macResources } from "../resources/index.js";
+import { macResources, mokinaResources } from "../resources/index.js";
 import { electronBuilderVersionForAppVersion } from "../versioning/index.js";
 import { execFileAsync } from "./commands.js";
 import {
@@ -111,7 +111,7 @@ export async function runElectronBuilder(
       output: paths.appBuilderOutputRoot,
     },
     dmg: {
-      icon: macResources.icon,
+      icon: mokinaProfile == null ? macResources.icon : mokinaResources.icon,
       iconSize: 96,
       title: identity.installerTitle,
     },
@@ -138,7 +138,7 @@ export async function runElectronBuilder(
       entitlementsInherit: config.signed ? macResources.entitlementsInherit : undefined,
       gatekeeperAssess: false,
       hardenedRuntime: config.signed,
-      icon: macResources.icon,
+      icon: mokinaProfile == null ? macResources.icon : mokinaResources.icon,
       identity: config.signed ? undefined : null,
       notarize: config.macNotarize ? undefined : false,
       target: targets,
@@ -163,7 +163,7 @@ export async function runElectronBuilder(
     nodeGypRebuild: false,
     npmRebuild: false,
     productName: identity.productName,
-    icon: macResources.icon,
+    icon: mokinaProfile == null ? macResources.icon : mokinaResources.icon,
     publish: [
       {
         provider: "generic",

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { MokinaLiveStatus } from './MokinaLiveStatus';
 import { Button } from '@open-design/components';
 
 import { joinMokinaExcerpt, mokinaContextBudgetExceeded, MOKINA_CONTEXT_BUDGETS, type MokinaContextSelection, type ProjectMaterialExtraction } from '@open-design/contracts';
@@ -342,6 +343,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
 
   return (
     <details className="mokina-material-picker mokina-context-panel">
+      <MokinaLiveStatus identity={scopeIdentity} summary={frozen?.snapshotId ?? ''} label={frozen ? t('mokina.contextPanel.frozenTitle') : ''} />
       <summary>{t('mokina.contextPanel.summary')}</summary>
       <p>{t('mokina.contextPanel.intro')}</p>
       <div className="mokina-context-panel__brand">
@@ -367,7 +369,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         {brandId && brandError ? <Button disabled={brandLoading} onClick={() => void selectBrand(brandId)}>{t('mokina.repair.refreshBrand')}</Button> : null}
       </div>
       {frozen ? (
-        <div role="status" className="mokina-context-panel__frozen">
+        <div className="mokina-context-panel__frozen">
           <p>
             {t('mokina.contextPanel.frozenTitle')}：
             {t('mokina.contextPanel.frozenDetail', {

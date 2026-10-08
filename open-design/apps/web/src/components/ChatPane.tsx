@@ -1,3 +1,5 @@
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+const EMPTY_MOKINA_BALANCE_CARDS = new Map();
 import type { SendRequestSnapshot } from '../runtime/chat/send-request-state';
 import { conversationMetaLabel } from '../runtime/chat/conversation-time';
 export { conversationMetaLabel } from '../runtime/chat/conversation-time';
@@ -728,6 +730,7 @@ interface Props {
   shareToOpenDesignBusyMessageId?: string | null;
   forceStreamingMessageIds?: Set<string>;
   initialDraft?: string;
+  composerFocusRequest?: number;
   sendRecoveryRequest?: { id: string; snapshot: SendRequestSnapshot } | null;
   onSendRecoveryRestored?: (id: string) => void;
   onSendRecoveryBlocked?: (reason?: 'storage' | 'occupied') => void;
@@ -1358,6 +1361,7 @@ export function ChatPane({
   shareToOpenDesignBusyMessageId,
   forceStreamingMessageIds,
   initialDraft,
+  composerFocusRequest = 0,
   sendRecoveryRequest,
   onSendRecoveryRestored,
   onSendRecoveryBlocked,
@@ -1608,6 +1612,12 @@ export function ChatPane({
   const logRef = useRef<HTMLDivElement | null>(null);
   const historyWrapRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<ChatComposerHandle | null>(null);
+  const lastComposerFocusRequest = useRef(composerFocusRequest);
+  useEffect(() => {
+    if (lastComposerFocusRequest.current === composerFocusRequest) return;
+    lastComposerFocusRequest.current = composerFocusRequest;
+    composerRef.current?.focus();
+  }, [composerFocusRequest]);
   const composerSlotRef = useRef<HTMLDivElement | null>(null);
   const composerLayerRef = useRef<HTMLDivElement | null>(null);
   const queuedSendStripRef = useRef<HTMLDivElement | null>(null);
@@ -2124,12 +2134,12 @@ export function ChatPane({
         daemonFailureVerdictFrom(failedRunErrorEvent),
       )
     : null;
-  const hasInlineAmrAuthorizeFailure = Boolean(
+  const hasInlineAmrAuthorizeFailure = Boolean(!MOKINA_LOCAL_EDITION &&
     retryAssistant && onRetry && runFailureUi?.primaryAction === 'authorize',
   );
   useEffect(() => {
     if (
-      !amrAuthRetryContinuation
+      MOKINA_LOCAL_EDITION || !amrAuthRetryContinuation
       || !onDiscardAmrAuthRetryContinuation
       || loading
       || !projectId
@@ -2171,6 +2181,7 @@ export function ChatPane({
     retryAssistant?.id,
   ]);
   const consumeAmrAuthRetryIfAuthorized = useCallback((status: VelaLoginStatus | null) => {
+    if (MOKINA_LOCAL_EDITION) return;
     if (!isAmrSessionAuthenticated(status)) {
       if (
         status?.loginInFlight === true
@@ -2473,9 +2484,9 @@ export function ChatPane({
   // OPEND-2807 / G16: the failed run selects one fixed recovery action.
   // The classifier still owns approved copy and handoffs, never extra buttons.
   const failedRunUsesCloud = retryAssistant?.agentId === 'amr';
-  const showCloudRetry = Boolean(retryAssistant && failedRunUsesCloud && onRetry);
+  const showCloudRetry = Boolean(retryAssistant && onRetry && (MOKINA_LOCAL_EDITION ? !failedRunUsesCloud : failedRunUsesCloud));
   const showCloudSwitchCta = Boolean(
-    retryAssistant && !failedRunUsesCloud
+    !MOKINA_LOCAL_EDITION && retryAssistant && !failedRunUsesCloud
     && (onSwitchToAmrAndRetry || onOpenAmrSettings),
   );
   const [supportDialogOpen, setSupportDialogOpen] = useState(false);
@@ -4446,7 +4457,7 @@ export function ChatPane({
                   items={chatRenderItems}
                   messages={displayMessages}
                   streaming={streaming}
-                  lowBalanceTurnCards={lowBalanceTurnCards}
+                  lowBalanceTurnCards={MOKINA_LOCAL_EDITION ? EMPTY_MOKINA_BALANCE_CARDS : lowBalanceTurnCards}
                   onLowBalanceTurnCardUpgrade={
                     onAmrBalanceUpgrade ?? (() => openAmrPlans('chat_upgrade_card'))
                   }
@@ -4528,10 +4539,11 @@ export function ChatPane({
                   <RunErrorCard
                     dataKind="run-recovery"
                     title={displayErrorTitle}
-                    description={displayError}
+                    description={MOKINA_LOCAL_EDITION && failedRunUsesCloud ? t('mokina.model.unavailable') : displayError}
                     actions={(
                       <>
                         {/* OPEND-2807: two standing actions and one runtime action. */}
+                        {!MOKINA_LOCAL_EDITION ? (
                         <RunErrorCardAction
                           type="button"
                           className="od-tooltip"
@@ -4543,7 +4555,9 @@ export function ChatPane({
                           <Icon name="headset" size={11} />
                           {t('chat.runError.contactSupportCta')}
                         </RunErrorCardAction>
+                        ) : null}
                         <ExportLogsAction />
+                        {MOKINA_LOCAL_EDITION && failedRunUsesCloud ? <RunErrorCardAction type="button" variant="primary" onClick={() => onOpenSettings?.('execution')}>{t('avatar.settings')}</RunErrorCardAction> : null}
                         {showCloudRetry && retryAssistant && onRetry ? (
                           <RunErrorCardAction
                             type="button"
@@ -4609,7 +4623,7 @@ export function ChatPane({
                   * 剩在这儿的是拦截档:那一轮已经被 `retractPaintedTurn` 收回,
                   * 没有 run 也就没有轮次,读数不摆在末尾就彻底没地方说了。
                   */}
-                {tailAmrBalanceCardUsd != null ? (
+                {!MOKINA_LOCAL_EDITION && tailAmrBalanceCardUsd != null ? (
                   <UpgradeCard
                     balanceUsd={tailAmrBalanceCardUsd}
                     onUpgrade={
@@ -4783,7 +4797,7 @@ export function ChatPane({
         * 组件自己走 portal 到 body,所以挂在这里不受聊天区滚动 / 层叠上下文影响。
         * 渠道由调用方给,单一出处在 `chat/support-channels.tsx`。
         */}
-      {supportDialogOpen ? (
+      {!MOKINA_LOCAL_EDITION && supportDialogOpen ? (
         <SupportDialog
           channels={supportChannels(t)}
           onClose={() => setSupportDialogOpen(false)}

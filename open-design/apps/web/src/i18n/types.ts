@@ -5911,4 +5911,10 @@ export interface Dict {
   'settings.mokinaConnection.state.networkUnavailable': string;
   'settings.mokinaConnection.state.modelUnavailable': string;
   'settings.mokinaConnection.state.unknown': string;
+  'mokina.empty.title': string;
+  'mokina.empty.description': string;
+  'mokina.empty.focus': string;
+  'mokina.empty.runningTitle': string;
+  'mokina.empty.runningDescription': string;
+  'mokina.model.unavailable': string;
 }

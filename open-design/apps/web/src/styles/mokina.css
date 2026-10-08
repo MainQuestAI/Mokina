@@ -1,0 +1,181 @@
+/* Product chrome only. The SSR html attribute also scopes body-mounted portals.
+   Customer documents and artifact iframes keep their own styles and bytes. */
+html[data-product='mokina'] {
+  --mokina-canvas: #f5f5f5;
+  --surface: var(--mokina-surface);
+  --muted: var(--mokina-secondary);
+  --mokina-surface: #ffffff;
+  --mokina-ink: #111111;
+  --mokina-secondary: #595959;
+  --mokina-edge: #dbdbdb;
+  --mokina-action: #0071e3;
+  --mokina-on-action: #ffffff;
+  --mokina-action-hover: color-mix(in srgb, var(--mokina-action) 92%, black);
+  --mokina-action-pressed: color-mix(in srgb, var(--mokina-action) 86%, black);
+  --mokina-glass-fill: color-mix(in srgb, var(--mokina-surface) 86%, transparent);
+  --bg: var(--mokina-canvas);
+  --bg-panel: var(--mokina-surface);
+  --bg-elevated: var(--mokina-surface);
+  --text: var(--mokina-ink);
+  --text-strong: var(--mokina-ink);
+  --text-muted: var(--mokina-secondary);
+  --border: var(--mokina-edge);
+  --chat-text: var(--mokina-ink);
+  --chat-text-secondary: var(--mokina-secondary);
+  --chat-surface: var(--mokina-surface);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html[data-product='mokina'] :where(button, input, textarea, select) {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+/* Both the shared Button module and legacy controls carry the primary class. */
+html[data-product='mokina'] button.primary:not([class*='danger' i]):not([class*='destruct' i]):not([class*='success' i]):not([data-tone='danger']):not([data-tone='success']) {
+  background: var(--mokina-action);
+  border-color: var(--mokina-action);
+  color: var(--mokina-on-action);
+  border-radius: 10px;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+html[data-product='mokina'] button.primary:not([class*='danger' i]):not([class*='destruct' i]):not([class*='success' i]):not([data-tone='danger']):not([data-tone='success']):hover:not(:disabled) {
+  background: var(--mokina-action-hover);
+  border-color: var(--mokina-action-hover);
+}
+
+html[data-product='mokina'] button.primary:not([class*='danger' i]):not([class*='destruct' i]):not([class*='success' i]):not([data-tone='danger']):not([data-tone='success']):active:not(:disabled) {
+  background: var(--mokina-action-pressed);
+  border-color: var(--mokina-action-pressed);
+}
+
+html[data-product='mokina'] button.primary:not([class*='danger' i]):not([class*='destruct' i]):not([class*='success' i]):not([data-tone='danger']):not([data-tone='success']):disabled {
+  background: var(--bg-subtle);
+  border-color: transparent;
+  color: var(--text-faint);
+  transform: none;
+}
+
+html[data-product='mokina'] :where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--mokina-action);
+  outline-offset: 2px;
+}
+
+html[data-product='mokina'] button.icon-btn,
+html[data-product='mokina'] button[aria-label]:has(> svg),
+html[data-product='mokina'] :where(.viewer-toolbar, .sketch-toolbar, .preview-draw-toolbar) button:has(svg) {
+  min-width: 44px;
+  min-height: 44px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+html[data-product='mokina'] :where(.viewer-toolbar, .sketch-toolbar, .preview-draw-toolbar) {
+  flex-wrap: wrap;
+}
+
+html[data-product='mokina'] .home-hero__title {
+  font-size: clamp(42px, 4.35vw, 68px);
+  line-height: 1.3;
+  font-weight: 600;
+  height: auto;
+  overflow-wrap: anywhere;
+}
+
+html[data-product='mokina'] .home-hero__input-card {
+  border-radius: 24px;
+  background: var(--mokina-surface);
+}
+html[data-product='mokina'] .composer .composer-shell { border-radius: 24px; background: var(--mokina-surface); }
+
+.mokina-home-brand { margin-bottom: 24px; color: #111111; }
+
+html[data-product='mokina'] .od-brand-glyph {
+  -webkit-mask-image: url('/mokina/mokina-icon-black.svg');
+  mask-image: url('/mokina/mokina-icon-black.svg');
+}
+
+html[data-product='mokina'] :where(.entry-nav-rail, .viewer-toolbar, .workspace-tabs-chrome) {
+  background: var(--mokina-glass-fill);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+html[data-product='mokina'] .mokina-context-panel {
+  border: 1px solid var(--mokina-edge);
+  border-radius: 12px;
+  margin: 8px 12px;
+  padding: 12px 16px;
+  background: var(--mokina-surface);
+  color: var(--mokina-ink);
+}
+
+html[data-product='mokina'] .mokina-context-panel :where(p, label, button) {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  html[data-product='mokina'] .home-hero__title { font-size: 40px; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  html[data-product='mokina'] { --mokina-glass-fill: var(--mokina-surface); }
+  html[data-product='mokina'] :where(.entry-nav-rail, .viewer-toolbar, .workspace-tabs-chrome, .preview-draw-toolbar, .sketch-editor-header) {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  html[data-product='mokina'] { --mokina-glass-fill: var(--mokina-surface); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-product='mokina'] :where(button, .home-hero__title *, .mokina-home-brand) {
+    transition: none;
+    animation: none;
+  }
+}
+
+.mokina-live-summary { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.mokina-preparation-notice, .mokina-recovery-notice { padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-panel); display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; line-height: 22px; }
+.mokina-preparation-notice p { flex-basis: 100%; margin: 0; }
+html[data-product="mokina"] .mokina-files-content { min-height: 0; flex: 1; display: flex; flex-direction: column; overflow: auto; }
+html[data-product="mokina"] .mokina-files-content > .design-files-panel { flex: 1; min-height: 200px; }
+.mokina-artifact-empty { padding: 32px; text-align: center; background: var(--bg-panel); }
+.mokina-artifact-empty h2 { font-size: clamp(28px, 2.55vw, 40px); line-height: 1.4; font-weight: 600; margin: 0 0 12px; }
+.mokina-artifact-empty p { color: var(--text-muted); font-size: 15px; line-height: 1.9; margin: 0 0 24px; }
+html[data-product="mokina"] :where(.viewer-toolbar, .ws-tabs-shell) { flex-wrap: wrap; }
+html[data-product="mokina"] .page-title { font-size: 28px; line-height: 36px; }
+@media (max-width: 760px) { .mokina-artifact-empty { padding: 24px 16px; } .mokina-artifact-empty h2 { font-size: 28px; } }
+
+html[data-product="mokina"] :where(.preview-draw-toolbar, .sketch-editor-header) { background: var(--mokina-glass-fill); border: 1px solid var(--border); border-radius: 12px; backdrop-filter: blur(16px); gap: 8px; }
+html[data-product="mokina"] :where(.preview-draw-toolbar button, .sketch-editor-header button, .preview-draw-icon-action, .preview-draw-subtool-action) { min-width: 44px; min-height: 44px; border-radius: 10px; font-size: 14px; line-height: 22px; }
+html[data-product="mokina"] :where(.preview-draw-toolbar button, .preview-draw-icon-action) svg { width: 20px; height: 20px; }
+@media (max-width: 760px) { html[data-product="mokina"] .preview-draw-toolbar { max-width: calc(100vw - 32px); flex-wrap: wrap; } }
+
+html:not([data-product="mokina"]) .mokina-files-content { display: contents; }
+
+html[data-product="mokina"] .mokina-artifact-reader :where(p, li) { font-size: 15px; line-height: 1.9; }
+html[data-product="mokina"] .mokina-artifact-reader > h1 { font-size: clamp(28px, 2.55vw, 40px); line-height: 1.4; font-weight: 600; }
+html[data-product="mokina"] button.icon-only:has(svg) { min-width: 44px; min-height: 44px; }
+html[data-product="mokina"] button:has(> .od-brand-glyph) { min-width: 44px; min-height: 44px; }
+@media (max-width: 760px) { html[data-product="mokina"] .mokina-artifact-reader > h1 { font-size: 28px; } }
+
+html[data-product="mokina"] :is(.composer-send:not(.stop), .home-hero__submit) {
+  background: var(--mokina-action); color: var(--mokina-on-action); border: 1px solid transparent;
+  min-width: 44px; min-height: 44px; border-radius: 10px; transition: background-color 160ms ease, color 160ms ease;
+}
+html[data-product="mokina"] :is(.composer-send:not(.stop), .home-hero__submit):not(:disabled):hover { background: var(--mokina-action-hover); }
+html[data-product="mokina"] :is(.composer-send:not(.stop), .home-hero__submit):not(:disabled):active { background: var(--mokina-action-pressed); }
+html[data-product="mokina"] :is(.composer-send:not(.stop), .home-hero__submit):disabled { background: var(--bg-subtle); color: var(--text-faint); border-color: transparent; }
+
+html[data-product="mokina"] :where(.entry-section__title, .onboarding-cloud__title, .settings-header h2) { font-size: 28px; line-height: 36px; }
+
+html[data-product="mokina"] #settings-dialog-title h2 { font-size: 28px; line-height: 36px; }
+
+/* Kept after the drawing toolbar rule so the preference wins the cascade. */
+@media (prefers-reduced-transparency: reduce) {
+  html[data-product="mokina"] :where(.preview-draw-toolbar, .sketch-editor-header) { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}

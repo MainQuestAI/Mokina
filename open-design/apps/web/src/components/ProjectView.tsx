@@ -365,6 +365,7 @@ import {
 } from './design-files/pluginFolderActions';
 import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunityPrompt';
 import { CenteredLoader } from './Loading';
+import { MokinaLiveStatus } from './mokina/MokinaLiveStatus';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { settleSubmittedMokinaSnapshot } from '../runtime/mokina/pending-context-snapshot';
 import { readHomeMokinaPreparation, clearHomeMokinaPreparation } from '../runtime/mokina/home-material-snapshot';
@@ -2685,6 +2686,7 @@ export function ProjectView({
   // wipes both — leaving the daemon's run with no client-side message to
   // attach the runId to.
   const [messagesInitialized, setMessagesInitialized] = useState(false);
+  const [composerFocusRequest, setComposerFocusRequest] = useState(0);
   const [previewComments, setPreviewComments] = useState<PreviewComment[]>([]);
   // Every local comment commit invalidates older in-flight list reads. The
   // initial read and the SSE/poll refresher use the same generation as a
@@ -8636,6 +8638,11 @@ export function ProjectView({
       // run can start. Local CLI and BYOK runtimes do not consume the Vela
       // wallet, so old daemons without this endpoint and directory outages
       // must not disable those runtimes.
+      if (MOKINA_LOCAL_EDITION && config.mode === 'daemon' && config.agentId === 'amr') {
+        setError(t('mokina.model.unavailable'));
+        onOpenSettings('execution');
+        return retainComposerDraft();
+      }
       if (!projectRunHasBillableAmrPrincipal) return retainComposerDraft();
       const effectiveAttachments = mergeChatAttachments(
         attachments,
@@ -13864,7 +13871,10 @@ export function ProjectView({
   const visibleSendRecords = pendingSendRecords.filter(record => record.projectId === project.id
     && record.conversationId === activeConversationId && (record.authorityKey ?? 'none') === projectRunAuthorityKey);
   const pendingSendNotice: ReactNode = visibleSendRecords.length > 0 ? (
-    <div className="mokina-pending-send" role="status" aria-live="polite" data-testid="mokina-pending-send">
+    <div className="mokina-pending-send" data-testid="mokina-pending-send">
+      <MokinaLiveStatus identity={JSON.stringify([project.id, activeConversationId, projectRunAuthorityKey])}
+        summary={visibleSendRecords.map(record => `${record.clientRequestId}:${record.status}`).join('|')}
+        label={visibleSendRecords.map(record => t(record.status === 'submitted' ? 'mokina.pendingSend.submittedSync' : record.status === 'draft' ? 'mokina.pendingSend.restore' : 'mokina.pendingSend.title')).join(' · ')} />
       {visibleSendRecords.map(record => {
         // FR-08 修订：有完整快照且无需重选上下文的 unknown 才能显式重发；
         // 其余 unknown 保留只读核对。放弃对非 pending 记录一律可用。
@@ -14119,10 +14129,11 @@ export function ProjectView({
               onRequestPluginFolderAgentAction={handlePluginFolderAgentAction}
               activePluginActionPaths={activePluginActionPaths}
               hiddenPluginActionPaths={hiddenAssistantPluginActionPaths}
-              onShareToOpenDesign={handleShareToOpenDesign}
+              onShareToOpenDesign={MOKINA_LOCAL_EDITION ? undefined : handleShareToOpenDesign}
               shareToOpenDesignBusyMessageId={shareToOpenDesignBusyMessageId}
               forceStreamingMessageIds={forceStreamingPluginMessageIds}
               initialDraft={chatInitialDraft}
+              composerFocusRequest={composerFocusRequest}
               sendRecoveryRequest={sendRecoveryRequest}
               onSendRecoveryBlocked={(reason) => { setError(t(reason === 'storage' ? 'mokina.pendingSend.saveFailed' : 'mokina.pendingSend.draftOccupied')); setSendRecoveryRequest(null); }}
               onSendRecoveryRestored={async (id) => {
@@ -14216,10 +14227,10 @@ export function ProjectView({
               onDeleteConversation={handleDeleteConversation}
               config={config}
               onOpenSettings={onOpenSettings}
-              amrBalanceCardUsd={amrBalanceCardUsd}
+              amrBalanceCardUsd={MOKINA_LOCAL_EDITION ? null : amrBalanceCardUsd}
               amrBalanceCardAnchorMessageId={amrBalanceCardAnchorId}
               amrBalanceCardUnavailable={amrBalanceFailureWalletUnavailable}
-              onAmrBalanceUpgrade={handleAmrBalanceCardUpgrade}
+              onAmrBalanceUpgrade={MOKINA_LOCAL_EDITION ? undefined : handleAmrBalanceCardUpgrade}
               showByokRecoveryAction={
                 config.mode === 'api' &&
                 daemonLive &&
@@ -14233,8 +14244,8 @@ export function ProjectView({
                 setError(null);
                 onModeChange('daemon');
               }}
-              onOpenAmrSettings={onOpenAmrSettings}
-              onSwitchToAmrAndRetry={handleSwitchToAmrAndRetry}
+              onOpenAmrSettings={MOKINA_LOCAL_EDITION ? undefined : onOpenAmrSettings}
+              onSwitchToAmrAndRetry={MOKINA_LOCAL_EDITION ? undefined : handleSwitchToAmrAndRetry}
               onLaunchAntigravityOauth={handleLaunchAntigravityOauth}
               onOpenMcpSettings={onOpenMcpSettings}
               onBrowsePlugins={onBrowsePlugins}
@@ -14309,13 +14320,13 @@ export function ProjectView({
               composerFooterAccessory={(
                 <>
                   {pendingSendNotice}
-                  {MOKINA_LOCAL_EDITION ? <MokinaContinuationRecoveryNotice projectId={project.id} workspaceContext={projectRunWorkspaceContext}
-                    onOpen={(projectId, conversationId) => navigate({ kind: 'project', projectId, conversationId, fileName: null })} /> : null}
                   {MOKINA_LOCAL_EDITION && activeConversationId ? <MokinaHomePreparationNotice projectId={project.id}
                     conversationId={activeConversationId} workspaceContext={projectRunWorkspaceContext}
                     onRestorePrompt={prompt => setSendRecoveryRequest({ id: `home:${activeConversationId}`, snapshot: {
                       prompt, extras: { attachments: [], commentAttachments: [], quotes: [], context: { skillIds: [], mcpServerIds: [], connectorIds: [], workspaceItems: [] } },
                     } })} /> : null}
+                  {MOKINA_LOCAL_EDITION ? <MokinaContinuationRecoveryNotice projectId={project.id} workspaceContext={projectRunWorkspaceContext}
+                    onOpen={(projectId, conversationId) => navigate({ kind: 'project', projectId, conversationId, fileName: null })} /> : null}
                   {executionControls}
                 </>
               )}
@@ -14418,6 +14429,18 @@ export function ProjectView({
           // running). An attached-but-not-yet-streaming run counts: it is
           // already writing.
           runInFlight={currentConversationStreaming || currentConversationHasActiveRun}
+          mokinaEmptyState={MOKINA_LOCAL_EDITION && committedFilesGeneration > 0 && messagesInitialized
+            && messagesConversationId === activeConversationId && !currentConversationAccessError
+            && !projectFiles.some(file => file.kind === 'html' || file.artifactKind || file.artifactManifest)
+            && liveArtifacts.length === 0
+            ? messages.length === 0 && !currentConversationActionDisabled ? 'initial'
+              : (currentConversationStreaming || currentConversationHasActiveRun) && messages.filter(message => message.role === 'user').length === 1 ? 'running' : undefined
+            : undefined}
+          onFocusComposer={() => {
+            setWorkspaceFocused(false);
+            setComposerFocusRequest(value => value + 1);
+          }}
+
           commentQueueOnSend={commentQueueOnSend}
           commentSendDisabled={currentConversationQueueDisabled}
           openRequest={openRequest}
@@ -14489,7 +14512,7 @@ export function ProjectView({
           onNewConversation={handleNewConversation}
           activeConversationChat={activeConversationChatState}
           onSwitchConversationToCloud={
-            onSwitchToCloud ? handleSwitchConversationToCloud : undefined
+            !MOKINA_LOCAL_EDITION && onSwitchToCloud ? handleSwitchConversationToCloud : undefined
           }
           chatRecoveryActionsBlockedReason={resolveRecoveryActionBlockReason({
             readOnly: Boolean(projectMutationReadOnly),

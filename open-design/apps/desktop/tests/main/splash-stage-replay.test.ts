@@ -129,4 +129,16 @@ describe('splash boot-stage replay guard', () => {
     expect(lastPayload.total).toBeGreaterThan(4);
     expect(lastPayload.label).toBe('Almost ready');
   });
+  test('replays the Mokina label after a delayed offline renderer loads', () => {
+    const splash = createMockSplash();
+    registerSplashStageTracking(splash.surface, { productId: 'mokina' });
+    setSplashStage(splash.surface, 'starting');
+    expect(splash.executed).toEqual([]);
+    splash.emitDidFinishLoad();
+    expect(splash.executed[0]).toContain('Starting Mokina');
+    expect(splash.executed[0]).not.toContain('Starting OpenDesign');
+    setSplashStage(splash.surface, 'engineReady');
+    expect(splash.executed[1]).toContain('Local engine ready');
+  });
+
 });

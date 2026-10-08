@@ -1,3 +1,4 @@
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { getResolvedDeviceId } from '../analytics/client';
@@ -589,7 +590,9 @@ export function AvatarMenu({
           aria-label={t('avatar.title')}
           style={popoverStyle}
         >
-          {config.mode === 'daemon' ? (
+          {MOKINA_LOCAL_EDITION && config.mode === 'daemon' && config.agentId === 'amr' ? (
+            <div className="avatar-model-section"><p>{t('mokina.model.unavailable')}</p><button type="button" onClick={() => { setOpen(false); onOpenSettings?.('execution'); }}>{t('avatar.settings')}</button></div>
+          ) : config.mode === 'daemon' ? (
             <>
               {hasSelectableModels && currentAgent ? (
                 <div className="avatar-model-section">

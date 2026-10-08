@@ -1,13 +1,14 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .actions button {
-  padding: 5px 8px;
-  font-size: 12px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 22px;
   white-space: nowrap;
 }
 
@@ -17,7 +18,8 @@
   gap: 4px;
   padding: 10px 16px;
   border-bottom: 1px solid var(--border);
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 22px;
   color: var(--text-muted);
 }
 

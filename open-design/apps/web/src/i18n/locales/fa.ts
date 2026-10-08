@@ -5615,4 +5615,10 @@ export const fa: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "هنوز نتیجه‌ای آماده نیست",
+  "mokina.empty.description": "آنچه می‌خواهید بسازید را بنویسید و برای شروع ارسال کنید.",
+  "mokina.empty.focus": "نوشتن نیازمندی‌ها",
+  "mokina.empty.runningTitle": "در حال ساخت اولین نتیجه",
+  "mokina.empty.runningDescription": "پس از تکمیل اینجا نمایش داده می‌شود. پیشرفت را در بخش همکاری دنبال کنید.",
+  "mokina.model.unavailable": "این مدل در Mokina در دسترس نیست. پیش از ارسال، یک مدل محلی یا BYOK در تنظیمات انتخاب کنید.",
 };

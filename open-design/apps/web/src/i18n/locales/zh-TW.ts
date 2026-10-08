@@ -6073,4 +6073,10 @@ export const zhTW: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "還沒有正式成果",
+  "mokina.empty.description": "寫下這次要完成的內容，傳送後開始製作。",
+  "mokina.empty.focus": "填寫製作要求",
+  "mokina.empty.runningTitle": "正在製作首份成果",
+  "mokina.empty.runningDescription": "完成後將在這裡顯示。進度可在協作區查看。",
+  "mokina.model.unavailable": "此模型在 Mokina 中無法使用。請在設定中選擇本機或自備金鑰模型後再傳送。",
 };

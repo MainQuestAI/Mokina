@@ -1,3 +1,4 @@
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 // InlineModelSwitcher — top-bar chip exposing CLI/BYOK + model picker.
 //
 // Lives in the entry view's sticky top-bar so users can swap between a
@@ -678,7 +679,7 @@ export function InlineModelSwitcher({
   const installedAgents = useMemo(
     () =>
       orderAgentsWithOpenDesignFirst(
-        agents.filter((a) => a.available && isVisibleLocalCliAgent(a)),
+        agents.filter((a) => a.available && isVisibleLocalCliAgent(a) && (!MOKINA_LOCAL_EDITION || a.id !== 'amr')),
       ),
     [agents],
   );
@@ -1144,6 +1145,11 @@ export function InlineModelSwitcher({
       setShowAmrReminderInPopover(false);
     }
   }, [config.agentId, config.mode, open]);
+
+  if (MOKINA_LOCAL_EDITION && config.mode === 'daemon' && config.agentId === 'amr') {
+    return <button type="button" className="inline-switcher" onClick={() => onOpenSettings('execution')}
+      title={t('mokina.model.unavailable')}>{t('settings.mokinaConnection.state.modelUnavailable')}</button>;
+  }
 
   return (
     <div

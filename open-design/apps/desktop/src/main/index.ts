@@ -211,6 +211,7 @@ export type DesktopMainOptions = {
   inviteProtocolClientPath?: string | null;
   preloadPath?: string;
   windowTitle?: string;
+  product?: { productId: 'mokina' } | null;
   onDesktopReady?: (controls: {
     dispatchInviteDeeplink(url: string | null): void;
     show(): void;
@@ -396,7 +397,7 @@ type DesktopMenuController = {
 
 function installDesktopMenu(
   runtime: SidecarRuntimeContext<LegacySidecarRuntimeLayout>,
-  options: Pick<DesktopMainOptions, "discoverDaemonUrl" | "discoverWebUrl"> & {
+  options: Pick<DesktopMainOptions, "discoverDaemonUrl" | "discoverWebUrl" | "product"> & {
     onOpenUpdateDialog?: () => void;
     updater: DesktopUpdater;
   },
@@ -464,7 +465,7 @@ function installDesktopMenu(
   const exportDiagnostics = () => {
     const focused = BrowserWindow.getFocusedWindow();
     void exportDiagnosticsToFile(
-      { discoverDaemonBaseUrl: discoverAppConfigBaseUrl },
+      { discoverDaemonBaseUrl: discoverAppConfigBaseUrl, product: options.product ?? (runtime.namespace.startsWith('mokina-local') ? { productId: 'mokina' } : null) },
       focused,
     ).catch((error: unknown) => {
       console.error("desktop diagnostics export from menu failed", error);
@@ -566,6 +567,7 @@ function installDesktopMenu(
         label: "Help",
         role: "help",
         submenu: [
+          ...(options.product?.productId === 'mokina' || runtime.namespace.startsWith('mokina-local') ? [] : [
           {
             label: "Documentation",
             click() {
@@ -592,6 +594,7 @@ function installDesktopMenu(
             },
           },
           { type: "separator" },
+          ] satisfies MenuItemConstructorOptions[]),
           { label: "Export Diagnostics…", click: exportDiagnostics },
         ],
       },
@@ -964,6 +967,7 @@ export async function runDesktopMain(
     splashStartedAt: options.splashStartedAt,
     updater,
     windowTitle: options.windowTitle,
+    product: options.product ?? (runtime.namespace.startsWith('mokina-local') ? { productId: 'mokina' } : null),
   });
   if (pendingUpdateDialogRequest) {
     pendingUpdateDialogRequest = false;
@@ -1002,6 +1006,7 @@ export async function runDesktopMain(
   );
   removeDiagnosticsIpc = registerDesktopDiagnosticsIpc({
     discoverDaemonBaseUrl: resolveDaemonBaseUrl(options),
+    product: options.product ?? (runtime.namespace.startsWith('mokina-local') ? { productId: 'mokina' } : null),
   });
   // Route opendesign:// team-invite deeplinks to the daemon (desktop wake-up).
   registerInviteDeeplink({

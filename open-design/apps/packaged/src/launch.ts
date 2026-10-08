@@ -46,12 +46,13 @@ function formatWritablePathError(options: {
   diagnostic: PathDiagnostic;
   error: unknown;
   parentDiagnostic: PathDiagnostic;
+  productName: string;
 }): string {
-  const { attemptedPath, currentUser, diagnostic, error, parentDiagnostic } = options;
+  const { attemptedPath, currentUser, diagnostic, error, parentDiagnostic, productName } = options;
   const message = error instanceof Error ? error.message : String(error);
   const parentPath = dirname(attemptedPath);
   const diagLines = [
-    `Open Design could not create or write to:`,
+    `${productName} could not create or write to:`,
     attemptedPath,
     "",
     `Current user: ${currentUser}`,
@@ -74,7 +75,7 @@ function formatWritablePathError(options: {
   return diagLines.join("\n");
 }
 
-export async function verifyPackagedDataRootWritable(paths: Pick<PackagedNamespacePaths, "dataRoot">): Promise<void> {
+export async function verifyPackagedDataRootWritable(paths: Pick<PackagedNamespacePaths, "dataRoot">, product?: { productId: 'mokina' } | null): Promise<void> {
   try {
     await mkdir(paths.dataRoot, { recursive: true });
     await access(paths.dataRoot, fsConstants.W_OK);
@@ -83,6 +84,7 @@ export async function verifyPackagedDataRootWritable(paths: Pick<PackagedNamespa
       inspectPath(paths.dataRoot),
       inspectPath(dirname(paths.dataRoot)),
     ]);
+    const productName = product?.productId === 'mokina' ? 'Mokina' : 'Open Design';
     throw new PackagedPathAccessError(
       formatWritablePathError({
         attemptedPath: paths.dataRoot,
@@ -90,16 +92,18 @@ export async function verifyPackagedDataRootWritable(paths: Pick<PackagedNamespa
         diagnostic,
         error,
         parentDiagnostic,
+        productName,
       }),
-      { cause: error },
+      { cause: error, title: `${productName} cannot access its data folder` },
     );
   }
 }
 
 export async function ensurePackagedNamespacePaths(
   paths: PackagedNamespacePaths,
+  product?: { productId: 'mokina' } | null,
 ): Promise<void> {
-  await verifyPackagedDataRootWritable(paths);
+  await verifyPackagedDataRootWritable(paths, product);
   await Promise.all([
     mkdir(paths.namespaceRoot, { recursive: true }),
     mkdir(paths.cacheRoot, { recursive: true }),

@@ -8,6 +8,9 @@ it('brands product copy while preserving instructions, service identity and inte
   expect(mokinaProductCopy('settings.welcomeTitle', 'Üdvözöljük az OpenDesignban')).toBe('Üdvözöljük a Mokinában');
   expect(mokinaProductCopy('settings.mcpServerHint', 'Tedd elérhetővé az OpenDesignt')).toBe('Tedd elérhetővé a Mokinát');
   expect(mokinaProductCopy('entry.followXLabel', '@OpenDesignHQ')).toBe('@OpenDesignHQ');
+  expect(mokinaProductCopy('settings.agentInstall.pathHint', 'der Open-Design-Daemon erbt')).toBe('der Mokina-Daemon erbt');
+  expect(mokinaProductCopy('useEverywhere.section.mcp.footer', 'in der Open-Design-App')).toBe('in der Mokina-App');
+  expect(mokinaProductCopy('useEverywhere.section.skills.snippet1', 'Open-Design-Extras; @open-design/contracts')).toBe('Mokina-Extras; @open-design/contracts');
   expect(mokinaProductCopy('chat.contextPrompt.referenceProject', 'Use the OpenDesign project {name}')).toBe('Use the OpenDesign project {name}');
   expect(mokinaProductCopy('handoff.promptIntro', 'OpenDesign project folder:')).toBe('OpenDesign project folder:');
   expect(mokinaProductCopy('settings.cloudCalloutTitle', 'OpenDesign Cloud')).toBe('OpenDesign Cloud');

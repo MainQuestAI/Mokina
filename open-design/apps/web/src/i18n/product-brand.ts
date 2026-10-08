@@ -12,5 +12,6 @@ export function mokinaProductCopy(key: string, copy: string): string {
   const endings: Record<string, string> = { ba: 'ba', ban: 'ban', 'ból': 'ból', gal: 'val', hoz: 'hoz', nak: 'nak', nal: 'val', nek: 'nak', ra: 'ra', t: 't' };
   return copy.replace(/\baz (?=Open ?Design\b|OpenDesign(?:ba|ban|ból|gal|hoz|nak|nal|nek|ra|t)\b)/g, 'a ')
     .replace(/\bOpenDesign(ba|ban|ból|gal|hoz|nak|nal|nek|ra|t)\b/gi, (_match, ending: string) => `Mokiná${endings[ending.toLowerCase()]}`)
+    .replace(/\bOpen-Design(?=-(?:App|Daemon|Extras)\b)/g, 'Mokina')
     .replace(/\bOpenDesign\b|\bOpen Design\b/gi, 'Mokina');
 }

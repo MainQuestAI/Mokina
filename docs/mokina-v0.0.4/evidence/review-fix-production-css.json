@@ -1,0 +1,87 @@
+{
+  "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+  "validation_source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+  "method": "CSS linked by the production index plus the actual lazy App stylesheet; minimal host markup to inspect computed styles. Running-product browser checks are recorded separately.",
+  "css_files": [
+    {
+      "path": "static/chunks/28zpjs7fff_ud.css",
+      "sha256": "c0dd3e661c4e03709b027d6602a0eb82e0276e2344a065ea4b945a76c52da07d"
+    },
+    {
+      "path": "static/chunks/0prhdxv4xtj3s.css",
+      "sha256": "9563b4cff9d6f037f5493eada52e6cbdfee0f74d9e094e81f1fa887bb6050e47"
+    },
+    {
+      "path": "static/chunks/2xya-p9m0jj2u.css",
+      "sha256": "7562dbe976171c0888afd5a991f1f0bce12795ddedde8e125fbd222c6c6c7ee2"
+    },
+    {
+      "path": "static/chunks/316yph22hve4r.css",
+      "sha256": "c5030463371dba0ed946238727aad25583d2d9e87102fa8a5affc73663d764a5"
+    },
+    {
+      "path": "static/chunks/0ew2hpabwev5l.css",
+      "sha256": "26c0fe75139d6f57822bd2370ea3229d454b93d6d1a36c294547dc2245620b3b"
+    },
+    {
+      "path": "static/chunks/3epor6gl5_2ku.css",
+      "sha256": "478ae907d1471bf7666ad34383927bf51c4491e54f55f970f30131d7e7916c4a"
+    }
+  ],
+  "module_class": "MokinaWorkspace-module__hlmf9a__workspaceLayout",
+  "cases": {
+    "mokina": {
+      "body": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "backgroundColor": "rgb(245, 245, 245)"
+      },
+      ".home-hero__title": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "backgroundColor": "rgba(0, 0, 0, 0)"
+      },
+      "button.primary": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "backgroundColor": "rgb(0, 113, 227)"
+      },
+      ".split-chat-slot": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "backgroundColor": "rgb(255, 255, 255)"
+      },
+      ".workspace": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "backgroundColor": "rgb(255, 255, 255)"
+      },
+      ".ws-body": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "backgroundColor": "rgb(255, 255, 255)"
+      }
+    },
+    "upstream": {
+      "body": {
+        "fontFamily": "\"Albert Sans\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "backgroundColor": "rgb(255, 255, 255)"
+      },
+      ".home-hero__title": {
+        "fontFamily": "Georgia, \"Songti SC\", STSong, SimSun, serif",
+        "backgroundColor": "rgba(0, 0, 0, 0)"
+      },
+      "button.primary": {
+        "fontFamily": "\"Albert Sans\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "backgroundColor": "rgb(32, 32, 32)"
+      },
+      ".split-chat-slot": {
+        "fontFamily": "\"Albert Sans\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "backgroundColor": "rgb(255, 255, 255)"
+      },
+      ".workspace": {
+        "fontFamily": "\"Albert Sans\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "backgroundColor": "rgb(255, 255, 255)"
+      },
+      ".ws-body": {
+        "fontFamily": "\"Albert Sans\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "backgroundColor": "rgb(255, 255, 255)"
+      }
+    }
+  },
+  "status": "pass"
+}

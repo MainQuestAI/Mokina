@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:50917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ui/mokina-edition-off.test.ts:7:1 › Mokina off production keeps populated recent projects without Mokina summary subscriptions (12.9s)
+
+  1 passed (1.3m)

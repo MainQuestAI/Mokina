@@ -1,0 +1,9 @@
+
+ RUN  v4.1.6 /workspace/work/Mokina-worktrees/v0.0.4-brand-ui/open-design/apps/desktop
+
+
+ Test Files  5 passed (5)
+      Tests  17 passed (17)
+   Start at  15:20:51
+   Duration  709ms (transform 472ms, setup 0ms, import 725ms, tests 59ms, environment 1ms)
+

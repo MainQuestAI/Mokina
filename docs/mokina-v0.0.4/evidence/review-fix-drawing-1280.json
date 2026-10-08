@@ -1,0 +1,160 @@
+{
+  "width": 758,
+  "scrollWidth": 758,
+  "left": 448,
+  "right": 1208,
+  "children": [
+    {
+      "width": 296,
+      "scrollWidth": 319,
+      "left": 455,
+      "right": 751,
+      "children": [
+        {
+          "name": "Mark tool",
+          "width": 146,
+          "flex": "0 0 auto",
+          "minWidth": "auto"
+        },
+        {
+          "name": "Undo",
+          "width": 44,
+          "flex": "0 0 44px",
+          "minWidth": "44px"
+        },
+        {
+          "name": "Redo",
+          "width": 44,
+          "flex": "0 0 44px",
+          "minWidth": "44px"
+        },
+        {
+          "name": "INPUT",
+          "width": 0,
+          "flex": "0 1 auto",
+          "minWidth": "0px"
+        },
+        {
+          "name": "Attach image",
+          "width": 44,
+          "flex": "0 0 44px",
+          "minWidth": "44px"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "left": 759,
+      "right": 1149,
+      "children": [
+        {
+          "name": "INPUT",
+          "width": 240,
+          "flex": "1 1 240px",
+          "minWidth": "0px"
+        },
+        {
+          "name": "Add to input",
+          "width": 44,
+          "flex": "0 0 auto",
+          "minWidth": "44px"
+        },
+        {
+          "name": "Queue",
+          "width": 44,
+          "flex": "0 0 auto",
+          "minWidth": "44px"
+        },
+        {
+          "name": "Send",
+          "width": 44,
+          "flex": "0 0 auto",
+          "minWidth": "44px"
+        }
+      ]
+    },
+    {
+      "width": 42,
+      "scrollWidth": 42,
+      "left": 1157,
+      "right": 1201,
+      "children": [
+        {
+          "name": "svg",
+          "width": 20,
+          "flex": "0 1 auto",
+          "minWidth": "auto"
+        }
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "name": "Box select",
+      "left": 458,
+      "right": 502,
+      "width": 44
+    },
+    {
+      "name": "Pen",
+      "left": 506,
+      "right": 550,
+      "width": 44
+    },
+    {
+      "name": "Text",
+      "left": 554,
+      "right": 598,
+      "width": 44
+    },
+    {
+      "name": "Undo",
+      "left": 607,
+      "right": 651,
+      "width": 44
+    },
+    {
+      "name": "Redo",
+      "left": 657,
+      "right": 701,
+      "width": 44
+    },
+    {
+      "name": "Attach image",
+      "left": 707,
+      "right": 751,
+      "width": 44
+    },
+    {
+      "name": "INPUT",
+      "left": 759,
+      "right": 999,
+      "width": 240
+    },
+    {
+      "name": "Add to input",
+      "left": 1005,
+      "right": 1049,
+      "width": 44
+    },
+    {
+      "name": "Queue",
+      "left": 1055,
+      "right": 1099,
+      "width": 44
+    },
+    {
+      "name": "Send",
+      "left": 1105,
+      "right": 1149,
+      "width": 44
+    },
+    {
+      "name": "Close",
+      "left": 1157,
+      "right": 1201,
+      "width": 44
+    }
+  ]
+}

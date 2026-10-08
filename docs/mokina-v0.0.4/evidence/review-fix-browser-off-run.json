@@ -1,0 +1,26 @@
+{
+  "validation_source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+  "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+  "stats": {
+    "startTime": "2026-10-08T15:09:24.626Z",
+    "duration": 79029.272,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "Mokina off production keeps populated recent projects without Mokina summary subscriptions",
+      "file": "mokina-edition-off.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 12853
+        }
+      ]
+    }
+  ]
+}

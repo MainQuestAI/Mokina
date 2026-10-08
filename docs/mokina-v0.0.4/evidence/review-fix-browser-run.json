@@ -1,0 +1,315 @@
+{
+  "validation_source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+  "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+  "stats": {
+    "startTime": "2026-10-08T14:56:57.765Z",
+    "duration": 394764.045,
+    "expected": 25,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "[P1] Mokina legacy Cloud handoff becomes a durable manual draft before a model switch",
+      "file": "mokina-cloud-handoff.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 21866
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation ready gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 9499
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation failed gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 9658
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation leave gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 16337
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation reload gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 22006
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina keeps file purpose after reload but requires file reselection",
+      "file": "mokina-input-preparation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 11501
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina retains staged input when the initial preparation save fails and retries the same target",
+      "file": "mokina-input-preparation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 10587
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina open-resolution and recent summaries at 1280x720",
+      "file": "mokina-navigation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 33988
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina open-resolution and recent summaries at 1440x900",
+      "file": "mokina-navigation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 34676
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina workspace indicator settles without overshoot and respects reduced motion",
+      "file": "mokina-navigation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 6019
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 1440px",
+      "file": "mokina-navigation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 7601
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 1280px",
+      "file": "mokina-navigation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 7176
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 390px",
+      "file": "mokina-navigation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 8951
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina empty project focuses its existing composer without writing or sending",
+      "file": "mokina-navigation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 6470
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change",
+      "file": "mokina-navigation.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 6690
+        }
+      ]
+    },
+    {
+      "title": "[P2] Mokina drawing controls have full hit areas and fit the viewport at 1280",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 7593
+        }
+      ]
+    },
+    {
+      "title": "[P2] Mokina drawing controls have full hit areas and fit the viewport at 390",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 8784
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina long-path materials stay inside the continuation panel at 1280x720",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 15149
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina panel actions remain reachable and preserve drafts at 1280x720",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 9736
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina long-path materials stay inside the continuation panel at 1440x900",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 14264
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina panel actions remain reachable and preserve drafts at 1440x900",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 11550
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina panel explains historical and chapterless action restrictions",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 14510
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina continuation creates an editable fixed-excerpt draft without a run",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 15125
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 900x600",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 8618
+        }
+      ]
+    },
+    {
+      "title": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 390x844",
+      "file": "mokina-workspace-actions.test.ts",
+      "project": "chromium",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 8131
+        }
+      ]
+    }
+  ],
+  "revision_note": "Run started before the validation-only commit; all product and browser-test bytes equal ecd6fc5e. Product source was already frozen at 16e99538."
+}

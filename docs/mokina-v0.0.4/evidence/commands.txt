@@ -13,6 +13,11 @@ corepack pnpm --filter @open-design/web exec vitest run tests/components/Project
 corepack pnpm --filter @open-design/web exec vitest run tests/components/ChatPane.error-card-ladder.test.tsx tests/runtime/chat/composer-draft.test.ts tests/runtime/send-request-state.test.ts
 corepack pnpm --filter @open-design/release test
 
+# Final first-review fix validation (171 Web / 9 release / 17 desktop / 7 pack)
+corepack pnpm --filter @open-design/web exec vitest run tests/components/ProjectView.retry-gating.test.tsx tests/components/ChatPane.error-card-ladder.test.tsx tests/components/PreviewDrawOverlay.test.tsx tests/components/SketchEditor.save.test.tsx tests/components/MokinaBrand.test.tsx tests/components/MokinaLiveStatus.test.tsx tests/i18n/product-brand.test.ts tests/runtime/chat/composer-draft.test.ts tests/runtime/send-request-state.test.ts tests/components/MokinaCandidateCompare.test.tsx tests/components/project-split-layout.mokina.test.ts
+corepack pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-splash.test.ts tests/main/splash-stage-replay.test.ts tests/main/diagnostics-chat-scroll-capture.test.ts tests/main/diagnostics-save-dialog.test.ts tests/main/diagnostics-export-delegates.test.ts
+corepack pnpm --filter @open-design/tools-pack exec vitest run tests/resources/mokina-brand.test.ts tests/mac-identity.test.ts
+
 # Current localized copy regression
 corepack pnpm --filter @open-design/web exec vitest run tests/i18n/product-brand.test.ts
 
@@ -23,6 +28,9 @@ corepack pnpm typecheck
 
 # Final Mokina browser checks, after builds/checks finish
 OD_E2E_NAMESPACE=mokina-local-v004-release-source NEXT_PUBLIC_MOKINA_EDITION=on MOKINA_LOCAL_EDITION=on corepack pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-input-preparation.test.ts ui/mokina-cloud-handoff.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts --workers=1 --project=chromium
+
+# Off edition runs separately after the on report has been archived.
+OD_E2E_NAMESPACE=mokina-local-v004-release-off NEXT_PUBLIC_MOKINA_EDITION=off MOKINA_LOCAL_EDITION=off corepack pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-edition-off.test.ts --workers=1 --project=chromium
 
 # Production standalone build
 NEXT_PUBLIC_MOKINA_EDITION=on OD_WEB_OUTPUT_MODE=standalone OD_WEB_DIST_DIR=.next-v004-validation corepack pnpm --filter @open-design/web build

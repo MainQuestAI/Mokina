@@ -558,6 +558,52 @@ describe('Mokina legacy Cloud Home handoff requires a fresh explicit send', () =
     fireEvent.click(screen.getByTestId('send-message'));
     await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
   });
+  it.each([[50, 65536], [51, 65536], [50, 65537]])('keeps %i attachments and %i prompt characters through manual recovery', async (count, length) => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const fullPrompt = 'x'.repeat(length);
+    const files = Array.from({ length: count }, (_, i) => ({ path: `file-${i}.txt`, name: `file-${i}.txt`, kind: 'file' }));
+    window.sessionStorage.setItem('od:auto-send-prompt:project-1', fullPrompt);
+    window.sessionStorage.setItem('od:auto-send-attachments:project-1', JSON.stringify(files));
+    const view = renderProjectView(amrConfig);
+    await waitForConversation();
+    if (count === 50 && length === 65536) {
+      await waitFor(() => expect(chatSurface.props?.sendRecoveryRequest?.snapshot.extras.attachments).toEqual(files));
+      expect(chatSurface.props?.sendRecoveryRequest?.snapshot.prompt).toBe(fullPrompt);
+    } else {
+      await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
+      expect(screen.getByTestId('mokina-manual-handoff')).toHaveTextContent(`file-${count - 1}.txt`);
+      expect(chatSurface.props?.sendRecoveryRequest).toBeNull();
+      view.unmount();
+      renderProjectView(localConfig);
+      await waitForConversation();
+      await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
+      expect(streamViaDaemon).not.toHaveBeenCalled();
+      expect(JSON.parse(sessionStorage.getItem('od:auto-send-attachments:project-1')!)).toEqual(files);
+      const send = screen.getByTestId('mokina-manual-handoff-send');
+      fireEvent.click(send); fireEvent.click(send);
+      await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
+      expect(streamViaDaemon.mock.calls[0]![0].history.at(-1).content).toBe(fullPrompt);
+      expect(streamViaDaemon.mock.calls[0]![0].history.at(-1).attachments).toEqual(files);
+    }
+  });
+  it('does not let an older cropped receipt consume a more complete Home source', async () => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const view = renderProjectView(amrConfig);
+    await waitForConversation();
+    await waitFor(() => expect(chatSurface.props?.sendRecoveryRequest?.snapshot.extras.attachments).toEqual(attachments));
+    view.unmount();
+    const full = Array.from({ length: 51 }, (_, i) => ({ path: `file-${i}.txt`, name: `file-${i}.txt`, kind: 'file' }));
+    sessionStorage.setItem('od:auto-send-attachments:project-1', JSON.stringify(full));
+    renderProjectView(localConfig);
+    await waitForConversation();
+    await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff')).toHaveTextContent('file-50.txt'));
+    expect(chatSurface.props?.sendRecoveryRequest).toBeNull();
+    expect(screen.queryByTestId('mokina-pending-send-restore')).toBeNull();
+    expect(JSON.parse(sessionStorage.getItem('od:auto-send-attachments:project-1')!)).toEqual(full);
+    expect(streamViaDaemon).not.toHaveBeenCalled();
+  });
   it('keeps the original payload and manual gate when durable draft storage fails', async () => {
     mokinaEdition.on = true;
     seedHandoff();

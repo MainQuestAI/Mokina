@@ -1,0 +1,654 @@
+
+ RUN  v4.1.6 /workspace/Mokina/open-design/apps/web
+
+ ❯ tests/components/ProjectView.retry-gating.test.tsx (41 tests | 2 failed | 38 skipped) 6155ms
+     × keeps 51 attachments and 65536 prompt characters through manual recovery 3027ms
+     × keeps 50 attachments and 65537 prompt characters through manual recovery 3023ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps 51 attachments and 65536 prompt characters through manual recovery
+TestingLibraryElementError: Unable to find an element by: [data-testid="mokina-manual-handoff-prompt"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"split _workspaceLayout_71b10c"[39m
+      [33mstyle[39m=[32m"--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"split-chat-slot"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-chat-tabs-dock"[39m
+          [33mdata-testid[39m=[32m"workspace-tabs-dock"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"_dock_8c9b80"[39m
+            [33mdata-testid[39m=[32m"chat-history-dock"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"chat.collapsePane"[39m
+            [33mclass[39m=[32m"split-chat-collapse od-tooltip"[39m
+            [33mdata-testid[39m=[32m"chat-collapse-toggle"[39m
+            [33mdata-tooltip[39m=[32m"chat.collapsePane"[39m
+            [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+            [33mtitle[39m=[32m"chat.collapsePane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"od-icon"[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mfocusable[39m=[32m"false"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mokina-pending-send"[39m
+            [33mdata-testid[39m=[32m"mokina-pending-send"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33maria-atomic[39m=[32m"true"[39m
+              [33maria-live[39m=[32m"polite"[39m
+              [33mclass[39m=[32m"mokina-live-summary"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [0mmokina.pendingSend.restore[0m
+            [36m</span>[39m
+            [36m<div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"mokina-pending-send__text"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.restore[0m
+                [0m：[0m
+                [0mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"mokina-pending-send__verify"[39m
+                [33mdata-testid[39m=[32m"mokina-pending-send-restore"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.restore[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"mokina-pending-send__verify"[39m
+                [33mdata-testid[39m=[32m"mokina-pending-send-discard"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.discard[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"active-conversation"[39m
+          [36m>[39m
+            [0mconv-a[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"queued-count"[39m
+          [36m>[39m
+            [0m0[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"queued-prompts"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"queued-meta-keys"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"recovery-blocked-reason"[39m
+          [36m>[39m
+            [0mnone[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"retry-pending-id"[39m
+          [36m>[39m
+            [0mnone[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"assistant-summary"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"chat-retry"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mretry[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"send-message"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0msend[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"share-to-open-design"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mshare[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"continue-remaining"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mcontinue remaining[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"resume-run"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mresume[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"submit-question-form"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0manswer form[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"comment-float-host"[39m
+        [33mdata-testid[39m=[32m"comment-float-host"[39m
+        [33mid[39m=[32m":r1:"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"project.resizeChatPanel"[39m
+        [33maria-orientation[39m=[32m"vertical"[39m
+        [33maria-valuemax[39m=[32m"720"[39m
+        [33maria-valuemin[39m=[32m"345"[39m
+        [33maria-valuenow[39m=[32m"460"[39m
+        [33mclass[39m=[32m"split-resize-handle"[39m
+        [33mrole[39m=[32m"separator"[39m
+        [33mtabindex[39m=[32m"0"[39m
+        [33mtitle[39m=[32m"project.resizeChatPanel"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"file-workspace"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"split _workspaceLayout_71b10c"[39m
+        [33mstyle[39m=[32m"--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-chat-slot"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"split-chat-tabs-dock"[39m
+            [33mdata-testid[39m=[32m"workspace-tabs-dock"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"_dock_8c9b80"[39m
+              [33mdata-testid[39m=[32m"chat-history-dock"[39m
+            [36m/>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"chat.collapsePane"[39m
+              [33mclass[39m=[32m"split-chat-collapse od-tooltip"[39m
+              [33mdata-testid[39m=[32m"chat-collapse-toggle"[39m
+              [33mdata-tooltip[39m=[32m"chat.collapsePane"[39m
+              [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+              [33mtitle[39m=[32m"chat.collapsePane"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"od-icon"[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mfocusable[39m=[32m"false"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<section>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"mokina-pending-send"[39m
+              [33mdata-testid[39m=[32m"mokina-pending-send"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-atomic[39m=[32m"true"[39m
+                [33maria-live[39m=[32m"polite"[39m
+                [33mclass[39m=[32m"mokina-live-summary"[39m
+                [33mrole[39m=[32m"status"[39m
+              [36m>[39m
+                [0mmokina.pendingSend.restore[0m
+              [36m</span>[39m
+              [36m<div>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"mokina-pending-send__text"[39m
+                [36m>[39m
+                  [0mmokina.pendingSend.restore[0m
+                  [0m：[0m
+                  [0mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[0m
+                [36m</span>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"mokina-pending-send__verify"[39m
+                  [33mdata-testid[39m=[32m"mokina-pending-send-restore"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mmokina.pendingSend.restore[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"mokina-pending-send__verify"[39m
+                  [33mdata-testid[39m=[32m"mokina-pending-send-discard"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mmokina.pendingSend.discard[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"active-conversation"[39m
+            [36m>[39m
+              [0mconv-a[0m
+            [36m</output>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"queued-count"[39m
+            [36m>[39m
+              [0m0[0m
+            [36m</output>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"queued-prompts"[39m
+            [36m/>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"queued-meta-keys"[39m
+            [36m/>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"recovery-blocked-reason"[39m
+            [36m>[39m
+              [0mnone[0m
+            [36m</output>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"retry-pending-id"[39m
+            [36m>[39m
+              [0mnone[0m
+            [36m</output>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"assistant-summary"[39m
+            [36m/>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"chat-retry"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mretry[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"send-message"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0msend[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"share-to-open-design"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mshare[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"continue-remaining"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mcontinue remaining[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"resume-run"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mresume[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"submit-question-form"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0manswer form[0m
+            [36m</button>[39m
+          [36m</section>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"comment-float-host"[39m
+          [33mdata-testid[39m=[32m"comment-float-host"[39m
+          [33mid[39m=[32m":r1:"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"project.resizeChatPanel"[39m
+          [33maria-orientation[39m=[32m"vertical"[39m
+          [33maria-valuemax[39m=[32m"720"[39m
+          [33maria-valuemin[39m=[32m"345"[39m
+          [33maria-valuenow[39m=[32m"460"[39m
+          [33mclass[39m=[32m"split-resize-handle"[39m
+          [33mrole[39m=[32m"separator"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtitle[39m=[32m"project.resizeChatPanel"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"file-workspace"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ tests/components/ProjectView.retry-gating.test.tsx:574:13
+    572|       expect(chatSurface.props?.sendRecoveryRequest?.snapshot.prompt).…
+    573|     } else {
+    574|       await waitFor(() => expect(screen.getByTestId('mokina-manual-han…
+       |             ^
+    575|       expect(screen.getByTestId('mokina-manual-handoff')).toHaveTextCo…
+    576|       expect(chatSurface.props?.sendRecoveryRequest).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps 50 attachments and 65537 prompt characters through manual recovery
+TestingLibraryElementError: Unable to find an element by: [data-testid="mokina-manual-handoff-prompt"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"split _workspaceLayout_71b10c"[39m
+      [33mstyle[39m=[32m"--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"split-chat-slot"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-chat-tabs-dock"[39m
+          [33mdata-testid[39m=[32m"workspace-tabs-dock"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"_dock_8c9b80"[39m
+            [33mdata-testid[39m=[32m"chat-history-dock"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"chat.collapsePane"[39m
+            [33mclass[39m=[32m"split-chat-collapse od-tooltip"[39m
+            [33mdata-testid[39m=[32m"chat-collapse-toggle"[39m
+            [33mdata-tooltip[39m=[32m"chat.collapsePane"[39m
+            [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+            [33mtitle[39m=[32m"chat.collapsePane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"od-icon"[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mfocusable[39m=[32m"false"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"active-conversation"[39m
+          [36m>[39m
+            [0mconv-a[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"queued-count"[39m
+          [36m>[39m
+            [0m0[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"queued-prompts"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"queued-meta-keys"[39m
+          [36m/>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"recovery-blocked-reason"[39m
+          [36m>[39m
+            [0mnone[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"retry-pending-id"[39m
+          [36m>[39m
+            [0mnone[0m
+          [36m</output>[39m
+          [36m<output[39m
+            [33mdata-testid[39m=[32m"assistant-summary"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"chat-retry"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mretry[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"send-message"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0msend[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"share-to-open-design"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mshare[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"continue-remaining"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mcontinue remaining[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"resume-run"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mresume[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"submit-question-form"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0manswer form[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"comment-float-host"[39m
+        [33mdata-testid[39m=[32m"comment-float-host"[39m
+        [33mid[39m=[32m":r2:"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"project.resizeChatPanel"[39m
+        [33maria-orientation[39m=[32m"vertical"[39m
+        [33maria-valuemax[39m=[32m"720"[39m
+        [33maria-valuemin[39m=[32m"345"[39m
+        [33maria-valuenow[39m=[32m"460"[39m
+        [33mclass[39m=[32m"split-resize-handle"[39m
+        [33mrole[39m=[32m"separator"[39m
+        [33mtabindex[39m=[32m"0"[39m
+        [33mtitle[39m=[32m"project.resizeChatPanel"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"file-workspace"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"split _workspaceLayout_71b10c"[39m
+        [33mstyle[39m=[32m"--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-chat-slot"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"split-chat-tabs-dock"[39m
+            [33mdata-testid[39m=[32m"workspace-tabs-dock"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"_dock_8c9b80"[39m
+              [33mdata-testid[39m=[32m"chat-history-dock"[39m
+            [36m/>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"chat.collapsePane"[39m
+              [33mclass[39m=[32m"split-chat-collapse od-tooltip"[39m
+              [33mdata-testid[39m=[32m"chat-collapse-toggle"[39m
+              [33mdata-tooltip[39m=[32m"chat.collapsePane"[39m
+              [33mdata-tooltip-placement[39m=[32m"bottom"[39m
+              [33mtitle[39m=[32m"chat.collapsePane"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"od-icon"[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mfocusable[39m=[32m"false"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<section>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"active-conversation"[39m
+            [36m>[39m
+              [0mconv-a[0m
+            [36m</output>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"queued-count"[39m
+            [36m>[39m
+              [0m0[0m
+            [36m</output>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"queued-prompts"[39m
+            [36m/>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"queued-meta-keys"[39m
+            [36m/>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"recovery-blocked-reason"[39m
+            [36m>[39m
+              [0mnone[0m
+            [36m</output>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"retry-pending-id"[39m
+            [36m>[39m
+              [0mnone[0m
+            [36m</output>[39m
+            [36m<output[39m
+              [33mdata-testid[39m=[32m"assistant-summary"[39m
+            [36m/>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"chat-retry"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mretry[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"send-message"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0msend[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"share-to-open-design"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mshare[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"continue-remaining"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mcontinue remaining[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"resume-run"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mresume[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mdata-testid[39m=[32m"submit-question-form"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0manswer form[0m
+            [36m</button>[39m
+          [36m</section>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"comment-float-host"[39m
+          [33mdata-testid[39m=[32m"comment-float-host"[39m
+          [33mid[39m=[32m":r2:"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"project.resizeChatPanel"[39m
+          [33maria-orientation[39m=[32m"vertical"[39m
+          [33maria-valuemax[39m=[32m"720"[39m
+          [33maria-valuemin[39m=[32m"345"[39m
+          [33maria-valuenow[39m=[32m"460"[39m
+          [33mclass[39m=[32m"split-resize-handle"[39m
+          [33mrole[39m=[32m"separator"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtitle[39m=[32m"project.resizeChatPanel"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"file-workspace"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ tests/components/ProjectView.retry-gating.test.tsx:574:13
+    572|       expect(chatSurface.props?.sendRecoveryRequest?.snapshot.prompt).…
+    573|     } else {
+    574|       await waitFor(() => expect(screen.getByTestId('mokina-manual-han…
+       |             ^
+    575|       expect(screen.getByTestId('mokina-manual-handoff')).toHaveTextCo…
+    576|       expect(chatSurface.props?.sendRecoveryRequest).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed | 38 skipped (41)
+   Start at  16:04:42
+   Duration  10.95s (transform 3.19s, setup 822ms, import 3.16s, tests 6.15s, environment 691ms)
+
+undefined
+/workspace/Mokina/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/components/ProjectView.retry-gating.test.tsx -t keeps .* attachments

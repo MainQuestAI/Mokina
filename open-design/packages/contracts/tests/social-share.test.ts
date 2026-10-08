@@ -37,3 +37,23 @@ describe('social-share contract', () => {
       .toContain('https%3A%2F%2Fexample.com%2Fopen-design-demo');
   });
 });
+
+it.each(['en', 'zh-CN'])('keeps Mokina repository identity and user content in %s platform targets', locale => {
+  const title = 'OpenDesign customer report';
+  const url = 'https://example.com/OpenDesign/result';
+  const payload = buildSocialSharePayload({ kind: 'project-html', edition: 'mokina', locale, title, url });
+  expect(payload.title).toBe(title);
+  expect(payload.url).toBe(url);
+  expect(payload.githubRepoUrl).toBe('https://github.com/MainQuestAI/Mokina');
+  expect(payload.text).toContain('Mokina');
+  expect(payload.copyText).toContain(payload.githubRepoUrl);
+  expect(payload.copyText).toContain(title);
+  for (const platform of payload.platforms) {
+    if (!platform.shareUrl) continue;
+    const query = new URL(platform.shareUrl).searchParams;
+    expect([...query.values()].join(' ')).toContain(url);
+    if (['x', 'facebook', 'reddit', 'telegram', 'whatsapp', 'weibo'].includes(platform.platform)) {
+      expect([...query.values()].join(' ')).toContain(payload.githubRepoUrl);
+    }
+  }
+});

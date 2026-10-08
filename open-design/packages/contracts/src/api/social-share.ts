@@ -1,5 +1,7 @@
 export const OPEN_DESIGN_GITHUB_REPO_URL = 'https://github.com/nexu-io/open-design';
 
+export const MOKINA_GITHUB_REPO_URL = 'https://github.com/MainQuestAI/Mokina';
+
 export type SocialShareTargetKind = 'open-design-repo' | 'project-html';
 
 export type SocialSharePlatform =
@@ -17,6 +19,7 @@ export type SocialSharePlatform =
 export type SocialShareMode = 'intent' | 'copy-open';
 
 export interface SocialShareRequest {
+  edition?: 'mokina';
   kind: SocialShareTargetKind;
   url?: string;
   title?: string;
@@ -156,14 +159,16 @@ function buildPlatformUrl(
 }
 
 export function buildSocialSharePayload(input: SocialShareRequest): SocialShareResponse {
+  const productName = input.edition === 'mokina' ? 'Mokina' : 'OpenDesign';
+  const githubRepoUrl = input.edition === 'mokina' ? MOKINA_GITHUB_REPO_URL : OPEN_DESIGN_GITHUB_REPO_URL;
   const kind = input.kind === 'project-html' ? 'project-html' : 'open-design-repo';
   const url = normalizeSocialShareUrl(input.url)
-    ?? (kind === 'open-design-repo' ? OPEN_DESIGN_GITHUB_REPO_URL : '');
-  const fallbackTitle = kind === 'project-html' ? 'OpenDesign project' : 'OpenDesign';
+    ?? (kind === 'open-design-repo' ? githubRepoUrl : '');
+  const fallbackTitle = kind === 'project-html' ? `${productName} project` : productName;
   const title = cleanText(input.title, fallbackTitle);
   const fallbackText = kind === 'project-html'
-    ? `Built with OpenDesign: ${title}. OpenDesign repo: ${OPEN_DESIGN_GITHUB_REPO_URL}`
-    : 'OpenDesign is an open-source workspace for creating, editing, deploying, and handing off design artifacts.';
+    ? `Built with ${productName}: ${title}. ${productName} repo: ${githubRepoUrl}`
+    : `${productName} is an open-source workspace for creating, editing, deploying, and handing off design artifacts.`;
   const text = cleanText(input.text, fallbackText);
   const copyText = cleanText(input.copyText, `${text}\n${url}`);
   const platforms = PLATFORM_DESCRIPTORS.map((descriptor) => ({
@@ -189,7 +194,7 @@ export function buildSocialSharePayload(input: SocialShareRequest): SocialShareR
     title,
     text,
     copyText,
-    githubRepoUrl: OPEN_DESIGN_GITHUB_REPO_URL,
+    githubRepoUrl,
     platforms,
   };
 }

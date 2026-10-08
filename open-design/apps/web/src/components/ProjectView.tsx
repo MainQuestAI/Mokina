@@ -367,7 +367,7 @@ import { SHARE_TO_COMMUNITY_PROMPT } from './share-to-community/shareToCommunity
 import { CenteredLoader } from './Loading';
 import { MokinaLiveStatus } from './mokina/MokinaLiveStatus';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
-import { sanitizeComposerDraftExtras } from '../runtime/chat/composer-draft';
+import { MokinaManualHandoff } from './mokina/MokinaManualHandoff';
 import { settleSubmittedMokinaSnapshot } from '../runtime/mokina/pending-context-snapshot';
 import { readHomeMokinaPreparation, clearHomeMokinaPreparation } from '../runtime/mokina/home-material-snapshot';
 import { MokinaHomePreparationNotice } from './mokina/MokinaHomePreparationNotice';
@@ -378,6 +378,7 @@ import {
 } from '../artifacts/mokina-project-entry';
 import { useMokinaProjectSummary, evictMokinaEntrySummary } from '../hooks/useMokinaProjectSummaries';
 import {
+  canRecoverSendSnapshot,
   persistClearSendRequest,
   persistSendRequestOutcome,
   loadSendRequestRecords,
@@ -8480,6 +8481,10 @@ export function ProjectView({
   const sendAdmissionRef = useRef(new Map<string, 'queued' | 'accepted' | 'restore-draft' | 'unknown'>());
   const [pendingSendRecords, setPendingSendRecords] = useState<SendRequestRecord[]>([]);
   const [pendingSendVerifyNonce, setPendingSendVerifyNonce] = useState(0);
+  const [manualHomeHandoff, setManualHomeHandoff] = useState<{
+    projectId: string; conversationId: string; authorityKey: string;
+    snapshot: SendRequestSnapshot; context: RunContextSelection | null;
+  } | null>(null);
   const [sendRecoveryRequest, setSendRecoveryRequest] = useState<{ id: string; snapshot: SendRequestSnapshot } | null>(null);
   const cleanupAcceptedSend = useCallback(async (projectId: string, conversationId: string, requestId: string, authorityKey: string | undefined,
     context: Pick<RunContextSelection, 'mokinaSnapshotId' | 'mokinaSnapshotGeneration'> | undefined) => {
@@ -13829,15 +13834,30 @@ export function ProjectView({
       if (config.mode === 'daemon' && config.agentId === 'amr') onOpenSettings('execution');
       const conversationId = activeConversationId;
       const lifetime = activeAuthorizationLifetimeRef.current;
-      const snapshot: SendRequestSnapshot = savedManualHandoff?.snapshot ?? {
+      const snapshot: SendRequestSnapshot = {
         prompt: seed,
-        extras: sanitizeComposerDraftExtras({ attachments, commentAttachments: [], quotes: [], context }),
+        extras: { attachments, commentAttachments: [], quotes: [], context: {
+          skillIds: context?.skillIds ?? [], mcpServerIds: context?.mcpServerIds ?? [],
+          connectorIds: context?.connectorIds ?? [], workspaceItems: context?.workspaceItems ?? [],
+          ...(context?.mokinaSnapshotId ? { mokinaSnapshotId: context.mokinaSnapshotId } : {}),
+          ...(context?.mokinaSnapshotGeneration ? { mokinaSnapshotGeneration: context.mokinaSnapshotGeneration } : {}),
+        } },
         ...(context?.pluginIds?.length ? { requiresContextReselection: true } : {}),
         userMessageId: identity.userMessageId,
         assistantMessageId: identity.assistantMessageId,
       };
+      // Do not manufacture a successful receipt from a lossy sanitizer. The full
+      // source remains session-backed and editable when a receipt cannot hold it.
+      const retainFullHandoff = () => setManualHomeHandoff({ projectId: project.id,
+        conversationId, authorityKey: projectRunAuthorityKey, snapshot, context });
+      const matchingReceipt = savedManualHandoff?.snapshot
+        && JSON.stringify(savedManualHandoff.snapshot) === JSON.stringify(snapshot);
+      if (!canRecoverSendSnapshot(snapshot) || savedManualHandoff && !matchingReceipt) {
+        retainFullHandoff();
+        return;
+      }
       void (async () => {
-        const saved = savedManualHandoff?.snapshot ? 'saved' : await persistPendingSendRequest({
+        const saved = matchingReceipt ? 'saved' : await persistPendingSendRequest({
           projectId: project.id, conversationId, authorityKey: projectRunAuthorityKey,
           clientRequestId: identity.clientRequestId!, prompt: seed, snapshot,
         });
@@ -13845,7 +13865,7 @@ export function ProjectView({
           project.id, conversationId, identity.clientRequestId!, 'draft', projectRunAuthorityKey);
         if (activeAuthorizationLifetimeRef.current !== lifetime
           || messagesConversationIdRef.current !== conversationId) return;
-        if (!restored) { setError(t('mokina.pendingSend.saveFailed')); return; }
+        if (!restored) { retainFullHandoff(); setError(t('mokina.pendingSend.saveFailed')); return; }
         // ChatPane transfers the whole receipt into the durable composer draft;
         // only its successful acknowledgement may consume the Home source.
         setSendRecoveryRequest({ id: identity.clientRequestId!, snapshot });
@@ -13932,7 +13952,9 @@ export function ProjectView({
   // 「结果待确认」（Spec B1 FR-08）：unknown 记录的非打断提示 + 只读核对。
   // 不自动重发、不换 ID；核对是纯 GET，受理与否都只更新本会话状态。
   const visibleSendRecords = pendingSendRecords.filter(record => record.projectId === project.id
-    && record.conversationId === activeConversationId && (record.authorityKey ?? 'none') === projectRunAuthorityKey);
+    && record.conversationId === activeConversationId && (record.authorityKey ?? 'none') === projectRunAuthorityKey
+    && !(manualHomeHandoff?.projectId === project.id && manualHomeHandoff.conversationId === activeConversationId
+      && record.clientRequestId === homeAutoSendIdentity(project.id).clientRequestId));
   const pendingSendNotice: ReactNode = visibleSendRecords.length > 0 ? (
     <div className="mokina-pending-send" data-testid="mokina-pending-send">
       <MokinaLiveStatus identity={JSON.stringify([project.id, activeConversationId, projectRunAuthorityKey])}
@@ -14387,6 +14409,33 @@ export function ProjectView({
               composerFooterAccessory={(
                 <>
                   {pendingSendNotice}
+                  {manualHomeHandoff?.projectId === project.id
+                    && manualHomeHandoff.conversationId === activeConversationId
+                    && manualHomeHandoff.authorityKey === projectRunAuthorityKey ? <MokinaManualHandoff
+                      key={`${project.id}:${activeConversationId}:${projectRunAuthorityKey}`}
+                      prompt={manualHomeHandoff.snapshot.prompt} attachments={manualHomeHandoff.snapshot.extras.attachments}
+                      disabled={currentConversationActionDisabled || streaming || config.mode === 'daemon' && config.agentId === 'amr'}
+                      onEdit={prompt => {
+                        autoSendSeedRef.current = prompt;
+                        setManualHomeHandoff(current => current ? { ...current, snapshot: { ...current.snapshot, prompt } } : current);
+                        try { window.sessionStorage.setItem(autoSendPromptKey(project.id), prompt); }
+                        catch { setError(t('mokina.pendingSend.saveFailed')); }
+                      }}
+                      onSend={async () => {
+                        const lifetime = activeAuthorizationLifetimeRef.current;
+                        const accepted = await handleSend(manualHomeHandoff.snapshot.prompt,
+                          manualHomeHandoff.snapshot.extras.attachments, [], { context: manualHomeHandoff.context ?? undefined });
+                        if (accepted) {
+                          const cleared = await persistClearSendRequest(manualHomeHandoff.projectId, manualHomeHandoff.conversationId,
+                            homeAutoSendIdentity(manualHomeHandoff.projectId).clientRequestId!, manualHomeHandoff.authorityKey);
+                          if (cleared) clearAutoSendSession(manualHomeHandoff.projectId);
+                          else setError(t('mokina.pendingSend.saveFailed'));
+                          if (activeAuthorizationLifetimeRef.current === lifetime) {
+                            autoSendAttachmentsRef.current = [];
+                            setManualHomeHandoff(null);
+                          }
+                        }
+                      }} /> : null}
                   {MOKINA_LOCAL_EDITION && activeConversationId ? <MokinaHomePreparationNotice projectId={project.id}
                     conversationId={activeConversationId} workspaceContext={projectRunWorkspaceContext}
                     onRestorePrompt={prompt => setSendRecoveryRequest({ id: `home:${activeConversationId}`, snapshot: {

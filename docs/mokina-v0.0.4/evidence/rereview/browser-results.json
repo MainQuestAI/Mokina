@@ -1,0 +1,318 @@
+{
+  "browser-full": {
+    "stats": {
+      "startTime": "2026-10-08T16:45:46.193Z",
+      "duration": 492555.734,
+      "expected": 30,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "cases": [
+      {
+        "title": "[P1] Mokina legacy Cloud handoff retains 1 files and 60 characters before explicit send",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 31914
+      },
+      {
+        "title": "[P1] Mokina legacy Cloud handoff retains 50 files and 65536 characters before explicit send",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 27332
+      },
+      {
+        "title": "[P1] Mokina legacy Cloud handoff retains 51 files and 65536 characters before explicit send",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 22628
+      },
+      {
+        "title": "[P1] Mokina legacy Cloud handoff retains 50 files and 65537 characters before explicit send",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 21846
+      },
+      {
+        "title": "[P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 20100
+      },
+      {
+        "title": "[P1] Mokina generated crash page displays every export outcome in Chromium",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 451
+      },
+      {
+        "title": "[P1] Mokina T31 home preparation ready gates the original send",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 9879
+      },
+      {
+        "title": "[P1] Mokina T31 home preparation failed gates the original send",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 9840
+      },
+      {
+        "title": "[P1] Mokina T31 home preparation leave gates the original send",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 16600
+      },
+      {
+        "title": "[P1] Mokina T31 home preparation reload gates the original send",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 23345
+      },
+      {
+        "title": "[P1] Mokina keeps file purpose after reload but requires file reselection",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 15720
+      },
+      {
+        "title": "[P1] Mokina retains staged input when the initial preparation save fails and retries the same target",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 13229
+      },
+      {
+        "title": "[P1] Mokina open-resolution and recent summaries at 1280x720",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 33985
+      },
+      {
+        "title": "[P1] Mokina open-resolution and recent summaries at 1440x900",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 32888
+      },
+      {
+        "title": "[P1] Mokina workspace indicator settles without overshoot and respects reduced motion",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 6103
+      },
+      {
+        "title": "[P1] Mokina brand, action and title styles at 1440px",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 7460
+      },
+      {
+        "title": "[P1] Mokina brand, action and title styles at 1280px",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 7270
+      },
+      {
+        "title": "[P1] Mokina brand, action and title styles at 390px",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 8670
+      },
+      {
+        "title": "[P1] Mokina empty project focuses its existing composer without writing or sending",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 6089
+      },
+      {
+        "title": "[P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 6482
+      },
+      {
+        "title": "[P2] Mokina drawing controls have full hit areas and fit the viewport at 1280",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 7171
+      },
+      {
+        "title": "[P2] Mokina drawing controls have full hit areas and fit the viewport at 390",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 7851
+      },
+      {
+        "title": "[P1] Mokina long-path materials stay inside the continuation panel at 1280x720",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 14109
+      },
+      {
+        "title": "[P1] Mokina panel actions remain reachable and preserve drafts at 1280x720",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 8415
+      },
+      {
+        "title": "[P1] Mokina long-path materials stay inside the continuation panel at 1440x900",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 14035
+      },
+      {
+        "title": "[P1] Mokina panel actions remain reachable and preserve drafts at 1440x900",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 8597
+      },
+      {
+        "title": "[P1] Mokina panel explains historical and chapterless action restrictions",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 12803
+      },
+      {
+        "title": "[P1] Mokina continuation creates an editable fixed-excerpt draft without a run",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 13497
+      },
+      {
+        "title": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 900x600",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 7148
+      },
+      {
+        "title": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 390x844",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 7716
+      }
+    ]
+  },
+  "browser-home-repeat": {
+    "stats": {
+      "startTime": "2026-10-08T16:42:25.283Z",
+      "duration": 169750.638,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "cases": [
+      {
+        "title": "[P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 17283
+      },
+      {
+        "title": "[P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 17275
+      },
+      {
+        "title": "[P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 5749
+      },
+      {
+        "title": "[P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 5990
+      }
+    ]
+  },
+  "browser-edition-off": {
+    "stats": {
+      "startTime": "2026-10-08T16:46:03.860Z",
+      "duration": 100083.04299999999,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "cases": [
+      {
+        "title": "Mokina off production keeps populated recent projects without Mokina summary subscriptions",
+        "project": "chromium",
+        "repeat": 0,
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 17432
+      }
+    ]
+  }
+}

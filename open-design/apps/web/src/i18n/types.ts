@@ -74,6 +74,7 @@ export interface Dict {
   'mokina.pendingSend.discard': string;
   'mokina.pendingSend.discardNotice': string;
   'mokina.pendingSend.notRecoverable': string;
+  'mokina.pendingSend.manualOverflow': string;
   'homeHero.materialsEntry': string;
   // Workspace invite acceptance (C lane)
   'invite.header.eyebrow': string;

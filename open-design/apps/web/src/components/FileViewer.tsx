@@ -22,6 +22,7 @@ import {
 import {
   buildSocialSharePayload,
   OPEN_DESIGN_GITHUB_REPO_URL,
+  MOKINA_GITHUB_REPO_URL,
   workspaceContextHasTeamIdentity,
   type CollabCloudMemberDirectoryEntry,
   type CollabMemberRole,
@@ -16942,10 +16943,11 @@ function HtmlViewer({
     const title = t('socialShare.projectTitle', { title: exportTitle });
     const text = t('socialShare.projectText', {
       title: exportTitle,
-      repo: OPEN_DESIGN_GITHUB_REPO_URL,
+      repo: MOKINA_LOCAL_EDITION ? MOKINA_GITHUB_REPO_URL : OPEN_DESIGN_GITHUB_REPO_URL,
     });
     return {
       kind: 'project-html',
+      ...(MOKINA_LOCAL_EDITION ? { edition: 'mokina' as const } : {}),
       locale,
       url: socialShareDisplayUrl,
       title,
@@ -16953,7 +16955,7 @@ function HtmlViewer({
       copyText: t('socialShare.projectCopyText', {
         title: exportTitle,
         url: socialShareDisplayUrl,
-        repo: OPEN_DESIGN_GITHUB_REPO_URL,
+        repo: MOKINA_LOCAL_EDITION ? MOKINA_GITHUB_REPO_URL : OPEN_DESIGN_GITHUB_REPO_URL,
       }),
     };
   }, [exportTitle, locale, socialShareDisplayUrl, t]);

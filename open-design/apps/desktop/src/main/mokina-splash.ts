@@ -17,7 +17,7 @@ export function mokinaCrashHtml(): string {
   return `data:text/html;charset=utf-8,${encodeURIComponent(`<!doctype html><html><head><meta charset="utf-8"><title>Mokina</title><style>
 body{background:#f5f5f5;color:#111;font:15px/1.9 system-ui;margin:0;padding:48px;color-scheme:light}h1{font-size:28px;line-height:36px}button{background:#0071e3;color:white;border:0;border-radius:10px;min-height:44px;padding:8px 16px;font:14px/22px system-ui}button:focus-visible{outline:2px solid #0071e3;outline-offset:2px}
 </style></head><body><h1>Mokina keeps closing on this device</h1><p>The app paused after repeated crashes. It will try to recover automatically. You can save local diagnostic logs or quit and restart Mokina.</p><button id="logs">Save logs…</button><p role="status" id="status"></p><script>
-var logs=document.getElementById('logs'),status=document.getElementById('status'),diag=window.openDesignDesktop;
-if(diag&&typeof diag.exportDiagnostics==='function'){logs.onclick=function(){logs.disabled=true;status.textContent='Saving logs…';Promise.resolve(diag.exportDiagnostics()).then(function(r){status.textContent=r&&r.ok?'Logs saved.':r&&r.cancelled?'':'Could not save logs.';}).catch(function(){status.textContent='Could not save logs.';}).finally(function(){logs.disabled=false;});};}else{logs.hidden=true;}
+var logs=document.getElementById('logs'),statusEl=document.getElementById('status'),diag=window.openDesignDesktop;
+if(diag&&typeof diag.exportDiagnostics==='function'){logs.onclick=function(){logs.disabled=true;statusEl.textContent='Saving logs…';Promise.resolve().then(function(){return diag.exportDiagnostics();}).then(function(r){statusEl.textContent=r&&r.ok?'Logs saved.':r&&r.cancelled?'':'Could not save logs.';}).catch(function(){statusEl.textContent='Could not save logs.';}).finally(function(){logs.disabled=false;});};}else{logs.hidden=true;}
 </script></body></html>`)}`;
 }

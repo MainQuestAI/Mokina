@@ -1,0 +1,5 @@
+
+> open-design@0.22.1 i18n:check /workspace/Mokina/open-design
+> tsx ./scripts/i18n-check.ts
+
+i18n P0 check passed: locale registration, README switchers, and core doc links are consistent.

@@ -38,6 +38,7 @@ export const zhTW: Dict = {
   'mokina.pendingSend.discard': "放棄這條",
   'mokina.pendingSend.discardNotice': "伺服器可能已受理；放棄只解除本機的待確認狀態。",
   'mokina.pendingSend.notRecoverable': "這條訊息超出可保存快照的上限，重新整理後無法自動恢復。",
+  'mokina.pendingSend.manualOverflow': "此草稿超出自動恢復容量。完整正文和全部檔案引用仍保留在本分頁。可在下方編輯後明確傳送，或收起以取消。傳送前請勿關閉此分頁。",
   'mokina.entryChooser.title': "選擇要開啟的成果",
   'mokina.entryChooser.cancel': "取消",
   'mokina.entrySummary.loading': "讀取成果…",

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.6 /workspace/Mokina/open-design/apps/desktop
+
+
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+   Start at  16:32:15
+   Duration  704ms (transform 505ms, setup 0ms, import 632ms, tests 27ms, environment 0ms)
+

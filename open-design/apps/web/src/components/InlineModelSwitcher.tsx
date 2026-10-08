@@ -1146,10 +1146,7 @@ export function InlineModelSwitcher({
     }
   }, [config.agentId, config.mode, open]);
 
-  if (MOKINA_LOCAL_EDITION && config.mode === 'daemon' && config.agentId === 'amr') {
-    return <button type="button" className="inline-switcher" onClick={() => onOpenSettings('execution')}
-      title={t('mokina.model.unavailable')}>{t('settings.mokinaConnection.state.modelUnavailable')}</button>;
-  }
+  const legacyMokinaModel = MOKINA_LOCAL_EDITION && config.mode === 'daemon' && config.agentId === 'amr';
 
   return (
     <div
@@ -1173,7 +1170,7 @@ export function InlineModelSwitcher({
         // both only covered the composer text under it. The accessible name
         // stays, so the icon-only treatment is still announced.
         aria-label={
-          compact
+          legacyMokinaModel ? t('settings.mokinaConnection.state.modelUnavailable') : compact
             ? `${chipAgentLabel} · ${chipModel}`
             : `${chipMode} · ${chipPrimary} · ${chipModel}`
         }
@@ -1210,7 +1207,7 @@ export function InlineModelSwitcher({
               )}
             </span>
             <span className="inline-switcher__chip-model-name">
-              {chipModelName}
+              {legacyMokinaModel ? t('settings.mokinaConnection.state.modelUnavailable') : chipModelName}
             </span>
           </>
         ) : (
@@ -1233,7 +1230,7 @@ export function InlineModelSwitcher({
               <span className="inline-switcher__chip-sep" aria-hidden="true">
                 ·
               </span>
-              <span className="inline-switcher__chip-model">{chipModelName}</span>
+              <span className="inline-switcher__chip-model">{legacyMokinaModel ? t('settings.mokinaConnection.state.modelUnavailable') : chipModelName}</span>
             </span>
             <Icon
               name="chevron-down"
@@ -1252,7 +1249,7 @@ export function InlineModelSwitcher({
           data-testid="inline-model-switcher-popover"
           style={popoverPlacement ? { maxHeight: `${popoverPlacement.maxHeight}px`, overflowY: 'auto' } : undefined}
         >
-          {compact ? null : (
+          {compact && !legacyMokinaModel ? null : (
           <div className="inline-switcher__row">
             <span className="inline-switcher__label">
               {t('inlineSwitcher.modeLabel')}
@@ -1325,7 +1322,7 @@ export function InlineModelSwitcher({
               the BYOK model). */}
           {config.mode === 'api' ? (
             <>
-              {compact ? null : (
+              {compact && !legacyMokinaModel ? null : (
               <div className="inline-switcher__row">
                 <span className="inline-switcher__label">
                   {t('inlineSwitcher.providerLabel')}
@@ -1418,7 +1415,7 @@ export function InlineModelSwitcher({
                 </div>
               ) : null}
             </>
-          ) : compact ? (
+          ) : compact && !legacyMokinaModel ? (
             // Compact home popover: a plain list of the CURRENT agent's model
             // names (no header, no agent icons) — switching agents lives in
             // the execution settings entry below.
@@ -1584,7 +1581,7 @@ export function InlineModelSwitcher({
                   </div>
                 )}
 
-              {amrInstalled ? (
+              {amrInstalled && !MOKINA_LOCAL_EDITION ? (
                 <div
                   className={
                     'inline-switcher__account' +

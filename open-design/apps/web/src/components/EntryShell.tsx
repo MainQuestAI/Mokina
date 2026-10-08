@@ -1443,7 +1443,7 @@ export function EntryShell({
   // when the brief cannot be routed reliably.
   async function handlePluginLoopSubmit(payload: PluginLoopSubmit) {
     if (MOKINA_LOCAL_EDITION && usesOpenDesignCloud) {
-      onOpenSettings('execution');
+      // Keep Home's live context bindings while the user chooses a model in place.
       return 'blocked' as const;
     }
     if (amrAuthRequired) {
@@ -1849,7 +1849,7 @@ export function EntryShell({
   return (
     <div className="entry-shell entry-shell--no-header">
       {MOKINA_LOCAL_EDITION && usesOpenDesignCloud ? <div className="mokina-model-unavailable" role="status">
-        <p>{t('mokina.model.unavailable')}</p><Button onClick={() => onOpenSettings('execution')}>{t('avatar.settings')}</Button>
+        <p>{t('mokina.model.unavailable')}</p>
       </div> : null}
       <div
         className={`entry${railOpen ? ' entry--rail-open' : ''}`}

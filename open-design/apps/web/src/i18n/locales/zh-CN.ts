@@ -38,6 +38,7 @@ export const zhCN: Dict = {
   'mokina.pendingSend.discard': "放弃这条",
   'mokina.pendingSend.discardNotice': "服务端可能已受理；放弃只解除本机的待确认状态。",
   'mokina.pendingSend.notRecoverable': "这条消息超出可保存快照的上限，刷新后无法自动恢复。",
+  'mokina.pendingSend.manualOverflow': "此草稿超出自动恢复容量。完整正文和全部文件引用仍保留在本标签页。可在下方编辑后明确发送，或收起以取消。发送前请勿关闭此标签页。",
   'mokina.entryChooser.title': "选择要打开的成果",
   'mokina.entryChooser.cancel': "取消",
   'mokina.entrySummary.loading': "读取成果…",
@@ -6071,5 +6072,5 @@ export const zhCN: Dict = {
   "mokina.empty.focus": "填写制作要求",
   "mokina.empty.runningTitle": "正在制作首份成果",
   "mokina.empty.runningDescription": "完成后将在这里显示。进度可在协作区查看。",
-  "mokina.model.unavailable": "此模型在 Mokina 中不可用。请在设置中选择本地或自带密钥模型后再发送。",
+  "mokina.model.unavailable": "此模型在 Mokina 中不可用。请先选择本地或自带密钥模型后再发送。",
 };

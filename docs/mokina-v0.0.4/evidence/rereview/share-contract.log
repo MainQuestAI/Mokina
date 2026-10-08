@@ -1,0 +1,9 @@
+
+ RUN  v4.1.6 /workspace/Mokina/open-design/packages/contracts
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:32:16
+   Duration  199ms (transform 42ms, setup 0ms, import 56ms, tests 6ms, environment 0ms)
+

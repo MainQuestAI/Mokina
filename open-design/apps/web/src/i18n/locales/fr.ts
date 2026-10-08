@@ -38,6 +38,7 @@ export const fr: Dict = {
   'mokina.pendingSend.discard': "Discard this receipt",
   'mokina.pendingSend.discardNotice': "The server may have accepted it. Discarding only clears the pending confirmation in this browser.",
   'mokina.pendingSend.notRecoverable': "This message is too large to keep a recoverable snapshot; it cannot be auto-restored after a reload.",
+  'mokina.pendingSend.manualOverflow': "This draft exceeds automatic recovery capacity. The full text and all file references remain in this tab. Edit here and send explicitly, or collapse to cancel. Keep this tab open until sent.",
   'mokina.entryChooser.title': "Choisir un livrable à ouvrir",
   'mokina.entryChooser.cancel': "Annuler",
   'mokina.entrySummary.loading': "Chargement des livrables…",

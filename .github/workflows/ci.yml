@@ -53,7 +53,8 @@ jobs:
           pnpm --filter @open-design/desktop exec vitest run tests/main/page-pdf-capture.test.ts
       - name: Brand UI review regression
         run: |
-          pnpm --filter @open-design/web exec vitest run tests/components/ChatPane.error-card-ladder.test.tsx tests/components/PreviewDrawOverlay.test.tsx tests/components/MokinaBrand.test.tsx tests/components/MokinaLiveStatus.test.tsx tests/i18n/product-brand.test.ts --maxWorkers=2
+          pnpm --filter @open-design/web exec vitest run tests/components/ChatPane.error-card-ladder.test.tsx tests/components/PreviewDrawOverlay.test.tsx tests/components/MokinaBrand.test.tsx tests/components/MokinaLiveStatus.test.tsx tests/i18n/product-brand.test.ts tests/components/HomeView.context-recovery.test.tsx tests/components/HomeView.plugin-workspace-scope.test.tsx tests/components/InlineModelSwitcher.byok-chip-label.test.tsx tests/runtime/chat/composer-draft.test.ts --maxWorkers=2
+          pnpm --filter @open-design/contracts exec vitest run tests/social-share.test.ts
           pnpm --filter @open-design/release test
           pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-splash.test.ts tests/main/splash-stage-replay.test.ts
           pnpm --filter @open-design/tools-pack exec vitest run tests/resources/mokina-brand.test.ts

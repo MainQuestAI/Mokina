@@ -1,3 +1,4 @@
+import { readHomeContextDraft, writeHomeContextDraft, clearHomeContextDraft } from '../runtime/mokina/home-context-draft';
 // Composed Home view — the top-down layout the entry view renders
 // when the left nav rail's "Home" tab is active.
 //
@@ -651,6 +652,19 @@ export function HomeView({
   // serialized into the persisted prompt draft).
   const [mokinaFilePlans, setMokinaFilePlans] = useState<Array<HomeMokinaFilePlan | null>>([]);
   const inputWorkspaceKey = workspaceIdentityCacheKey(workspaceContext);
+  const [homeContextRestore, setHomeContextRestore] = useState(() => ({
+    scope: inputWorkspaceKey, pending: MOKINA_LOCAL_EDITION && ownsComposerDraft,
+    draft: MOKINA_LOCAL_EDITION && ownsComposerDraft ? readHomeContextDraft(inputWorkspaceKey) : null,
+  }));
+  if (homeContextRestore.scope !== inputWorkspaceKey) {
+    if (MOKINA_LOCAL_EDITION && ownsComposerDraft) {
+      setActiveSkill(null); setActiveSkillCatalogScope(null);
+      setSelectedPluginContexts([]); setSelectedMcpContexts([]);
+      setSelectedConnectorContexts([]); setContextWorkspaceItems([]);
+    }
+    setHomeContextRestore({ scope: inputWorkspaceKey, pending: MOKINA_LOCAL_EDITION && ownsComposerDraft,
+      draft: MOKINA_LOCAL_EDITION && ownsComposerDraft ? readHomeContextDraft(inputWorkspaceKey) : null });
+  }
   const inputDraftsRef = useRef(new Map<string, StagedInputDraft | null>());
   const inputSavesRef = useRef(Promise.resolve(true));
   const [missingInputs, setMissingInputs] = useState<{ workspaceKey: string; inputs: StagedInputMetadata[] }>({ workspaceKey: '', inputs: [] });
@@ -1301,6 +1315,50 @@ export function HomeView({
     () => mcpServers.filter((server) => server.enabled),
     [mcpServers],
   );
+
+  useEffect(() => {
+    if (!homeContextRestore.pending || homeContextRestore.scope !== inputWorkspaceKey
+      || workspaceContextState.identityChangePending || pluginsLoading || skillsLoading || mcpLoading) return;
+    const draft = homeContextRestore.draft;
+    if (draft) {
+      const skill = selectableSkills.find(item => item.id === draft.skillId) ?? null;
+      const pluginPicks = draft.plugins.flatMap(item => {
+        const record = plugins.find(record => record.id === item.id);
+        return record ? [{ record, inlineBacked: item.inlineBacked }] : [];
+      });
+      const mcpPicks = draft.mcp.flatMap(item => {
+        const server = enabledMcpServers.find(server => server.id === item.id);
+        return server ? [{ server, inlineBacked: item.inlineBacked }] : [];
+      });
+      const connectorPicks = draft.connectors.flatMap(item => {
+        const connector = connectors.find(connector => connector.id === item.id);
+        return connector ? [{ connector, inlineBacked: item.inlineBacked }] : [];
+      });
+      // Missing references remain visible and retained until resolved or explicitly discarded.
+      if (draft.skillId && !skill || pluginPicks.length !== draft.plugins.length
+        || mcpPicks.length !== draft.mcp.length || connectorPicks.length !== draft.connectors.length) return;
+      setActiveSkill(skill);
+      setActiveSkillCatalogScope(skill ? localCatalogScopeFromWorkspaceContext(workspaceContext) : null);
+      setSelectedPluginContexts(pluginPicks); setSelectedMcpContexts(mcpPicks);
+      setSelectedConnectorContexts(connectorPicks); setContextWorkspaceItems(draft.workspaceItems);
+    }
+    setHomeContextRestore(current => ({ ...current, pending: false, draft: null }));
+  }, [homeContextRestore, inputWorkspaceKey, workspaceContextState.identityChangePending, pluginsLoading,
+    skillsLoading, mcpLoading, selectableSkills, plugins, enabledMcpServers, connectors, workspaceContext]);
+  useEffect(() => {
+    if (!MOKINA_LOCAL_EDITION || !ownsComposerDraft || homeContextRestore.pending
+      || homeContextRestore.scope !== inputWorkspaceKey || workspaceContextState.identityChangePending) return;
+    try {
+      writeHomeContextDraft(inputWorkspaceKey, {
+        skillId: activeSkill?.id ?? null,
+        plugins: selectedPluginContexts.map(item => ({ id: item.record.id, inlineBacked: item.inlineBacked })),
+        mcp: selectedMcpContexts.map(item => ({ id: item.server.id, inlineBacked: item.inlineBacked })),
+        connectors: selectedConnectorContexts.map(item => ({ id: item.connector.id, inlineBacked: item.inlineBacked })),
+        workspaceItems: contextWorkspaceItems,
+      });
+    } catch { setError(t('mokina.pendingSend.saveFailed')); }
+  }, [homeContextRestore, inputWorkspaceKey, ownsComposerDraft, workspaceContextState.identityChangePending,
+    activeSkill, selectedPluginContexts, selectedMcpContexts, selectedConnectorContexts, contextWorkspaceItems, t]);
 
   const designSystemPickerSystems = useMemo(
     () => selectableHomeDesignSystems(designSystems, defaultDesignSystemId),
@@ -2838,6 +2896,7 @@ export function HomeView({
     // path lands here directly — swallow re-entry during the in-flight window.
     if (sending || defaultTypePending) return;
     if (MOKINA_LOCAL_EDITION && ownsComposerDraft) {
+      if (homeContextRestore.pending) { setError(t('mokina.pendingSend.reselect')); return; }
       if (missingInputs.workspaceKey === inputWorkspaceKey && missingInputs.inputs.length) { setError(t('mokina.repair.reselectFiles')); return; }
     }
     const trimmed = prompt.trim();
@@ -3098,6 +3157,7 @@ export function HomeView({
       // next time the Home tab mounts.
       if (ownsComposerDraft) clearHomeComposerDraft();
       if (MOKINA_LOCAL_EDITION && ownsComposerDraft) {
+        clearHomeContextDraft(inputWorkspaceKey);
         await clearStagedInputDraft(inputWorkspaceKey, inputDraftsRef.current.get(inputWorkspaceKey) ?? null);
         inputDraftsRef.current.set(inputWorkspaceKey, null);
         setStagedFiles([]); setMokinaFilePlans([]);
@@ -3198,6 +3258,16 @@ export function HomeView({
           installationId={deepSeekV4FlashCampaignInstallationId}
         />
       )}
+      {MOKINA_LOCAL_EDITION && homeContextRestore.pending && homeContextRestore.draft ? <div role="status" data-testid="mokina-home-context-restore">
+        <p>{t('mokina.pendingSend.reselect')}</p>
+        <p>{[homeContextRestore.draft.skillId, ...homeContextRestore.draft.plugins.map(item => item.id),
+          ...homeContextRestore.draft.mcp.map(item => item.id), ...homeContextRestore.draft.connectors.map(item => item.id),
+          ...homeContextRestore.draft.workspaceItems.map(item => item.label)].filter(Boolean).join(' · ')}</p>
+        <Button onClick={() => {
+          clearHomeContextDraft(inputWorkspaceKey);
+          setHomeContextRestore(current => ({ ...current, pending: false, draft: null }));
+        }}>{t('mokina.pendingSend.discard')}</Button>
+      </div> : null}
       {MOKINA_LOCAL_EDITION && missingInputs.workspaceKey === inputWorkspaceKey && missingInputs.inputs.length > 0 ? <div role="status" className="mokina-material-picker" data-testid="mokina-missing-inputs">
         <p>{t('mokina.repair.reselectFiles')}</p>
         {missingInputs.inputs.map(item => <div key={item.inputId}>

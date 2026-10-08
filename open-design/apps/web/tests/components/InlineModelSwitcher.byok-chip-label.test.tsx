@@ -17,7 +17,7 @@
  * 判据落在 chip 的 `aria-label` 上,不是「有没有出现某个字符串」——
  * 模型名两种模式下都在标签里,只查模型名会永远通过。
  */
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { InlineModelSwitcher } from '../../src/components/InlineModelSwitcher';
 import type { AgentInfo, AppConfig } from '../../src/types';
@@ -96,4 +96,20 @@ describe('BYOK 紧凑 chip 的读屏标签', () => {
     const chip = show(configOf({ mode: 'daemon' }));
     expect(chip.getAttribute('aria-label') ?? '').toContain('Claude Code');
   });
+});
+
+it('lets a legacy Mokina AMR selection choose a local model without navigating away', async () => {
+  vi.resetModules();
+  vi.doMock('../../src/mokina-edition', () => ({ MOKINA_LOCAL_EDITION: true }));
+  const { InlineModelSwitcher: Switcher } = await import('../../src/components/InlineModelSwitcher');
+  const settings = vi.fn();
+  const change = vi.fn();
+  render(<Switcher config={configOf({ agentId: 'amr' })} agents={[claudeAgent]} compact daemonLive
+    providerModelsCache={{}} onModeChange={vi.fn()} onAgentChange={change}
+    onAgentModelChange={vi.fn()} onApiProtocolChange={vi.fn()} onApiModelChange={vi.fn()} onOpenSettings={settings} />);
+  fireEvent.click(screen.getByTestId('inline-model-switcher-chip'));
+  fireEvent.click(screen.getByTestId('inline-model-switcher-agent-claude'));
+  expect(change).toHaveBeenCalledWith('claude');
+  expect(settings).not.toHaveBeenCalled();
+  vi.doUnmock('../../src/mokina-edition');
 });

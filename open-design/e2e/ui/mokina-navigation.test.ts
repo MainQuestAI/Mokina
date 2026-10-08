@@ -226,11 +226,14 @@ test('[P1] Mokina keeps a legacy Cloud choice unavailable until an explicit mode
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('open-design:config')!).agentId)).toBe('amr');
   await page.getByTestId('home-hero-input').fill('保留未发送内容');
   await page.getByTestId('home-hero-submit').click();
-  const settings = page.getByRole('region', { name: /^Settings/ });
-  await expect(settings).toBeVisible({ timeout: T.long });
-  await expect(page.locator('.settings-cloud-signin-callout')).toHaveCount(0);
+  // A blocked Home submit keeps the live bindings and opens no settings route.
+  await expect(page.getByTestId('home-hero-input')).toHaveText('保留未发送内容');
+  await expect(page.getByRole('region', { name: /^Settings/ })).toHaveCount(0);
+  await page.getByTestId('inline-model-switcher-chip').click();
+  await expect(page.getByTestId('inline-model-switcher-popover')).toBeVisible();
+  await expect(page.getByTestId('inline-model-switcher-agent-amr')).toHaveCount(0);
+  await page.keyboard.press('Escape');
   await expect(page.getByTestId('entry-nav-community')).toHaveCount(0);
-  await expect(settings.locator('.amr-auth-anchor')).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('open-design:config')!).agentId)).toBe('amr');
   expect(writes).toEqual([]);
 });

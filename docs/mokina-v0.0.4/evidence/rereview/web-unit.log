@@ -1,0 +1,9 @@
+
+ RUN  v4.1.6 /workspace/Mokina/open-design/apps/web
+
+
+ Test Files  9 passed (9)
+      Tests  119 passed (119)
+   Start at  16:49:38
+   Duration  25.56s (transform 16.33s, setup 6.24s, import 18.64s, tests 15.67s, environment 7.28s)
+

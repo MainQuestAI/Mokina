@@ -1,0 +1,56 @@
+
+ RUN  v4.1.6 /workspace/Mokina/open-design/apps/desktop
+
+ ❯ tests/main/mokina-splash.test.ts (7 tests | 5 failed) 13ms
+   × shows diagnostics progress and success, then restores the button 6ms
+   × shows diagnostics progress and failure, then restores the button 1ms
+   × shows diagnostics progress and cancel, then restores the button 1ms
+   × shows diagnostics progress and reject, then restores the button 1ms
+   × shows diagnostics progress and throw, then restores the button 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/main/mokina-splash.test.ts > shows diagnostics progress and success, then restores the button
+ FAIL  tests/main/mokina-splash.test.ts > shows diagnostics progress and failure, then restores the button
+ FAIL  tests/main/mokina-splash.test.ts > shows diagnostics progress and cancel, then restores the button
+ FAIL  tests/main/mokina-splash.test.ts > shows diagnostics progress and reject, then restores the button
+AssertionError: expected '' to be 'Saving logs…' // Object.is equality
+
+- Expected
++ Received
+
+- Saving logs…
+
+ ❯ tests/main/mokina-splash.test.ts:37:34
+     35|     logs.onclick!();
+     36|     expect(logs.disabled).toBe(true);
+     37|     expect(statusEl.textContent).toBe('Saving logs…');
+       |                                  ^
+     38|     await Promise.resolve();
+     39|     if (outcome === 'reject') reject(new Error('IPC'));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/main/mokina-splash.test.ts > shows diagnostics progress and throw, then restores the button
+Error: IPC
+ ❯ Object.exportDiagnostics tests/main/mokina-splash.test.ts:28:86
+     26|     const pending = new Promise((yes, no) => { resolve = yes; reject =…
+     27|     const scope = { document: { getElementById: (id: string) => id ===…
+     28|       openDesignDesktop: { exportDiagnostics: () => { if (outcome === …
+       |                                                                                      ^
+     29|     // Window.status is a string property, including assignment coerci…
+     30|     Object.defineProperty(scope, 'status', { get: () => '', set: () =>…
+ ❯ Object.logs.onclick evalmachine.<anonymous>:3:152
+ ❯ tests/main/mokina-splash.test.ts:35:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 2 passed (7)
+   Start at  16:04:41
+   Duration  250ms (transform 51ms, setup 0ms, import 65ms, tests 13ms, environment 0ms)
+
+undefined
+/workspace/Mokina/open-design/apps/desktop:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/main/mokina-splash.test.ts

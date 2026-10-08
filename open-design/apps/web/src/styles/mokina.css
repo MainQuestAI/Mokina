@@ -14,6 +14,7 @@ html[data-product='mokina'] {
   --mokina-action-pressed: color-mix(in srgb, var(--mokina-action) 86%, black);
   --mokina-glass-fill: color-mix(in srgb, var(--mokina-surface) 86%, transparent);
   --bg: var(--mokina-canvas);
+  --bg-app: var(--mokina-canvas);
   --bg-panel: var(--mokina-surface);
   --bg-elevated: var(--mokina-surface);
   --text: var(--mokina-ink);
@@ -23,8 +24,16 @@ html[data-product='mokina'] {
   --chat-text: var(--mokina-ink);
   --chat-text-secondary: var(--mokina-secondary);
   --chat-surface: var(--mokina-surface);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --serif: var(--sans);
+  --mokina-control-radius: 10px;
+  --mokina-toolbar-radius: 12px;
+  --mokina-toolbar-blur: 16px;
+  --mokina-toolbar-gap: 8px;
+  font-family: var(--sans);
 }
+
+html[data-product='mokina'] .home-hero__title { font-family: var(--sans); }
 
 html[data-product='mokina'] :where(button, input, textarea, select) {
   font-size: 14px;
@@ -153,6 +162,12 @@ html[data-product="mokina"] .page-title { font-size: 28px; line-height: 36px; }
 html[data-product="mokina"] :where(.preview-draw-toolbar, .sketch-editor-header) { background: var(--mokina-glass-fill); border: 1px solid var(--border); border-radius: 12px; backdrop-filter: blur(16px); gap: 8px; }
 html[data-product="mokina"] :where(.preview-draw-toolbar button, .sketch-editor-header button, .preview-draw-icon-action, .preview-draw-subtool-action) { min-width: 44px; min-height: 44px; border-radius: 10px; font-size: 14px; line-height: 22px; }
 html[data-product="mokina"] :where(.preview-draw-toolbar button, .preview-draw-icon-action) svg { width: 20px; height: 20px; }
+html[data-product="mokina"] .preview-draw-note-input::placeholder { color: var(--mokina-secondary); }
+html[data-product="mokina"] .preview-draw-note-input:focus {
+  background: var(--mokina-surface) !important;
+  border-color: var(--mokina-action) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mokina-action) 20%, transparent) !important;
+}
 @media (max-width: 760px) { html[data-product="mokina"] .preview-draw-toolbar { max-width: calc(100vw - 32px); flex-wrap: wrap; } }
 
 html:not([data-product="mokina"]) .mokina-files-content { display: contents; }

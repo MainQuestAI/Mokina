@@ -30,6 +30,7 @@ import {
   type WebStatusSnapshot,
 } from "@open-design/sidecar-proto";
 import { dirname, join } from "node:path";
+import { isMokinaLocalNamespace } from "@open-design/release";
 
 import {
   resolveLogFilePath,
@@ -465,7 +466,7 @@ function installDesktopMenu(
   const exportDiagnostics = () => {
     const focused = BrowserWindow.getFocusedWindow();
     void exportDiagnosticsToFile(
-      { discoverDaemonBaseUrl: discoverAppConfigBaseUrl, product: options.product ?? (runtime.namespace.startsWith('mokina-local') ? { productId: 'mokina' } : null) },
+      { discoverDaemonBaseUrl: discoverAppConfigBaseUrl, product: options.product ?? (isMokinaLocalNamespace(runtime.namespace) ? { productId: 'mokina' } : null) },
       focused,
     ).catch((error: unknown) => {
       console.error("desktop diagnostics export from menu failed", error);
@@ -567,7 +568,7 @@ function installDesktopMenu(
         label: "Help",
         role: "help",
         submenu: [
-          ...(options.product?.productId === 'mokina' || runtime.namespace.startsWith('mokina-local') ? [] : [
+          ...(options.product?.productId === 'mokina' || isMokinaLocalNamespace(runtime.namespace) ? [] : [
           {
             label: "Documentation",
             click() {
@@ -967,7 +968,7 @@ export async function runDesktopMain(
     splashStartedAt: options.splashStartedAt,
     updater,
     windowTitle: options.windowTitle,
-    product: options.product ?? (runtime.namespace.startsWith('mokina-local') ? { productId: 'mokina' } : null),
+    product: options.product ?? (isMokinaLocalNamespace(runtime.namespace) ? { productId: 'mokina' } : null),
   });
   if (pendingUpdateDialogRequest) {
     pendingUpdateDialogRequest = false;
@@ -1006,7 +1007,7 @@ export async function runDesktopMain(
   );
   removeDiagnosticsIpc = registerDesktopDiagnosticsIpc({
     discoverDaemonBaseUrl: resolveDaemonBaseUrl(options),
-    product: options.product ?? (runtime.namespace.startsWith('mokina-local') ? { productId: 'mokina' } : null),
+    product: options.product ?? (isMokinaLocalNamespace(runtime.namespace) ? { productId: 'mokina' } : null),
   });
   // Route opendesign:// team-invite deeplinks to the daemon (desktop wake-up).
   registerInviteDeeplink({

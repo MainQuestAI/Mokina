@@ -4,6 +4,7 @@ import { createPortal, flushSync } from 'react-dom';
 import { Icon } from './Icon';
 import { RemixIcon } from './RemixIcon';
 import { useT } from '../i18n';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import type { PreviewVisualMarkKind } from '../types';
 import { requestPreviewSnapshot } from '../runtime/exports';
 import { isImeComposing } from '../utils/imeComposing';
@@ -1535,18 +1536,18 @@ export function PreviewDrawOverlay({
               alignItems: 'center',
               justifyContent: 'center',
               alignContent: 'center',
-              flexWrap: 'nowrap',
-              gap: 6,
+              flexWrap: MOKINA_LOCAL_EDITION ? 'wrap' : 'nowrap',
+              gap: 'var(--mokina-toolbar-gap, 6px)',
               boxSizing: 'border-box',
               width: 'max-content',
               maxWidth: '100%',
               overflow: 'visible',
               padding: 6,
-              background: 'rgba(20,20,20,0.92)',
-              color: '#fff',
-              borderRadius: 22,
+              background: 'var(--mokina-glass-fill, rgba(20,20,20,0.92))',
+              color: 'var(--mokina-ink, #fff)',
+              borderRadius: 'var(--mokina-toolbar-radius, 22px)',
               boxShadow: '0 6px 24px rgba(0,0,0,0.18)',
-              backdropFilter: 'blur(8px)',
+              backdropFilter: 'blur(var(--mokina-toolbar-blur, 8px))',
               zIndex: 91,
               pointerEvents: 'auto',
               fontSize: 13,
@@ -1637,11 +1638,11 @@ export function PreviewDrawOverlay({
               disabled={sending}
               placeholder={t('chat.annotationNotePlaceholder')}
               style={{
-                background: 'rgba(218, 97, 56, 0.18)',
-                border: '1px solid rgba(248, 150, 104, 0.82)',
+                background: MOKINA_LOCAL_EDITION ? 'var(--mokina-surface)' : 'rgba(218, 97, 56, 0.18)',
+                border: MOKINA_LOCAL_EDITION ? '1px solid var(--mokina-edge)' : '1px solid rgba(248, 150, 104, 0.82)',
                 borderRadius: 999,
                 outline: 'none',
-                boxShadow: '0 0 0 3px rgba(218, 97, 56, 0.22)',
+                boxShadow: MOKINA_LOCAL_EDITION ? 'none' : '0 0 0 3px rgba(218, 97, 56, 0.22)',
                 color: 'inherit',
                 flexGrow: 1,
                 flexShrink: 1,
@@ -1889,7 +1890,7 @@ const subToolGroupStyle: CSSProperties = {
   borderRadius: 999,
   // Track behind the segments, so the armed tool's fill reads as a thumb
   // sliding inside a group rather than a lone highlighted button.
-  background: 'rgba(255,255,255,0.08)',
+  background: MOKINA_LOCAL_EDITION ? 'var(--bg-subtle)' : 'rgba(255,255,255,0.08)',
   border: 'none',
   flex: '0 0 auto',
 };
@@ -1916,14 +1917,14 @@ function subToolButtonStyle(active: boolean): CSSProperties {
   return {
     border: 'none',
     borderRadius: 999,
-    width: 34,
-    height: 30,
+    width: MOKINA_LOCAL_EDITION ? 44 : 34,
+    height: MOKINA_LOCAL_EDITION ? 44 : 30,
     padding: 0,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: active ? 'rgba(255,255,255,0.18)' : 'transparent',
-    color: '#fff',
+    background: active ? (MOKINA_LOCAL_EDITION ? 'var(--mokina-surface)' : 'rgba(255,255,255,0.18)') : 'transparent',
+    color: MOKINA_LOCAL_EDITION ? 'var(--mokina-ink)' : '#fff',
     fontSize: 12,
     fontWeight: active ? 600 : 500,
     cursor: 'pointer',
@@ -1933,10 +1934,10 @@ function subToolButtonStyle(active: boolean): CSSProperties {
 
 function drawActionButtonStyle(primary: boolean): CSSProperties {
   return {
-    border: primary ? 'none' : '1px solid rgba(255,255,255,0.2)',
+    border: primary ? 'none' : (MOKINA_LOCAL_EDITION ? '1px solid var(--mokina-edge)' : '1px solid rgba(255,255,255,0.2)'),
     borderRadius: 999,
-    width: 34,
-    height: 34,
+    width: MOKINA_LOCAL_EDITION ? 44 : 34,
+    height: MOKINA_LOCAL_EDITION ? 44 : 34,
     padding: 0,
     fontSize: 13,
     cursor: 'pointer',
@@ -1945,7 +1946,7 @@ function drawActionButtonStyle(primary: boolean): CSSProperties {
     justifyContent: 'center',
     flex: '0 0 auto',
     whiteSpace: 'nowrap',
-    background: primary ? 'var(--accent)' : 'transparent',
+    background: primary ? (MOKINA_LOCAL_EDITION ? 'var(--mokina-action)' : 'var(--accent)') : 'transparent',
     color: primary ? '#fff' : 'inherit',
   };
 }
@@ -1958,26 +1959,27 @@ function historyButtonStyle(enabled: boolean): CSSProperties {
   };
 }
 
+const iconButtonSize = MOKINA_LOCAL_EDITION ? 44 : 30;
 const iconButtonStyle: CSSProperties = {
-  border: '1px solid rgba(255,255,255,0.18)',
-  borderRadius: 999,
-  width: 30,
-  minWidth: 30,
-  height: 30,
+  border: '1px solid var(--mokina-edge, rgba(255,255,255,0.18))',
+  borderRadius: 'var(--mokina-control-radius, 999px)',
+  width: iconButtonSize,
+  minWidth: iconButtonSize,
+  height: iconButtonSize,
   padding: 0,
   cursor: 'pointer',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  flex: '0 0 30px',
+  flex: `0 0 ${iconButtonSize}px`,
   aspectRatio: '1 / 1',
   background: 'rgba(255,255,255,0.05)',
-  color: '#fff',
+  color: 'var(--mokina-ink, #fff)',
 };
 
 const closeButtonStyle: CSSProperties = {
   ...iconButtonStyle,
-  borderColor: 'rgba(255,255,255,0.14)',
+  borderColor: MOKINA_LOCAL_EDITION ? 'var(--mokina-edge)' : 'rgba(255,255,255,0.14)',
   background: 'rgba(255,255,255,0.05)',
 };
 
@@ -1996,10 +1998,10 @@ const previewDrawDockBaseStyle: CSSProperties = {
 };
 
 const previewDrawDockDockedStyle: CSSProperties = {
-  left: 'calc(50% - 52px)',
+  left: MOKINA_LOCAL_EDITION ? '50%' : 'calc(50% - 52px)',
   bottom: 16,
   transform: 'translateX(-50%)',
-  maxWidth: 'min(760px, calc(100% - 144px))',
+  maxWidth: MOKINA_LOCAL_EDITION ? 'min(760px, calc(100% - 32px))' : 'min(760px, calc(100% - 144px))',
 };
 
 

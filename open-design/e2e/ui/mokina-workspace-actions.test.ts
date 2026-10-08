@@ -4,10 +4,51 @@ import type { ProjectFileVersionResponse, ProjectFileVersionsResponse } from '@o
 import { expect, test } from '@/playwright/suite';
 import { applyStandardMocks } from '@/playwright/mock-factory';
 import { T } from '@/timeouts';
+import { clickPreviewToolbarAction } from '@/playwright/workspace';
 
 test.beforeEach(async ({ page }) => {
   await applyStandardMocks(page);
 });
+
+for (const viewport of [{ width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+  test(`[P2] Mokina drawing controls have full hit areas and fit the viewport at ${viewport.width}`, async ({ page }, testInfo) => {
+    await page.setViewportSize(viewport);
+    const project = await seedWorkspace(page);
+    await openArtifact(page, project, 'plan.html');
+    await expect(page.locator('.split-chat-slot')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.locator('.ws-body')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    if (viewport.width <= 760) {
+      // Use the real narrow-workspace affordance before opening preview tools.
+      await page.getByRole('button', { name: 'Collapse the conversation pane', exact: true }).click();
+    }
+    const mark = page.getByTestId('draw-overlay-toggle');
+    await clickPreviewToolbarAction(page, 'draw-overlay-toggle', /^Mark$/);
+    await expect(mark).toHaveAttribute('aria-pressed', 'true');
+    const toolbar = page.locator('.preview-draw-toolbar');
+    await expect(toolbar).toBeVisible();
+    await expect(toolbar.getByRole('button', { name: 'Box select', exact: true })).toHaveCSS('color', 'rgb(17, 17, 17)');
+    for (const name of ['Undo', 'Redo', 'Close']) {
+      const control = toolbar.getByRole('button', { name, exact: true });
+      await expect(control).toBeVisible();
+      const box = await control.boundingBox();
+      expect(box!.width, `${name} hit width`).toBeGreaterThanOrEqual(44);
+      expect(box!.height, `${name} hit height`).toBeGreaterThanOrEqual(44);
+    }
+    const geometry = await toolbar.evaluate(element => ({ width: element.clientWidth, scrollWidth: element.scrollWidth,
+      left: element.getBoundingClientRect().left, right: element.getBoundingClientRect().right,
+      children: Array.from(element.children).map(child => ({ width: child.clientWidth, scrollWidth: child.scrollWidth,
+        left: child.getBoundingClientRect().left, right: child.getBoundingClientRect().right,
+        children: Array.from(child.children).map(node => ({ name: node.getAttribute('aria-label') ?? node.tagName,
+          width: node.getBoundingClientRect().width, flex: getComputedStyle(node).flex, minWidth: getComputedStyle(node).minWidth })) })) }));
+    await testInfo.attach(`drawing-geometry-${viewport.width}`, { body: JSON.stringify(geometry, null, 2), contentType: 'application/json' });
+    expect(geometry.scrollWidth, JSON.stringify(geometry)).toBeLessThanOrEqual(geometry.width + 1);
+    expect(geometry.left).toBeGreaterThanOrEqual(0);
+    expect(geometry.right).toBeLessThanOrEqual(viewport.width);
+    await testInfo.attach(`drawing-controls-${viewport.width}`, { body: await page.screenshot(), contentType: 'image/png' });
+    await toolbar.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(toolbar).toHaveCount(0);
+  });
+}
 
 for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900 }]) {
   test(`[P1] Mokina long-path materials stay inside the continuation panel at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {

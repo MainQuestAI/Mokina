@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { MokinaFixedSource } from '../../src/components/mokina/MokinaFixedSource';
 import { I18nProvider } from '../../src/i18n';
@@ -23,4 +23,17 @@ it('only a missing receipt is no fixed source; network failure stays a read erro
   vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
   rerender(<I18nProvider initial="en"><MokinaFixedSource projectId="offline" /></I18nProvider>);
   expect(await screen.findByText('Read failed')).toBeVisible();
+});
+
+it('does not restart receipt reads when the same workspace context is reconstructed', async () => {
+  const context = { workspaceId: 'w', workspaceType: 'personal', workspaceMemberId: 'm', role: 'owner', lifecycleState: 'active', memberStatus: 'active', permissions: { canShareProjects: true, canWriteSyncedFiles: true } } as import('@open-design/contracts').WorkspaceCollabContext;
+  const fetcher = vi.fn().mockImplementation(async () => new Response('', { status: 404 }));
+  vi.stubGlobal('fetch', fetcher);
+  const view = (ctx: typeof context) => <I18nProvider initial="en"><MokinaFixedSource projectId="same" workspaceContext={ctx} /></I18nProvider>;
+  const { rerender } = render(view(context));
+  await screen.findByText('No fixed source');
+  await act(async () => { rerender(view({ ...context, permissions: { ...context.permissions } })); });
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  await act(async () => { rerender(view({ ...context, workspaceMemberId: 'other' })); });
+  expect(fetcher).toHaveBeenCalledTimes(2);
 });

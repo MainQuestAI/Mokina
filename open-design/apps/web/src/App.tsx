@@ -2506,12 +2506,6 @@ function AppInner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const refreshProjects = useCallback(async () => {
-    const request = beginProjectListRequest(workspaceProjectView);
-    const list = await listCurrentWorkspaceProjects({ workspaceView: workspaceProjectView });
-    if (reconcileFetchedProjects(list, request) && isCurrentProjectListRequest(request)) setProjectsLoading(false);
-  }, [beginProjectListRequest, listCurrentWorkspaceProjects, reconcileFetchedProjects, isCurrentProjectListRequest, workspaceProjectView]);
-
   const refreshProjectsStrict = useCallback(async () => {
     const request = beginProjectListRequest(workspaceProjectView);
     try {
@@ -2524,6 +2518,12 @@ function AppInner() {
       if (isCurrentProjectListRequest(request)) setProjectsLoading(false);
     }
   }, [beginProjectListRequest, listCurrentWorkspaceProjects, reconcileFetchedProjects, isCurrentProjectListRequest, workspaceProjectView]);
+
+  // Background callers do not await a surfaced error, but must retain the
+  // same strict read semantics: an offline catalog is not an empty catalog.
+  const refreshProjects = useCallback(async () => {
+    try { await refreshProjectsStrict(); } catch { /* strict path records the read error */ }
+  }, [refreshProjectsStrict]);
 
   const refreshProjectsAfterTeamCatalogChange = useCallback(() => {
     const context = workspaceContextRef.current;

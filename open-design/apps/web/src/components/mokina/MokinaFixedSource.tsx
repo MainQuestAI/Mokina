@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { MokinaContinuationV2, WorkspaceCollabContext } from '@open-design/contracts';
 import { useT } from '../../i18n';
 import { projectFileUrl } from '../../providers/registry';
@@ -15,11 +15,14 @@ export function MokinaFixedSource({ projectId, workspaceContext = null, hideMiss
 }) {
   const t = useT();
   const identity = JSON.stringify([projectId, workspaceIdentityCacheKey(workspaceContext)]);
+  const contextRef = useRef(workspaceContext);
+  contextRef.current = workspaceContext;
   const [read, setRead] = useState<SourceRead | null>(null);
   useEffect(() => {
     const controller = new AbortController();
+    const requestContext = contextRef.current;
     void enqueueMokinaMetadataRead(async signal => {
-      const response = await fetch(projectFileUrl(projectId, 'MOKINA-CONTINUATION.json', workspaceContext), { signal, cache: 'no-store' });
+      const response = await fetch(projectFileUrl(projectId, 'MOKINA-CONTINUATION.json', requestContext), { signal, cache: 'no-store' });
       if (response.status === 404) return null;
       if (!response.ok) throw new Error('source-read-failed');
       const receipt = await response.json() as Partial<MokinaContinuationV2>;
@@ -33,7 +36,7 @@ export function MokinaFixedSource({ projectId, workspaceContext = null, hideMiss
       if (!controller.signal.aborted) setRead({ identity, source });
     }).catch(() => { if (!controller.signal.aborted) setRead({ identity, source: null, failed: true }); });
     return () => controller.abort();
-  }, [identity, projectId, workspaceContext]);
+  }, [identity, projectId]);
   if (!read || read.identity !== identity) return <span>{t('common.loading')}</span>;
   if (read.failed) return <span>{t('mokina.pages.readFailed')}</span>;
   const source = read.source;

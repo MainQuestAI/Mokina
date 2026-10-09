@@ -38,6 +38,13 @@ export type SavePendingSendResult = 'saved' | 'skipped' | 'failed';
 const owners = new Set<string>();
 const canonical = (value: unknown): string => JSON.stringify(value, (_key, item) => item && typeof item === 'object' && !Array.isArray(item)
   ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item);
+/** A manual handoff may only consume its source when every safe reference survives. */
+export function canRecoverSendSnapshot(snapshot: SendRequestSnapshot): boolean {
+  const extras = sanitizeComposerDraftExtras(snapshot.extras);
+  return snapshot.prompt.length <= MAX_PROMPT_CHARS
+    && JSON.stringify(extras).length <= DRAFT_MAX_EXTRAS_CHARS
+    && canonical(extras) === canonical(snapshot.extras);
+}
 const legacyKey = (p: string, c: string) => `od:send-request:${p}:${c}`;
 const prefix = (p: string, c: string, authorityKey = 'none') => `od:send-request:v2:${JSON.stringify([authorityKey, p, c])}:`;
 const recordKey = (r: Pick<SendRequestRecord, 'projectId' | 'conversationId' | 'authorityKey' | 'clientRequestId'>) => `${prefix(r.projectId, r.conversationId, r.authorityKey)}${encodeURIComponent(r.clientRequestId)}`;
@@ -111,8 +118,7 @@ export function savePendingSendRequest(input: {
     if (input.snapshot) {
       const extras = sanitizeComposerDraftExtras(input.snapshot.extras);
       // Unlike ordinary convenience drafts, a send receipt cannot silently shed payload.
-      if (JSON.stringify(extras).length <= DRAFT_MAX_EXTRAS_CHARS
-        && canonical(extras) === canonical(input.snapshot.extras)) {
+      if (canRecoverSendSnapshot({ ...input.snapshot, prompt: input.prompt })) {
         snapshot = { ...input.snapshot, extras, prompt: input.prompt };
       } else if (!existing) {
         // Oversized payload: keep the receipt identity (preview only) so a

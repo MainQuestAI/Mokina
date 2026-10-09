@@ -2,12 +2,12 @@
    contracts; document iframes, transcript rendering and persistence stay owned
    by their original components. This class also covers the creation handoff. */
 .workspaceLayout {
-  --mokina-paper: var(--bg);
-  --mokina-glass: color-mix(in srgb, var(--bg) 86%, transparent);
+  --mokina-paper: var(--surface, var(--bg));
+  --mokina-glass: color-mix(in srgb, var(--surface, var(--bg)) 86%, transparent);
   --mokina-edge: color-mix(in srgb, var(--border) 65%, transparent);
   margin-inline: 12px;
   padding-block: 12px;
-  background: color-mix(in srgb, var(--bg) 65%, var(--bg-subtle));
+  background: var(--bg-app);
 }
 
 .workspaceLayout > :global(.split-chat-slot),
@@ -41,6 +41,22 @@
   background: var(--mokina-glass);
   backdrop-filter: blur(16px) saturate(1.02);
   border-bottom: 1px solid var(--mokina-edge);
+}
+
+/* Wrapped actions must contribute their height instead of painting over the
+   preview toolbar beneath the upstream fixed 44px tab strip. */
+:global(html) :global(.app) .workspaceLayout :global(.ws-tabs-shell) {
+  height: auto;
+  min-height: 44px;
+}
+
+.workspaceLayout :global(.ws-tabs-actions),
+.workspaceLayout :global(.ws-tabs-file-actions-before),
+.workspaceLayout :global(.ws-tabs-file-actions),
+.workspaceLayout :global(.ws-tabs-project-actions) {
+  flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .workspaceLayout :global(.split-chat-tabs-dock) {

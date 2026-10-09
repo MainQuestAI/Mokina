@@ -1,0 +1,40 @@
+{
+  "source": "Mokina-Brand-UI-Spec-2026-10-08/assets/brand-candidate",
+  "status": "candidate_not_finally_approved",
+  "sourceHash": "857b1c745e40f2f3f01190ecf6f2ac11e1f0933f6b0a0dc2269c55c6c83d2836",
+  "files": {
+    "mokina-horizontal-black.svg": "d152f2e64a9ed8f25c09f2a13ce5ff6ba07c9ca953361934516c1358e0475ad9",
+    "mokina-horizontal-white.svg": "81b4d58a59665645909be186e64a63ea1d9e3910aea72e1f617cc3ac444d6a10",
+    "mokina-icon-black.svg": "857b1c745e40f2f3f01190ecf6f2ac11e1f0933f6b0a0dc2269c55c6c83d2836",
+    "mokina-icon-white.svg": "1dc5a1c50705e1594b15ab4b2c9fcc959d2ed8e443199406bf15636b1d2ab710",
+    "mokina-stacked-black.svg": "8f10c954fe7ea83d0137e27bff3c12728b3c71fad6a1fdd4fae4c4e6ab9074f5",
+    "mokina-stacked-white.svg": "7852f802942d2a44a0cd93da0605a5e25a245a5876e0a6c62e11c56467d26be3",
+    "mokina-wordmark-black.svg": "af9475e522e6e209b9fa3ea1155fdefc1be43dc83cf9cdb5ea149a66c23c46ca",
+    "mokina-wordmark-white.svg": "bb97df1dd7f143efe67e3f1efe5e24535d3ffcd551311fe86b80399888bdc7c1"
+  },
+  "derived": {
+    "web/apple-touch-icon.png": "51e169f9dd9eac750ebcc8dbd7fbf967f5c8f006edfdb952d9eeccc80ed4f4b0",
+    "web/icon.png": "df3af5c7a620412903110f7ab1bba6c6e4e7840d5e29d3b2309bda2773c88c47",
+    "native/icon.png": "df3af5c7a620412903110f7ab1bba6c6e4e7840d5e29d3b2309bda2773c88c47",
+    "native/icon.icns": "ee8ce02fdcdd7166424a3679fb7d6f2eb4927a2721c19a7376bae115df85ebd7",
+    "native/Mokina.iconset/icon_16x16.png": "c698af6db257959491354bf9cf8d3734cc2b54663a3732c17dd3d7067a4e9ddf",
+    "native/Mokina.iconset/icon_16x16@2x.png": "139b1fc4f6c1676c8326219af9cf16c56c2e51ae225b46ca12c2100ce4bc233e",
+    "native/Mokina.iconset/icon_32x32.png": "139b1fc4f6c1676c8326219af9cf16c56c2e51ae225b46ca12c2100ce4bc233e",
+    "native/Mokina.iconset/icon_32x32@2x.png": "003eb5f7ea34c532cd0181dffecdd98d95a812214bea1f85f138b48badbd4b28",
+    "native/Mokina.iconset/icon_128x128.png": "303c86a8d174ff102374f5cdafca96692b21300656e547f8ef53934d1d0ec9a2",
+    "native/Mokina.iconset/icon_128x128@2x.png": "fbbc3b38b4b38cf43dcf45b10490eb09281e97ac8207c8f958b095473250f520",
+    "native/Mokina.iconset/icon_256x256.png": "fbbc3b38b4b38cf43dcf45b10490eb09281e97ac8207c8f958b095473250f520",
+    "native/Mokina.iconset/icon_256x256@2x.png": "a53df0c57c5265f20b8a6a634752dc989cb2001a48676d75ce8b44138ab225b7",
+    "native/Mokina.iconset/icon_512x512.png": "a53df0c57c5265f20b8a6a634752dc989cb2001a48676d75ce8b44138ab225b7",
+    "native/Mokina.iconset/icon_512x512@2x.png": "df3af5c7a620412903110f7ab1bba6c6e4e7840d5e29d3b2309bda2773c88c47",
+    "web/samples/mark-16.png": "ade21f89a89a00e73f5209d74d38bf7c475ec4cdce21f6323a585cc60c78fc69",
+    "web/samples/mark-16@2x.png": "4b12c2bf076b93adbb17b8e380aabb64d567f8c945c91c9f6201d0015285cd3a",
+    "web/samples/mark-20.png": "be72939d03d4bd826dd37a443a7ec53650bd6cd78eec7df34c30a0b5592a8cca",
+    "web/samples/mark-20@2x.png": "19f0f89b60d5177f152ae75501ea93811070633081b3544950c0529b019b61fa",
+    "web/samples/mark-24.png": "65bc1614b414ae8e20f42367455be5daf8653426df20569f37a87e664b7fa9c7",
+    "web/samples/mark-24@2x.png": "8e4ec073c47e07c24828d546a4300cdb1dd207fb6ba6627213cf5f9d7896b284",
+    "web/samples/mark-32.png": "4b12c2bf076b93adbb17b8e380aabb64d567f8c945c91c9f6201d0015285cd3a",
+    "web/samples/mark-32@2x.png": "f73ff764e660b4a7d047ceb249a871ddd36b0ac6087c8224636456f46ee9fb55",
+    "native/icon.ico": "2ad0829914e53b2fe429634307865a0fe31622ae900480da303be7b7392f97ef"
+  }
+}

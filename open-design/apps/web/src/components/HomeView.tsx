@@ -1,3 +1,4 @@
+import { readHomeContextDraft, writeHomeContextDraft, clearHomeContextDraft, hasHomeContextReferences, type HomeContextDraft } from '../runtime/mokina/home-context-draft';
 // Composed Home view — the top-down layout the entry view renders
 // when the left nav rail's "Home" tab is active.
 //
@@ -651,6 +652,30 @@ export function HomeView({
   // serialized into the persisted prompt draft).
   const [mokinaFilePlans, setMokinaFilePlans] = useState<Array<HomeMokinaFilePlan | null>>([]);
   const inputWorkspaceKey = workspaceIdentityCacheKey(workspaceContext);
+  const changedHomeContextFields = useRef(new Set<keyof HomeContextDraft>());
+  const [homeContextRestore, setHomeContextRestore] = useState(() => {
+    const draft = MOKINA_LOCAL_EDITION && ownsComposerDraft ? readHomeContextDraft(inputWorkspaceKey) : null;
+    return { scope: inputWorkspaceKey, pending: hasHomeContextReferences(draft), draft };
+  });
+  if (homeContextRestore.scope !== inputWorkspaceKey) {
+    changedHomeContextFields.current = new Set();
+    if (MOKINA_LOCAL_EDITION && ownsComposerDraft) {
+      setActiveSkill(null); setActiveSkillCatalogScope(null);
+      setSelectedPluginContexts([]); setSelectedMcpContexts([]);
+      setSelectedConnectorContexts([]); setContextWorkspaceItems([]);
+    }
+    const draft = MOKINA_LOCAL_EDITION && ownsComposerDraft ? readHomeContextDraft(inputWorkspaceKey) : null;
+    setHomeContextRestore({ scope: inputWorkspaceKey, pending: hasHomeContextReferences(draft), draft });
+  }
+  // An explicit edit owns its whole field. Late catalog replies may only fill
+  // untouched fields, including when a previously selected reference is missing.
+  function claimHomeContextField(field: keyof HomeContextDraft) {
+    if (!MOKINA_LOCAL_EDITION || !ownsComposerDraft) return;
+    changedHomeContextFields.current.add(field);
+    setHomeContextRestore(current => current.pending && current.draft ? {
+      ...current, draft: { ...current.draft, [field]: field === 'skillId' ? null : [] },
+    } : current);
+  }
   const inputDraftsRef = useRef(new Map<string, StagedInputDraft | null>());
   const inputSavesRef = useRef(Promise.resolve(true));
   const [missingInputs, setMissingInputs] = useState<{ workspaceKey: string; inputs: StagedInputMetadata[] }>({ workspaceKey: '', inputs: [] });
@@ -1190,6 +1215,7 @@ export function HomeView({
     }
 
     setActive(null);
+    for (const field of ['skillId', 'plugins', 'mcp', 'connectors'] as const) claimHomeContextField(field);
     setActiveSkill(null);
     setActiveSkillCatalogScope(null);
     setSelectedPluginContexts([]);
@@ -1301,6 +1327,72 @@ export function HomeView({
     () => mcpServers.filter((server) => server.enabled),
     [mcpServers],
   );
+
+  useEffect(() => {
+    if (!homeContextRestore.pending || homeContextRestore.scope !== inputWorkspaceKey
+      || workspaceContextState.identityChangePending || !homeContextRestore.draft) return;
+    const draft = homeContextRestore.draft;
+    const remaining = { ...draft };
+    const changed = changedHomeContextFields.current;
+    if (changed.has('skillId')) remaining.skillId = null;
+    else if (draft.skillId && !skillsLoading) {
+      const skill = selectableSkills.find(item => item.id === draft.skillId);
+      if (skill) {
+        setActiveSkill(skill);
+        setActiveSkillCatalogScope(localCatalogScopeFromWorkspaceContext(workspaceContext));
+        remaining.skillId = null;
+      }
+    }
+    if (changed.has('plugins')) remaining.plugins = draft.plugins.length ? [] : draft.plugins;
+    else if (draft.plugins.length && !pluginsLoading) {
+      const picks = draft.plugins.flatMap(item => {
+        const record = plugins.find(record => record.id === item.id);
+        return record ? [{ record, inlineBacked: item.inlineBacked }] : [];
+      });
+      if (picks.length === draft.plugins.length) { setSelectedPluginContexts(picks); remaining.plugins = []; }
+    }
+    if (changed.has('mcp')) remaining.mcp = draft.mcp.length ? [] : draft.mcp;
+    else if (draft.mcp.length && !mcpLoading) {
+      const picks = draft.mcp.flatMap(item => {
+        const server = enabledMcpServers.find(server => server.id === item.id);
+        return server ? [{ server, inlineBacked: item.inlineBacked }] : [];
+      });
+      if (picks.length === draft.mcp.length) { setSelectedMcpContexts(picks); remaining.mcp = []; }
+    }
+    if (changed.has('connectors')) remaining.connectors = draft.connectors.length ? [] : draft.connectors;
+    else if (draft.connectors.length) {
+      const picks = draft.connectors.flatMap(item => {
+        const connector = connectors.find(connector => connector.id === item.id);
+        return connector ? [{ connector, inlineBacked: item.inlineBacked }] : [];
+      });
+      if (picks.length === draft.connectors.length) { setSelectedConnectorContexts(picks); remaining.connectors = []; }
+    }
+    if (changed.has('workspaceItems')) remaining.workspaceItems = draft.workspaceItems.length ? [] : draft.workspaceItems;
+    else if (draft.workspaceItems.length) {
+      setContextWorkspaceItems(draft.workspaceItems); remaining.workspaceItems = [];
+    }
+    const pending = hasHomeContextReferences(remaining);
+    if (!pending || Object.keys(remaining).some(key => remaining[key as keyof HomeContextDraft] !== draft[key as keyof HomeContextDraft])) {
+      setHomeContextRestore(current => ({ ...current, pending, draft: pending ? remaining : null }));
+    }
+  }, [homeContextRestore, inputWorkspaceKey, workspaceContextState.identityChangePending, pluginsLoading,
+    skillsLoading, mcpLoading, selectableSkills, plugins, enabledMcpServers, connectors, workspaceContext]);
+  useEffect(() => {
+    if (!MOKINA_LOCAL_EDITION || !ownsComposerDraft
+      || homeContextRestore.scope !== inputWorkspaceKey || workspaceContextState.identityChangePending) return;
+    // Keep unresolved references without preventing new user choices from being saved.
+    const unresolved = homeContextRestore.pending ? homeContextRestore.draft : null;
+    try {
+      writeHomeContextDraft(inputWorkspaceKey, {
+        skillId: unresolved?.skillId ?? activeSkill?.id ?? null,
+        plugins: unresolved?.plugins.length ? unresolved.plugins : selectedPluginContexts.map(item => ({ id: item.record.id, inlineBacked: item.inlineBacked })),
+        mcp: unresolved?.mcp.length ? unresolved.mcp : selectedMcpContexts.map(item => ({ id: item.server.id, inlineBacked: item.inlineBacked })),
+        connectors: unresolved?.connectors.length ? unresolved.connectors : selectedConnectorContexts.map(item => ({ id: item.connector.id, inlineBacked: item.inlineBacked })),
+        workspaceItems: unresolved?.workspaceItems.length ? unresolved.workspaceItems : contextWorkspaceItems,
+      });
+    } catch { setError(t('mokina.pendingSend.saveFailed')); }
+  }, [homeContextRestore, inputWorkspaceKey, ownsComposerDraft, workspaceContextState.identityChangePending,
+    activeSkill, selectedPluginContexts, selectedMcpContexts, selectedConnectorContexts, contextWorkspaceItems, t]);
 
   const designSystemPickerSystems = useMemo(
     () => selectableHomeDesignSystems(designSystems, defaultDesignSystemId),
@@ -2014,6 +2106,7 @@ export function HomeView({
   }, [ownsComposerDraft, defaultTypeSettled, active, promptHandoff, pendingPluginUseHandoff, variant, pluginsLoading, pendingChipRestore, plugins]);
 
   function addPluginContext(record: InstalledPluginRecord, nextPrompt: string | null) {
+    claimHomeContextField('plugins');
     setSelectedPluginContexts((prev) => {
       if (prev.some((item) => item.record.id === record.id)) return prev;
       return [...prev, { record, inlineBacked: true }];
@@ -2129,6 +2222,7 @@ export function HomeView({
   }
 
   function removePluginContext(pluginId: string) {
+    claimHomeContextField('plugins');
     const record = selectedPluginContexts.find((item) => item.record.id === pluginId)?.record ?? null;
     setSelectedPluginContexts((prev) => prev.filter((item) => item.record.id !== pluginId));
     if (record) {
@@ -2192,6 +2286,7 @@ export function HomeView({
   }
 
   function addWorkspaceContext(item: WorkspaceContextItem) {
+    claimHomeContextField('workspaceItems');
     setContextWorkspaceItems((current) =>
       current.some((candidate) => candidate.id === item.id)
         ? current
@@ -2201,6 +2296,7 @@ export function HomeView({
   }
 
   function removeWorkspaceContext(id: string) {
+    claimHomeContextField('workspaceItems');
     setContextWorkspaceItems((current) => current.filter((item) => item.id !== id));
   }
 
@@ -2226,7 +2322,7 @@ export function HomeView({
       // auth gate and surface as a confusing late create-time failure.
       // Surface the host error instead and keep the existing working dir.
       setError(
-        `Couldn't open the folder picker (${'reason' in result ? result.reason : 'host unavailable'}). Please update OpenDesign and try again.`,
+        `Couldn't open the folder picker (${'reason' in result ? result.reason : 'host unavailable'}). Please update ${MOKINA_LOCAL_EDITION ? 'Mokina' : 'OpenDesign'} and try again.`,
       );
       return null;
     }
@@ -2251,7 +2347,7 @@ export function HomeView({
       }
       if ('canceled' in result && result.canceled) return null;
       setError(
-        `Couldn't open the folder picker (${'reason' in result ? result.reason : 'host unavailable'}). Please update OpenDesign and try again.`,
+        `Couldn't open the folder picker (${'reason' in result ? result.reason : 'host unavailable'}). Please update ${MOKINA_LOCAL_EDITION ? 'Mokina' : 'OpenDesign'} and try again.`,
       );
       return null;
     }
@@ -2439,6 +2535,7 @@ export function HomeView({
   // order already ranks a user-selected Skill above its own), so nothing has
   // to be discarded to keep the rule defined.
   function useSkill(skill: SkillSummary, nextPrompt: string | null) {
+    claimHomeContextField('skillId');
     setActiveSkill(skill);
     setActiveSkillCatalogScope(localCatalogScopeFromWorkspaceContext(workspaceContext));
     setError(null);
@@ -2451,6 +2548,7 @@ export function HomeView({
   }
 
   function useMcpServer(_server: McpServerConfig, nextPrompt: string) {
+    claimHomeContextField('mcp');
     setSelectedMcpContexts((current) => (
       current.some((item) => item.server.id === _server.id)
         ? current
@@ -2462,6 +2560,7 @@ export function HomeView({
   }
 
   function removeMcpContext(serverId: string) {
+    claimHomeContextField('mcp');
     const server = selectedMcpContexts.find((item) => item.server.id === serverId)?.server ?? null;
     setSelectedMcpContexts((current) => current.filter((item) => item.server.id !== serverId));
     if (server) {
@@ -2474,6 +2573,7 @@ export function HomeView({
   }
 
   function useConnector(connector: ConnectorDetail, nextPrompt: string) {
+    claimHomeContextField('connectors');
     setSelectedConnectorContexts((current) => (
       current.some((item) => item.connector.id === connector.id)
         ? current
@@ -2486,6 +2586,7 @@ export function HomeView({
   }
 
   function removeConnectorContext(connectorId: string) {
+    claimHomeContextField('connectors');
     const connector = selectedConnectorContexts.find((item) => item.connector.id === connectorId)?.connector ?? null;
     setSelectedConnectorContexts((current) => current.filter((item) => item.connector.id !== connectorId));
     if (connector) {
@@ -2501,6 +2602,7 @@ export function HomeView({
     const nextInputs = buildPluginAuthoringInputs(goal);
     const nextPrompt = buildPluginAuthoringPromptForInputs(nextInputs);
     runWithReplacementConfirmation('Plugin authoring', nextPrompt, async () => {
+      claimHomeContextField('skillId');
       setActive(null);
       setActiveSkill(null);
       setActiveSkillCatalogScope(null);
@@ -2838,6 +2940,7 @@ export function HomeView({
     // path lands here directly — swallow re-entry during the in-flight window.
     if (sending || defaultTypePending) return;
     if (MOKINA_LOCAL_EDITION && ownsComposerDraft) {
+      if (homeContextRestore.pending) { setError(t('mokina.pendingSend.reselect')); return; }
       if (missingInputs.workspaceKey === inputWorkspaceKey && missingInputs.inputs.length) { setError(t('mokina.repair.reselectFiles')); return; }
     }
     const trimmed = prompt.trim();
@@ -3098,6 +3201,7 @@ export function HomeView({
       // next time the Home tab mounts.
       if (ownsComposerDraft) clearHomeComposerDraft();
       if (MOKINA_LOCAL_EDITION && ownsComposerDraft) {
+        clearHomeContextDraft(inputWorkspaceKey);
         await clearStagedInputDraft(inputWorkspaceKey, inputDraftsRef.current.get(inputWorkspaceKey) ?? null);
         inputDraftsRef.current.set(inputWorkspaceKey, null);
         setStagedFiles([]); setMokinaFilePlans([]);
@@ -3198,6 +3302,16 @@ export function HomeView({
           installationId={deepSeekV4FlashCampaignInstallationId}
         />
       )}
+      {MOKINA_LOCAL_EDITION && homeContextRestore.pending && homeContextRestore.draft ? <div role="status" data-testid="mokina-home-context-restore">
+        <p>{t('mokina.pendingSend.reselect')}</p>
+        <p>{[homeContextRestore.draft.skillId, ...homeContextRestore.draft.plugins.map(item => item.id),
+          ...homeContextRestore.draft.mcp.map(item => item.id), ...homeContextRestore.draft.connectors.map(item => item.id),
+          ...homeContextRestore.draft.workspaceItems.map(item => item.label)].filter(Boolean).join(' · ')}</p>
+        <Button onClick={() => {
+          clearHomeContextDraft(inputWorkspaceKey);
+          setHomeContextRestore(current => ({ ...current, pending: false, draft: null }));
+        }}>{t('mokina.pendingSend.discard')}</Button>
+      </div> : null}
       {MOKINA_LOCAL_EDITION && missingInputs.workspaceKey === inputWorkspaceKey && missingInputs.inputs.length > 0 ? <div role="status" className="mokina-material-picker" data-testid="mokina-missing-inputs">
         <p>{t('mokina.repair.reselectFiles')}</p>
         {missingInputs.inputs.map(item => <div key={item.inputId}>
@@ -3238,6 +3352,7 @@ export function HomeView({
         onClearActivePlugin={clearActivePlugin}
         onClearActiveChip={clearActiveChipSelection}
         onClearActiveSkill={() => {
+          claimHomeContextField('skillId');
           setActiveSkill(null);
           setActiveSkillCatalogScope(null);
         }}

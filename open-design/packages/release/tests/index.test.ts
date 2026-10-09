@@ -96,6 +96,7 @@ describe("mokina product profile", () => {
     expect(isMokinaLocalNamespace("mokina-local.2")).toBe(true);
     expect(isMokinaLocalNamespace("mokina-local_v2")).toBe(true);
     expect(isMokinaLocalNamespace("mokina-localism")).toBe(false);
+    expect(isMokinaLocalNamespace("mokina-locality")).toBe(false);
     expect(isMokinaLocalNamespace("mokina")).toBe(false);
     expect(isMokinaLocalNamespace("release-mokina-local")).toBe(false);
   });

@@ -1,0 +1,350 @@
+{
+  "target_version": "0.0.4",
+  "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+  "base_sha": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
+  "toolchain": {
+    "os": "Linux",
+    "node": "24.19.0",
+    "pnpm": "10.33.2",
+    "playwright": "1.60.0"
+  },
+  "runs": [
+    {
+      "id": "web-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/web-frozen.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 237,
+      "skipped": 3,
+      "files": 13
+    },
+    {
+      "id": "recovery-upstream-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/recovery-upstream-frozen.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 228,
+      "skipped": 0,
+      "files": 6
+    },
+    {
+      "id": "project-retry-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/project-retry-frozen.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 33,
+      "skipped": 0,
+      "files": 1
+    },
+    {
+      "id": "daemon-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/daemon-frozen.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 63,
+      "skipped": 0,
+      "files": 7
+    },
+    {
+      "id": "desktop-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/desktop-frozen.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 40,
+      "skipped": 0,
+      "files": 7
+    },
+    {
+      "id": "packaged-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/packaged-frozen.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 30,
+      "skipped": 0,
+      "files": 4
+    },
+    {
+      "id": "pack-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/pack-frozen.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 25,
+      "skipped": 0,
+      "files": 2
+    },
+    {
+      "id": "guard-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/guard-frozen.txt",
+      "commands_source": "evidence/commands.txt"
+    },
+    {
+      "id": "i18n-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/i18n-frozen.txt",
+      "commands_source": "evidence/commands.txt"
+    },
+    {
+      "id": "typecheck-frozen",
+      "status": "pass",
+      "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+      "evidence": "evidence/typecheck-frozen.txt",
+      "commands_source": "evidence/commands.txt"
+    },
+    {
+      "id": "final-copy-tests",
+      "status": "pass",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "evidence": "evidence/final-copy-tests.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 1,
+      "skipped": 0,
+      "files": 1
+    },
+    {
+      "id": "off-browser",
+      "status": "pass",
+      "source_sha": "3f2ca17969b6aa5b80b65947b893c7c23c508cc9",
+      "evidence": "evidence/off-browser.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 1,
+      "skipped": 0,
+      "files": 1,
+      "scope": "edition off real browser default title/style/summary isolation at 1440 and1280; Mokina-only copy changes do not affect this profile"
+    },
+    {
+      "id": "e2e-typecheck",
+      "status": "pass",
+      "source_sha": null,
+      "evidence": "evidence/e2e-typecheck.txt",
+      "commands_source": "evidence/commands.txt",
+      "revision_note": "Executed after browser-test corrections; exact commit not captured in original command log."
+    },
+    {
+      "id": "web-production-build",
+      "status": "pass",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "evidence": "evidence/web-production-build.txt",
+      "scope": "Mokina standalone production Web and Next TypeScript compilation"
+    },
+    {
+      "id": "browser-final",
+      "status": "pass",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "passed": 22,
+      "skipped": 0,
+      "files": 3,
+      "stats": {
+        "startTime": "2026-10-08T11:22:18.759Z",
+        "duration": 340174.951,
+        "expected": 22,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "evidence": "evidence/browser-final-run.json",
+      "log": "evidence/browser-final.txt",
+      "screenshots": [
+        "evidence/brand-home-1440.png",
+        "evidence/brand-home-1280.png",
+        "evidence/brand-home-390.png",
+        "evidence/empty-project.png",
+        "evidence/candidate-comparison-900.png",
+        "evidence/candidate-comparison-390.png"
+      ],
+      "note": "Final serial run after production build completed; previous21+1reload timeout is retained separately."
+    },
+    {
+      "id": "review-fix-web",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-web.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 171,
+      "skipped": 0,
+      "files": 11
+    },
+    {
+      "id": "review-fix-typecheck",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-typecheck.txt",
+      "commands_source": "evidence/commands.txt"
+    },
+    {
+      "id": "review-fix-guard",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-guard.txt",
+      "commands_source": "evidence/commands.txt"
+    },
+    {
+      "id": "review-fix-release",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-release.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 9,
+      "skipped": 0,
+      "files": 1
+    },
+    {
+      "id": "review-fix-desktop",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-desktop.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 17,
+      "skipped": 0,
+      "files": 5
+    },
+    {
+      "id": "review-fix-pack",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-pack.txt",
+      "commands_source": "evidence/commands.txt",
+      "passed": 7,
+      "skipped": 0,
+      "files": 2
+    },
+    {
+      "id": "review-fix-i18n",
+      "status": "pass",
+      "source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-i18n.txt",
+      "commands_source": "evidence/commands.txt",
+      "revision_note": "Executed before validation commit; relevant product source bytes are identical to 16e99538. No product source changes followed."
+    },
+    {
+      "id": "review-fix-production-build",
+      "status": "pass",
+      "source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-production-build.txt",
+      "commands_source": "evidence/commands.txt",
+      "revision_note": "Executed before validation commit; relevant product source bytes are identical to 16e99538. No product source changes followed."
+    },
+    {
+      "id": "review-fix-browser",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "passed": 25,
+      "skipped": 0,
+      "files": 4,
+      "stats": {
+        "startTime": "2026-10-08T14:56:57.765Z",
+        "duration": 394764.045,
+        "expected": 25,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "evidence": "evidence/review-fix-browser-run.json",
+      "log": "evidence/review-fix-browser.txt",
+      "commands_source": "evidence/commands.txt",
+      "revision_note": "Run started before the validation-only commit; all product and browser-test bytes equal ecd6fc5e. Product source was already frozen at 16e99538.",
+      "screenshots": [
+        "evidence/review-fix-cloud-draft.png",
+        "evidence/review-fix-home-1440.png",
+        "evidence/review-fix-home-1280.png",
+        "evidence/review-fix-home-390.png",
+        "evidence/review-fix-drawing-1280.png",
+        "evidence/review-fix-drawing-390.png"
+      ]
+    },
+    {
+      "id": "review-fix-browser-off",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "passed": 1,
+      "skipped": 0,
+      "files": 1,
+      "stats": {
+        "startTime": "2026-10-08T15:09:24.626Z",
+        "duration": 79029.272,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "evidence": "evidence/review-fix-browser-off-run.json",
+      "log": "evidence/review-fix-browser-off.txt",
+      "commands_source": "evidence/commands.txt"
+    },
+    {
+      "id": "review-fix-production-css",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "product_source_sha": "16e995385e21615e40c04a59f253032a011bc38a",
+      "evidence": "evidence/review-fix-production-css.json",
+      "scope": "Compiled production stylesheet order and lazy App CSS against minimal host markup; computed fonts and canvas/pane roles for Mokina and off edition. Real app browser evidence is separate."
+    },
+    {
+      "id": "review-fix-remote-ci",
+      "status": "pass",
+      "source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+      "evidence": "evidence/review-fix-remote-ci.json",
+      "url": "https://github.com/MainQuestAI/Mokina/actions/runs/37797449606",
+      "scope": "Complete Mokina PR checks workflow, including recovery/export/dependency owner regression and real daemon/browser checks. Subsequent evidence-only head triggers its own run."
+    }
+  ],
+  "overlap_warning": "Suites overlap. Counts must not be added as unique test totals. Original runs retain their original source identities; review-fix runs are separate. Product source is frozen at 16e99538; validation/CI source is ecd6fc5e. Subsequent evidence-only commits do not change these tested bytes.",
+  "native_candidate_version": null,
+  "native_candidate_sha": null,
+  "release_status": "blocked",
+  "not_run": [
+    "macOS arm64 install candidate",
+    "Finder Dock DMG native menus About offline crash UI",
+    "VoiceOver",
+    "same-fixture baseline repeated scroll long-task trace >50ms",
+    "real old-profile copy and two native application windows",
+    "same native candidate export and external open",
+    "authorized professional result / visual user signoff",
+    "final Logo master approval",
+    "Windows/Linux package builds",
+    "full dependency audit / inherited skipped white-screen cases"
+  ],
+  "static_resources": {
+    "status": "pass",
+    "evidence": "evidence/resource-repro.json",
+    "files": 36,
+    "byte_identical": true,
+    "source_mark_sha256": "857b1c745e40f2f3f01190ecf6f2ac11e1f0933f6b0a0dc2269c55c6c83d2836"
+  },
+  "locale_classification": {
+    "status": "static_pass",
+    "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+    "locales": 19,
+    "new_keys_per_locale": 6,
+    "retained_keys": 39,
+    "evidence": "evidence/locale-audit.json"
+  },
+  "initial_product_source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+  "validation_source_sha": "ecd6fc5e5d6100d969b95248404ad768dafbb940",
+  "review_fixes": {
+    "status": "implemented_and_locally_verified",
+    "initial_review_head": "c7f597ddfbc8a8db309b1cbe3da7024d3610f1a3",
+    "findings_fixed": 6,
+    "report": "2026-10-08-review-fixes.md",
+    "ci_status": "passed_at_validation_source",
+    "native_acceptance": "unchanged_pending",
+    "ci_evidence": "evidence/review-fix-remote-ci.json"
+  }
+}

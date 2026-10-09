@@ -1,0 +1,17 @@
+# Run from open-design, Node 24 and pnpm 10.33.2.
+pnpm install --frozen-lockfile
+pnpm typecheck
+pnpm guard
+pnpm i18n:check
+pnpm --filter @open-design/web typecheck
+pnpm --filter @open-design/web exec vitest run tests/components/ProjectView.retry-gating.test.tsx tests/components/HomeView.context-recovery.test.tsx tests/components/HomeView.plugin-workspace-scope.test.tsx tests/components/InlineModelSwitcher.byok-chip-label.test.tsx tests/runtime/chat/composer-draft.test.ts tests/runtime/send-request-state.test.ts tests/i18n/product-brand.test.ts tests/components/FileViewer.mokina-revision-recovery.test.tsx tests/components/HomeView.attachment-stash.test.tsx --maxWorkers=2
+pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-splash.test.ts tests/main/splash-stage-replay.test.ts
+pnpm --filter @open-design/contracts exec vitest run tests/social-share.test.ts
+NEXT_PUBLIC_MOKINA_EDITION=on OD_WEB_OUTPUT_MODE=standalone OD_WEB_DIST_DIR=.next-pr13-r2 pnpm --filter @open-design/web build
+# Browser checks must run after the workspace builds/typecheck have finished.
+OD_E2E_NAMESPACE=mokina-local-pr13-r2-clean NEXT_PUBLIC_MOKINA_EDITION=on MOKINA_LOCAL_EDITION=on pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-cloud-handoff.test.ts ui/mokina-input-preparation.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts --workers=1 --project=chromium
+
+pnpm --filter @open-design/e2e typecheck
+pnpm --filter @open-design/daemon exec vitest run tests/runtimes/chat-run-context.test.ts --maxWorkers=2
+OD_E2E_NAMESPACE=mokina-local-pr13-r2-home-final NEXT_PUBLIC_MOKINA_EDITION=on MOKINA_LOCAL_EDITION=on pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-cloud-handoff.test.ts ui/mokina-navigation.test.ts --grep "Home retains|legacy Cloud choice" --repeat-each=2 --workers=1 --project=chromium
+OD_E2E_NAMESPACE=mokina-local-pr13-r2-off NEXT_PUBLIC_MOKINA_EDITION=off MOKINA_LOCAL_EDITION=off pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-edition-off.test.ts --workers=1 --project=chromium

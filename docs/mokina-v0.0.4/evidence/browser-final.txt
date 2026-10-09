@@ -1,0 +1,31 @@
+
+Running 22 tests using 1 worker
+
+(node:36139) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36139) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › ui/mokina-input-preparation.test.ts:7:3 › [P1] Mokina T31 home preparation ready gates the original send (10.6s)
+  ✓   2 [chromium] › ui/mokina-input-preparation.test.ts:7:3 › [P1] Mokina T31 home preparation failed gates the original send (11.4s)
+  ✓   3 [chromium] › ui/mokina-input-preparation.test.ts:7:3 › [P1] Mokina T31 home preparation leave gates the original send (15.8s)
+  ✓   4 [chromium] › ui/mokina-input-preparation.test.ts:7:3 › [P1] Mokina T31 home preparation reload gates the original send (22.1s)
+  ✓   5 [chromium] › ui/mokina-input-preparation.test.ts:71:1 › [P1] Mokina keeps file purpose after reload but requires file reselection (11.9s)
+  ✓   6 [chromium] › ui/mokina-input-preparation.test.ts:86:1 › [P1] Mokina retains staged input when the initial preparation save fails and retries the same target (9.8s)
+  ✓   7 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720 (32.8s)
+  ✓   8 [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900 (32.4s)
+  ✓   9 [chromium] › ui/mokina-navigation.test.ts:87:1 › [P1] Mokina workspace indicator settles without overshoot and respects reduced motion (6.1s)
+  ✓  10 [chromium] › ui/mokina-navigation.test.ts:159:3 › [P1] Mokina brand, action and title styles at 1440px (7.2s)
+  ✓  11 [chromium] › ui/mokina-navigation.test.ts:159:3 › [P1] Mokina brand, action and title styles at 1280px (7.2s)
+  ✓  12 [chromium] › ui/mokina-navigation.test.ts:159:3 › [P1] Mokina brand, action and title styles at 390px (8.6s)
+  ✓  13 [chromium] › ui/mokina-navigation.test.ts:185:1 › [P1] Mokina empty project focuses its existing composer without writing or sending (6.2s)
+  ✓  14 [chromium] › ui/mokina-navigation.test.ts:208:1 › [P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change (6.5s)
+  ✓  15 [chromium] › ui/mokina-workspace-actions.test.ts:13:3 › [P1] Mokina long-path materials stay inside the continuation panel at 1280x720 (13.0s)
+  ✓  16 [chromium] › ui/mokina-workspace-actions.test.ts:56:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720 (9.0s)
+  ✓  17 [chromium] › ui/mokina-workspace-actions.test.ts:13:3 › [P1] Mokina long-path materials stay inside the continuation panel at 1440x900 (13.7s)
+  ✓  18 [chromium] › ui/mokina-workspace-actions.test.ts:56:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1440x900 (9.2s)
+  ✓  19 [chromium] › ui/mokina-workspace-actions.test.ts:115:1 › [P1] Mokina panel explains historical and chapterless action restrictions (12.7s)
+  ✓  20 [chromium] › ui/mokina-workspace-actions.test.ts:140:1 › [P1] Mokina continuation creates an editable fixed-excerpt draft without a run (13.7s)
+  ✓  21 [chromium] › ui/mokina-workspace-actions.test.ts:167:3 › [P1] Mokina long candidate comparison keeps controls and keyboard reachable at 900x600 (7.7s)
+  ✓  22 [chromium] › ui/mokina-workspace-actions.test.ts:167:3 › [P1] Mokina long candidate comparison keeps controls and keyboard reachable at 390x844 (7.7s)
+
+  22 passed (5.7m)

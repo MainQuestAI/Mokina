@@ -3,6 +3,7 @@ import type { TrackingProjectKind } from '@open-design/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import { trackFileManagerClick } from '../analytics/events';
 import { useT } from '../i18n';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { LIBRARY_UI_VISIBLE } from '../features/libraryUi';
 import type { Dict } from '../i18n/types';
 import { copyToClipboard } from '../lib/copy-to-clipboard';
@@ -368,6 +369,7 @@ const USEFUL_TIPS: ReadonlyArray<{ key: keyof Dict; url?: string }> = [
   },
 ];
 const TIP_TYPE_MS = 32; // per-character typing speed
+const PRODUCT_USEFUL_TIPS = MOKINA_LOCAL_EDITION ? USEFUL_TIPS.filter(tip => !tip.url) : USEFUL_TIPS;
 const TIP_HOLD_MS = 3800; // pause on a fully-typed tip before advancing
 
 function prefersReducedMotion(): boolean {
@@ -391,7 +393,7 @@ function RotatingTip({ auxiliary = false }: { auxiliary?: boolean }) {
   // depends only on `index` — depending on the (re-created) array would reset
   // the typewriter on every render and never advance.
   const tipsRef = useRef<string[]>([]);
-  tipsRef.current = USEFUL_TIPS.map(({ key }) => t(key));
+  tipsRef.current = PRODUCT_USEFUL_TIPS.map(({ key }) => t(key));
 
   useEffect(() => {
     const tips = tipsRef.current;
@@ -438,8 +440,8 @@ function RotatingTip({ auxiliary = false }: { auxiliary?: boolean }) {
         <span className="df-useful-info-label">{t('designFiles.usefulInfoLabel')}</span>
       </div>
       <span className="df-useful-info-tip">
-        {USEFUL_TIPS[index]?.url ? (
-          <a className="df-tip-link" href={USEFUL_TIPS[index].url} target="_blank" rel="noreferrer">
+        {PRODUCT_USEFUL_TIPS[index]?.url ? (
+          <a className="df-tip-link" href={PRODUCT_USEFUL_TIPS[index].url} target="_blank" rel="noreferrer">
             {typed}
           </a>
         ) : (
@@ -1823,7 +1825,7 @@ export function DesignFilesPanel({
                           >
                             {sharingFolder === `publish:${folder.path}` ? 'Sending…' : 'Publish repo'}
                           </button>
-                          <button
+                          {!MOKINA_LOCAL_EDITION ? <button
                             type="button"
                             className="df-plugin-install"
                             data-testid={`design-plugin-folder-contribute-${folder.path}`}
@@ -1833,7 +1835,7 @@ export function DesignFilesPanel({
                             }
                           >
                             {sharingFolder === `contribute:${folder.path}` ? 'Sending…' : 'OpenDesign PR'}
-                          </button>
+                          </button> : null}
                         </div>
                       ) : null}
                     </div>

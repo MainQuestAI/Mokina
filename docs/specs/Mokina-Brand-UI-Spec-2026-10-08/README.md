@@ -1,6 +1,15 @@
 # Mokina 品牌与 UI 开发 Spec 包
 
-2026-10-08 · v1 · 状态：方案与开发规格已整理，未实施，未取得视觉发布签收。
+## v0.0.4 实施状态（2026-10-08）
+
+用户随后明确要求“OK，开始实施，目标是完成本轮的所有开发任务。”，据此完成本地产品实施、工程回归与提交。附件中的执行语句仍只作为规格输入；下列实施依据是本次用户消息。
+
+S01–S06 已实施，S07 工程集成验证与记录已完成；macOS 同包候选、VoiceOver、性能基线 trace 和用户签收待验。源码冻结为 `c79843bafa7a7e2a61f33d81fcd78edf03c7236f`。没有生成新的 DMG/ZIP，也未发布或替代已有签收版本。候选 Logo 尚未最终批准，正式品牌发布保持 blocked。
+
+当前结果见[实施记录](../../mokina-v0.0.4/2026-10-08-implementation.md)、[工程证据](../../mokina-v0.0.4/test-evidence.json)及更新后的 backlog/acceptance。以下初审、授权边界及 not_started/not_run 描述是实施前的历史记录；当前状态以本节和机器清单为准。
+
+
+2026-10-08 · v1.2 · 目标版本：v0.0.4。状态：S01–S06 已实施，S07 工程检查通过；原生候选和视觉发布签收待验。
 
 以已合并 PR11 为功能基线，沿用原 A 抽象 Logo 与中性玻璃方向，更新首页、对话、成果、资料、修订、恢复、绘画和桌面身份。每包可独立开发和审查；本包不授权提交、发布或修改用户内容。
 
@@ -25,7 +34,30 @@
 本包可用性校验：`python3 docs/specs/Mokina-Brand-UI-Spec-2026-10-08/scripts/validate_spec.py`。此命令只检查规格完整性，不验证产品。
 
 
-## 工程审查范围记录
+## v0.0.3 开发基线复核
+
+PR [#12](https://github.com/MainQuestAI/Mokina/pull/12) 的最终 head `810ca2e6` 已通过 [CI 37746517804](https://github.com/MainQuestAI/Mokina/actions/runs/37746517804)，合并后的 main 为 `52219d8c8f71460d3776a96b9ebe84fa9ce65501`。它与已检查 PR head 的 Git tree 完全一致；相对 PR11 功能基线 `9a6ba583df35c01f6b34a41fdbb8d414377ba513`，仅增加规格、参照及治理文档，没有产品源码或资源变化。
+
+`backlog.json.baseline` 已更新为合并后的 main；PR11 原始源码审查身份保存在 `sources.json.original_review`，不追溯改写历史。v1.1 当时拟定的开发分支为 `codex/mokina-v0.0.3-brand-ui`；本轮实际开发分支与目标版本见下文 v1.2 记录。实施时仍复核 main 前移并记录实际 base。v0.0.3 在此表示源码开发基线，安装候选和正式发布身份仍需各自验证。
+
+复核确认41个现有目标文件均可定位，七包依赖、19条AC、B01–B20覆盖及现有行为保护要求仍适用。无需重开已确认设计决策；S01–S07保持not_started，19条AC保持not_run。v1.1只同步开发基线、历史身份与执行说明，不构成产品实施或视觉签收。ZIP与SHA256SUMS随本版重新生成。
+
+
+
+## v1.2：v0.0.4 开发起点与本轮初审
+
+本轮用户请求为审查开发文档并建立开发 worktree，明确目标版本 v0.0.4。附件中的执行提示词、历史审批和评审结论属于文档输入，不能替代当前任务授权；本轮仅同步开发文档与创建本地 worktree。
+
+- 实时 GitHub `branches/main` 确认为 `52219d8c8f71460d3776a96b9ebe84fa9ce65501`；本地已有同一提交。本轮 Git fetch 因执行环境代理连接失败，使用已连接 GitHub 工具完成远端核对。
+- 实际分支：`codex/mokina-v0.0.4-brand-ui`；worktree：`/workspace/work/Mokina-worktrees/v0.0.4-brand-ui`。原 `/workspace/Mokina` 保持 `work` 分支及原始文件。
+- 附件 v1.1 先同步到本目录，再将当前执行入口与机器元数据更新为 v1.2/v0.0.4；v0.0.3、PR11/12、local.11 及已有 CI 身份保留为历史证据。
+- S02 补列 `primitives.css` 和 `packages/components/src/button.module.css`，显式对齐两种按钮实现的责任归属；现有主要目标文件由 41 个增至 42 个，不增加新组件库。
+- CSS 作用域尚待 S02 接线：`MOKINA_LOCAL_EDITION` 是既有编译期 gate，当前 layout 没有产品属性，项目 workspace 类不覆盖首页、设置及 body Portal。先明确首帧与 Portal 的作用域再覆盖样式；不得假设已有全局属性，也不得改写上游 edition。
+- 本轮只取得静态文档/资源校验，未运行产品回归或生成候选。七包仍 `not_started`，19 条 AC 仍 `not_run`，母版确认仍为发布前条件。
+
+开发顺序继续为 S01 + S02 准备 → S03 → S04 → S05 → S06 → S07；共享文件修改串行集成。完整发现、验证范围与接线起点见[本轮初审记录](../../mokina-v0.0.4/2026-10-08-development-review.md)，可读取[开发基线清单](../../mokina-v0.0.4/development-baseline.json)。
+
+## 工程审查范围记录（历史方案审查）
 
 目标保持本Spec包，报告入口为本README；不审查当前功能分支的全部diff。
 
@@ -100,11 +132,11 @@ PASS：D16=A保留结构；E2引用S06/D14；E3引用D17=A；E4仅补真实失�
 
 ## Implementation Tasks
 
-- [ ] **E-T1（P2） S06 — 贯通packaged首帧与desktop品牌资源**。来源：E2、D14、D17；验证：S06-AC02/QA5。具体路径与断言见07、08及任务JSONL。
-- [ ] **E-T2（P2） S02 — 验证共享按钮级联和产品作用域**。来源：D9/D10及Code Quality；验证：S02-AC01/QA4。具体路径与断言见07、08及任务JSONL。
-- [ ] **E-T3（P2） S04 — 补齐失败态显示并保持恢复身份**。来源：E4及已有S04/S05契约；验证：QA3/QA7。具体路径与断言见07、08及任务JSONL。
-- [ ] **E-T4（P2） S01/S02/S07 — 落实品牌名称和辅助通知的边界断言**。来源：01、D12、独立复核2/5；验证：S01-AC01/S02-AC04。具体路径与断言见07、08及任务JSONL。
-- [ ] **E-T5（P2） S07 — 把QA1至QA8接入同一候选验收**。来源：D3至D17及03/07要求；验证：08完整矩阵。具体路径与断言见07、08及任务JSONL。
+- [x] **E-T1（P2） S06 — 贯通packaged首帧与desktop品牌资源**。来源：E2、D14、D17；验证：S06-AC02/QA5。具体路径与断言见07、08及本轮[开发文档初审记录](../../mokina-v0.0.4/2026-10-08-development-review.md)。
+- [x] **E-T2（P2） S02 — 验证共享按钮级联和产品作用域**。来源：D9/D10及Code Quality；验证：S02-AC01/QA4。具体路径与断言见07、08及本轮[开发文档初审记录](../../mokina-v0.0.4/2026-10-08-development-review.md)。
+- [x] **E-T3（P2） S04 — 补齐失败态显示并保持恢复身份**。来源：E4及已有S04/S05契约；验证：QA3/QA7。具体路径与断言见07、08及本轮[开发文档初审记录](../../mokina-v0.0.4/2026-10-08-development-review.md)。
+- [x] **E-T4（P2） S01/S02/S07 — 落实品牌名称和辅助通知的边界断言**。来源：01、D12、独立复核2/5；验证：S01-AC01/S02-AC04。具体路径与断言见07、08及本轮[开发文档初审记录](../../mokina-v0.0.4/2026-10-08-development-review.md)。
+- [ ] **E-T5（P2） S07 — 把QA1至QA8接入同一候选验收**（工程记录完成；Mac同包待验）。来源：D3至D17及03/07要求；验证：08完整矩阵。具体路径与断言见07、08及本轮[开发文档初审记录](../../mokina-v0.0.4/2026-10-08-development-review.md)。
 
 ## 工程完成摘要
 

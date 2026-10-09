@@ -38,6 +38,7 @@ export const uk: Dict = {
   'mokina.pendingSend.discard': "Discard this receipt",
   'mokina.pendingSend.discardNotice': "The server may have accepted it. Discarding only clears the pending confirmation in this browser.",
   'mokina.pendingSend.notRecoverable': "This message is too large to keep a recoverable snapshot; it cannot be auto-restored after a reload.",
+  'mokina.pendingSend.manualOverflow': "This draft exceeds automatic recovery capacity. The full text and all file references remain in this tab. Edit here and send explicitly, or collapse to cancel. Keep this tab open until sent.",
   'mokina.entryChooser.title': "Виберіть результат для відкриття",
   'mokina.entryChooser.cancel': "Скасувати",
   'mokina.entrySummary.loading': "Завантаження результатів…",
@@ -5620,4 +5621,10 @@ export const uk: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "Готових результатів ще немає",
+  "mokina.empty.description": "Опишіть, що хочете створити, і надішліть, щоб почати.",
+  "mokina.empty.focus": "Вказати вимоги",
+  "mokina.empty.runningTitle": "Створюється перший результат",
+  "mokina.empty.runningDescription": "Він з’явиться тут після завершення. Стежте за поступом у зоні співпраці.",
+  "mokina.model.unavailable": "Ця модель недоступна в Mokina. Перед надсиланням виберіть локальну модель або BYOK у налаштуваннях.",
 };

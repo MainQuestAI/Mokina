@@ -1,0 +1,226 @@
+{
+  "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+  "tool": "Playwright1.60.0 Chromium",
+  "stats": {
+    "startTime": "2026-10-08T11:22:18.759Z",
+    "duration": 340174.951,
+    "expected": 22,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "[P1] Mokina T31 home preparation ready gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "line": 7,
+      "status": "passed",
+      "duration_ms": 10582
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation failed gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "line": 7,
+      "status": "passed",
+      "duration_ms": 11355
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation leave gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "line": 7,
+      "status": "passed",
+      "duration_ms": 15755
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation reload gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "line": 7,
+      "status": "passed",
+      "duration_ms": 22080
+    },
+    {
+      "title": "[P1] Mokina keeps file purpose after reload but requires file reselection",
+      "file": "mokina-input-preparation.test.ts",
+      "line": 71,
+      "status": "passed",
+      "duration_ms": 11909
+    },
+    {
+      "title": "[P1] Mokina retains staged input when the initial preparation save fails and retries the same target",
+      "file": "mokina-input-preparation.test.ts",
+      "line": 86,
+      "status": "passed",
+      "duration_ms": 9838
+    },
+    {
+      "title": "[P1] Mokina open-resolution and recent summaries at 1280x720",
+      "file": "mokina-navigation.test.ts",
+      "line": 15,
+      "status": "passed",
+      "duration_ms": 32819
+    },
+    {
+      "title": "[P1] Mokina open-resolution and recent summaries at 1440x900",
+      "file": "mokina-navigation.test.ts",
+      "line": 15,
+      "status": "passed",
+      "duration_ms": 32379
+    },
+    {
+      "title": "[P1] Mokina workspace indicator settles without overshoot and respects reduced motion",
+      "file": "mokina-navigation.test.ts",
+      "line": 87,
+      "status": "passed",
+      "duration_ms": 6095
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 1440px",
+      "file": "mokina-navigation.test.ts",
+      "line": 159,
+      "status": "passed",
+      "duration_ms": 7221
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 1280px",
+      "file": "mokina-navigation.test.ts",
+      "line": 159,
+      "status": "passed",
+      "duration_ms": 7202
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 390px",
+      "file": "mokina-navigation.test.ts",
+      "line": 159,
+      "status": "passed",
+      "duration_ms": 8626
+    },
+    {
+      "title": "[P1] Mokina empty project focuses its existing composer without writing or sending",
+      "file": "mokina-navigation.test.ts",
+      "line": 185,
+      "status": "passed",
+      "duration_ms": 6193
+    },
+    {
+      "title": "[P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change",
+      "file": "mokina-navigation.test.ts",
+      "line": 208,
+      "status": "passed",
+      "duration_ms": 6494
+    },
+    {
+      "title": "[P1] Mokina long-path materials stay inside the continuation panel at 1280x720",
+      "file": "mokina-workspace-actions.test.ts",
+      "line": 13,
+      "status": "passed",
+      "duration_ms": 12968
+    },
+    {
+      "title": "[P1] Mokina panel actions remain reachable and preserve drafts at 1280x720",
+      "file": "mokina-workspace-actions.test.ts",
+      "line": 56,
+      "status": "passed",
+      "duration_ms": 9019
+    },
+    {
+      "title": "[P1] Mokina long-path materials stay inside the continuation panel at 1440x900",
+      "file": "mokina-workspace-actions.test.ts",
+      "line": 13,
+      "status": "passed",
+      "duration_ms": 13702
+    },
+    {
+      "title": "[P1] Mokina panel actions remain reachable and preserve drafts at 1440x900",
+      "file": "mokina-workspace-actions.test.ts",
+      "line": 56,
+      "status": "passed",
+      "duration_ms": 9232
+    },
+    {
+      "title": "[P1] Mokina panel explains historical and chapterless action restrictions",
+      "file": "mokina-workspace-actions.test.ts",
+      "line": 115,
+      "status": "passed",
+      "duration_ms": 12712
+    },
+    {
+      "title": "[P1] Mokina continuation creates an editable fixed-excerpt draft without a run",
+      "file": "mokina-workspace-actions.test.ts",
+      "line": 140,
+      "status": "passed",
+      "duration_ms": 13690
+    },
+    {
+      "title": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 900x600",
+      "file": "mokina-workspace-actions.test.ts",
+      "line": 167,
+      "status": "passed",
+      "duration_ms": 7696
+    },
+    {
+      "title": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 390x844",
+      "file": "mokina-workspace-actions.test.ts",
+      "line": 167,
+      "status": "passed",
+      "duration_ms": 7747
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "brand-home-1440.png",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "sha256": "9e11ed3b64fed44edc466b652be6bb7e5f424a87748fb27a97db86caea7477e1",
+      "test": "[P1] Mokina brand, action and title styles at 1440px",
+      "kind": "real_browser_synthetic_fixture",
+      "limitations": "Linux Chromium dev runtime; Next development indicator can appear. Not a macOS app screenshot."
+    },
+    {
+      "file": "brand-home-1280.png",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "sha256": "4d3a9a7eca0f6718c5a191de14df4788bf0faceb16264e3946881b8fdd88fa56",
+      "test": "[P1] Mokina brand, action and title styles at 1280px",
+      "kind": "real_browser_synthetic_fixture",
+      "limitations": "Linux Chromium dev runtime; Next development indicator can appear. Not a macOS app screenshot."
+    },
+    {
+      "file": "brand-home-390.png",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "sha256": "5bfedef8e1fe5806c826be7bb5522a64f300ec0e9236c5432b9a3f9d1ee13e41",
+      "test": "[P1] Mokina brand, action and title styles at 390px",
+      "kind": "real_browser_synthetic_fixture",
+      "limitations": "Linux Chromium dev runtime; Next development indicator can appear. Not a macOS app screenshot."
+    },
+    {
+      "file": "empty-project.png",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "sha256": "a78b99ac79fc64b9debabc11e44a51e1725a2be7c90a6cfa12571e4a682809c3",
+      "test": "[P1] Mokina empty project focuses its existing composer without writing or sending",
+      "kind": "real_browser_synthetic_fixture",
+      "limitations": "Linux Chromium dev runtime; Next development indicator can appear. Not a macOS app screenshot."
+    },
+    {
+      "file": "candidate-comparison-900.png",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "sha256": "314c5374435ba5bace154462fdfd634682f1125f6d021f86c7f53e0fbee56526",
+      "test": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 900x600",
+      "kind": "real_browser_synthetic_fixture",
+      "limitations": "Linux Chromium dev runtime; Next development indicator can appear. Not a macOS app screenshot."
+    },
+    {
+      "file": "candidate-comparison-390.png",
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "sha256": "f649ede8684dc1ba3478b2cee4bf551eee7f65bcbeacaea4c3aca98ad6a5e184",
+      "test": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 390x844",
+      "kind": "real_browser_synthetic_fixture",
+      "limitations": "Linux Chromium dev runtime; Next development indicator can appear. Not a macOS app screenshot."
+    }
+  ],
+  "environment": {
+    "platform": "Linux",
+    "namespace_prefix": "mokina-local-v004-release-source",
+    "mokina_edition": "on",
+    "workers": 1,
+    "data": "E2E worker scratch only; no real profile"
+  },
+  "scope_note": "390px comparison opens the real desktop entry at900px, then resizes the mounted dialog; narrow-screen dialog robustness only."
+}

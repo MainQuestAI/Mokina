@@ -1,0 +1,10 @@
+
+ RUN  v4.1.6 $WORKTREE/open-design/apps/web
+
+Not implemented: navigation to another Document
+
+ Test Files  6 passed (6)
+      Tests  228 passed (228)
+   Start at  11:12:50
+   Duration  59.50s (transform 25.14s, setup 4.62s, import 31.22s, tests 42.57s, environment 6.17s)
+

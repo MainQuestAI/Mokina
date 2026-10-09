@@ -38,6 +38,7 @@ export const ar: Dict = {
   'mokina.pendingSend.discard': "Discard this receipt",
   'mokina.pendingSend.discardNotice': "The server may have accepted it. Discarding only clears the pending confirmation in this browser.",
   'mokina.pendingSend.notRecoverable': "This message is too large to keep a recoverable snapshot; it cannot be auto-restored after a reload.",
+  'mokina.pendingSend.manualOverflow': "This draft exceeds automatic recovery capacity. The full text and all file references remain in this tab. Edit here and send explicitly, or collapse to cancel. Keep this tab open until sent.",
   'mokina.entryChooser.title': "اختر مخرجًا لفتحه",
   'mokina.entryChooser.cancel': "إلغاء",
   'mokina.entrySummary.loading': "جارٍ تحميل المخرجات…",
@@ -5620,4 +5621,10 @@ export const ar: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "لا توجد نتائج مكتملة بعد",
+  "mokina.empty.description": "اكتب ما تريد إنجازه ثم أرسل للبدء.",
+  "mokina.empty.focus": "كتابة المتطلبات",
+  "mokina.empty.runningTitle": "جارٍ إعداد النتيجة الأولى",
+  "mokina.empty.runningDescription": "ستظهر هنا عند اكتمالها. تابع التقدم في مساحة التعاون.",
+  "mokina.model.unavailable": "هذا النموذج غير متاح في Mokina. اختر نموذجًا محليًا أو BYOK في الإعدادات قبل الإرسال.",
 };

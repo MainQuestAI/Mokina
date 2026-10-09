@@ -18,6 +18,7 @@ import { fetchHostEditors, openProjectInEditor } from '../providers/registry';
 import { useAnalytics } from '../analytics/provider';
 import { trackHandoffClick } from '../analytics/events';
 import { useT } from '../i18n';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { copyToClipboard } from '../lib/copy-to-clipboard';
 import { Icon } from './Icon';
 import { EditorIcon } from './EditorIcon';
@@ -182,7 +183,7 @@ function mergeCliTargets(agents: AgentInfo[] | undefined): CliTarget[] {
       version: agent.version,
     });
   }
-  return [...byId.values()].sort((a, b) => {
+  return [...byId.values()].filter(target => !MOKINA_LOCAL_EDITION || target.id !== 'amr').sort((a, b) => {
     const ai = CLI_ORDER.indexOf(a.id);
     const bi = CLI_ORDER.indexOf(b.id);
     const ao = ai === -1 ? Number.MAX_SAFE_INTEGER : ai;

@@ -1,0 +1,3 @@
+Command: pnpm --filter @open-design/web exec tsc --noEmit
+Observed exit status: 0
+stdout/stderr: empty

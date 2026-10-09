@@ -1,9 +1,11 @@
 # S02 · Tokens图标与公共控件
 
-状态：ready_for_implementation_planning；当前未实施。前置依赖：无；以当前 main 为代码基线。
+状态：implemented；工程回归已执行，完整分层签收见 acceptance.json。前置依赖：无；以当前 main 为代码基线。
 
 ## 改动边界
 
+- `open-design/apps/web/src/styles/primitives.css`
+- `open-design/packages/components/src/button.module.css`
 - `open-design/apps/web/src/styles/tokens.css`
 - `open-design/apps/web/src/styles/shell.css`
 - `open-design/apps/web/src/components/Icon.tsx`
@@ -14,6 +16,12 @@
 原替换账对应：B10, B11, B12, B13, B17。上述为主要改动文件；相邻 CSS module、i18n 与定向测试可随之修改。runtime、daemon、持久化 schema 和用户数据默认只读；若视觉实施暴露功能缺陷，单列缺陷修复，不混入视觉重构。
 
 **D15=A**：本轮不增加深色模式；深色参数仅保留设计文档/样张检查，不为其新增生产深色样式分支或主题入口；不删除上游已有深色兼容规则。运行验收限浅色。
+
+## v0.0.4 初审补充：文件归属与产品作用域
+
+共享 `primitives.css` 的按钮/图标样式由 S02 负责；S01 只盘点其品牌消费点，不并行覆盖该文件。`button.module.css` 已被01/07明确要求核查，本版补入机器清单；若无需直接修改，应记录真实调用者及CSS级联证据。
+
+只读定位：`src/mokina-edition.ts`、`app/layout.tsx`、`src/App.tsx`。现有 `MOKINA_LOCAL_EDITION` 是编译期标记，layout尚无产品作用域属性，`MokinaWorkspace.module.css.workspaceLayout`仅覆盖项目工作区。S02实施前必须明确首页、设置、正文外壳及body Portal的作用域和首帧接线，复用现有edition边界；与S01的layout及S03的App改动串行协调。不假设已有 `data-mokina` 等属性，不全局改写上游，不新增持久化产品身份。
 
 ## 开发任务
 
@@ -41,3 +49,8 @@
 按03文档选择该包定向检查；更改状态分支必须保留现有回归断言。交付PR应列文件、前后截图、AC证据、资产hash及未验项。不得只交截图而不交实际可达入口。
 
 回退仅还原本包资产引用/组件/CSS与测试；不清空用户数据、journal、草稿或历史成果。涉及共享 HomeView/ProjectView/FileViewer 的包按依赖顺序集成，不以整文件覆盖解决冲突。
+
+
+## 本轮实施追踪
+
+源码 `c79843bafa7a7e2a61f33d81fcd78edf03c7236f`；[实施与测试记录](../../../mokina-v0.0.4/2026-10-08-implementation.md)。开发任务已接线，native/读屏/用户层仍按 acceptance.json 的分层状态待验，不将工程单元结果记为安装候选通过。

@@ -1,0 +1,42 @@
+
+Running 30 tests using 1 worker
+
+[1A[2K(node:14135) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:14135) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/30] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 1 files and 60 characters before explicit send
+[1A[2K[2/30] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 50 files and 65536 characters before explicit send
+[1A[2K[3/30] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 51 files and 65536 characters before explicit send
+[1A[2K[4/30] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 50 files and 65537 characters before explicit send
+[1A[2K[5/30] [chromium] › ui/mokina-cloud-handoff.test.ts:82:1 › [P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh
+[1A[2K[6/30] [chromium] › ui/mokina-cloud-handoff.test.ts:136:1 › [P1] Mokina generated crash page displays every export outcome in Chromium
+[1A[2K[7/30] [chromium] › ui/mokina-input-preparation.test.ts:7:3 › [P1] Mokina T31 home preparation ready gates the original send
+[1A[2K[8/30] [chromium] › ui/mokina-input-preparation.test.ts:7:3 › [P1] Mokina T31 home preparation failed gates the original send
+[1A[2K[9/30] [chromium] › ui/mokina-input-preparation.test.ts:7:3 › [P1] Mokina T31 home preparation leave gates the original send
+[1A[2K[10/30] [chromium] › ui/mokina-input-preparation.test.ts:7:3 › [P1] Mokina T31 home preparation reload gates the original send
+[1A[2K[11/30] [chromium] › ui/mokina-input-preparation.test.ts:71:1 › [P1] Mokina keeps file purpose after reload but requires file reselection
+[1A[2K[12/30] [chromium] › ui/mokina-input-preparation.test.ts:86:1 › [P1] Mokina retains staged input when the initial preparation save fails and retries the same target
+[1A[2K[13/30] [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1280x720
+[1A[2K[14/30] [chromium] › ui/mokina-navigation.test.ts:15:3 › [P1] Mokina open-resolution and recent summaries at 1440x900
+[1A[2K[15/30] [chromium] › ui/mokina-navigation.test.ts:87:1 › [P1] Mokina workspace indicator settles without overshoot and respects reduced motion
+[1A[2K[16/30] [chromium] › ui/mokina-navigation.test.ts:159:3 › [P1] Mokina brand, action and title styles at 1440px
+[1A[2K[17/30] [chromium] › ui/mokina-navigation.test.ts:159:3 › [P1] Mokina brand, action and title styles at 1280px
+[1A[2K[18/30] [chromium] › ui/mokina-navigation.test.ts:159:3 › [P1] Mokina brand, action and title styles at 390px
+[1A[2K[19/30] [chromium] › ui/mokina-navigation.test.ts:189:1 › [P1] Mokina empty project focuses its existing composer without writing or sending
+[1A[2K[20/30] [chromium] › ui/mokina-navigation.test.ts:212:1 › [P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change
+[1A[2K[21/30] [chromium] › ui/mokina-workspace-actions.test.ts:14:3 › [P2] Mokina drawing controls have full hit areas and fit the viewport at 1280
+[1A[2K[22/30] [chromium] › ui/mokina-workspace-actions.test.ts:14:3 › [P2] Mokina drawing controls have full hit areas and fit the viewport at 390
+[1A[2K[23/30] [chromium] › ui/mokina-workspace-actions.test.ts:63:3 › [P1] Mokina long-path materials stay inside the continuation panel at 1280x720
+[1A[2K[24/30] [chromium] › ui/mokina-workspace-actions.test.ts:106:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1280x720
+[1A[2K[25/30] [chromium] › ui/mokina-workspace-actions.test.ts:63:3 › [P1] Mokina long-path materials stay inside the continuation panel at 1440x900
+[1A[2K[26/30] [chromium] › ui/mokina-workspace-actions.test.ts:106:3 › [P1] Mokina panel actions remain reachable and preserve drafts at 1440x900
+[1A[2K[27/30] [chromium] › ui/mokina-workspace-actions.test.ts:165:1 › [P1] Mokina panel explains historical and chapterless action restrictions
+[1A[2K[28/30] [chromium] › ui/mokina-workspace-actions.test.ts:190:1 › [P1] Mokina continuation creates an editable fixed-excerpt draft without a run
+[1A[2K[29/30] [chromium] › ui/mokina-workspace-actions.test.ts:217:3 › [P1] Mokina long candidate comparison keeps controls and keyboard reachable at 900x600
+[1A[2K[30/30] [chromium] › ui/mokina-workspace-actions.test.ts:217:3 › [P1] Mokina long candidate comparison keeps controls and keyboard reachable at 390x844
+[1A[2K  30 passed (8.2m)

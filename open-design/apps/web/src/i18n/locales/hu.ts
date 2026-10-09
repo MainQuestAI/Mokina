@@ -38,6 +38,7 @@ export const hu: Dict = {
   'mokina.pendingSend.discard': "Discard this receipt",
   'mokina.pendingSend.discardNotice': "The server may have accepted it. Discarding only clears the pending confirmation in this browser.",
   'mokina.pendingSend.notRecoverable': "This message is too large to keep a recoverable snapshot; it cannot be auto-restored after a reload.",
+  'mokina.pendingSend.manualOverflow': "This draft exceeds automatic recovery capacity. The full text and all file references remain in this tab. Edit here and send explicitly, or collapse to cancel. Keep this tab open until sent.",
   'mokina.entryChooser.title': "Válassza ki a megnyitandó artefaktot",
   'mokina.entryChooser.cancel': "Mégse",
   'mokina.entrySummary.loading': "Artefaktok betöltése…",
@@ -5620,4 +5621,10 @@ export const hu: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "Még nincs kész eredmény",
+  "mokina.empty.description": "Írd le, mit szeretnél elkészíteni, majd küldd el a kezdéshez.",
+  "mokina.empty.focus": "Követelmények megadása",
+  "mokina.empty.runningTitle": "Az első eredmény készül",
+  "mokina.empty.runningDescription": "Elkészülte után itt jelenik meg. A folyamatot az együttműködési területen követheted.",
+  "mokina.model.unavailable": "Ez a modell nem érhető el a Mokinában. Küldés előtt válassz helyi vagy BYOK modellt a beállításokban.",
 };

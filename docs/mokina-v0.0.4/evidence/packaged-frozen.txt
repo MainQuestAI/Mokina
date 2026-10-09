@@ -1,0 +1,9 @@
+
+ RUN  v4.1.6 $WORKTREE/open-design/apps/packaged
+
+
+ Test Files  4 passed (4)
+      Tests  30 passed (30)
+   Start at  11:14:28
+   Duration  485ms (transform 357ms, setup 0ms, import 539ms, tests 46ms, environment 1ms)
+

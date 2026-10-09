@@ -36,6 +36,12 @@ function resolveToolsPackRoot(startDir: string): string {
 export const toolsPackRoot = resolveToolsPackRoot(dirname(fileURLToPath(import.meta.url)));
 export const resourcesRoot = join(toolsPackRoot, "resources");
 
+export const mokinaResources = {
+  icon: join(resourcesRoot, "mokina", "icon.icns"),
+  iconPng: join(resourcesRoot, "mokina", "icon.png"),
+  iconIco: join(resourcesRoot, "mokina", "icon.ico"),
+} as const;
+
 export const macResources = {
   entitlements: join(resourcesRoot, "mac", "entitlements.mac.plist"),
   entitlementsInherit: join(resourcesRoot, "mac", "entitlements.mac.inherit.plist"),

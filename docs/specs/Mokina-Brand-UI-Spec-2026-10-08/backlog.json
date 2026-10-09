@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "baseline": "52219d8c8f71460d3776a96b9ebe84fa9ce65501",
   "packages": [
     {
       "id": "S01",
       "title": "Web品牌与资产",
       "spec": "specs/S01-Web品牌与资产.md",
       "depends_on": [],
-      "status": "not_started",
+      "status": "implemented",
       "brand_inventory": [
         "B01",
         "B02",
@@ -26,14 +26,20 @@
       "acceptance": [
         "S01-AC01",
         "S01-AC02"
-      ]
+      ],
+      "implementation": {
+        "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+        "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+        "native_candidate": null,
+        "release_status": "blocked_pending_native_and_user_acceptance"
+      }
     },
     {
       "id": "S02",
       "title": "Tokens图标与公共控件",
       "spec": "specs/S02-Tokens图标与公共控件.md",
       "depends_on": [],
-      "status": "not_started",
+      "status": "implemented",
       "brand_inventory": [
         "B10",
         "B11",
@@ -47,14 +53,27 @@
         "open-design/apps/web/src/components/Icon.tsx",
         "open-design/apps/web/src/components/RemixIcon.tsx",
         "open-design/apps/web/src/components/FileTypeIcon.tsx",
-        "open-design/apps/web/src/components/MokinaWorkspace.module.css"
+        "open-design/apps/web/src/components/MokinaWorkspace.module.css",
+        "open-design/apps/web/src/styles/primitives.css",
+        "open-design/packages/components/src/button.module.css"
       ],
       "acceptance": [
         "S02-AC01",
         "S02-AC02",
         "S02-AC03",
         "S02-AC04"
-      ]
+      ],
+      "read_only_source_paths": [
+        "open-design/apps/web/src/mokina-edition.ts",
+        "open-design/apps/web/app/layout.tsx",
+        "open-design/apps/web/src/App.tsx"
+      ],
+      "implementation": {
+        "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+        "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+        "native_candidate": null,
+        "release_status": "blocked_pending_native_and_user_acceptance"
+      }
     },
     {
       "id": "S03",
@@ -64,7 +83,7 @@
         "S01",
         "S02"
       ],
-      "status": "not_started",
+      "status": "implemented",
       "brand_inventory": [
         "B03",
         "B05",
@@ -83,7 +102,13 @@
       "acceptance": [
         "S03-AC01",
         "S03-AC02"
-      ]
+      ],
+      "implementation": {
+        "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+        "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+        "native_candidate": null,
+        "release_status": "blocked_pending_native_and_user_acceptance"
+      }
     },
     {
       "id": "S04",
@@ -92,7 +117,7 @@
       "depends_on": [
         "S03"
       ],
-      "status": "not_started",
+      "status": "implemented",
       "brand_inventory": [
         "B17",
         "B18"
@@ -109,7 +134,13 @@
         "S04-AC02",
         "S04-AC03",
         "S04-AC04"
-      ]
+      ],
+      "implementation": {
+        "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+        "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+        "native_candidate": null,
+        "release_status": "blocked_pending_native_and_user_acceptance"
+      }
     },
     {
       "id": "S05",
@@ -118,7 +149,7 @@
       "depends_on": [
         "S04"
       ],
-      "status": "not_started",
+      "status": "implemented",
       "brand_inventory": [
         "B10",
         "B16",
@@ -136,7 +167,13 @@
         "S05-AC01",
         "S05-AC02",
         "S05-AC03"
-      ]
+      ],
+      "implementation": {
+        "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+        "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+        "native_candidate": null,
+        "release_status": "blocked_pending_native_and_user_acceptance"
+      }
     },
     {
       "id": "S06",
@@ -147,7 +184,7 @@
         "S02",
         "S05"
       ],
-      "status": "not_started",
+      "status": "implemented",
       "brand_inventory": [
         "B05",
         "B06",
@@ -174,7 +211,13 @@
       "acceptance": [
         "S06-AC01",
         "S06-AC02"
-      ]
+      ],
+      "implementation": {
+        "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+        "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+        "native_candidate": null,
+        "release_status": "blocked_pending_native_and_user_acceptance"
+      }
     },
     {
       "id": "S07",
@@ -188,7 +231,7 @@
         "S05",
         "S06"
       ],
-      "status": "not_started",
+      "status": "engineering_verified_native_pending",
       "brand_inventory": [],
       "source_paths": [
         ".github/workflows/ci.yml",
@@ -200,7 +243,20 @@
       "acceptance": [
         "S07-AC01",
         "S07-AC02"
-      ]
+      ],
+      "implementation": {
+        "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+        "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+        "native_candidate": null,
+        "release_status": "blocked_pending_native_and_user_acceptance"
+      }
     }
-  ]
+  ],
+  "functional_baseline": "9a6ba583df35c01f6b34a41fdbb8d414377ba513",
+  "spec_revision": "1.2",
+  "development_version": "0.0.4",
+  "baseline_pr": 12,
+  "development_branch": "codex/mokina-v0.0.4-brand-ui",
+  "implementation_source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+  "acceptance_summary": "Engineering implementation complete; layered acceptance remains partial. No macOS installation candidate."
 }

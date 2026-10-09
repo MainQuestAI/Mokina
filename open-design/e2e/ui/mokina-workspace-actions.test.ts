@@ -1,12 +1,63 @@
 import { randomUUID } from 'node:crypto';
 import type { Locator, Page } from '@playwright/test';
+import type { ProjectFileVersionResponse, ProjectFileVersionsResponse } from '@open-design/contracts';
 import { expect, test } from '@/playwright/suite';
 import { applyStandardMocks } from '@/playwright/mock-factory';
 import { T } from '@/timeouts';
+import { clickPreviewToolbarAction } from '@/playwright/workspace';
 
 test.beforeEach(async ({ page }) => {
   await applyStandardMocks(page);
 });
+
+for (const viewport of [{ width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+  test(`[P2] Mokina drawing controls have full hit areas and fit the viewport at ${viewport.width}`, async ({ page }, testInfo) => {
+    await page.setViewportSize(viewport);
+    const project = await seedWorkspace(page);
+    await openArtifact(page, project, 'plan.html');
+    await expect(page.locator('.split-chat-slot')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.locator('.ws-body')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    if (viewport.width <= 760) {
+      // Use the real narrow-workspace affordance before opening preview tools.
+      await page.getByRole('button', { name: 'Collapse the conversation pane', exact: true }).click();
+    }
+    const mark = page.getByTestId('draw-overlay-toggle');
+    await clickPreviewToolbarAction(page, 'draw-overlay-toggle', /^Mark$/);
+    await expect(mark).toHaveAttribute('aria-pressed', 'true');
+    const toolbar = page.locator('.preview-draw-toolbar');
+    await expect(toolbar).toBeVisible();
+    await expect(toolbar.getByRole('button', { name: 'Box select', exact: true })).toHaveCSS('color', 'rgb(17, 17, 17)');
+    for (const name of ['Undo', 'Redo', 'Close']) {
+      const control = toolbar.getByRole('button', { name, exact: true });
+      await expect(control).toBeVisible();
+      const box = await control.boundingBox();
+      expect(box!.width, `${name} hit width`).toBeGreaterThanOrEqual(44);
+      expect(box!.height, `${name} hit height`).toBeGreaterThanOrEqual(44);
+    }
+    const geometry = await toolbar.evaluate(element => ({ width: element.clientWidth, scrollWidth: element.scrollWidth,
+      left: element.getBoundingClientRect().left, right: element.getBoundingClientRect().right,
+      children: Array.from(element.children).map(child => ({ width: child.clientWidth, scrollWidth: child.scrollWidth,
+        left: child.getBoundingClientRect().left, right: child.getBoundingClientRect().right,
+        children: Array.from(child.children).map(node => ({ name: node.getAttribute('aria-label') ?? node.tagName,
+          width: node.getBoundingClientRect().width, flex: getComputedStyle(node).flex, minWidth: getComputedStyle(node).minWidth })) })),
+      controls: Array.from(element.querySelectorAll('button, input:not([type="file"])')).map(node => ({
+        name: node.getAttribute('aria-label') ?? node.tagName, left: node.getBoundingClientRect().left,
+        right: node.getBoundingClientRect().right, width: node.getBoundingClientRect().width })) }));
+    await testInfo.attach(`drawing-geometry-${viewport.width}`, { body: JSON.stringify(geometry, null, 2), contentType: 'application/json' });
+    // Invisible tooltip pseudo-elements intentionally overflow this toolbar.
+    // Measure actual interactive boxes, rather than counting hidden tooltips
+    // in scrollWidth or clipping the popovers to make that number smaller.
+    for (const control of geometry.controls.filter(control => control.width > 0)) {
+      expect(control.left, `${control.name} left edge`).toBeGreaterThanOrEqual(geometry.left);
+      expect(control.right, `${control.name} right edge`).toBeLessThanOrEqual(geometry.right);
+    }
+    expect(geometry.left).toBeGreaterThanOrEqual(0);
+    expect(geometry.right).toBeLessThanOrEqual(viewport.width);
+    await testInfo.attach(`drawing-controls-${viewport.width}`, { body: await page.screenshot(), contentType: 'image/png' });
+    await toolbar.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(toolbar).toHaveCount(0);
+  });
+}
 
 for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900 }]) {
   test(`[P1] Mokina long-path materials stay inside the continuation panel at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
@@ -161,6 +212,70 @@ test('[P1] Mokina continuation creates an editable fixed-excerpt draft without a
   expect(runPosts).toEqual([]);
   await testInfo.attach('continuation-editable-draft', { body: await page.screenshot(), contentType: 'image/png' });
 });
+
+for (const viewport of [{ width: 900, height: 600 }, { width: 390, height: 844 }]) {
+  test(`[P1] Mokina long candidate comparison keeps controls and keyboard reachable at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
+    // 390px is the dialog robustness check for this desktop product. Open via
+    // its real desktop entry first, then resize the mounted dialog.
+    await page.setViewportSize(viewport.width < 860 ? { width: 900, height: 600 } : viewport);
+    const project = await seedWorkspace(page);
+    const path = `/api/projects/${project.projectId}/files/plan.html/versions`;
+    const history = await (await page.request.get(path)).json() as ProjectFileVersionsResponse;
+    const base = history.versions.find(version => version.current)!;
+    expect(base).toBeTruthy();
+    const snapshot = await (await page.request.get(`${path}/${base.id}`)).json() as ProjectFileVersionResponse;
+    const request = '补充完整门店传播要求与预算核对说明。'.repeat(80);
+    const candidate = { ...base, id: `candidate-${randomUUID()}`, current: false, candidate: true,
+      baseVersionId: base.id, version: base.version + 1, label: '长版本标签'.repeat(30), prompt: request };
+    const content = snapshot.content.replace('优先验证门店渠道。', '候选策略渠道300万元。'.repeat(40))
+      .replace('预算保持十万元上限。', '候选预算500万元。');
+    await page.route(`**${path}?*`, route => route.fulfill({ json: { ...history, versions: [candidate, ...history.versions] } }));
+    await page.route(`**${path}`, route => route.fulfill({ json: { ...history, versions: [candidate, ...history.versions] } }));
+    await page.route(`**${path}/${candidate.id}*`, route => route.fulfill({ json: { version: candidate, content } }));
+    const unexpectedWrites = await guardActionSideEffects(page);
+    await openArtifact(page, project, 'plan.html');
+    await page.getByRole('button', { name: 'Revise section', exact: true }).click();
+    const panel = page.locator('.artifact-version-panel');
+    await panel.getByRole('listbox').getByRole('option').filter({ hasText: request }).click();
+    const trigger = panel.getByRole('button', { name: 'Compare', exact: true });
+    await trigger.click();
+    await page.setViewportSize(viewport);
+    const dialog = page.getByRole('dialog', { name: 'Candidate comparison', exact: true });
+    await expect(dialog).toBeVisible();
+    const close = dialog.getByRole('button', { name: 'Close', exact: true });
+    const cancel = dialog.getByRole('button', { name: 'Cancel', exact: true });
+    const adopt = dialog.getByRole('button', { name: 'Adopt candidate', exact: true });
+    await expect(close).toBeFocused();
+    await expect(adopt).toBeEnabled();
+    const body = dialog.locator('[tabindex="0"][aria-label="Changed sections"]');
+    await expect(body).toContainText(request);
+    expect(await body.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+    const controlsInViewport = async () => {
+      for (const control of [close, cancel, adopt]) {
+        const box = await control.boundingBox(); expect(box).not.toBeNull();
+        expect(box!.y).toBeGreaterThanOrEqual(0); expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
+        expect(box!.x).toBeGreaterThanOrEqual(0); expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width);
+      }
+    };
+    await controlsInViewport();
+    await body.focus(); await body.press('End');
+    await expect.poll(() => body.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+    await controlsInViewport();
+    if (viewport.width < 860) {
+      await dialog.getByRole('radio', { name: 'Base version', exact: true }).check();
+      await expect(dialog.locator('pre').filter({ hasText: '优先验证门店渠道。' })).toBeVisible();
+      await dialog.getByRole('radio', { name: 'Candidate', exact: true }).check();
+      await expect(dialog.locator('pre').filter({ hasText: '候选策略渠道300万元。' })).toBeVisible();
+    } else {
+      await expect(dialog.locator('pre')).toHaveCount(2);
+    }
+    await adopt.focus(); await adopt.press('Tab'); await expect(close).toBeFocused();
+    await close.press('Shift+Tab'); await expect(adopt).toBeFocused();
+    await testInfo.attach(`candidate-comparison-${viewport.width}`, { body: await page.screenshot(), contentType: 'image/png' });
+    await page.keyboard.press('Escape'); await expect(dialog).toHaveCount(0); await expect(trigger).toBeFocused();
+    expect(unexpectedWrites).toEqual([]);
+  });
+}
 
 async function seedWorkspace(page: Page) {
   const projectId = `mokina-actions-${randomUUID()}`;

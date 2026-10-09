@@ -1,0 +1,49 @@
+{
+  "sourceHead": "b004a338feb2eb3fdb69c4c2c03827fe71495a25",
+  "stats": {
+    "startTime": "2026-10-09T01:16:00.683Z",
+    "duration": 372922.238,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 51 files and 65536 characters before explicit send",
+      "status": "failed",
+      "retry": 0,
+      "durationMs": 46481,
+      "errors": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('mokina-manual-handoff-prompt')\nExpected: \u001b[32m\"edited:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      ]
+    },
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 50 files and 65537 characters before explicit send",
+      "status": "failed",
+      "retry": 0,
+      "durationMs": 47045,
+      "errors": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('mokina-manual-handoff-prompt')\nExpected: \u001b[32m\"edited:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      ]
+    },
+    {
+      "title": "[P1] Mokina late MCP catalog preserves new Skill B and connector over old empty context",
+      "status": "failed",
+      "retry": 0,
+      "durationMs": 17370,
+      "errors": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 4\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"connectors\": Array [\u001b[39m\n\u001b[32m-     \"new-connector\",\u001b[39m\n\u001b[32m-   ],\u001b[39m\n\u001b[32m"
+      ]
+    },
+    {
+      "title": "[P1] Mokina late MCP catalog preserves new Skill B and connector over old skill-a context",
+      "status": "failed",
+      "retry": 0,
+      "durationMs": 17494,
+      "errors": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 4\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"connectors\": Array [\u001b[39m\n\u001b[32m-     \"new-connector\",\u001b[39m\n\u001b[32m-   ],\u001b[39m\n\u001b[32m"
+      ]
+    }
+  ]
+}

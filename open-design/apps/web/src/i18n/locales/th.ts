@@ -38,6 +38,7 @@ export const th: Dict = {
   'mokina.pendingSend.discard': "Discard this receipt",
   'mokina.pendingSend.discardNotice': "The server may have accepted it. Discarding only clears the pending confirmation in this browser.",
   'mokina.pendingSend.notRecoverable': "This message is too large to keep a recoverable snapshot; it cannot be auto-restored after a reload.",
+  'mokina.pendingSend.manualOverflow': "This draft exceeds automatic recovery capacity. The full text and all file references remain in this tab. Edit here and send explicitly, or collapse to cancel. Keep this tab open until sent.",
   'mokina.entryChooser.title': "เลือกผลงานที่จะเปิด",
   'mokina.entryChooser.cancel': "ยกเลิก",
   'mokina.entrySummary.loading': "กำลังโหลดผลงาน…",
@@ -5620,4 +5621,10 @@ export const th: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "ยังไม่มีผลงานที่เสร็จสมบูรณ์",
+  "mokina.empty.description": "เขียนสิ่งที่ต้องการทำ แล้วส่งเพื่อเริ่มสร้าง",
+  "mokina.empty.focus": "เขียนข้อกำหนด",
+  "mokina.empty.runningTitle": "กำลังสร้างผลงานแรก",
+  "mokina.empty.runningDescription": "ผลงานจะแสดงที่นี่เมื่อเสร็จ ติดตามความคืบหน้าได้ในพื้นที่ทำงานร่วมกัน",
+  "mokina.model.unavailable": "โมเดลนี้ไม่พร้อมใช้งานใน Mokina เลือกโมเดลในเครื่องหรือ BYOK ในการตั้งค่าก่อนส่ง",
 };

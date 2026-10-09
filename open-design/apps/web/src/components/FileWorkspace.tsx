@@ -245,6 +245,8 @@ interface Props {
    * in flight must see the file grid, not a live preview captioned "thinking".
    */
   runInFlight?: boolean;
+  mokinaEmptyState?: 'initial' | 'running';
+  onFocusComposer?: () => void;
   commentQueueOnSend?: boolean;
   commentSendDisabled?: boolean;
   // `openBatch`, when present, is the complete ordered list of files to open as
@@ -1477,6 +1479,8 @@ export function FileWorkspace({
   isDeck,
   streaming,
   runInFlight = false,
+  mokinaEmptyState,
+  onFocusComposer,
   commentQueueOnSend = false,
   commentSendDisabled = false,
   openRequest,
@@ -4526,6 +4530,12 @@ export function FileWorkspace({
             githubConnected={githubConnected}
           />
         ) : designFilesTabActive ? (
+          <div className="mokina-files-content">
+            {mokinaEmptyState ? <section className="mokina-artifact-empty" data-testid={`mokina-artifact-${mokinaEmptyState}`}>
+              <h2>{t(mokinaEmptyState === 'initial' ? 'mokina.empty.title' : 'mokina.empty.runningTitle')}</h2>
+              <p>{t(mokinaEmptyState === 'initial' ? 'mokina.empty.description' : 'mokina.empty.runningDescription')}</p>
+              {mokinaEmptyState === 'initial' ? <Button variant="primary" onClick={onFocusComposer}>{t('mokina.empty.focus')}</Button> : null}
+            </section> : null}
           <DesignFilesPanel
             key={projectId}
             projectId={projectId}
@@ -4654,6 +4664,7 @@ export function FileWorkspace({
             activePluginActionPaths={activePluginActionPaths}
             hiddenPluginActionPaths={hiddenPluginActionPaths}
           />
+          </div>
         ) : isBrowserTabId(activeTab) ? (
           null
         ) : isActiveSketch && activeFile ? (

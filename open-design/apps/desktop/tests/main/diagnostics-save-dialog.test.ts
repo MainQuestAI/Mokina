@@ -11,7 +11,7 @@ import { describe, expect, it, vi } from "vitest";
 // recent-items writes; this test locks both.
 const { showSaveDialog } = vi.hoisted(() => ({
   showSaveDialog: vi.fn(
-    async (_options: { defaultPath: string; properties?: string[] }) => ({
+    async (_options: { title: string; defaultPath: string; properties?: string[] }) => ({
       canceled: true as const,
       filePath: undefined,
     }),
@@ -29,9 +29,13 @@ vi.mock("electron", () => ({
 import { exportDiagnosticsToFile } from "../../src/main/diagnostics.js";
 
 describe("exportDiagnosticsToFile save dialog", () => {
-  it("seeds a bare filename (never a directory) and opts out of recent items", async () => {
+  it.each([
+    { product: null, title: 'Export OpenDesign diagnostics' },
+    { product: { productId: 'mokina' as const }, title: 'Export Mokina diagnostics' },
+  ])("seeds a bare filename and the correct product title: $title", async ({ product, title }) => {
+    showSaveDialog.mockClear();
     const result = await exportDiagnosticsToFile(
-      { discoverDaemonBaseUrl: vi.fn() },
+      { discoverDaemonBaseUrl: vi.fn(), product },
       null,
     );
 
@@ -40,6 +44,7 @@ describe("exportDiagnosticsToFile save dialog", () => {
     expect(showSaveDialog).toHaveBeenCalledTimes(1);
 
     const opts = showSaveDialog.mock.calls[0]![0];
+    expect(opts.title).toBe(title);
     expect(opts.defaultPath).not.toContain(sep);
     expect(opts.defaultPath).not.toContain("Downloads");
     expect(opts.properties).toContain("dontAddToRecent");

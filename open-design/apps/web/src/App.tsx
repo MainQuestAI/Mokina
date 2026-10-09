@@ -1441,6 +1441,11 @@ function AppInner() {
   // can't overwrite the saved state with `''` before hydration lands.
   const [composioConfigLoading, setComposioConfigLoading] = useState(true);
   const route = useRoute();
+  useEffect(() => {
+    if (MOKINA_LOCAL_EDITION && (route.kind === 'community' || (route.kind === 'home' && route.view === 'community'))) {
+      navigate({ kind: 'home', view: 'home' }, { replace: true });
+    }
+  }, [route]);
   const routeRef = useRef(route);
   routeRef.current = route;
   const settingsReturnTargetRef = useRef<SettingsReturnTarget | null>(null);
@@ -2094,6 +2099,7 @@ function AppInner() {
   }, [applyAmrLoginStatus]);
 
   useEffect(() => {
+    if (MOKINA_LOCAL_EDITION) return;
     const usesOpenDesignCloud =
       config.mode === 'daemon'
       && config.agentId === AMR_AGENT_ID;
@@ -5491,7 +5497,7 @@ function AppInner() {
     );
   } else if (route.kind === 'collab-demo') {
     appMain = <CollabDemoView projectId={route.projectId} />;
-  } else if (route.kind === 'community') {
+  } else if (route.kind === 'community' && !MOKINA_LOCAL_EDITION) {
     appMain = (
       <CommunityView
         onRemixTemplate={({ templateId, prompt }) => {
@@ -5762,7 +5768,7 @@ function AppInner() {
           daemonLive={daemonLive}
           onModeChange={handleModeChange}
           onAgentChange={handleAgentChange}
-          onSwitchToCloud={handleSwitchToCloud}
+          onSwitchToCloud={MOKINA_LOCAL_EDITION ? undefined : handleSwitchToCloud}
           onAgentModelChange={handleAgentModelChange}
           onApiModelChange={handleApiModelChange}
           onRefreshAgents={refreshAgents}

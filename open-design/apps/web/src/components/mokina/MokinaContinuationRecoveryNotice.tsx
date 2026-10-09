@@ -3,6 +3,7 @@ import { Button } from '@open-design/components';
 import type { WorkspaceCollabContext } from '@open-design/contracts';
 import { workspaceIdentityCacheKey } from '../../collab/workspace-identity';
 import { MOKINA_CONTINUATION_CHANGED, readMokinaContinuationJournal, resumeMokinaContinuation, type MokinaContinuationJournal } from '../../runtime/mokina/continuation-recovery';
+import { MokinaLiveStatus } from './MokinaLiveStatus';
 import { useT } from '../../i18n';
 
 export function MokinaContinuationRecoveryNotice({ projectId, workspaceContext, onOpen }: {
@@ -13,6 +14,7 @@ export function MokinaContinuationRecoveryNotice({ projectId, workspaceContext, 
   const [records, setRecords] = useState<Array<{ key: string; journal: MokinaContinuationJournal }>>([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const workspaceKey = workspaceIdentityCacheKey(workspaceContext);
   const identity = JSON.stringify([workspaceKey, projectId]);
   const identityRef = useRef(identity); identityRef.current = identity;
@@ -27,12 +29,13 @@ export function MokinaContinuationRecoveryNotice({ projectId, workspaceContext, 
   }, [projectId, workspaceKey]);
   const visible = records.filter(({ journal }) => journal.intent?.source.projectId === projectId && journal.intent.workspaceKey === workspaceKey);
   if (!visible.length) return null;
-  return <div role="status" data-testid="mokina-continuation-recovery">
+  return <div className="mokina-recovery-notice" data-testid="mokina-continuation-recovery">
+    <MokinaLiveStatus identity={identity} summary={visible.map(({ journal }) => `${journal.operationId}:${journal.checkpoint}`).join('|')} label={visible.map(({ journal }) => t(journal.checkpoint === 'draft-ready' ? 'mokina.repair.continuationSaved' : 'mokina.repair.continuationPending')).join(' · ')} />
     {visible.map(({ key, journal }) => <div key={key}>
       <span>{journal.intent?.source.fileName} · {t(journal.checkpoint === 'draft-ready' ? 'mokina.repair.continuationSaved' : 'mokina.repair.continuationPending')} {journal.lastError}</span>
       <Button disabled={busy} onClick={async () => {
         const issuedIdentity = identity;
-        setBusy(true); setError('');
+        setBusy(true); setError(''); setAttempt(value => value + 1);
         try {
           const current = readMokinaContinuationJournal(window.localStorage.getItem(key));
           if (!current) throw new Error(t('mokina.repair.recordChanged'));
@@ -42,6 +45,6 @@ export function MokinaContinuationRecoveryNotice({ projectId, workspaceContext, 
         finally { if (identityRef.current === issuedIdentity) { setBusy(false); refresh(); } }
       }}>{t('mokina.repair.resumeOriginal')}</Button>
     </div>)}
-    {error ? <p role="alert">{error}</p> : null}
+    {error ? <p key={attempt} role="alert">{error}</p> : null}
   </div>;
 }

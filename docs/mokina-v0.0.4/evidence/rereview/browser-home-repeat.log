@@ -1,0 +1,24 @@
+
+Running 4 tests using 1 worker
+
+[1A[2K(node:13247) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:13247) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] [chromium] › ui/mokina-cloud-handoff.test.ts:82:1 › [P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh
+[1A[2K[2/4] [chromium] › ui/mokina-navigation.test.ts:212:1 › [P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change
+[1A[2K(node:13623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:13623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[3/4] [chromium] › ui/mokina-cloud-handoff.test.ts:82:1 › [P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh
+[1A[2K[4/4] [chromium] › ui/mokina-navigation.test.ts:212:1 › [P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change
+[1A[2K  4 passed (2.8m)

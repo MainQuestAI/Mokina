@@ -6,6 +6,7 @@ import { HOME_MOKINA_PREPARATION_CHANGED, readHomeMokinaPreparation, saveHomeMok
   prepareHomeMokinaSnapshot, type HomeMokinaPreparationRecord } from '../../runtime/mokina/home-material-snapshot';
 import { readPendingMokinaSnapshot } from '../../runtime/mokina/pending-context-snapshot';
 import { homeAttachmentUploadsPending, subscribeHomeAttachmentUploads } from '../../state/home-attachment-handoff';
+import { MokinaLiveStatus } from './MokinaLiveStatus';
 import { useT } from '../../i18n';
 
 export function MokinaHomePreparationNotice({ projectId, conversationId, workspaceContext, onRestorePrompt }: {
@@ -19,40 +20,45 @@ export function MokinaHomePreparationNotice({ projectId, conversationId, workspa
   const uploadsPending = useSyncExternalStore(subscribeHomeAttachmentUploads, () => homeAttachmentUploadsPending(projectId), () => false);
   const [record, setRecord] = useState<HomeMokinaPreparationRecord | null>(null);
   const [busy, setBusy] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [error, setError] = useState('');
   useEffect(() => {
     identityRef.current = identity;
     const update = () => setRecord(readHomeMokinaPreparation(projectId, conversationId, workspaceKey));
     update();
     window.addEventListener(HOME_MOKINA_PREPARATION_CHANGED, update);
     window.addEventListener('storage', update);
-    setBusy(false);
+    setBusy(false); setError('');
     return () => { identityRef.current = ''; window.removeEventListener(HOME_MOKINA_PREPARATION_CHANGED, update); window.removeEventListener('storage', update); };
   }, [projectId, conversationId, workspaceKey]);
   async function retry(acceptExclusions: boolean) {
     if (!record || busy) return;
     const issuedIdentity = identity;
-    setBusy(true);
+    setBusy(true); setError(''); setAttempt(value => value + 1);
     try {
       let preparedRecord = record;
       const result = await prepareHomeMokinaSnapshot({ ...record, workspaceContext, acceptExclusions,
         onPrepared: async fixedSelection => { preparedRecord = await saveHomeMokinaPreparation({ ...preparedRecord, fixedSelection }); } });
       await saveHomeMokinaPreparation({ ...preparedRecord, status: result.status, excluded: result.excluded, bindingGeneration: result.status === 'ready' ? result.generation : undefined,
         message: result.status === 'needs-input' ? result.message : undefined });
-    } catch (error) { if (identityRef.current === issuedIdentity) setRecord({ ...record, message: error instanceof Error ? error.message : t('mokina.pendingSend.saveFailed') }); }
+    } catch (cause) { if (identityRef.current === issuedIdentity) setError(cause instanceof Error ? cause.message : t('mokina.pendingSend.saveFailed')); }
     finally { if (identityRef.current === issuedIdentity) setBusy(false); }
   }
   if (!record || record.projectId !== projectId || record.conversationId !== conversationId || record.workspaceKey !== workspaceKey) return null;
-  return <div role="status" data-testid="mokina-home-preparation">
+  return <div className="mokina-preparation-notice" data-testid="mokina-home-preparation">
+    <MokinaLiveStatus identity={identity} summary={record.status === 'ready' ? t('mokina.repair.homeReady') : record.status === 'preparing' ? t('mokina.repair.homePreparing') : t('mokina.pendingSend.reselect')} />
+    {error ? <p key={attempt} role="alert">{error}</p> : null}
     <p>{record.status === 'ready' ? t('mokina.repair.homeReady') : record.status === 'preparing' ? t('mokina.repair.homePreparing') : record.message}</p>
     {record.excluded.map((item, index) => <p key={index}>{item.displayName}：{item.explanation}</p>)}
     <Button disabled={busy || uploadsPending} onClick={() => onRestorePrompt(record.prompt)}>{t('mokina.repair.restorePrompt')}</Button>
-    {record.status !== 'ready' ? <Button disabled={busy || uploadsPending} onClick={() => void retry(false)}>{t('mokina.repair.retryPreparation')}</Button> : null}
+    {record.status !== 'ready' ? <Button variant="primary" disabled={busy || uploadsPending} onClick={() => void retry(false)}>{t('mokina.repair.retryPreparation')}</Button> : null}
     {record.status !== 'ready' && record.excluded.length > 0 ? <Button disabled={busy || uploadsPending} onClick={() => void retry(true)}>{t('mokina.repair.excludeContinue')}</Button> : null}
     <Button disabled={busy || uploadsPending} onClick={async () => {
+      const issuedIdentity = identity; setError(''); setAttempt(value => value + 1);
       const adjusted = readPendingMokinaSnapshot(projectId, { conversationId, workspaceKey });
-      if (!adjusted) { setRecord({ ...record, message: t('mokina.repair.adjustFirst') }); return; }
+      if (!adjusted) { setError(t('mokina.repair.adjustFirst')); return; }
       try { await saveHomeMokinaPreparation({ ...record, bindingSnapshotId: adjusted.snapshotId, bindingGeneration: adjusted.generation, status: 'ready', message: undefined }); }
-      catch (cause) { setRecord({ ...record, message: cause instanceof Error ? cause.message : t('mokina.pendingSend.saveFailed') }); }
+      catch (cause) { if (identityRef.current === issuedIdentity) setError(cause instanceof Error ? cause.message : t('mokina.pendingSend.saveFailed')); }
     }}>{t('mokina.repair.adoptAdjusted')}</Button>
   </div>;
 }

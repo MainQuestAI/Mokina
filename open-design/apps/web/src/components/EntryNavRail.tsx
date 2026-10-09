@@ -65,6 +65,7 @@ import { notifyAmrLoginStatusChanged } from './amrLoginPolling';
 import { Icon } from './Icon';
 import { GITHUB_STARS_FALLBACK_LABEL, formatStars, useGithubStars } from './useGithubStars';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import { MokinaBrand } from './mokina/MokinaBrand';
 import { PlanWordmark, planBadgeTierForWorkspace } from './PlanWordmark';
 import { MarqueeLabel } from './MarqueeLabel';
 import { RemixIcon } from './RemixIcon';
@@ -2453,7 +2454,7 @@ export function EntryNavRail({
         >
           <Icon name="home" size={16} />
         </NavButton>
-        <NavButton
+        {!MOKINA_LOCAL_EDITION ? <NavButton
           active={view === 'community'}
           ariaLabel={communityLabel}
           label={communityLabel}
@@ -2461,7 +2462,7 @@ export function EntryNavRail({
           testId="entry-nav-community"
         >
           <Icon name="globe" size={16} />
-        </NavButton>
+        </NavButton> : null}
 
         {context ? (
           <div className="entry-nav-rail__team-section">
@@ -2688,7 +2689,7 @@ export function EntryNavRail({
                   className="entry-nav-rail__account-avatar entry-nav-rail__account-avatar--local"
                   aria-hidden
                 >
-                  <Icon name="terminal" size={14} />
+                  {MOKINA_LOCAL_EDITION ? <MokinaBrand size={24} /> : <Icon name="terminal" size={14} />}
                 </span>
                 <span className="entry-nav-rail__account-name">{MOKINA_LOCAL_EDITION ? 'Mokina' : t('entry.localAccountName')}</span>
               </button>

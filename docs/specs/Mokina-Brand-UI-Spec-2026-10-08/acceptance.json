@@ -7,9 +7,16 @@
       "title": "身份与像素",
       "scenario": "在首页、展开/折叠导航及助手行展示 mark；16/20/24/32px、浅深底无裁切/拉伸。供应商选择器仍显示实际品牌。逐处核对首页、展开/折叠导航、助手行的可访问树：独立身份有Mokina名称，已有相邻或父控件名称的装饰图形不重复播报。",
       "layer": "browser+asset",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "品牌组件、8份SVG和36份派生资产的单元/尺寸/hash检查；首页1440/1280/390浏览器截图。16/20/24/32浅深载体静态样张已保存；各入口完整可访问树和视觉签收仍待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S01-AC02",
@@ -17,9 +24,16 @@
       "title": "母版确认边界",
       "scenario": "8 个 SVG 可解析且无外部资源；记录候选 hash 和用户确认状态。未确认时可完成候选接线，正式品牌发布状态必须保持 blocked。",
       "layer": "asset+user",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "passed",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "8份SVG解析/安全约束、候选hash、36份派生文件逐字节再生成通过。母版仍 candidate_not_finally_approved，正式品牌发布 blocked；此条仅确认边界被遵守，不代表用户批准Logo。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S02-AC01",
@@ -27,9 +41,16 @@
       "title": "视觉基础和可访问性",
       "scenario": "本轮浅色主题下正文4.5:1、关键图形3:1；禁用有真实 disabled 状态；Tab焦点可见；透明度/动态回退不遮挡输入。本轮浅色主题下主按钮default/hover/pressed符合01状态表且文字对比≥4.5:1；focus外环可见，disabled无悬停/按下反馈；共享Button和实际页面入口均检查，非Mokina及危险/成功语义不变。桌面及390px窄屏的纯图标按钮实际命中区均≥44×44px，邻接点击区不重叠；工具条换行后动作仍可达，不改变图形尺寸或画布内容。",
       "layer": "browser",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "真实首页按钮default/hover/pressed及44px尺寸在1440/1280/390通过；共享Button作用域、禁用和语义例外已接线。全入口命中区重叠、所有文本/图形对比和读屏实测待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S02-AC02",
@@ -37,9 +58,16 @@
       "title": "滚动与隔离",
       "scenario": "相同长对话 fixture 和窗口下对比基线；连续滚动/拖动/输入不出现新增长时间卡顿；性能 trace 同场景无新增超过50ms的重复滚动长任务；Mokina edition off 不改变外观。",
       "layer": "browser+trace",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "edition off浏览器回归通过；玻璃只作用于固定工具区，聊天祖先无新增滤镜/裁切。相同基线fixture的50ms性能trace未执行，不能用功能回归代替。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S03-AC01",
@@ -47,9 +75,16 @@
       "title": "首页持久化失败",
       "scenario": "故障注入首次准备写入失败：附件与目的仍在，重试只使用一个项目；成功交接后才清空。App重启前未保存不能声称可恢复。",
       "layer": "browser+native",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "浏览器故障注入首次准备保存失败、保留附件与目的、同一目标重试通过；App重启持久化链未在新mac候选验证。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S03-AC02",
@@ -57,9 +92,16 @@
       "title": "输入器真实能力",
       "scenario": "上传中不可提前发送；排除有名单和显式确认；重选材料后采用更新；模型/品牌与真实配置一致；中文组合输入及跨会话附件不误发。资料未ready时仅重试准备使用主按钮样式，其余可见动作保留文字并为次级样式；ready无重试按钮；busy/uploadsPending时所有既有禁用条件不变。同时出现提交结果、资料准备、接续恢复时，按此顺序排列；全部提示内容与动作可达，不因排序而改变过滤、禁用或发送行为。首页A图形静态显示，无扫描/淡入/旋转/循环动画，不影响实际加载和创建判断。",
       "layer": "browser+native",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "ready/failed/leave/reload准备门控、重新选择材料、静态首页Logo和资料提示操作回归通过；上传/重试禁用沿原条件。中文组合输入与同包native完整路径待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S04-AC01",
@@ -67,9 +109,16 @@
       "title": "版本与候选",
       "scenario": "从当前→历史→候选依次打开、比较、采用、导出；选定版本内容一致，未采用前不改正式稿；取消无文件。",
       "layer": "browser+native",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "FileViewer修订恢复、候选采用/取消禁用、指定版本缺失保护定向回归通过；同包原生版本→采用→导出→外部打开完整链待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S04-AC02",
@@ -77,9 +126,16 @@
       "title": "布局与焦点",
       "scenario": "1280×720、1440×900和900×600最小桌面窗口（记录实际Web内容区尺寸）可完成修订与导出；弹窗打开焦点进入、Tab不泄漏、Esc关闭且返回触发点；390×844仅作窄屏健壮性检查。修订比较弹窗在900×600及390×844下使用长要求、多条差异和长版本标签：顶部标题/关闭与底部取消/采用持续可见，中间内容可完整滚动且无操作遮挡；键盘能到达两比较区域、全部说明及底部操作；采用中及历史基准的禁用条件保持，切换原稿/候选不丢内容。",
       "layer": "browser",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "长比较弹窗900×600和390×844切换、内部滚动、Tab/Esc及焦点返回通过；1280/1440工作区操作通过。390只验证已打开弹窗窄屏健壮性；完整修订/导出链仍待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S05-AC01",
@@ -87,9 +143,16 @@
       "title": "精确选区与源变化",
       "scenario": "选择DOCX表格前后不连续段落，冻结内容不含未选表格；409时无POST runs，重新读取重选后可固定；旧snapshot保持不变。",
       "layer": "integration+native",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "daemon精确材料、snapshot、409和源变化定向回归通过，snapshot/journal/schema未改；DOCX原生完整选区链待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S05-AC02",
@@ -97,9 +160,16 @@
       "title": "恢复隔离",
       "scenario": "同项目不同会话及两个真实应用窗口恢复；CAS冲突不冒称保存，恢复原目标不复制项目、重开草稿不自动发送，切换身份不串写。",
       "layer": "integration+native",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "daemon CAS/恢复路由、desktop恢复存储与Web草稿隔离回归通过；两个真实应用窗口及旧profile副本未验证。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S05-AC03",
@@ -107,9 +177,16 @@
       "title": "未知拒绝与缺失资产",
       "scenario": "模拟响应丢失、明确拒绝与历史资产缺失：三个状态文案/允许动作不同；未知不重发，拒绝按现有门控重试，缺失导出失败而不换版本。",
       "layer": "browser+native",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "恢复状态/版本缺失保护和旧Cloud错误卡门控定向回归通过；旧Cloud只显示不可用和现有设置入口，本地手动重试保留。响应丢失/缺失资产同包原生现场链待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S06-AC01",
@@ -117,9 +194,16 @@
       "title": "绘画内容保护",
       "scenario": "真实可达入口完成绘画→撤销重做→缩放→保存重开；用户SVG/图片内容不变；Mokina界面图标正确，第三方工具按清单保留。",
       "layer": "browser+native",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "SketchEditor保存、默认色、FileWorkspace和PreviewDrawOverlay回归通过；工具条样式保留引擎图标。完整绘画→撤销重做→缩放→保存重开native链待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S06-AC02",
@@ -127,9 +211,16 @@
       "title": "桌面资源与启动",
       "scenario": "新mac候选的Finder、Dock、splash、关于、DMG同源；断网冷启动品牌可见；Mokina profile选专属资源，上游profile仍用原资源。Mokina启动首帧为静态A图形，无Logo扫描及WebGL依赖；无网络/sidecar延迟仍可见，完成与关闭遵循真实启动状态；上游profile扫描与回退回归保留。",
       "layer": "asset+native",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "同源PNG/ICNS/ICO/iconset尺寸/hash、Mokina静态内联splash、真实启动状态和上游扫描回归通过；Linux不能验证Finder/Dock/DMG/原生关于/断网冷启动。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S07-AC01",
@@ -137,9 +228,16 @@
       "title": "同一候选与签收",
       "scenario": "所有必需AC附同一候选证据；输入失败、旧profile、双窗口、真实品牌、导出外部打开完成；用户视觉/专业签收各有记录。任一缺失则候选待验。",
       "layer": "native+user",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "blocked",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "未生成v0.0.4 macOS安装候选；无DMG/ZIP hash，未做真实旧profile/双窗口/外部打开/业务品牌或用户视觉与专业签收。不得标记整体验收完成。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S04-AC03",
@@ -147,9 +245,16 @@
       "title": "初始空项目引导",
       "scenario": "初始空项目显示约定标题、说明和“填写制作要求”；点击后焦点进入当前项目输入器，已有草稿保持原样，不触发创建项目或发送请求；运行中、未知、失败及仅未选中文件的项目不得误用初始空态。",
       "layer": "browser",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "初始空项目按实际资料/消息/会话门控显示；浏览器点击既有输入器聚焦、草稿保留且无创建/发送通过。失败/未知及未选文件全部分支现场对照待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S04-AC04",
@@ -157,9 +262,16 @@
       "title": "首次制作等待",
       "scenario": "首次制作运行中且无正式成果时显示约定标题和说明，无骨架或虚构百分比；停止仍从现有协作区操作，不重复增加停止/重试按钮、不自动跳焦点；已有正式成果不被等待空态替换。",
       "layer": "browser",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "首次真实运行无正式成果时显示静态等待说明；已有预览路径优先，无新进度状态或重复停止按钮。FileWorkspace既有真实run/预览保护回归通过；新等待分支现场验收待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S02-AC03",
@@ -167,9 +279,16 @@
       "title": "标题与正文角色",
       "scenario": "在1440px、1280px和390px视口核对首页展示标题、普通页面标题、应用控制的成果文档主标题；computed style符合01角色表，长中文标题完整换行，普通页面保持28/36；用户文件及自带样式嵌入内容不被全局标题规则改写。同时核对操作文字14/22、成果正文段落及列表15px/1.9；正文规则不影响用户文件、嵌入内容、代码块和表格。",
       "layer": "browser",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "1440/1280/390首页computed style、标题公式和主操作文字通过；普通标题28/36、应用控制Markdown正文15/1.9已接线。全部文档角色/长中文标题/客户嵌入内容现场对照待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S02-AC04",
@@ -177,9 +296,16 @@
       "title": "辅助技术通知",
       "scenario": "启用VoiceOver验证资料准备到待确认及ready、接续失败和多提示共存：每次实际状态变化只收到简短通知，普通重渲染/排序不重复，错误不被父status与子alert重复播报；详细文件名单仍可访问；新操作再次失败仍通知；切换项目不播报旧项目异步结果，不自动移焦点。另检查DOM角色，但不以DOM检查替代实际读屏证据。",
       "layer": "browser+assistive-technology",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "MokinaLiveStatus去重、身份切换和通知角色单元检查通过；详细资料仍可访问。Linux没有VoiceOver，真实读屏输出未验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     },
     {
       "id": "S07-AC02",
@@ -187,9 +313,18 @@
       "title": "旧产品品牌清理",
       "scenario": "按05逐项核对Mokina冷启动、加载、菜单、设置、关于、错误、离线及崩溃恢复；支持语言及回退文案、窗口标题、tooltip、辅助标签、图形/动画无旧产品品牌。附字符串扫描分类清单与真实Web/native画面；按D14确认Mokina上游Cloud/社区/支持入口均移除，旧Cloud配置有明确不可用说明与现有模型设置入口；本地及自配模型仍可用，不自动切模型或重发，不清空凭据和历史成果。内部协议、用户文件、许可证和上游profile不被批量改写。",
       "layer": "browser+native+asset",
-      "status": "not_run",
-      "evidence": [],
-      "candidate_sha": null
+      "status": "partial",
+      "evidence": [
+        {
+          "record": "../../mokina-v0.0.4/2026-10-08-implementation.md",
+          "scope": "19语言字典和回退文案分类、Web真实入口及上游隔离检查通过；Cloud/社区/支持入口按D14隐藏，旧Cloud不自动换模型/重发、不清凭据。native菜单/离线/崩溃画面待验。"
+        }
+      ],
+      "candidate_sha": null,
+      "source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+      "native_candidate_version": null
     }
-  ]
+  ],
+  "implementation_source_sha": "c79843bafa7a7e2a61f33d81fcd78edf03c7236f",
+  "release_status": "blocked_pending_native_and_user_acceptance"
 }

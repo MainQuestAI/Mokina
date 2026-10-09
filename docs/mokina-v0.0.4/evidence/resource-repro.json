@@ -1,0 +1,8 @@
+{
+  "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+  "status": "pass",
+  "files": 36,
+  "byte_identical": true,
+  "method": "generate again into independent workspace directories and compare every emitted file",
+  "brand_approval": "candidate_not_finally_approved"
+}

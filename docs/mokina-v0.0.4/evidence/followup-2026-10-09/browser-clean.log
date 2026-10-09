@@ -1,0 +1,36 @@
+
+Running 16 tests using 1 worker
+
+(node:8703) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:8703) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/16] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 1 files and 60 characters before explicit send
+[2/16] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 50 files and 65536 characters before explicit send
+[3/16] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 51 files and 65536 characters before explicit send
+[4/16] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 50 files and 65537 characters before explicit send
+[5/16] [chromium] › ui/mokina-cloud-handoff.test.ts:107:1 › [P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh
+[6/16] [chromium] › ui/mokina-cloud-handoff.test.ts:161:1 › [P1] Mokina generated crash page displays every export outcome in Chromium
+[7/16] [chromium] › ui/mokina-cloud-handoff.test.ts:187:3 › [P1] Mokina late MCP catalog preserves new Skill B and connector over old empty context
+[8/16] [chromium] › ui/mokina-cloud-handoff.test.ts:187:3 › [P1] Mokina late MCP catalog preserves new Skill B and connector over old skill-a context
+(node:9423) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:9423) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[9/16] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 1 files and 60 characters before explicit send
+[10/16] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 50 files and 65536 characters before explicit send
+[11/16] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 51 files and 65536 characters before explicit send
+[12/16] [chromium] › ui/mokina-cloud-handoff.test.ts:7:1 › [P1] Mokina legacy Cloud handoff retains 50 files and 65537 characters before explicit send
+[13/16] [chromium] › ui/mokina-cloud-handoff.test.ts:107:1 › [P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh
+[14/16] [chromium] › ui/mokina-cloud-handoff.test.ts:161:1 › [P1] Mokina generated crash page displays every export outcome in Chromium
+[15/16] [chromium] › ui/mokina-cloud-handoff.test.ts:187:3 › [P1] Mokina late MCP catalog preserves new Skill B and connector over old empty context
+[16/16] [chromium] › ui/mokina-cloud-handoff.test.ts:187:3 › [P1] Mokina late MCP catalog preserves new Skill B and connector over old skill-a context
+  16 passed (6.6m)

@@ -22,6 +22,7 @@ import {
 import {
   buildSocialSharePayload,
   OPEN_DESIGN_GITHUB_REPO_URL,
+  MOKINA_GITHUB_REPO_URL,
   workspaceContextHasTeamIdentity,
   type CollabCloudMemberDirectoryEntry,
   type CollabMemberRole,
@@ -3616,6 +3617,7 @@ function FileVersionManagerModal({
   const [downloadMenuVersionId, setDownloadMenuVersionId] = useState<string | null>(null);
   const [candidateCompare, setCandidateCompare] = useState<{ base: ProjectFileVersion; baseHtml: string } | null>(null);
   const [candidateCompareBusy, setCandidateCompareBusy] = useState(false);
+  const candidateCompareTriggerRef = useRef<HTMLButtonElement>(null);
   const [versionExportToast, setVersionExportToast] = useState<ExportToastState | null>(null);
   const [selectedContinuationSections, setSelectedContinuationSections] = useState<string[]>([]);
   const [continuationBackground, setContinuationBackground] = useState('');
@@ -3981,7 +3983,7 @@ function FileVersionManagerModal({
   // panel. The toolbar entry that toggles the panel is excluded so its own
   // toggle keeps working without a close/reopen race.
   useEffect(() => {
-    if (confirmRestore || downloadMenuVersionId) return;
+    if (confirmRestore || downloadMenuVersionId || candidateCompare) return;
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
@@ -3996,7 +3998,7 @@ function FileVersionManagerModal({
     };
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, [onClose, confirmRestore, downloadMenuVersionId]);
+  }, [onClose, confirmRestore, downloadMenuVersionId, candidateCompare]);
 
   useEffect(() => {
     if (!selectedId) {
@@ -4080,6 +4082,10 @@ function FileVersionManagerModal({
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
+      if (candidateCompare) {
+        setCandidateCompare(null);
+        return;
+      }
       if (versionImageExportVersionId) {
         if (!versionImageExportInFlight) setVersionImageExportVersionId(null);
         return;
@@ -4107,6 +4113,7 @@ function FileVersionManagerModal({
     downloadMenuVersionId,
     versionImageExportVersionId,
     versionImageExportInFlight,
+    candidateCompare,
   ]);
 
   useEffect(() => {
@@ -5186,6 +5193,7 @@ function FileVersionManagerModal({
             <button
               type="button"
               className="artifact-version-panel__compare"
+              ref={candidateCompareTriggerRef}
               disabled={candidateCompareBusy}
               onClick={() => { void openCandidateCompare(); }}
             >
@@ -5325,6 +5333,7 @@ function FileVersionManagerModal({
       </aside>
       {candidateCompare && selectedVersion?.candidate && selectedContent ? (
         <MokinaCandidateCompare
+          returnFocusTo={candidateCompareTriggerRef.current}
           baseVersion={candidateCompare.base}
           candidateVersion={selectedVersion}
           baseHtml={candidateCompare.baseHtml}
@@ -16934,10 +16943,11 @@ function HtmlViewer({
     const title = t('socialShare.projectTitle', { title: exportTitle });
     const text = t('socialShare.projectText', {
       title: exportTitle,
-      repo: OPEN_DESIGN_GITHUB_REPO_URL,
+      repo: MOKINA_LOCAL_EDITION ? MOKINA_GITHUB_REPO_URL : OPEN_DESIGN_GITHUB_REPO_URL,
     });
     return {
       kind: 'project-html',
+      ...(MOKINA_LOCAL_EDITION ? { edition: 'mokina' as const } : {}),
       locale,
       url: socialShareDisplayUrl,
       title,
@@ -16945,7 +16955,7 @@ function HtmlViewer({
       copyText: t('socialShare.projectCopyText', {
         title: exportTitle,
         url: socialShareDisplayUrl,
-        repo: OPEN_DESIGN_GITHUB_REPO_URL,
+        repo: MOKINA_LOCAL_EDITION ? MOKINA_GITHUB_REPO_URL : OPEN_DESIGN_GITHUB_REPO_URL,
       }),
     };
   }, [exportTitle, locale, socialShareDisplayUrl, t]);
@@ -21112,7 +21122,7 @@ function MarkdownViewer({
                   {/* Safe by contract: renderMarkdownToSafeHtml escapes raw HTML and rejects unsafe link protocols. */}
                   <article
                     ref={markdownArticleRef}
-                    className="markdown-rendered"
+                    className={`markdown-rendered${MOKINA_LOCAL_EDITION && (file.artifactKind || file.artifactManifest) ? ' mokina-artifact-reader' : ''}`}
                     onClick={(event) => void handleMarkdownBodyClick(event)}
                     dangerouslySetInnerHTML={{ __html: html }}
                   />

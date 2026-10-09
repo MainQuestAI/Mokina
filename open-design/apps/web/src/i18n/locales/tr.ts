@@ -38,6 +38,7 @@ export const tr: Dict = {
   'mokina.pendingSend.discard': "Discard this receipt",
   'mokina.pendingSend.discardNotice': "The server may have accepted it. Discarding only clears the pending confirmation in this browser.",
   'mokina.pendingSend.notRecoverable': "This message is too large to keep a recoverable snapshot; it cannot be auto-restored after a reload.",
+  'mokina.pendingSend.manualOverflow': "This draft exceeds automatic recovery capacity. The full text and all file references remain in this tab. Edit here and send explicitly, or collapse to cancel. Keep this tab open until sent.",
   'mokina.entryChooser.title': "Açılacak çıktıyı seçin",
   'mokina.entryChooser.cancel': "İptal",
   'mokina.entrySummary.loading': "Çıktılar yükleniyor…",
@@ -5620,4 +5621,10 @@ export const tr: Dict = {
   'settings.mokinaConnection.state.networkUnavailable': "Network unavailable",
   'settings.mokinaConnection.state.modelUnavailable': "Model unavailable",
   'settings.mokinaConnection.state.unknown': "State unconfirmed",
+  "mokina.empty.title": "Henüz tamamlanmış sonuç yok",
+  "mokina.empty.description": "Ne yapmak istediğinizi yazın ve başlamak için gönderin.",
+  "mokina.empty.focus": "Gereksinimleri yaz",
+  "mokina.empty.runningTitle": "İlk sonuç hazırlanıyor",
+  "mokina.empty.runningDescription": "Tamamlandığında burada görünecek. İlerlemeyi iş birliği alanından izleyin.",
+  "mokina.model.unavailable": "Bu model Mokina’da kullanılamıyor. Göndermeden önce ayarlardan yerel veya BYOK model seçin.",
 };

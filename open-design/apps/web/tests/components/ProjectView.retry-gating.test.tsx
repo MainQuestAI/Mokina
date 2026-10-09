@@ -9,6 +9,7 @@ import type { ChatPane as ChatPaneComponent } from '../../src/components/ChatPan
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProjectView } from '../../src/components/ProjectView';
+import { loadSendRequestRecords } from '../../src/runtime/chat/send-request-state';
 import { workspaceIdentityCacheKey } from '../../src/collab/workspace-identity';
 import { pendingMokinaSnapshotKey } from '../../src/runtime/mokina/pending-context-snapshot';
 import type { ProjectWorkspaceScopeState } from '../../src/collab/useProjectWorkspaceScope';
@@ -447,8 +448,8 @@ const strandedRunningAssistant: ChatMessage = {
   runStatus: 'running',
 } as ChatMessage;
 
-function renderProjectView(config: AppConfig = localConfig) {
-  return render(
+function projectViewElement(config: AppConfig = localConfig) {
+  return (
     <ProjectView
       project={project}
       routeFileName={null}
@@ -468,8 +469,12 @@ function renderProjectView(config: AppConfig = localConfig) {
       onTouchProject={vi.fn()}
       onProjectChange={vi.fn()}
       onProjectsRefresh={vi.fn()}
-    />,
+    />
   );
+}
+
+function renderProjectView(config: AppConfig = localConfig) {
+  return render(projectViewElement(config));
 }
 
 async function waitForConversation() {
@@ -517,6 +522,174 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
   vi.clearAllMocks();
+});
+
+describe('Mokina legacy Cloud Home handoff requires a fresh explicit send', () => {
+  const prompt = 'saved Cloud draft';
+  const attachments = [{ path: 'uploads/brief.txt', name: 'brief.txt', kind: 'file' as const }];
+  const context = { skillIds: ['skill-1'], mokinaSnapshotId: 'snapshot-1', mokinaSnapshotGeneration: 'generation-1' };
+  function seedHandoff() {
+    conversationMessages = [];
+    window.sessionStorage.setItem('od:auto-send-first:project-1', '1');
+    window.sessionStorage.setItem('od:auto-send-prompt:project-1', prompt);
+    window.sessionStorage.setItem('od:auto-send-attachments:project-1', JSON.stringify(attachments));
+    window.sessionStorage.setItem('od:auto-send-context:project-1', JSON.stringify(context));
+  }
+  it('preserves the whole manual handoff across settings changes and remounts, then permits explicit send', async () => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const view = renderProjectView(amrConfig);
+    await waitForConversation();
+    await waitFor(() => expect(chatSurface.props?.sendRecoveryRequest?.snapshot.prompt).toBe(prompt));
+    const recovery = chatSurface.props!.sendRecoveryRequest!;
+    expect(recovery.snapshot.extras.attachments).toEqual(attachments);
+    expect(recovery.snapshot.extras.context).toMatchObject(context);
+    expect(window.sessionStorage.getItem('od:auto-send-first:project-1')).toBe('manual');
+    const receipts = loadSendRequestRecords(project.id, conversation.id, chatSurface.props?.amrAuthRetryWorkspaceIdentityKey);
+    expect(receipts.find(record => record.clientRequestId === recovery.id)).toMatchObject({ status: 'draft', phase: 'prepared' });
+    view.rerender(projectViewElement(localConfig));
+    await act(async () => { await Promise.resolve(); });
+    expect(streamViaDaemon).not.toHaveBeenCalled(); expect(saveMessage).not.toHaveBeenCalled();
+    view.unmount();
+    renderProjectView(localConfig);
+    await waitForConversation();
+    await waitFor(() => expect(chatSurface.props?.sendRecoveryRequest?.id).toBe(recovery.id));
+    expect(streamViaDaemon).not.toHaveBeenCalled(); expect(saveMessage).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('send-message'));
+    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
+  });
+  it.each([[50, 65536], [51, 65536], [50, 65537]])('keeps %i attachments and %i prompt characters through manual recovery', async (count, length) => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const fullPrompt = 'x'.repeat(length);
+    const files = Array.from({ length: count }, (_, i) => ({ path: `file-${i}.txt`, name: `file-${i}.txt`, kind: 'file' }));
+    window.sessionStorage.setItem('od:auto-send-prompt:project-1', fullPrompt);
+    window.sessionStorage.setItem('od:auto-send-attachments:project-1', JSON.stringify(files));
+    const view = renderProjectView(amrConfig);
+    await waitForConversation();
+    if (count === 50 && length === 65536) {
+      await waitFor(() => expect(chatSurface.props?.sendRecoveryRequest?.snapshot.extras.attachments).toEqual(files));
+      expect(chatSurface.props?.sendRecoveryRequest?.snapshot.prompt).toBe(fullPrompt);
+    } else {
+      await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
+      expect(screen.getByTestId('mokina-manual-handoff')).toHaveTextContent(`file-${count - 1}.txt`);
+      expect(chatSurface.props?.sendRecoveryRequest).toBeNull();
+      view.unmount();
+      // A different ordinary message B is already persisted when A is recovered.
+      conversationMessages = [{ ...userMessage, content: 'Separate ordinary B' }];
+      renderProjectView(localConfig);
+      await waitForConversation();
+      await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
+      expect(streamViaDaemon).not.toHaveBeenCalled();
+      expect(JSON.parse(sessionStorage.getItem('od:auto-send-attachments:project-1')!)).toEqual(files);
+      const send = screen.getByTestId('mokina-manual-handoff-send');
+      fireEvent.click(send); fireEvent.click(send);
+      await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
+      expect(streamViaDaemon.mock.calls[0]![0].history.at(-1).content).toBe(fullPrompt);
+      expect(streamViaDaemon.mock.calls[0]![0].history.at(-1).attachments).toEqual(files);
+    }
+  });
+  it('keeps the full manual recovery editable if saving its scope fails', async () => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const fullPrompt = 'x'.repeat(65537);
+    sessionStorage.setItem('od:auto-send-prompt:project-1', fullPrompt);
+    const setItem = Storage.prototype.setItem;
+    const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function(this: Storage, key, value) {
+      if (this === sessionStorage && key === 'od:auto-send-manual-scope:project-1') throw new Error('quota');
+      return setItem.call(this, key, value);
+    });
+    try {
+      const view = renderProjectView(amrConfig);
+      await waitForConversation();
+      await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
+      expect(sessionStorage.getItem('od:auto-send-first:project-1')).toBe('manual');
+      view.unmount();
+      renderProjectView(localConfig);
+      await waitForConversation();
+      await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
+      expect(streamViaDaemon).not.toHaveBeenCalled();
+      expect(sessionStorage.getItem('od:auto-send-prompt:project-1')).toBe(fullPrompt);
+    } finally { write.mockRestore(); }
+  });
+  it.each(['conversation', 'authority'])('does not rebind a retained Home source to another %s', async mismatch => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    sessionStorage.setItem('od:auto-send-first:project-1', 'manual');
+    const ownerAuthority = workspaceIdentityCacheKey(workspaceScopeMocks.personalContext());
+    sessionStorage.setItem('od:auto-send-manual-scope:project-1', JSON.stringify([
+      project.id, mismatch === 'conversation' ? 'other-conversation' : conversation.id,
+      mismatch === 'authority' ? 'other-authority' : ownerAuthority,
+    ]));
+    const fullPrompt = 'x'.repeat(65537);
+    sessionStorage.setItem('od:auto-send-prompt:project-1', fullPrompt);
+    renderProjectView(localConfig);
+    await waitForConversation();
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.queryByTestId('mokina-manual-handoff')).toBeNull();
+    expect(sessionStorage.getItem('od:auto-send-prompt:project-1')).toBe(fullPrompt);
+    expect(streamViaDaemon).not.toHaveBeenCalled();
+  });
+  it('does not let an older cropped receipt consume a more complete Home source', async () => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const view = renderProjectView(amrConfig);
+    await waitForConversation();
+    await waitFor(() => expect(chatSurface.props?.sendRecoveryRequest?.snapshot.extras.attachments).toEqual(attachments));
+    view.unmount();
+    const full = Array.from({ length: 51 }, (_, i) => ({ path: `file-${i}.txt`, name: `file-${i}.txt`, kind: 'file' }));
+    sessionStorage.setItem('od:auto-send-attachments:project-1', JSON.stringify(full));
+    renderProjectView(localConfig);
+    await waitForConversation();
+    await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff')).toHaveTextContent('file-50.txt'));
+    expect(chatSurface.props?.sendRecoveryRequest).toBeNull();
+    expect(screen.queryByTestId('mokina-pending-send-restore')).toBeNull();
+    expect(JSON.parse(sessionStorage.getItem('od:auto-send-attachments:project-1')!)).toEqual(full);
+    expect(streamViaDaemon).not.toHaveBeenCalled();
+  });
+  it('keeps the original payload and manual gate when durable draft storage fails', async () => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const setItem = Storage.prototype.setItem;
+    const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function(this: Storage, key, value) {
+      if (this === window.localStorage && key.startsWith('od:send-request:')) throw new Error('disk full');
+      return setItem.call(this, key, value);
+    });
+    try {
+      const view = renderProjectView(amrConfig);
+      await waitForConversation();
+      await waitFor(() => expect(chatSurface.props?.error).toBe('mokina.pendingSend.saveFailed'));
+      view.rerender(projectViewElement(localConfig));
+      await act(async () => { await Promise.resolve(); });
+      expect(streamViaDaemon).not.toHaveBeenCalled();
+      expect(window.sessionStorage.getItem('od:auto-send-first:project-1')).toBe('manual');
+      expect(window.sessionStorage.getItem('od:auto-send-prompt:project-1')).toBe(prompt);
+      expect(JSON.parse(window.sessionStorage.getItem('od:auto-send-attachments:project-1')!)).toEqual(attachments);
+    } finally { write.mockRestore(); }
+  });
+  it('does not recreate a paused handoff after the user explicitly discards it', async () => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const view = renderProjectView(amrConfig);
+    await waitForConversation();
+    await waitFor(() => expect(chatSurface.props?.sendRecoveryRequest).toBeTruthy());
+    fireEvent.click(screen.getByTestId('mokina-pending-send-discard'));
+    await waitFor(() => expect(window.sessionStorage.getItem('od:auto-send-first:project-1')).toBeNull());
+    expect(window.sessionStorage.getItem('od:auto-send-prompt:project-1')).toBeNull();
+    view.unmount();
+    renderProjectView(localConfig);
+    await waitForConversation();
+    expect(chatSurface.props?.sendRecoveryRequest).toBeNull();
+    expect(streamViaDaemon).not.toHaveBeenCalled();
+  });
+  it.each([false, true])('retains ordinary local Home auto-send with Mokina=%s', async on => {
+    mokinaEdition.on = on;
+    seedHandoff();
+    renderProjectView(localConfig);
+    await waitForConversation();
+    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
+    expect(streamViaDaemon.mock.calls[0]![0].history.at(-1).content).toBe(prompt);
+  });
 });
 
 describe('OPEND-2821 门控为真时,宿主要说出原因而不是静默吞掉点击', () => {

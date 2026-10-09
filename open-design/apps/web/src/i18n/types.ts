@@ -74,6 +74,7 @@ export interface Dict {
   'mokina.pendingSend.discard': string;
   'mokina.pendingSend.discardNotice': string;
   'mokina.pendingSend.notRecoverable': string;
+  'mokina.pendingSend.manualOverflow': string;
   'homeHero.materialsEntry': string;
   // Workspace invite acceptance (C lane)
   'invite.header.eyebrow': string;
@@ -5911,4 +5912,10 @@ export interface Dict {
   'settings.mokinaConnection.state.networkUnavailable': string;
   'settings.mokinaConnection.state.modelUnavailable': string;
   'settings.mokinaConnection.state.unknown': string;
+  'mokina.empty.title': string;
+  'mokina.empty.description': string;
+  'mokina.empty.focus': string;
+  'mokina.empty.runningTitle': string;
+  'mokina.empty.runningDescription': string;
+  'mokina.model.unavailable': string;
 }

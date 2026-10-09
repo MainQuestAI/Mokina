@@ -1,0 +1,168 @@
+{
+  "source_sha": "76e369e701841e6ecbf725b011146e74b46bc5aa",
+  "stats": {
+    "startTime": "2026-10-08T11:11:11.173Z",
+    "duration": 482093.895,
+    "expected": 21,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "[P1] Mokina T31 home preparation ready gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "status": "passed",
+      "duration_ms": 27909,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation failed gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "status": "passed",
+      "duration_ms": 16191,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation leave gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "status": "passed",
+      "duration_ms": 21869,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina T31 home preparation reload gates the original send",
+      "file": "mokina-input-preparation.test.ts",
+      "status": "passed",
+      "duration_ms": 25764,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina keeps file purpose after reload but requires file reselection",
+      "file": "mokina-input-preparation.test.ts",
+      "status": "failed",
+      "duration_ms": 32377,
+      "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('mokina-missing-inputs')\nExpected substring: \u001b[32m\"kept.csv\"\u001b[39m\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('mokina-missing-inputs')\u001b[22m\n"
+    },
+    {
+      "title": "[P1] Mokina retains staged input when the initial preparation save fails and retries the same target",
+      "file": "mokina-input-preparation.test.ts",
+      "status": "passed",
+      "duration_ms": 10767,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina open-resolution and recent summaries at 1280x720",
+      "file": "mokina-navigation.test.ts",
+      "status": "passed",
+      "duration_ms": 32956,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina open-resolution and recent summaries at 1440x900",
+      "file": "mokina-navigation.test.ts",
+      "status": "passed",
+      "duration_ms": 34501,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina workspace indicator settles without overshoot and respects reduced motion",
+      "file": "mokina-navigation.test.ts",
+      "status": "passed",
+      "duration_ms": 6215,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 1440px",
+      "file": "mokina-navigation.test.ts",
+      "status": "passed",
+      "duration_ms": 6976,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 1280px",
+      "file": "mokina-navigation.test.ts",
+      "status": "passed",
+      "duration_ms": 7065,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina brand, action and title styles at 390px",
+      "file": "mokina-navigation.test.ts",
+      "status": "passed",
+      "duration_ms": 8729,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina empty project focuses its existing composer without writing or sending",
+      "file": "mokina-navigation.test.ts",
+      "status": "passed",
+      "duration_ms": 6545,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina keeps a legacy Cloud choice unavailable until an explicit model change",
+      "file": "mokina-navigation.test.ts",
+      "status": "passed",
+      "duration_ms": 6139,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina long-path materials stay inside the continuation panel at 1280x720",
+      "file": "mokina-workspace-actions.test.ts",
+      "status": "passed",
+      "duration_ms": 13601,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina panel actions remain reachable and preserve drafts at 1280x720",
+      "file": "mokina-workspace-actions.test.ts",
+      "status": "passed",
+      "duration_ms": 10011,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina long-path materials stay inside the continuation panel at 1440x900",
+      "file": "mokina-workspace-actions.test.ts",
+      "status": "passed",
+      "duration_ms": 13759,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina panel actions remain reachable and preserve drafts at 1440x900",
+      "file": "mokina-workspace-actions.test.ts",
+      "status": "passed",
+      "duration_ms": 9627,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina panel explains historical and chapterless action restrictions",
+      "file": "mokina-workspace-actions.test.ts",
+      "status": "passed",
+      "duration_ms": 13217,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina continuation creates an editable fixed-excerpt draft without a run",
+      "file": "mokina-workspace-actions.test.ts",
+      "status": "passed",
+      "duration_ms": 13972,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 900x600",
+      "file": "mokina-workspace-actions.test.ts",
+      "status": "passed",
+      "duration_ms": 7228,
+      "error": ""
+    },
+    {
+      "title": "[P1] Mokina long candidate comparison keeps controls and keyboard reachable at 390x844",
+      "file": "mokina-workspace-actions.test.ts",
+      "status": "passed",
+      "duration_ms": 7583,
+      "error": ""
+    }
+  ],
+  "note": "21 passed, 1 reload timed out while still on startup loading screen. Superseded by final run; failure retained for audit."
+}

@@ -1,3 +1,5 @@
+import { MOKINA_NATIVE_ICON_DATA_URL } from './mokina-brand.js';
+import { mokinaPendingHtml, mokinaCrashHtml } from './mokina-splash.js';
 import { execFile } from "node:child_process";
 import { createHmac, randomBytes } from "node:crypto";
 import { appendFile, mkdir, realpath, stat, writeFile } from "node:fs/promises";
@@ -443,6 +445,7 @@ export type DesktopRuntimeOptions = {
    * distinguishable in the OS window switcher.
    */
   windowTitle?: string;
+  product?: { productId: 'mokina' } | null;
   /**
    * Round-5 (lefarcen P1, mrcfps): lazy re-handshake hook. The runtime
    * calls this when the daemon answers `503 DESKTOP_AUTH_PENDING` so a
@@ -1424,7 +1427,7 @@ export type SplashStageSurface = {
   };
 };
 
-type SplashStageState = { ready: boolean; pending: SplashBootStage | null };
+type SplashStageState = { ready: boolean; pending: SplashBootStage | null; mokina: boolean };
 
 // Per-splash readiness + the latest stage requested before the page finished
 // loading. Keyed weakly so a closed splash is collected without bookkeeping.
@@ -1433,7 +1436,7 @@ const splashStageState = new WeakMap<SplashStageSurface, SplashStageState>();
 function applySplashStage(splash: SplashStageSurface, stage: SplashBootStage): void {
   void splash.webContents
     .executeJavaScript(
-      `window.__odSplashSetStage && window.__odSplashSetStage(${JSON.stringify(splashStagePayload(stage))});`,
+      `window.__odSplashSetStage && window.__odSplashSetStage(${JSON.stringify({ ...splashStagePayload(stage), label: splashStageState.get(splash)?.mokina && stage === "starting" ? "Starting Mokina" : SPLASH_STAGE_LABELS[stage] })});`,
       true,
     )
     .catch(() => undefined);
@@ -1448,8 +1451,8 @@ function applySplashStage(splash: SplashStageSurface, stage: SplashBootStage): v
  * window creation on a cold boot) is silently dropped. The latest stashed
  * stage is replayed once the page reports it has loaded.
  */
-export function registerSplashStageTracking(splash: SplashStageSurface): void {
-  const state: SplashStageState = { ready: false, pending: null };
+export function registerSplashStageTracking(splash: SplashStageSurface, product?: { productId: 'mokina' } | null): void {
+  const state: SplashStageState = { ready: false, pending: null, mokina: product?.productId === 'mokina' };
   splashStageState.set(splash, state);
   splash.webContents.once("did-finish-load", () => {
     state.ready = true;
@@ -1516,7 +1519,7 @@ export function pinNativeAppearanceToLight(): void {
  * once the real app has mounted in the (initially hidden) main window. Frameless
  * + matching size so the reveal swap reads as a single window, never a flash.
  */
-export function createSplashWindow(): SplashWindowHandle {
+export function createSplashWindow(product?: { productId: 'mokina' } | null): SplashWindowHandle {
   // OpenDesign ships light-only (the theme setting was removed), so pin the
   // native appearance before the first window exists. Electron defaults
   // `themeSource` to `system`, which paints the macOS vibrancy glass and the
@@ -1543,8 +1546,8 @@ export function createSplashWindow(): SplashWindowHandle {
   // Arm stage tracking before loadURL so a stage update fired before the
   // page loads is deferred and replayed rather than dropped (see
   // `registerSplashStageTracking`).
-  registerSplashStageTracking(splash);
-  void splash.loadURL(createPendingHtml());
+  registerSplashStageTracking(splash, product);
+  void splash.loadURL(product?.productId === 'mokina' ? mokinaPendingHtml() : createPendingHtml());
   return { startedAt, window: splash };
 }
 
@@ -1552,9 +1555,14 @@ function resolveDesktopIconPath(): string {
   return resolve(dirname(fileURLToPath(import.meta.url)), "../../../web/public/app-icon.png");
 }
 
-function applyDockIcon(): void {
+function resolveDesktopIcon(product?: { productId: 'mokina' } | null) {
+  return product?.productId === 'mokina' ? nativeImage.createFromDataURL(MOKINA_NATIVE_ICON_DATA_URL) : resolveDesktopIconPath();
+}
+
+function applyDockIcon(product?: { productId: 'mokina' } | null): void {
   if (process.platform !== "darwin" || !app.dock) return;
-  const icon = nativeImage.createFromPath(resolveDesktopIconPath());
+  const resource = resolveDesktopIcon(product);
+  const icon = typeof resource === 'string' ? nativeImage.createFromPath(resource) : resource;
   if (icon.isEmpty()) return;
   app.dock.setIcon(icon);
 }
@@ -2023,7 +2031,7 @@ async function showDirectoryPickerForSender(
 
 export async function createDesktopRuntime(options: DesktopRuntimeOptions): Promise<DesktopRuntime> {
   const preloadPath = options.preloadPath ?? join(dirname(fileURLToPath(import.meta.url)), "preload.cjs");
-  applyDockIcon();
+  applyDockIcon(options.product);
 
   // ipcMain.handle() registers a handler in an internal map that is *not*
   // surfaced via eventNames(); the previous `!eventNames().includes(...)`
@@ -2252,7 +2260,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
   const windowTitle = options.windowTitle ?? "Mokina";
   const window = new BrowserWindow({
     height: 900,
-    icon: resolveDesktopIconPath(),
+    icon: resolveDesktopIcon(options.product),
     // Below this size the project page's left/right split (chat
     // composer + designs panel + preview pane) overlaps and the top
     // navigation clips, so prevent Electron from honoring user drags
@@ -2858,7 +2866,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
   let splash: BrowserWindow | null = options.splashWindow ?? null;
   let splashStartedAt = options.splashStartedAt ?? Date.now();
   if (splash == null) {
-    const created = createSplashWindow();
+    const created = createSplashWindow(options.product);
     splash = created.window;
     splashStartedAt = created.startedAt;
   }
@@ -2950,7 +2958,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
     pendingUrl = null;
     void window
       .loadURL(
-        createRendererCrashHtml({
+        options.product?.productId === 'mokina' ? mokinaCrashHtml() : createRendererCrashHtml({
           appVersion: app.getVersion(),
           platform: process.platform,
           osVersion: release(),

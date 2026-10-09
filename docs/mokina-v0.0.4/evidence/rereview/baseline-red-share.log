@@ -1,0 +1,35 @@
+
+ RUN  v4.1.6 /workspace/Mokina/open-design/packages/contracts
+
+ ❯ tests/social-share.test.ts (4 tests | 2 failed) 11ms
+   × keeps Mokina repository identity and user content in en platform targets 6ms
+   × keeps Mokina repository identity and user content in zh-CN platform targets 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/social-share.test.ts > keeps Mokina repository identity and user content in en platform targets
+ FAIL  tests/social-share.test.ts > keeps Mokina repository identity and user content in zh-CN platform targets
+AssertionError: expected 'https://github.com/nexu-io/open-design' to be 'https://github.com/MainQuestAI/Mokina' // Object.is equality
+
+Expected: "https://github.com/MainQuestAI/Mokina"
+Received: "https://github.com/nexu-io/open-design"
+
+ ❯ tests/social-share.test.ts:47:33
+     45|   expect(payload.title).toBe(title);
+     46|   expect(payload.url).toBe(url);
+     47|   expect(payload.githubRepoUrl).toBe('https://github.com/MainQuestAI/M…
+       |                                 ^
+     48|   expect(payload.text).toContain('Mokina');
+     49|   expect(payload.copyText).toContain(payload.githubRepoUrl);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  16:05:10
+   Duration  195ms (transform 46ms, setup 0ms, import 58ms, tests 11ms, environment 0ms)
+
+undefined
+/workspace/Mokina/open-design/packages/contracts:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/social-share.test.ts

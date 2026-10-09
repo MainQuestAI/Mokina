@@ -105,6 +105,7 @@ import {
 import type { Dict } from "../i18n/types";
 import { agentDisplayName, agentIconId, exactAgentDisplayName } from "../utils/agentLabels";
 import { AgentIcon } from "./AgentIcon";
+import { MokinaBrand } from "./mokina/MokinaBrand";
 import { filterImplicitProducedFiles } from "../produced-files";
 import type {
   AgentEvent,
@@ -898,6 +899,8 @@ function AssistantMessageImpl({
     | Extract<AgentEvent, { kind: "usage" }>
     | undefined;
   const roleName = assistantRoleName(message, t);
+  const isProductAssistant = MOKINA_LOCAL_EDITION && !message.agentId && !message.agentName
+    && !message.events?.some(event => event.kind === "status" && event.label === "starting" && event.detail);
   const roleIconId = agentIconId(message.agentId, message.agentName);
   const hasEmptyResponse = events.some(
     (e) => e.kind === "status" && e.label === "empty_response"
@@ -1306,8 +1309,8 @@ function AssistantMessageImpl({
     >
       {showRole ? (
         <div className="role" data-testid="assistant-role">
-          <AgentIcon id={roleIconId} size={20} className="role-agent-icon" />
-          <span className="role-name">{roleName}</span>
+          {isProductAssistant ? <MokinaBrand size={20} /> : <AgentIcon id={roleIconId} size={20} className="role-agent-icon" />}
+          <span className="role-name">{isProductAssistant ? "Mokina" : roleName}</span>
         </div>
       ) : null}
       <div className="assistant-flow" data-testid="assistant-flow">

@@ -1,6 +1,26 @@
 import type { Dict } from '../types';
 
 export const hu: Dict = {
+  "mokina.pages.newWork": "Új munka kezdése",
+  "mokina.pages.readFailed": "Olvasási hiba",
+  "mokina.pages.homeTitle": "Min szeretne ma dolgozni?",
+  "mokina.pages.homeSubtitle": "Az elemzéstől a tervig haladjon előre a munkában.",
+  "mokina.pages.start": "Munka indítása",
+  "mokina.pages.projects": "Projektek",
+  "mokina.pages.subtitle": "Tekintse át az eredményeket, az előrehaladást és a forrásokat.",
+  "mokina.pages.empty": "Hozzon létre projektet az első feladathoz.",
+  "mokina.pages.recent": "Legutóbbi",
+  "mokina.pages.all": "Összes",
+  "mokina.pages.scene": "Felhasználás",
+  "mokina.pages.status": "Állapot",
+  "mokina.pages.source": "Rögzített forrás",
+  "mokina.pages.unclassified": "Besorolatlan",
+  "mokina.pages.noSource": "Nincs rögzített forrás",
+  "mokina.pages.unknown": "Ismeretlen",
+  "mokina.pages.open": "Megnyitás",
+  "mokina.pages.materials": "Anyagok",
+  "mokina.pages.reading": "Olvasás",
+
   'mokina.runEvidence.receiptReadFailed': "Failed to read the run receipt.",
   'mokina.runEvidence.transmissionOnly': "Submitted confirms transmission only, not model adoption.",
   'mokina.repair.reselectFiles': "File entries and purposes were kept, but their bytes could not be restored. Select the files again or explicitly exclude them before sending.",

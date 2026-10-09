@@ -1,6 +1,26 @@
 import type { Dict } from '../types';
 
 export const th: Dict = {
+  "mokina.pages.newWork": "เริ่มงานใหม่",
+  "mokina.pages.readFailed": "อ่านไม่สำเร็จ",
+  "mokina.pages.homeTitle": "วันนี้อยากทำงานอะไรต่อ?",
+  "mokina.pages.homeSubtitle": "เดินหน้างานตั้งแต่การวิเคราะห์จนถึงแผนงาน",
+  "mokina.pages.start": "เริ่มงาน",
+  "mokina.pages.projects": "โครงการ",
+  "mokina.pages.subtitle": "ดูผลลัพธ์ ความคืบหน้า และแหล่งข้อมูลของงาน",
+  "mokina.pages.empty": "สร้างโครงการเพื่อเริ่มงานแรกของคุณ",
+  "mokina.pages.recent": "ล่าสุด",
+  "mokina.pages.all": "ทั้งหมด",
+  "mokina.pages.scene": "การใช้งาน",
+  "mokina.pages.status": "สถานะ",
+  "mokina.pages.source": "แหล่งข้อมูลที่ตรึง",
+  "mokina.pages.unclassified": "ยังไม่จัดหมวดหมู่",
+  "mokina.pages.noSource": "ไม่มีแหล่งข้อมูลที่ตรึง",
+  "mokina.pages.unknown": "ไม่ทราบ",
+  "mokina.pages.open": "เปิด",
+  "mokina.pages.materials": "เอกสาร",
+  "mokina.pages.reading": "อ่าน",
+
   'mokina.runEvidence.receiptReadFailed': "Failed to read the run receipt.",
   'mokina.runEvidence.transmissionOnly': "Submitted confirms transmission only, not model adoption.",
   'mokina.repair.reselectFiles': "File entries and purposes were kept, but their bytes could not be restored. Select the files again or explicitly exclude them before sending.",

@@ -1,6 +1,26 @@
 import type { Dict } from '../types';
 
 export const de: Dict = {
+  "mokina.pages.newWork": "Neue Arbeit beginnen",
+  "mokina.pages.readFailed": "Lesen fehlgeschlagen",
+  "mokina.pages.homeTitle": "Woran möchten Sie heute arbeiten?",
+  "mokina.pages.homeSubtitle": "Von der Analyse bis zum Plan: Bringen Sie Ihre Arbeit voran.",
+  "mokina.pages.start": "Arbeit beginnen",
+  "mokina.pages.projects": "Projekte",
+  "mokina.pages.subtitle": "Ergebnisse, Fortschritt und Quellen Ihrer Arbeit prüfen.",
+  "mokina.pages.empty": "Erstellen Sie ein Projekt für Ihre erste Aufgabe.",
+  "mokina.pages.recent": "Zuletzt",
+  "mokina.pages.all": "Alle",
+  "mokina.pages.scene": "Anwendung",
+  "mokina.pages.status": "Status",
+  "mokina.pages.source": "Fixierte Quelle",
+  "mokina.pages.unclassified": "Nicht klassifiziert",
+  "mokina.pages.noSource": "Keine fixierte Quelle",
+  "mokina.pages.unknown": "Unbekannt",
+  "mokina.pages.open": "Öffnen",
+  "mokina.pages.materials": "Materialien",
+  "mokina.pages.reading": "Lesen",
+
   'mokina.runEvidence.receiptReadFailed': "Failed to read the run receipt.",
   'mokina.runEvidence.transmissionOnly': "Submitted confirms transmission only, not model adoption.",
   'mokina.repair.reselectFiles': "File entries and purposes were kept, but their bytes could not be restored. Select the files again or explicitly exclude them before sending.",

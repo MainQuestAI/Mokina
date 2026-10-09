@@ -1,6 +1,26 @@
 import type { Dict } from "../types";
 
 export const zhTW: Dict = {
+  "mokina.pages.newWork": "開始新工作",
+  "mokina.pages.readFailed": "讀取失敗",
+  "mokina.pages.homeTitle": "今天想推進什麼工作？",
+  "mokina.pages.homeSubtitle": "從分析、方案到交付，讓每一步工作有依據。",
+  "mokina.pages.start": "開始工作",
+  "mokina.pages.projects": "專案",
+  "mokina.pages.subtitle": "繼續手上的工作，查看成果、進度與來源。",
+  "mokina.pages.empty": "建立專案，開始你的第一項工作。",
+  "mokina.pages.recent": "最近",
+  "mokina.pages.all": "全部",
+  "mokina.pages.scene": "場景",
+  "mokina.pages.status": "狀態",
+  "mokina.pages.source": "固定來源",
+  "mokina.pages.unclassified": "未分類",
+  "mokina.pages.noSource": "無固定來源",
+  "mokina.pages.unknown": "狀態未知",
+  "mokina.pages.open": "開啟",
+  "mokina.pages.materials": "資料",
+  "mokina.pages.reading": "閱讀",
+
   'mokina.runEvidence.receiptReadFailed': "執行依據讀取失敗。",
   'mokina.runEvidence.transmissionOnly': "已提交僅證明資料已傳輸，不代表模型已採納。",
   'mokina.repair.reselectFiles': "文件条目和用途已保留，但未恢复文件内容。请重新选择文件或明确排除后再发送。",

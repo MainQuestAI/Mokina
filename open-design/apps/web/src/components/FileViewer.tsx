@@ -6,7 +6,8 @@ import { Button, Input, Select } from '@open-design/components';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import mokinaActionStyles from './MokinaArtifactActions.module.css';
 
-type MokinaActionRequest = { action: 'revision' | 'continue' };
+type MokinaActionRequest = { action: 'versions' | 'revision' | 'continue' };
+import { MokinaTaskSection } from './mokina/MokinaTaskSection';
 import {
   getLatestHostPreviewNavigationFailure,
   subscribeHostPreviewNavigationFailure,
@@ -3560,6 +3561,7 @@ function normalizeDeckVisualSource(source: string): string {
 }
 
 function FileVersionManagerModal({
+  portalHost,
   projectId,
   projectKind,
   file,
@@ -3578,6 +3580,7 @@ function FileVersionManagerModal({
   onRestored,
   viewerOnly = false,
 }: {
+  portalHost?: HTMLElement | null;
   projectId: string;
   projectKind: TrackingProjectKind;
   file: ProjectFile;
@@ -3771,8 +3774,7 @@ function FileVersionManagerModal({
   }, [versions]);
   const selectedVersion =
     (selectedId ? versionById.get(selectedId) : undefined) ??
-    versions.find((version) => version.current) ??
-    versions[0] ??
+    (initialVersionId ? null : versions.find((version) => version.current) ?? versions[0]) ??
     null;
   const versionCountLabel = versions.length === 1
     ? t('fileViewer.versions.countOne')
@@ -3841,21 +3843,22 @@ function FileVersionManagerModal({
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [continuationPanelAvailable, projectId]);
+  const mokinaTask = MOKINA_LOCAL_EDITION ? (actionRequest?.action ?? 'versions') : 'versions';
   const revisionSectionRef = useRef<HTMLElement>(null);
   const continuationSectionRef = useRef<HTMLElement>(null);
   const actionStatusRef = useRef<HTMLParagraphElement>(null);
   const handledActionRef = useRef<MokinaActionRequest | null>(null);
-  const actionUnavailable = !selectedVersion
+  const actionUnavailable = mokinaTask === 'versions' ? null : !selectedVersion
     ? t('fileViewer.mokina.unavailableNoVersions')
     : !selectedContentMatchesVersion
       ? t('fileViewer.mokina.unavailableReadFailed')
       : continuationSections.length === 0
         ? t('fileViewer.mokina.unavailableNoSections')
-        : actionRequest?.action === 'revision' && !selectedVersion.current
+        : actionRequest?.action === 'revision' && !selectedVersion.current && !selectedVersion.candidate
           ? t('fileViewer.mokina.unavailableRevisionCurrent')
           : null;
   useEffect(() => {
-    if (!actionRequest || handledActionRef.current === actionRequest || loading
+    if (!actionRequest || actionRequest.action === 'versions' || handledActionRef.current === actionRequest || loading
       || (selectedVersion && !selectedContentMatchesVersion)) return;
     const target = actionUnavailable ? actionStatusRef.current
       : actionRequest.action === 'revision' ? revisionSectionRef.current : continuationSectionRef.current;
@@ -4811,14 +4814,16 @@ function FileVersionManagerModal({
     <>
       <aside
         className="artifact-version-panel"
+        data-mokina-task={MOKINA_LOCAL_EDITION ? mokinaTask : undefined}
+        data-inline={MOKINA_LOCAL_EDITION && portalHost ? true : undefined}
         role="dialog"
-        aria-label={t('fileViewer.versions.title')}
+        aria-label={t(mokinaTask === 'revision' ? 'fileViewer.mokina.actionRevision' : mokinaTask === 'continue' ? 'fileViewer.mokina.actionContinue' : 'fileViewer.versions.title')}
       >
         <header className="artifact-version-panel__head">
           {/* Title first, the 历史版本·N count as a subline under it. */}
           <div>
-            <strong title={panelFileName}>{panelFileName}</strong>
-            <p>{`${t('fileViewer.versions.entryFull')} · ${versionCountLabel}`}</p>
+            {MOKINA_LOCAL_EDITION ? <h1>{t(mokinaTask === 'revision' ? 'fileViewer.mokina.actionRevision' : mokinaTask === 'continue' ? 'fileViewer.mokina.actionContinue' : 'fileViewer.versions.entryFull')}</h1> : <strong title={panelFileName}>{panelFileName}</strong>}
+            <p>{MOKINA_LOCAL_EDITION ? `${panelFileName} · ${versionCountLabel}` : `${t('fileViewer.versions.entryFull')} · ${versionCountLabel}`}</p>
           </div>
           <div className="artifact-version-panel__head-actions">
             <button
@@ -4845,11 +4850,11 @@ function FileVersionManagerModal({
         {MOKINA_LOCAL_EDITION ? (
           <div className={mokinaActionStyles.context}>
             <div className={mokinaActionStyles.actions} role="group" aria-label={t('fileViewer.mokina.actionGroupAria')}>
-              {(['revision', 'continue'] as const).map(action => (
+              {(['versions', 'revision', 'continue'] as const).map(action => (
                 <Button key={action} variant="ghost" disabled={viewerOnly}
                   title={viewerOnly ? t('fileViewer.readonlySharedNoExport') : undefined}
-                  onClick={() => onActionRequest({ action })}>
-                  {action === 'revision' ? t('fileViewer.mokina.actionRevision') : t('fileViewer.mokina.actionContinue')}
+                  aria-pressed={mokinaTask === action} onClick={() => onActionRequest({ action })}>
+                  {action === 'versions' ? t('fileViewer.versions.title') : action === 'revision' ? t('fileViewer.mokina.actionRevision') : t('fileViewer.mokina.actionContinue')}
                 </Button>
               ))}
             </div>
@@ -4870,6 +4875,10 @@ function FileVersionManagerModal({
           </div>
         ) : null}
         <div className={MOKINA_LOCAL_EDITION ? mokinaActionStyles.body : mokinaActionStyles.passthrough}>
+        {error ? (
+          <p className="artifact-version-panel__note" role="alert">{error}</p>
+        ) : null}
+        <MokinaTaskSection name="versions" active={!MOKINA_LOCAL_EDITION || mokinaTask === 'versions'}>
         <div className="artifact-version-panel__preview">
           {srcDoc ? (
             <iframe
@@ -4896,9 +4905,7 @@ function FileVersionManagerModal({
             </div>
           ) : null}
         </div>
-        {error ? (
-          <p className="artifact-version-panel__note" role="alert">{error}</p>
-        ) : null}
+
         {showSearch ? (
           <div className="file-version-search">
             <RemixIcon name="search-line" size={14} />
@@ -5009,6 +5016,8 @@ function FileVersionManagerModal({
             })
           )}
         </div>
+        </MokinaTaskSection>
+        <MokinaTaskSection name="revision" active={!MOKINA_LOCAL_EDITION || mokinaTask === 'revision'}>
         {continuationSections.length > 0 && selectedVersion?.current ? (
           <section ref={revisionSectionRef} tabIndex={-1} className="artifact-version-panel__continuation artifact-version-panel__continuation--revision" aria-label={t('fileViewer.mokina.revisionSectionAria')}>
             <strong>{t('fileViewer.mokina.revisionTitle')}</strong>
@@ -5021,7 +5030,7 @@ function FileVersionManagerModal({
             <textarea value={revisionRequest} disabled={viewerOnly || revisionBusy}
               onChange={event => setRevisionRequest(event.target.value)}
               placeholder={t('fileViewer.mokina.revisionRequestPlaceholder')} aria-label={t('fileViewer.mokina.revisionRequestAria')} />
-            <button type="button" disabled={viewerOnly || revisionBusy || revisionAbandonBusy || !revisionRecoveryLoaded
+            <button type="button" className={MOKINA_LOCAL_EDITION ? 'primary' : undefined} disabled={viewerOnly || revisionBusy || revisionAbandonBusy || !revisionRecoveryLoaded
               || Boolean(pendingRevisionJob) || !revisionSectionId || !revisionRequest.trim()}
               onClick={() => { void generateChapterCandidate(); }}>
               {revisionBusy ? t('fileViewer.mokina.generatingCandidate') : t('fileViewer.mokina.generateCandidate')}
@@ -5056,10 +5065,13 @@ function FileVersionManagerModal({
             {revisionProgress ? <p role="status">{revisionProgress}</p> : null}
           </section>
         ) : null}
+        </MokinaTaskSection>
+        <MokinaTaskSection name="continue" active={!MOKINA_LOCAL_EDITION || mokinaTask === 'continue'}>
         {continuationSections.length > 0 && selectedVersion ? (
           <section ref={continuationSectionRef} tabIndex={-1} className="artifact-version-panel__continuation" aria-label={t('fileViewer.mokina.continuationSectionAria')}>
             <strong>{t('fileViewer.mokina.continuationTitle')}</strong>
             <p>{t('fileViewer.mokina.continuationIntro', { version: selectedVersion.version })}</p>
+            <div className="mokina-continuation-form">
             {continuationSections.map((section) => (
               <label key={section.id}>
                 <input
@@ -5092,6 +5104,14 @@ function FileVersionManagerModal({
                 <span>{t('fileViewer.mokina.intentLanding')}</span>
               </label>
             </fieldset>
+            <textarea
+              value={continuationBackground}
+              onChange={(event) => setContinuationBackground(event.target.value)}
+              placeholder={t('fileViewer.mokina.continuationBackgroundPlaceholder')}
+              aria-label={t('fileViewer.mokina.continuationBackgroundAria')}
+            />
+            </div>
+            <aside className="mokina-continuation-confirmation">
             {continuationAssetCandidates.length > 0 ? (
               <fieldset className="artifact-version-panel__continuation-assets">
                 <legend>{t('fileViewer.mokina.continuationAssets')}</legend>
@@ -5175,20 +5195,21 @@ function FileVersionManagerModal({
                 chars: continuationBrandPreview.chars.toLocaleString(),
               })}</small>
             ) : null}
-            <textarea
-              value={continuationBackground}
-              onChange={(event) => setContinuationBackground(event.target.value)}
-              placeholder={t('fileViewer.mokina.continuationBackgroundPlaceholder')}
-              aria-label={t('fileViewer.mokina.continuationBackgroundAria')}
-            />
-            <button type="button" disabled={viewerOnly || continuationBusy || selectedContinuationSections.length === 0}
+              <h2>{t('fileViewer.mokina.createContinuation')}</h2>
+              <p>{panelFileName} · v{selectedVersion.version}</p>
+              <ul>{selectedContinuationSections.map(id => <li key={id}>{continuationSections.find(section => section.id === id)?.text.slice(0, 120) ?? id}</li>)}</ul>
+              {continuationBrandPreview ? <p>{continuationBrandPreview.title}</p> : null}
+              <ul>{continuationAssets.map(asset => <li key={asset.name}>{asset.name} · {asset.usageNote}</li>)}</ul>
+            <button type="button" className={MOKINA_LOCAL_EDITION ? 'primary' : undefined} disabled={viewerOnly || continuationBusy || selectedContinuationSections.length === 0}
               onClick={() => { void continueFromSelectedSections(); }}>
               {continuationBusy ? t('fileViewer.mokina.creating') : t('fileViewer.mokina.createContinuation')}
             </button>
+            </aside>
           </section>
         ) : null}
+        </MokinaTaskSection>
         </div>
-        <footer className="artifact-version-panel__foot">
+        <footer className="artifact-version-panel__foot" hidden={MOKINA_LOCAL_EDITION && mokinaTask !== 'versions' && !(mokinaTask === 'revision' && selectedVersion?.candidate)}>
           {selectedVersion?.candidate ? (
             <button
               type="button"
@@ -5202,6 +5223,7 @@ function FileVersionManagerModal({
           ) : null}
           <button
             type="button"
+            hidden={MOKINA_LOCAL_EDITION && mokinaTask !== 'versions'}
             className={`artifact-version-panel__restore${confirmRestore ? ' active' : ''}`}
             disabled={restoreDisabled}
             title={viewerOnly ? t('fileViewer.readonlySharedNoExport') : undefined}
@@ -5223,6 +5245,7 @@ function FileVersionManagerModal({
           </button>
           <button
             type="button"
+            hidden={MOKINA_LOCAL_EDITION && mokinaTask !== 'versions'}
             className="artifact-version-panel__download"
             aria-haspopup="menu"
             aria-expanded={Boolean(selectedVersion) && downloadMenuVersionId === selectedVersion?.id}
@@ -5425,7 +5448,7 @@ function FileVersionManagerModal({
         />
       ) : null}
     </>,
-    document.body,
+    MOKINA_LOCAL_EDITION && portalHost ? portalHost : document.body,
   );
 }
 
@@ -8984,7 +9007,8 @@ function HtmlViewer({
   const [versionModalOpen, setVersionModalOpen] = useState<false | 'toolbar' | 'more_menu'>(false);
   const [pinnedOpenVersionId, setPinnedOpenVersionId] = useState<string | undefined>();
   useEffect(() => {
-    if (!versionOpenRequest || !workspaceActive) return;
+    if (!versionOpenRequest) { setPinnedOpenVersionId(undefined); return; }
+    if (!workspaceActive) return;
     const controller = new AbortController();
     const pinTarget = () => { setPinnedOpenVersionId(versionOpenRequest.id); setVersionModalOpen('toolbar'); };
     void enqueueMokinaMetadataRead(readSignal => fetchProjectFileVersions(projectId, file.name, workspaceContext,
@@ -19106,6 +19130,7 @@ function HtmlViewer({
           BROWSING versions (recvq56vFjQKfT). */}
       {workspaceActive && versionModalOpen && versioningAvailable && typeof document !== 'undefined' ? (
         <FileVersionManagerModal
+          portalHost={viewerRootRef.current?.closest<HTMLElement>('[data-testid="file-workspace"]')}
           projectId={projectId}
           projectKind={projectKind}
           file={file}

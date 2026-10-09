@@ -62,6 +62,11 @@ describe('parseRoute / buildPath (issue #1505)', () => {
     expect(buildPath(route)).toBe('/projects/p-1/conversations/conv-abc');
   });
 
+  it('retains the conversation while opening a fixed historical version', () => {
+    const route: Route = { kind: 'project', projectId: 'p1', conversationId: 'c1', versionId: 'v1', fileName: 'nested/方案.html' };
+    expect(roundTrip(route)).toEqual(route);
+  });
+
   it('round-trips a project + conversation + file route', () => {
     const route: Route = {
       kind: 'project',
@@ -121,4 +126,9 @@ describe('parseRoute / buildPath (issue #1505)', () => {
     expect(roundTrip({ kind: 'collab-demo', projectId: null })).toEqual({ kind: 'collab-demo', projectId: null });
     expect(roundTrip({ kind: 'collab-demo', projectId: 'p-9' })).toEqual({ kind: 'collab-demo', projectId: 'p-9' });
   });
+});
+
+it('round-trips a fixed source without dropping its historical version or nested file', () => {
+  const route: Route = { kind: 'project', projectId: '来源项目', fileName: '成果/方案 #1.html', versionId: 'v/old #1' };
+  expect(parseRoute(buildPath(route))).toEqual(route);
 });

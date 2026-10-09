@@ -1,3 +1,4 @@
+import { MokinaProjectShell } from './components/mokina/MokinaProjectShell';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { AnimatePresence, motion, MotionConfig } from 'motion/react';
@@ -976,6 +977,8 @@ export function App() {
 
 function AppInner() {
   const { t } = useI18n();
+  const projectReadTranslateRef = useRef(t);
+  projectReadTranslateRef.current = t;
   const iframeKeepAlivePool = useIframeKeepAlivePool();
   const clientType = useMemo(() => detectClientType(), []);
   const hostPlatform = useMemo(() => getOpenDesignHost()?.client.platform, []);
@@ -1421,6 +1424,7 @@ function AppInner() {
   }, []);
   const [dsLoading, setDsLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
+  const [projectsReadError, setProjectsReadError] = useState<string | null>(null);
   const [promptTemplatesLoading, setPromptTemplatesLoading] = useState(true);
   // Goes true once the daemon-persisted config (agentId/designSystemId/etc.)
   // has merged into local state. Auto-selection effects below wait on this
@@ -1504,6 +1508,7 @@ function AppInner() {
           ));
     projectListScopeRef.current = currentProjectListScope;
     projectDisplayKeyRef.current = currentProjectDisplayKey;
+    setProjectsReadError(null);
     if (snapshot) {
       const snapshotIds = new Set(snapshot.projects.map((project) => project.id));
       const preserved = pendingProjects.filter((project) => !snapshotIds.has(project.id));
@@ -1620,6 +1625,12 @@ function AppInner() {
       workspaceView: effectiveView,
     };
   }, []);
+
+  const isCurrentProjectListRequest = useCallback((request: ProjectListRequest) =>
+    request.accountGeneration === currentWorkspaceAccountGeneration()
+    && request.scopeKey === projectListScopeKey(workspaceContextRef.current)
+    && request.displayKey === projectDisplayKeyRef.current
+    && request.generation === projectListRequestGenerationRef.current, []);
 
   const reconcileFetchedProjects = useCallback((list: Project[], request: ProjectListRequest) => {
     if (
@@ -2146,6 +2157,7 @@ function AppInner() {
       if (cancelled) return;
       setDaemonLive(alive);
       if (!alive) {
+        setProjectsReadError(projectReadTranslateRef.current('mokina.pages.readFailed'));
         // No daemon — clear every loading flag so empty states render
         // instead of the entry view sitting on indefinite spinners.
         setAgentsLoading(false);
@@ -2257,12 +2269,12 @@ function AppInner() {
 
       const request = beginProjectListRequest(workspaceProjectViewRef.current);
       void listCurrentWorkspaceProjects({
-        workspaceView: workspaceProjectViewRef.current,
+        workspaceView: workspaceProjectViewRef.current, throwOnError: true,
       }).then((list) => {
         if (cancelled) return;
-        reconcileFetchedProjects(list, request);
-        setProjectsLoading(false);
-      });
+        if (reconcileFetchedProjects(list, request)) setProjectsReadError(null);
+      }).catch(() => { if (!cancelled && isCurrentProjectListRequest(request)) setProjectsReadError(projectReadTranslateRef.current('mokina.pages.readFailed')); })
+        .finally(() => { if (!cancelled && isCurrentProjectListRequest(request)) setProjectsLoading(false); });
 
       void listTemplates().then((list) => {
         if (cancelled) return;
@@ -2498,16 +2510,18 @@ function AppInner() {
     const request = beginProjectListRequest(workspaceProjectView);
     const list = await listCurrentWorkspaceProjects({ workspaceView: workspaceProjectView });
     reconcileFetchedProjects(list, request);
-  }, [beginProjectListRequest, listCurrentWorkspaceProjects, reconcileFetchedProjects, workspaceProjectView]);
+  }, [beginProjectListRequest, listCurrentWorkspaceProjects, reconcileFetchedProjects, isCurrentProjectListRequest, workspaceProjectView]);
 
   const refreshProjectsStrict = useCallback(async () => {
     const request = beginProjectListRequest(workspaceProjectView);
-    const list = await listCurrentWorkspaceProjects({
-      throwOnError: true,
-      workspaceView: workspaceProjectView,
-    });
-    reconcileFetchedProjects(list, request);
-  }, [beginProjectListRequest, listCurrentWorkspaceProjects, reconcileFetchedProjects, workspaceProjectView]);
+    try {
+      const list = await listCurrentWorkspaceProjects({ throwOnError: true, workspaceView: workspaceProjectView });
+      if (reconcileFetchedProjects(list, request)) setProjectsReadError(null);
+    } catch (cause) {
+      if (isCurrentProjectListRequest(request)) setProjectsReadError(projectReadTranslateRef.current('mokina.pages.readFailed'));
+      throw cause;
+    }
+  }, [beginProjectListRequest, listCurrentWorkspaceProjects, reconcileFetchedProjects, isCurrentProjectListRequest, workspaceProjectView]);
 
   const refreshProjectsAfterTeamCatalogChange = useCallback(() => {
     const context = workspaceContextRef.current;
@@ -2550,7 +2564,7 @@ function AppInner() {
             throwOnError: true,
             workspaceView: effectiveWorkspaceProjectView,
           });
-          if (!cancelled) reconcileFetchedProjects(list, request);
+          if (!cancelled && reconcileFetchedProjects(list, request)) setProjectsReadError(null);
           return;
         } catch (err) {
           if (cancelled) return;
@@ -2565,6 +2579,7 @@ function AppInner() {
             await new Promise((resolve) => setTimeout(resolve, 1200));
             continue;
           }
+          if (isCurrentProjectListRequest(request)) setProjectsReadError(projectReadTranslateRef.current('mokina.pages.readFailed'));
           console.error('[projects] failed to refresh after workspace switch', err);
         }
       }
@@ -5759,6 +5774,7 @@ function AppInner() {
           authoritativeProjectName={activeAuthoritativeProjectName}
           resolveAuthoritativeProjectName={resolveAuthoritativeProjectName}
           routeFileName={route.fileName}
+          routeVersionId={route.versionId}
           routeConversationId={route.conversationId ?? null}
           config={config}
           agents={agents}
@@ -5851,6 +5867,7 @@ function AppInner() {
           workspaceDesignSystems.identity !== currentWorkspaceCatalogIdentity || dsLoading
         }
         projectsLoading={projectsLoading}
+        projectsReadError={projectsReadError}
         promptTemplatesLoading={promptTemplatesLoading}
         onCreateProject={handleCreateProject}
         onCreatePluginShareProject={handleCreatePluginShareProject}
@@ -5983,7 +6000,13 @@ function AppInner() {
           <ProjectWorkspaceRecoveryTip />
         ) : null}
         <div className="workspace-shell__body">
-          {appMain}
+          {MOKINA_LOCAL_EDITION && route.kind === 'project' ? <MokinaProjectShell
+            recentProjects={projects} onOpenRecentProject={handleOpenProject} onOpenSettings={openSettings}
+            onRenameRecentProject={handleRenameProject}
+            onDeleteRecentProject={handleDeleteProject} onDuplicateRecentProject={handleDuplicateProject}
+            onExportRecoveryRecentProject={handleExportRecoveryProject}>
+            {appMain}
+          </MokinaProjectShell> : appMain}
         </div>
       </div>
       {clientType === 'desktop' ? null : (

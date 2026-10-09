@@ -159,8 +159,8 @@ function setupRecoveryFetch(
 
 async function openRecoveryPanel() {
   render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} />);
-  fireEvent.click(screen.getByRole('button', { name: 'Versions' }));
-  return screen.findByRole('dialog', { name: 'Versions' });
+  fireEvent.click(screen.getByRole('button', { name: 'Revise section' }));
+  return screen.findByRole('dialog', { name: /^(Versions|Revise section|Continue)$/ });
 }
 
 describe('Mokina revision recovery UI', () => {
@@ -267,7 +267,7 @@ describe('Mokina revision recovery UI', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Revise section' }));
     const select = await screen.findByRole('combobox', { name: 'Section to revise' });
     await waitFor(() => expect(document.activeElement).toBe(select));
-    const panel = screen.getByRole('dialog', { name: 'Versions' });
+    const panel = screen.getByRole('dialog', { name: /^(Versions|Revise section|Continue)$/ });
     fireEvent.change(select, { target: { value: 'strategy' } });
     const prompt = screen.getByRole('textbox', { name: 'Section change request' });
     fireEvent.change(prompt, { target: { value: '保留尚未发送的修订要求' } });
@@ -277,7 +277,7 @@ describe('Mokina revision recovery UI', () => {
     // coverage separately proves these panel-owned controls are actionable.
     const continueButton = within(panel).getByRole('button', { name: 'Continue' });
     fireEvent.pointerDown(continueButton);
-    expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(panel);
+    expect(screen.queryByRole('dialog', { name: /^(Versions|Revise section|Continue)$/ })).toBe(panel);
     fireEvent.pointerUp(continueButton);
     fireEvent.click(continueButton);
     const continuation = screen.getByRole('region', { name: 'Selective continuation' });
@@ -289,7 +289,7 @@ describe('Mokina revision recovery UI', () => {
     fireEvent.change(background, { target: { value: '保留尚未发送的接续背景' } });
     const revisionButton = within(panel).getByRole('button', { name: 'Revise section' });
     fireEvent.pointerDown(revisionButton);
-    expect(screen.queryByRole('dialog', { name: 'Versions' })).toBe(panel);
+    expect(screen.queryByRole('dialog', { name: /^(Versions|Revise section|Continue)$/ })).toBe(panel);
     fireEvent.pointerUp(revisionButton);
     fireEvent.click(revisionButton);
     await waitFor(() => expect(document.activeElement).toBe(select));
@@ -301,7 +301,7 @@ describe('Mokina revision recovery UI', () => {
     expect(background.value).toBe('保留尚未发送的接续背景');
     expect(screen.getByText('Selected: v1 · Current draft')).toBeTruthy();
     fireEvent.pointerDown(document.body);
-    expect(screen.queryByRole('dialog', { name: 'Versions' })).toBeNull();
+    expect(screen.queryByRole('dialog', { name: /^(Versions|Revise section|Continue)$/ })).toBeNull();
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/runs' && init?.method === 'POST')).toBe(false);
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);
   });
@@ -313,7 +313,7 @@ describe('Mokina revision recovery UI', () => {
     const message = await screen.findByText('This version has no selectable sections, so it cannot be revised or continued yet.');
     await waitFor(() => expect(document.activeElement).toBe(message));
     expect(screen.queryByRole('button', { name: 'Create continuation project (no send)' })).toBeNull();
-    fireEvent.click(within(screen.getByRole('dialog', { name: 'Versions' })).getByRole('button', { name: 'Revise section' }));
+    fireEvent.click(within(screen.getByRole('dialog', { name: /^(Versions|Revise section|Continue)$/ })).getByRole('button', { name: 'Revise section' }));
     await waitFor(() => expect(document.activeElement).toBe(message));
     expect(screen.queryByRole('button', { name: 'Generate candidate (current draft unchanged)' })).toBeNull();
   });
@@ -326,7 +326,7 @@ describe('Mokina revision recovery UI', () => {
       expect(button.disabled).toBe(true);
       fireEvent.click(button);
     }
-    expect(screen.queryByRole('dialog', { name: 'Versions' })).toBeNull();
+    expect(screen.queryByRole('dialog', { name: /^(Versions|Revise section|Continue)$/ })).toBeNull();
     expect(fetchMock.mock.calls.some(([, init]) => init?.method === 'POST')).toBe(false);
   });
 
@@ -346,7 +346,7 @@ describe('Mokina revision recovery UI', () => {
     const { fetchMock } = setupRecoveryFetch('running');
     const view = render(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} />);
     fireEvent.click(screen.getByRole('button', { name: 'Revise section' }));
-    const panel = await screen.findByRole('dialog', { name: 'Versions' });
+    const panel = await screen.findByRole('dialog', { name: /^(Versions|Revise section|Continue)$/ });
     await within(panel).findByRole('combobox', { name: 'Section to revise' });
     view.rerender(<FileViewer projectId="project-1" projectKind="prototype" file={file} liveHtml={source} viewerOnly />);
     for (const name of ['Revise section', 'Continue']) {
@@ -366,6 +366,7 @@ describe('Mokina revision recovery UI', () => {
     });
     const panel = await openRecoveryPanel();
     await within(panel).findByRole('combobox', { name: 'Section to revise' });
+    fireEvent.click(within(panel).getByRole('button', { name: 'Versions' }));
     fireEvent.click(within(panel).getByRole('option', { name: /早期方案/ }));
     fireEvent.click(within(panel).getByRole('button', { name: 'Revise section' }));
     await within(panel).findByText('Reading the selected version; reselect a version if the read fails.');

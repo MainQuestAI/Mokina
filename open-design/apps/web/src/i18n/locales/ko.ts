@@ -1,6 +1,26 @@
 import type { Dict } from '../types';
 
 export const ko: Dict = {
+  "mokina.pages.newWork": "새 작업 시작",
+  "mokina.pages.readFailed": "읽기 실패",
+  "mokina.pages.homeTitle": "오늘 어떤 일을 진행할까요?",
+  "mokina.pages.homeSubtitle": "분석부터 계획과 결과까지 근거를 바탕으로 진행하세요.",
+  "mokina.pages.start": "작업 시작",
+  "mokina.pages.projects": "프로젝트",
+  "mokina.pages.subtitle": "결과, 진행 상황 및 출처를 확인하고 작업을 계속하세요.",
+  "mokina.pages.empty": "프로젝트를 만들어 첫 작업을 시작하세요.",
+  "mokina.pages.recent": "최근",
+  "mokina.pages.all": "전체",
+  "mokina.pages.scene": "용도",
+  "mokina.pages.status": "상태",
+  "mokina.pages.source": "고정 출처",
+  "mokina.pages.unclassified": "미분류",
+  "mokina.pages.noSource": "고정 출처 없음",
+  "mokina.pages.unknown": "알 수 없음",
+  "mokina.pages.open": "열기",
+  "mokina.pages.materials": "자료",
+  "mokina.pages.reading": "읽기",
+
   'mokina.runEvidence.receiptReadFailed': "Failed to read the run receipt.",
   'mokina.runEvidence.transmissionOnly': "Submitted confirms transmission only, not model adoption.",
   'mokina.repair.reselectFiles': "File entries and purposes were kept, but their bytes could not be restored. Select the files again or explicitly exclude them before sending.",

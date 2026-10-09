@@ -51,7 +51,8 @@ type ReadResult = {
   unreadable: boolean;
 };
 
-export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: {
+export function MokinaContextPanel({ projectId, files, projectDesignSystemId, expanded = false }: {
+  expanded?: boolean;
   projectId: string;
   files: ProjectFile[];
   /** N04: the project's bound brand kit, preselected transparently when offered. */
@@ -206,7 +207,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
               name,
               contentDigest: '',
               status: 'unreadable',
-              limitations: [result && 'error' in result ? result.error : '资料读取失败'],
+              limitations: [result && 'error' in result ? result.error : t('mokina.contextPanel.readFailed')],
               sections: [],
             },
             unreadable: true,
@@ -231,7 +232,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
     const issuedScope = scopeIdentity;
     const capturedGeneration = readPendingMokinaSnapshot(projectId, scope)?.generation ?? null;
     if (busy || brandLoading || (!brand && !results)) return;
-    if (results?.some(item => item.unreadable) && !acceptUnreadable) { setError('请明确确认排除无法读取的文件。'); return; }
+    if (results?.some(item => item.unreadable) && !acceptUnreadable) { setError(t('mokina.repair.acceptUnreadable')); return; }
     if (chosenGroups.length === 0 && assets.length === 0 && !brand) {
       setError(t('mokina.contextPanel.selectGroup'));
       return;
@@ -243,7 +244,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
       if (!material) continue;
       const entry = byFile.get(group.name) ?? { digest: material.contentDigest, parserVersion: material.parserVersion ?? '', fragmentIds: new Set<string>() };
       for (const section of group.sections) {
-        if (!section.fragmentId || !entry.parserVersion) { setError('资料选择协议已更新，请重新读取。'); return; }
+        if (!section.fragmentId || !entry.parserVersion) { setError(t('mokina.contextPanel.sourceChanged')); return; }
         entry.fragmentIds.add(section.fragmentId);
       }
       byFile.set(group.name, entry);
@@ -280,7 +281,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
     }
     const excluded = (results ?? [])
       .filter((item) => item.unreadable)
-      .map((item) => ({ displayName: item.material.name, reason: 'unreadable', explanation: item.material.limitations.join('；') || '无法读取' }));
+      .map((item) => ({ displayName: item.material.name, reason: 'unreadable', explanation: item.material.limitations.join('；') || t('mokina.contextPanel.unreadable') }));
     setBusy(true);
     setError(null);
     try {
@@ -324,7 +325,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         charCount: items.reduce((sum, item) => sum + (item.text?.length ?? 0), 0),
         frozenAt: new Date().toISOString(),
         itemLabels: items.map((item) => item.displayName).slice(0, 20),
-        excluded: excluded.map((entry) => ({ displayName: entry.displayName, reason: '无法读取' })),
+        excluded: excluded.map((entry) => ({ displayName: entry.displayName, reason: t('mokina.contextPanel.unreadable') })),
       };
       if (issuedScope !== scopeRef.current) return;
       const persisted = await writePendingMokinaSnapshot(record, { generation: capturedGeneration });
@@ -339,12 +340,13 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
   }
 
   // 没有资料文件、且品牌目录确认也为空时，这个面板没有可做的事。
-  if (candidates.length === 0 && brandCatalogLoaded && !brandCatalogError && designSystems.length === 0) return null;
+  if (!expanded && candidates.length === 0 && brandCatalogLoaded && !brandCatalogError && designSystems.length === 0) return null;
 
+  const Container = expanded ? 'section' : 'details';
   return (
-    <details className="mokina-material-picker mokina-context-panel">
+    <Container className={`mokina-material-picker mokina-context-panel${expanded ? ' mokina-context-panel--expanded' : ''}`}>
       <MokinaLiveStatus identity={scopeIdentity} summary={frozen?.snapshotId ?? ''} label={frozen ? t('mokina.contextPanel.frozenTitle') : ''} />
-      <summary>{t('mokina.contextPanel.summary')}</summary>
+      {expanded ? <h1>{t('mokina.pages.materials')}</h1> : <summary>{t('mokina.contextPanel.summary')}</summary>}
       <p>{t('mokina.contextPanel.intro')}</p>
       <div className="mokina-context-panel__brand">
         <label>
@@ -355,7 +357,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
             disabled={busy}
             onChange={(event) => void selectBrand(event.target.value)}
           >
-            <option value="">不使用品牌规则</option>
+            <option value="">{t('fileViewer.mokina.continuationBrandNone')}</option>
             {designSystems.map((system) => (
               <option key={system.id} value={system.id}>{system.title}</option>
             ))}
@@ -440,12 +442,12 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
             {t('mokina.contextPanel.budgetStatus', { chars: chosenChars.toLocaleString(), budget: budget.toLocaleString() })}
           </p>
           {assets.map(asset => <div key={asset.name}>
-            <label>{asset.name} · 素材角色<select aria-label={`${asset.name} 素材角色`} value={asset.role}
+            <label>{asset.name} · {t('fileViewer.mokina.continuationAssets')}<select aria-label={`${asset.name} ${t('fileViewer.mokina.continuationAssets')}`} value={asset.role}
               onChange={event => setAssets(current => current.map(item => item.name === asset.name
                 ? { ...item, role: event.target.value as typeof asset.role } : item))}>
-              <option value="logo">品牌标识</option><option value="hero">主视觉</option><option value="supporting">辅助素材</option>
+              <option value="logo">{t('fileViewer.mokina.assetRoleLogo')}</option><option value="hero">{t('fileViewer.mokina.assetRoleHero')}</option><option value="supporting">{t('fileViewer.mokina.assetRoleSupporting')}</option>
             </select></label>
-            <input aria-label={`${asset.name} 使用说明`} value={asset.usageNote} placeholder="使用说明"
+            <input aria-label={`${asset.name} ${t('fileViewer.mokina.continuationUsagePlaceholder')}`} value={asset.usageNote} placeholder={t('fileViewer.mokina.continuationUsagePlaceholder')}
               onChange={event => setAssets(current => current.map(item => item.name === asset.name ? { ...item, usageNote: event.target.value } : item))} />
           </div>)}
           {groups.map((group) => (
@@ -458,8 +460,8 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
                   ? [...current, group.key]
                   : current.filter((key) => key !== group.key)))}
               />
-              <span>{group.name} · {group.label} · {group.chars.toLocaleString()} 字</span>
-              <small>{group.sections[0]?.location}：{group.sections[0]?.text.slice(0, 100)}</small>
+              <span>{group.name} · {group.label}</span>
+              {expanded ? group.sections.map((section, index) => <span className="mokina-excerpt" key={`${section.location}:${index}`}><small>{section.location}</small><span>{section.text}</span></span>) : <small>{group.sections[0]?.location}：{group.sections[0]?.text.slice(0, 100)}</small>}
             </label>
           ))}
         </div>
@@ -469,7 +471,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         onChange={event => setAcceptUnreadable(event.target.checked)} />{t('mokina.repair.acceptUnreadable')}</label> : null}
       {readLegacyPendingMokinaSnapshot(projectId) && !frozen ? <Button onClick={async () => {
         try { await claimLegacyPendingMokinaSnapshot(projectId, scope); setFrozen(readPendingMokinaSnapshot(projectId, scope)); }
-        catch (cause) { setError(cause instanceof Error ? cause.message : '恢复失败'); }
+        catch (cause) { setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.freezeFailed')); }
       }}>{t('mokina.repair.claimLegacy')}</Button> : null}
       <div className="mokina-context-panel__actions">
         <button
@@ -482,11 +484,12 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId }: 
         <button
           type="button"
           disabled={busy || brandLoading || (!!brandId && !!brandError) || (!brand && (!results || (chosenGroups.length === 0 && assets.length === 0)))}
+          className="primary"
           onClick={() => void freezeSnapshot()}
         >
           {busy ? t('mokina.contextPanel.busy') : t('mokina.contextPanel.freezeAction', { count: chosenGroups.length + assets.length + (brand ? 1 : 0) })}
         </button>
       </div>
-    </details>
+    </Container>
   );
 }

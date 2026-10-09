@@ -2,6 +2,7 @@
    Customer documents and artifact iframes keep their own styles and bytes. */
 html[data-product='mokina'] {
   --mokina-canvas: #f5f5f5;
+  --brand: #0071e3;
   --surface: var(--mokina-surface);
   --muted: var(--mokina-secondary);
   --mokina-surface: #ffffff;
@@ -194,3 +195,116 @@ html[data-product="mokina"] #settings-dialog-title h2 { font-size: 28px; line-he
 @media (prefers-reduced-transparency: reduce) {
   html[data-product="mokina"] :where(.preview-draw-toolbar, .sketch-editor-header) { backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
+
+/* Full-page product shell. Keep content opaque; glass belongs to controls. */
+html[data-product='mokina'] .entry-main--scroll { background: #fff; border-radius: 20px; }
+html[data-product='mokina'] .entry-nav-rail__panel {
+  background: var(--mokina-glass-fill); border: 1px solid var(--mokina-edge);
+  border-radius: 20px; padding: 12px 8px; backdrop-filter: blur(16px);
+}
+html[data-product='mokina'] .mokina-nav-brand { border: 0; background: transparent; color: var(--mokina-ink); padding: 8px 0 20px; width: 100%; text-align: start; }
+html[data-product='mokina'] .entry-nav-rail__team-section { border-top: 0; }
+html[data-product='mokina'] .entry-nav-rail__recent { margin-block: 16px 24px; }
+html[data-product='mokina'] .entry-nav-rail__team-section:has(.entry-nav-rail__recent) { min-height: 0; }
+html[data-product='mokina'] .entry-blank__cta.primary { color: var(--mokina-on-action); border-radius: 10px; }
+html[data-product='mokina'] .mokina-projects { max-width: 1280px; margin: 0 auto; padding: 32px; }
+html[data-product='mokina'] .mokina-page-header { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 32px; }
+html[data-product='mokina'] .mokina-page-header h1 { margin: 0; font-size: 28px; line-height: 36px; }
+html[data-product='mokina'] .mokina-page-header p { margin: 8px 0 0; color: var(--mokina-secondary); }
+html[data-product='mokina'] :is(.mokina-projects, .mokina-workspace-tabs, .mokina-task-section) button { min-height: 44px; padding: 8px 16px; border-radius: 10px; }
+html[data-product='mokina'] :is(.mokina-project-tabs, .mokina-workspace-tabs) { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+html[data-product='mokina'] :is(.mokina-project-tabs, .mokina-workspace-tabs) button { border: 1px solid transparent; color: var(--mokina-secondary); background: transparent; }
+html[data-product='mokina'] :is(.mokina-project-tabs, .mokina-workspace-tabs) button[aria-pressed='true'] { background: var(--mokina-canvas); color: var(--mokina-ink); border-color: var(--mokina-edge); }
+html[data-product='mokina'] .mokina-project-empty { min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+html[data-product='mokina'] .mokina-project-empty p { color: var(--mokina-secondary); text-align: center; }
+html[data-product='mokina'] .mokina-project-table { overflow-x: auto; }
+html[data-product='mokina'] .mokina-project-table table { width: 100%; border-collapse: collapse; text-align: start; }
+html[data-product='mokina'] .mokina-project-table :is(th, td) { padding: 16px 12px; border-bottom: 1px solid var(--mokina-edge); text-align: start; overflow-wrap: anywhere; }
+html[data-product='mokina'] .mokina-project-table thead { color: var(--mokina-secondary); font-size: 12px; }
+html[data-product='mokina'] .mokina-project-table button { background: transparent; color: var(--mokina-ink); border: 0; text-align: start; }
+html[data-product='mokina'] .mokina-source-link small { display: block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+html[data-product='mokina'] .home-hero:not(.home-hero--dock) { max-width: 1180px; display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); column-gap: 48px; align-items: start; text-align: start; }
+html[data-product='mokina'] .home-hero:not(.home-hero--dock) > .mokina-home-brand { grid-column: 1; }
+html[data-product='mokina'] .home-hero:not(.home-hero--dock) > .home-hero__title { grid-column: 1; margin-inline: 0; text-align: start; }
+html[data-product='mokina'] .home-hero:not(.home-hero--dock) > .home-hero__subtitle { grid-column: 1; text-align: start; }
+html[data-product='mokina'] .home-hero:not(.home-hero--dock) > .home-hero__composer-card { grid-column: 2; grid-row: 1 / span 4; width: 100%; min-width: 0; }
+html[data-product='mokina'] .home-hero:not(.home-hero--dock) > :not(.mokina-home-brand, .home-hero__title, .home-hero__subtitle, .home-hero__composer-card) { grid-column: 1 / -1; }
+html[data-product='mokina'] .mokina-workspace-tabs { padding: 8px 16px; border-bottom: 1px solid var(--mokina-edge); flex-shrink: 0; background: var(--mokina-glass-fill); }
+html[data-product='mokina'] :is(.mokina-materials-view, .mokina-task-section) { min-width: 0; min-height: 0; }
+html[data-product='mokina'] .mokina-materials-view { overflow: auto; flex: 1; padding: 24px; background: #fff; }
+html[data-product='mokina'] .mokina-context-panel--expanded { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(0, 1.2fr); gap: 16px 24px; margin: 0; padding: 0; background: #fff; border: 0; }
+html[data-product='mokina'] .mokina-context-panel--expanded > :is(h1, p, [role='alert'], [role='status'], .mokina-context-panel__actions, .mokina-context-panel__frozen) { grid-column: 1 / -1; }
+html[data-product='mokina'] .mokina-context-panel--expanded h1 { font-size: 28px; line-height: 36px; }
+html[data-product='mokina'] .mokina-context-panel--expanded .mokina-material-picker__files { grid-column: 1; }
+html[data-product='mokina'] .mokina-context-panel--expanded .mokina-material-picker__preview { grid-column: 2; grid-row: span 3; }
+html[data-product='mokina'] .mokina-context-panel__actions { position: sticky; bottom: 0; padding: 12px; background: var(--mokina-glass-fill); border: 1px solid var(--mokina-edge); border-radius: 12px; backdrop-filter: blur(16px); }
+html[data-product='mokina'] .artifact-version-panel[data-mokina-task] { width: min(1000px, calc(100vw - 48px)); height: calc(100vh - 90px); max-height: none; padding: 24px; border-radius: 20px; background: #fff; }
+html[data-product='mokina'] .artifact-version-panel [aria-pressed='true'] { background: var(--mokina-canvas); outline: 1px solid var(--mokina-edge); }
+html[data-product='mokina'] .mokina-task-section--versions { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(220px, .7fr); gap: 24px; }
+html[data-product='mokina'] .mokina-task-section--versions .artifact-version-panel__preview { grid-column: 1; grid-row: 1 / span 3; min-height: 360px; }
+html[data-product='mokina'] .mokina-task-section--versions .artifact-version-list { margin: 0; max-height: none; }
+html[data-product='mokina'] .mokina-task-section--continue > section { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
+html[data-product='mokina'] .mokina-task-section--continue > section > :is(strong, p, button) { grid-column: 1 / -1; }
+html[data-product='mokina'] .mokina-task-section :is(input, select, textarea) { max-width: 100%; min-width: 0; }
+html[data-product='mokina'] .mokina-task-section textarea { min-height: 120px; }
+html[data-product='mokina'] .mokina-task-section--revision > section { max-width: 760px; margin-inline: auto; }
+/* UA hidden must beat host flex/grid rules, while controllers stay mounted. */
+html[data-product='mokina'] :is(.mokina-task-section, .mokina-materials-view, .ws-body, .artifact-version-panel__foot)[hidden] { display: none; }
+@media (max-width: 1200px) {
+  html[data-product='mokina'] .home-hero:not(.home-hero--dock) { display: flex; flex-direction: column; gap: 24px; }
+}
+@media (max-width: 760px) {
+  html[data-product='mokina'] .mokina-projects { padding: 20px 16px; }
+  html[data-product='mokina'] .mokina-page-header { align-items: start; flex-direction: column; gap: 16px; }
+  html[data-product='mokina'] .mokina-project-table table { min-width: 620px; }
+  html[data-product='mokina'] .artifact-version-panel[data-mokina-task] { inset: 12px; width: auto; height: calc(100dvh - 24px); padding: 16px; }
+  html[data-product='mokina'] :is(.mokina-task-section--versions, .mokina-task-section--continue > section, .mokina-context-panel--expanded) { display: flex; flex-direction: column; }
+  html[data-product='mokina'] .mokina-materials-view { padding: 16px; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  html[data-product='mokina'] :is(.entry-nav-rail__panel, .mokina-context-panel__actions, .mokina-workspace-tabs) { background: #fff; backdrop-filter: none; }
+}
+html[data-product='mokina'] .mokina-continuation-form { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+html[data-product='mokina'] .mokina-continuation-confirmation { align-self: start; padding: 20px; border-radius: 12px; background: var(--mokina-canvas); overflow-wrap: anywhere; }
+html[data-product='mokina'] .mokina-continuation-confirmation h2 { font-size: 18px; line-height: 26px; margin-top: 0; }
+html[data-product='mokina'] .artifact-version-panel__foot button[hidden] { display: none; }
+html[data-product='mokina'] .mokina-task-section--continue > section > :is(strong, p) { margin: 0; }
+html[data-product='mokina'] .mokina-project-shell { height: 100%; min-height: 0; --entry-rail-width: 214px; }
+html[data-product='mokina'] .mokina-project-shell > .entry { height: 100%; display: grid; }
+html[data-product='mokina'] .mokina-project-content { min-width: 0; min-height: 0; height: 100%; }
+html[data-product='mokina'] .mokina-project-content > .app { height: 100%; min-height: 0; }
+html[data-product='mokina'] .mokina-compact-nav { display: none; }
+@media (max-width: 760px) {
+  html[data-product='mokina'] .mokina-project-shell { display: grid; grid-template-rows: 56px minmax(0, 1fr); }
+  html[data-product='mokina'] .mokina-project-shell > .entry { grid-template-columns: minmax(0, 1fr); }
+  html[data-product='mokina'] .mokina-project-shell .entry-nav-rail { display: none; }
+  html[data-product='mokina'] .mokina-compact-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-inline: 12px; }
+  html[data-product='mokina'] .mokina-compact-nav button { border: 0; background: transparent; min-height: 44px; }
+}
+html[data-product='mokina'] [data-testid='file-workspace'] { position: relative; }
+html[data-product='mokina'] .artifact-version-panel[data-inline='true'] { position: absolute; inset: 0; width: auto; height: auto; box-shadow: none; border: 0; z-index: 30; container-type: inline-size; }
+html[data-product='mokina'] .artifact-version-panel[data-mokina-task] .artifact-version-panel__continuation { max-height: none; overflow: visible; border: 0; padding: 8px 0; font-size: 14px; line-height: 22px; }
+html[data-product='mokina'] .artifact-version-panel[data-mokina-task] .artifact-version-panel__continuation label > span { white-space: normal; overflow-wrap: anywhere; }
+html[data-product='mokina'] .artifact-version-panel[data-mokina-task] .artifact-version-panel__continuation select { min-height: 44px; border-radius: 10px; }
+@container (max-width: 560px) {
+  html[data-product='mokina'] .mokina-task-section--versions:not([hidden]), html[data-product='mokina'] .mokina-task-section--continue:not([hidden]) > section { display: flex; flex-direction: column; }
+}
+@media (max-width: 760px) {
+  html[data-product='mokina'] .mokina-project-table table { min-width: 0; }
+  html[data-product='mokina'] .mokina-project-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  html[data-product='mokina'] .mokina-project-table :is(table, tbody) { display: block; }
+  html[data-product='mokina'] .mokina-project-table tr { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--mokina-edge); padding-block: 16px; }
+  html[data-product='mokina'] .mokina-project-table :is(th, td) { border: 0; padding: 4px; }
+  html[data-product='mokina'] .mokina-project-table th, html[data-product='mokina'] .mokina-project-table td[data-label]:nth-child(4) { grid-column: 1 / -1; }
+  html[data-product='mokina'] .mokina-project-table td[data-label]::before { content: attr(data-label); display: block; color: var(--mokina-secondary); font-size: 12px; }
+}
+
+html[data-product="mokina"] .mokina-excerpt { display:block; margin-top:8px; white-space:pre-wrap; overflow-wrap:anywhere; }
+html[data-product="mokina"] .mokina-excerpt > small { display:block; margin-bottom:4px; color:var(--mokina-secondary); }
+
+html[data-product='mokina'] .artifact-version-panel__head h1 { font-size: 28px; line-height: 36px; margin: 0; overflow-wrap: anywhere; }
+html[data-product='mokina'] .artifact-version-panel__head > div:first-child { min-width: 0; }
+html[data-product='mokina'] .artifact-version-panel__head p { overflow-wrap: anywhere; }
+html[data-product='mokina'] .mokina-task-section fieldset { min-inline-size: 0; max-width: 100%; }
+html[data-product='mokina'] .mokina-continuation-confirmation button { max-width: 100%; white-space: normal; }
+html[data-product='mokina'] .mokina-continuation-confirmation { display: flex; flex-direction: column; gap: 16px; }

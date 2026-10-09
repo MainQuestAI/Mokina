@@ -1,3 +1,5 @@
+import { MokinaFixedSource } from './mokina/MokinaFixedSource';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import type { RecoveryActionBlockReason } from '../runtime/chat/recovery-gating';
 import {
   memo,
@@ -1556,6 +1558,7 @@ export function FileWorkspace({
   readonlyNotice,
   fileSyncBadge = null,
 }: Props) {
+  const [mokinaWorkspaceView, setMokinaWorkspaceView] = useState<'reading' | 'materials'>('reading');
   const refreshFilesWithoutResult = useCallback(async () => {
     await onRefreshFiles();
   }, [onRefreshFiles]);
@@ -4420,13 +4423,18 @@ export function FileWorkspace({
           <span>{readonlyNotice}</span>
         </div>
       ) : null}
+      {MOKINA_LOCAL_EDITION && !designSystemProject ? <div className="mokina-workspace-tabs" role="group" aria-label={t('mokina.pages.materials')}>
+        {(['reading', 'materials'] as const).map(view => <button type="button" key={view} disabled={viewerOnly && view === 'materials'} aria-pressed={mokinaWorkspaceView === view}
+          onClick={() => setMokinaWorkspaceView(view)}>{t(`mokina.pages.${view}`)}</button>)}
+        <MokinaFixedSource projectId={projectId} workspaceContext={workspaceContext} hideMissing />
+      </div> : null}
       {!viewerOnly && !designSystemProject && !initialMaterializationPending ? (
-        <>
+        <div className={MOKINA_LOCAL_EDITION ? 'mokina-materials-view' : undefined} hidden={MOKINA_LOCAL_EDITION && mokinaWorkspaceView !== 'materials'}>
+          <MokinaContextPanel expanded={MOKINA_LOCAL_EDITION} projectId={projectId} files={files} projectDesignSystemId={projectDesignSystemId ?? null} />
           <MokinaMaterialPicker projectId={projectId} projectName={projectName || '市场工作'} files={files} />
-          <MokinaContextPanel projectId={projectId} files={files} projectDesignSystemId={projectDesignSystemId ?? null} />
-        </>
+        </div>
       ) : null}
-      <div className="ws-body">
+      <div className="ws-body" hidden={MOKINA_LOCAL_EDITION && !designSystemProject && mokinaWorkspaceView === 'materials'}>
         {/* Banner moved into DesignFilesPanel for the Design Files tab so
             single-click preview (which keeps activeTab on DESIGN_FILES_TAB)
             no longer leaves a stale banner mounted above the preview.

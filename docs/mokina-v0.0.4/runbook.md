@@ -2,6 +2,8 @@
 
 2026-10-09 已构建 `0.0.4-local.1` macOS arm64 DMG/ZIP，完成首轮同包原生安装、菜单/诊断导出与 15 项资料选区/恢复验证。真实 CLI 连接超时及诊断默认文件名旧品牌前缀待处理。安装包保留于 `/Users/dingcheng/Mokina-PR13-QA/releases/0.0.4-local.1/`，本轮临时应用、注册和数据已清理；实际源码、摘要和证据见 [PR13 本地原生验证记录](2026-10-09-native-validation.md)。已签收版仍为 v0.0.2-local.6；现用 local.11 及此前签收记录保持原样。候选验证不等于用户签收或发布。
 
+2026-10-09 用户授权后，PR13 已合并，原生验证记录和治理规则已整合到 `main`，源码标签为 `V0.0.4`。当前合并与标签归属见 [V0.0.4 记录](2026-10-09-v004-merge-and-tag.md)；下文验证分支及包构建 SHA 保留为本轮候选的来源证据。
+
 ## 检出与开发
 
 PR13 分支为 `codex/mokina-v0.0.4-brand-ui`，最新复审产品提交为 `9eb266c8`，base `52219d8c`。本地已把 PR13 和旧分支治理记录合并到 `codex/mokina-v0.0.4-native-validation-20261009`；包构建提交 `a7f190a5` 的产品目录与最新复审提交一致。`c79843ba` 是首次实施的历史冻结点，不能代表复审修复后的候选。在 `open-design/` 读取 [AGENTS.md](../../open-design/AGENTS.md) 及目标子目录指令，Node24，Corepack pnpm10.33.2，安装锁定依赖：

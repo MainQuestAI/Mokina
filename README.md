@@ -13,7 +13,7 @@ Mokina 是 macOS arm64 桌面营销工作产品（OpenDesign 宿主 + Mokina edi
 | 历史 V0.0.3 修复基线 | `93531732e2e01e6bfdf5153f3685af4bf132f850`（本轮开始时 main；不是 local.6 包源码） |
 | V0.0.2 标签 | 注释标签 `e3e1a7cf`，指向 `e3e8848e` |
 | 支持平台 | 实测 macOS arm64；Windows/Linux、签名、公证、自动更新未纳入 |
-| 开发中版本 | v0.0.4 品牌/UI换新，PR13 分支 `codex/mokina-v0.0.4-brand-ui`，复审产品提交 `9eb266c8`；本地合并验证分支 `codex/mokina-v0.0.4-native-validation-20261009`。S01–S06 实施见 [实施记录](./docs/mokina-v0.0.4/2026-10-08-implementation.md) |
+| 源码版本 | `V0.0.4`，PR13 已合并到 `main`，复审产品提交 `9eb266c8`；已整合本地原生验证和清理规则。S01–S06 实施见 [实施记录](./docs/mokina-v0.0.4/2026-10-08-implementation.md)，合并与标签归属见 [V0.0.4 记录](./docs/mokina-v0.0.4/2026-10-09-v004-merge-and-tag.md)。源码标签不改变用户签收状态 |
 | 本轮 macOS 原生候选 | `0.0.4-local.1`，build `a7f190a5`，产品目录与 PR13 复审一致；首轮同包安装、菜单/诊断导出及 15 项资料选区/恢复已有证据，真实 CLI 连接超时和诊断默认文件名旧前缀待处理；[验证与清理记录](./docs/mokina-v0.0.4/2026-10-09-native-validation.md)。现用 local.11 保留，新候选临时副本已清理，用户签收待验 |
 | 历史 V0.0.3 隔离 QA 候选 | `0.0.3-local.7`，source `4cf68e9c`；[同包原生范围与剩余门槛](./docs/mokina-v0.0.3/2026-10-07-local7-native-verification.md)；未标整体验收或公开发布 |
 

@@ -4435,8 +4435,8 @@ export function FileWorkspace({
         </div>
       ) : null}
       {MOKINA_LOCAL_EDITION && !designSystemProject ? <div className="mokina-workspace-tabs" role="group" aria-label={t('mokina.pages.materials')}>
-        {(['reading', 'materials'] as const).map(view => <button type="button" key={view} disabled={viewerOnly && view === 'materials'} aria-pressed={mokinaWorkspaceView === view}
-          onClick={() => selectMokinaWorkspaceView(view)}>{t(`mokina.pages.${view}`)}</button>)}
+        {(['reading', 'materials'] as const).map(view => <Button type="button" key={view} disabled={viewerOnly && view === 'materials'} aria-pressed={mokinaWorkspaceView === view}
+          onClick={() => selectMokinaWorkspaceView(view)}>{t(`mokina.pages.${view}`)}</Button>)}
         <MokinaFixedSource projectId={projectId} workspaceContext={workspaceContext} hideMissing />
       </div> : null}
       {!viewerOnly && !designSystemProject && !initialMaterializationPending ? (

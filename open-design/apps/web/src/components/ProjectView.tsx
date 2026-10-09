@@ -5453,13 +5453,16 @@ export function ProjectView({
   // FileWorkspace promotes it to an active tab. We watch routeFileName
   // (the parsed segment) so back/forward navigation triggers the same path.
   const pendingRouteFileRef = useRef<string | null>(routeFileName);
+  const previousRouteVersionRef = useRef(routeVersionId);
   useEffect(() => {
+    const releaseRoutePin = previousRouteVersionRef.current !== undefined && routeVersionId === undefined;
+    previousRouteVersionRef.current = routeVersionId;
     pendingRouteFileRef.current = routeFileName;
     if (!routeFileName) return;
     lastHostRequestedOpenRef.current = routeFileName;
     // URL synchronization acknowledges the selected file; it must not erase
     // the version captured by a chooser/default-open request for that same file.
-    setOpenRequest(previous => ({ name: routeFileName, versionId: routeVersionId ?? (previous?.name === routeFileName ? previous.versionId : undefined), nonce: Date.now() }));
+    setOpenRequest(previous => ({ name: routeFileName, versionId: routeVersionId ?? (!releaseRoutePin && previous?.name === routeFileName ? previous.versionId : undefined), nonce: Date.now() }));
   }, [routeFileName, routeVersionId]);
 
   // Sync the URL when the active tab changes, so reload + share-link both

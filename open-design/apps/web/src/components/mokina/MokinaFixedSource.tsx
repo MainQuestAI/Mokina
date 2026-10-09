@@ -1,3 +1,4 @@
+import { Button } from '@open-design/components';
 import { useEffect, useRef, useState } from 'react';
 import type { MokinaContinuationV2, WorkspaceCollabContext } from '@open-design/contracts';
 import { useT } from '../../i18n';
@@ -42,8 +43,8 @@ export function MokinaFixedSource({ projectId, workspaceContext = null, hideMiss
   const source = read.source;
   if (!source && hideMissing) return null;
   if (!source) return <span>{t('mokina.pages.noSource')}</span>;
-  return <button type="button" className="mokina-source-link" title={`${source.fileName} · ${source.versionId}`}
+  return <Button type="button" className="mokina-source-link" title={`${source.fileName} · ${source.versionId}`}
     onClick={() => navigate({ kind: 'project', projectId: source.projectId, fileName: source.fileName, versionId: source.versionId })}>
     {source.fileName}<small>{source.versionId}</small>
-  </button>;
+  </Button>;
 }

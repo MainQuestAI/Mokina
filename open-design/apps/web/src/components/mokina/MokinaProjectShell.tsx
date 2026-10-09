@@ -1,3 +1,4 @@
+import { Button } from '@open-design/components';
 import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
 import { EntryNavRail } from '../EntryNavRail';
 import { ENTRY_RAIL_STATE_EVENT, ENTRY_RAIL_TOGGLE_EVENT, RAIL_OPEN_STORAGE_KEY, readStoredRailOpen } from '../entryRailBridge';
@@ -19,10 +20,10 @@ export function MokinaProjectShell({ children, ...props }: Props) {
     window.dispatchEvent(new CustomEvent(ENTRY_RAIL_STATE_EVENT, { detail: { open } }));
   }, [open]);
   return <div className={`mokina-project-shell entry-shell--no-header${open ? ' is-rail-open' : ''}`}>
-    <div className="mokina-compact-nav"><button aria-label="Mokina" onClick={() => navigate({ kind: 'home', view: 'home' })}><MokinaBrand size={28} /></button>
-      <button onClick={() => navigate({ kind: 'home', view: 'home' })}>{t('mokina.pages.start')}</button>
-      <button onClick={() => navigate({ kind: 'home', view: 'projects' })}>{t('mokina.pages.projects')}</button>
-      <button onClick={() => props.onOpenSettings?.()}>{t('entry.accountSettings')}</button></div>
+    <div className="mokina-compact-nav"><Button aria-label="Mokina" onClick={() => navigate({ kind: 'home', view: 'home' })}><MokinaBrand size={28} /></Button>
+      <Button onClick={() => navigate({ kind: 'home', view: 'home' })}>{t('mokina.pages.start')}</Button>
+      <Button onClick={() => navigate({ kind: 'home', view: 'projects' })}>{t('mokina.pages.projects')}</Button>
+      <Button onClick={() => props.onOpenSettings?.()}>{t('entry.accountSettings')}</Button></div>
     <div className={`entry${open ? ' entry--rail-open' : ''}`}>
       <EntryNavRail {...props} view="projects" context={null} open={open}
         onViewChange={view => navigate({ kind: 'home', view })}

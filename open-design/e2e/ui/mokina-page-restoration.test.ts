@@ -76,6 +76,13 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     await expect(page).toHaveURL(new RegExp(`/versions/${fixture.versionId}/files/plan.html`));
     await expect(page.locator('.artifact-version-panel')).toBeVisible({ timeout: T.long });
     await expect(page.locator('.artifact-version-panel').getByText('Selected: v1 · History')).toBeVisible();
+    // A same-file client-side navigation back to the current route must release
+    // the historical pin without remounting the project or creating anything.
+    await page.evaluate(() => {
+      history.pushState(null, '', location.pathname.replace(/\/versions\/[^/]+/, ''));
+      dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await expect(page.locator('.artifact-version-panel').getByText('Selected: v2 · Current')).toBeVisible();
     expect(writes).toEqual([]);
     for (const id of [fixture.projectId, fixture.targetId]) expect((await page.request.delete(`/api/projects/${id}`)).ok()).toBe(true);
   });

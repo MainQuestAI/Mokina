@@ -311,3 +311,7 @@ html[data-product='mokina'] .mokina-continuation-confirmation { display: flex; f
 
 html[data-product='mokina'] .mokina-continuation-confirmation > :is(h2, p, ul) { margin: 0; }
 html[data-product='mokina'] .mokina-continuation-confirmation > ul:empty { display: none; }
+html[data-product='mokina'] .mokina-context-panel--expanded > :is(h1, p) { margin: 0; }
+html[data-product='mokina'] .mokina-context-panel--expanded .mokina-context-panel__brand { grid-column: 1; grid-row: 3; }
+html[data-product='mokina'] .mokina-context-panel--expanded .mokina-material-picker__files { grid-row: 4; }
+html[data-product='mokina'] .mokina-context-panel--expanded .mokina-material-picker__preview { grid-row: 3 / span 2; }

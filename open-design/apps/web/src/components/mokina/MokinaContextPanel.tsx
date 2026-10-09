@@ -347,7 +347,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
     <Container className={`mokina-material-picker mokina-context-panel${expanded ? ' mokina-context-panel--expanded' : ''}`}>
       <MokinaLiveStatus identity={scopeIdentity} summary={frozen?.snapshotId ?? ''} label={frozen ? t('mokina.contextPanel.frozenTitle') : ''} />
       {expanded ? <h1>{t('mokina.pages.materials')}</h1> : <summary>{t('mokina.contextPanel.summary')}</summary>}
-      <p>{t('mokina.contextPanel.intro')}</p>
+      <p>{t(expanded ? 'mokina.pages.materialsIntro' : 'mokina.contextPanel.intro')}</p>
       <div className="mokina-context-panel__brand">
         <label>
           {t('mokina.contextPanel.brandSource')}

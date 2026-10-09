@@ -1559,6 +1559,17 @@ export function FileWorkspace({
   fileSyncBadge = null,
 }: Props) {
   const [mokinaWorkspaceView, setMokinaWorkspaceView] = useState<'reading' | 'materials'>('reading');
+  const readingFocusModeRef = useRef(focusMode);
+  const selectMokinaWorkspaceView = (view: 'reading' | 'materials') => {
+    if (view === mokinaWorkspaceView) return;
+    if (view === 'materials') {
+      readingFocusModeRef.current = focusMode;
+      onFocusModeChange?.(true);
+    } else {
+      onFocusModeChange?.(readingFocusModeRef.current);
+    }
+    setMokinaWorkspaceView(view);
+  };
   const refreshFilesWithoutResult = useCallback(async () => {
     await onRefreshFiles();
   }, [onRefreshFiles]);
@@ -4425,7 +4436,7 @@ export function FileWorkspace({
       ) : null}
       {MOKINA_LOCAL_EDITION && !designSystemProject ? <div className="mokina-workspace-tabs" role="group" aria-label={t('mokina.pages.materials')}>
         {(['reading', 'materials'] as const).map(view => <button type="button" key={view} disabled={viewerOnly && view === 'materials'} aria-pressed={mokinaWorkspaceView === view}
-          onClick={() => setMokinaWorkspaceView(view)}>{t(`mokina.pages.${view}`)}</button>)}
+          onClick={() => selectMokinaWorkspaceView(view)}>{t(`mokina.pages.${view}`)}</button>)}
         <MokinaFixedSource projectId={projectId} workspaceContext={workspaceContext} hideMissing />
       </div> : null}
       {!viewerOnly && !designSystemProject && !initialMaterializationPending ? (

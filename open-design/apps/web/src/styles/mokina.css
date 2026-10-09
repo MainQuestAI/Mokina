@@ -308,3 +308,6 @@ html[data-product='mokina'] .artifact-version-panel__head p { overflow-wrap: any
 html[data-product='mokina'] .mokina-task-section fieldset { min-inline-size: 0; max-width: 100%; }
 html[data-product='mokina'] .mokina-continuation-confirmation button { max-width: 100%; white-space: normal; }
 html[data-product='mokina'] .mokina-continuation-confirmation { display: flex; flex-direction: column; gap: 16px; }
+
+html[data-product='mokina'] .mokina-continuation-confirmation > :is(h2, p, ul) { margin: 0; }
+html[data-product='mokina'] .mokina-continuation-confirmation > ul:empty { display: none; }

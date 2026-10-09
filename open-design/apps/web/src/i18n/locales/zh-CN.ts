@@ -2,6 +2,7 @@ import type { Dict } from "../types";
 
 export const zhCN: Dict = {
   "mokina.pages.newWork": "开始新工作",
+  "mokina.pages.materialsIntro": "选择要使用的具体摘录，确认后固定为本次任务的来源。",
   "mokina.pages.readFailed": "读取失败",
   "mokina.pages.homeTitle": "今天想推进什么工作？",
   "mokina.pages.homeSubtitle": "从分析、方案到交付，让每一步工作有依据。",

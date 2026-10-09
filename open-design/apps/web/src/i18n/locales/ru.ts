@@ -2,6 +2,7 @@ import type { Dict } from '../types';
 
 export const ru: Dict = {
   "mokina.pages.newWork": "Начать новую работу",
+  "mokina.pages.materialsIntro": "Выберите фрагменты и подтвердите источники для этой задачи.",
   "mokina.pages.readFailed": "Ошибка чтения",
   "mokina.pages.homeTitle": "Над чем вы хотите поработать сегодня?",
   "mokina.pages.homeSubtitle": "От анализа к плану — двигайте работу вперёд.",

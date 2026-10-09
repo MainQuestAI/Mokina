@@ -2,6 +2,7 @@ import type { Dict } from '../types';
 
 export const hu: Dict = {
   "mokina.pages.newWork": "Új munka kezdése",
+  "mokina.pages.materialsIntro": "Válassza ki a pontos részleteket, majd erősítse meg a feladat forrásait.",
   "mokina.pages.readFailed": "Olvasási hiba",
   "mokina.pages.homeTitle": "Min szeretne ma dolgozni?",
   "mokina.pages.homeSubtitle": "Az elemzéstől a tervig haladjon előre a munkában.",

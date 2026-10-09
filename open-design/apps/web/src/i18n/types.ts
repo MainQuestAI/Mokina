@@ -34,6 +34,7 @@ export interface Dict {
   'mokina.pages.homeSubtitle': string;
   'mokina.pages.readFailed': string;
   'mokina.pages.start': string;
+  'mokina.pages.materialsIntro': string;
   'mokina.pages.newWork': string;
   'mokina.pages.projects': string;
   'mokina.pages.subtitle': string;

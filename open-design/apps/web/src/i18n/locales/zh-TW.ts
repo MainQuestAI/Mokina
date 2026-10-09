@@ -2,6 +2,7 @@ import type { Dict } from "../types";
 
 export const zhTW: Dict = {
   "mokina.pages.newWork": "開始新工作",
+  "mokina.pages.materialsIntro": "選擇要使用的具體摘錄，確認後固定為本次任務的來源。",
   "mokina.pages.readFailed": "讀取失敗",
   "mokina.pages.homeTitle": "今天想推進什麼工作？",
   "mokina.pages.homeSubtitle": "從分析、方案到交付，讓每一步工作有依據。",

@@ -2,6 +2,7 @@ import type { Dict } from '../types';
 
 export const ar: Dict = {
   "mokina.pages.newWork": "بدء عمل جديد",
+  "mokina.pages.materialsIntro": "حدد المقتطفات المطلوبة، ثم أكد مصادر هذه المهمة.",
   "mokina.pages.readFailed": "تعذرت القراءة",
   "mokina.pages.homeTitle": "على ماذا تريد العمل اليوم؟",
   "mokina.pages.homeSubtitle": "من التحليل إلى الخطة، ادفع عملك إلى الأمام.",

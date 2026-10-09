@@ -1,0 +1,31 @@
+{
+  "temporaryProcessesRemaining": [],
+  "temporaryRegistrationsRemaining": [],
+  "temporaryMountedImagesRemaining": [],
+  "removedTemporaryRoots": [
+    "/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local-v004-1",
+    "/private/tmp/mokina-pr13-native-wma0k8l9",
+    "/Users/dingcheng/Mokina-PR13-QA/fixtures",
+    "/Users/dingcheng/Mokina-PR13-QA/screenshots",
+    "/Users/dingcheng/Library/Application Support/Mokina/launcher/channels/stable/namespaces/mokina-local-v004-1"
+  ],
+  "outputNamespaceRemoved": true,
+  "runtimeNamespaceRemoved": true,
+  "finderProfileRemoved": true,
+  "faultRootRemoved": true,
+  "temporaryAppBundlesRemaining": [],
+  "releaseFiles": [
+    "Mokina-mokina-local-v004-1.dmg",
+    "Mokina-mokina-local-v004-1.zip",
+    "Mokina-mokina-local-v004-1-payload.zip",
+    "manifest.json",
+    "SHA256SUMS"
+  ],
+  "preservedApp": "/Users/dingcheng/Applications/Mokina.app",
+  "preservedAppVersion": "0.0.3-local.11",
+  "preservedInfoSha256": "9550eecfb1770045549f619af74e2488e19d9a80b54028f9522f0bd555e7e9e0",
+  "preservedAppCodesignVerified": true,
+  "otherUserProfilesRetained": true,
+  "canonicalNamespaceResiduesRemaining": [],
+  "finderLauncherNamespaceRemoved": true
+}

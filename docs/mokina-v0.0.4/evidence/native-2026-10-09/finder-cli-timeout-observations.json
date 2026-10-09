@@ -1,0 +1,29 @@
+{
+  "cli": "Codex CLI",
+  "cliVersion": "codex-cli 0.160.0",
+  "observedMessage": "测试在 45143 毫秒后超时。",
+  "url": "od://app/onboarding",
+  "successfulRealModelConnection": false,
+  "profileCreatedThisRound": true,
+  "profile": "/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local-v004-1",
+  "logs": [
+    {
+      "logPath": "/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local-v004-1/logs/web/latest.log",
+      "lines": []
+    },
+    {
+      "logPath": "/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local-v004-1/logs/desktop/latest.log",
+      "lines": [
+        "{\"level\":\"info\",\"message\":\"console.info\",\"timestamp\":\"2026-10-09T03:12:06.142Z\",\"meta\":{\"args\":[\"[open-design desktop] sidecar action start\",{\"input\":{\"path\":\"/Users/dingcheng/Coding-Project/02-key-project/Mokina/output/native-validation-2026-10-09/finder-cli-timeout\"},\"type\":\"screenshot\"}]}}",
+        "{\"level\":\"info\",\"message\":\"console.info\",\"timestamp\":\"2026-10-09T03:12:19.561Z\",\"meta\":{\"args\":[\"[open-design desktop] sidecar action start\",{\"input\":{\"path\":\"/Users/dingcheng/Coding-Project/02-key-project/Mokina/output/native-validation-2026-10-09/finder-cli-timeout.png\"},\"type\":\"screenshot\"}]}}"
+      ]
+    },
+    {
+      "logPath": "/Users/dingcheng/Library/Application Support/Mokina/namespaces/mokina-local-v004-1/logs/daemon/latest.log",
+      "lines": [
+        "[test:agent] Antigravity → timeout in 45.0s",
+        "[test:agent] Codex CLI → timeout in 45.1s"
+      ]
+    }
+  ]
+}

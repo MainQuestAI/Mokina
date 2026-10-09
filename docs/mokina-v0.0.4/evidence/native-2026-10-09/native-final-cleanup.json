@@ -1,0 +1,16 @@
+{
+  "detachedMount": false,
+  "namespace": "mokina-local-v004-1",
+  "outputRoot": "/Users/dingcheng/Mokina-PR13-QA/out/mac/namespaces/mokina-local-v004-1",
+  "removedLauncherNamespaceRoot": true,
+  "removedOutputRoot": true,
+  "removedRuntimeNamespaceRoot": true,
+  "runtimeNamespaceRoot": "/Users/dingcheng/Mokina-PR13-QA/runtime/mac/namespaces/mokina-local-v004-1",
+  "stop": {
+    "gracefulRequested": false,
+    "namespace": "mokina-local-v004-1",
+    "remainingPids": [],
+    "status": "not-running",
+    "stoppedPids": []
+  }
+}

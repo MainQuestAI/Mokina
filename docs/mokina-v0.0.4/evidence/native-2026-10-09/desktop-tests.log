@@ -1,0 +1,12 @@
+
+> @open-design/desktop@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/apps/desktop
+> vitest run -c vitest.config.ts -- tests/main/mokina-splash.test.ts tests/main/splash-stage-replay.test.ts tests/main/diagnostics-save-dialog.test.ts tests/main/mokina-recovery-store.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/apps/desktop
+
+
+ Test Files  54 passed (54)
+      Tests  517 passed | 1 skipped (518)
+   Start at  10:44:59
+   Duration  15.15s (transform 3.38s, setup 0ms, import 5.92s, tests 37.70s, environment 3ms)

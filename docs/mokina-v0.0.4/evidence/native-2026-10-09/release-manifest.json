@@ -1,0 +1,25 @@
+{
+  "version": "0.0.4-local.1",
+  "reviewedProductSha": "9eb266c826e85e558778254cfd43ba03346b921c",
+  "buildSha": "a7f190a59d645eb196b173ca687e0dfcc0ac8079",
+  "productTreeIdenticalToReviewedHead": true,
+  "platform": "macOS-arm64",
+  "nativeAcceptance": "partial",
+  "artifacts": {
+    "Mokina-mokina-local-v004-1.dmg": {
+      "path": "/Users/dingcheng/Mokina-PR13-QA/releases/0.0.4-local.1/Mokina-mokina-local-v004-1.dmg",
+      "bytes": 408738737,
+      "sha256": "4f77b578432c0e26ffac6d76226e70056655e0f1b7cff422027d0390697e9ae6"
+    },
+    "Mokina-mokina-local-v004-1.zip": {
+      "path": "/Users/dingcheng/Mokina-PR13-QA/releases/0.0.4-local.1/Mokina-mokina-local-v004-1.zip",
+      "bytes": 611406022,
+      "sha256": "bc850590e7a28be1294bbe0737bac64a56b67e43464aa83da879632542650eb9"
+    },
+    "Mokina-mokina-local-v004-1-payload.zip": {
+      "path": "/Users/dingcheng/Mokina-PR13-QA/releases/0.0.4-local.1/Mokina-mokina-local-v004-1-payload.zip",
+      "bytes": 430568489,
+      "sha256": "2a30269b4d4eb092cb3285366e9a66fd5bdd712fee3b3267de72861dc81605b2"
+    }
+  }
+}

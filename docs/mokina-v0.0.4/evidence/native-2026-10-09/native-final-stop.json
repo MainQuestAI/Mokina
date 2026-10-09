@@ -1,0 +1,18 @@
+{
+  "gracefulRequested": true,
+  "namespace": "mokina-local-v004-1",
+  "remainingPids": [],
+  "status": "stopped",
+  "stoppedPids": [
+    19830,
+    19824,
+    19671,
+    19670,
+    19669,
+    19668,
+    19803,
+    19786,
+    19692,
+    19691
+  ]
+}

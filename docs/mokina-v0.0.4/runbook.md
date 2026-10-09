@@ -1,10 +1,12 @@
 # v0.0.4 开发与原生候选 Runbook
 
-当前只有已提交的产品源码和工程证据，没有 v0.0.4 DMG/ZIP。已签收版仍为 v0.0.2-local.6；既有 local.11 及此前安装包记录保持原样。本记录不能作为已生成安装包的下载/安装证明。
+2026-10-09 已构建 `0.0.4-local.1` macOS arm64 DMG/ZIP，完成首轮同包原生安装、菜单/诊断导出与 15 项资料选区/恢复验证。真实 CLI 连接超时及诊断默认文件名旧品牌前缀待处理。安装包保留于 `/Users/dingcheng/Mokina-PR13-QA/releases/0.0.4-local.1/`，本轮临时应用、注册和数据已清理；实际源码、摘要和证据见 [PR13 本地原生验证记录](2026-10-09-native-validation.md)。已签收版仍为 v0.0.2-local.6；现用 local.11 及此前签收记录保持原样。候选验证不等于用户签收或发布。
+
+2026-10-09 用户授权后，PR13 已合并，原生验证记录和治理规则已整合到 `main`，源码标签为 `V0.0.4`。当前合并与标签归属见 [V0.0.4 记录](2026-10-09-v004-merge-and-tag.md)；下文验证分支及包构建 SHA 保留为本轮候选的来源证据。
 
 ## 检出与开发
 
-分支 `codex/mokina-v0.0.4-brand-ui`，产品源码冻结 `c79843bafa7a7e2a61f33d81fcd78edf03c7236f`，base `52219d8c`。在 `open-design/` 读取 [AGENTS.md](../../open-design/AGENTS.md) 及目标子目录指令，Node24，Corepack pnpm10.33.2，安装锁定依赖：
+PR13 分支为 `codex/mokina-v0.0.4-brand-ui`，最新复审产品提交为 `9eb266c8`，base `52219d8c`。本地已把 PR13 和旧分支治理记录合并到 `codex/mokina-v0.0.4-native-validation-20261009`；包构建提交 `a7f190a5` 的产品目录与最新复审提交一致。`c79843ba` 是首次实施的历史冻结点，不能代表复审修复后的候选。在 `open-design/` 读取 [AGENTS.md](../../open-design/AGENTS.md) 及目标子目录指令，Node24，Corepack pnpm10.33.2，安装锁定依赖：
 
 ```sh
 corepack pnpm install --frozen-lockfile
@@ -26,7 +28,7 @@ corepack pnpm --filter @open-design/tools-pack exec tsx \
 
 ## macOS arm64 后续候选
 
-本轮环境为 Linux，不能执行 Finder、Dock、VoiceOver 和 DMG 同包链。Mac 上从冻结源码执行既有 pack 流程，明确设置 Mokina edition / namespace；候选号实际构建时再分配，不预占 local.12，不覆盖 local.11。`<next-v004-local-candidate>` 是待实际分配的占位，不是已生成版本：
+以下是 2026-10-08 Linux 实施阶段留下的构建模板。2026-10-09 已在 Mac 上分配并构建 `0.0.4-local.1`；后续新候选按实际构建递增，不覆盖现用 local.11。`<next-v004-local-candidate>` 保留为模板占位，实际操作使用明确版本与独立 namespace：
 
 ```sh
 cd open-design

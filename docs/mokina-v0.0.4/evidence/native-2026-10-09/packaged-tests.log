@@ -1,0 +1,12 @@
+
+> @open-design/packaged@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/apps/packaged
+> vitest run -c vitest.config.ts -- tests/launch.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/apps/packaged
+
+
+ Test Files  23 passed (23)
+      Tests  335 passed (335)
+   Start at  10:45:15
+   Duration  1.76s (transform 4.35s, setup 0ms, import 6.24s, tests 2.88s, environment 1ms)

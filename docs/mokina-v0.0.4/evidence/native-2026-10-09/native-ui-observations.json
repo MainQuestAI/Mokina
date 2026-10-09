@@ -1,0 +1,20 @@
+{
+  "bytes": 178701,
+  "sha256": "f0ff841eda8a595b29772c5282ad6e032507abd1eaba9786fa853fd879525c80",
+  "memberCount": 28,
+  "crcError": null,
+  "nativeDialogTitle": "Export Mokina diagnostics",
+  "defaultFileName": "open-design-diagnostics-2026-10-09T03-04-12Z.zip",
+  "chosenFileName": "native-diagnostics.zip",
+  "cancelReturnedToHome": true,
+  "about": "Mokina 0.0.4-local.1 (0.0.4-local.1)",
+  "helpMenu": [
+    "Export Diagnostics…"
+  ],
+  "nativeMenu": [
+    "About Mokina",
+    "Hide Mokina",
+    "Quit Mokina"
+  ],
+  "oldBrandFilenameObserved": true
+}

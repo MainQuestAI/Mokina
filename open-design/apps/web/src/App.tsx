@@ -2509,7 +2509,7 @@ function AppInner() {
   const refreshProjects = useCallback(async () => {
     const request = beginProjectListRequest(workspaceProjectView);
     const list = await listCurrentWorkspaceProjects({ workspaceView: workspaceProjectView });
-    reconcileFetchedProjects(list, request);
+    if (reconcileFetchedProjects(list, request) && isCurrentProjectListRequest(request)) setProjectsLoading(false);
   }, [beginProjectListRequest, listCurrentWorkspaceProjects, reconcileFetchedProjects, isCurrentProjectListRequest, workspaceProjectView]);
 
   const refreshProjectsStrict = useCallback(async () => {
@@ -2520,6 +2520,8 @@ function AppInner() {
     } catch (cause) {
       if (isCurrentProjectListRequest(request)) setProjectsReadError(projectReadTranslateRef.current('mokina.pages.readFailed'));
       throw cause;
+    } finally {
+      if (isCurrentProjectListRequest(request)) setProjectsLoading(false);
     }
   }, [beginProjectListRequest, listCurrentWorkspaceProjects, reconcileFetchedProjects, isCurrentProjectListRequest, workspaceProjectView]);
 

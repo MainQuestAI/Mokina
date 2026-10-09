@@ -1,0 +1,96 @@
+
+> @open-design/tools-pack@0.22.1 test /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/tools/pack
+> vitest run -- tests/resources/mokina-brand.test.ts
+
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/tools/pack
+
+[web-sourcemaps] browser chunks dir not found at /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-web-sourcemaps-yhWMr0/apps/web/.next/static; skipping
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-web-sourcemaps-qRqoJo/apps/web/.next/static; nothing to do
+[web-sourcemaps] found 3 .map file(s) under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-web-sourcemaps-tWbYdr/apps/web/.next/static
+[web-sourcemaps] POSTHOG_CLI_API_KEY/POSTHOG_CLI_PROJECT_ID missing; skipping upload
+[web-sourcemaps] stripped 3 .map file(s) before packaging
+[web-sourcemaps] found 1 .map file(s) under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-web-sourcemaps-cPUilJ/apps/web/.next/static
+[web-sourcemaps] POSTHOG_CLI_API_KEY/POSTHOG_CLI_PROJECT_ID missing; skipping upload
+[web-sourcemaps] stripped 1 .map file(s) before packaging
+[tools-pack mac] run ditto '/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-tools-pack-mac-payload-JjlGmE/.tmp/tools-pack/out/mac/namespaces/release-beta/builder/mac-arm64/Open Design Beta.app' '/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-tools-pack-mac-payload-JjlGmE/.tmp/tools-pack/out/mac/namespaces/release-beta/payload/stage/payload/Open Design Beta.app'
+[tools-pack mac] done ditto '/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-tools-pack-mac-payload-JjlGmE/.tmp/tools-pack/out/mac/namespaces/release-beta/builder/mac-arm64/Open Design Beta.app' '/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-tools-pack-mac-payload-JjlGmE/.tmp/tools-pack/out/mac/namespaces/release-beta/payload/stage/payload/Open Design Beta.app' durationMs=25
+[tools-pack mac] run ditto -c -k --sequesterRsrc --rsrc . '/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-tools-pack-mac-payload-JjlGmE/.tmp/tools-pack/out/mac/namespaces/release-beta/payload/Open Design-release-beta-payload.zip'
+[tools-pack mac] done ditto -c -k --sequesterRsrc --rsrc . '/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/od-tools-pack-mac-payload-JjlGmE/.tmp/tools-pack/out/mac/namespaces/release-beta/payload/Open Design-release-beta-payload.zip' durationMs=42
+[tools-pack mac] run /Users/dingcheng/.local/share/fnm/node-versions/v24.15.0/installation/bin/node /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-wepeBh/fake-electron-builder.mjs --mac --projectDir /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-wepeBh/.tmp/tools-pack/out/mac/namespaces/local-test/assembled/app --config /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-wepeBh/.tmp/tools-pack/out/mac/namespaces/local-test/builder-config.json --publish never
+[tools-pack mac] done /Users/dingcheng/.local/share/fnm/node-versions/v24.15.0/installation/bin/node /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-wepeBh/fake-electron-builder.mjs --mac --projectDir /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-wepeBh/.tmp/tools-pack/out/mac/namespaces/local-test/assembled/app --config /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-wepeBh/.tmp/tools-pack/out/mac/namespaces/local-test/builder-config.json --publish never durationMs=45
+[tools-pack mac] run /Users/dingcheng/.local/share/fnm/node-versions/v24.15.0/installation/bin/node /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-QFIbg2/fake-electron-builder.mjs --mac --projectDir /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-QFIbg2/.tmp/tools-pack/out/mac/namespaces/local-test/assembled/app --config /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-QFIbg2/.tmp/tools-pack/out/mac/namespaces/local-test/builder-config.json --publish never
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-V6lED5/apps/web/.next/static; nothing to do
+[tools-pack mac] done /Users/dingcheng/.local/share/fnm/node-versions/v24.15.0/installation/bin/node /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-QFIbg2/fake-electron-builder.mjs --mac --projectDir /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-QFIbg2/.tmp/tools-pack/out/mac/namespaces/local-test/assembled/app --config /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-QFIbg2/.tmp/tools-pack/out/mac/namespaces/local-test/builder-config.json --publish never durationMs=39
+[tools-pack win] segment:start phase=nsis:resolve-makensis
+[tools-pack win] segment:done durationMs=1 phase=nsis:resolve-makensis
+[tools-pack win] segment:start phase=nsis:read-version
+[tools-pack win] segment:done durationMs=0 phase=nsis:read-version
+[tools-pack win] segment:start phase=nsis:ensure-persian-language
+[tools-pack win] segment:done durationMs=4 phase=nsis:ensure-persian-language
+[tools-pack win] segment:start phase=nsis:prepare
+[tools-pack win] segment:done durationMs=4 phase=nsis:prepare
+[tools-pack win] segment:start phase=nsis:write-script
+[tools-pack win] segment:done durationMs=10 phase=nsis:write-script
+[tools-pack win] segment:start phase=nsis:makensis
+[tools-pack win] segment:start phase=nsis:makensis:process
+ ❯ tests/mac.test.ts (22 tests | 1 failed) 270ms
+     × does not embed the build machine Node launcher into mac resources 42ms
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-V6lED5/apps/web/.next/static; nothing to do
+[tools-pack win] segment:done durationMs=292 phase=nsis:makensis:process
+[tools-pack win] segment:done durationMs=292 phase=nsis:makensis
+[tools-pack win] segment:start phase=nsis:stat
+[tools-pack win] segment:done durationMs=1 phase=nsis:stat
+[tools-pack win] segment:start phase=nsis:resolve-makensis
+[tools-pack win] segment:done durationMs=1 phase=nsis:resolve-makensis
+[tools-pack win] segment:start phase=nsis:read-version
+[tools-pack win] segment:done durationMs=0 phase=nsis:read-version
+[tools-pack win] segment:start phase=nsis:ensure-persian-language
+[tools-pack win] segment:done durationMs=1 phase=nsis:ensure-persian-language
+[tools-pack win] segment:start phase=nsis:prepare
+[tools-pack win] segment:done durationMs=1 phase=nsis:prepare
+[tools-pack win] segment:start phase=nsis:write-script
+[tools-pack win] segment:done durationMs=2 phase=nsis:write-script
+[tools-pack win] segment:start phase=nsis:makensis
+[tools-pack win] segment:start phase=nsis:makensis:process
+[tools-pack win] segment:done durationMs=83 phase=nsis:makensis:process
+[tools-pack win] segment:done durationMs=83 phase=nsis:makensis
+[tools-pack win] segment:start phase=nsis:stat
+[tools-pack win] segment:done durationMs=1 phase=nsis:stat
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-alias-7j9JVX/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-peer-deps-T4vHFm/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-mac-alias-hzIeZi/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-stale-fcvdP3/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-stale-fcvdP3/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-stale-3Z60VT/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-stale-3Z60VT/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-package-cache-FN6W2h/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-package-cache-FN6W2h/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-platform-CMcZhb/apps/web/.next/static; nothing to do
+[web-sourcemaps] no .map files under /var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-workspace-build-platform-CMcZhb/apps/web/.next/static; nothing to do
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/mac.test.ts > copyResourceTree > does not embed the build machine Node launcher into mac resources
+Error: ENOENT: no such file or directory, open '/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/open-design-tools-pack-mac-m7utP0/tools/pack/resources/pdf/mac-arm64/manifest.json'
+ ❯ copyBundledPdfRuntime src/resources/pdf-runtime.ts:7:31
+      5| export async function copyBundledPdfRuntime(workspaceRoot: string, res…
+      6|   const root = join(workspaceRoot, 'tools', 'pack', 'resources', 'pdf'…
+      7|   const manifest = JSON.parse(await readFile(join(root, 'manifest.json…
+       |                               ^
+      8|     schemaVersion: number; architecture: string; files: Array<{ path: …
+      9|   };
+ ❯ copyResourceTree src/mac/app.ts:153:3
+ ❯ tests/mac.test.ts:219:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 46 passed (47)
+      Tests  1 failed | 342 passed | 8 skipped (351)
+   Start at  10:45:17
+   Duration  3.77s (transform 4.63s, setup 0ms, import 8.21s, tests 15.10s, environment 2ms)
+
+/Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/tools/pack:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @open-design/tools-pack@0.22.1 test: `vitest run -- tests/resources/mokina-brand.test.ts`
+Exit status 1

@@ -1,0 +1,12 @@
+{
+  "installedAppPath": "/Users/dingcheng/Mokina-PR13-QA/out/mac/namespaces/mokina-local-v004-1/install/Applications/Mokina.app",
+  "namespace": "mokina-local-v004-1",
+  "removed": true,
+  "stop": {
+    "gracefulRequested": false,
+    "namespace": "mokina-local-v004-1",
+    "remainingPids": [],
+    "status": "not-running",
+    "stoppedPids": []
+  }
+}

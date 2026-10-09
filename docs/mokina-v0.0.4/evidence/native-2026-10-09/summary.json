@@ -1,0 +1,155 @@
+{
+  "reviewedProductSha": "9eb266c826e85e558778254cfd43ba03346b921c",
+  "buildSha": "a7f190a59d645eb196b173ca687e0dfcc0ac8079",
+  "version": "0.0.4-local.1",
+  "productTreeIdenticalToReview": true,
+  "guard": "passed",
+  "workspaceTypecheck": "passed",
+  "productionBuild": "passed",
+  "desktopUnit": {
+    "passed": 517,
+    "skipped": 1
+  },
+  "packagedUnit": {
+    "passed": 335
+  },
+  "toolsPackFullSuite": {
+    "passed": 342,
+    "failed": 1,
+    "skipped": 8,
+    "failure": "PDF manifest missing in temporary fixture"
+  },
+  "brandResourceFocused": {
+    "passed": 1
+  },
+  "nativeFirstRun": {
+    "passed": 14,
+    "failed": 1,
+    "filteredOut": 16,
+    "failure": "interruption 11 fixture root safety constraint"
+  },
+  "nativeFault11ScopedRun": {
+    "passed": 1,
+    "failed": 0,
+    "filteredOut": 30,
+    "sameDmgHardLink": true
+  },
+  "nativeSelectedCasesWithPassingEvidence": 15,
+  "nativeAgentAndBusinessData": "synthetic fixtures",
+  "realCliConnection": "timeout at 45143 ms; not passed",
+  "nativeOldBrandFilename": "open-design-diagnostics-*",
+  "nativeCases": {
+    "Mokina recovery native interruption [P1] Mokina native DOCX exact selection freezes only the chosen paragraphs": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 15118.744708999999
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina native source change requires reconfirmation and scopes bindings by conversation": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 20642.513250000004
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 1 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 21109.213499999998
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 2 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 19792.98458399999
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 3 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 21440.701083000007
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 4 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 22100.148917000013
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 5 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 20360.521041
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 6 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 20152.657542
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 7 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 20996.71983299998
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 8 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 20939.646542000002
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 11 resume preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "failed",
+        "durationMs": 7.617541999992682
+      },
+      {
+        "run": "fault11ScopedRun",
+        "status": "passed",
+        "durationMs": 22626.090417
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 3 missing-source preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 20594.307457999996
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 6 edited-target preserves real intent without overwriting": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 19372.013834000012
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 9 reconciles one accepted request without resending": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 20823.17849999998
+      }
+    ],
+    "Mokina recovery native interruption [P1] Mokina recovery native interruption 10 reconciles one accepted request without resending": [
+      {
+        "run": "firstRun",
+        "status": "passed",
+        "durationMs": 23234.191332999966
+      }
+    ]
+  },
+  "remoteMergeOrPushPerformed": false,
+  "cleanupComplete": true
+}

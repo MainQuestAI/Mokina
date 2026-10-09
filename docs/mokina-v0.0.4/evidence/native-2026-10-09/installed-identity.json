@@ -1,0 +1,10 @@
+{
+  "name": "Mokina",
+  "bundleId": "ai.mainquest.mokina.preview",
+  "version": "0.0.4-local.1",
+  "sameInfoAsBuilder": true,
+  "installedIcon": "/Users/dingcheng/Mokina-PR13-QA/out/mac/namespaces/mokina-local-v004-1/install/Applications/Mokina.app/Contents/Resources/icon.icns",
+  "iconSha256": "ee8ce02fdcdd7166424a3679fb7d6f2eb4927a2721c19a7376bae115df85ebd7",
+  "sameIconAsSource": true,
+  "noQuarantine": true
+}

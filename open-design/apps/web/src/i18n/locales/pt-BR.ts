@@ -1,6 +1,27 @@
 import type { Dict } from '../types';
 
 export const ptBR: Dict = {
+  "mokina.pages.newWork": "Iniciar novo trabalho",
+  "mokina.pages.materialsIntro": "Selecione os trechos e confirme as fontes desta tarefa.",
+  "mokina.pages.readFailed": "Falha na leitura",
+  "mokina.pages.homeTitle": "Em que você quer trabalhar hoje?",
+  "mokina.pages.homeSubtitle": "Da análise ao plano, avance no seu trabalho.",
+  "mokina.pages.start": "Começar",
+  "mokina.pages.projects": "Projetos",
+  "mokina.pages.subtitle": "Confira resultados, progresso e fontes.",
+  "mokina.pages.empty": "Crie um projeto para começar sua primeira tarefa.",
+  "mokina.pages.recent": "Recentes",
+  "mokina.pages.all": "Todos",
+  "mokina.pages.scene": "Uso",
+  "mokina.pages.status": "Status",
+  "mokina.pages.source": "Fonte fixada",
+  "mokina.pages.unclassified": "Sem classificação",
+  "mokina.pages.noSource": "Sem fonte fixada",
+  "mokina.pages.unknown": "Desconhecido",
+  "mokina.pages.open": "Abrir",
+  "mokina.pages.materials": "Materiais",
+  "mokina.pages.reading": "Ler",
+
   'mokina.runEvidence.receiptReadFailed': "Failed to read the run receipt.",
   'mokina.runEvidence.transmissionOnly': "Submitted confirms transmission only, not model adoption.",
   'mokina.repair.reselectFiles': "File entries and purposes were kept, but their bytes could not be restored. Select the files again or explicitly exclude them before sending.",

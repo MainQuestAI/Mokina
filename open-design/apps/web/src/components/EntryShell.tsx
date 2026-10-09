@@ -110,6 +110,7 @@ import {
 } from './entry-rail-account-state';
 import { LibrarySection } from './LibrarySection';
 import { UpdaterPopup } from './UpdaterPopup';
+import { MokinaProjects } from './mokina/MokinaProjects';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import { WhatsNewPopup } from './WhatsNewPopup';
 import { DeepSeekHarnessSetupDialog } from './DeepSeekHarnessSetupDialog';
@@ -485,6 +486,7 @@ interface Props {
   skillsLoading?: boolean;
   designSystemsLoading?: boolean;
   projectsLoading?: boolean;
+  projectsReadError?: string | null;
   // Execution / model-switching context. Threaded down from `App` so the
   // top-bar `InlineModelSwitcher` can render the active mode/agent/model
   // and persist changes through the same callbacks the project view uses.
@@ -648,6 +650,7 @@ export function EntryShell({
   skillsLoading = false,
   designSystemsLoading = false,
   projectsLoading = false,
+  projectsReadError,
   config,
   providerModelsCache: sharedProviderModelsCache,
   onProviderModelsCacheChange,
@@ -1967,7 +1970,8 @@ export function EntryShell({
               />
             </div>
             <div data-testid="entry-view-projects" data-active={view === 'projects' ? 'true' : 'false'} {...inactiveViewProps(view === 'projects')}>
-              {projectsLoading || skillsLoading || designSystemsLoading ? (
+              {MOKINA_LOCAL_EDITION ? (view === 'projects' ? <MokinaProjects projects={projectSearchProjects} loading={projectsLoading} error={projectsReadError}
+                onStart={() => changeView('home')} onRetry={() => { void Promise.resolve(onProjectsRefresh?.()).catch(() => {}); }} onOpen={handleOpenAllProjects} openingProjectId={pullingProjectId} workspaceContext={workspaceContext} /> : null) : projectsLoading || skillsLoading || designSystemsLoading ? (
                 <CenteredLoader label={t('common.loading')} />
               ) : (
                 <div className="entry-section">
@@ -2154,6 +2158,8 @@ export function EntryShell({
                 project spaces / workspace settings), rendered as a placeholder
                 until those land. */}
             {view === 'drafts' || view === 'all-projects' ? (
+              MOKINA_LOCAL_EDITION ? <MokinaProjects projects={projectSearchProjects} loading={projectsLoading} error={projectsReadError}
+                onStart={() => changeView('home')} onRetry={() => { void Promise.resolve(onProjectsRefresh?.()).catch(() => {}); }} onOpen={handleOpenAllProjects} openingProjectId={pullingProjectId} workspaceContext={workspaceContext} /> : (
               // 全部项目 (OPEND-3108): ONE catalog — the same list the rail's
               // 最近浏览过 shows — split by the strip's 最近浏览过 / 个人项目 /
               // 团队项目 tabs. The legacy `all-projects` view (the
@@ -2200,6 +2206,7 @@ export function EntryShell({
                     canManageProjectCollection={workspaceContext?.permissions.canShareProjects === true}
                   />
                 </div>
+              )
               )
             ) : null}
             {view === 'members' ? (

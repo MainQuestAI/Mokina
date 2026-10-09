@@ -126,6 +126,7 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
 
     await panel.getByLabel('Section to revise').selectOption('budget');
     await panel.getByLabel('Section change request').fill('保留预算上限，补充渠道分配。');
+    await panel.getByRole('button', { name: 'Versions', exact: true }).click();
     const selectedVersion = await panel.getByRole('listbox').getByRole('option', { selected: true }).textContent();
     await continuation.click();
     await expect(panel.getByRole('checkbox').first()).toBeFocused();
@@ -142,9 +143,12 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
     await revision.press('Space');
     await expect(panel.getByLabel('Section to revise')).toBeFocused();
     expect(await originalPanel!.evaluate((element) => element === document.querySelector('.artifact-version-panel'))).toBe(true);
+    await panel.getByRole('button', { name: 'Versions', exact: true }).click();
     await expect(panel.getByRole('listbox').getByRole('option', { selected: true })).toHaveText(selectedVersion!);
+    await revision.click();
     await expect(panel.getByLabel('Section to revise')).toHaveValue('budget');
     await expect(panel.getByLabel('Section change request')).toHaveValue('保留预算上限，补充渠道分配。');
+    await continuation.click();
     await expect(panel.getByRole('checkbox', { name: /strategy：/ })).toBeChecked();
     await expect(panel.getByLabel('Continuation background')).toHaveValue('沿用已选择结论，制作门店传播内容。');
 
@@ -168,13 +172,16 @@ test('[P1] Mokina panel explains historical and chapterless action restrictions'
   await openArtifact(page, project, 'plan.html');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   const panel = page.locator('.artifact-version-panel');
+  await panel.getByRole('button', { name: 'Versions', exact: true }).click();
   await panel.getByRole('listbox').getByRole('option').filter({ hasText: '第一稿' }).click();
+  await panel.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(panel.getByRole('checkbox', { name: /strategy：第一稿/ })).toBeVisible();
   await panel.getByRole('button', { name: 'Revise section', exact: true }).click();
   await expect(panel.getByText('Section revision only supports the current draft; select the current version first.')).toBeVisible();
   await expect(panel.getByLabel('Section to revise')).toHaveCount(0);
   await panel.getByRole('button', { name: 'Continue', exact: true }).press('Enter');
   await expect(panel.getByRole('checkbox').first()).toBeFocused();
+  await panel.getByRole('button', { name: 'Versions', exact: true }).click();
   await expect(panel.getByRole('listbox').getByRole('option', { selected: true })).toContainText('第一稿');
 
   await openArtifact(page, project, 'plain.html');
@@ -236,6 +243,7 @@ for (const viewport of [{ width: 900, height: 600 }, { width: 390, height: 844 }
     await openArtifact(page, project, 'plan.html');
     await page.getByRole('button', { name: 'Revise section', exact: true }).click();
     const panel = page.locator('.artifact-version-panel');
+    await panel.getByRole('button', { name: 'Versions', exact: true }).click();
     await panel.getByRole('listbox').getByRole('option').filter({ hasText: request }).click();
     const trigger = panel.getByRole('button', { name: 'Compare', exact: true });
     await trigger.click();

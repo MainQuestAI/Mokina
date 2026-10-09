@@ -899,6 +899,7 @@ interface Props {
     expectedAuthorizationKey: string,
   ) => Promise<ProjectNameAuthorityResolution>;
   routeFileName: string | null;
+  routeVersionId?: string;
   /**
    * Routed conversation id. When set (the URL is
    * `/projects/:id/conversations/:cid[/...]`), the project view picks
@@ -2152,6 +2153,7 @@ export function ProjectView({
   authoritativeProjectName,
   resolveAuthoritativeProjectName,
   routeFileName,
+  routeVersionId,
   routeConversationId = null,
   config,
   agents,
@@ -5450,14 +5452,18 @@ export function ProjectView({
   // When the URL points at a specific file, fire an open request so the
   // FileWorkspace promotes it to an active tab. We watch routeFileName
   // (the parsed segment) so back/forward navigation triggers the same path.
+  const pendingRouteFileRef = useRef<string | null>(routeFileName);
+  const previousRouteVersionRef = useRef(routeVersionId);
   useEffect(() => {
+    const releaseRoutePin = previousRouteVersionRef.current !== undefined && routeVersionId === undefined;
+    previousRouteVersionRef.current = routeVersionId;
+    pendingRouteFileRef.current = routeFileName;
     if (!routeFileName) return;
     lastHostRequestedOpenRef.current = routeFileName;
     // URL synchronization acknowledges the selected file; it must not erase
     // the version captured by a chooser/default-open request for that same file.
-    setOpenRequest(previous => previous?.name === routeFileName && previous.versionId
-      ? previous : { name: routeFileName, nonce: Date.now() });
-  }, [routeFileName]);
+    setOpenRequest(previous => ({ name: routeFileName, versionId: routeVersionId ?? (!releaseRoutePin && previous?.name === routeFileName ? previous.versionId : undefined), nonce: Date.now() }));
+  }, [routeFileName, routeVersionId]);
 
   // Sync the URL when the active tab changes, so reload + share-link both
   // land back on the same view. Replace (not push) on tab activation so the
@@ -5484,8 +5490,13 @@ export function ProjectView({
     // hydrating. Preserve that authority until activeConversationId resolves;
     // otherwise this first tab-sync pass strips `/conversations/:cid` and the
     // subsequent list load can no longer select the requested conversation.
+    // Let the routed file become active before persisted tabs may synchronize
+    // the URL. Otherwise a fixed historical source loses its version on mount.
+    if (pendingRouteFileRef.current && target !== pendingRouteFileRef.current) return;
+    pendingRouteFileRef.current = null;
     const effectiveConversationId = activeConversationId ?? routeConversationId;
-    const nextKey = `${effectiveConversationId ?? ''}:${target ?? ''}`;
+    const pinnedVersion = target === routeFileName ? routeVersionId : undefined;
+    const nextKey = `${effectiveConversationId ?? ''}:${target ?? ''}:${pinnedVersion ?? ''}`;
     if (nextKey === lastSyncedRouteKeyRef.current) return;
     lastSyncedRouteKeyRef.current = nextKey;
     lastSyncedConversationIdRef.current = effectiveConversationId;
@@ -5503,6 +5514,7 @@ export function ProjectView({
         projectId: project.id,
         conversationId: effectiveConversationId,
         fileName: target,
+        versionId: pinnedVersion,
       },
       { replace: true },
     );
@@ -5512,6 +5524,8 @@ export function ProjectView({
     project.id,
     activeConversationId,
     routeConversationId,
+    routeFileName,
+    routeVersionId,
   ]);
 
   const handleEnsureProject = useCallback(async (): Promise<string | null> => {
@@ -12091,6 +12105,7 @@ export function ProjectView({
           projectId: project.id,
           conversationId: fresh.id,
           fileName: openTabsState.active ?? null,
+        versionId: openTabsState.active === routeFileName ? routeVersionId : undefined,
         },
         { replace: true },
       );
@@ -12142,11 +12157,12 @@ export function ProjectView({
         projectId: project.id,
         conversationId: id,
         fileName: openTabsState.active ?? null,
+        versionId: openTabsState.active === routeFileName ? routeVersionId : undefined,
       },
       { replace: true },
     );
     setMessageLoadRetryNonce((nonce) => nonce + 1);
-  }, [activeConversationId, commitPreviewComments, failedMessagesConversationId, project.id, openTabsState.active]);
+  }, [activeConversationId, commitPreviewComments, failedMessagesConversationId, project.id, openTabsState.active, routeFileName, routeVersionId]);
 
   const refreshConversationsForProgrammaticBrandRetry = useCallback(
     async (conversationId: string): Promise<boolean> => {
@@ -12381,6 +12397,7 @@ export function ProjectView({
             projectId: project.id,
             conversationId: fresh.id,
             fileName: openTabsState.active ?? null,
+        versionId: openTabsState.active === routeFileName ? routeVersionId : undefined,
           },
           { replace: true },
         );

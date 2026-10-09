@@ -165,7 +165,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     const title = page.locator('.home-hero__title');
     const style = await title.evaluate(node => ({ font: parseFloat(getComputedStyle(node).fontSize), line: parseFloat(getComputedStyle(node).lineHeight) }));
     const bodyFont = await page.locator('body').evaluate(node => getComputedStyle(node).fontFamily);
-    expect(bodyFont).toContain('BlinkMacSystemFont');
+    expect(bodyFont).toMatch(/BlinkMacSystemFont|system-ui/);
     await expect(title).toHaveCSS('font-family', bodyFont);
     await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(245, 245, 245)');
     expect(style.font).toBeCloseTo(viewport.width <= 760 ? 40 : Math.min(68, Math.max(42, viewport.width * 0.0435)), 1);

@@ -61,6 +61,7 @@ export type Route =
        */
       conversationId?: string | null;
       fileName: string | null;
+      versionId?: string;
     }
   | { kind: 'marketplace' }
   | { kind: 'marketplace-detail'; pluginId: string }
@@ -81,9 +82,15 @@ export function parseRoute(pathname: string): Route {
   if (parts[0] === 'projects') {
     if (parts[1]) {
       const projectId = decodeURIComponent(parts[1]);
+      if (parts[2] === 'versions' && parts[3] && parts[4] === 'files' && parts[5]) {
+        return { kind: 'project', projectId, versionId: decodeURIComponent(parts[3]), fileName: parts.slice(5).map(decodeURIComponent).join('/') };
+      }
       // /projects/:id/conversations/:cid[/files/...]
       if (parts[2] === 'conversations' && parts[3]) {
         const conversationId = decodeURIComponent(parts[3]);
+        if (parts[4] === 'versions' && parts[5] && parts[6] === 'files' && parts[7]) {
+          return { kind: 'project', projectId, conversationId, versionId: decodeURIComponent(parts[5]), fileName: parts.slice(7).map(decodeURIComponent).join('/') };
+        }
         if (parts[4] === 'files' && parts[5]) {
           return {
             kind: 'project',
@@ -175,6 +182,10 @@ export function parseRoute(pathname: string): Route {
 }
 
 export function buildPath(route: Route): string {
+  if (route.kind === 'project' && route.versionId && route.fileName) {
+    const conversationPath = route.conversationId ? `/conversations/${encodeURIComponent(route.conversationId)}` : '';
+    return `/projects/${encodeURIComponent(route.projectId)}${conversationPath}/versions/${encodeURIComponent(route.versionId)}/files/${route.fileName.split('/').map(encodeURIComponent).join('/')}`;
+  }
   if (route.kind === 'home') {
     if (route.view === 'onboarding') return '/onboarding';
     if (route.view === 'projects') return '/projects';

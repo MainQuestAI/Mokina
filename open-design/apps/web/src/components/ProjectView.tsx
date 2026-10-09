@@ -1550,10 +1550,15 @@ function readAutoSendAmrGateWitness(
   }
 }
 
+function manualHomeScopeKey(projectId: string): string {
+  return `od:auto-send-manual-scope:${projectId}`;
+}
+
 function clearAutoSendSession(projectId: string): void {
   if (typeof window === 'undefined') return;
   try {
     window.sessionStorage.removeItem(autoSendFirstMessageKey(projectId));
+    window.sessionStorage.removeItem(manualHomeScopeKey(projectId));
     window.sessionStorage.removeItem(autoSendPromptKey(projectId));
     window.sessionStorage.removeItem(autoSendAttachmentsKey(projectId));
     window.sessionStorage.removeItem(autoSendContextKey(projectId));
@@ -13743,6 +13748,94 @@ export function ProjectView({
     projectIsProgrammaticBrandExtraction,
   ]);
 
+  // An unconsumed manual source belongs to its original conversation/authority,
+  // even after an unrelated message is sent. Only the explicit recovery UI sends it.
+  const manualHandoffAttemptRef = useRef<string | null>(null);
+  const manualHandoffOwnerRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!MOKINA_LOCAL_EDITION || !activeConversationId || !messagesInitialized
+      || messagesConversationIdRef.current !== activeConversationId
+      || homeAttachmentUploads.length > 0 || projectIsProgrammaticBrandExtraction) return;
+    let flag: string | null;
+    try { flag = window.sessionStorage.getItem(autoSendFirstMessageKey(project.id)); }
+    catch { return; }
+    if (!flag) return;
+    const identity = homeAutoSendIdentity(project.id);
+    const savedManualHandoff = loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
+      .find(record => record.clientRequestId === identity.clientRequestId
+        && record.phase === 'prepared' && record.status === 'draft');
+    if (!(homeAutoSendRequiresManualRef.current || flag === 'manual' || savedManualHandoff
+      || config.mode === 'daemon' && config.agentId === 'amr')) return;
+    const seed = autoSendSeedRef.current ?? readAutoSendPrompt(project.id) ?? project.pendingPrompt ?? '';
+    const freshAttachments = readAutoSendAttachments(project.id);
+    const attachments = freshAttachments.length ? freshAttachments : autoSendAttachmentsRef.current ?? [];
+    const context = autoSendContextRef.current ?? readAutoSendContext(project.id);
+    if (!seed.trim() && !attachments.length) return;
+    // Latch BEFORE opening settings or awaiting storage. A model/config
+    // rerender must never turn this blocked intent into a dispatched run.
+    homeAutoSendRequiresManualRef.current = true;
+    const owner = JSON.stringify([project.id, activeConversationId, projectRunAuthorityKey]);
+    if (manualHandoffOwnerRef.current && manualHandoffOwnerRef.current !== owner) return;
+    let ownerSaved = true;
+    try {
+      const storedOwner = window.sessionStorage.getItem(manualHomeScopeKey(project.id));
+      if (storedOwner && storedOwner !== owner) return;
+      manualHandoffOwnerRef.current = owner;
+      window.sessionStorage.setItem(autoSendFirstMessageKey(project.id), 'manual');
+      window.sessionStorage.setItem(manualHomeScopeKey(project.id), owner);
+    } catch {
+      // Metadata failure must not hide the only complete editable copy. The
+      // mounted view still owns this source; never rebind it to another scope.
+      manualHandoffOwnerRef.current = owner;
+      ownerSaved = false;
+    }
+    if (manualHandoffAttemptRef.current === owner) return;
+    manualHandoffAttemptRef.current = owner;
+    setError(t(ownerSaved ? 'mokina.model.unavailable' : 'mokina.pendingSend.saveFailed'));
+    if (config.mode === 'daemon' && config.agentId === 'amr') onOpenSettings('execution');
+    const conversationId = activeConversationId;
+    const lifetime = activeAuthorizationLifetimeRef.current;
+    const snapshot: SendRequestSnapshot = {
+      prompt: seed,
+      extras: { attachments, commentAttachments: [], quotes: [], context: {
+        skillIds: context?.skillIds ?? [], mcpServerIds: context?.mcpServerIds ?? [],
+        connectorIds: context?.connectorIds ?? [], workspaceItems: context?.workspaceItems ?? [],
+        ...(context?.mokinaSnapshotId ? { mokinaSnapshotId: context.mokinaSnapshotId } : {}),
+        ...(context?.mokinaSnapshotGeneration ? { mokinaSnapshotGeneration: context.mokinaSnapshotGeneration } : {}),
+      } },
+      ...(context?.pluginIds?.length ? { requiresContextReselection: true } : {}),
+      userMessageId: identity.userMessageId,
+      assistantMessageId: identity.assistantMessageId,
+    };
+    // Do not manufacture a successful receipt from a lossy sanitizer. The full
+    // source remains session-backed and editable when a receipt cannot hold it.
+    const retainFullHandoff = () => setManualHomeHandoff({ projectId: project.id,
+      conversationId, authorityKey: projectRunAuthorityKey, snapshot, context });
+    const matchingReceipt = savedManualHandoff?.snapshot
+      && JSON.stringify(savedManualHandoff.snapshot) === JSON.stringify(snapshot);
+    if (!canRecoverSendSnapshot(snapshot) || savedManualHandoff && !matchingReceipt) {
+      retainFullHandoff();
+      return;
+    }
+    void (async () => {
+      const saved = matchingReceipt ? 'saved' : await persistPendingSendRequest({
+        projectId: project.id, conversationId, authorityKey: projectRunAuthorityKey,
+        clientRequestId: identity.clientRequestId!, prompt: seed, snapshot,
+      });
+      const restored = saved === 'saved' && await persistSendRequestOutcome(
+        project.id, conversationId, identity.clientRequestId!, 'draft', projectRunAuthorityKey);
+      if (activeAuthorizationLifetimeRef.current !== lifetime
+        || messagesConversationIdRef.current !== conversationId) return;
+      if (!restored) { retainFullHandoff(); setError(t('mokina.pendingSend.saveFailed')); return; }
+      // ChatPane transfers the whole receipt into the durable composer draft;
+      // only its successful acknowledgement may consume the Home source.
+      setSendRecoveryRequest({ id: identity.clientRequestId!, snapshot });
+    })();
+
+  }, [activeConversationId, messagesInitialized, homeAttachmentUploads, project.id,
+    project.pendingPrompt, projectIsProgrammaticBrandExtraction, projectRunAuthorityKey,
+    config.mode, config.agentId, onOpenSettings, t]);
+
   // PluginLoopHome auto-send: when the user submits on Home, app.tsx
   // sets `sessionStorage['od:auto-send-first:<projectId>']` and routes
   // through createProject. Once the conversation id resolves and the
@@ -13815,63 +13908,8 @@ export function ProjectView({
     if (!seed && attachments.length === 0) {
       return;
     }
-    const identity = homeAutoSendIdentity(project.id);
-    const savedManualHandoff = MOKINA_LOCAL_EDITION
-      ? loadSendRequestRecords(project.id, activeConversationId, projectRunAuthorityKey)
-        .find(record => record.clientRequestId === identity.clientRequestId
-          && record.phase === 'prepared' && record.status === 'draft')
-      : undefined;
     if (MOKINA_LOCAL_EDITION && (homeAutoSendRequiresManualRef.current
-      || flag === 'manual' || savedManualHandoff
-      || config.mode === 'daemon' && config.agentId === 'amr')) {
-      // Latch BEFORE opening settings or awaiting storage. A model/config
-      // rerender must never turn this blocked intent into a dispatched run.
-      homeAutoSendRequiresManualRef.current = true;
-      autoSentRef.current = true;
-      try { window.sessionStorage.setItem(autoSendFirstMessageKey(project.id), 'manual'); }
-      catch { /* The scoped durable receipt below is the second recovery copy. */ }
-      setError(t('mokina.model.unavailable'));
-      if (config.mode === 'daemon' && config.agentId === 'amr') onOpenSettings('execution');
-      const conversationId = activeConversationId;
-      const lifetime = activeAuthorizationLifetimeRef.current;
-      const snapshot: SendRequestSnapshot = {
-        prompt: seed,
-        extras: { attachments, commentAttachments: [], quotes: [], context: {
-          skillIds: context?.skillIds ?? [], mcpServerIds: context?.mcpServerIds ?? [],
-          connectorIds: context?.connectorIds ?? [], workspaceItems: context?.workspaceItems ?? [],
-          ...(context?.mokinaSnapshotId ? { mokinaSnapshotId: context.mokinaSnapshotId } : {}),
-          ...(context?.mokinaSnapshotGeneration ? { mokinaSnapshotGeneration: context.mokinaSnapshotGeneration } : {}),
-        } },
-        ...(context?.pluginIds?.length ? { requiresContextReselection: true } : {}),
-        userMessageId: identity.userMessageId,
-        assistantMessageId: identity.assistantMessageId,
-      };
-      // Do not manufacture a successful receipt from a lossy sanitizer. The full
-      // source remains session-backed and editable when a receipt cannot hold it.
-      const retainFullHandoff = () => setManualHomeHandoff({ projectId: project.id,
-        conversationId, authorityKey: projectRunAuthorityKey, snapshot, context });
-      const matchingReceipt = savedManualHandoff?.snapshot
-        && JSON.stringify(savedManualHandoff.snapshot) === JSON.stringify(snapshot);
-      if (!canRecoverSendSnapshot(snapshot) || savedManualHandoff && !matchingReceipt) {
-        retainFullHandoff();
-        return;
-      }
-      void (async () => {
-        const saved = matchingReceipt ? 'saved' : await persistPendingSendRequest({
-          projectId: project.id, conversationId, authorityKey: projectRunAuthorityKey,
-          clientRequestId: identity.clientRequestId!, prompt: seed, snapshot,
-        });
-        const restored = saved === 'saved' && await persistSendRequestOutcome(
-          project.id, conversationId, identity.clientRequestId!, 'draft', projectRunAuthorityKey);
-        if (activeAuthorizationLifetimeRef.current !== lifetime
-          || messagesConversationIdRef.current !== conversationId) return;
-        if (!restored) { retainFullHandoff(); setError(t('mokina.pendingSend.saveFailed')); return; }
-        // ChatPane transfers the whole receipt into the durable composer draft;
-        // only its successful acknowledgement may consume the Home source.
-        setSendRecoveryRequest({ id: identity.clientRequestId!, snapshot });
-      })();
-      return;
-    }
+      || flag === 'manual' || config.mode === 'daemon' && config.agentId === 'amr')) return;
     if (!projectRunHasBillableAmrPrincipal) return;
     const autoSendGateStillMatches =
       autoSendAmrGateWitnessRef.current !== undefined &&

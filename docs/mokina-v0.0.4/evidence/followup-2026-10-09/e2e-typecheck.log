@@ -1,0 +1,3 @@
+
+> @open-design/e2e@0.22.1 typecheck /workspace/Mokina/open-design/e2e
+> tsc -p tsconfig.json --noEmit

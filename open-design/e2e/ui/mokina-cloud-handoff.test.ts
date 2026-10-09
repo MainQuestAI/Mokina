@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { expect, test } from '@/playwright/suite';
-import { routeMockAgents, routeUnavailableVelaStatus, suppressWhatsNew, routeSuccessfulRuns } from '@/playwright/mock-factory';
+import { routeMockAgents, routeUnavailableVelaStatus, suppressWhatsNew, routeSuccessfulRuns, applyStandardMocks } from '@/playwright/mock-factory';
 import { T } from '@/timeouts';
 
 for (const [count, length] of [[1, 60], [50, 65536], [51, 65536], [50, 65537]]) {
@@ -47,6 +47,7 @@ test(`[P1] Mokina legacy Cloud handoff retains ${count} files and ${length} char
   // ProjectView; the payload must survive that boundary before returning.
   const settings = page.getByRole('region', { name: /^Settings/ });
   await expect(settings).toBeVisible({ timeout: T.long });
+  const settingsUrl = page.url();
   await settings.getByTestId('settings-agent-select-mock').click();
   await expect(settings.getByTestId('settings-agent-select-mock')).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(() => config.agentId).toBe('mock');
@@ -63,18 +64,42 @@ test(`[P1] Mokina legacy Cloud handoff retains ${count} files and ${length} char
     await container.locator('summary').click();
     prompt = `edited:${prompt}`;
     await editor.fill(prompt);
+    // Send B using the ordinary composer while the full source A remains unconsumed.
+    await page.getByTestId('chat-composer-input').fill('Separate ordinary message B');
+    await page.getByTestId('chat-send').click();
+    await runs.expectCount(1);
+    const conversationId = runs.bodies[0]!.conversationId;
+    await expect.poll(async () => {
+      const response = await page.request.get(`/api/projects/${projectId}/conversations/${conversationId}/messages`);
+      expect(response.ok()).toBe(true);
+      return (await response.json()).messages.some((message: { content: string }) => message.content === 'Separate ordinary message B');
+    }).toBe(true);
+    await expect(page.getByTestId('chat-send')).toBeVisible();
   }
   await page.reload({ waitUntil: 'domcontentloaded' });
   if (overflow) await expect(editor).toHaveValue(prompt, { timeout: T.long });
   else await expect(editor).toHaveText(prompt, { timeout: T.long });
   await expect(container).toContainText(files.at(-1)!.name);
-  await runs.expectNone();
+  if (overflow) {
+    await runs.expectCount(1);
+    // Re-enter the actual Settings page; the project composer has no Home model chip.
+    await page.goto(settingsUrl, { waitUntil: 'domcontentloaded' });
+    await expect(settings).toBeVisible();
+    await settings.getByTestId('settings-agent-select-mock').click();
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    await expect(editor).toHaveValue(prompt, { timeout: T.long });
+    await expect(container.locator('li')).toHaveCount(count!);
+    prompt = `restored:${prompt}`;
+    await editor.fill(prompt);
+    await runs.expectCount(1);
+  } else await runs.expectNone();
   await testInfo.attach('legacy-cloud-manual-draft', { body: await page.screenshot(), contentType: 'image/png' });
   const send = page.getByTestId(overflow ? 'mokina-manual-handoff-send' : 'chat-send');
   if (overflow) await send.dblclick(); else await send.click();
-  await runs.expectCount(1);
-  expect(JSON.stringify(runs.bodies[0])).toContain(prompt);
-  expect(runs.bodies[0]!.attachments).toEqual(files.map(file => file.path));
+  await runs.expectCount(overflow ? 2 : 1);
+  expect(JSON.stringify(runs.bodies.at(-1))).toContain(prompt);
+  expect(runs.bodies.at(-1)!.attachments).toEqual(files.map(file => file.path));
+  if (overflow) await expect.poll(() => page.evaluate(id => sessionStorage.getItem(`od:auto-send-first:${id}`), projectId)).toBeNull();
 });
 
 }
@@ -157,3 +182,76 @@ test('[P1] Mokina generated crash page displays every export outcome in Chromium
     await testInfo.attach(`diagnostics-${outcome}`, { body: await page.screenshot(), contentType: 'image/png' });
   }
 });
+
+for (const oldSkill of [null, 'skill-a']) {
+  test(`[P1] Mokina late MCP catalog preserves new Skill B and connector over old ${oldSkill ?? 'empty'} context`, async ({ page }, testInfo) => {
+    test.slow();
+    await applyStandardMocks(page);
+    const runs = await routeSuccessfulRuns(page);
+    const skillIds: string[] = [];
+    for (const label of ['a', 'b']) {
+      const imported = await page.request.post('/api/skills/import', { data: {
+        name: `r3-skill-${label}-${randomUUID()}`, description: 'Recovery race fixture', body: '# Recovery fixture\nUse the selected skill.',
+      } });
+      expect(imported.ok(), await imported.text()).toBe(true);
+      skillIds.push((await imported.json()).skill.id);
+    }
+    const [skillA, skillB] = skillIds;
+    const skill = (id: string, name: string) => ({ id, name, description: 'Recovery race fixture', triggers: [], mode: 'prototype', surface: 'web', previewType: 'html', designSystemRequired: false, defaultFor: [], upstream: null, hasBody: true, examplePrompt: '' });
+    await page.route('**/api/skills', route => route.fulfill({ json: { skills: [skill(skillA!, 'Skill A'), skill(skillB!, 'Skill B')] } }));
+    await page.route('**/api/connectors', route => route.fulfill({ json: { connectors: [
+      { id: 'new-connector', name: 'New Connector', status: 'connected', provider: 'test', category: 'test', tools: [] },
+    ] } }));
+    let releaseMcp!: () => void;
+    const pendingMcp = new Promise<void>(resolve => { releaseMcp = resolve; });
+    let mcpRequested = false;
+    await page.route('**/api/mcp/servers', async route => {
+      mcpRequested = true;
+      await pendingMcp;
+      await route.fulfill({ json: { servers: [{ id: 'catalog-ready', label: 'Catalog Ready MCP', enabled: true, transport: 'stdio', command: 'mcp' }] } });
+    });
+    await page.addInitScript(oldSkill => {
+      if (sessionStorage.getItem('race-seeded')) return;
+      sessionStorage.setItem('race-seeded', '1');
+      sessionStorage.setItem('od:home-context:none', JSON.stringify({ skillId: oldSkill, plugins: [], mcp: [], connectors: [], workspaceItems: [] }));
+    }, oldSkill ? skillA! : null);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => mcpRequested).toBe(true);
+    const input = page.getByTestId('home-hero-input');
+    await input.fill('@skill');
+    const picker = page.getByTestId('home-hero-plugin-picker');
+    await picker.getByRole('tab', { name: /Skills/i }).click();
+    await picker.getByRole('option', { name: /Skill B/ }).click();
+    await expect(input).toContainText('Skill B');
+    await input.press('End'); await page.keyboard.insertText(' ');
+    await page.getByTestId('home-hero-plus-trigger').click();
+    await page.getByTestId('composer-plus-connectors').click();
+    await page.getByRole('menuitem', { name: /New Connector/ }).click();
+    await expect(input).toContainText('New Connector');
+    const mcpDone = page.waitForResponse(response => new URL(response.url()).pathname === '/api/mcp/servers');
+    releaseMcp();
+    expect((await mcpDone).ok()).toBe(true);
+    // Witness the catalog in the rendered app before checking the selected fields.
+    await page.getByTestId('home-hero-plus-trigger').click();
+    await page.getByTestId('composer-plus-mcp').click();
+    await expect(page.getByRole('menuitem', { name: /Catalog Ready MCP/ })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect.poll(() => page.evaluate(() => {
+      const draft = JSON.parse(sessionStorage.getItem('od:home-context:none') ?? '{}');
+      return { skillId: draft.skillId, connectors: draft.connectors?.map((item: { id: string }) => item.id) };
+    })).toEqual({ skillId: skillB, connectors: ['new-connector'] });
+    await runs.expectNone();
+    await testInfo.attach('late-catalog-selection', { body: await page.screenshot(), contentType: 'image/png' });
+    const submitted = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname === '/api/projects');
+    const created = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/projects');
+    await page.getByTestId('home-hero-submit').click();
+    const body = (await submitted).postDataJSON();
+    expect(body.skillId).toBe(skillB);
+    const createdResponse = await created;
+    expect(createdResponse.ok(), await createdResponse.text()).toBe(true);
+    expect(body.metadata.contextConnectors.map((item: { id: string }) => item.id)).toEqual(['new-connector']);
+    await runs.expectCount(1);
+    const project = await (await page.request.get(`/api/projects/${runs.bodies[0]!.projectId}`)).json();
+    expect(project.project.skillId).toBe(skillB);
+  });
+}

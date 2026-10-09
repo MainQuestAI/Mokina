@@ -575,6 +575,8 @@ describe('Mokina legacy Cloud Home handoff requires a fresh explicit send', () =
       expect(screen.getByTestId('mokina-manual-handoff')).toHaveTextContent(`file-${count - 1}.txt`);
       expect(chatSurface.props?.sendRecoveryRequest).toBeNull();
       view.unmount();
+      // A different ordinary message B is already persisted when A is recovered.
+      conversationMessages = [{ ...userMessage, content: 'Separate ordinary B' }];
       renderProjectView(localConfig);
       await waitForConversation();
       await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
@@ -586,6 +588,47 @@ describe('Mokina legacy Cloud Home handoff requires a fresh explicit send', () =
       expect(streamViaDaemon.mock.calls[0]![0].history.at(-1).content).toBe(fullPrompt);
       expect(streamViaDaemon.mock.calls[0]![0].history.at(-1).attachments).toEqual(files);
     }
+  });
+  it('keeps the full manual recovery editable if saving its scope fails', async () => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    const fullPrompt = 'x'.repeat(65537);
+    sessionStorage.setItem('od:auto-send-prompt:project-1', fullPrompt);
+    const setItem = Storage.prototype.setItem;
+    const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function(this: Storage, key, value) {
+      if (this === sessionStorage && key === 'od:auto-send-manual-scope:project-1') throw new Error('quota');
+      return setItem.call(this, key, value);
+    });
+    try {
+      const view = renderProjectView(amrConfig);
+      await waitForConversation();
+      await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
+      expect(sessionStorage.getItem('od:auto-send-first:project-1')).toBe('manual');
+      view.unmount();
+      renderProjectView(localConfig);
+      await waitForConversation();
+      await waitFor(() => expect(screen.getByTestId('mokina-manual-handoff-prompt')).toHaveValue(fullPrompt));
+      expect(streamViaDaemon).not.toHaveBeenCalled();
+      expect(sessionStorage.getItem('od:auto-send-prompt:project-1')).toBe(fullPrompt);
+    } finally { write.mockRestore(); }
+  });
+  it.each(['conversation', 'authority'])('does not rebind a retained Home source to another %s', async mismatch => {
+    mokinaEdition.on = true;
+    seedHandoff();
+    sessionStorage.setItem('od:auto-send-first:project-1', 'manual');
+    const ownerAuthority = workspaceIdentityCacheKey(workspaceScopeMocks.personalContext());
+    sessionStorage.setItem('od:auto-send-manual-scope:project-1', JSON.stringify([
+      project.id, mismatch === 'conversation' ? 'other-conversation' : conversation.id,
+      mismatch === 'authority' ? 'other-authority' : ownerAuthority,
+    ]));
+    const fullPrompt = 'x'.repeat(65537);
+    sessionStorage.setItem('od:auto-send-prompt:project-1', fullPrompt);
+    renderProjectView(localConfig);
+    await waitForConversation();
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.queryByTestId('mokina-manual-handoff')).toBeNull();
+    expect(sessionStorage.getItem('od:auto-send-prompt:project-1')).toBe(fullPrompt);
+    expect(streamViaDaemon).not.toHaveBeenCalled();
   });
   it('does not let an older cropped receipt consume a more complete Home source', async () => {
     mokinaEdition.on = true;

@@ -1,0 +1,547 @@
+
+ RUN  v4.1.6 /workspace/Mokina/open-design/apps/web
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+stderr | tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at ProjectView (/workspace/Mokina/open-design/apps/web/src/components/ProjectView.tsx:1115:3)
+
+ ❯ tests/components/ProjectView.retry-gating.test.tsx (45 tests | 1 failed | 44 skipped) 3124ms
+     × keeps the full manual recovery editable if saving its scope fails 3121ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/components/ProjectView.retry-gating.test.tsx > Mokina legacy Cloud Home handoff requires a fresh explicit send > keeps the full manual recovery editable if saving its scope fails
+TestingLibraryElementError: Unable to find an element by: [data-testid="mokina-manual-handoff-prompt"]
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="split _workspaceLayout_71b10c"
+      style="--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"
+    >
+      <div
+        class="split-chat-slot"
+      >
+        <div
+          class="split-chat-tabs-dock"
+          data-testid="workspace-tabs-dock"
+        >
+          <div
+            class="_dock_8c9b80"
+            data-testid="chat-history-dock"
+          />
+          <button
+            aria-label="chat.collapsePane"
+            class="split-chat-collapse od-tooltip"
+            data-testid="chat-collapse-toggle"
+            data-tooltip="chat.collapsePane"
+            data-tooltip-placement="bottom"
+            title="chat.collapsePane"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="od-icon"
+              fill="currentColor"
+              focusable="false"
+              height="16"
+              viewBox="0 0 24 24"
+              width="16"
+            >
+              <path
+                d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"
+              />
+            </svg>
+          </button>
+        </div>
+        <section>
+          <output
+            data-testid="active-conversation"
+          >
+            conv-a
+          </output>
+          <output
+            data-testid="queued-count"
+          >
+            0
+          </output>
+          <output
+            data-testid="queued-prompts"
+          />
+          <output
+            data-testid="queued-meta-keys"
+          />
+          <output
+            data-testid="recovery-blocked-reason"
+          >
+            none
+          </output>
+          <output
+            data-testid="retry-pending-id"
+          >
+            none
+          </output>
+          <output
+            data-testid="assistant-summary"
+          />
+          <button
+            data-testid="chat-retry"
+            type="button"
+          >
+            retry
+          </button>
+          <button
+            data-testid="send-message"
+            type="button"
+          >
+            send
+          </button>
+          <button
+            data-testid="share-to-open-design"
+            type="button"
+          >
+            share
+          </button>
+          <button
+            data-testid="continue-remaining"
+            type="button"
+          >
+            continue remaining
+          </button>
+          <button
+            data-testid="resume-run"
+            type="button"
+          >
+            resume
+          </button>
+          <button
+            data-testid="submit-question-form"
+            type="button"
+          >
+            answer form
+          </button>
+        </section>
+      </div>
+      <div
+        class="comment-float-host"
+        data-testid="comment-float-host"
+        id=":r0:"
+      />
+      <div
+        aria-label="project.resizeChatPanel"
+        aria-orientation="vertical"
+        aria-valuemax="720"
+        aria-valuemin="345"
+        aria-valuenow="460"
+        class="split-resize-handle"
+        role="separator"
+        tabindex="0"
+        title="project.resizeChatPanel"
+      />
+      <div
+        data-testid="file-workspace"
+      />
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div>
+      <div
+        class="split _workspaceLayout_71b10c"
+        style="--project-chat-panel-width: 460px; --project-chat-handle-width: 4px; --project-workspace-panel-track: minmax(400px, 1fr);"
+      >
+        <div
+          class="split-chat-slot"
+        >
+          <div
+            class="split-chat-tabs-dock"
+            data-testid="workspace-tabs-dock"
+          >
+            <div
+              class="_dock_8c9b80"
+              data-testid="chat-history-dock"
+            />
+            <button
+              aria-label="chat.collapsePane"
+              class="split-chat-collapse od-tooltip"
+              data-testid="chat-collapse-toggle"
+              data-tooltip="chat.collapsePane"
+              data-tooltip-placement="bottom"
+              title="chat.collapsePane"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="od-icon"
+                fill="currentColor"
+                focusable="false"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+              >
+                <path
+                  d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM8 5H4V19H8V5ZM10 5V19H20V5H10Z"
+                />
+              </svg>
+            </button>
+          </div>
+          <section>
+            <output
+              data-testid="active-conversation"
+            >
+              conv-a
+            </output>
+            <output
+              data-testid="queued-count"
+            >
+              0
+            </output>
+            <output
+              data-testid="queued-prompts"
+            />
+            <output
+              data-testid="queued-meta-keys"
+            />
+            <output
+              data-testid="recovery-blocked-reason"
+            >
+              none
+            </output>
+            <output
+              data-testid="retry-pending-id"
+            >
+              none
+            </output>
+            <output
+              data-testid="assistant-summary"
+            />
+            <button
+              data-testid="chat-retry"
+              type="button"
+            >
+              retry
+            </button>
+            <button
+              data-testid="send-message"
+              type="button"
+            >
+              send
+            </button>
+            <button
+              data-testid="share-to-open-design"
+              type="button"
+            >
+              share
+            </button>
+            <button
+              data-testid="continue-remaining"
+              type="button"
+            >
+              continue remaining
+            </button>
+            <button
+              data-testid="resume-run"
+              type="button"
+            >
+              resume
+            </button>
+            <button
+              data-testid="submit-question-form"
+              type="button"
+            >
+              answer form
+            </button>
+          </section>
+        </div>
+        <div
+          class="comment-float-host"
+          data-testid="comment-float-host"
+          id=":r0:"
+        />
+        <div
+          aria-label="project.resizeChatPanel"
+          aria-orientation="vertical"
+          aria-valuemax="720"
+          aria-valuemin="345"
+          aria-valuenow="460"
+          class="split-resize-handle"
+          role="separator"
+          tabindex="0"
+          title="project.resizeChatPanel"
+        />
+        <div
+          data-testid="file-workspace"
+        />
+      </div>
+    </div>
+  </body>
+</html>
+ ❯ Proxy.waitForWrapper ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ tests/components/ProjectView.retry-gating.test.tsx:605:13
+    603|       renderProjectView(amrConfig);
+    604|       await waitForConversation();
+    605|       await waitFor(() => expect(screen.getByTestId('mokina-manual-han…
+       |             ^
+    606|       expect(streamViaDaemon).not.toHaveBeenCalled();
+    607|       expect(sessionStorage.getItem('od:auto-send-prompt:project-1')).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 44 skipped (45)
+   Start at  01:27:24
+   Duration  9.11s (transform 4.39s, setup 1.11s, import 4.24s, tests 3.12s, environment 522ms)
+
+undefined
+/workspace/Mokina/open-design/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/components/ProjectView.retry-gating.test.tsx -t saving its scope fails --maxWorkers=2

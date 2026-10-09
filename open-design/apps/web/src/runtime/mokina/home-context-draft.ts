@@ -22,3 +22,8 @@ export function readHomeContextDraft(scope: string): HomeContextDraft | null {
     return row;
   } catch { return null; }
 }
+
+/** Empty snapshots must not wait for unrelated catalogs or clear new choices. */
+export function hasHomeContextReferences(draft: HomeContextDraft | null): boolean {
+  return !!draft && (!!draft.skillId || [draft.plugins, draft.mcp, draft.connectors, draft.workspaceItems].some(items => items.length > 0));
+}

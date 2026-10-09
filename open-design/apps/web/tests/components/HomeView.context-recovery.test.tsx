@@ -80,3 +80,68 @@ it('retains unresolved safe references and blocks sending until they are explici
   await waitFor(() => expect(screen.queryByTestId('mokina-home-context-restore')).toBeNull());
   expect(hero.props?.prompt).toBe('Still retained');
 });
+
+it.each([null, 'skill-a'])('keeps new selections when MCP resolves after old skill %s', async oldSkill => {
+  const skill = (id: string) => ({ id, name: id, description: '', triggers: [], mode: 'prototype', previewType: 'none', designSystemRequired: false, defaultFor: [], upstream: null, hasBody: true, aggregatesExamples: false, examplePrompt: '' });
+  const oldMcp = { id: 'old-mcp', label: 'Old MCP', enabled: true, transport: 'stdio', command: 'mcp' };
+  const connector = { id: 'new-connector', name: 'New Connector', status: 'connected', provider: 'test', category: 'test', tools: [] };
+  sessionStorage.setItem('od:home-context:none', JSON.stringify({ skillId: oldSkill, plugins: [], mcp: [], connectors: [], workspaceItems: [] }));
+  let releaseMcp!: (response: Response) => void;
+  const delayedMcp = new Promise<Response>(resolve => { releaseMcp = resolve; });
+  vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => String(input).includes('/mcp/servers') ? delayedMcp : new Response(JSON.stringify({ plugins: [] }), { headers: { 'content-type': 'application/json' } })));
+  const submit = vi.fn(async (_payload: unknown) => 'blocked' as const);
+  render(<I18nProvider initial="en"><HomeView projects={[]} onOpenProject={() => {}} skills={[skill('skill-a'), skill('skill-b')] as ComponentProps<typeof HomeView>['skills']}
+    connectors={[connector] as unknown as ComponentProps<typeof HomeView>['connectors']} onSubmit={submit} /></I18nProvider>);
+  await waitFor(() => expect(hero.props?.pluginsLoading).toBe(false));
+  expect(hero.props?.mcpLoading).toBe(true);
+  await act(async () => {
+    hero.props!.onPickSkill!(skill('skill-b') as never, '@skill-b ');
+    hero.props!.onPickConnector!(connector as never, '@skill-b @New Connector retained');
+  });
+  expect(hero.props?.activeSkillId).toBe('skill-b');
+  await act(async () => { releaseMcp(new Response(JSON.stringify({ servers: [oldMcp] }), { headers: { 'content-type': 'application/json' } })); });
+  await waitFor(() => expect(hero.props?.mcpLoading).toBe(false));
+  expect(hero.props?.activeSkillId).toBe('skill-b');
+  expect(hero.props?.selectedConnectorContexts?.map(item => item.id)).toEqual(['new-connector']);
+  await act(async () => { await hero.props!.onSubmit(); });
+  const payload = submit.mock.calls[0]![0] as Parameters<NonNullable<ComponentProps<typeof HomeView>['onSubmit']>>[0];
+  expect(payload.skillId).toBe('skill-b');
+  expect(payload.contextConnectors?.map(item => item.id)).toEqual(['new-connector']);
+});
+
+it('saves a newly chosen array field while retaining other unresolved fields, without resurrecting its old selection', async () => {
+  const connector = (id: string) => ({ id, name: id, status: 'connected', provider: 'test', category: 'test', tools: [] });
+  const oldMcp = { id: 'old-mcp', label: 'Old MCP', enabled: true, transport: 'stdio', command: 'mcp' };
+  sessionStorage.setItem('od:home-context:none', JSON.stringify({ skillId: null, plugins: [], mcp: [{ id: 'old-mcp', inlineBacked: false }], connectors: [{ id: 'old-connector', inlineBacked: false }], workspaceItems: [] }));
+  let release!: (response: Response) => void;
+  const delayed = new Promise<Response>(resolve => { release = resolve; });
+  vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => String(input).includes('/mcp/servers') ? delayed : new Response(JSON.stringify({ plugins: [] }), { headers: { 'content-type': 'application/json' } })));
+  const submit = vi.fn(async (_payload: unknown) => 'blocked' as const);
+  const element = (ids: string[]) => <I18nProvider initial="en"><HomeView projects={[]} onOpenProject={() => {}} onSubmit={submit}
+    connectors={ids.map(connector) as unknown as ComponentProps<typeof HomeView>['connectors']} /></I18nProvider>;
+  const view = render(element(['new-connector']));
+  await waitFor(() => expect(hero.props?.pluginsLoading).toBe(false));
+  await act(async () => { hero.props!.onPickConnector!(connector('new-connector') as never, '@new-connector request'); });
+  await waitFor(() => expect(readHomeContextDraft('none')?.connectors).toEqual([{ id: 'new-connector', inlineBacked: true }]));
+  expect(readHomeContextDraft('none')?.mcp).toEqual([{ id: 'old-mcp', inlineBacked: false }]);
+  view.rerender(element(['old-connector', 'new-connector']));
+  await act(async () => { release(new Response(JSON.stringify({ servers: [oldMcp] }), { headers: { 'content-type': 'application/json' } })); });
+  await waitFor(() => expect(hero.props?.selectedMcpContexts?.map(item => item.id)).toEqual(['old-mcp']));
+  expect(hero.props?.selectedConnectorContexts?.map(item => item.id)).toEqual(['new-connector']);
+  await act(async () => { await hero.props!.onSubmit(); });
+  const payload = submit.mock.calls[0]![0] as Parameters<NonNullable<ComponentProps<typeof HomeView>['onSubmit']>>[0];
+  expect(payload.contextConnectors?.map(item => item.id)).toEqual(['new-connector']);
+  expect(payload.contextMcpServers?.map(item => item.id)).toEqual(['old-mcp']);
+});
+
+it('an empty snapshot does not wait for the MCP catalog before an explicit send', async () => {
+  sessionStorage.setItem('od:home-context:none', JSON.stringify({ skillId: null, plugins: [], mcp: [], connectors: [], workspaceItems: [] }));
+  vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => String(input).includes('/mcp/servers') ? new Promise<Response>(() => {}) : new Response(JSON.stringify({ plugins: [] }), { headers: { 'content-type': 'application/json' } })));
+  const submit = vi.fn(async (_payload: unknown) => 'blocked' as const);
+  render(<I18nProvider initial="en"><HomeView projects={[]} onOpenProject={() => {}} onSubmit={submit} /></I18nProvider>);
+  await waitFor(() => expect(hero.props?.pluginsLoading).toBe(false));
+  expect(hero.props?.mcpLoading).toBe(true);
+  await act(async () => { hero.props!.onPromptChange('Independent request'); });
+  await act(async () => { await hero.props!.onSubmit(); });
+  expect(submit).toHaveBeenCalledTimes(1);
+});

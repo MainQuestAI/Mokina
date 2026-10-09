@@ -1,0 +1,73 @@
+
+> open-design@0.22.1 typecheck /workspace/Mokina/open-design
+> pnpm -r --workspace-concurrency=4 --if-present run typecheck && tsc -p scripts/tsconfig.json --noEmit
+
+Scope: 27 of 28 workspace projects
+packages/components typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/diagnostics typecheck$ tsc -p tsconfig.json --noEmit
+packages/dsh-runtime typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/metatool typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/diagnostics typecheck: Done
+packages/platform typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/metatool typecheck: Done
+packages/registry-protocol typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/dsh-runtime typecheck: Done
+packages/release typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/platform typecheck: Done
+packages/components typecheck: Done
+packages/release typecheck: Done
+packages/registry-protocol typecheck: Done
+packages/contracts typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/download typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/host typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/sidecar typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/host typecheck: Done
+packages/sidecar-proto typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/download typecheck: Done
+tools/serve typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/sidecar typecheck: Done
+packages/sidecar-proto typecheck: Done
+tools/serve typecheck: Done
+packages/contracts typecheck: Done
+apps/web typecheck$ tsc -b --noEmit
+e2e typecheck$ tsc -p tsconfig.json --noEmit
+packages/agui-adapter typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/launcher-proto typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+apps/web typecheck: Done
+packages/plugin-runtime typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/launcher-proto typecheck: Done
+packages/standalone typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+packages/agui-adapter typecheck: Done
+tools/dev typecheck$ tsc -p tsconfig.json --noEmit
+packages/standalone typecheck: Done
+packages/plugin-runtime typecheck: Done
+tools/dev typecheck: Done
+e2e typecheck: Done
+apps/closure pretypecheck$ pnpm --filter @open-design/standalone build
+apps/daemon typecheck$ pnpm --filter @open-design/contracts build && pnpm --filter @open-design/registry-protocol build && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+apps/desktop typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+shells/terminal pretypecheck$ pnpm --filter @open-design/standalone build
+shells/terminal pretypecheck: > @open-design/standalone@0.1.0 build /workspace/Mokina/open-design/packages/standalone
+shells/terminal pretypecheck: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+apps/closure pretypecheck: > @open-design/standalone@0.1.0 build /workspace/Mokina/open-design/packages/standalone
+apps/closure pretypecheck: > tsx ./esbuild.config.ts && tsc -p tsconfig.json --emitDeclarationOnly
+apps/daemon typecheck: > @open-design/contracts@0.22.1 build /workspace/Mokina/open-design/packages/contracts
+apps/daemon typecheck: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+shells/terminal pretypecheck: Done
+shells/terminal typecheck$ tsc -p tsconfig.tests.json --noEmit
+apps/closure pretypecheck: Done
+apps/closure typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+shells/terminal typecheck: Done
+tools/pack typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+apps/closure typecheck: Done
+tools/release typecheck$ tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+apps/daemon typecheck: > @open-design/registry-protocol@0.5.0 build /workspace/Mokina/open-design/packages/registry-protocol
+apps/daemon typecheck: > node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly
+tools/pack typecheck: Done
+tools/release typecheck: Done
+apps/desktop typecheck: Done
+apps/daemon typecheck: Done
+apps/packaged typecheck$ pnpm --filter @open-design/desktop build && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit
+apps/packaged typecheck: > @open-design/desktop@0.22.1 build /workspace/Mokina/open-design/apps/desktop
+apps/packaged typecheck: > tsc -p tsconfig.json
+apps/packaged typecheck: Done

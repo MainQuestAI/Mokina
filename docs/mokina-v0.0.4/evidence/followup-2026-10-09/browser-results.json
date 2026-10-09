@@ -1,0 +1,147 @@
+{
+  "baselineHead": "b004a338feb2eb3fdb69c4c2c03827fe71495a25",
+  "testedBlobs": {
+    "open-design/apps/web/src/components/HomeView.tsx": "c6021e5c6efa355722168f6e26cd2e7fb171c5d2",
+    "open-design/apps/web/src/components/ProjectView.tsx": "f433370be480138bee952eff3ccafaf064668bd7",
+    "open-design/apps/web/src/runtime/mokina/home-context-draft.ts": "c3ede4760be62f5c478fb005cc337745cdf72522",
+    "open-design/e2e/ui/mokina-cloud-handoff.test.ts": "dcda18971194a25a78362f465ec2e49967a2558a"
+  },
+  "stats": {
+    "startTime": "2026-10-09T01:41:58.649Z",
+    "duration": 396420.27,
+    "expected": 16,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 1 files and 60 characters before explicit send",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 20537
+    },
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 50 files and 65536 characters before explicit send",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 19184
+    },
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 51 files and 65536 characters before explicit send",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 31533
+    },
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 50 files and 65537 characters before explicit send",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 30246
+    },
+    {
+      "title": "[P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 15458
+    },
+    {
+      "title": "[P1] Mokina generated crash page displays every export outcome in Chromium",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 486
+    },
+    {
+      "title": "[P1] Mokina late MCP catalog preserves new Skill B and connector over old empty context",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 9412
+    },
+    {
+      "title": "[P1] Mokina late MCP catalog preserves new Skill B and connector over old skill-a context",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 10638
+    },
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 1 files and 60 characters before explicit send",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 20349
+    },
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 50 files and 65536 characters before explicit send",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 19691
+    },
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 51 files and 65536 characters before explicit send",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 30637
+    },
+    {
+      "title": "[P1] Mokina legacy Cloud handoff retains 50 files and 65537 characters before explicit send",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 30406
+    },
+    {
+      "title": "[P1] Mokina Home retains bound MCP context through cancelled selection, settings return and refresh",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 15451
+    },
+    {
+      "title": "[P1] Mokina generated crash page displays every export outcome in Chromium",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 431
+    },
+    {
+      "title": "[P1] Mokina late MCP catalog preserves new Skill B and connector over old empty context",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 9302
+    },
+    {
+      "title": "[P1] Mokina late MCP catalog preserves new Skill B and connector over old skill-a context",
+      "project": "chromium",
+      "repeat": 0,
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 9144
+    }
+  ]
+}

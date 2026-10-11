@@ -8,6 +8,10 @@
     "dist"
   ],
   "exports": {
+    "./profile-migration": {
+      "types": "./dist/main/mokina-profile-migration.d.ts",
+      "default": "./dist/main/mokina-profile-migration.js"
+    },
     "./main": {
       "types": "./dist/main/index.d.ts",
       "default": "./dist/main/index.js"

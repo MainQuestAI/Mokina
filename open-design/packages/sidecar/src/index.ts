@@ -6,6 +6,8 @@
  * details; callers share only the five-field resource identity and these operations.
  */
 
+export { findSidecarProcessesInNamespace } from './namespace-processes.js';
+
 export type {
   AppRuntimePathRequest,
   BaseResolutionOptions,

@@ -364,7 +364,9 @@ describe('Mokina revision recovery UI', () => {
     const selected = within(continuation).getByRole('checkbox') as HTMLInputElement;
     fireEvent.click(selected);
     fireEvent.change(within(continuation).getByRole('textbox', { name: 'Continuation background' }), { target: { value: '保留我的背景' } });
-    fireEvent.click(within(continuation).getByRole('button', { name: 'Create continuation project (no send)' }));
+    const create = within(continuation).getByRole('button', { name: 'Create continuation project (no send)' }) as HTMLButtonElement;
+    await waitFor(() => expect(create.disabled).toBe(false));
+    fireEvent.click(create);
     await waitFor(() => expect(finish).toBeTypeOf('function'));
     expect(fetchMock.mock.calls.some(([url, init]) => String(url) === '/api/projects' && init?.method === 'POST')).toBe(false);
     await act(async () => finish(false));

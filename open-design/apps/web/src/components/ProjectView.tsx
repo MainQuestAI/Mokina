@@ -5459,11 +5459,14 @@ export function ProjectView({
     previousRouteVersionRef.current = routeVersionId;
     pendingRouteFileRef.current = routeFileName;
     if (!routeFileName) return;
+    // A fixed-source link asks to read a particular version. Project switching
+    // resets the chat layout, which otherwise hides that version on small windows.
+    if (MOKINA_LOCAL_EDITION && routeVersionId) setWorkspaceFocused(true);
     lastHostRequestedOpenRef.current = routeFileName;
     // URL synchronization acknowledges the selected file; it must not erase
     // the version captured by a chooser/default-open request for that same file.
     setOpenRequest(previous => ({ name: routeFileName, versionId: routeVersionId ?? (!releaseRoutePin && previous?.name === routeFileName ? previous.versionId : undefined), nonce: Date.now() }));
-  }, [routeFileName, routeVersionId]);
+  }, [project.id, routeFileName, routeVersionId]);
 
   // Sync the URL when the active tab changes, so reload + share-link both
   // land back on the same view. Replace (not push) on tab activation so the

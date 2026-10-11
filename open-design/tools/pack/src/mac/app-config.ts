@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 
+import { MOKINA_LOCAL_PREVIEW_NAMESPACE } from "@open-design/release";
 import type { ToolPackConfig } from "../config/index.js";
 import { pathExists } from "./fs.js";
 import type { SeededAppConfigPaths } from "./types.js";
@@ -24,7 +25,7 @@ export function resolveSeededAppConfigPaths(config: ToolPackConfig): SeededAppCo
 }
 
 export async function seedPackagedAppConfig(config: ToolPackConfig): Promise<void> {
-  if (config.portable) return;
+  if (config.portable || config.namespace === MOKINA_LOCAL_PREVIEW_NAMESPACE) return;
 
   const { sourcePath, targetPath } = resolveSeededAppConfigPaths(config);
   if (!(await pathExists(sourcePath))) return;
@@ -48,7 +49,10 @@ export async function writeLaunchPackagedConfig(config: ToolPackConfig, appPath:
     throw new Error(`packaged launch config source must be a JSON object: ${embeddedConfigPath}`);
   }
 
-  const launchConfigPath = join(config.roots.runtime.namespaceRoot, "runtime", "open-design-config.json");
+  // Launcher preparation must not create a stable user profile before native migration.
+  const launchConfigPath = config.namespace === MOKINA_LOCAL_PREVIEW_NAMESPACE
+    ? join(config.roots.output.namespaceRoot, "launch", "open-design-config.json")
+    : join(config.roots.runtime.namespaceRoot, "runtime", "open-design-config.json");
   await mkdir(dirname(launchConfigPath), { recursive: true });
   await writeFile(
     launchConfigPath,

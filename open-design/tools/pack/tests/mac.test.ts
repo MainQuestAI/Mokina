@@ -17,7 +17,7 @@ import {
 import macBuilderSource from "@/mac/builder.ts?raw";
 import { runElectronBuilder } from "@/mac/builder.js";
 import { resolveSeededAppConfigPaths, seedPackagedAppConfig, writeLaunchPackagedConfig } from "@/mac/index.js";
-import { resolveMacPaths } from "@/mac/paths.js";
+import { desktopLogPath, resolveMacPaths } from "@/mac/paths.js";
 
 async function pathExists(path: string): Promise<boolean> {
   try {
@@ -541,10 +541,27 @@ describe("validateMacNativeRebuildOutput", () => {
 });
 
 describe("writeLaunchPackagedConfig", () => {
-  it("injects the tools-pack runtime namespace root without mutating the packaged app config", async () => {
+  it.each(["mokina-local", "release-beta"])("prepares %s launch config without mutating the packaged app config", async (namespace) => {
     const root = await mkdtemp(join(tmpdir(), "open-design-tools-pack-mac-"));
     try {
-      const config = makeConfig(root, { namespace: "release-beta", portable: true });
+      const base = makeConfig(root);
+      const outputNamespaceRoot = join(base.roots.output.platformRoot, "namespaces", namespace);
+      const config = makeConfig(root, {
+        namespace,
+        portable: true,
+        roots: {
+          ...base.roots,
+          output: {
+            ...base.roots.output,
+            namespaceRoot: outputNamespaceRoot,
+            appBuilderRoot: join(outputNamespaceRoot, "builder"),
+          },
+          runtime: {
+            ...base.roots.runtime,
+            namespaceRoot: join(base.roots.runtime.namespaceBaseRoot, namespace),
+          },
+        },
+      });
       const appPath = join(root, "Open Design.app");
       const embeddedConfigPath = join(appPath, "Contents", "Resources", "open-design-config.json");
       await mkdir(dirname(embeddedConfigPath), { recursive: true });
@@ -567,10 +584,17 @@ describe("writeLaunchPackagedConfig", () => {
       const launchConfig = JSON.parse(await readFile(launchConfigPath, "utf8")) as Record<string, unknown>;
       const embeddedConfig = JSON.parse(await readFile(embeddedConfigPath, "utf8")) as Record<string, unknown>;
 
-      expect(launchConfigPath).toBe(join(config.roots.runtime.namespaceRoot, "runtime", "open-design-config.json"));
+      const stableMokina = namespace === "mokina-local";
+      expect(launchConfigPath).toBe(stableMokina
+        ? join(config.roots.output.namespaceRoot, "launch", "open-design-config.json")
+        : join(config.roots.runtime.namespaceRoot, "runtime", "open-design-config.json"));
+      await mkdir(dirname(desktopLogPath(config)), { recursive: true });
+      await writeFile(desktopLogPath(config), "launcher diagnostic");
+      // The migration chooser must see an absent target before the stable app starts.
+      expect(await pathExists(config.roots.runtime.namespaceRoot)).toBe(!stableMokina);
       expect(launchConfig).toMatchObject({
         appVersion: "0.5.1-beta.2",
-        namespace: "release-beta",
+        namespace,
         namespaceBaseRoot: config.roots.runtime.namespaceBaseRoot,
         nodeCommandRelative: "open-design/bin/node",
         webOutputMode: "standalone",

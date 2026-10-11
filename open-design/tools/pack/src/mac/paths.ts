@@ -1,6 +1,7 @@
 import { homedir } from "node:os";
 import { join } from "node:path";
 
+import { MOKINA_LOCAL_PREVIEW_NAMESPACE } from "@open-design/release";
 import { APP_KEYS } from "@open-design/sidecar-proto";
 
 import type { ToolPackConfig } from "../config/index.js";
@@ -84,5 +85,7 @@ export function resolveMacPaths(config: ToolPackConfig): MacPaths {
 
 
 export function desktopLogPath(config: ToolPackConfig): string {
+  // The first stable launch may still be waiting for explicit data migration.
+  if (config.namespace === MOKINA_LOCAL_PREVIEW_NAMESPACE) return join(config.roots.output.namespaceRoot, "launch", "desktop.log");
   return join(config.roots.runtime.namespaceRoot, "logs", APP_KEYS.DESKTOP, "latest.log");
 }

@@ -80,4 +80,20 @@ describe('NewProjectPanel recovery import entry', () => {
     await screen.findByText(/recovery package is not readable/);
     await waitFor(() => expect(button).not.toBeDisabled());
   });
+  it('ignores repeated file picks until the current import has settled', async () => {
+    let complete!: (result: { ok: boolean }) => void;
+    const handler = vi.fn(() => new Promise<{ ok: boolean }>(resolve => { complete = resolve; }));
+    renderPanel(handler);
+    const input = screen.getByTestId('newproj-recovery-input') as HTMLInputElement;
+    const file = new File(['zip'], 'recovery.zip');
+    fireEvent.change(input, { target: { files: [file] } });
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(handler).toHaveBeenCalledTimes(1);
+    complete({ ok: true });
+    await waitFor(() => expect(screen.getByRole('button', { name: /Import recovery package/ })).not.toBeDisabled());
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(handler).toHaveBeenCalledTimes(2);
+    complete({ ok: true });
+  });
+
 });

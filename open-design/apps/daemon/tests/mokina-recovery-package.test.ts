@@ -200,7 +200,7 @@ describe('mokina recovery package', () => {
     const built = await buildProjectRecoveryPackage({
       projectsRoot: root, projectId: 'p1', projectName: '方案项目', exportId: 'exp-1',
     });
-    expect(built.manifest.schema).toBe('mokina.project-recovery.v1');
+    expect(built.manifest.schema).toBe('mokina.project-recovery.v2');
     expect(built.manifest.versions).toHaveLength(2);
     expect(built.manifest.versions.find((version) => version.current)?.originalVersionId).toBe('v2');
     expect(built.manifest.contexts).toEqual([

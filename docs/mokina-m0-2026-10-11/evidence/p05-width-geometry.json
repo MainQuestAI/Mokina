@@ -1,0 +1,342 @@
+{
+  "before900": {
+    "width": 284,
+    "scrollWidth": 345,
+    "children": [
+      {
+        "tag": "DIV",
+        "className": "MokinaArtifactActions_actions__PuVIV",
+        "text": "VersionsRevise sectionContinue",
+        "left": 643,
+        "right": 947.75,
+        "width": 304.75,
+        "minWidth": "auto",
+        "display": "flex",
+        "gridTemplateColumns": "none",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "BUTTON",
+        "className": "button_button__QHXX5 button_ghost__LJW9F ghost",
+        "text": "Continue",
+        "left": 862.765625,
+        "right": 947.75,
+        "width": 84.984375,
+        "minWidth": "auto",
+        "display": "flex",
+        "gridTemplateColumns": "none",
+        "whiteSpace": "nowrap"
+      },
+      {
+        "tag": "STRONG",
+        "className": "",
+        "text": "Selected: v2 · Current draft",
+        "left": 643,
+        "right": 947.75,
+        "width": 304.75,
+        "minWidth": "auto",
+        "display": "block",
+        "gridTemplateColumns": "none",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "SPAN",
+        "className": "",
+        "text": "Download and continue from the selected version; a candidate replaces the current draft only after a",
+        "left": 643,
+        "right": 947.75,
+        "width": 304.75,
+        "minWidth": "auto",
+        "display": "block",
+        "gridTemplateColumns": "none",
+        "whiteSpace": "normal"
+      }
+    ]
+  },
+  "after": {
+    "1440-P05-geometry": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "content": [
+        {
+          "surface": "workspace",
+          "width": 826,
+          "height": 832
+        },
+        {
+          "surface": "artifact-version-panel",
+          "width": 824,
+          "height": 830
+        }
+      ]
+    },
+    "1440-P05-overflow": {
+      "width": 824,
+      "scrollWidth": 824,
+      "children": []
+    },
+    "1440-P05-action-geometry": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "text": "Generate candidate (current draft unchanged)",
+      "rect": {
+        "x": 635,
+        "y": 532.6875,
+        "width": 760,
+        "height": 44
+      },
+      "hit": true,
+      "scrollOwners": [
+        {
+          "className": "MokinaArtifactActions_body__mC6zi",
+          "rect": {
+            "x": 627,
+            "y": 271.5,
+            "width": 776,
+            "height": 591.5
+          },
+          "scrollHeight": 592,
+          "clientHeight": 592,
+          "scrollTop": 0,
+          "overflowY": "auto"
+        }
+      ]
+    },
+    "1440-P06-geometry": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "content": [
+        {
+          "surface": "workspace",
+          "width": 826,
+          "height": 832
+        },
+        {
+          "surface": "artifact-version-panel",
+          "width": 824,
+          "height": 830
+        }
+      ]
+    },
+    "1440-P06-overflow": {
+      "width": 824,
+      "scrollWidth": 824,
+      "children": []
+    },
+    "1440-P06-action-geometry": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "text": "Download",
+      "rect": {
+        "x": 1129.921875,
+        "y": 819,
+        "width": 273.078125,
+        "height": 44
+      },
+      "hit": true,
+      "scrollOwners": []
+    },
+    "1440-P07-geometry": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "content": [
+        {
+          "surface": "workspace",
+          "width": 826,
+          "height": 832
+        },
+        {
+          "surface": "artifact-version-panel",
+          "width": 824,
+          "height": 830
+        }
+      ]
+    },
+    "1440-P07-overflow": {
+      "width": 824,
+      "scrollWidth": 824,
+      "children": []
+    },
+    "1440-P07-action-geometry": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "text": "Create continuation project (no send)",
+      "rect": {
+        "x": 1047,
+        "y": 592.6875,
+        "width": 336,
+        "height": 44
+      },
+      "hit": true,
+      "scrollOwners": [
+        {
+          "className": "MokinaArtifactActions_body__mC6zi",
+          "rect": {
+            "x": 627,
+            "y": 271.5,
+            "width": 776,
+            "height": 591.5
+          },
+          "scrollHeight": 592,
+          "clientHeight": 592,
+          "scrollTop": 0,
+          "overflowY": "auto"
+        }
+      ]
+    },
+    "900-P05-geometry": {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "content": [
+        {
+          "surface": "workspace",
+          "width": 286,
+          "height": 532
+        },
+        {
+          "surface": "artifact-version-panel",
+          "width": 284,
+          "height": 530
+        }
+      ]
+    },
+    "900-P05-overflow": {
+      "width": 284,
+      "scrollWidth": 284,
+      "children": []
+    },
+    "900-P05-action-geometry": {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "text": "Generate candidate (current draft unchanged)",
+      "rect": {
+        "x": 627,
+        "y": 511.875,
+        "width": 236,
+        "height": 44
+      },
+      "hit": true,
+      "scrollOwners": [
+        {
+          "className": "MokinaArtifactActions_body__mC6zi",
+          "rect": {
+            "x": 627,
+            "y": 417.5,
+            "width": 236,
+            "height": 145.5
+          },
+          "scrollHeight": 352,
+          "clientHeight": 146,
+          "scrollTop": 206,
+          "overflowY": "auto"
+        }
+      ]
+    },
+    "900-P06-geometry": {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "content": [
+        {
+          "surface": "workspace",
+          "width": 286,
+          "height": 532
+        },
+        {
+          "surface": "artifact-version-panel",
+          "width": 284,
+          "height": 530
+        }
+      ]
+    },
+    "900-P06-overflow": {
+      "width": 284,
+      "scrollWidth": 284,
+      "children": []
+    },
+    "900-P06-action-geometry": {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "text": "Download",
+      "rect": {
+        "x": 755,
+        "y": 519,
+        "width": 108,
+        "height": 44
+      },
+      "hit": true,
+      "scrollOwners": []
+    },
+    "900-P07-geometry": {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "content": [
+        {
+          "surface": "workspace",
+          "width": 286,
+          "height": 532
+        },
+        {
+          "surface": "artifact-version-panel",
+          "width": 284,
+          "height": 530
+        }
+      ]
+    },
+    "900-P07-overflow": {
+      "width": 284,
+      "scrollWidth": 284,
+      "children": []
+    },
+    "900-P07-action-geometry": {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "text": "Create continuation project (no send)",
+      "rect": {
+        "x": 647,
+        "y": 491.640625,
+        "width": 196,
+        "height": 44
+      },
+      "hit": true,
+      "scrollOwners": [
+        {
+          "className": "MokinaArtifactActions_body__mC6zi",
+          "rect": {
+            "x": 627,
+            "y": 381.5,
+            "width": 236,
+            "height": 181.5
+          },
+          "scrollHeight": 915,
+          "clientHeight": 182,
+          "scrollTop": 733,
+          "overflowY": "auto"
+        }
+      ]
+    }
+  }
+}

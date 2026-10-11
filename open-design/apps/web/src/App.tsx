@@ -209,13 +209,14 @@ import {
   type AmrAuthRetryContinuation,
 } from './runtime/amr-auth-retry-continuation';
 import { installFontRecovery } from './runtime/font-recovery';
-import { prepareMokinaImport, persistMokinaImport } from './runtime/mokina/recovery-import-journal';
+import { resumeMokinaRecoveryImport } from './runtime/mokina/recovery-import-journal';
 import { isDurableRecoveryAvailable, hydrateDurableRecoveryIntoLocalStorage, LegacyRecoveryConfirmationRequired, resolveLegacyRecoveryRecords } from './runtime/persistence/mokina-recovery-store';
 import {
   exportProjectRecoveryZip,
-  importProjectRecoveryZip,
   saveRecoveryFile,
+  RecoveryExportIncompleteError,
 } from './runtime/mokina/recovery-package-client';
+import { MokinaRecoveryReportDialog, type MokinaRecoveryReport } from './components/mokina/MokinaRecoveryReportDialog';
 import {
   runWithConcurrency,
   STAGED_UPLOAD_CONCURRENCY,
@@ -1124,6 +1125,20 @@ function AppInner() {
   const [blockedHomePreparations, setBlockedHomePreparations] = useState<Record<string, PendingProjectCreation>>({});
   const [projectOpenError, setProjectOpenError] = useState<string | null>(null);
   const [recoveryNotice, setRecoveryNotice] = useState<{ message: string; tone: 'success' | 'error' } | null>(null);
+  const [recoveryReport, setRecoveryReport] = useState<(MokinaRecoveryReport & {
+    salvage?: { projectId: string; workspaceContext: WorkspaceCollabContext | null };
+  }) | null>(null);
+  const [recoveryExportBusy, setRecoveryExportBusy] = useState(false);
+  const recoveryExportInFlight = useRef(false);
+  const recoveryExportGeneration = useRef(0);
+  const recoveryImportGeneration = useRef(0);
+  const recoveryImportInFlight = useRef(false);
+  useEffect(() => {
+    recoveryExportGeneration.current++;
+    recoveryImportGeneration.current++;
+    setRecoveryReport(null);
+    setRecoveryNotice(null);
+  }, [currentWorkspaceCatalogIdentity]);
   const [deepLinkResolutionFailure, setDeepLinkResolutionFailure] = useState<{
     projectId: string;
     failure: 'missing' | 'materialization-failed';
@@ -3826,18 +3841,59 @@ function AppInner() {
   );
 
   const handleExportRecoveryProject = useCallback(
-    async (projectId: string) => {
+    async (projectId: string, salvage?: { workspaceContext: WorkspaceCollabContext | null }) => {
+      if (recoveryExportInFlight.current) return;
+      const generation = ++recoveryExportGeneration.current;
+      let workspace: WorkspaceCollabContext | null;
+      let current: WorkspaceCollabContext | null;
       try {
-        const { blob, filename } = await exportProjectRecoveryZip(projectId, {
-          workspaceContext: resolvedWorkspaceContextForWrite(workspaceContextStateRef.current),
+        current = resolvedWorkspaceContextForWrite(workspaceContextStateRef.current);
+        workspace = salvage ? salvage.workspaceContext : current;
+      } catch (error) {
+        setRecoveryNotice({ message: error instanceof Error ? error.message : t('recentProjects.exportRecoveryFailed'), tone: 'error' });
+        return;
+      }
+      const scope = workspace ? workspaceIdentityCacheKey(workspace) : 'local';
+      const accountGeneration = currentWorkspaceAccountGeneration();
+      if (scope !== (current ? workspaceIdentityCacheKey(current) : 'local')) {
+        setRecoveryReport(null);
+        return;
+      }
+      setRecoveryNotice(null);
+      const isCurrent = () => {
+        const state = workspaceContextStateRef.current;
+        return generation === recoveryExportGeneration.current && accountGeneration === currentWorkspaceAccountGeneration()
+          && !state.loading && !state.identityChangePending
+          && scope === (state.context ? workspaceIdentityCacheKey(state.context) : 'local');
+      };
+      recoveryExportInFlight.current = true;
+      setRecoveryExportBusy(true);
+      try {
+        const { blob, filename, integrity } = await exportProjectRecoveryZip(projectId, {
+          workspaceContext: workspace,
+          mode: salvage ? 'partial' : 'complete',
         });
+        if (!isCurrent()) return;
         saveRecoveryFile(blob, filename);
-        setRecoveryNotice({ message: t('recentProjects.exportRecoveryDone'), tone: 'success' });
+        if (integrity.status !== 'complete') setRecoveryReport({ stage: 'downloaded', integrity, filename });
+        else {
+          setRecoveryReport(null);
+          setRecoveryNotice({ message: t('recentProjects.exportRecoveryDone'), tone: 'success' });
+        }
       } catch (err) {
+        if (!isCurrent()) return;
+        if (err instanceof RecoveryExportIncompleteError) {
+          setRecoveryReport({ stage: 'incomplete', integrity: { status: 'partial', issues: err.issues },
+            message: err.message, salvage: { projectId, workspaceContext: workspace } });
+          return;
+        }
         setRecoveryNotice({
           message: `${t('recentProjects.exportRecoveryFailed')}：${err instanceof Error ? err.message : ''}`,
           tone: 'error',
         });
+      } finally {
+        recoveryExportInFlight.current = false;
+        setRecoveryExportBusy(false);
       }
     },
     [t],
@@ -3845,27 +3901,42 @@ function AppInner() {
 
   const handleImportMokinaRecovery = useCallback(
     async (file: File, options?: { copy?: boolean }): Promise<{ ok: boolean; message?: string }> => {
+      if (recoveryImportInFlight.current) return { ok: false, message: '恢复包正在导入，请等待本次结果。' };
+      recoveryImportInFlight.current = true;
+      setRecoveryNotice(null);
+      setRecoveryReport(null);
       try {
         const workspace = resolvedWorkspaceContextForWrite(workspaceContextStateRef.current);
-        const journal = await prepareMokinaImport(file, workspace ? workspaceIdentityCacheKey(workspace) : 'local', options?.copy);
-        const { operationId, targetProjectId } = journal;
-        const result = journal.state === 'imported' ? { projectId: targetProjectId, warnings: [] } : await importProjectRecoveryZip(file, {
-          operationId,
-          targetProjectId,
-          workspaceContext: resolvedWorkspaceContextForWrite(workspaceContextStateRef.current),
+        const generation = ++recoveryImportGeneration.current;
+        const accountGeneration = currentWorkspaceAccountGeneration();
+        const scope = workspace ? workspaceIdentityCacheKey(workspace) : 'local';
+        const isCurrent = () => {
+          const state = workspaceContextStateRef.current;
+          return generation === recoveryImportGeneration.current
+            && accountGeneration === currentWorkspaceAccountGeneration()
+            && !state.loading && !state.identityChangePending
+            && scope === (state.context ? workspaceIdentityCacheKey(state.context) : 'local');
+        };
+        const result = await resumeMokinaRecoveryImport(file, {
+          workspace: scope, workspaceContext: workspace, copy: options?.copy, isCurrent,
         });
-        await persistMokinaImport({ ...journal, state: 'imported' });
+        if (!result || !isCurrent()) return { ok: false, message: '工作区已切换；返回原工作区重新选择此包，可查看同一次导入结果。' };
         rememberLocalProject(result.projectId);
         try { await refreshProjectsStrict(); } catch {
           return { ok: false, message: '项目已导入，列表刷新失败；重试将打开同一项目。' };
         }
-        if (result.warnings.length > 0) {
+        if (!isCurrent()) return { ok: false, message: '工作区已切换；导入结果已保存在原工作区。' };
+        if (result.integrity.status !== 'complete') {
+          setRecoveryReport({ stage: 'imported', integrity: result.integrity, filename: file.name });
+        } else if (result.warnings.length > 0) {
           setRecoveryNotice({ message: result.warnings.join('；'), tone: 'success' });
         }
         navigate({ kind: 'project', projectId: result.projectId, fileName: null });
         return { ok: true };
       } catch (err) {
         return { ok: false, message: err instanceof Error ? err.message : undefined };
+      } finally {
+        recoveryImportInFlight.current = false;
       }
     },
     [navigate, refreshProjectsStrict, rememberLocalProject],
@@ -6125,6 +6196,12 @@ function AppInner() {
           onDismiss={() => setRecoveryNotice(null)}
         />
       ) : null}
+      {recoveryReport ? <MokinaRecoveryReportDialog report={recoveryReport} busy={recoveryExportBusy}
+        onClose={() => { recoveryExportGeneration.current++; setRecoveryReport(null); }}
+        onSalvage={recoveryReport.salvage ? () => {
+          const request = recoveryReport.salvage!;
+          void handleExportRecoveryProject(request.projectId, { workspaceContext: request.workspaceContext });
+        } : undefined} /> : null}
       {/* First-run privacy consent banner. It waits for daemon config
           hydration because privacyDecisionAt is daemon-owned and stripped
           from localStorage. It waits for `onboardingCompleted` so first-run

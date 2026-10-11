@@ -1,6 +1,6 @@
 import { randomUUID } from '../../utils/uuid';
 import { workspaceProjectHeaders } from '../../collab/workspace-identity';
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import { readMokinaRecoveryIntegrity, type MokinaRecoveryIntegrity, type MokinaRecoveryIssue, type WorkspaceCollabContext } from '@open-design/contracts';
 
 /**
  * Client half of the project recovery package (T14): export the current
@@ -12,7 +12,23 @@ import type { WorkspaceCollabContext } from '@open-design/contracts';
 export type ImportedRecoveryProject = {
   projectId: string;
   warnings: string[];
+  integrity: MokinaRecoveryIntegrity;
 };
+
+export class RecoveryExportIncompleteError extends Error {
+  constructor(message: string, readonly issues: MokinaRecoveryIssue[]) { super(message); }
+}
+
+/** The displayed report is from the downloaded ZIP, not a separate, stale preflight. */
+export async function inspectRecoveryZip(bytes: ArrayBuffer): Promise<MokinaRecoveryIntegrity> {
+  const { default: JSZip } = await import('jszip');
+  const archive = await JSZip.loadAsync(bytes);
+  const manifest = archive.file('mokina-recovery.json');
+  if (!manifest) throw new Error('恢复包缺少完整性清单，未开始下载。');
+  const report = readMokinaRecoveryIntegrity(JSON.parse(await manifest.async('text')));
+  if (!report) throw new Error('恢复包完整性清单无效，未开始下载。');
+  return report;
+}
 
 export function mintRecoveryIdentity(): { operationId: string; targetProjectId: string } {
   return { operationId: randomUUID(), targetProjectId: randomUUID() };
@@ -32,23 +48,37 @@ export async function exportProjectRecoveryZip(
   options: {
     operationId?: string;
     workspaceContext?: WorkspaceCollabContext | null;
+    mode?: 'complete' | 'partial';
   } = {},
-): Promise<{ blob: Blob; filename: string }> {
+): Promise<{ blob: Blob; filename: string; integrity: MokinaRecoveryIntegrity }> {
   const response = await fetch(
     `/api/projects/${encodeURIComponent(projectId)}/mokina/recovery-export`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...(workspaceHeaders(options.workspaceContext) ?? {}) },
-      body: JSON.stringify({ operationId: options.operationId ?? randomUUID() }),
+      body: JSON.stringify({ operationId: options.operationId ?? randomUUID(), mode: options.mode ?? 'complete' }),
     },
   );
   if (!response.ok) {
-    throw new Error(await serverErrorMessage(response, `恢复包导出失败（${response.status}）`));
+    const body = await response.json().catch(() => null) as {
+      error?: { code?: string; message?: string; details?: { issues?: MokinaRecoveryIssue[]; canSalvage?: boolean } };
+    } | null;
+    const message = body?.error?.message || `恢复包导出失败（${response.status}）`;
+    const issues = body?.error?.details?.issues;
+    if (body?.error?.code === 'MOKINA_RECOVERY_INCOMPLETE' && body.error.details?.canSalvage === true && Array.isArray(issues) && issues.length > 0) {
+      throw new RecoveryExportIncompleteError(message, issues);
+    }
+    throw new Error(message);
   }
   const disposition = response.headers.get('content-disposition') ?? '';
   const match = /filename="([^"]+)"/u.exec(disposition);
   const filename = match?.[1] && match[1].trim().length > 0 ? match[1] : `${projectId}-recovery.zip`;
-  return { blob: await response.blob(), filename };
+  const bytes = await response.arrayBuffer();
+  const integrity = await inspectRecoveryZip(bytes);
+  if (options.mode !== 'partial' && integrity.status !== 'complete') {
+    throw new Error('服务端未提供可确认完整的恢复包；未自动下载，请更新服务或明确选择部分抢救。');
+  }
+  return { blob: new Blob([bytes], { type: 'application/zip' }), filename, integrity };
 }
 
 /** Trigger a browser download; a no-op outside the DOM (tests, SSR). */
@@ -90,7 +120,7 @@ export async function importProjectRecoveryZip(
   if (!response.ok) {
     throw new Error(await serverErrorMessage(response, `恢复包导入失败（${response.status}）`));
   }
-  const body = await response.json() as { projectId?: unknown; warnings?: unknown };
+  const body = await response.json() as { projectId?: unknown; warnings?: unknown; integrity?: MokinaRecoveryIntegrity };
   if (typeof body.projectId !== 'string' || body.projectId.length === 0) {
     throw new Error('恢复包导入响应缺少项目 ID。');
   }
@@ -99,5 +129,6 @@ export async function importProjectRecoveryZip(
     warnings: Array.isArray(body.warnings)
       ? body.warnings.filter((warning): warning is string => typeof warning === 'string')
       : [],
+    integrity: body.integrity ?? { status: 'unknown', issues: [] },
   };
 }

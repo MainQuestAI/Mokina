@@ -7,6 +7,56 @@ import { T } from '@/timeouts';
 test.beforeEach(async ({ page }) => { await applyStandardMocks(page); });
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 900, height: 600 }]) {
+  test(`[P1] Mokina pre-creation continuation draft survives reopen, refresh and project switching at ${viewport.width}`, async ({ page }, info) => {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const source = await seedRevisionProject(page, 'P07 unsent continuation source');
+    const other = await seedRevisionProject(page, 'P07 unrelated project');
+    const writes: string[] = [];
+    page.on('request', request => {
+      if (request.method() === 'POST' && /\/api\/(runs|projects)$/.test(new URL(request.url()).pathname)) writes.push(request.url());
+    });
+    const open = async (projectId: string) => {
+      await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
+      await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long });
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await expect(page.getByLabel('Continuation background')).toBeVisible();
+    };
+    await open(source);
+    const panel = page.locator('.artifact-version-panel');
+    const selection = panel.getByRole('checkbox', { name: /^budget：/ });
+    const background = panel.getByLabel('Continuation background');
+    const requirement = '保留预算上限，活动页只解释已选定的门店活动，不添加优惠承诺。';
+    await selection.check();
+    await background.fill(requirement);
+    await panel.getByRole('radio', { name: 'Build a landing page (draft only, nothing generated automatically)' }).check();
+    const key = `od:continuation:draft:${JSON.stringify(['none', source, 'plan.html'])}`;
+    await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? '{}').background, key)).toBe(requirement);
+    await recordDraft(page, info, 'continuation-entered');
+    await panel.getByRole('button', { name: 'Close', exact: true }).click();
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await expect(background).toHaveValue(requirement);
+    await background.scrollIntoViewIfNeeded();
+    await recordDraft(page, info, 'continuation-reopened');
+    await expect(selection).toBeChecked();
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await expect(background).toHaveValue(requirement);
+    await expect(selection).toBeChecked();
+    await expect(panel.getByRole('radio', { name: 'Build a landing page (draft only, nothing generated automatically)' })).toBeChecked();
+    await open(other);
+    await expect(background).toHaveValue('');
+    await expect(selection).not.toBeChecked();
+    await background.fill('另一个项目的继续制作要求。');
+    await open(source);
+    await expect(background).toHaveValue(requirement);
+    await expect(selection).toBeChecked();
+    await expect(panel.getByRole('button', { name: 'Create continuation project (no send)', exact: true })).toBeEnabled();
+    expect(writes, 'restoring a preparation draft never creates a project or a run').toEqual([]);
+    await recordDraft(page, info, 'continuation-restored');
+    for (const projectId of [source, other]) expect((await page.request.delete(`/api/projects/${projectId}`)).ok()).toBe(true);
+  });
+
   test(`[P1] Mokina conversation history supports new sessions, switching and refresh at ${viewport.width}`, async ({ page }, info) => {
     await page.setViewportSize(viewport);
     await page.emulateMedia({ reducedMotion: 'reduce' });

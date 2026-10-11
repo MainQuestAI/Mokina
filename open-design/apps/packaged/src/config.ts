@@ -1,4 +1,4 @@
-import { access, readFile } from "node:fs/promises";
+import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 import {
@@ -7,14 +7,9 @@ import {
 } from "@open-design/release";
 import { SIDECAR_DEFAULTS, normalizeNamespace } from "@open-design/sidecar-proto";
 
-// `electron` is loaded lazily so this module can also be imported from the
-// headless entry, which runs in a plain Node process without the electron
-// dependency on disk. Top-level `import { app } from "electron"` would crash
-// headless at module-load with ERR_MODULE_NOT_FOUND.
-async function loadElectronApp() {
-  const electron = await import("electron");
-  return electron.app;
-}
+// Keep Electron out of this module so pure/headless configuration helpers stay
+// importable in Node. The GUI entry supplies app before the first event-loop turn.
+type PackagedConfigApp = { getPath: (name: 'userData') => string; getAppPath: () => string };
 
 export const PACKAGED_CONFIG_PATH_ENV = "OD_PACKAGED_CONFIG_PATH";
 export const PACKAGED_NAMESPACE_ENV = "OD_PACKAGED_NAMESPACE";
@@ -85,36 +80,26 @@ export type PackagedConfig = {
   webOutputMode: PackagedWebOutputMode;
 };
 
-async function pathExists(filePath: string): Promise<boolean> {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function readJsonIfExists(filePath: string): Promise<RawPackagedConfig | null> {
-  if (!(await pathExists(filePath))) return null;
-  return JSON.parse(await readFile(filePath, "utf8")) as RawPackagedConfig;
+function readJsonIfExists(filePath: string): RawPackagedConfig | null {
+  if (!existsSync(filePath)) return null;
+  return JSON.parse(readFileSync(filePath, "utf8")) as RawPackagedConfig;
 }
 
 function resolveDefaultConfigPath(): string {
   return join(process.resourcesPath, "open-design-config.json");
 }
 
-async function readRawPackagedConfig(): Promise<RawPackagedConfig> {
+function readRawPackagedConfig(electronApp: PackagedConfigApp): RawPackagedConfig {
   const explicit = process.env[PACKAGED_CONFIG_PATH_ENV];
   if (explicit != null && explicit.length > 0) {
-    const config = await readJsonIfExists(resolve(explicit));
+    const config = readJsonIfExists(resolve(explicit));
     if (config == null) throw new Error(`packaged config not found at ${explicit}`);
     return config;
   }
 
-  const electronApp = await loadElectronApp();
   return (
-    (await readJsonIfExists(resolveDefaultConfigPath())) ??
-    (await readJsonIfExists(join(electronApp.getAppPath(), "open-design-config.json"))) ??
+    readJsonIfExists(resolveDefaultConfigPath()) ??
+    readJsonIfExists(join(electronApp.getAppPath(), "open-design-config.json")) ??
     {}
   );
 }
@@ -181,22 +166,22 @@ function resolvePackagedWebStandaloneRoot(
   return join(process.resourcesPath, "open-design-web-standalone");
 }
 
-async function resolvePackagedRelativeEntry(value: string | undefined): Promise<string | null> {
+function resolvePackagedRelativeEntry(value: string | undefined): string | null {
   const cleaned = cleanOptionalString(value);
   if (cleaned == null) return null;
   const entry = join(process.resourcesPath, cleaned);
-  if (!(await pathExists(entry))) {
+  if (!existsSync(entry)) {
     throw new Error(`configured packaged entry not found at ${entry}`);
   }
   return entry;
 }
 
-export async function readPackagedConfig(): Promise<PackagedConfig> {
-  const raw = await readRawPackagedConfig();
+/** Synchronous because namespace/session paths must be set before Electron ready. */
+export function readPackagedConfig(electronApp: PackagedConfigApp): PackagedConfig {
+  const raw = readRawPackagedConfig(electronApp);
   const namespace = normalizeNamespace(
     process.env[PACKAGED_NAMESPACE_ENV] ?? raw.namespace ?? SIDECAR_DEFAULTS.namespace,
   );
-  const electronApp = await loadElectronApp();
   const namespaceBaseRoot = resolvePackagedNamespaceBaseRoot(
     raw.namespaceBaseRoot,
     electronApp.getPath("userData"),
@@ -207,7 +192,7 @@ export async function readPackagedConfig(): Promise<PackagedConfig> {
       ? join("open-design", "bin", "node")
       : raw.nodeCommandRelative;
   const nodeCommandCandidate = join(process.resourcesPath, relativeNodeCommand);
-  const nodeCommand = (await pathExists(nodeCommandCandidate)) ? nodeCommandCandidate : null;
+  const nodeCommand = existsSync(nodeCommandCandidate) ? nodeCommandCandidate : null;
   const allowWebOutputModeOverride = isTruthyEnv(process.env[PACKAGED_WEB_OUTPUT_MODE_OVERRIDE_ENV]);
   const webOutputMode = resolvePackagedWebOutputMode(
     allowWebOutputModeOverride
@@ -220,9 +205,9 @@ export async function readPackagedConfig(): Promise<PackagedConfig> {
       ? process.env[PACKAGED_WEB_STANDALONE_ROOT_ENV] ?? raw.webStandaloneRoot
       : raw.webStandaloneRoot,
   );
-  const daemonCliEntry = await resolvePackagedRelativeEntry(raw.daemonCliEntryRelative);
-  const daemonSidecarEntry = await resolvePackagedRelativeEntry(raw.daemonSidecarEntryRelative);
-  const webSidecarEntry = await resolvePackagedRelativeEntry(raw.webSidecarEntryRelative);
+  const daemonCliEntry = resolvePackagedRelativeEntry(raw.daemonCliEntryRelative);
+  const daemonSidecarEntry = resolvePackagedRelativeEntry(raw.daemonSidecarEntryRelative);
+  const webSidecarEntry = resolvePackagedRelativeEntry(raw.webSidecarEntryRelative);
 
   return {
     amrProfile: resolvePackagedAmrProfile(raw.amrProfile),

@@ -115,6 +115,7 @@ import {
   persistPendingSendRequest,
 } from '../runtime/chat/send-request-state';
 import { flushDurableRecord, mirrorDurableRecord, mutateDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
+import { continuationDraftKey, parseContinuationDraft, useContinuationDraft, type ContinuationDraftAsset } from '../runtime/mokina/continuation-draft';
 import { isDefinitiveRunCreateRefusal } from '../runtime/chat/run-create-failure';
 import type { MokinaContinuationV2 } from '@open-design/contracts';
 import { MokinaCandidateCompare } from './mokina/MokinaCandidateCompare';
@@ -3622,23 +3623,27 @@ function FileVersionManagerModal({
   const [candidateCompareBusy, setCandidateCompareBusy] = useState(false);
   const candidateCompareTriggerRef = useRef<HTMLButtonElement>(null);
   const [versionExportToast, setVersionExportToast] = useState<ExportToastState | null>(null);
-  const [selectedContinuationSections, setSelectedContinuationSections] = useState<string[]>([]);
-  const [continuationBackground, setContinuationBackground] = useState('');
-  const [continuationIntent, setContinuationIntent] = useState<MokinaContinuationIntent>('discuss');
   // N05: assets + brand carried into the continuation. Bytes are uploaded to
   // the TARGET project and frozen into its context snapshot before the
   // continuation JSON is written, so the draft runs standalone even after the
   // source project changes.
-  const [continuationAssets, setContinuationAssets] = useState<Array<{ name: string; role: 'logo' | 'hero' | 'supporting'; usageNote: string }>>([]);
-  const [continuationBrandId, setContinuationBrandId] = useState('');
-  const [continuationBrandPreview, setContinuationBrandPreview] = useState<{ title: string; chars: number; digest: string } | null>(null);
   const [continuationDesignSystems, setContinuationDesignSystems] = useState<Array<{ id: string; title: string }>>([]);
   const [continuationAssetCandidates, setContinuationAssetCandidates] = useState<string[]>([]);
   const brandPreviewSeqRef = useRef(0);
+  const continuationAssetSequences = useRef(new Map<string, number>());
   const continuationScope = JSON.stringify([workspaceIdentityCacheKey(workspaceContext), projectId, file.name]);
   const continuationScopeRef = useRef(continuationScope);
   continuationScopeRef.current = continuationScope;
-  useEffect(() => { brandPreviewSeqRef.current++; setContinuationBrandId(''); setContinuationBrandPreview(null); }, [continuationScope]);
+  const continuationDraft = useContinuationDraft(continuationScope);
+  const { background: continuationBackground, intent: continuationIntent, assets: continuationAssets, brand: continuationBrand } = continuationDraft.draft;
+  const continuationBrandId = continuationBrand?.id ?? '';
+  const [continuationVerifiedBrand, setContinuationVerifiedBrand] = useState('');
+  const continuationBrandPreview = continuationBrand?.digest && continuationVerifiedBrand === `${continuationBrand.id}:${continuationBrand.digest}`
+    ? { ...continuationBrand, digest: continuationBrand.digest } : null;
+  const [continuationInvalidAssets, setContinuationInvalidAssets] = useState<string[]>([]);
+  const [continuationVerifying, setContinuationVerifying] = useState(false);
+  const [continuationReadingSources, setContinuationReadingSources] = useState<string[]>([]);
+  useEffect(() => { setContinuationReadingSources([]); }, [continuationScope]);
   const [continuationBusy, setContinuationBusy] = useState(false);
   const [revisionSectionId, setRevisionSectionId] = useState('');
   const [revisionRequest, setRevisionRequest] = useState('');
@@ -3858,13 +3863,53 @@ function FileVersionManagerModal({
     });
   }, [selectedContent, selectedContentMatchesVersion]);
   const continuationPanelAvailable = continuationSections.length > 0 && Boolean(selectedVersion);
+  const continuationSource = { baseVersionId: selectedVersion?.id ?? '', contentDigest: selectedVersion?.contentDigest };
+  const continuationSourceChanged = Boolean(continuationDraft.draft.baseVersionId && selectedVersion
+    && (continuationDraft.draft.baseVersionId !== selectedVersion.id
+      || (continuationDraft.draft.contentDigest && selectedVersion.contentDigest && continuationDraft.draft.contentDigest !== selectedVersion.contentDigest)
+      || (selectedContentMatchesVersion && continuationDraft.draft.sections.some(id => !continuationSections.some(section => section.id === id)))));
+  const selectedContinuationSections = continuationSourceChanged ? [] : continuationDraft.draft.sections;
+  const continuationInputDisabled = viewerOnly || continuationBusy || continuationDraft.readFailed || continuationDraft.unreadable !== null || continuationDraft.resetting;
+  const continuationIdentity = JSON.stringify([continuationAssets.map(asset => [asset.name, asset.digest]), continuationBrand?.id, continuationBrand?.digest]);
+  useEffect(() => {
+    let cancelled = false;
+    setContinuationVerifying(true); setContinuationVerifiedBrand('');
+    void Promise.all([
+      Promise.all(continuationAssets.map(async asset => {
+        if (!asset.digest) return asset.name;
+        try {
+          const response = await fetch(projectFileUrl(projectId, asset.name, workspaceContext), { cache: 'no-store' });
+          return response.ok && await mokinaBytesDigest(await response.arrayBuffer()) === asset.digest ? null : asset.name;
+        } catch { return asset.name; }
+      })),
+      (async () => {
+        if (!continuationBrand?.digest) return '';
+        try {
+          const response = await fetch(`/api/design-systems/${encodeURIComponent(continuationBrand.id)}`,
+            { cache: 'no-store', ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}) });
+          if (!response.ok) return '';
+          const body = await response.json() as { body?: unknown };
+          if (typeof body.body !== 'string') return '';
+          const digest = await mokinaBytesDigest(new TextEncoder().encode(body.body).buffer as ArrayBuffer);
+          return digest === continuationBrand.digest ? `${continuationBrand.id}:${digest}` : '';
+        } catch { return ''; }
+      })(),
+    ]).then(([invalid, brand]) => {
+      if (cancelled) return;
+      setContinuationInvalidAssets(invalid.filter((name): name is string => name !== null));
+      setContinuationVerifiedBrand(brand); setContinuationVerifying(false);
+    });
+    return () => { cancelled = true; };
+    // Notes and roles do not change resource identity or authorize another read.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [continuationIdentity, continuationScope]);
   useEffect(() => {
     if (!MOKINA_LOCAL_EDITION || !continuationPanelAvailable) return;
     let cancelled = false;
     void fetchDesignSystems(workspaceContext)
       .then((systems) => { if (!cancelled) setContinuationDesignSystems(systems.map((system) => ({ id: system.id, title: system.title }))); })
       .catch(() => {});
-    void fetchProjectFiles(projectId, { workspaceContext })
+    void fetchProjectFiles(projectId, { workspaceContext, fresh: true, requireAuthoritative: true })
       .then((files) => { if (!cancelled) setContinuationAssetCandidates(files.map((entry) => entry.name).filter((name) => MOKINA_ASSET_FILE_PATTERN.test(name))); })
       .catch(() => {});
     return () => { cancelled = true; };
@@ -3895,7 +3940,6 @@ function FileVersionManagerModal({
     const control = target.querySelector<HTMLElement>('select, input, textarea');
     (control ?? target).focus({ preventScroll: true });
   }, [actionRequest, loading, selectedVersion, selectedContentMatchesVersion, actionUnavailable]);
-  useEffect(() => { setSelectedContinuationSections([]); }, [selectedId]);
   const previousRevisionVersionRef = useRef(selectedId);
   useEffect(() => {
     if (selectedId && ((previousRevisionVersionRef.current && previousRevisionVersionRef.current !== selectedId)
@@ -3977,8 +4021,14 @@ function FileVersionManagerModal({
     if (preferredId && !nextVersions.some(version => version.id === preferredId)) {
       setSelectedId(null); setError(tRef.current('fileViewer.versions.loadFailed')); setLoading(false); return;
     }
+    let continuationRestore = null;
+    try {
+      continuationRestore = actionRequest?.action === 'continue' && !preferredId
+        ? parseContinuationDraft(localStorage.getItem(continuationDraftKey(continuationScope)), continuationScope) : null;
+    } catch { /* The draft hook shows an explicit read failure; version browsing remains available. */ }
     const nextSelected =
       (preferredId ? nextVersions.find((version) => version.id === preferredId) : null) ??
+      (continuationRestore ? nextVersions.find(version => version.id === continuationRestore.baseVersionId) : null) ??
       currentVersion ??
       nextVersions[0] ??
       null;
@@ -4429,14 +4479,68 @@ function FileVersionManagerModal({
     }
   }
 
+  async function confirmContinuationAsset(name: string) {
+    setError(null);
+    const issuedScope = continuationScope;
+    const sequence = (continuationAssetSequences.current.get(name) ?? 0) + 1;
+    continuationAssetSequences.current.set(name, sequence);
+    setContinuationReadingSources(current => [...new Set([...current, `asset:${name}`])]);
+    const existing = continuationAssets.find(asset => asset.name === name);
+    continuationDraft.update(value => ({ assets: [...value.assets.filter(asset => asset.name !== name),
+      { name, role: existing?.role ?? 'supporting', usageNote: existing?.usageNote ?? '' }] }), continuationSource);
+    try {
+      const response = await fetch(projectFileUrl(projectId, name, workspaceContext), { cache: 'no-store' });
+      if (!response.ok) throw new Error('Asset unreadable');
+      const bytes = await response.arrayBuffer();
+      const digest = await mokinaBytesDigest(bytes);
+      if (issuedScope !== continuationScopeRef.current || continuationAssetSequences.current.get(name) !== sequence
+        || !continuationSectionRef.current?.isConnected) return;
+      continuationDraft.update(value => ({ assets: value.assets.map(asset => asset.name === name
+        ? { ...asset, digest, byteLength: bytes.byteLength } : asset) }));
+    } catch {
+      if (issuedScope === continuationScopeRef.current && continuationAssetSequences.current.get(name) === sequence) setError(t('fileViewer.mokina.continuationAssetChanged', { name }));
+    } finally {
+      if (issuedScope === continuationScopeRef.current && continuationAssetSequences.current.get(name) === sequence) {
+        setContinuationReadingSources(current => current.filter(key => key !== `asset:${name}`));
+      }
+    }
+  }
+
+  async function confirmContinuationBrand(id: string) {
+    setError(null);
+    const sequence = ++brandPreviewSeqRef.current;
+    const issuedScope = continuationScope;
+    if (!id) { continuationDraft.update({ brand: null }, continuationSource); setContinuationReadingSources(current => current.filter(key => key !== 'brand')); return; }
+    setContinuationReadingSources(current => [...new Set([...current, 'brand'])]);
+    const title = continuationDesignSystems.find(system => system.id === id)?.title ?? continuationBrand?.title ?? id;
+    continuationDraft.update({ brand: { id, title, chars: 0 } }, continuationSource);
+    try {
+      const response = await fetch(`/api/design-systems/${encodeURIComponent(id)}`,
+        { cache: 'no-store', ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}) });
+      if (!response.ok) throw new Error('Brand unreadable');
+      const body = await response.json() as { body?: unknown };
+      if (typeof body.body !== 'string' || !body.body.trim()) throw new Error('Brand empty');
+      const digest = await mokinaBytesDigest(new TextEncoder().encode(body.body).buffer as ArrayBuffer);
+      if (sequence !== brandPreviewSeqRef.current || issuedScope !== continuationScopeRef.current || !continuationSectionRef.current?.isConnected) return;
+      continuationDraft.update({ brand: { id, title, chars: body.body.length, digest } });
+    } catch {
+      if (sequence === brandPreviewSeqRef.current && issuedScope === continuationScopeRef.current) setError(t('fileViewer.mokina.continuationBrandChanged'));
+    } finally {
+      if (sequence === brandPreviewSeqRef.current && issuedScope === continuationScopeRef.current) setContinuationReadingSources(current => current.filter(key => key !== 'brand'));
+    }
+  }
+
   async function continueFromSelectedSections() {
     const issuedScope = continuationScope;
-    if (!selectedVersion || !selectedContentMatchesVersion || continuationBusy) return;
+    if (!selectedVersion || !selectedContentMatchesVersion || continuationInputDisabled || continuationSourceChanged
+      || continuationDraft.saveFailed || continuationVerifying || continuationInvalidAssets.length || continuationAssets.some(asset => !asset.digest)) return;
     const chosen = continuationSections.filter(section => selectedContinuationSections.includes(section.id));
     if (!chosen.length) { setError('请先选择至少一个章节。'); return; }
     if (continuationBrandId && !continuationBrandPreview?.digest) { setError('品牌规则尚未读取完成，请重新选择品牌后重试。'); return; }
     setContinuationBusy(true); setError(null);
     try {
+      if (!await continuationDraft.flush()) throw new Error(t('fileViewer.mokina.continuationDraftSaveFailed'));
+      if (issuedScope !== continuationScopeRef.current || !continuationSectionRef.current?.isConnected) return;
       const intent: ContinuationIntent = {
         source: { projectId, fileName: file.name, versionId: selectedVersion.id,
           versionState: selectedVersion.candidate ? 'candidate' : selectedVersion.current ? 'current' : 'historical',
@@ -4464,11 +4568,16 @@ function FileVersionManagerModal({
       }
       for (const asset of intent.assets) {
         const saved = existing?.intent?.assets.find(item => item.inputId === asset.inputId && item.name === asset.name);
-        if (saved?.digest) { asset.digest = saved.digest; asset.byteLength = saved.byteLength; continue; }
+        if (saved?.digest && saved.digest === asset.digest) { asset.byteLength = saved.byteLength; continue; }
         const response = await fetch(projectFileUrl(projectId, asset.name, workspaceContext), { cache: 'no-store' });
         if (!response.ok) throw new Error(`素材读取失败：${asset.name}，尚未创建接续项目。`);
         const bytes = await response.arrayBuffer();
-        asset.digest = await mokinaBytesDigest(bytes); asset.byteLength = bytes.byteLength;
+        const digest = await mokinaBytesDigest(bytes);
+        if (asset.digest !== digest) {
+          setContinuationInvalidAssets(current => [...new Set([...current, asset.name])]);
+          throw new Error(t('fileViewer.mokina.continuationAssetChanged', { name: asset.name }));
+        }
+        asset.byteLength = bytes.byteLength;
       }
       if (continuationTextUnits(intent) + (continuationBrandPreview?.chars ?? 0) > MOKINA_CONTEXT_BUDGETS.maxExcerptCodeUnits
         || intent.assets.reduce((sum, asset) => sum + (asset.byteLength ?? 0), 0) > MOKINA_CONTEXT_BUDGETS.maxAssetBytes
@@ -5149,14 +5258,29 @@ function FileVersionManagerModal({
           <section ref={continuationSectionRef} tabIndex={-1} className="artifact-version-panel__continuation" aria-label={t('fileViewer.mokina.continuationSectionAria')}>
             <strong>{t('fileViewer.mokina.continuationTitle')}</strong>
             <p>{t('fileViewer.mokina.continuationIntro', { version: selectedVersion.version })}</p>
+            {continuationDraft.readFailed ? <div>
+              <p role="alert">{t('fileViewer.mokina.continuationDraftReadFailed')}</p>
+              <Button onClick={continuationDraft.retry}>{t('preview.retry')}</Button>
+            </div> : continuationDraft.unreadable !== null ? <div>
+              <p role="alert">{t(continuationDraft.saveFailed ? 'fileViewer.mokina.continuationDraftSaveFailed' : 'fileViewer.mokina.continuationDraftUnreadable')}</p>
+              <Button disabled={viewerOnly || continuationDraft.resetting} onClick={() => { void continuationDraft.resetUnreadable(); }}>
+                {t('fileViewer.mokina.revisionDraftReset')}</Button>
+            </div> : continuationDraft.saveFailed ? <div>
+              <p role="alert">{t('fileViewer.mokina.continuationDraftSaveFailed')}</p>
+              <Button disabled={viewerOnly || continuationBusy} onClick={continuationDraft.retry}>{t('preview.retry')}</Button>
+            </div> : continuationDraft.saving ? <p role="status">{t('fileViewer.mokina.continuationDraftSaving')}</p> : null}
+            {continuationSourceChanged ? <p role="alert">{t('fileViewer.mokina.continuationSourceChanged')}</p> : null}
+            {continuationVerifying || continuationReadingSources.length > 0 ? <p role="status">{t('fileViewer.mokina.continuationCheckingSources')}</p> : null}
             <div className="mokina-continuation-form">
             {continuationSections.map((section) => (
               <label key={section.id}>
                 <input
                   type="checkbox"
+                  disabled={continuationInputDisabled}
                   checked={selectedContinuationSections.includes(section.id)}
-                  onChange={(event) => setSelectedContinuationSections((current) =>
-                    event.target.checked ? [...current, section.id] : current.filter((id) => id !== section.id))}
+                  onChange={(event) => continuationDraft.update({ ...continuationSource,
+                    sections: event.target.checked ? [...selectedContinuationSections, section.id]
+                      : selectedContinuationSections.filter(id => id !== section.id) })}
                 />
                 <span>{section.id}：{section.text.slice(0, 90)}</span>
               </label>
@@ -5167,8 +5291,9 @@ function FileVersionManagerModal({
                 <input
                   type="radio"
                   name="mokina-continuation-intent"
+                  disabled={continuationInputDisabled}
                   checked={continuationIntent === 'discuss'}
-                  onChange={() => setContinuationIntent('discuss')}
+                  onChange={() => continuationDraft.update({ intent: 'discuss' }, continuationSource)}
                 />
                 <span>{t('fileViewer.mokina.intentDiscuss')}</span>
               </label>
@@ -5176,34 +5301,40 @@ function FileVersionManagerModal({
                 <input
                   type="radio"
                   name="mokina-continuation-intent"
+                  disabled={continuationInputDisabled}
                   checked={continuationIntent === 'landing-page'}
-                  onChange={() => setContinuationIntent('landing-page')}
+                  onChange={() => continuationDraft.update({ intent: 'landing-page' }, continuationSource)}
                 />
                 <span>{t('fileViewer.mokina.intentLanding')}</span>
               </label>
             </fieldset>
             <textarea
               value={continuationBackground}
-              onChange={(event) => setContinuationBackground(event.target.value)}
+              disabled={continuationInputDisabled}
+              onChange={(event) => continuationDraft.update({ background: event.target.value }, continuationSource)}
               placeholder={t('fileViewer.mokina.continuationBackgroundPlaceholder')}
               aria-label={t('fileViewer.mokina.continuationBackgroundAria')}
             />
             </div>
             <aside className="mokina-continuation-confirmation">
-            {continuationAssetCandidates.length > 0 ? (
+            {continuationAssetCandidates.length > 0 || continuationAssets.length > 0 ? (
               <fieldset className="artifact-version-panel__continuation-assets">
                 <legend>{t('fileViewer.mokina.continuationAssets')}</legend>
-                {continuationAssetCandidates.map((name) => {
+                {[...new Set([...continuationAssetCandidates, ...continuationAssets.map(asset => asset.name)])].map((name) => {
                   const asset = continuationAssets.find((entry) => entry.name === name) ?? null;
                   return (
                     <div key={name}>
                       <label>
                         <input
                           type="checkbox"
+                          disabled={continuationInputDisabled}
                           checked={Boolean(asset)}
-                          onChange={(event) => setContinuationAssets((current) => event.target.checked
-                            ? [...current.filter((entry) => entry.name !== name), { name, role: 'supporting', usageNote: '' }]
-                            : current.filter((entry) => entry.name !== name))}
+                          onChange={(event) => {
+                            if (event.target.checked) { void confirmContinuationAsset(name); return; }
+                            continuationAssetSequences.current.set(name, (continuationAssetSequences.current.get(name) ?? 0) + 1);
+                            setContinuationReadingSources(current => current.filter(key => key !== `asset:${name}`));
+                            continuationDraft.update(value => ({ assets: value.assets.filter(entry => entry.name !== name) }));
+                          }}
                         />
                         <span title={name}>{name}</span>
                       </label>
@@ -5212,8 +5343,9 @@ function FileVersionManagerModal({
                           <select
                             aria-label={`${name} ${t('fileViewer.mokina.continuationAssets')}`}
                             value={asset.role}
-                            onChange={(event) => setContinuationAssets((current) => current.map((entry) => entry.name === name
-                              ? { ...entry, role: event.target.value as 'logo' | 'hero' | 'supporting' } : entry))}
+                            disabled={continuationInputDisabled}
+                            onChange={(event) => continuationDraft.update(value => ({ assets: value.assets.map(entry => entry.name === name
+                              ? { ...entry, role: event.target.value as ContinuationDraftAsset['role'] } : entry) }))}
                           >
                             <option value="logo">{t('fileViewer.mokina.assetRoleLogo')}</option>
                             <option value="hero">{t('fileViewer.mokina.assetRoleHero')}</option>
@@ -5222,10 +5354,15 @@ function FileVersionManagerModal({
                           <input
                             aria-label={`${name} ${t('fileViewer.mokina.continuationUsagePlaceholder')}`}
                             value={asset.usageNote}
+                            disabled={continuationInputDisabled}
                             placeholder={t('fileViewer.mokina.continuationUsagePlaceholder')}
-                            onChange={(event) => setContinuationAssets((current) => current.map((entry) => entry.name === name
-                              ? { ...entry, usageNote: event.target.value } : entry))}
+                            onChange={(event) => continuationDraft.update(value => ({ assets: value.assets.map(entry => entry.name === name
+                              ? { ...entry, usageNote: event.target.value } : entry) }))}
                           />
+                          {!continuationVerifying && !continuationReadingSources.includes(`asset:${name}`) && (!asset.digest || continuationInvalidAssets.includes(name)) ? <div>
+                            <p role="alert">{t('fileViewer.mokina.continuationAssetChanged', { name })}</p>
+                            <Button disabled={continuationInputDisabled} onClick={() => { void confirmContinuationAsset(name); }}>{t('fileViewer.mokina.continuationConfirmSource')}</Button>
+                          </div> : null}
                         </>
                       ) : null}
                     </div>
@@ -5233,40 +5370,28 @@ function FileVersionManagerModal({
                 })}
               </fieldset>
             ) : null}
-            {continuationDesignSystems.length > 0 ? (
+            {continuationDesignSystems.length > 0 || continuationBrand ? (
               <label className="artifact-version-panel__continuation-brand">
                 {t('fileViewer.mokina.continuationBrand')}
                 <select
                   aria-label={t('fileViewer.mokina.continuationBrand')}
                   value={continuationBrandId}
-                  onChange={(event) => {
-                    const id = event.target.value;
-                    setContinuationBrandId(id);
-                    const summary = continuationDesignSystems.find((system) => system.id === id);
-                    const seq = ++brandPreviewSeqRef.current;
-                    const scope = continuationScope;
-                    setContinuationBrandPreview(null);
-                    if (id && summary) {
-                      void fetch(`/api/design-systems/${encodeURIComponent(id)}`,
-                        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined)
-                        .then(async (response) => {
-                          if (!response.ok || seq !== brandPreviewSeqRef.current) return;
-                          const body = await response.json().catch(() => null) as { body?: string } | null;
-                          const text = typeof body?.body === 'string' ? body.body : '';
-                          const digest = await mokinaBytesDigest(new TextEncoder().encode(text).buffer as ArrayBuffer);
-                          if (text.trim() && seq === brandPreviewSeqRef.current && scope === continuationScopeRef.current) setContinuationBrandPreview({ title: summary.title, chars: text.length, digest });
-                        })
-                        .catch(() => {});
-                    }
-                  }}
+                  disabled={continuationInputDisabled}
+                  onChange={(event) => { void confirmContinuationBrand(event.target.value); }}
                 >
                   <option value="">{t('fileViewer.mokina.continuationBrandNone')}</option>
+                  {continuationBrand && !continuationDesignSystems.some(system => system.id === continuationBrand.id)
+                    ? <option value={continuationBrand.id}>{continuationBrand.title}</option> : null}
                   {continuationDesignSystems.map((system) => (
                     <option key={system.id} value={system.id}>{system.title}</option>
                   ))}
                 </select>
               </label>
             ) : null}
+            {continuationBrand && !continuationVerifying && !continuationReadingSources.includes('brand') && !continuationBrandPreview ? <div>
+              <p role="alert">{t('fileViewer.mokina.continuationBrandChanged')}</p>
+              <Button disabled={continuationInputDisabled} onClick={() => { void confirmContinuationBrand(continuationBrand.id); }}>{t('fileViewer.mokina.continuationConfirmSource')}</Button>
+            </div> : null}
             {continuationBrandPreview ? (
               <small role="status">{t('fileViewer.mokina.continuationBrandSelected', {
                 brand: continuationBrandPreview.title,
@@ -5278,7 +5403,10 @@ function FileVersionManagerModal({
               <ul>{selectedContinuationSections.map(id => <li key={id}>{continuationSections.find(section => section.id === id)?.text.slice(0, 120) ?? id}</li>)}</ul>
               {continuationBrandPreview ? <p>{continuationBrandPreview.title}</p> : null}
               <ul>{continuationAssets.map(asset => <li key={asset.name}>{asset.name} · {asset.usageNote}</li>)}</ul>
-            <button type="button" className={MOKINA_LOCAL_EDITION ? 'primary' : undefined} disabled={viewerOnly || continuationBusy || selectedContinuationSections.length === 0}
+            <button type="button" className={MOKINA_LOCAL_EDITION ? 'primary' : undefined} disabled={continuationInputDisabled
+              || continuationDraft.saveFailed || continuationDraft.saving || continuationVerifying || continuationSourceChanged
+              || continuationInvalidAssets.length > 0 || continuationAssets.some(asset => !asset.digest)
+              || Boolean(continuationBrandId && !continuationBrandPreview) || selectedContinuationSections.length === 0}
               onClick={() => { void continueFromSelectedSections(); }}>
               {continuationBusy ? t('fileViewer.mokina.creating') : t('fileViewer.mokina.createContinuation')}
             </button>

@@ -1,4 +1,4 @@
-import { chmod, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdtemp, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { EventEmitter } from "node:events";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -293,6 +293,55 @@ describe("startPackedMacApp", () => {
       expect(result.source).toBe("installed");
       expect(result.executablePath).toBe(executablePath);
       expect(result.status?.state).toBe("running");
+    } finally {
+      await rm(root, { force: true, recursive: true });
+    }
+  });
+
+  it("keeps the stable Mokina profile absent until the native migration chooser starts", async () => {
+    const root = await mkdtemp(join(tmpdir(), "open-design-tools-pack-mac-lifecycle-"));
+    try {
+      const base = makeConfig(root);
+      const namespace = "mokina-local";
+      const outputNamespaceRoot = join(base.roots.output.platformRoot, "namespaces", namespace);
+      const config = makeConfig(root, {
+        namespace,
+        roots: {
+          ...base.roots,
+          output: {
+            ...base.roots.output,
+            namespaceRoot: outputNamespaceRoot,
+            appBuilderRoot: join(outputNamespaceRoot, "builder"),
+          },
+          runtime: {
+            ...base.roots.runtime,
+            namespaceRoot: join(base.roots.runtime.namespaceBaseRoot, namespace),
+          },
+        },
+      });
+      const paths = resolveMacPaths(config);
+      const executablePath = join(paths.installedAppPath, "Contents", "MacOS", "Mokina");
+      await mkdir(join(paths.installedAppPath, "Contents", "MacOS"), { recursive: true });
+      await writeFile(executablePath, "#!/bin/sh\nexit 0\n", "utf8");
+      await chmod(executablePath, 0o755);
+      convergeSidecarLaunch.mockImplementationOnce(async (request) => {
+        await expect(stat(config.roots.runtime.namespaceRoot)).rejects.toMatchObject({ code: "ENOENT" });
+        return defaultConvergeSidecarLaunch(request);
+      });
+
+      const result = await startPackedMacApp(config);
+      const launchConfigPath = join(outputNamespaceRoot, "launch", "open-design-config.json");
+      const launchEnv = spawnLoggedProcess.mock.calls[0]?.[0]?.env as NodeJS.ProcessEnv | undefined;
+
+      expect(result.source).toBe("installed");
+      expect(result.logPath).toBe(join(outputNamespaceRoot, "launch", "desktop.log"));
+      expect(launchEnv?.OD_PACKAGED_CONFIG_PATH).toBe(launchConfigPath);
+      expect(JSON.parse(await readFile(launchConfigPath, "utf8"))).toMatchObject({
+        namespace,
+        namespaceBaseRoot: config.roots.runtime.namespaceBaseRoot,
+      });
+      await expect(readFile(result.logPath, "utf8")).resolves.toBe("");
+      await expect(stat(config.roots.runtime.namespaceRoot)).rejects.toMatchObject({ code: "ENOENT" });
     } finally {
       await rm(root, { force: true, recursive: true });
     }

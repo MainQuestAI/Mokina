@@ -75,7 +75,9 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     await sourceLink.click();
     await expect(page).toHaveURL(new RegExp(`/versions/${fixture.versionId}/files/plan.html`));
     await expect(page.locator('.artifact-version-panel')).toBeVisible({ timeout: T.long });
-    await expect(page.locator('.artifact-version-panel').getByText('Selected: v1 · History')).toBeVisible();
+    await expect(page.locator('.artifact-version-panel').getByText('Selected: v1 · History')).toBeInViewport();
+    await expect(page.frameLocator('.artifact-version-panel__preview iframe').getByText('Historical source')).toBeVisible({ timeout: T.long });
+    await shot(page, info, 'P08-fixed-source-return');
     // A same-file client-side navigation back to the current route must release
     // the historical pin without remounting the project or creating anything.
     await page.evaluate(() => {

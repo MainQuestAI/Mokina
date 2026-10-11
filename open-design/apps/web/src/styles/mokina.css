@@ -315,3 +315,15 @@ html[data-product='mokina'] .mokina-context-panel--expanded > :is(h1, p) { margi
 html[data-product='mokina'] .mokina-context-panel--expanded .mokina-context-panel__brand { grid-column: 1; grid-row: 3; }
 html[data-product='mokina'] .mokina-context-panel--expanded .mokina-material-picker__files { grid-row: 4; }
 html[data-product='mokina'] .mokina-context-panel--expanded .mokina-material-picker__preview { grid-row: 3 / span 2; }
+
+/* Mokina's recovery actions live in the rail: at desktop narrow widths the
+   explicit open state must remain usable, including the 900px host minimum. */
+@media (min-width: 761px) and (max-width: 1080px) {
+  html[data-product='mokina'] .entry-shell--no-header .entry.entry--rail-open {
+    grid-template-columns: var(--entry-rail-width, 236px) minmax(0, 1fr);
+  }
+  html[data-product='mokina'] .entry-shell--no-header .entry--rail-open .entry-nav-rail {
+    overflow: visible;
+    pointer-events: auto;
+  }
+}

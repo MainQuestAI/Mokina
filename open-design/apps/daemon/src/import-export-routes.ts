@@ -41,7 +41,9 @@ import { readProjectFileVersion } from './project-file-versions.js';
 import {
   buildProjectRecoveryPackage,
   importProjectRecoveryPackage,
+  RecoveryIncompleteError,
 } from './mokina/recovery-package.js';
+import { resolveProjectDir } from './projects.js';
 import { authorizeReasoningEgress, sendReasoningEgressDenial } from './reasoning-egress.js';
 import { sandboxImportedProjectRootUnavailableReason } from './sandbox-mode.js';
 import { parseOrchestratorWorkspace } from './workspace-contract.js';
@@ -398,7 +400,7 @@ export function registerImportRoutes(app: Express, ctx: RegisterImportRoutesDeps
         });
         fs.promises.unlink(req.file.path).catch(() => {});
         if (!result.ok) return sendApiError(res, result.status, result.code, result.message);
-        res.json({ projectId: result.projectId, warnings: result.warnings });
+        res.json({ projectId: result.projectId, warnings: result.warnings, integrity: result.integrity });
       } catch (error: any) {
         if (req.file?.path) fs.promises.unlink(req.file.path).catch(() => {});
         sendApiError(res, 400, 'BAD_REQUEST', error?.message || 'recovery import failed');
@@ -1613,6 +1615,8 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
     if (!authority) return;
     const operationId = typeof req.body?.operationId === 'string' ? req.body.operationId.trim() : '';
     if (!operationId) return sendApiError(res, 400, 'BAD_REQUEST', 'operationId required');
+    const mode = req.body?.mode ?? 'complete';
+    if (mode !== 'complete' && mode !== 'partial') return sendApiError(res, 400, 'BAD_REQUEST', 'mode must be complete or partial');
     const project = getProject(db, req.params.id);
     if (!project) return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
     try {
@@ -1621,12 +1625,17 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
         projectId: project.id,
         projectName: project.name || 'project',
         exportId: operationId,
+        projectRoot: resolveProjectDir(PROJECTS_DIR, project.id, project.metadata),
+        mode,
       });
       const safeName = built.baseName.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'project-recovery';
       res.setHeader('content-type', 'application/zip');
       res.setHeader('content-disposition', `attachment; filename="${safeName}.zip"`);
       res.send(built.buffer);
     } catch (error: any) {
+      if (error instanceof RecoveryIncompleteError) {
+        return sendApiError(res, 409, error.code, error.message, { details: { issues: error.issues, canSalvage: true } });
+      }
       sendApiError(res, 409, 'MOKINA_RECOVERY_EXPORT_FAILED', error?.message || 'recovery export failed');
     }
   });

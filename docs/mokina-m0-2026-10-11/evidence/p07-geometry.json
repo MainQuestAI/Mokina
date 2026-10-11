@@ -1,0 +1,62 @@
+{
+  "baseline": "98851a978840ef84a649379cfe3fa86cb63a8212",
+  "scene": "P07 unsent continuation source",
+  "background": "保留预算上限，活动页只解释已选定的门店活动，不添加优惠承诺。",
+  "transition": "enter -> close -> reopen; background scrolled into view",
+  "before": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "panel": {
+        "x": 603,
+        "y": 57,
+        "width": 824,
+        "height": 830
+      },
+      "horizontalOverflow": 0
+    },
+    {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "panel": {
+        "x": 389,
+        "y": 57,
+        "width": 498,
+        "height": 530
+      },
+      "horizontalOverflow": 0
+    }
+  ],
+  "after": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "panel": {
+        "x": 603,
+        "y": 57,
+        "width": 824,
+        "height": 830
+      },
+      "horizontalOverflow": 0
+    },
+    {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "panel": {
+        "x": 389,
+        "y": 57,
+        "width": 498,
+        "height": 530
+      },
+      "horizontalOverflow": 0
+    }
+  ]
+}

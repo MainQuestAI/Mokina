@@ -149,7 +149,14 @@ for (const width of [1280, 900]) test(`[P1] M2 freezes evidence across source re
     const versions = await (await page.request.get(`/api/projects/${id}/files/plan.html/versions?readOnly=true`)).json();
     const fixed = versions.versions.find((v: { current: boolean }) => v.current);
     await put('sales.csv', 'id,amount,unit\nreplacement,999,CNY');
+    let failRead = true;
+    const versionUrl = `**/api/projects/${id}/files/plan.html/versions/${fixed.id}`;
+    await page.route(versionUrl, route => failRead ? route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":{"message":"temporary read failure"}}' }) : route.continue());
     await open();
+    await expect(page.getByTestId('mokina-version-quality')).toContainText('Record unavailable', { timeout: T.long });
+    failRead = false;
+    await page.locator('.artifact-version-panel').getByRole('button', { name: 'Close', exact: true }).click();
+    await page.getByRole('button', { name: 'Versions', exact: true }).click();
     const panel = page.getByTestId('mokina-version-quality'); await expect(panel).toContainText('Issues found', { timeout: T.long });
     await panel.locator('summary').first().click();
     await expect(panel).toContainText('BUDGET_LINE'); await expect(panel).toContainText('CAPACITY_EXCEEDED');

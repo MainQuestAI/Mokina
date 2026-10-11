@@ -72,6 +72,7 @@ async function startWith(options: {
   const app = express();
   app.use(express.json());
   registerProjectFileRoutes(app, {
+    appConfig: { readAppConfig: async () => ({}) } as never,
     db,
     http: {
       sendApiError: (res: any, status: number, code: string, message: string) => {

@@ -1,5 +1,5 @@
 import type http from 'node:http';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import {
   MOKINA_CODEX_CONNECTION_STATES,
@@ -7,6 +7,8 @@ import {
   probeMokinaCodexConnection,
   type MokinaCodexProbeResults,
 } from '../src/mokina/codex-connection.js';
+import * as connection from '../src/mokina/codex-connection.js';
+import { readAppConfig, writeAppConfig } from '../src/app-config.js';
 import { startServer } from '../src/server.js';
 
 function probes(overrides: Partial<MokinaCodexProbeResults> = {}): MokinaCodexProbeResults {
@@ -116,5 +118,30 @@ describe('GET /api/mokina/codex-connection', () => {
     const second = await probeMokinaCodexConnection(process.env);
     expect(second.state).toBe(first.state);
     expect(second.checkedAt).toBe(first.checkedAt);
+  });
+
+  it('rechecks saved CLI preferences on every explicit request', async () => {
+    const dataDir = process.env.OD_DATA_DIR!;
+    const previous = await readAppConfig(dataDir);
+    const probe = vi.spyOn(connection, 'probeMokinaCodexConnection')
+      .mockResolvedValueOnce(classifyMokinaCodexConnection(probes()))
+      .mockResolvedValueOnce(classifyMokinaCodexConnection(probes({ loginStatusText: 'Not logged in' })));
+    try {
+      await writeAppConfig(dataDir, { agentCliEnv: { codex: { CODEX_BIN: '/synthetic/first-codex' } } });
+      const first = await fetch(`${baseUrl}/api/mokina/codex-connection`);
+      expect(await first.json()).toMatchObject({ state: 'ready' });
+      expect(probe).toHaveBeenLastCalledWith(process.env, {
+        useCache: false, agentCliEnv: { codex: { CODEX_BIN: '/synthetic/first-codex' } },
+      });
+      await writeAppConfig(dataDir, { agentCliEnv: { codex: { CODEX_BIN: '/synthetic/second-codex' } } });
+      const second = await fetch(`${baseUrl}/api/mokina/codex-connection`);
+      expect(await second.json()).toMatchObject({ state: 'login_required' });
+      expect(probe).toHaveBeenLastCalledWith(process.env, {
+        useCache: false, agentCliEnv: { codex: { CODEX_BIN: '/synthetic/second-codex' } },
+      });
+    } finally {
+      probe.mockRestore();
+      await writeAppConfig(dataDir, { agentCliEnv: previous.agentCliEnv ?? null });
+    }
   });
 });

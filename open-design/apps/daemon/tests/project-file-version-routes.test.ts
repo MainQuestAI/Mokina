@@ -78,6 +78,33 @@ describe('project file version routes', () => {
     expect(((await compatible.json()) as { versions: unknown[] }).versions).toHaveLength(1);
   });
 
+  it('surfaces damaged history without creating a replacement and reads it again after repair', async () => {
+    const projectId = await createProject();
+    await writeProjectFile(projectId, 'brand.html', '<html><body>保留的版本</body></html>');
+    const versionsUrl = `${baseUrl}/api/projects/${projectId}/files/brand.html/versions`;
+    const original = await fetch(versionsUrl);
+    expect(original.status).toBe(200);
+    const originalBody = await original.json();
+    const { root } = await getProjectFileVersionRootStats(projectsRoot(), projectId, 'brand.html');
+    const manifestPath = path.join(root, 'manifest.json');
+    const manifest = await fs.readFile(manifestPath, 'utf8');
+    const damaged = JSON.stringify({ ...JSON.parse(manifest), entries: null });
+    await fs.writeFile(manifestPath, damaged);
+    for (const suffix of ['', '?readOnly=true']) {
+      const response = await fetch(`${versionsUrl}${suffix}`);
+      expect(response.status).toBe(400);
+      expect(await response.text()).toContain('版本记录损坏');
+    }
+    const capture = await fetch(versionsUrl, { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ source: 'manual' }) });
+    expect(capture.status).toBe(400);
+    expect(await fs.readFile(manifestPath, 'utf8')).toBe(damaged);
+    await fs.writeFile(manifestPath, manifest);
+    const recovered = await fetch(versionsUrl);
+    expect(recovered.status).toBe(200);
+    expect(await recovered.json()).toEqual(originalBody);
+  });
+
   it('lists and restores HTML history after the working file is deleted', async () => {
     const projectId = await createProject();
     await writeProjectFile(projectId, 'brand.html', '<html><body>recover me</body></html>');

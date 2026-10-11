@@ -4825,6 +4825,7 @@ export function ProjectView({
     persistTabsState({ tabs: [primaryFile.name], active: primaryFile.name });
     hasAppliedInitialPrimaryOpenRef.current = true;
   }, [
+    tabsHydrationVersion,
     mokinaEntryRecord,
     openTabsState.active,
     openTabsState.tabs.length,

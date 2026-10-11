@@ -15,6 +15,7 @@
 |---|---|---|
 | R01 P07创建前草稿 | 关闭/刷新/切换、来源改变和保存失败，不自动创建/运行 | 66项定向回归及两视口真实流程通过，见[r01-evidence.md](r01-evidence.md)；安装包重启另验 |
 | R02恢复包完整性 | 完整失败/显式partial、引用闭包、v1兼容、GUI/CLI与导入幂等一致 | 后端49项、前端15项及两视口真实恢复通过，见[r02-evidence.md](r02-evidence.md) |
+| 窄窗口修订与交付操作 | 侧栏展开后 P05/P06/P07 导航、版本说明和主操作可达 | CI 发现的 900px 溢出已复现修复，两视口完整页面链及恢复流程 4/4 通过，见[p05-width-evidence.md](p05-width-evidence.md) |
 | R03诊断身份一致 | 配置CLI/HOME、PATH缺失、登录失效、缺CLI/权限失败及脱敏 | 17项定向红绿通过，见[r03-evidence.md](r03-evidence.md) |
 | R04稳定profile迁移 | 支持身份/schema、排除活跃写入者、原子发布、中断恢复与原数据保留 | 见[r04-evidence.md](r04-evidence.md)；原生同包结果另验 |
 | 既有真实成果专业评审 | 原输入/输出身份、独立复算、具体优缺点及后续验收样例 | 已完成[AI评审](marketing-quality-review.md)，不冒充人工专业签收 |

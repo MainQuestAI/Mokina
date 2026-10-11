@@ -41,3 +41,9 @@ PR #16 的首轮提交 `2140fca9a0bc8fa7b828f268e7c842ff50049fd1` 在 GitHub 的
 - 原始日志保留在 `output/mokina-m0-2026-10-11/ci-failure-921b2b76.log`、`ci-launch-scope-red.log`、`ci-launch-scope-green.log`、`ci-mac-stable-lifecycle-red.log`、`ci-mac-lifecycle-green.log`、`ci-tools-pack-typecheck-green.log`、`ci-tools-pack-build-green.log`；最终 SHA 另由 PR CI 核验。
 
 这轮验证仅使用测试自己的 mkdtemp 目录，均在 finally 中清理；没有启动真实应用或后台服务，也没有新增挂载、注册或用户数据。
+
+## 900px 面板与侧栏同时展开
+
+提交 `ec0b73bfa5c16adf3e05e1e94cdeb528be73b1c7` 的 [CI](https://github.com/MainQuestAI/Mokina/actions/runs/38109870032) 已通过前述构建、启动及迁移检查，最后浏览器组 44/45 通过；900×600 的 P05 在两次运行中均横向溢出 61px。R02 恢复可达侧栏后，原有面板内部的 grid 最小宽度和不换行导航在更窄空间中暴露缺陷。
+
+本地实际 DOM 与同视口截图定位原因后，仅调整 Mokina 面板 context 的 CSS。保留侧栏入口和原溢出断言，未裁切内容或缩小字体。900×600 与 1440×900 的完整 P01–P08、R02 恢复流程共 4/4 通过，P05/P06/P07 主操作经正常滚动可命中；独立代码审查及前后截图复核通过。详见 [窄窗口验收](p05-width-evidence.md)。原始 CI 日志保留在 `output/mokina-m0-2026-10-11/ci-failure-ec0b73bf.log`，修复后的最终提交须重新跑 CI 并重建候选。

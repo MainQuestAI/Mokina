@@ -8543,7 +8543,7 @@ async function runFiles(args) {
                                                Print a unified diff.
   od files versions <projectId> <relpath> [--read-only]  List saved HTML versions; read-only never creates a baseline.
   od files version-read <projectId> <relpath> <versionId>
-                                               Stream one saved HTML version.
+                                               Stream one saved HTML version; --json includes frozen evidence and quality checks.
   od files version-create <projectId> <relpath>
                                                Save the current HTML as a version.
   od files version-restore <projectId> <relpath> <versionId>

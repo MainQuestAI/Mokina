@@ -1,3 +1,5 @@
+import type { MokinaQualitySnapshot } from '@open-design/contracts';
+import { MokinaVersionQuality } from './mokina/MokinaVersionQuality';
 import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ClipboardEvent as ReactClipboardEvent, type CSSProperties, type DragEvent as ReactDragEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
 import type { ArtifactExportFormat } from '../runtime/chat/artifact-export';
 import { AnchoredMenuShell } from './chat/AnchoredMenuShell';
@@ -3749,6 +3751,7 @@ function FileVersionManagerModal({
   // Client-side cache of fetched version HTML keyed by version id. Revisiting a
   // version is then zero-fetch (and, because the srcDoc string value is stable,
   // zero-reparse). `inFlightRef` dedupes concurrent hover-prefetch + click.
+  const qualityCacheRef = useRef<Map<string, MokinaQualitySnapshot>>(new Map());
   const contentCacheRef = useRef<Map<string, string>>(new Map());
   const renderableContentCacheRef = useRef<Map<string, string>>(new Map());
   const renderableErrorCacheRef = useRef<Map<string, string>>(new Map());
@@ -3981,6 +3984,7 @@ function FileVersionManagerModal({
       .then(([rawResult, renderableResult]) => {
         if (rawResult.status === 'fulfilled' && rawResult.value) {
           contentCacheRef.current.set(versionId, rawResult.value.content);
+          if (rawResult.value.quality) qualityCacheRef.current.set(versionId, rawResult.value.quality);
         }
         if (renderableResult.status === 'fulfilled') {
           renderableContentCacheRef.current.set(versionId, renderableResult.value.content);
@@ -5056,6 +5060,11 @@ function FileVersionManagerModal({
           <p className="artifact-version-panel__note" role="alert">{error}</p>
         ) : null}
         <MokinaTaskSection name="versions" active={!MOKINA_LOCAL_EDITION || mokinaTask === 'versions'}>
+        {MOKINA_LOCAL_EDITION && selectedVersion && selectedContentMatchesVersion && !loadingContent ? <MokinaVersionQuality
+          versionId={selectedVersion.id} quality={qualityCacheRef.current.get(selectedVersion.id)}
+          onLocate={(sectionId) => {
+            onActionRequest?.({ action: 'revision' }); setRevisionSectionId(sectionId);
+          }} /> : null}
         <div className="artifact-version-panel__preview">
           {srcDoc ? (
             <iframe
@@ -19336,6 +19345,7 @@ function HtmlViewer({
           BROWSING versions (recvq56vFjQKfT). */}
       {workspaceActive && versionModalOpen && versioningAvailable && typeof document !== 'undefined' ? (
         <FileVersionManagerModal
+          key={JSON.stringify([workspaceIdentityCacheKey(workspaceContext), projectId, file.name])}
           portalHost={viewerRootRef.current?.closest<HTMLElement>('[data-testid="file-workspace"]')}
           projectId={projectId}
           projectKind={projectKind}

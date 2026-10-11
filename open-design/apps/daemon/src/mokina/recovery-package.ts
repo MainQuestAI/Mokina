@@ -1,3 +1,4 @@
+import { readVersionEvidence } from './version-evidence.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { lstat, mkdir, mkdtemp, readFile, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -323,6 +324,11 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
     if (version.frozenContentPath != null && !byPath.has(version.frozenContentPath)) {
       return fail(400, 'BAD_REQUEST', `冻结版本内容未包含在恢复包中：${version.entry}`);
     }
+    try {
+      readVersionEvidence(buffers.get(version.contentPath)!.toString('utf8'),
+        version.frozenContentPath ? buffers.get(version.frozenContentPath)?.toString('utf8') : undefined,
+        version.originalVersionId, version.contentDigest);
+    } catch { return fail(400, 'BAD_REQUEST', `版本证据冻结记录无效：${version.entry}`); }
     if (version.current && version.candidate) {
       return fail(400, 'BAD_REQUEST', `候选版本不能同时是当前版本：${version.entry}`);
     }

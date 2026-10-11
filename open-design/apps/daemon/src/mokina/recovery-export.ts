@@ -1,3 +1,4 @@
+import { readVersionEvidence } from './version-evidence.js';
 import { createHash } from 'node:crypto';
 import { lstat, readFile, readdir } from 'node:fs/promises';
 import type { Dirent } from 'node:fs';
@@ -199,7 +200,10 @@ async function collectVersions(capture: RecoveryCapture): Promise<MokinaRecovery
         capture.issue(contentPath, 'invalid', '版本内容与已保存摘要不符。'); capture.files.delete(contentPath); continue;
       }
       const frozenContentPath = typeof entry.frozenContentPath === 'string' ? `${directory}/${entry.frozenContentPath}` : undefined;
-      if (frozenContentPath && !await capture.file(frozenContentPath, 'frozen-version')) continue;
+      const frozen = frozenContentPath ? await capture.file(frozenContentPath, 'frozen-version') : undefined;
+      if (frozenContentPath && !frozen) continue;
+      try { readVersionEvidence(content.toString('utf8'), frozen?.toString('utf8'), entry.id, digest(content)); }
+      catch { capture.issue(contentPath, 'invalid', '版本证据冻结记录缺失或摘要不符。'); continue; }
       versions.push({ entry: entry.fileName, originalVersionId: entry.id, versionNumber: Number(entry.version),
         current: entry.id === currentId, candidate: entry.candidate === true, contentPath, contentDigest: digest(content),
         ...(frozenContentPath ? { frozenContentPath } : {}),

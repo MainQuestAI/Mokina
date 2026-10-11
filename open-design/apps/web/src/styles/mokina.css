@@ -241,7 +241,7 @@ html[data-product='mokina'] .mokina-context-panel__actions { position: sticky; b
 html[data-product='mokina'] .artifact-version-panel[data-mokina-task] { width: min(1000px, calc(100vw - 48px)); height: calc(100vh - 90px); max-height: none; padding: 24px; border-radius: 20px; background: #fff; }
 html[data-product='mokina'] .artifact-version-panel [aria-pressed='true'] { background: var(--mokina-canvas); outline: 1px solid var(--mokina-edge); }
 html[data-product='mokina'] .mokina-task-section--versions { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(220px, .7fr); gap: 24px; }
-html[data-product='mokina'] .mokina-task-section--versions .artifact-version-panel__preview { grid-column: 1; grid-row: 1 / span 3; min-height: 360px; }
+html[data-product='mokina'] .mokina-task-section--versions .artifact-version-panel__preview { grid-column: 1; grid-row: 2 / span 3; min-height: 360px; }
 html[data-product='mokina'] .mokina-task-section--versions .artifact-version-list { margin: 0; max-height: none; }
 html[data-product='mokina'] .mokina-task-section--continue > section { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
 html[data-product='mokina'] .mokina-task-section--continue > section > :is(strong, p, button) { grid-column: 1 / -1; }

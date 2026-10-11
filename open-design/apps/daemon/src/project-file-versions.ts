@@ -1,4 +1,5 @@
 import type {
+  MokinaQualitySnapshot,
   ArtifactOrigin,
   ArtifactOriginStatus,
   ProjectFileKind,
@@ -12,6 +13,8 @@ import path from 'node:path';
 
 import { isSafeId, kindFor, mimeFor, readProjectFile, resolveProjectDir, resolveProjectFilePath, validateProjectPath } from './projects.js';
 import { bundleStandaloneHtml } from './artifacts/standalone-html.js';
+
+import { freezeVersionEvidence, hasVersionEvidence, readVersionEvidence } from './mokina/version-evidence.js';
 
 const VERSION_ROOT = '.file-versions';
 const VERSION_MANIFEST = 'manifest.json';
@@ -502,7 +505,7 @@ export async function readProjectFileVersion(
   fileName: string,
   versionId: string,
   metadata?: unknown,
-): Promise<{ version: ProjectFileVersion; content: string; frozenContent?: string }> {
+): Promise<{ version: ProjectFileVersion; content: string; frozenContent?: string; quality: MokinaQualitySnapshot }> {
   const safeName = validateUserFileName(fileName);
   const safeVersionId = String(versionId || '').trim();
   if (!safeVersionId || !VERSION_ID_RE.test(safeVersionId)) {
@@ -521,6 +524,7 @@ export async function readProjectFileVersion(
     : undefined;
   return {
     version: publicVersion(entry, state.currentVersionId),
+    quality: readVersionEvidence(content, frozenContent, entry.id, projectFileVersionContentDigest(content)),
     content,
     ...(frozenContent ? { frozenContent } : {}),
   };
@@ -624,6 +628,17 @@ async function createProjectFileVersionUnlocked(
   if (options.candidate) entry.candidate = true;
   if (options.baseVersionId) entry.baseVersionId = options.baseVersionId;
   if (options.operationId) entry.operationId = options.operationId;
+  // An explicit base carries its immutable evidence into revisions/restores.
+  // A changed declaration still has to resolve and validate a new source.
+  const evidenceBase = entries.find(item => item.id === (options.baseVersionId ?? options.restoreFromVersionId ?? entry.parentVersionId));
+  let inheritedEvidence: MokinaQualitySnapshot | undefined;
+  if (evidenceBase) {
+    const baseText = await readFile(path.join(root, evidenceBase.contentPath), 'utf8');
+    if (hasVersionEvidence(baseText)) {
+      const baseFrozen = evidenceBase.frozenContentPath ? await readFile(path.join(root, evidenceBase.frozenContentPath), 'utf8') : undefined;
+      inheritedEvidence = readVersionEvidence(baseText, baseFrozen, evidenceBase.id, projectFileVersionContentDigest(baseText));
+    }
+  }
   await writeFile(path.join(root, contentPath), text);
   // Freeze local HTML resources while the version is captured. A failed or
   // incomplete bundle leaves the source version intact; historical export
@@ -649,8 +664,16 @@ async function createProjectFileVersionUnlocked(
         },
       });
       if (bundled.externalDependencies.length === 0) {
-        entry.frozenContentPath = `${String(version).padStart(4, '0')}-${id}-frozen.html`;
-        await writeFile(path.join(root, entry.frozenContentPath), bundled.html);
+        const frozenContentPath = `${String(version).padStart(4, '0')}-${id}-frozen.html`;
+        const evidenceHtml = await freezeVersionEvidence(bundled.html, id, entry.contentDigest!, async (sourcePath, expectedDigest) => {
+          const inherited = inheritedEvidence?.sources.find(item => item.path === sourcePath && item.sha256 === expectedDigest && item.text !== undefined && !item.error);
+          if (inherited?.text !== undefined) return Buffer.from(inherited.text, 'utf8');
+          const source = await resolveProjectFilePath(projectsRoot, projectId, sourcePath, metadata);
+          if (source.size > 512 * 1024) throw new Error('Evidence file exceeds 512 KiB');
+          return (await readProjectFile(projectsRoot, projectId, sourcePath, metadata)).buffer;
+        });
+        await writeFile(path.join(root, frozenContentPath), evidenceHtml);
+        entry.frozenContentPath = frozenContentPath;
       }
     } catch {
       // Keep the source version; export validates unresolved resources.

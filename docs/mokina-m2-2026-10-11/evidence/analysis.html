@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>记录金额审阅｜合成案例分析</title>
+<style>body{font:16px/1.6 system-ui;max-width:960px;margin:40px auto;padding:0 24px;color:#17212b;background:#fff}section{margin:32px 0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:8px;text-align:left}aside{padding:12px;border:1px solid #bbb}@media print{section{break-inside:avoid}details>*{display:block}body{margin:0}}
+:root{--bg:oklch(1 0 0);--surface:oklch(.975 .003 245);--fg:oklch(.244 .024 248);--muted:oklch(.43 .024 248);--border:oklch(.79 0 0);--accent:oklch(.32 .045 248);--error:oklch(.40 .13 27);--display:"Songti SC","Noto Serif CJK SC","SimSun",serif;--body:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--mono:"SFMono-Regular",Consolas,monospace}
+*{box-sizing:border-box}html{background:var(--bg)}body{max-width:1180px;margin:0 auto;padding:0 40px 64px;color:var(--fg);background:var(--bg);font-family:var(--body);line-height:1.75;overflow-wrap:anywhere}header{padding:44px 0 28px;border-bottom:3px solid var(--fg)}.eyebrow{font:12px/1.6 var(--mono);letter-spacing:.1em;color:var(--muted)}h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.4}h1{font-size:clamp(30px,4.3vw,52px);font-weight:700;margin:12px 0 18px;letter-spacing:.02em}h2{font-size:28px;margin:0 0 22px}h3{font-size:21px;margin:24px 0 10px}p{margin:10px 0;text-wrap:pretty}a{color:var(--fg);text-decoration-thickness:1px;text-underline-offset:4px}a:hover{color:var(--fg);background:var(--surface);text-decoration-thickness:2px}a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}nav{display:flex;gap:6px 24px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--border)}nav a{display:inline-flex;align-items:center;min-height:44px;font-size:14px}main>section{padding:30px 0 22px;margin:0;border-bottom:1px solid var(--border);scroll-margin-top:16px}aside,.notice{background:var(--surface);border:1px solid var(--border);padding:16px 20px}.notice strong{display:block}.lede{max-width:820px;font-size:18px}.meta{font-size:13px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:24px 0}.metric{padding:20px 18px 20px 0;min-width:0}.metric+.metric{padding-left:22px;border-left:1px solid var(--border)}.metric strong{display:block;font:600 clamp(26px,3.5vw,38px)/1.3 var(--mono);letter-spacing:-.04em}.metric span{font-size:13px;color:var(--muted)}.columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}.direction{border-top:2px solid var(--fg);padding-top:12px;min-width:0}.direction h3{margin-top:8px}.tag{font:13px/1.5 var(--mono);color:var(--muted)}table{table-layout:fixed;margin:18px 0 10px;font-size:14px;line-height:1.6}caption{text-align:left;font-size:16px;font-weight:600;margin-bottom:12px;color:var(--fg)}th,td{border:1px solid var(--border);padding:12px 10px;vertical-align:top;overflow-wrap:anywhere}th{background:var(--surface);font-weight:600}td[data-quantity],td[data-unit-price],td[data-amount],td[data-hours]{font:14px/1.7 var(--mono);font-variant-numeric:tabular-nums}tfoot td{font-weight:600;background:var(--surface)}.budget-name{width:19%}.budget-number{width:10%}.budget-source{width:41%}.fine{font-size:13px;color:var(--muted)}.formula{font-family:var(--mono);font-variant-numeric:tabular-nums}.known-issue{font-weight:600;color:var(--error)}.source{padding:18px 0;border-bottom:1px solid var(--border)}.source:last-child{border-bottom:0}.hash{display:block;font:12px/1.8 var(--mono);overflow-wrap:anywhere;word-break:break-all}.quote{font-size:14px;margin:8px 0;padding:8px 14px;border:1px solid var(--border)}ul,ol{padding-left:24px}li+li{margin-top:7px}details{margin-top:16px}summary{min-height:44px;cursor:pointer;display:list-item;padding:9px 0}summary:hover{background:var(--surface);color:var(--fg)}.quality{border:1px solid var(--border);padding:16px 20px;margin-top:20px}footer{padding-top:20px;font-size:13px;color:var(--muted)}.status{font-weight:600}.checks{padding-left:22px}
+@media(max-width:700px){body{padding:0 20px 40px}header{padding-top:28px}h2{font-size:25px}.lede{font-size:16px}.columns{grid-template-columns:1fr;gap:20px}.metrics{grid-template-columns:1fr}.metric,.metric+.metric{padding:14px 0;border-left:0;border-bottom:1px solid var(--border)}.metric:last-child{border-bottom:0}.metric strong{font-size:30px}table,thead,tbody,tfoot,tr,th,td{display:block;width:100%}thead{display:none}table{border:0}tr{border:1px solid var(--border);margin-bottom:14px}td{border:0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(80px,30%) minmax(0,1fr);gap:12px;padding:10px 12px}td:last-child{border-bottom:0}td::before{content:attr(data-label);font-family:var(--body);font-weight:600;font-size:12px;color:var(--muted)}td[colspan]{display:block}caption{display:block}.budget-name,.budget-number,.budget-source{width:auto}.hash{font-size:11px}nav{gap:4px 18px}}
+@media print{body{max-width:none;padding:0;font-size:12pt;color:var(--fg)}header{padding-top:0}h1{font-size:28pt}h2{font-size:19pt}h3{font-size:15pt}table,.fine,.meta,.hash,.quote,footer{font-size:12pt}nav{display:none}section{break-inside:auto}tr,.direction,.source,.quality{break-inside:avoid}a{text-decoration:none}.columns{display:block}.direction{margin-bottom:20px}th,td{padding:8px}.metrics{margin:16px 0}}
+</style>
+</head>
+<body>
+<header data-od-id="analysis-header">
+<p class="eyebrow">合成案例 / 数据分析验收 / 方法 0.0.2</p>
+<h1 data-od-id="analysis-title">先补齐口径，再判断增长</h1>
+<p class="lede">这份样本支持分渠道、分币种的记录金额比较；它不足以证明需求增长、营销效果或市场规模。</p>
+<aside data-od-id="analysis-status"><strong>内部预览，未获商业批准。</strong> 所有输入均为合成案例。清洗和复算不核实源事实，也不构成预算启用或营销发布授权。</aside>
+</header>
+<nav aria-label="分析章节" data-od-id="analysis-navigation">
+<a href="#scope" data-od-id="nav-scope">01 决策口径</a><a href="#findings" data-od-id="nav-findings">02 发现与解释</a><a href="#evidence" data-od-id="nav-evidence">03 数据与复算</a><a href="#implications" data-od-id="nav-implications">04 行动条件</a><a href="#limits" data-od-id="nav-limits">05 边界与检查</a>
+</nav>
+<main>
+<section id="scope" data-mokina-id="scope" data-od-id="scope">
+<h2 data-od-id="scope-title">01 / 要支持什么决定</h2>
+<p><strong>决策问题：</strong>2026 年 1–2 月的已提供记录，能否支持把后续线上营销资源优先放到 web 渠道？当前答案是：可将 web 列为待验证候选，不能据此扩张投入或承诺增长。依据：<a href="#source-sales-raw">[sales-raw]</a>、<a href="#source-sales-clean">[sales-clean]</a>；该业务判断为推断。</p>
+<div class="metrics" data-od-id="sample-summary">
+<div class="metric" data-od-id="metric-raw"><strong>8</strong><span>原始数据记录，不含表头</span></div>
+<div class="metric" data-od-id="metric-retained"><strong>6</strong><span>派生文件保留记录；5 条 CNY，1 条 USD</span></div>
+<div class="metric" data-od-id="metric-excluded"><strong>2</strong><span>明确排除行；原始证据仍完整保留</span></div>
+</div>
+<table data-od-id="scope-table"><caption>固定本次分析边界</caption><thead><tr><th scope="col">维度</th><th scope="col">口径</th><th scope="col">不能推断的内容</th></tr></thead><tbody>
+<tr><td data-label="维度">时期与样本</td><td data-label="口径">period 为 2026-01、2026-02；只有所给 CSV 的 8 条记录</td><td data-label="不能推断">是否覆盖完整自然月、完整渠道及全部交易，均未知</td></tr>
+<tr><td data-label="维度">金额与币种</td><td data-label="口径">amount 按 currency 分组；CNY 与 USD 分开，不使用汇率</td><td data-label="不能推断">amount 是含税收入、退款前金额、出货额或其他口径，未核实</td></tr>
+<tr><td data-label="维度">人群与地区</td><td data-label="口径">未提供地区、行业细分、客户画像、品牌身份或样本抽样框</td><td data-label="不能推断">不能命名一个真实市场、估计总体规模或替代目标受众研究</td></tr>
+<tr><td data-label="维度">待验证假设</td><td data-label="口径">web 金额变化可能来自渠道内需求，也可能来自渠道结构或记录覆盖改变</td><td data-label="不能推断">无订单、流量、投放、归因或毛利资料，不能归因或计算 ROI</td></tr>
+</tbody></table>
+<p class="fine">分析遵循 <a href="#source-analysis-method">[analysis-method]</a> 0.0.2；保留 <a href="#source-analysis-template">[analysis-template]</a> 的五个稳定章节标识。</p>
+</section>
+<section id="findings" data-mokina-id="findings" data-od-id="findings">
+<h2 data-od-id="findings-title">02 / 可观察的变化，与尚未成立的解释</h2>
+<table data-od-id="findings-table"><caption>观察 → 证据 → 解释 → 限制 → 决策影响</caption><thead><tr><th scope="col">观察与证据</th><th scope="col">可作的解释</th><th scope="col">限制</th><th scope="col">决策影响</th></tr></thead><tbody>
+<tr><td data-label="观察与证据">CNY web：1000 → 1200。原始第 2、5 行；派生第 2、4 行。<a href="#source-sales-raw">[sales-raw]</a> <a href="#source-sales-clean">[sales-clean]</a></td><td data-label="可作的解释">该渠道的两条记录金额差为 200；可能值得进一步拆解</td><td data-label="限制">不知道订单数、客单价、退款和流量；两条记录是否同等覆盖未核实</td><td data-label="决策影响">可提出渠道试验假设，不能把金额上升当成营销增量</td></tr>
+<tr><td data-label="观察与证据">清洗后 CNY 已知值小计：1500 → 1500。派生第 2、3、6 行与第 4、7 行。<a href="#source-sales-clean">[sales-clean]</a></td><td data-label="可作的解释">当前保留的数值小计相等</td><td data-label="限制">二月 social 为空且被排除；两期有效 CNY 记录数分别为 3 和 2</td><td data-label="决策影响"><strong>不得写成整体销售持平</strong>；先补齐记录覆盖再比较</td></tr>
+<tr><td data-label="观察与证据">other：0 → 300；USD 仅二月有 90。原始第 8、9、7 行。<a href="#source-sales-raw">[sales-raw]</a></td><td data-label="可作的解释">other 的绝对金额差为 300；USD 当前只可描述单期观察</td><td data-label="限制">零基数不可算增长率；USD 一月无记录不等于 0</td><td data-label="决策影响">不以无效增长率排名；USD 不与 CNY 合计</td></tr>
+</tbody></table>
+<div class="columns">
+<article class="direction" data-od-id="explanation-demand"><p class="tag">解释 A · 待验证假设</p><h3 data-od-id="explanation-demand-title">web 渠道自身需求增强</h3><p><strong>支持：</strong>在已提供的同币种记录中，web 从 1000 变为 1200。<a href="#source-sales-clean">[sales-clean]</a></p><p><strong>反证与削弱：</strong>订单数、客户数和流量均缺失；金额增加也可能仅由客单价、退款时间或记录覆盖变化构成。CNY 已知值总小计没有同步增加，且二月存在缺失。</p><p><strong>验证方式：</strong>取得两个月同口径的 web 完整订单明细、有效订单数、退款与去重客户数，分解“订单数 × 净客单价”，再与可核验的渠道归因对应。</p><p><strong>改变判断的证据：</strong>若统一口径后 web 增加消失，或只由金额记账时间/转渠道产生，则放弃需求增强解释；若订单与客户数也增加且完整性成立，才提高该假设的可信度，仍不等于广告因果。</p></article>
+<article class="direction" data-od-id="explanation-coverage"><p class="tag">解释 B · 待验证假设</p><h3 data-od-id="explanation-coverage-title">渠道结构或记录覆盖改变</h3><p><strong>支持：</strong>一月有整行重复 r2；二月 social 金额缺失；other 从 0 到 300。数据缺口足以影响跨期小计。<a href="#source-sales-raw">[sales-raw]</a></p><p><strong>反证与削弱：</strong>没有客户迁移、渠道编码变更或补录日志；不能仅凭缺失就断言渠道迁移，也不能断言缺失金额一定为正。</p><p><strong>验证方式：</strong>核对 r2 是否同一业务记录；补齐 r4 原始凭证；获取渠道定义和覆盖清单，按同一记录主键、币种与期间重新汇总。</p><p><strong>改变判断的证据：</strong>若补齐后结构差异消失，优先认定原样本覆盖影响；若主键、完整性和渠道定义都稳定，而跨渠道变化仍存在，则该解释减弱，需用客户级轨迹验证真正迁移。</p></article>
+</div>
+<p class="fine">两种解释竞争同一组有限观察，并非已成立事实，也不排除二者同时存在。此处按 <a href="#source-analysis-method">[analysis-method]</a> 步骤 4–5 展示支持与反证。</p>
+</section>
+<section id="evidence" data-mokina-id="evidence" data-od-id="evidence">
+<h2 data-od-id="evidence-title">03 / 原始问题保留，计算过程可复查</h2>
+<h3 data-od-id="schema-title">原始字段与已知问题</h3>
+<p>字段：<code>record_id</code>（记录标识）、<code>period</code>（月份）、<code>channel</code>（渠道）、<code>amount</code>（金额）、<code>currency</code>（币种）。原始文件含表头共 9 个物理行，8 条记录、7 个不同 ID，均为 5 个字段；金额非空值可解析为数值，没有另见非法非空金额或不规则字段数。<a href="#source-sales-raw">[sales-raw]</a></p>
+<aside data-od-id="raw-issues"><strong class="known-issue">已知问题没有因清洗而消失</strong><ul><li>重复：r2 在物理第 3、4 行出现两次，五个字段完全相同。业务上是否重复交易仍需核验。</li><li>缺失：物理第 6 行 r4 的 amount 为空；它不是 0。</li><li>单位混用：7 条 CNY 与 1 条 USD 同处源文件，禁止跨币种求和。</li><li>零基数：物理第 8 行 r6 的 amount 为合法 0；作为 other 增长率分母时，增长率不可计算。</li></ul></aside>
+<table data-od-id="raw-table"><caption>原始 CSV 全部记录 · 物理行号包含表头</caption><thead><tr><th scope="col">原始行</th><th scope="col">记录 ID</th><th scope="col">时期</th><th scope="col">渠道</th><th scope="col">amount</th><th scope="col">币种</th><th scope="col">处理与问题</th></tr></thead><tbody><tr data-od-id="raw-line-2"><td data-label="原始行">2</td><td data-label="记录 ID">r1</td><td data-label="时期">2026-01</td><td data-label="渠道">web</td><td data-label="amount">1000</td><td data-label="币种">CNY</td><td data-label="处理与问题">保留 → 派生第 2 行</td></tr>
+<tr data-od-id="raw-line-3"><td data-label="原始行">3</td><td data-label="记录 ID">r2</td><td data-label="时期">2026-01</td><td data-label="渠道">social</td><td data-label="amount">500</td><td data-label="币种">CNY</td><td data-label="处理与问题">首条 r2；保留 → 派生第 3 行</td></tr>
+<tr data-od-id="raw-line-4"><td data-label="原始行">4</td><td data-label="记录 ID">r2</td><td data-label="时期">2026-01</td><td data-label="渠道">social</td><td data-label="amount">500</td><td data-label="币种">CNY</td><td data-label="处理与问题"><span class="known-issue">重复 r2，且与第 3 行整行相同；排除</span></td></tr>
+<tr data-od-id="raw-line-5"><td data-label="原始行">5</td><td data-label="记录 ID">r3</td><td data-label="时期">2026-02</td><td data-label="渠道">web</td><td data-label="amount">1200</td><td data-label="币种">CNY</td><td data-label="处理与问题">保留 → 派生第 4 行</td></tr>
+<tr data-od-id="raw-line-6"><td data-label="原始行">6</td><td data-label="记录 ID">r4</td><td data-label="时期">2026-02</td><td data-label="渠道">social</td><td data-label="amount"><strong>空值</strong></td><td data-label="币种">CNY</td><td data-label="处理与问题"><span class="known-issue">amount 为空；排除，不补 0</span></td></tr>
+<tr data-od-id="raw-line-7"><td data-label="原始行">7</td><td data-label="记录 ID">r5</td><td data-label="时期">2026-02</td><td data-label="渠道">web</td><td data-label="amount">90</td><td data-label="币种">USD</td><td data-label="处理与问题">USD 独立保留 → 派生第 5 行</td></tr>
+<tr data-od-id="raw-line-8"><td data-label="原始行">8</td><td data-label="记录 ID">r6</td><td data-label="时期">2026-01</td><td data-label="渠道">other</td><td data-label="amount">0</td><td data-label="币种">CNY</td><td data-label="处理与问题">合法 0 保留 → 派生第 6 行；作为增长率分母时不可计算</td></tr>
+<tr data-od-id="raw-line-9"><td data-label="原始行">9</td><td data-label="记录 ID">r7</td><td data-label="时期">2026-02</td><td data-label="渠道">other</td><td data-label="amount">300</td><td data-label="币种">CNY</td><td data-label="处理与问题">保留 → 派生第 7 行</td></tr></tbody></table>
+<h3 data-od-id="cleaning-title">公开清洗规则与明确排除列表</h3>
+<ol data-od-id="cleaning-rules"><li>按原始行序保留首次出现的 r2，排除第二条完全相同的 r2。此去重规则是假定 record_id 应唯一的分析选择，未核实业务真实性。</li><li>排除空金额 r4 的整条记录，仅用于已知数值汇总；不补 0、不预测缺失金额，不据此宣称二月数据完整。</li><li>其余记录保持原字段值及顺序；保留合法 0 和 USD。输出 UTF-8、LF 换行的独立派生 CSV。汇总时按币种及月份分组，不换汇、不合并币种。</li></ol>
+<table data-od-id="exclusions-table"><caption>恰好排除两行；原始冻结文件完全保留</caption><thead><tr><th scope="col">原始物理行</th><th scope="col">逐字记录</th><th scope="col">排除理由与影响</th></tr></thead><tbody>
+<tr data-od-id="excluded-line-4"><td data-label="原始物理行">4</td><td data-label="逐字记录"><code>r2,2026-01,social,500,CNY</code></td><td data-label="排除理由与影响">第二条重复 r2；一月 CNY 已知值小计减少 500。保留第 3 行。</td></tr>
+<tr data-od-id="excluded-line-6"><td data-label="原始物理行">6</td><td data-label="逐字记录"><code>r4,2026-02,social,,CNY</code></td><td data-label="排除理由与影响">金额缺失；不能量化被排除金额。二月 social 不参与数值小计，但其缺失状态保留。</td></tr>
+</tbody></table>
+<table data-od-id="clean-table"><caption>派生 CSV 全部记录与逐行映射 · [sales-clean]</caption><thead><tr><th scope="col">派生行</th><th scope="col">原始行</th><th scope="col">记录 ID</th><th scope="col">时期</th><th scope="col">渠道</th><th scope="col">amount</th><th scope="col">币种</th></tr></thead><tbody><tr data-od-id="clean-line-2"><td data-label="派生行">2</td><td data-label="原始行">2</td><td data-label="记录 ID">r1</td><td data-label="时期">2026-01</td><td data-label="渠道">web</td><td data-label="amount">1000</td><td data-label="币种">CNY</td></tr>
+<tr data-od-id="clean-line-3"><td data-label="派生行">3</td><td data-label="原始行">3</td><td data-label="记录 ID">r2</td><td data-label="时期">2026-01</td><td data-label="渠道">social</td><td data-label="amount">500</td><td data-label="币种">CNY</td></tr>
+<tr data-od-id="clean-line-4"><td data-label="派生行">4</td><td data-label="原始行">5</td><td data-label="记录 ID">r3</td><td data-label="时期">2026-02</td><td data-label="渠道">web</td><td data-label="amount">1200</td><td data-label="币种">CNY</td></tr>
+<tr data-od-id="clean-line-5"><td data-label="派生行">5</td><td data-label="原始行">7</td><td data-label="记录 ID">r5</td><td data-label="时期">2026-02</td><td data-label="渠道">web</td><td data-label="amount">90</td><td data-label="币种">USD</td></tr>
+<tr data-od-id="clean-line-6"><td data-label="派生行">6</td><td data-label="原始行">8</td><td data-label="记录 ID">r6</td><td data-label="时期">2026-01</td><td data-label="渠道">other</td><td data-label="amount">0</td><td data-label="币种">CNY</td></tr>
+<tr data-od-id="clean-line-7"><td data-label="派生行">7</td><td data-label="原始行">9</td><td data-label="记录 ID">r7</td><td data-label="时期">2026-02</td><td data-label="渠道">other</td><td data-label="amount">300</td><td data-label="币种">CNY</td></tr></tbody></table>
+<h3 data-od-id="totals-title">先按币种分开，再比较已知值</h3>
+<table data-od-id="period-totals"><caption>CNY 单币种小计；不含 USD，空值从未计为 0</caption><thead><tr><th scope="col">阶段</th><th scope="col">2026-01</th><th scope="col">2026-02</th><th scope="col">两期已知值合计</th></tr></thead><tbody>
+<tr><td data-label="阶段">原始合法数值；重复仍在</td><td data-label="2026-01">1000 + 500 + 500 + 0 = <strong>2000</strong> CNY<br>4 个数值</td><td data-label="2026-02">1200 + 300 = <strong>1500</strong> CNY<br>2 个数值，另有 1 个缺失</td><td data-label="两期已知值合计">3500 CNY；含重复，且缺失未计，不可视作真实总额</td></tr>
+<tr><td data-label="阶段">派生保留的已知数值</td><td data-label="2026-01">1000 + 500 + 0 = <strong>1500</strong> CNY<br>3 个数值</td><td data-label="2026-02">1200 + 300 = <strong>1500</strong> CNY<br>2 个数值；缺失的 social 仍未知</td><td data-label="两期已知值合计">3000 CNY；仅是保留值之和，不是核实后的销售总额</td></tr>
+</tbody></table>
+<p data-od-id="usd-total"><strong>USD 单独记录：</strong>二月 web 为 90 USD（原始第 7 行 / 派生第 5 行）；一月没有 USD 记录，不能当作 0。USD 已知值合计为 90 USD，只含一条记录；不计算其跨期增长率，不与 CNY 3000 相加。<a href="#source-sales-raw">[sales-raw]</a> <a href="#source-sales-clean">[sales-clean]</a></p>
+<h3 data-od-id="ratios-title">比例：可见值是复算输入</h3>
+<p class="fine">以下容器提供 numerator = 本期 − 前期、denominator = 前期，结果用小数。标记只核对这些给定数值之间的算术，不证明其与 CSV 行的对应真实或口径完整。<a href="#source-protocol">[protocol]</a></p>
+<div class="columns">
+<article class="direction" data-mokina-ratio data-od-id="ratio-raw-cny"><h3 data-od-id="ratio-raw-title">原始 CNY 已知值小计</h3><p>前期 2000，本期 1500。<a href="#source-sales-raw">[sales-raw]</a></p><p class="formula">分子 <span data-numerator>-500</span> ÷ 分母 <span data-denominator>2000</span> = <strong data-ratio-result>-0.25</strong></p><p class="known-issue">这是含重复且二月缺失的小计比较，不是可采用的整体下降率。</p></article>
+<article class="direction" data-mokina-ratio data-od-id="ratio-clean-cny"><h3 data-od-id="ratio-clean-title">派生 CNY 已知值小计</h3><p>前期 1500，本期 1500。<a href="#source-sales-clean">[sales-clean]</a></p><p class="formula">分子 <span data-numerator>0</span> ÷ 分母 <span data-denominator>1500</span> = <strong data-ratio-result>0</strong></p><p class="known-issue">结果仅为保留数值的算术差；不能据此认定整体金额持平。</p></article>
+<article class="direction" data-mokina-ratio data-od-id="ratio-web"><h3 data-od-id="ratio-web-title">CNY web 记录金额</h3><p>前期 1000，本期 1200。派生第 2、4 行。<a href="#source-sales-clean">[sales-clean]</a></p><p class="formula">分子 <span data-numerator>200</span> ÷ 分母 <span data-denominator>1000</span> = <strong data-ratio-result>0.2</strong></p><p>小数 0.2 对应 20%；只描述这两条记录，未核实同口径覆盖，更不证明投放效果。</p></article>
+<article class="direction" data-mokina-ratio data-od-id="ratio-other"><h3 data-od-id="ratio-other-title">CNY other 零基数</h3><p>前期 0，本期 300。派生第 6、7 行。<a href="#source-sales-clean">[sales-clean]</a></p><p class="formula">分子 <span data-numerator>300</span> ÷ 分母 <span data-denominator>0</span> → <strong class="known-issue" data-ratio-result>不可计算</strong></p><p>可陈述绝对增加 300 CNY；不写为增长 300%、0 或无穷大。零分母问题保留，不修改检查结论。</p></article>
+</div>
+<p data-od-id="missing-comparisons"><strong>CNY social 不提供比例：</strong>一月保留首条 r2 为 500 CNY；二月 r4 缺失，差值本身未知。<strong>USD 也不提供跨期比例：</strong>一月不存在记录。这两处没有合法的已知分子或基数，不强填数值标记。依据：<a href="#source-sales-raw">[sales-raw]</a>。</p>
+<h3 data-od-id="sources-title">冻结来源、逐字摘录与真实字节摘要</h3>
+<p>以下五个来源分别固定证据；原始文件与派生文件不互相覆盖。SHA256 由所列文件的实际字节计算，支持摘录逐字存在于对应冻结文件中。摘要绑定字节，不验证内容真实性。</p>
+<article class="source" id="source-sales-raw" data-od-id="source-sales-raw"><h3 data-od-id="source-sales-raw-heading">[sales-raw]</h3><p class="meta">evidence/sales-dirty.csv · data</p><p>定位：完整 CSV，物理第 1–9 行；第 1 行为表头</p><p class="quote">逐字摘录：<q>r2,2026-01,social,500,CNY
+r2,2026-01,social,500,CNY</q></p><p>限制：合成验收数据；保留重复 ID、空金额、混合币种和零基数。未核实 amount 的业务定义、交易真实性与记录覆盖。</p><code class="hash">SHA256 9723250603e42a2ff1c033822c67e232a756aa4383a1b275f4b08a668df11150</code></article>
+<article class="source" id="source-sales-clean" data-od-id="source-sales-clean"><h3 data-od-id="source-sales-clean-heading">[sales-clean]</h3><p class="meta">evidence/sales-clean.csv · data</p><p>定位：完整派生 CSV，物理第 1–7 行；由原始第 2、3、5、7、8、9 行生成</p><p class="quote">逐字摘录：<q>r1,2026-01,web,1000,CNY
+r2,2026-01,social,500,CNY
+r3,2026-02,web,1200,CNY</q></p><p>限制：仅按本页公开规则排除原始物理第 4、6 行；缺失没有补零，USD 保留且单独统计。不是事实更正；二月 CNY 口径仍不完整。</p><code class="hash">SHA256 4a22da5fbd42f39227e14c8b1a5249f596e48eba60fb9676fb17d0ad2f703436</code></article>
+<article class="source" id="source-analysis-method" data-od-id="source-analysis-method"><h3 data-od-id="source-analysis-method-heading">[analysis-method]</h3><p class="meta">evidence/analysis-method.md · method · 方法版本 0.0.2</p><p>定位：完整方法，步骤 1–6；重点为步骤 3–6</p><p class="quote">逐字摘录：<q>未经说明不去重、不补0、不合并币种。</q></p><p>限制：绑定实际读取的方法版本，不代表专业判断正确或业务批准。</p><code class="hash">SHA256 e36277e696475b32c0f107cd3fbc8fa57af0b37799200cda120ffa71dd10f39d</code></article>
+<article class="source" id="source-protocol" data-od-id="source-protocol"><h3 data-od-id="source-protocol-heading">[protocol]</h3><p class="meta">evidence/evidence-contract.md · full-text</p><p>定位：完整协议；先读再声明、可见数值就是计算输入、交付自查</p><p class="quote">逐字摘录：<q>这些标记是可选的机械检查输入，不代替正文、业务审批或来源真实性核验。</q></p><p>限制：机械标记仅提供复算输入；摘要相符不证明源事实真实。</p><code class="hash">SHA256 09c6a24590f56799c3a250a53077a691946248adce25aad841a2de51bc812322</code></article>
+<article class="source" id="source-analysis-template" data-od-id="source-analysis-template"><h3 data-od-id="source-analysis-template-heading">[analysis-template]</h3><p class="meta">evidence/analysis-template.html · full-text</p><p>定位：完整结构模板；scope、findings、evidence、implications、limits 五个稳定章节</p><p class="quote">逐字摘录：<q>&lt;section id=&quot;scope&quot; data-mokina-id=&quot;scope&quot;&gt;</q></p><p>限制：仅复用章节与基础样式；模板中的占位文案不构成事实。</p><code class="hash">SHA256 ba346de3e69bc8c4b506235b63e4b59e66904a291db14997604087bcf30fc8ea</code></article>
+</section>
+<section id="implications" data-mokina-id="implications" data-od-id="implications">
+<h2 data-od-id="implications-title">04 / 当前选择：先核口径，再决定试验</h2>
+<p><strong>当前建议为有条件的推断：</strong>优先完成数据完整性核对。两月、六条保留记录不够支持扩大线上营销投入，也不足以为任何计划方向排序。该建议基于 <a href="#source-sales-raw">[sales-raw]</a> 的已知缺陷和 <a href="#source-analysis-method">[analysis-method]</a> 的分析边界。</p>
+<table data-od-id="actions-table"><caption>两条可区分的后续行动路径；均为取证建议，尚未获批</caption><thead><tr><th scope="col">路径</th><th scope="col">启动条件与方式</th><th scope="col">观察窗口与证伪信号</th><th scope="col">判断变化条件</th></tr></thead><tbody>
+<tr data-od-id="action-verify"><td data-label="路径">先核记录覆盖</td><td data-label="启动条件与方式">取得数据负责人的原始导出与字段说明；逐项核 r2、补 r4、确认是否覆盖完整月份和各渠道。保留更正前后映射。</td><td data-label="观察窗口与证伪信号">复核同一 2026-01 / 2026-02 窗口，不混入其他月份；若无法解释主键或缺失，停止总体跨期比较。</td><td data-label="判断变化条件">只有重复含义、缺失金额、币种及覆盖均可追溯后，才更新金额比较。若趋势改变，撤回原样本下的方向判断。</td></tr>
+<tr data-od-id="action-test"><td data-label="路径">有条件验证 web 假设</td><td data-label="启动条件与方式">完成前一路径，具备可归因的线上渠道、有效订单/客户口径与单独批准的试验范围后，才设计小规模线上内容试验。</td><td data-label="观察窗口与证伪信号">建议观察一个预先锁定的 4 周窗口，与同长度、同定义且可核实的基线比较；渠道标记丢失或基线不完整即暂停效果比较。</td><td data-label="判断变化条件">同时获得完整流量、有效咨询、订单、退款及归因信息，才能讨论转化变化。若只增长记录金额而无可比机制，维持“不足以归因”。</td></tr>
+</tbody></table>
+<p>以上不包含线下活动、品鉴、到店预约或接待；不设置臆造的增长目标，不推算广告 CPC、毛利或 ROI。实际资源选择见独立计划成果，本页不为它新增费用或承诺。</p>
+</section>
+<section id="limits" data-mokina-id="limits" data-od-id="limits">
+<h2 data-od-id="limits-title">05 / 未核实项与两层检查</h2>
+<div class="columns">
+<article data-od-id="unknowns"><h3 data-od-id="unknowns-title">源事实与样本限制</h3><ul><li>交易真实性、币种标识、金额定义、税费/退款口径、月份覆盖和样本选择方式未核实。</li><li>r2 是否真实业务重复、r4 金额、USD 一月数据是否存在、渠道编码是否变更，均未知。</li><li>客户数、订单数、基线、转化率、广告 CPC、产品毛利、预算批准与现有渠道可用性均未核实。</li><li>这是合成、小样本、仅两期观察；无地区或行业覆盖资料，不作因果结论或市场规模外推。</li></ul></article>
+<article data-od-id="professional-review"><h3 data-od-id="professional-review-title">专业自评 · 独立于算术</h3><p><strong>可使用范围：</strong>复查原始数据缺陷、检查排除过程、按币种重算已知值、提出后续取证顺序。</p><p><strong>不满足的决策条件：</strong>完整可比的两月业务口径、因果识别、可核验转化与利润资料。即使数值复算无误，也不能据此认定营销有效或批准投入。</p><p><strong>清洗代价：</strong>减少重复值对小计的影响，但不能恢复缺失数据，也不能证实首次 r2 是正确记录。补证可能改变结论。</p></article>
+</div>
+<div class="quality" id="quality-status" data-od-id="quality-status"><h3 data-od-id="quality-title">算术与宿主检查状态</h3><p><strong>本地静态检查已核对：结构、证据摘要、逐字摘录与可见数值复算一致。宿主规则检查以保存版本的质量记录为准；本地复算不替代该记录，也不代表源事实核实或业务批准。</strong></p><p>本页公开原始与派生的独立证据、逐行映射及可见公式。原始重复、缺失、币种混用和零分母均保留；检查发现必须显露，不以清洗文件替换原始检查输入，不修改宿主结果。</p><p>复算标记只说明提供数值之间的关系，不代表源事实已经核实；规则无发现也不等于专业批准。</p></div>
+<p class="fine" data-od-id="files-read">实际读取：marketing-method.md、analysis-method.md、evidence-contract.md、marketing-template.html、analysis-template.html、quote-capacity.json、sales-dirty.csv。本分析的关键数据依据为 [sales-raw] 与 [sales-clean]，方法版本为 0.0.2；报价不被当作分析中的交易事实。</p>
+</section>
+</main>
+<footer data-od-id="analysis-footer">合成产品验收 · 所有结论限于所给样本 · 内部预览不代表批准</footer>
+<script type="application/json" id="mokina-evidence">{
+  "schema": "mokina.evidence.v1",
+  "sources": [
+    {
+      "id": "sales-raw",
+      "path": "evidence/sales-dirty.csv",
+      "kind": "data",
+      "locator": "完整 CSV，物理第 1–9 行；第 1 行为表头",
+      "limitation": "合成验收数据；保留重复 ID、空金额、混合币种和零基数。未核实 amount 的业务定义、交易真实性与记录覆盖。",
+      "sectionId": "evidence",
+      "excerpt": "r2,2026-01,social,500,CNY\nr2,2026-01,social,500,CNY",
+      "csv": {
+        "id": "record_id",
+        "amount": "amount",
+        "unit": "currency"
+      },
+      "sha256": "9723250603e42a2ff1c033822c67e232a756aa4383a1b275f4b08a668df11150"
+    },
+    {
+      "id": "sales-clean",
+      "path": "evidence/sales-clean.csv",
+      "kind": "data",
+      "locator": "完整派生 CSV，物理第 1–7 行；由原始第 2、3、5、7、8、9 行生成",
+      "limitation": "仅按本页公开规则排除原始物理第 4、6 行；缺失没有补零，USD 保留且单独统计。不是事实更正；二月 CNY 口径仍不完整。",
+      "sectionId": "evidence",
+      "excerpt": "r1,2026-01,web,1000,CNY\nr2,2026-01,social,500,CNY\nr3,2026-02,web,1200,CNY",
+      "csv": {
+        "id": "record_id",
+        "amount": "amount",
+        "unit": "currency"
+      },
+      "sha256": "4a22da5fbd42f39227e14c8b1a5249f596e48eba60fb9676fb17d0ad2f703436"
+    },
+    {
+      "id": "analysis-method",
+      "path": "evidence/analysis-method.md",
+      "kind": "method",
+      "methodVersion": "0.0.2",
+      "locator": "完整方法，步骤 1–6；重点为步骤 3–6",
+      "limitation": "绑定实际读取的方法版本，不代表专业判断正确或业务批准。",
+      "sectionId": "findings",
+      "excerpt": "未经说明不去重、不补0、不合并币种。",
+      "sha256": "e36277e696475b32c0f107cd3fbc8fa57af0b37799200cda120ffa71dd10f39d"
+    },
+    {
+      "id": "protocol",
+      "path": "evidence/evidence-contract.md",
+      "kind": "full-text",
+      "locator": "完整协议；先读再声明、可见数值就是计算输入、交付自查",
+      "limitation": "机械标记仅提供复算输入；摘要相符不证明源事实真实。",
+      "sectionId": "evidence",
+      "excerpt": "这些标记是可选的机械检查输入，不代替正文、业务审批或来源真实性核验。",
+      "sha256": "09c6a24590f56799c3a250a53077a691946248adce25aad841a2de51bc812322"
+    },
+    {
+      "id": "analysis-template",
+      "path": "evidence/analysis-template.html",
+      "kind": "full-text",
+      "locator": "完整结构模板；scope、findings、evidence、implications、limits 五个稳定章节",
+      "limitation": "仅复用章节与基础样式；模板中的占位文案不构成事实。",
+      "sectionId": "scope",
+      "excerpt": "<section id=\"scope\" data-mokina-id=\"scope\">",
+      "sha256": "ba346de3e69bc8c4b506235b63e4b59e66904a291db14997604087bcf30fc8ea"
+    }
+  ]
+}</script>
+</body>
+</html>

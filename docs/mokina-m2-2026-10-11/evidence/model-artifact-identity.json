@@ -1,0 +1,16 @@
+[
+  {
+    "file": "analysis.html",
+    "versionId": "6d6689f1-a99f-48c4-8ecb-be0239be1388",
+    "sha256": "7faeda7b46e073ec6d85cf2f92b744515b01ab4a59edb6dc1ead4c7792419af3",
+    "status": "issues",
+    "sourceCount": 5
+  },
+  {
+    "file": "plan.html",
+    "versionId": "50757fd3-ca01-4044-b9f0-93a900fffce2",
+    "sha256": "510826456fe3bf875196df2b064aca9ba09c52c6521f66c0f847cda10623ffbc",
+    "status": "rules-clear",
+    "sourceCount": 4
+  }
+]

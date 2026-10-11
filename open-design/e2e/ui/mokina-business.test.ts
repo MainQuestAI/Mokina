@@ -127,3 +127,42 @@ test('[P2] damaged Brief recovery keeps a backup and restores editing explicitly
   await info.attach('recovered-after-1280x800', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
   expect((await page.request.delete(`/api/projects/${id}`)).ok()).toBe(true);
 });
+
+for (const width of [1280, 900]) test(`[P1] M2 freezes evidence across source replacement and shows selected-version issues at ${width}`, async ({ page }, info) => {
+  test.setTimeout(T.xlong);
+  const { createHash } = await import('node:crypto');
+  const sha = (text: string) => createHash('sha256').update(text).digest('hex');
+  await applyStandardMocks(page); await page.setViewportSize({ width, height: width === 1280 ? 800 : 600 });
+  const id = `m2-${randomUUID()}`;
+  expect((await page.request.post('/api/projects', { data: { id, name: 'M2 版本依据验收', skillId: null, designSystemId: null, metadata: { kind: 'prototype' } } })).ok()).toBe(true);
+  try {
+    const csv = 'id,amount,unit\noriginal,100,CNY';
+    const body = '<html><body><section id="budget" data-mokina-id="budget"><h1>预算</h1><table data-mokina-budget data-budget-limit="1000" data-capacity-hours="5"><tr data-budget-item><td data-quantity>2</td><td data-unit-price>300</td><td data-amount>700</td><td data-hours>6</td></tr></table></section></body></html>';
+    const put = async (name: string, content: string) => expect((await page.request.post(`/api/projects/${id}/files`, { data: { name, content } })).ok()).toBe(true);
+    await put('sales.csv', csv); await put('plan.html', body);
+    const open = async () => { await page.goto(`/projects/${id}/files/plan.html`); await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long }); await page.getByRole('button', { name: 'Versions', exact: true }).click(); };
+    await open();
+    await expect(page.getByTestId('mokina-version-quality')).toContainText('Not checked', { timeout: T.long });
+    await info.attach(`m2-before-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    const declaration = { schema: 'mokina.evidence.v1', sources: [{ id: 'sales', path: 'sales.csv', sha256: sha(csv), kind: 'data', locator: 'all rows', limitation: 'synthetic data', sectionId: 'budget', csv: { id: 'id', amount: 'amount', unit: 'unit' } }] };
+    await put('plan.html', body.replace('</body>', `<script id="mokina-evidence" type="application/json">${JSON.stringify(declaration)}</script></body>`));
+    const versions = await (await page.request.get(`/api/projects/${id}/files/plan.html/versions?readOnly=true`)).json();
+    const fixed = versions.versions.find((v: { current: boolean }) => v.current);
+    await put('sales.csv', 'id,amount,unit\nreplacement,999,CNY');
+    await open();
+    const panel = page.getByTestId('mokina-version-quality'); await expect(panel).toContainText('Issues found', { timeout: T.long });
+    await panel.locator('summary').first().click();
+    await expect(panel).toContainText('BUDGET_LINE'); await expect(panel).toContainText('CAPACITY_EXCEEDED');
+    await panel.getByText('sales · data · sales.csv', { exact: true }).click();
+    await expect(panel.locator('pre')).toContainText('original,100,CNY');
+    await expect(panel).not.toContainText('replacement,999');
+    await info.attach(`m2-after-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    const response = await page.request.post(`/api/projects/${id}/export/html`, { data: { fileName: 'plan.html', versionId: fixed.id, title: 'Evidence export' } });
+    expect(response.ok()).toBe(true);
+    const exported = await response.text();
+    expect(exported).toContain('original,100,CNY');
+    expect(exported).not.toContain('replacement,999');
+    await panel.getByRole('button', { name: 'Locate chapter budget' }).first().click();
+    await expect(page.locator('.artifact-version-panel')).toHaveAttribute('data-mokina-task', 'revision');
+  } finally { expect((await page.request.delete(`/api/projects/${id}`)).ok()).toBe(true); }
+});

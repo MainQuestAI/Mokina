@@ -24,7 +24,7 @@ kind 仅 full-text / summary / data / method。来源可选 url、accessedAt、e
 
 比例用可见 data-mokina-ratio 容器，内部 data-numerator、data-denominator、data-ratio-result。结果是小数不是百分数。0分母须显示“不可计算”，不得填0/无穷大。环比 numerator=本期−前期，denominator=前期；展示原期值与计算口径供人工复核。该标记只复算已提供数值，不证明它们来自哪个CSV行。
 
-CSV 源可声明 csv:{"id":"record_id","amount":"amount","unit":"currency"}。宿主标记重复ID、缺失/非法金额、混合单位和不规则行；不静默去重或补0。干净数据只按单位求和，不跨币种汇总。若需清洗，保留原始源和明确排除清单，再生成派生文件并分别声明；原始脏数据问题应保留为已知限制，而非假装不存在。
+CSV 源可声明 csv:{"id":"record_id","amount":"amount","unit":"currency"}。宿主标记重复ID、缺失/非法金额、混合单位和不规则行；不静默去重或补0。干净数据只按单位求和，不跨币种汇总。CSV金额最多8位小数，单值绝对值不超过1e12；超出支持范围明确报问题，不静默截断。若需清洗，保留原始源和明确排除清单，再生成派生文件并分别声明；原始脏数据问题应保留为已知限制，而非假装不存在。
 
 ## 交付自查
 

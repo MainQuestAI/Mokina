@@ -104,3 +104,11 @@ it('rechecks the actual model artifacts using their captured source bytes, witho
     else expect(checked.calculations.map(c => c.result)).toEqual(expect.arrayContaining(['3000', '90']));
   }
 });
+
+
+it('preserves decimal CSV amounts when a large amount would swallow a small one in binary floating point', async () => {
+  const data = 'record_id,amount,currency\na,1000000000000,CNY\nb,0.00000001,CNY';
+  const source = html(digest(data));
+  const frozen = await freezeVersionEvidence(source, 'v', digest(source), async () => Buffer.from(data));
+  expect(readVersionEvidence(source, frozen, 'v', digest(source)).calculations.map(c => c.result)).toContain('1000000000000.00000001');
+});

@@ -66,17 +66,28 @@ function inspectCsv(source: MokinaEvidenceSource, text: string, issues: MokinaQu
   const fields = source.csv!; const indexes = [fields.id, fields.amount, fields.unit].map(k => header.indexOf(k));
   if (indexes.some(i => i < 0) || new Set(header).size !== header.length) fail('CSV mapping missing or duplicate headers');
   const [idIndex, amountIndex, unitIndex] = indexes as [number, number, number];
-  const seen = new Set<string>(); const totals = new Map<string, number>(); let invalid = false;
+  const seen = new Set<string>(); const totals = new Map<string, bigint>(); let invalid = false;
   const issue = (code: string, message: string) => { invalid = true; issues.push({ code, sourceId: source.id, sectionId: source.sectionId, message }); };
   for (const [index, row] of rows.entries()) {
-    const id = row[idIndex]!.trim(); const amount = number(row[amountIndex]!); const unit = row[unitIndex]!.trim();
-    if (!id || amount === null || !unit) issue('CSV_MISSING', `Row ${index + 2}: missing identity/unit or invalid amount; no zero-fill.`);
+    const id = row[idIndex]!.trim(); const amountText = row[amountIndex]!.trim();
+    const amount = number(amountText);
+    const supportedPrecision = /^-?\d+(?:\.\d{1,8})?$/u.test(amountText); const unit = row[unitIndex]!.trim();
+    if (!id || amount === null || !unit || !supportedPrecision) issue('CSV_MISSING', `Row ${index + 2}: missing identity/unit or invalid amount; no zero-fill.${amount !== null && !supportedPrecision ? ' At most 8 decimals are supported.' : ''}`);
     if (seen.has(id)) issue('CSV_DUPLICATE', `Row ${index + 2}: duplicate ${id}; no automatic deduplication.`);
     seen.add(id);
-    if (amount !== null && unit) totals.set(unit, (totals.get(unit) ?? 0) + amount);
+    if (amount !== null && unit && supportedPrecision) {
+      const [whole, fraction = ''] = amountText.replace(/^-/, '').split('.');
+      const units = BigInt(whole!) * 100_000_000n + BigInt(fraction.padEnd(8, '0'));
+      totals.set(unit, (totals.get(unit) ?? 0n) + (amountText.startsWith('-') ? -units : units));
+    }
   }
   if (totals.size > 1) issues.push({ code: 'CSV_MIXED_UNITS', sectionId: source.sectionId, sourceId: source.id, message: 'Multiple units; cross-unit total is undefined.' });
-  if (!invalid) for (const [unit, sum] of totals) calculations.push({ sectionId: source.sectionId, expression: `${source.id}: sum(${fields.amount}) grouped by ${fields.unit}=${unit}; all ${rows.length} rows retained`, result: String(Number(sum.toFixed(8))) });
+  if (!invalid) for (const [unit, sum] of totals) {
+    const absolute = sum < 0n ? -sum : sum;
+    const decimal = String(absolute % 100_000_000n).padStart(8, '0').replace(/0+$/, '');
+    const result = `${sum < 0n ? '-' : ''}${absolute / 100_000_000n}${decimal ? '.' + decimal : ''}`;
+    calculations.push({ sectionId: source.sectionId, expression: `${source.id}: sum(${fields.amount}) grouped by ${fields.unit}=${unit}; all ${rows.length} rows retained`, result });
+  }
 }
 
 export function hasVersionEvidence(content: string): boolean {

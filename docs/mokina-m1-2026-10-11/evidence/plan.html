@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="合成茶品牌线上获客内部营销方案预览，主题、额度及执行条件均待评审确认。">
+  <meta name="brief-version" content="f595c73f-569d-4fc3-8cd5-d5943507158c">
+  <meta name="brief-sha256" content="488a10f9e7352e4321e0c8e5d698425de82ebc4d27844b34590b14228db6070c">
+  <meta name="background-version" content="8b4a9339-e088-4601-89ee-34c4e718d0c8">
+  <meta name="background-sha256" content="6cb85ec4a9c9fcf638baa480436ff81211658b8f80465a92f7e9ebedfa882d33">
+  <title>合成茶品牌｜内部营销方案预览</title>
+  <style>
+    :root {
+      --bg:      oklch(99% 0.002 240);
+      --surface: oklch(100% 0 0);
+      --fg:      oklch(18% 0.012 250);
+      --muted:   oklch(54% 0.012 250);
+      --border:  oklch(92% 0.005 250);
+      --accent:  oklch(58% 0.18 255);
+
+      --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      --font-body:    -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--fg); background: var(--bg); font: 16px/1.8 var(--font-body); }
+    .plan { max-width: 960px; margin: 0 auto; padding: 48px 40px 32px; }
+    .plan__header { padding-bottom: 30px; }
+    .plan__meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; font-size: 13px; }
+    .plan__brand { font-weight: 600; letter-spacing: .08em; }
+    .plan__status { padding: 3px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); }
+    .plan__status::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
+    h1 { margin: 0 0 12px; font: 650 clamp(30px, 5vw, 42px)/1.3 var(--font-display); letter-spacing: -.02em; text-wrap: balance; }
+    h2 { margin: 0; font: 650 17px/1.8 var(--font-display); text-wrap: balance; }
+    p { margin: 0 0 10px; text-wrap: pretty; overflow-wrap: anywhere; }
+    p:last-child { margin-bottom: 0; }
+    .plan__intro { max-width: 660px; }
+    .plan__section { display: grid; grid-template-columns: 174px minmax(0, 1fr); gap: 28px; border-top: 1px solid var(--border); padding: 24px 0; }
+    .plan__number { display: block; margin-bottom: 3px; color: var(--muted); font: 12px/1.6 ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+    .plan__label { font-weight: 650; }
+    .plan__note { font-size: 14px; }
+    .plan__cap { display: flex; align-items: baseline; flex-wrap: wrap; gap: 5px 12px; margin: 0 0 10px; }
+    .plan__amount { font-size: 30px; line-height: 1.25; font-weight: 650; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+    table { width: 100%; border-collapse: collapse; margin: 18px 0 12px; table-layout: fixed; font-size: 14px; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+    th { font-weight: 600; background: var(--surface); }
+    th:first-child, td:first-child { padding-left: 0; width: 24%; }
+    th:nth-child(2), td:nth-child(2) { width: 25%; text-align: right; font-variant-numeric: tabular-nums; }
+    th:last-child, td:last-child { padding-right: 0; padding-left: 18px; }
+    ol { margin: 0; padding-left: 1.4em; }
+    li { padding-left: .2em; margin-bottom: 6px; text-wrap: pretty; }
+    li:last-child { margin-bottom: 0; }
+    li::marker { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .plan__footer { padding-top: 18px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+    @media (max-width: 640px) {
+      .plan { padding: 24px 20px; }
+      .plan__meta { margin-bottom: 24px; }
+      .plan__section { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 22px 0; }
+      .plan__section-title { display: flex; align-items: baseline; gap: 10px; }
+      .plan__number { margin: 0; }
+      th, td { padding: 10px 4px; }
+      th:last-child, td:last-child { padding-left: 10px; }
+    }
+    @media print {
+      body { background: var(--surface); font-size: 12pt; }
+      .plan { max-width: none; margin: 0; padding: 0; }
+      .plan__section { padding: 14px 0; break-inside: avoid; }
+      .plan__meta, .plan__note, .plan__footer, table, .plan__number { font-size: 12pt; }
+    }
+  </style>
+</head>
+<body>
+  <main class="plan" data-od-id="marketing-plan">
+    <header class="plan__header" data-od-id="plan-header">
+      <div class="plan__meta"><span class="plan__brand">合成茶品牌 / 线上获客</span><span class="plan__status">内部评审 · 未批准</span></div>
+      <h1 data-od-id="plan-title">内部营销方案预览</h1>
+      <p class="plan__intro">供内部营销负责人评审；预览不代表主题、预算或执行获批。周期待确认。</p>
+    </header>
+
+    <section id="goal" class="plan__section" aria-labelledby="goal-title" data-od-id="goal">
+      <div class="plan__section-title"><span class="plan__number" aria-hidden="true">01</span><h2 id="goal-title" data-od-id="goal-title">目标与统计口径</h2></div>
+      <div>
+        <p><span class="plan__label">已确认事实：</span>品牌仅在线上销售。</p>
+        <p>统计同意接收消息的新增线索。建议按联系方式去重、比对存量并保留同意记录，排除重复、未同意及已撤回者；数量目标待基线确认，不承诺转化或收益。</p>
+      </div>
+    </section>
+
+    <section id="proposal" class="plan__section" aria-labelledby="proposal-title" data-od-id="proposal">
+      <div class="plan__section-title"><span class="plan__number" aria-hidden="true">02</span><h2 id="proposal-title" data-od-id="proposal-title">建议与假设</h2></div>
+      <div>
+        <p><span class="plan__label">待评审建议：</span>“春日第一席新茶”，未获业务确认；须核实周期与产品信息后决定是否采用。</p>
+        <p><span class="plan__label">工作假设：</span>有可用线上渠道及留资工具，待核实。<br><span class="plan__label">个人偏好：</span>未提供。</p>
+      </div>
+    </section>
+
+    <section id="online-actions" class="plan__section" aria-labelledby="actions-title" data-od-id="online-actions">
+      <div class="plan__section-title"><span class="plan__number" aria-hidden="true">03</span><h2 id="actions-title" data-od-id="actions-title">线上行动与边界</h2></div>
+      <div>
+        <p>建议经审核后，在有权限的线上渠道发布有证据的产品内容，引导自愿订阅。留资前说明用途、频次及退出方式，主动勾选、最少采集；不购买名单或未经同意群发。</p>
+        <p class="plan__note">禁止线下活动、门店品鉴、到店预约和线下接待，不得改名规避。不得编造产品功效、报价或已批准优惠；对外内容须先审核。</p>
+      </div>
+    </section>
+
+    <section id="budget" class="plan__section" aria-labelledby="budget-title" data-od-id="budget">
+      <div class="plan__section-title"><span class="plan__number" aria-hidden="true">04</span><h2 id="budget-title" data-od-id="budget-title">预算额度建议</h2></div>
+      <div>
+        <div class="plan__cap"><strong class="plan__amount">¥30,000</strong><span>人民币总上限 · 含制作与运营</span></div>
+        <p class="plan__note">以下为待核实的分配草案，非报价或批准预算；含税费及平台费用，不足则缩减范围，不突破总上限。</p>
+        <table aria-label="预算额度建议及待核实依据" data-od-id="budget-table">
+          <thead><tr><th scope="col">用途</th><th scope="col">建议上限／元</th><th scope="col">待核实依据</th></tr></thead>
+          <tbody>
+            <tr data-od-id="budget-production"><td>内容制作</td><td>6,000</td><td>素材数量、供应商报价</td></tr>
+            <tr data-od-id="budget-online-promotion"><td>线上投放</td><td>12,000</td><td>渠道报价、试投成本</td></tr>
+            <tr data-od-id="budget-operations"><td>线上运营</td><td>8,000</td><td>人员工时、工具费用</td></tr>
+            <tr data-od-id="budget-reserve"><td>预留额度</td><td>4,000</td><td>变更明细，另行审批</td></tr>
+          </tbody>
+        </table>
+        <p class="plan__note">分项合计30,000元；报价核实、内部批准后方可支出。</p>
+      </div>
+    </section>
+
+    <section id="execution" class="plan__section" aria-labelledby="execution-title" data-od-id="execution">
+      <div class="plan__section-title"><span class="plan__number" aria-hidden="true">05</span><h2 id="execution-title" data-od-id="execution-title">执行步骤</h2></div>
+      <ol>
+        <li data-od-id="step-evidence">补证：核实人员、产能、卖点与报价。</li>
+        <li data-od-id="step-approval">评审：确认主题、排期、额度与信息收集规则。</li>
+        <li data-od-id="step-pilot">获批后小规模线上试行，检查同意、退出与去重流程。</li>
+        <li data-od-id="step-review">复盘有效新增线索与实际费用，再决定继续、调整或停止。</li>
+      </ol>
+    </section>
+
+    <section id="confirmations" class="plan__section" aria-labelledby="confirmations-title" data-od-id="confirmations">
+      <div class="plan__section-title"><span class="plan__number" aria-hidden="true">06</span><h2 id="confirmations-title" data-od-id="confirmations-title">需要用户确认</h2></div>
+      <p>具体周期、可用人员及负责人、产能、供应商报价、产品卖点证据；主题是否采用、渠道权限、去重基线、消息频次及数据保留期限。条件未齐不进入对外执行。</p>
+    </section>
+    <footer class="plan__footer" data-od-id="plan-source">依据固定任务简报及已确认背景快照；本轮仅交付内部方案。</footer>
+  </main>
+</body>
+</html>

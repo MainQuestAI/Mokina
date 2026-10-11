@@ -1,0 +1,36 @@
+{
+  "result": {
+    "document": {
+      "schema": "mokina.business.v1",
+      "operationId": "background1",
+      "requestDigest": "06b7814968bad7461c9136f32bf73683f515632f3784934d12228f2c87378c0a",
+      "body": {
+        "kind": "background",
+        "value": {
+          "title": "合成茶品牌",
+          "facts": [
+            {
+              "id": "online",
+              "text": "品牌仅在线上销售。",
+              "source": "合成验收案例中的用户明确确认",
+              "scope": "本次茶品牌",
+              "status": "confirmed"
+            },
+            {
+              "id": "theme",
+              "text": "建议使用“春日第一席新茶”作为传播主题。",
+              "source": "策略建议，用户仅要求预览",
+              "scope": "待评审方向",
+              "status": "proposed"
+            }
+          ],
+          "preferences": ""
+        }
+      },
+      "backgroundSnapshot": null
+    },
+    "revision": "6cb85ec4a9c9fcf638baa480436ff81211658b8f80465a92f7e9ebedfa882d33",
+    "fileName": "business-background.html",
+    "versionId": "8b4a9339-e088-4601-89ee-34c4e718d0c8"
+  }
+}

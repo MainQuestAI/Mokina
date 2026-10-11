@@ -10,6 +10,13 @@
   background: var(--bg-app);
 }
 
+/* od-fade-in ends at the app's normal opacity of 1. Retaining its last
+   frame would keep an unnecessary stacking context around the workspace,
+   trapping its menus underneath the composer portal even after entry. */
+:global(.app):has(> .workspaceLayout) {
+  animation-fill-mode: backwards;
+}
+
 .workspaceLayout > :global(.split-chat-slot),
 .workspaceLayout > :global(.workspace) {
   margin: 0;
@@ -61,6 +68,13 @@
 
 .workspaceLayout :global(.split-chat-tabs-dock) {
   border-radius: 19px 19px 0 0;
+}
+
+/* The glass dock creates a stacking context. While history is open, lift
+   that context to the existing dropdown layer so the transcript and the
+   fixed composer cannot intercept the menu, including its scrolling rows. */
+.workspaceLayout :global(.split-chat-tabs-dock:has(.chat-history-wrap.open)) {
+  z-index: 150;
 }
 
 .workspaceLayout :global(.ws-body) {

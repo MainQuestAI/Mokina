@@ -17,6 +17,8 @@ Mokina 是 macOS arm64 桌面营销工作产品（OpenDesign 宿主 + Mokina edi
 | 本轮 macOS 原生候选 | `0.0.4-local.1`，build `a7f190a5`，产品目录与 PR13 复审一致；首轮同包安装、菜单/诊断导出及 15 项资料选区/恢复已有证据，真实 CLI 连接超时和诊断默认文件名旧前缀待处理；[验证与清理记录](./docs/mokina-v0.0.4/2026-10-09-native-validation.md)。现用 local.11 保留，新候选临时副本已清理，用户签收待验 |
 | 历史 V0.0.3 隔离 QA 候选 | `0.0.3-local.7`，source `4cf68e9c`；[同包原生范围与剩余门槛](./docs/mokina-v0.0.3/2026-10-07-local7-native-verification.md)；未标整体验收或公开发布 |
 
+2026-10-11 成熟度升级：修订草稿恢复、固定资料并发保护、损坏版本历史保护，以及实际 CLI 身份的登录检查已实现，见[本轮范围与证据](./docs/mokina-maturity-2026-10-11/README.md)。本轮独立分支基于 PR #14，未合并或公开发布，不改变现用应用与用户签收状态；最终候选的提交、摘要和同包验收以本轮交付 manifest 为准。
+
 日常打开：从 DMG 安装后在 Finder 打开 `Mokina.app`。app 自带 web、daemon 与 PDF 文本工具；**生成任务需要已登录的 Codex CLI 与模型网络**（外部依赖，不在包内）。首次使用与失败恢复指引见 Runbook「local.6 交付与使用」；连接与前置检查在 app 内「设置 → 连接诊断」。
 
 ## 源码开发入口（原生实现）

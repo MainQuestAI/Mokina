@@ -33,7 +33,7 @@ describe('MokinaCodexConnectionRow', () => {
       cli: { resolved: true, version: 'codex-cli 0.160.0', source: 'path' },
       auth: { state: 'logged-in', methodLabel: 'ChatGPT' },
       model: { configuredModel: 'gpt-5.6-terra', readable: true },
-      nextAction: '连接可用。发起真实测试任务验证模型执行。',
+      nextAction: 'CLI 已安装并登录。发起真实测试任务验证模型与网络连接。',
     }), { status: 200 }));
     vi.stubGlobal('fetch', fetchMock);
 
@@ -44,9 +44,9 @@ describe('MokinaCodexConnectionRow', () => {
     await screen.findByTestId('mokina-codex-connection-state');
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const state = await screen.findByTestId('mokina-codex-connection-state');
-    expect(state.textContent).toContain('Connected');
+    expect(state.textContent).toContain('Logged in');
     expect(state.textContent).toContain('ChatGPT');
-    expect((await screen.findByTestId('mokina-codex-connection-next')).textContent).toContain('连接可用');
+    expect((await screen.findByTestId('mokina-codex-connection-next')).textContent).toContain('真实测试任务');
   });
 
   it('never claims connected when the probe is unconfirmed', async () => {
@@ -63,7 +63,7 @@ describe('MokinaCodexConnectionRow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Check connection' }));
     const state = await screen.findByTestId('mokina-codex-connection-state');
     expect(state.textContent).toContain('State unconfirmed');
-    expect(state.textContent).not.toContain('Connected');
+    expect(state.textContent).not.toContain('Logged in');
   });
 
   it('surfaces a failed check without a fake state', async () => {

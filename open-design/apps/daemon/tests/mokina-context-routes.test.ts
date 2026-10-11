@@ -129,6 +129,24 @@ describe('mokina context snapshot routes', () => {
     expect(result.body?.error?.code).toBe('MOKINA_SOURCE_CHANGED');
   });
 
+  it('returns one durable identity for overlapping snapshot requests and keeps project ownership separate', async () => {
+    const projectId = await createProject();
+    const otherProjectId = await createProject();
+    const snapshotId = randomUUID();
+    const request = { snapshotId, selections: [{ itemId: 'note', mode: 'note',
+      sourceRef: { kind: 'user-note' }, text: '本项目预算 50 万' }], excluded: [] };
+    const results = await Promise.all(Array.from({ length: 6 }, () => prepareSnapshot(projectId, request)));
+    expect(results.map(result => result.status).sort()).toEqual([200, 200, 200, 200, 200, 201]);
+    expect(new Set(results.map(result => result.body.snapshot.fingerprint)).size).toBe(1);
+    const other = await prepareSnapshot(otherProjectId, { ...request,
+      selections: [{ ...request.selections[0]!, text: '另一个项目预算 10 万' }] });
+    expect(other.status).toBe(201);
+    expect(other.body.snapshot.projectId).toBe(otherProjectId);
+    const read = await fetch(`${baseUrl}/api/projects/${projectId}/mokina/context-snapshots/${snapshotId}`);
+    expect(read.status).toBe(200);
+    expect((await read.json() as { snapshot: unknown }).snapshot).toEqual(results[0]!.body.snapshot);
+  });
+
   it('freezes a brand source through the detail-route read path (server wiring)', async () => {
     // N04 review: the snapshot route must resolve brand bytes via the same
     // read path as GET /api/design-systems/:id. Freezing a built-in brand

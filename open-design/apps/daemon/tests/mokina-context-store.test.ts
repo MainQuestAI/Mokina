@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   stageMokinaSnapshotAssets,
@@ -57,6 +57,26 @@ describe('Mokina context store', () => {
 
   it('canonicalizes JSON with sorted keys and stable arrays', () => {
     expect(canonicalJson({ b: 1, a: [2, { d: 4, c: 3 }] })).toBe('{"a":[2,{"c":3,"d":4}],"b":1}');
+  });
+
+  it('freezes the same asset concurrently without colliding temporary files', async () => {
+    const bytes = Buffer.from('<svg>shared logo</svg>');
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(0);
+    try {
+      const results = await Promise.allSettled(Array.from({ length: 6 }, (_, index) =>
+        prepareMokinaContextSnapshot({ projectsRoot, projectId: 'p1', source: makeSource({ 'logo.svg': bytes }),
+          request: { snapshotId: `asset-concurrent-${index}`, excluded: [], selections: [{ itemId: 'A', mode: 'asset',
+            sourceRef: { kind: 'project-file', projectId: 'p1', fileName: 'logo.svg' },
+            expectedSourceDigest: sha256Hex(bytes), role: 'logo', usageNote: '品牌' }] } })));
+      for (const settled of results) {
+        expect(settled.status).toBe('fulfilled');
+        if (settled.status !== 'fulfilled') throw settled.reason;
+        const result = settled.value;
+        if (!result.ok) throw new Error(result.message);
+        const staged = await stageMokinaSnapshotAssets(projectsRoot, 'p1', result.snapshot);
+        expect(await readFile(staged.A!.path)).toEqual(bytes);
+      }
+    } finally { clock.mockRestore(); }
   });
 
   it('freezes continuation candidate provenance without re-reading a deleted source', async () => {
@@ -143,6 +163,39 @@ describe('Mokina context store', () => {
     });
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.code).toBe('MOKINA_SOURCE_CHANGED');
+  });
+
+  it.each([false, true])('preserves the first committed snapshot when overlapping preparation differs=%s', async (differentSelection) => {
+    const bytes = Buffer.from('# 品牌\n原品牌\n\n# 预算\n50 万');
+    const request = {
+      snapshotId: 'overlap',
+      selections: [{ itemId: 'S1', mode: 'groups' as const, textKind: 'material-excerpt' as const,
+        sourceRef: { kind: 'project-file' as const, projectId: 'p1', fileName: 'brief.md' },
+        expectedSourceDigest: sha256Hex(bytes), groupIds: ['heading:1'] }],
+      excluded: [],
+    };
+    let entered!: () => void;
+    const reading = new Promise<void>((resolve) => { entered = resolve; });
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => { release = resolve; });
+    const slower = prepareMokinaContextSnapshot({ projectsRoot, projectId: 'p1', request,
+      now: new Date('2026-10-11T00:00:00Z'),
+      source: { readProjectFile: async () => { entered(); await held; return { bytes }; } } });
+    await reading;
+    const committed = await prepareMokinaContextSnapshot({ projectsRoot, projectId: 'p1',
+      request: differentSelection ? { ...request, selections: [{ ...request.selections[0]!, groupIds: ['heading:2'] }] } : request,
+      now: new Date('2026-10-11T00:00:01Z'), source: makeSource({ 'brief.md': bytes }) });
+    release();
+    const delayed = await slower;
+    expect(committed.ok).toBe(true);
+    if (!committed.ok) throw new Error(committed.message);
+    if (differentSelection) {
+      expect(delayed).toMatchObject({ ok: false, status: 409, code: 'MOKINA_SNAPSHOT_CONFLICT' });
+    } else {
+      expect(delayed).toMatchObject({ ok: true, reused: true, snapshot: committed.snapshot });
+    }
+    expect(await readMokinaContextSnapshot(projectsRoot, 'p1', request.snapshotId))
+      .toMatchObject({ ok: true, snapshot: committed.snapshot });
   });
 
   it('freezes selected material groups with locators and limitations', async () => {

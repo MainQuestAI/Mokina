@@ -4,7 +4,11 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
 
+import { agentCliEnvForAgent, validateAgentCliEnv, type AgentCliEnvPrefs } from '../app-config.js';
 import { extractCodexRootModelConfig, parseStableCodexVersion } from '../runtimes/codex-model-preflight.js';
+import { codexAgentDef } from '../runtimes/defs/codex.js';
+import { spawnEnvForAgent } from '../runtimes/env.js';
+import { applyAgentLaunchEnv, resolveAgentLaunch } from '../runtimes/launch.js';
 
 /**
  * Minimal Codex connection check (T04).
@@ -94,10 +98,10 @@ export function classifyMokinaCodexConnection(probes: MokinaCodexProbeResults): 
       ...base,
       state: 'ready',
       auth: { state: 'logged-in', methodLabel: loginMethodLabel(loginText) },
-      nextAction: '连接可用。发起真实测试任务验证模型执行。',
+      nextAction: 'CLI 已安装并登录。发起真实测试任务验证模型与网络连接。',
     };
   }
-  if (probes.loginStatusOk && loggedOut) {
+  if (loggedOut) {
     return {
       ...base,
       state: 'login_required',
@@ -137,26 +141,33 @@ export function classifyMokinaCodexConnection(probes: MokinaCodexProbeResults): 
   }
 }
 
-const probeCache = { at: 0, report: null as MokinaCodexConnectionReport | null };
+const probeCache = { at: 0, key: '', report: null as MokinaCodexConnectionReport | null };
 const CACHE_MS = 30_000;
 
 export async function probeMokinaCodexConnection(
-  env: NodeJS.ProcessEnv = process.env,
-  options: { useCache?: boolean } = {},
+  baseEnv: NodeJS.ProcessEnv = process.env,
+  options: { useCache?: boolean; agentCliEnv?: AgentCliEnvPrefs } = {},
 ): Promise<MokinaCodexConnectionReport> {
-  if (options.useCache !== false && probeCache.report && Date.now() - probeCache.at < CACHE_MS) {
+  // Use the same saved CLI preferences, wrapper resolution and environment as
+  // a real run, including GUI-launch PATH repair and the selected CODEX_HOME.
+  const configuredEnv = agentCliEnvForAgent(validateAgentCliEnv(options.agentCliEnv), 'codex');
+  const launch = resolveAgentLaunch(codexAgentDef, configuredEnv);
+  const env = applyAgentLaunchEnv(spawnEnvForAgent('codex', baseEnv, configuredEnv), launch);
+  const binary = launch.launchPath;
+  const codexHome = env.CODEX_HOME?.trim() || join(env.HOME?.trim() || homedir(), '.codex');
+  const cacheKey = JSON.stringify([binary, codexHome, env.PATH ?? '']);
+  if (options.useCache !== false && probeCache.key === cacheKey && probeCache.report && Date.now() - probeCache.at < CACHE_MS) {
     return probeCache.report;
   }
-  const configuredPath = env.MOKINA_CODEX_CLI_PATH?.trim();
-  const binary = configuredPath && configuredPath.length > 0 ? configuredPath : 'codex';
-  const cliSource: MokinaCodexProbeResults['cliSource'] = configuredPath && configuredPath.length > 0 ? 'configured-path' : 'path';
+  const cliSource: MokinaCodexProbeResults['cliSource'] = launch.configuredOverridePath ? 'configured-path' : 'path';
   const run = promisify(execFile);
 
   let versionOk = false;
   let versionText: string | null = null;
   let versionError: MokinaCodexProbeResults['versionError'] = null;
   try {
-    const { stdout } = await run(binary, ['--version'], { timeout: 3_000 });
+    if (!binary) throw new Error('ENOENT: Codex CLI not found');
+    const { stdout } = await run(binary, ['--version'], { timeout: 3_000, env });
     versionText = stdout.trim();
     versionOk = versionText.length > 0;
     if (!versionOk) versionError = 'other';
@@ -172,13 +183,19 @@ export async function probeMokinaCodexConnection(
   let loginStatusOk = false;
   let loginStatusText: string | null = null;
   let loginStatusError: MokinaCodexProbeResults['loginStatusError'] = null;
-  if (versionOk) {
+  if (versionOk && binary) {
     try {
-      const { stdout } = await run(binary, ['login', 'status'], { timeout: 5_000 });
-      loginStatusText = stdout.trim();
+      const { stdout, stderr } = await run(binary, ['login', 'status'], { timeout: 5_000, env });
+      loginStatusText = `${stdout}\n${stderr}`.trim();
       loginStatusOk = true;
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      // Codex writes login state to stderr and exits 1 when logged out. Keep
+      // those bytes local to classification; the public report never returns
+      // raw probe output or credential material.
+      const output = error as { stdout?: unknown; stderr?: unknown } | null;
+      loginStatusText = [output?.stdout, output?.stderr]
+        .filter((value): value is string => typeof value === 'string').join('\n').trim();
+      const message = `${error instanceof Error ? error.message : String(error)}\n${loginStatusText}`;
       loginStatusError = /EACCES|EPERM|permission/iu.test(message)
         ? 'permission'
         : /ENOTFOUND|ECONNREFUSED|ETIMEDOUT|network/iu.test(message)
@@ -192,7 +209,7 @@ export async function probeMokinaCodexConnection(
   let configReadable = false;
   let configuredModel: string | null = null;
   try {
-    const configPath = join(env.CODEX_HOME?.trim() || join(homedir(), '.codex'), 'config.toml');
+    const configPath = join(codexHome, 'config.toml');
     const content = await readFile(configPath, 'utf8');
     configReadable = true;
     configuredModel = extractCodexRootModelConfig(content).model ?? null;
@@ -212,6 +229,7 @@ export async function probeMokinaCodexConnection(
     configuredModel,
   });
   probeCache.at = Date.now();
+  probeCache.key = cacheKey;
   probeCache.report = report;
   return report;
 }

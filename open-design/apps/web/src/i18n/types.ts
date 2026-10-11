@@ -5856,6 +5856,9 @@ export interface Dict {
   'fileViewer.mokina.revisionSectionPlaceholder': string;
   'fileViewer.mokina.revisionRequestPlaceholder': string;
   'fileViewer.mokina.revisionRequestAria': string;
+  'fileViewer.mokina.revisionDraftSaveFailed': string;
+  'fileViewer.mokina.revisionDraftUnreadable': string;
+  'fileViewer.mokina.revisionDraftReset': string;
   'fileViewer.mokina.generatingCandidate': string;
   'fileViewer.mokina.generateCandidate': string;
   'fileViewer.mokina.saveFinishedCandidate': string;

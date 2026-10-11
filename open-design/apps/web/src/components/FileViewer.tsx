@@ -114,7 +114,7 @@ import {
   persistSendRequestOutcome,
   persistPendingSendRequest,
 } from '../runtime/chat/send-request-state';
-import { mirrorDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
+import { flushDurableRecord, mirrorDurableRecord, mutateDurableRecord, removeDurableRecord } from '../runtime/persistence/mokina-recovery-store';
 import { isDefinitiveRunCreateRefusal } from '../runtime/chat/run-create-failure';
 import type { MokinaContinuationV2 } from '@open-design/contracts';
 import { MokinaCandidateCompare } from './mokina/MokinaCandidateCompare';
@@ -3652,14 +3652,41 @@ function FileVersionManagerModal({
   const revisionPanelActiveRef = useRef(true);
   const revisionStorageKey = `mokina:revision:${projectId}:${file.name}`;
   const revisionDraftKey = `od:revision:draft:${projectId}:${file.name}`;
+  const [revisionDraftSaveFailed, setRevisionDraftSaveFailed] = useState(false);
+  const [revisionDraftUnreadable, setRevisionDraftUnreadable] = useState<string | null>(null);
+  const [revisionDraftResetBusy, setRevisionDraftResetBusy] = useState(false);
+  const revisionDraftBackupKeyRef = useRef<string | null>(null);
+  const revisionDraftWriteRef = useRef(0);
+  const revisionDraftVersionRef = useRef<string | undefined>(undefined);
   const [pendingRevisionJob, setPendingRevisionJob] = useState<MokinaRevisionJob | null>(null);
   useEffect(() => {
     let active = true;
     revisionPanelActiveRef.current = true;
+    revisionDraftWriteRef.current++;
+    setRevisionDraftSaveFailed(false);
+    setRevisionDraftUnreadable(null);
+    setRevisionDraftResetBusy(false);
+    revisionDraftBackupKeyRef.current = null;
     const savedJob = parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey));
-    let savedDraft: { sectionId?: string; prompt?: string } | null = null;
-    try { savedDraft = JSON.parse(localStorage.getItem(revisionDraftKey) ?? 'null'); } catch { /* Preserve unreadable drafts for inspection. */ }
-    setRevisionSectionId(savedJob?.sectionId ?? savedDraft?.sectionId ?? '');
+    let savedDraft: { sectionId?: string; prompt?: string; baseVersionId?: string } | null = null;
+    const draftRaw = localStorage.getItem(revisionDraftKey);
+    if (draftRaw !== null) {
+      try {
+        const parsed = JSON.parse(draftRaw);
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)
+          || typeof parsed.sectionId !== 'string' || typeof parsed.prompt !== 'string'
+          || (parsed.baseVersionId !== undefined && typeof parsed.baseVersionId !== 'string')) throw new Error('Invalid draft');
+        savedDraft = parsed;
+      } catch { setRevisionDraftUnreadable(draftRaw); }
+    }
+    revisionDraftVersionRef.current = savedJob?.baseVersionId ?? savedDraft?.baseVersionId;
+    if (savedDraft) {
+      const sequence = revisionDraftWriteRef.current;
+      void flushDurableRecord(revisionDraftKey).then(saved => {
+        if (active && sequence === revisionDraftWriteRef.current) setRevisionDraftSaveFailed(!saved);
+      });
+    }
+    setRevisionSectionId(savedJob?.sectionId ?? (savedDraft?.baseVersionId ? savedDraft.sectionId : '') ?? '');
     setRevisionRequest(savedJob?.prompt ?? savedDraft?.prompt ?? '');
     setPendingRevisionJob(savedJob);
     setPendingRevisionStatus(savedJob ? 'checking' : null);
@@ -3871,7 +3898,8 @@ function FileVersionManagerModal({
   useEffect(() => { setSelectedContinuationSections([]); }, [selectedId]);
   const previousRevisionVersionRef = useRef(selectedId);
   useEffect(() => {
-    if (previousRevisionVersionRef.current && previousRevisionVersionRef.current !== selectedId) setRevisionSectionId('');
+    if (selectedId && ((previousRevisionVersionRef.current && previousRevisionVersionRef.current !== selectedId)
+      || (revisionDraftVersionRef.current && revisionDraftVersionRef.current !== selectedId))) setRevisionSectionId('');
     previousRevisionVersionRef.current = selectedId;
   }, [selectedId]);
   const restoreDisabled =
@@ -4557,7 +4585,7 @@ function FileVersionManagerModal({
     setError(null);
     try {
       if (revisionSubmissionState(job) === 'rejected') {
-        const draft = JSON.stringify({ sectionId: job.sectionId, prompt: job.prompt });
+        const draft = JSON.stringify({ sectionId: job.sectionId, prompt: job.prompt, baseVersionId: job.baseVersionId });
         if (!await mirrorDurableRecord(revisionDraftKey, draft)) throw new Error('修改要求未能安全保存，请重试。');
         localStorage.setItem(revisionDraftKey, draft);
         if (job.conversationId && job.clientRequestId
@@ -4567,7 +4595,8 @@ function FileVersionManagerModal({
         if (!await persistClearMokinaRevisionJob(revisionStorageKey, job)) throw new Error('修订记录清理失败，请重试；修改要求已保留。');
         if (revisionPanelActiveRef.current) {
           setPendingRevisionJob(null); setPendingRevisionStatus(null);
-          setRevisionSectionId(job.sectionId); setRevisionRequest(job.prompt);
+          revisionDraftVersionRef.current = job.baseVersionId;
+          setRevisionSectionId(job.baseVersionId === selectedVersion?.id ? job.sectionId : ''); setRevisionRequest(job.prompt);
           setRevisionProgress('已结束未受理修订；修改要求已保留，可以重新生成。');
         }
         return;
@@ -4663,9 +4692,48 @@ function FileVersionManagerModal({
     }
   }
 
+  // Unsent requirements use the existing draft key and native recovery mirror.
+  // Persist from edits, never from an initial empty render or version fetch.
+  function saveRevisionDraft(sectionId: string, prompt: string) {
+    if (revisionDraftUnreadable !== null || revisionDraftResetBusy) return;
+    const sequence = ++revisionDraftWriteRef.current;
+    const raw = JSON.stringify({ sectionId, prompt, baseVersionId: selectedVersion?.id });
+    revisionDraftVersionRef.current = selectedVersion?.id;
+    try {
+      localStorage.setItem(revisionDraftKey, raw);
+    } catch {
+      setRevisionDraftSaveFailed(true);
+      return;
+    }
+    void mirrorDurableRecord(revisionDraftKey, raw).then(saved => {
+      if (revisionPanelActiveRef.current && sequence === revisionDraftWriteRef.current) setRevisionDraftSaveFailed(!saved);
+    }).catch(() => {
+      if (revisionPanelActiveRef.current && sequence === revisionDraftWriteRef.current) setRevisionDraftSaveFailed(true);
+    });
+  }
+
+  async function resetUnreadableRevisionDraft() {
+    if (revisionDraftUnreadable === null || revisionDraftResetBusy) return;
+    const original = revisionDraftUnreadable;
+    const issuedScope = continuationScope;
+    const backupKey = revisionDraftBackupKeyRef.current ??= `${revisionDraftKey}:unreadable:${newClientOperationId()}`;
+    setRevisionDraftResetBusy(true);
+    try {
+      if (!await mirrorDurableRecord(backupKey, original)) throw new Error('Backup unavailable');
+      localStorage.setItem(backupKey, original);
+      if (!await mutateDurableRecord(revisionDraftKey, raw => raw === original ? null : undefined)) throw new Error('Draft changed');
+      if (issuedScope !== continuationScopeRef.current || !revisionPanelActiveRef.current) return;
+      setRevisionDraftUnreadable(null); setRevisionDraftSaveFailed(false);
+    } catch {
+      if (issuedScope === continuationScopeRef.current && revisionPanelActiveRef.current) setRevisionDraftSaveFailed(true);
+    } finally {
+      if (issuedScope === continuationScopeRef.current && revisionPanelActiveRef.current) setRevisionDraftResetBusy(false);
+    }
+  }
+
   async function generateChapterCandidate() {
     if (!selectedVersion?.current || !selectedContentMatchesVersion || !selectedContent || revisionBusy || revisionAbandonBusy
-      || !revisionRecoveryLoaded || pendingRevisionJob) return;
+      || !revisionRecoveryLoaded || pendingRevisionJob || revisionDraftSaveFailed || revisionDraftUnreadable !== null || revisionDraftResetBusy) return;
     const persistedJob = parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey));
     if (persistedJob) {
       setPendingRevisionJob(persistedJob);
@@ -5022,16 +5090,26 @@ function FileVersionManagerModal({
           <section ref={revisionSectionRef} tabIndex={-1} className="artifact-version-panel__continuation artifact-version-panel__continuation--revision" aria-label={t('fileViewer.mokina.revisionSectionAria')}>
             <strong>{t('fileViewer.mokina.revisionTitle')}</strong>
             <p>{t('fileViewer.mokina.revisionIntro')}</p>
-            <select value={revisionSectionId} disabled={viewerOnly || revisionBusy}
-              aria-label={t('fileViewer.mokina.revisionSectionSelectAria')} onChange={event => setRevisionSectionId(event.target.value)}>
+            <select value={revisionSectionId} disabled={viewerOnly || revisionBusy || revisionDraftUnreadable !== null || revisionDraftResetBusy}
+              aria-label={t('fileViewer.mokina.revisionSectionSelectAria')} onChange={event => {
+                setRevisionSectionId(event.target.value); saveRevisionDraft(event.target.value, revisionRequest);
+              }}>
               <option value="">{t('fileViewer.mokina.revisionSectionPlaceholder')}</option>
               {continuationSections.map(section => <option key={section.id} value={section.id}>{section.id}：{section.text.slice(0, 42)}</option>)}
             </select>
-            <textarea value={revisionRequest} disabled={viewerOnly || revisionBusy}
-              onChange={event => setRevisionRequest(event.target.value)}
+            <textarea value={revisionRequest} disabled={viewerOnly || revisionBusy || revisionDraftUnreadable !== null || revisionDraftResetBusy}
+              onChange={event => { setRevisionRequest(event.target.value); saveRevisionDraft(revisionSectionId, event.target.value); }}
               placeholder={t('fileViewer.mokina.revisionRequestPlaceholder')} aria-label={t('fileViewer.mokina.revisionRequestAria')} />
+            {revisionDraftUnreadable !== null ? <div>
+              <p role="alert">{t(revisionDraftSaveFailed ? 'fileViewer.mokina.revisionDraftSaveFailed' : 'fileViewer.mokina.revisionDraftUnreadable')}</p>
+              <Button type="button" disabled={viewerOnly || revisionDraftResetBusy}
+                onClick={() => { void resetUnreadableRevisionDraft(); }}>{t('fileViewer.mokina.revisionDraftReset')}</Button>
+            </div> : revisionDraftSaveFailed ? <div>
+              <p role="alert">{t('fileViewer.mokina.revisionDraftSaveFailed')}</p>
+              <Button type="button" onClick={() => saveRevisionDraft(revisionSectionId, revisionRequest)}>{t('preview.retry')}</Button>
+            </div> : null}
             <button type="button" className={MOKINA_LOCAL_EDITION ? 'primary' : undefined} disabled={viewerOnly || revisionBusy || revisionAbandonBusy || !revisionRecoveryLoaded
-              || Boolean(pendingRevisionJob) || !revisionSectionId || !revisionRequest.trim()}
+              || revisionDraftSaveFailed || revisionDraftUnreadable !== null || revisionDraftResetBusy || Boolean(pendingRevisionJob) || !revisionSectionId || !revisionRequest.trim()}
               onClick={() => { void generateChapterCandidate(); }}>
               {revisionBusy ? t('fileViewer.mokina.generatingCandidate') : t('fileViewer.mokina.generateCandidate')}
             </button>

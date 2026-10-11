@@ -75,6 +75,30 @@ describe('project file versions', () => {
     });
   });
 
+  it.each(['missing-entries', 'invalid-entry', 'duplicate-id', 'missing-current'])
+    ('refuses a structurally damaged version manifest without discarding history (%s)', async (damage) => {
+      await withProject(async (projectsRoot, projectId) => {
+        const original = await createProjectFileVersion(projectsRoot, projectId, 'brand.html', '<p>v1</p>');
+        const root = (await getProjectFileVersionRootStats(projectsRoot, projectId, 'brand.html')).root;
+        const manifestPath = path.join(root, 'manifest.json');
+        const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+        if (damage === 'missing-entries') delete manifest.entries;
+        if (damage === 'invalid-entry') manifest.entries.push({ id: '../bad' });
+        if (damage === 'duplicate-id') manifest.entries.push({ ...manifest.entries[0], version: 2 });
+        if (damage === 'missing-current') manifest.currentVersionId = 'missing-version';
+        const damaged = JSON.stringify(manifest);
+        await writeFile(manifestPath, damaged);
+
+        await expect(listProjectFileVersions(projectsRoot, projectId, 'brand.html'))
+          .rejects.toMatchObject({ code: 'VERSION_MANIFEST_INVALID' });
+        await expect(createProjectFileVersion(projectsRoot, projectId, 'brand.html', '<p>v2</p>'))
+          .rejects.toMatchObject({ code: 'VERSION_MANIFEST_INVALID' });
+        expect(await readFile(manifestPath, 'utf8')).toBe(damaged);
+        expect((await getProjectFileVersionRootStats(projectsRoot, projectId, 'brand.html')).entries
+          .some(name => name.includes(original.id))).toBe(true);
+      });
+    });
+
   it('rejects adoption when a manual edit changed the working file after candidate creation', async () => {
     await withProject(async (projectsRoot, projectId) => {
       const fileName = 'brand.html';

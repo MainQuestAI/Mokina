@@ -334,14 +334,22 @@ function normalizeManifestEntry(raw: Record<string, unknown>, fileName: string, 
 }
 
 function normalizeManifest(raw: unknown, fileName: string): VersionEntry[] {
-  if (!raw || typeof raw !== 'object') return [];
-  const entries = Array.isArray((raw as { entries?: unknown }).entries)
-    ? (raw as { entries: unknown[] }).entries
-    : [];
-  return entries.flatMap((entry, index) => {
-    if (!entry || typeof entry !== 'object') return [];
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)
+    || !Array.isArray((raw as { entries?: unknown }).entries)) {
+    throw codedError('版本记录损坏，已停止读取和覆盖；请保留项目数据并从有效恢复包恢复。', 'VERSION_MANIFEST_INVALID');
+  }
+  const entries = (raw as { entries: unknown[] }).entries;
+  const ids = new Set<string>();
+  return entries.map((entry, index) => {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      throw codedError('版本记录包含无效条目，不能将其当作空历史。', 'VERSION_MANIFEST_INVALID');
+    }
     const normalized = normalizeManifestEntry(entry as Record<string, unknown>, fileName, index);
-    return normalized ? [normalized] : [];
+    if (!normalized || ids.has(normalized.id)) {
+      throw codedError('版本记录的身份缺失或重复，已停止读取和覆盖。', 'VERSION_MANIFEST_INVALID');
+    }
+    ids.add(normalized.id);
+    return normalized;
   });
 }
 
@@ -353,6 +361,10 @@ function normalizeManifestState(raw: unknown, fileName: string): VersionManifest
   const persistedCurrentVersionId = raw && typeof raw === 'object'
     ? normalizeVersionId((raw as { currentVersionId?: unknown }).currentVersionId)
     : undefined;
+  if (schemaVersion >= 2 && (raw as { currentVersionId?: unknown }).currentVersionId !== null
+    && (!persistedCurrentVersionId || !entries.some(entry => entry.id === persistedCurrentVersionId && !entry.candidate))) {
+    throw codedError('当前版本的身份记录损坏，已停止读取和覆盖。', 'VERSION_MANIFEST_INVALID');
+  }
   const currentVersionId = schemaVersion >= 2
     ? (persistedCurrentVersionId && entries.some((entry) => entry.id === persistedCurrentVersionId)
       ? persistedCurrentVersionId

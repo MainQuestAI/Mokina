@@ -1,0 +1,7 @@
+PR18 · Fixed version export
+Verified source bytes retained. Decimal budget: 150.08.
+1.5 100.05 150.08 0.3
+
+Evidence / calculations · rules-clear
+
+

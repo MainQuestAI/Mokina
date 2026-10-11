@@ -1,0 +1,134 @@
+{
+  "schema": "mokina.quality.v1",
+  "versionId": "6d6689f1-a99f-48c4-8ecb-be0239be1388",
+  "contentDigest": "7faeda7b46e073ec6d85cf2f92b744515b01ab4a59edb6dc1ead4c7792419af3",
+  "frozenBodyDigest": "caf449a478a75b6417e141fd1908ff4fbc17cdf38be20f96085be6e76e2193c0",
+  "status": "issues",
+  "sources": [
+    {
+      "id": "sales-raw",
+      "path": "evidence/sales-dirty.csv",
+      "sha256": "9723250603e42a2ff1c033822c67e232a756aa4383a1b275f4b08a668df11150",
+      "kind": "data",
+      "sectionId": "evidence",
+      "locator": "完整 CSV，物理第 1–9 行；第 1 行为表头",
+      "limitation": "合成验收数据；保留重复 ID、空金额、混合币种和零基数。未核实 amount 的业务定义、交易真实性与记录覆盖。",
+      "excerpt": "r2,2026-01,social,500,CNY\nr2,2026-01,social,500,CNY",
+      "csv": {
+        "id": "record_id",
+        "amount": "amount",
+        "unit": "currency"
+      },
+      "text": "record_id,period,channel,amount,currency\nr1,2026-01,web,1000,CNY\nr2,2026-01,social,500,CNY\nr2,2026-01,social,500,CNY\nr3,2026-02,web,1200,CNY\nr4,2026-02,social,,CNY\nr5,2026-02,web,90,USD\nr6,2026-01,other,0,CNY\nr7,2026-02,other,300,CNY\n"
+    },
+    {
+      "id": "sales-clean",
+      "path": "evidence/sales-clean.csv",
+      "sha256": "4a22da5fbd42f39227e14c8b1a5249f596e48eba60fb9676fb17d0ad2f703436",
+      "kind": "data",
+      "sectionId": "evidence",
+      "locator": "完整派生 CSV，物理第 1–7 行；由原始第 2、3、5、7、8、9 行生成",
+      "limitation": "仅按本页公开规则排除原始物理第 4、6 行；缺失没有补零，USD 保留且单独统计。不是事实更正；二月 CNY 口径仍不完整。",
+      "excerpt": "r1,2026-01,web,1000,CNY\nr2,2026-01,social,500,CNY\nr3,2026-02,web,1200,CNY",
+      "csv": {
+        "id": "record_id",
+        "amount": "amount",
+        "unit": "currency"
+      },
+      "text": "record_id,period,channel,amount,currency\nr1,2026-01,web,1000,CNY\nr2,2026-01,social,500,CNY\nr3,2026-02,web,1200,CNY\nr5,2026-02,web,90,USD\nr6,2026-01,other,0,CNY\nr7,2026-02,other,300,CNY\n"
+    },
+    {
+      "id": "analysis-method",
+      "path": "evidence/analysis-method.md",
+      "sha256": "e36277e696475b32c0f107cd3fbc8fa57af0b37799200cda120ffa71dd10f39d",
+      "kind": "method",
+      "sectionId": "findings",
+      "locator": "完整方法，步骤 1–6；重点为步骤 3–6",
+      "limitation": "绑定实际读取的方法版本，不代表专业判断正确或业务批准。",
+      "methodVersion": "0.0.2",
+      "excerpt": "未经说明不去重、不补0、不合并币种。",
+      "text": "# 有依据市场分析方法 0.0.2\n\n输入：要支持的具体决策、地区/人群/时期、选中资料与允许的研究范围。没有决策问题，不把资料堆成长文。\n\n1. 定义市场口径与时间：行业/细分/地区、金额币种、收入或出货量，不混用存量和增量。先列待验证假设，标记哪些会改变业务选择。\n2. 逐份实际读选中资料。外部网页记录URL、访问时间、可定位摘录；只得到搜索摘要就标summary，不冒充全文。原文与推断分别写，报告冲突、时效不足及选择偏差。\n3. CSV先列字段、记录数、重复ID、缺失金额、混合单位。未经说明不去重、不补0、不合并币种。需要清洗时保留原始数据、排除规则和排除行，派生文件单独记录摘要。\n4. 每个关键判断用“观察→证据→解释→限制→决策影响”。同比/环比对齐时间和基数，零基数不可算增长率；金额趋势不证明因果。市场规模外推必须写样本覆盖与假设区间，不用一个商家销量冒充行业规模。\n5. 给两个真实备选解释/行动：例如需求增长 vs 渠道结构变化。列支持与反证、可验证方式、改变判断所需的新证据。\n6. 按证据协议固定原文/摘录与方法、提供可见计算，并把算术检查和专业判断分开。未核实事实、样本局限和下一步取证写进交付。\n\n正例：同一CSV出现重复ID、空金额和USD记录。先显示问题，明确排除第二条重复和空金额后，CNY按期合计，USD独立保留；前期0的渠道显示环比不可计算。结论仅针对这个样本，不能推断品牌投放导致增长。\n反例：默认空值=0、自动删除重复后不告知；把USD90加到CNY3000；0到300写增长300%；把搜索结果摘要写成“已通读研究”；为支持建议省略矛盾材料。\n"
+    },
+    {
+      "id": "protocol",
+      "path": "evidence/evidence-contract.md",
+      "sha256": "09c6a24590f56799c3a250a53077a691946248adce25aad841a2de51bc812322",
+      "kind": "full-text",
+      "sectionId": "evidence",
+      "locator": "完整协议；先读再声明、可见数值就是计算输入、交付自查",
+      "limitation": "机械标记仅提供复算输入；摘要相符不证明源事实真实。",
+      "excerpt": "这些标记是可选的机械检查输入，不代替正文、业务审批或来源真实性核验。",
+      "text": "# 版本证据与计算协议 v1\n\n这些标记是可选的机械检查输入，不代替正文、业务审批或来源真实性核验。HTML 是唯一可写成果。用户要求交付时才写文件；修复已有成果沿指定 baseVersion 产生候选，不自动采用。\n\n## 先读再声明\n\n实际读取本方法、选中资料及报价，不用搜索摘要冒充全文。研究资料记录 URL、实际访问时间、支持摘录、页码/段落、时点和适用范围；无法访问正文时使用 summary 类型并说明限制。比较冲突来源，不删除不利依据。给每个关键结论在正文标出 source ID；推断单独标注。\n\n把确实读取且用户选中的证据 UTF-8 字节保存到项目可见目录（如 evidence/），并计算实际 SHA-256。不要复制整个私人目录，不声明未读资料。方法文件也复制实际读取的版本并固定摘要；这是绑定记录，运行日志中的读取才是读取证据。每份最多512KiB，共最多8份/2MiB；长文用明确标注范围的摘录并写 limitation，不称全文。\n\n成果中放一个 script[type=application/json]#mokina-evidence，正文保留对应章节与可读引用：\n\n```json\n{\"schema\":\"mokina.evidence.v1\",\"sources\":[{\"id\":\"quote\",\"path\":\"evidence/quote.txt\",\"sha256\":\"实际64位小写摘要\",\"kind\":\"data\",\"locator\":\"报价条目1–3\",\"limitation\":\"用户提供的合成报价，不是采购承诺\",\"sectionId\":\"budget\"},{\"id\":\"method\",\"path\":\"evidence/method.md\",\"sha256\":\"实际64位小写摘要\",\"kind\":\"method\",\"methodVersion\":\"0.0.2\",\"locator\":\"完整方法\",\"limitation\":\"方法绑定不证明模型理解\",\"sectionId\":\"directions\"}]}\n```\n\nkind 仅 full-text / summary / data / method。来源可选 url、accessedAt、excerpt；excerpt 必须逐字存在于冻结文本中。sectionId 必须对应成果里的 data-mokina-id。路径禁止绝对路径、隐藏文件和上级跳转。不能手写 #mokina-quality-snapshot 或 data-mokina-evidence-appendix，它们由宿主保存版本时生成。\n\n## 可见数值就是计算输入\n\n预算表使用 data-mokina-budget、data-budget-limit（总上限）、data-capacity-hours（内部总工时）。每个行动行 data-budget-item 必须有且仅有 data-quantity、data-unit-price、data-amount、data-hours 四个可见单元格。数字为纯十进制，单位放表头，不放数值单元格；单表单币种。data-hours 是该行总内部工时，不是单件工时，不能与外包工时混算。\n\n宿主复算每行 quantity×unit-price、总预算、剩余预算和总内部工时；显式展示未使用预算。不同方向各用一个预算表，不能把互斥方向合计。报价支持哪个单价、包含什么、不含什么，写在行内说明并引用源 ID。算术正确不证明报价真实、容量合理或ROI成立。\n\n比例用可见 data-mokina-ratio 容器，内部 data-numerator、data-denominator、data-ratio-result。结果是小数不是百分数。0分母须显示“不可计算”，不得填0/无穷大。环比 numerator=本期−前期，denominator=前期；展示原期值与计算口径供人工复核。该标记只复算已提供数值，不证明它们来自哪个CSV行。\n\nCSV 源可声明 csv:{\"id\":\"record_id\",\"amount\":\"amount\",\"unit\":\"currency\"}。宿主标记重复ID、缺失/非法金额、混合单位和不规则行；不静默去重或补0。干净数据只按单位求和，不跨币种汇总。若需清洗，保留原始源和明确排除清单，再生成派生文件并分别声明；原始脏数据问题应保留为已知限制，而非假装不存在。\n\n## 交付自查\n\n保存后通过 `od files versions <project> <file> --read-only --json` 找到对应版本，再 `od files version-read <project> <file> <version> --json` 查看 quality。未知保存结果先查版本，不重新运行。问题绑定该版本；补足资料或修正文案后保存新候选。rules-clear 只说明这些规则无发现，不是专业批准。旧成果无标记时保持 unreviewed。\n"
+    },
+    {
+      "id": "analysis-template",
+      "path": "evidence/analysis-template.html",
+      "sha256": "ba346de3e69bc8c4b506235b63e4b59e66904a291db14997604087bcf30fc8ea",
+      "kind": "full-text",
+      "sectionId": "scope",
+      "locator": "完整结构模板；scope、findings、evidence、implications、limits 五个稳定章节",
+      "limitation": "仅复用章节与基础样式；模板中的占位文案不构成事实。",
+      "excerpt": "<section id=\"scope\" data-mokina-id=\"scope\">",
+      "text": "<!doctype html><html lang=\"zh-CN\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>结构模板·不是客户成果</title><style>body{font:16px/1.6 system-ui;max-width:960px;margin:40px auto;padding:0 24px;color:#17212b;background:#fff}section{margin:32px 0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:8px;text-align:left}aside{padding:12px;border:1px solid #bbb}@media print{section{break-inside:avoid}details>*{display:block}body{margin:0}}</style><body><h1>待替换标题</h1><aside>结构示例，未完成研究、检查或批准。不要把模板数据当作用户事实。</aside><section id=\"scope\" data-mokina-id=\"scope\"><h2>决策问题与口径</h2><p>明确地区、时期、币种、样本和待验证假设。</p></section>\n<section id=\"findings\" data-mokina-id=\"findings\"><h2>发现与备选解释</h2><p>观察、支持与反证、推断和决策影响分别写。</p></section>\n<section id=\"evidence\" data-mokina-id=\"evidence\"><h2>依据与计算</h2><p>列原始数据问题、清洗规则、计算过程及来源ID。</p></section>\n<section id=\"implications\" data-mokina-id=\"implications\"><h2>选择与验证</h2><p>两种行动条件、风险、证伪信号；不要把相关性当因果。</p></section>\n<section id=\"limits\" data-mokina-id=\"limits\"><h2>边界与未知</h2><p>摘要不代表全文；样本不代表总体；缺失和零分母不能补零。</p></section>\n<!-- 根据 evidence-contract.md 添加实际读取资料的证据声明；没有真实摘要时不得伪造。 -->\n</body></html>\n"
+    }
+  ],
+  "issues": [
+    {
+      "code": "CSV_DUPLICATE",
+      "sourceId": "sales-raw",
+      "sectionId": "evidence",
+      "message": "Row 4: duplicate r2; no automatic deduplication."
+    },
+    {
+      "code": "CSV_MISSING",
+      "sourceId": "sales-raw",
+      "sectionId": "evidence",
+      "message": "Row 6: missing identity/unit or invalid amount; no zero-fill."
+    },
+    {
+      "code": "CSV_MIXED_UNITS",
+      "sectionId": "evidence",
+      "sourceId": "sales-raw",
+      "message": "Multiple units; cross-unit total is undefined."
+    },
+    {
+      "code": "CSV_MIXED_UNITS",
+      "sectionId": "evidence",
+      "sourceId": "sales-clean",
+      "message": "Multiple units; cross-unit total is undefined."
+    },
+    {
+      "code": "ZERO_DENOMINATOR",
+      "sectionId": "evidence",
+      "message": "Zero denominator: ratio is undefined, never zero or infinity."
+    }
+  ],
+  "calculations": [
+    {
+      "sectionId": "evidence",
+      "expression": "sales-clean: sum(amount) grouped by currency=CNY; all 6 rows retained",
+      "result": "3000"
+    },
+    {
+      "sectionId": "evidence",
+      "expression": "sales-clean: sum(amount) grouped by currency=USD; all 6 rows retained",
+      "result": "90"
+    },
+    {
+      "sectionId": "evidence",
+      "expression": "-500 / 2000 (decimal, not percent)",
+      "result": "-0.25"
+    },
+    {
+      "sectionId": "evidence",
+      "expression": "0 / 1500 (decimal, not percent)",
+      "result": "0"
+    },
+    {
+      "sectionId": "evidence",
+      "expression": "200 / 1000 (decimal, not percent)",
+      "result": "0.2"
+    }
+  ],
+  "fingerprint": "9f9454c246b008a86d21c08322747e65cca37f915cd4fdbc7071b0f00563e303"
+}

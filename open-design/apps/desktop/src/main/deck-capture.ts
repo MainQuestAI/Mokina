@@ -1,3 +1,4 @@
+import { loadExportDocument } from './export-document.js';
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -280,7 +281,7 @@ export async function renderDeckSlides(
 
   try {
     const doc = injectBaseHref(input.html, input.baseHref);
-    await loadArtifactDocument(window, `data:text/html;charset=utf-8,${encodeURIComponent(doc)}`);
+    await loadExportDocument(window, doc, url => loadArtifactDocument(window, url));
     tLoad = Date.now();
     await waitForPrintableContent(window);
     tAssets = Date.now();

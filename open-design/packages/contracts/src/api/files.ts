@@ -1,3 +1,4 @@
+import type { MokinaQualitySnapshot } from './mokina-quality.js';
 import type { OkResponse } from '../common.js';
 import type { ArtifactKind, ArtifactManifest } from './artifacts.js';
 
@@ -143,6 +144,7 @@ export interface ProjectFileVersionsResponse {
 }
 
 export interface ProjectFileVersionResponse {
+  quality?: MokinaQualitySnapshot;
   version: ProjectFileVersion;
   content: string;
   /** Self-contained HTML snapshot for historically accurate preview/export. */

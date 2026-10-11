@@ -1,0 +1,74 @@
+{
+  "desktop": {
+    "app": "desktop",
+    "status": "stopped",
+    "stop": {
+      "alreadyStopped": false,
+      "forcedPids": [],
+      "matchedPids": [
+        94715,
+        94713,
+        94706,
+        94705,
+        94704,
+        94703
+      ],
+      "remainingPids": [],
+      "stoppedPids": [
+        94715,
+        94713,
+        94706,
+        94705,
+        94704,
+        94703
+      ],
+      "gracefulAccepted": true,
+      "staleEndpointRemoved": false
+    },
+    "via": "ipc"
+  },
+  "web": {
+    "app": "web",
+    "status": "stopped",
+    "stop": {
+      "alreadyStopped": false,
+      "forcedPids": [],
+      "matchedPids": [
+        90722,
+        90719,
+        90717
+      ],
+      "remainingPids": [],
+      "stoppedPids": [
+        90722,
+        90719,
+        90717
+      ],
+      "gracefulAccepted": true,
+      "staleEndpointRemoved": false
+    },
+    "via": "ipc"
+  },
+  "daemon": {
+    "app": "daemon",
+    "status": "stopped",
+    "stop": {
+      "alreadyStopped": false,
+      "forcedPids": [],
+      "matchedPids": [
+        90448,
+        90447,
+        90446
+      ],
+      "remainingPids": [],
+      "stoppedPids": [
+        90448,
+        90447,
+        90446
+      ],
+      "gracefulAccepted": true,
+      "staleEndpointRemoved": false
+    },
+    "via": "ipc"
+  }
+}

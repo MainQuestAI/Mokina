@@ -127,3 +127,140 @@ test('[P2] damaged Brief recovery keeps a backup and restores editing explicitly
   await info.attach('recovered-after-1280x800', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
   expect((await page.request.delete(`/api/projects/${id}`)).ok()).toBe(true);
 });
+
+for (const width of [1280, 900]) test(`[P1] M2 freezes evidence across source replacement and shows selected-version issues at ${width}`, async ({ page }, info) => {
+  test.setTimeout(T.xlong);
+  const { createHash } = await import('node:crypto');
+  const sha = (text: string) => createHash('sha256').update(text).digest('hex');
+  await applyStandardMocks(page); await page.setViewportSize({ width, height: width === 1280 ? 800 : 600 });
+  const id = `m2-${randomUUID()}`;
+  let releaseHeldRead = () => {};
+  expect((await page.request.post('/api/projects', { data: { id, name: 'M2 版本依据验收', skillId: null, designSystemId: null, metadata: { kind: 'prototype' } } })).ok()).toBe(true);
+  try {
+    const csv = 'id,amount,unit\noriginal,100,CNY';
+    const body = '<html><body><section id="budget" data-mokina-id="budget"><h1>预算</h1><table data-mokina-budget data-budget-limit="1000" data-capacity-hours="5"><tr data-budget-item><td data-quantity>2</td><td data-unit-price>300</td><td data-amount>700</td><td data-hours>6</td></tr></table></section></body></html>';
+    const put = async (name: string, content: string) => expect((await page.request.post(`/api/projects/${id}/files`, { data: { name, content } })).ok()).toBe(true);
+    await put('sales.csv', csv); await put('plan.html', body);
+    const open = async () => { await page.goto(`/projects/${id}/files/plan.html`); await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long }); await page.getByRole('button', { name: 'Versions', exact: true }).click(); };
+    await open();
+    await expect(page.getByTestId('mokina-version-quality')).toContainText('Not checked', { timeout: T.long });
+    await info.attach(`m2-before-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    const declaration = { schema: 'mokina.evidence.v1', sources: [{ id: 'sales', path: 'sales.csv', sha256: sha(csv), kind: 'data', locator: 'all rows', limitation: 'synthetic data', sectionId: 'budget', csv: { id: 'id', amount: 'amount', unit: 'unit' } }] };
+    await put('plan.html', body.replace('</body>', `<script id="mokina-evidence" type="application/json">${JSON.stringify(declaration)}</script></body>`));
+    const versions = await (await page.request.get(`/api/projects/${id}/files/plan.html/versions?readOnly=true`)).json();
+    const fixed = versions.versions.find((v: { current: boolean }) => v.current);
+    await put('sales.csv', 'id,amount,unit\nreplacement,999,CNY');
+    let failRead = true;
+    const versionUrl = `**/api/projects/${id}/files/plan.html/versions/${fixed.id}`;
+    await page.route(versionUrl, route => failRead ? route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":{"message":"temporary read failure"}}' }) : route.continue());
+    await open();
+    await expect(page.getByTestId('mokina-version-quality')).toContainText('Record unavailable', { timeout: T.long });
+    await info.attach(`r7-read-failure-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    failRead = false;
+    await page.getByTestId('mokina-version-quality').locator('summary').first().click();
+    await page.getByRole('button', { name: 'Read quality record again', exact: true }).click();
+    const panel = page.getByTestId('mokina-version-quality'); await expect(panel).toContainText('Issues found', { timeout: T.long });
+    await expect(panel).toContainText('BUDGET_LINE'); await expect(panel).toContainText('CAPACITY_EXCEEDED');
+    await panel.getByText('sales · data · sales.csv', { exact: true }).click();
+    await expect(panel.locator('pre')).toContainText('original,100,CNY');
+    await expect(panel).not.toContainText('replacement,999');
+    await info.attach(`m2-after-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    const response = await page.request.post(`/api/projects/${id}/export/html`, { data: { fileName: 'plan.html', versionId: fixed.id, title: 'Evidence export' } });
+    expect(response.ok()).toBe(true);
+    const exported = await response.text();
+    expect(exported).toContain('original,100,CNY');
+    expect(exported).not.toContain('replacement,999');
+    await panel.getByRole('button', { name: 'Locate chapter budget' }).first().click();
+    await expect(page.locator('.artifact-version-panel')).toHaveAttribute('data-mokina-task', 'versions');
+    await expect(page.frameLocator('.artifact-version-panel__preview iframe').locator('#budget')).toHaveAttribute('data-mokina-located', 'true');
+    await info.attach(`r6-located-current-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    await expect(panel.getByRole('button', { name: 'Revise this chapter', exact: true })).toBeVisible();
+    // Real API creates a later current version and a candidate; all three use
+    // uncached reads after navigation, so live-source seeding cannot mask R7.
+    await put('sales.csv', csv);
+    const declared = body.replace('</body>', `<script id="mokina-evidence" type="application/json">${JSON.stringify(declaration)}</script></body>`);
+    await put('plan.html', declared.replace('预算', '当前预算'));
+    const list = await (await page.request.get(`/api/projects/${id}/files/plan.html/versions?readOnly=true`)).json();
+    const current = list.versions.find((v: { current: boolean }) => v.current);
+    const created = await page.request.post(`/api/projects/${id}/files/plan.html/candidates`, { data: {
+      baseVersionId: current.id, sectionId: 'budget', replacementHtml: body.match(/<section[\s\S]*<\/section>/)![0].replace('预算', '候选预算'), operationId: randomUUID(), prompt: 'candidate inspection',
+    } });
+    expect(created.ok()).toBe(true); const candidate = (await created.json()).version;
+    const unavailable = new Set([fixed.id, current.id, candidate.id]);
+    await page.unroute(versionUrl);
+    await page.route(`**/api/projects/${id}/files/plan.html/versions/*`, route => {
+      const versionId = new URL(route.request().url()).pathname.split('/').pop()!;
+      return unavailable.has(versionId) ? route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":{"message":"temporary read failure"}}' }) : route.continue();
+    });
+    const inspectionWrites: string[] = [];
+    const trackWrite = (request: Pick<import('@playwright/test').Request, 'url' | 'method'>) => {
+      // Preview HTML is a read-only POST; navigation also persists workspace tabs.
+      // Neither may create a run or mutate artifact/version content.
+      const pathname = new URL(request.url()).pathname;
+      const previewRead = request.method() === 'POST' && pathname === `/api/projects/${id}/export/html`;
+      const tabState = request.method() === 'PUT' && pathname === `/api/projects/${id}/tabs`;
+      const globalCreation = request.method() === 'POST' && (pathname === '/api/runs' || pathname === '/api/projects');
+      const projectMutation = pathname.startsWith(`/api/projects/${id}/`) && !['GET', 'HEAD'].includes(request.method()) && !previewRead && !tabState;
+      if (globalCreation || projectMutation) inspectionWrites.push(request.method() + ' ' + request.url());
+    };
+    // Check the actual collector before relying on its zero-write result.
+    // These are synthetic callbacks only: no project/run is created on the server.
+    const collectorCases = [
+      ['POST', '/api/runs', true],
+      ['POST', '/api/projects', true],
+      ['POST', `/api/projects/${id}/files`, true],
+      ['POST', `/api/projects/${id}/export/html`, false],
+      ['PUT', `/api/projects/${id}/tabs`, false],
+      ['DELETE', `/api/projects/${id}/tabs`, true],
+      ['GET', '/api/runs', false],
+      ['GET', '/api/projects', false],
+    ] as const;
+    for (const [method, pathname, captured] of collectorCases) {
+      const url = new URL(pathname, page.url()).href;
+      trackWrite({ method: () => method, url: () => url });
+      expect(inspectionWrites, `${method} ${pathname}: collector coverage`).toEqual(captured ? [`${method} ${url}`] : []);
+      inspectionWrites.length = 0;
+    }
+    page.on('request', trackWrite);
+    await open();
+    for (const [label, version] of [['current', current], ['candidate', candidate], ['history', fixed]] as const) {
+      await page.getByRole('option').filter({ has: page.getByText(`v${version.version}`, { exact: true }) }).click();
+      await expect(panel).toContainText('Record unavailable');
+      await expect(page.frameLocator('.artifact-version-panel__preview iframe').locator('#budget')).toBeVisible();
+      if (!(await panel.evaluate(el => (el as HTMLDetailsElement).open))) await panel.locator('summary').first().click();
+      await info.attach(`r7-${label}-failed-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+      unavailable.delete(version.id);
+      await panel.getByRole('button', { name: 'Read quality record again', exact: true }).click();
+      await expect(panel).toContainText(version.id);
+      await panel.getByRole('button', { name: 'Locate chapter budget' }).first().click();
+      await expect(page.frameLocator('.artifact-version-panel__preview iframe').locator('#budget')).toHaveAttribute('data-mokina-located', 'true');
+      await expect(page.locator('.artifact-version-panel')).toHaveAttribute('data-mokina-task', 'versions');
+      await info.attach(`r6-${label}-located-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    }
+    // Delay one old-version read, switch to another version, then release it.
+    // The late result may warm its own cache but must not change the selection.
+    let oldStarted = false;
+    const held = new Promise<void>(resolve => { releaseHeldRead = resolve; });
+    await page.route(versionUrl, async route => { oldStarted = true; await held; await route.continue(); });
+    await open();
+    await page.getByRole('option').filter({ has: page.getByText(`v${fixed.version}`, { exact: true }) }).click();
+    await expect.poll(() => oldStarted, { message: 'Delayed historical read must reach the interceptor' }).toBe(true);
+    await page.getByRole('option').filter({ has: page.getByText(`v${candidate.version}`, { exact: true }) }).click({ timeout: T.short });
+    await expect(panel).toContainText(candidate.id);
+    const late = page.waitForResponse(response => response.url().endsWith(`/versions/${fixed.id}`));
+    releaseHeldRead(); await late;
+    await expect(panel).toContainText(candidate.id); await expect(panel).not.toContainText(fixed.id);
+    expect(inspectionWrites, 'inspection, retry and locating never write or create runs').toEqual([]);
+    page.off('request', trackWrite);
+    const other = `m2-other-${randomUUID()}`;
+    expect((await page.request.post('/api/projects', { data: { id: other, name: 'Other project', skillId: null, designSystemId: null } })).ok()).toBe(true);
+    try {
+      expect((await page.request.post(`/api/projects/${other}/files`, { data: { name: 'plan.html', content: '<html><body>Other project</body></html>' } })).ok()).toBe(true);
+      await page.goto(`/projects/${other}/files/plan.html`);
+      await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long });
+      await page.getByRole('button', { name: 'Versions', exact: true }).click();
+      await expect(panel).toContainText('Not checked'); await expect(panel).not.toContainText(candidate.id);
+    } finally { expect((await page.request.delete(`/api/projects/${other}`)).ok()).toBe(true); }
+
+  } finally { releaseHeldRead(); expect((await page.request.delete(`/api/projects/${id}`)).ok()).toBe(true); }
+});

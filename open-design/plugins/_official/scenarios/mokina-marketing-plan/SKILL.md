@@ -13,3 +13,5 @@ od:
 按问题需要给出一个或多个方向；存在实质替代路径时再比较取舍。把每项行动对应到目标、受众、渠道、时间、预算和验证信号；预算合计保持一致，无法分配的部分明示。区分有证据的事实、估算、建议和待验证项。用户要求先讨论时不写文件。
 
 交付 HTML 时使用稳定章节 ID `objectives`、`audience`、`directions`、`actions`、`budget`、`measurement`、`sources`，遵循同目录 `references/report-contract.md`，采用自包含图表与打印样式。联网来源必须有真实 URL、访问时间与支持结论的摘录。
+
+交付前必须实际读取 `references/method.md`、`references/evidence-contract.md` 与 `templates/report.html`。按方法逐项判断，保留证据限制、预算与容量复算、替代方向和无法确认的项。示例只供结构参考，不得把示例报价、结论或数据当作当前任务事实。

@@ -861,6 +861,30 @@ describe('POST /api/projects/:id/export/html route', () => {
     },
   );
 
+  for (const [count, token] of [[3, 'x'], [4, '<&']] as const) it(`exports ${count} full-sized sources including escaped ${token} through HTML, inline and PDF gates`, async () => {
+    const text = token.repeat(512 * 1024 / token.length);
+    const sources = [];
+    for (let i = 0; i < count; i++) {
+      const name = `large-${count}-${i}.txt`;
+      await writeFile(path.join(projectsRoot, projectId, name), text);
+      sources.push({ id: `s${i}`, path: name, sha256: createHash('sha256').update(text).digest('hex'), kind: 'data', locator: 'all', limitation: 'synthetic', sectionId: 'plan' });
+    }
+    const fileName = `large-${count}.html`;
+    const content = `<html><body><section id="plan" data-mokina-id="plan">Large evidence</section><script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources })}</script></body></html>`;
+    const version = await createProjectFileVersion(projectsRoot, projectId, fileName, content);
+    const before = await readProjectFileVersion(projectsRoot, projectId, fileName, version.id);
+    expect(Buffer.byteLength(before.frozenContent!)).toBeGreaterThan(2 * 1024 * 1024);
+    expect(before.quality.sources.every(s => s.text === text)).toBe(true);
+    const response = await postExport({ fileName, versionId: version.id });
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain('mokina-quality-snapshot');
+    const inline = await fetch(`${baseUrl}/api/projects/${projectId}/export/${fileName}?inline=1&versionId=${version.id}`);
+    expect(inline.status).toBe(200); await inline.arrayBuffer();
+    const calls = pdfRendererCalls;
+    const pdf = await fetch(`${baseUrl}/api/projects/${projectId}/export/pdf`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fileName, versionId: version.id }) });
+    expect(pdf.status).toBe(200); expect(pdfRendererCalls).toBe(calls + 1);
+  });
+
   it('embeds nested HTML, CSS, image, font, and module dependencies into one file', async () => {
     const response = await postExport({ fileName: 'pages/index.html', title: 'Offline Demo' });
     expect(response.status).toBe(200);

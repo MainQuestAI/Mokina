@@ -1,4 +1,5 @@
 import type {
+  MokinaQualitySnapshot,
   ArtifactOrigin,
   ArtifactOriginStatus,
   ProjectFileKind,
@@ -11,7 +12,9 @@ import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/p
 import path from 'node:path';
 
 import { isSafeId, kindFor, mimeFor, readProjectFile, resolveProjectDir, resolveProjectFilePath, validateProjectPath } from './projects.js';
-import { bundleStandaloneHtml } from './artifacts/standalone-html.js';
+import { bundleStandaloneHtml, StandaloneHtmlExportError, MAX_STANDALONE_ENTRY_BYTES, MAX_STANDALONE_OUTPUT_BYTES } from './artifacts/standalone-html.js';
+
+import { freezeVersionEvidence, hasVersionEvidence, readVersionEvidence } from './mokina/version-evidence.js';
 
 const VERSION_ROOT = '.file-versions';
 const VERSION_MANIFEST = 'manifest.json';
@@ -502,7 +505,7 @@ export async function readProjectFileVersion(
   fileName: string,
   versionId: string,
   metadata?: unknown,
-): Promise<{ version: ProjectFileVersion; content: string; frozenContent?: string }> {
+): Promise<{ version: ProjectFileVersion; content: string; frozenContent?: string; quality: MokinaQualitySnapshot }> {
   const safeName = validateUserFileName(fileName);
   const safeVersionId = String(versionId || '').trim();
   if (!safeVersionId || !VERSION_ID_RE.test(safeVersionId)) {
@@ -516,11 +519,16 @@ export async function readProjectFileVersion(
     throw codedError('version not found', 'ENOENT');
   }
   const content = await readFile(path.join(versionRootFor(projectsRoot, projectId, safeName), entry.contentPath), 'utf8');
+  const contentDigest = projectFileVersionContentDigest(content);
+  if (entry.contentDigest && entry.contentDigest !== contentDigest) {
+    throw codedError('saved version content digest mismatch', 'VERSION_CONTENT_MISMATCH');
+  }
   const frozenContent = entry.frozenContentPath
     ? await readFile(path.join(versionRootFor(projectsRoot, projectId, safeName), entry.frozenContentPath), 'utf8')
     : undefined;
   return {
     version: publicVersion(entry, state.currentVersionId),
+    quality: readVersionEvidence(content, frozenContent, entry.id, contentDigest, { neverCaptured: !entry.frozenContentPath }),
     content,
     ...(frozenContent ? { frozenContent } : {}),
   };
@@ -624,37 +632,68 @@ async function createProjectFileVersionUnlocked(
   if (options.candidate) entry.candidate = true;
   if (options.baseVersionId) entry.baseVersionId = options.baseVersionId;
   if (options.operationId) entry.operationId = options.operationId;
-  await writeFile(path.join(root, contentPath), text);
-  // Freeze local HTML resources while the version is captured. A failed or
-  // incomplete bundle leaves the source version intact; historical export
-  // will reject it instead of silently reading today's project resources.
+  // An explicit base carries its immutable evidence into revisions/restores.
+  // A changed declaration still has to resolve and validate a new source.
+  const evidenceBase = entries.find(item => item.id === (options.baseVersionId ?? options.restoreFromVersionId ?? entry.parentVersionId));
+  let inheritedEvidence: MokinaQualitySnapshot | undefined;
+  if (evidenceBase) {
+    const baseText = await readFile(path.join(root, evidenceBase.contentPath), 'utf8');
+    const baseDigest = projectFileVersionContentDigest(baseText);
+    if (evidenceBase.contentDigest && evidenceBase.contentDigest !== baseDigest) {
+      throw codedError('saved base version content digest mismatch', 'VERSION_CONTENT_MISMATCH');
+    }
+    if (hasVersionEvidence(baseText)) {
+      const baseFrozen = evidenceBase.frozenContentPath ? await readFile(path.join(root, evidenceBase.frozenContentPath), 'utf8') : undefined;
+      inheritedEvidence = readVersionEvidence(baseText, baseFrozen, evidenceBase.id, baseDigest, { neverCaptured: !evidenceBase.frozenContentPath });
+    }
+  }
+  let frozenHtml: string | undefined;
   if (entry.mime.startsWith('text/html')) {
+    if (Buffer.byteLength(text) > MAX_STANDALONE_ENTRY_BYTES) {
+      throw codedError('Original HTML exceeds 2 MiB entry limit', 'PAYLOAD_TOO_LARGE');
+    }
+    let resources: NonNullable<MokinaQualitySnapshot['resources']>;
+    let resourceHtml = text;
     try {
       const bundled = await bundleStandaloneHtml({
-        entryPath: safeName,
-        html: text,
+        entryPath: safeName, html: text,
         readAsset: async (projectPath) => {
           let file;
-          try {
-            file = await resolveProjectFilePath(projectsRoot, projectId, projectPath, metadata);
-          } catch (error) {
-            if (errorCode(error) === 'ENOENT') return null;
-            throw error;
-          }
-          return {
-            mime: file.mime,
-            size: file.size,
-            read: async () => (await readProjectFile(projectsRoot, projectId, projectPath, metadata)).buffer,
-          };
+          try { file = await resolveProjectFilePath(projectsRoot, projectId, projectPath, metadata); }
+          catch (error) { if (errorCode(error) === 'ENOENT') return null; throw error; }
+          return { mime: file.mime, size: file.size,
+            read: async () => (await readProjectFile(projectsRoot, projectId, projectPath, metadata)).buffer };
         },
       });
-      if (bundled.externalDependencies.length === 0) {
-        entry.frozenContentPath = `${String(version).padStart(4, '0')}-${id}-frozen.html`;
-        await writeFile(path.join(root, entry.frozenContentPath), bundled.html);
-      }
-    } catch {
-      // Keep the source version; export validates unresolved resources.
+      resourceHtml = bundled.html;
+      resources = { status: bundled.externalDependencies.length ? 'incomplete' : 'complete', reasons: bundled.externalDependencies };
+    } catch (error) {
+      if (!(error instanceof StandaloneHtmlExportError)) throw error;
+      resources = { status: 'incomplete', reasons: [error.message] };
     }
+    if (hasVersionEvidence(text) || resources.status === 'complete') {
+      frozenHtml = await freezeVersionEvidence(resourceHtml, id, entry.contentDigest!, async (sourcePath, expectedDigest) => {
+        const inherited = inheritedEvidence?.sources.find(item => item.path === sourcePath && item.sha256 === expectedDigest && item.text !== undefined);
+        if (inherited?.text !== undefined) return Buffer.from(inherited.text, 'utf8');
+        const source = await resolveProjectFilePath(projectsRoot, projectId, sourcePath, metadata);
+        if (source.size > 512 * 1024) throw new Error('Evidence file exceeds 512 KiB');
+        return (await readProjectFile(projectsRoot, projectId, sourcePath, metadata)).buffer;
+      }, resources);
+      if (Buffer.byteLength(frozenHtml) > MAX_STANDALONE_OUTPUT_BYTES) {
+        throw codedError('Frozen HTML exceeds 100 MiB output limit', 'PAYLOAD_TOO_LARGE');
+      }
+      entry.frozenContentPath = `${String(version).padStart(4, '0')}-${id}-frozen.html`;
+    }
+  }
+  // Commit the manifest only after both immutable files are durable. A failed
+  // write must remain a failed save, not a successfully listed unreadable version.
+  try {
+    await writeFile(path.join(root, contentPath), text);
+    if (frozenHtml !== undefined) await writeFile(path.join(root, entry.frozenContentPath!), frozenHtml);
+  } catch (error) {
+    await Promise.all([contentPath, entry.frozenContentPath].filter((p): p is string => Boolean(p))
+      .map(p => rm(path.join(root, p), { force: true }).catch(() => {})));
+    throw error;
   }
   const nextEntries = [...entries, entry];
   await writeVersionManifest(projectsRoot, projectId, safeName, nextEntries, {

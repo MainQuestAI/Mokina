@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useEffect, type ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -22,6 +22,12 @@ import {
   loadTabs,
 } from '../../src/state/projects';
 import { fetchPreviewComments, fetchProjectFiles } from '../../src/providers/registry';
+
+const mokinaTest = vi.hoisted(() => ({ enabled: false, record: null as unknown }));
+vi.mock('../../src/mokina-edition', () => ({ get MOKINA_LOCAL_EDITION() { return mokinaTest.enabled; } }));
+vi.mock('../../src/hooks/useMokinaProjectSummaries', () => ({
+  useMokinaProjectSummary: () => mokinaTest.record,
+}));
 
 vi.mock('../../src/i18n', () => ({
   useI18n: () => ({
@@ -210,6 +216,8 @@ function renderProjectView(props?: {
 
 describe('ProjectView tab URL hydration', () => {
   beforeEach(() => {
+    mokinaTest.enabled = false;
+    mokinaTest.record = null;
     mockedListConversations.mockResolvedValue([conversation]);
     mockedCreateConversation.mockResolvedValue(conversation);
     mockedListMessages.mockResolvedValue([]);
@@ -221,6 +229,24 @@ describe('ProjectView tab URL hydration', () => {
   afterEach(() => {
     cleanup();
     vi.clearAllMocks();
+  });
+
+  it.each([false, true])('respects saved=%s when empty tabs hydrate after the summary', async (hasSavedState) => {
+    mokinaTest.enabled = true;
+    mokinaTest.record = {
+      status: 'ok', completeness: 'complete', summary: null,
+      entries: ['plan.html', 'schedule.html'].map(entry => ({
+        entry, readState: 'ok', versions: [{ id: entry, version: 1, current: true, createdAt: 1 }],
+      })),
+    };
+    let finishTabs!: (state: Awaited<ReturnType<typeof loadTabs>>) => void;
+    mockedLoadTabs.mockImplementation(() => new Promise(resolve => { finishTabs = resolve; }));
+    renderProjectView();
+    await waitFor(() => expect(mockedFetchProjectFiles).toHaveBeenCalled());
+    expect(screen.queryByTestId('mokina-entry-chooser')).toBeNull();
+    await act(async () => { finishTabs({ tabs: [], active: null, hasSavedState }); });
+    if (hasSavedState) expect(screen.queryByTestId('mokina-entry-chooser')).toBeNull();
+    else expect(await screen.findByTestId('mokina-entry-chooser')).toBeTruthy();
   });
 
   it('syncs a persisted active tab to the URL before the file list has hydrated', async () => {

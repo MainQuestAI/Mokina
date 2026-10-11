@@ -1,3 +1,4 @@
+import { loadExportDocument } from './export-document.js';
 import { mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -89,7 +90,7 @@ export async function exportArtifact(
   try {
     window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
     window.webContents.on("will-navigate", (event) => event.preventDefault());
-    await window.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(buildDocument(input))}`);
+    await loadExportDocument(window, buildDocument(input));
 
     if (thumbnail) return await renderFirstViewportThumbnail(window, input, { height, width });
 

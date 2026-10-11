@@ -1,0 +1,6 @@
+.panel { grid-column: 1 / -1; grid-row: 1; min-width: 0; margin: 12px 0; padding: 12px; border: 1px solid var(--border-color, #e5e7eb); border-radius: 8px; overflow-wrap: anywhere; font-size: 12px; }
+.panel summary { cursor: pointer; font-weight: 600; }
+.panel p, .panel li { margin: 8px 0; }
+.panel pre { max-height: 240px; overflow: auto; white-space: pre-wrap; font-size: 11px; }
+.panel button { color: var(--accent-color, #2563eb); cursor: pointer; text-decoration: underline; }
+.identity { display: block; overflow-wrap: anywhere; font-size: 10px; }

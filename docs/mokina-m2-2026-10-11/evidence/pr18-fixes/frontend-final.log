@@ -1,0 +1,8 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/apps/web
+
+
+ Test Files  4 passed (4)
+      Tests  42 passed (42)
+   Start at  21:42:45
+   Duration  11.25s (transform 5.98s, setup 2.16s, import 5.81s, tests 9.95s, environment 1.78s)

@@ -25,6 +25,7 @@ const buildTargets = [
   "packages/diagnostics",
   "packages/dsh-runtime",
   "apps/daemon",
+  "apps/desktop",
   "tools/dev",
   "tools/pack",
   "tools/release",

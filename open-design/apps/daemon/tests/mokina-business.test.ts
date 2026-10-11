@@ -98,10 +98,13 @@ describe('M1 business facts and Brief', () => {
     expect(reconciled.document.backgroundSnapshot?.facts[0]?.text).toBe('仅线上销售');
   });
 
-  it('does not interpret a missing project directory as an empty Brief', async () => {
+  it('supports lazy managed roots but never treats an unavailable imported folder as an empty Brief', async () => {
     await rm(path.join(root, 'p1'), { recursive: true });
-    await expect(readBusinessDocument({ projectsRoot: root, projectId: 'p1', kind: 'brief' })).rejects.toThrow();
-    await expect(save('p1', background())).rejects.toThrow();
+    expect(await readBusinessDocument({ projectsRoot: root, projectId: 'p1', kind: 'brief' })).toBeNull();
+    expect((await save('p1', background())).versionId).toBeTruthy();
+    const scope = { projectsRoot: root, projectId: 'p2', metadata: { baseDir: path.join(root, 'missing-import') } };
+    await expect(readBusinessDocument({ ...scope, kind: 'brief' })).rejects.toThrow();
+    await expect(saveBusinessDocument({ ...scope, request: background() })).rejects.toThrow();
   });
 
   it('serializes competing first saves and keeps the losing draft from overwriting the winner', async () => {

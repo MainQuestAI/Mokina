@@ -4,7 +4,7 @@ import {
   type MokinaBusinessReadResult, type SaveMokinaBusinessRequest,
 } from '@open-design/contracts';
 import { stat } from 'node:fs/promises';
-import { readProjectFile, writeProjectFile, resolveProjectDir } from '../projects.js';
+import { readProjectFile, writeProjectFile, resolveProjectDir, projectDir } from '../projects.js';
 import { readProjectFileVersion, withProjectFileVersionLock } from '../project-file-versions.js';
 import { canonicalJson, sha256Hex } from './context-store.js';
 
@@ -58,15 +58,16 @@ function parseHtml(html: string): MokinaBusinessDocument {
   } catch { return fail('UNRECOGNIZED', '文件不是可安全编辑的业务文档，或已在其他编辑器修改。请保留原件并通过阅读／章节修订处理。'); }
 }
 async function currentHtml(scope: Scope, kind: MokinaBusinessKind): Promise<string | null> {
-  try { return (await readProjectFile(scope.projectsRoot, scope.projectId, MOKINA_BUSINESS_FILES[kind], scope.metadata)).buffer.toString('utf8'); }
+  const dir = resolveProjectDir(scope.projectsRoot, scope.projectId, scope.metadata);
+  try { await stat(dir); }
   catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-    // ENOENT may describe the whole project, not an absent optional document.
-    // realpath/readFile report this differently across host platforms.
-    const root = await stat(resolveProjectDir(scope.projectsRoot, scope.projectId, scope.metadata));
-    if (!root.isDirectory()) throw error;
-    return null;
+    // Managed project roots are lazy: a valid new DB project has no directory
+    // until its first file write. Imported roots must already be available.
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT' && dir === projectDir(scope.projectsRoot, scope.projectId)) return null;
+    throw error;
   }
+  try { return (await readProjectFile(scope.projectsRoot, scope.projectId, MOKINA_BUSINESS_FILES[kind], scope.metadata)).buffer.toString('utf8'); }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') { await stat(dir); return null; } throw error; }
 }
 export async function readBusinessDocument(scope: Scope & { kind: MokinaBusinessKind; versionId?: string }): Promise<MokinaBusinessReadResult | null> {
   const fileName = MOKINA_BUSINESS_FILES[scope.kind];

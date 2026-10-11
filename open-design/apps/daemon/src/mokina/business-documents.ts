@@ -3,7 +3,8 @@ import {
   type MokinaBackgroundSnapshot, type MokinaBusinessDocument, type MokinaBusinessKind,
   type MokinaBusinessReadResult, type SaveMokinaBusinessRequest,
 } from '@open-design/contracts';
-import { readProjectFile, writeProjectFile } from '../projects.js';
+import { stat } from 'node:fs/promises';
+import { readProjectFile, writeProjectFile, resolveProjectDir } from '../projects.js';
 import { readProjectFileVersion, withProjectFileVersionLock } from '../project-file-versions.js';
 import { canonicalJson, sha256Hex } from './context-store.js';
 
@@ -58,7 +59,14 @@ function parseHtml(html: string): MokinaBusinessDocument {
 }
 async function currentHtml(scope: Scope, kind: MokinaBusinessKind): Promise<string | null> {
   try { return (await readProjectFile(scope.projectsRoot, scope.projectId, MOKINA_BUSINESS_FILES[kind], scope.metadata)).buffer.toString('utf8'); }
-  catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null; throw error; }
+  catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    // ENOENT may describe the whole project, not an absent optional document.
+    // realpath/readFile report this differently across host platforms.
+    const root = await stat(resolveProjectDir(scope.projectsRoot, scope.projectId, scope.metadata));
+    if (!root.isDirectory()) throw error;
+    return null;
+  }
 }
 export async function readBusinessDocument(scope: Scope & { kind: MokinaBusinessKind; versionId?: string }): Promise<MokinaBusinessReadResult | null> {
   const fileName = MOKINA_BUSINESS_FILES[scope.kind];

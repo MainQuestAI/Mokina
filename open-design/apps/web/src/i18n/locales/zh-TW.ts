@@ -33,6 +33,7 @@ export const zhTW: Dict = {
   'mokina.business.brief': "任务 Brief",
   'mokina.business.background': "业务背景",
   'mokina.business.draftFailed': "草稿尚未安全保存，请保留输入并重试。",
+  'mokina.business.rebuild': '備份損壞草稿並重建',
   'mokina.business.unknown': "保存结果待核对。先读取当前成果，再核对同一请求；不要重新创建请求。",
   'mokina.business.saved': "已保存为 HTML 成果和固定版本；尚未开始制作。",
   'mokina.business.reconcile': "核对并完成同一保存",

@@ -33,6 +33,7 @@ export const hu: Dict = {
   'mokina.business.brief': "Task Brief",
   'mokina.business.background': "Business background",
   'mokina.business.draftFailed': "Draft not safely saved. Keep your input and retry.",
+  'mokina.business.rebuild': 'Back up damaged draft and rebuild',
   'mokina.business.unknown': "Save outcome needs verification. Read the current artifact, then reconcile the same request.",
   'mokina.business.saved': "Saved as an HTML artifact and fixed version. Production has not started.",
   'mokina.business.reconcile': "Reconcile the same save",

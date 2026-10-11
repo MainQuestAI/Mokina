@@ -3,11 +3,19 @@ import { parseSaveMokinaBusinessRequest } from '@open-design/contracts';
 import { flushDurableRecord, mirrorDurableRecord } from '../persistence/mokina-recovery-store';
 export type BusinessDraft = { schema: 1; request: SaveMokinaBusinessRequest; pending: boolean };
 export const businessDraftKey = (scope: string, kind: string) => `od:composer-draft:mokina-business:${scope}:${kind}`;
+export class BusinessDraftCorruptError extends Error {
+  constructor(public readonly raw: string) { super('业务草稿损坏，请先备份原记录再明确重建'); }
+}
 export function readBusinessDraft(key: string): BusinessDraft | null {
-  const raw = localStorage.getItem(key); if (raw === null) return null;
-  const parsed = JSON.parse(raw);
-  if (parsed.schema !== 1 || typeof parsed.pending !== 'boolean') throw new Error('业务草稿无法读取，请保留原记录');
-  return { schema: 1, request: parseSaveMokinaBusinessRequest(parsed.request, true), pending: parsed.pending };
+  return parseBusinessDraft(localStorage.getItem(key));
+}
+export function parseBusinessDraft(raw: string | null): BusinessDraft | null {
+  if (raw === null) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed.schema !== 1 || typeof parsed.pending !== 'boolean') throw new Error('Invalid draft');
+    return { schema: 1, request: parseSaveMokinaBusinessRequest(parsed.request, true), pending: parsed.pending };
+  } catch { throw new BusinessDraftCorruptError(raw); }
 }
 export async function persistBusinessDraft(key: string, value: BusinessDraft, expectedRaw: string | null): Promise<string> {
   const raw = JSON.stringify(value);

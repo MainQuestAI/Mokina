@@ -62,6 +62,7 @@ export interface Dict {
   'mokina.business.brief': string;
   'mokina.business.background': string;
   'mokina.business.draftFailed': string;
+  'mokina.business.rebuild': string;
   'mokina.business.unknown': string;
   'mokina.business.saved': string;
   'mokina.business.reconcile': string;

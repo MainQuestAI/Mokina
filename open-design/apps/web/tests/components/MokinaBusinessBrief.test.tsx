@@ -3,9 +3,10 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, expect, it, vi } from 'vitest';
 import type { MokinaBusinessReadResult, SaveMokinaBusinessRequest } from '@open-design/contracts';
 import { MokinaBusinessBrief } from '../../src/components/mokina/MokinaBusinessBrief';
+import * as recovery from '../../src/runtime/persistence/mokina-recovery-store';
 import { resetDurableRecoveryForTests } from '../../src/runtime/persistence/mokina-recovery-store';
 const props = { projectId: 'p1', conversationId: 'c1', workspaceContext: null, onPrepare: vi.fn() };
-afterEach(() => { cleanup(); localStorage.clear(); vi.unstubAllGlobals(); resetDurableRecoveryForTests(); props.onPrepare.mockClear(); });
+afterEach(() => { cleanup(); vi.restoreAllMocks(); localStorage.clear(); vi.unstubAllGlobals(); resetDurableRecoveryForTests(); props.onPrepare.mockClear(); });
 function open() { render(<MokinaBusinessBrief {...props} />); fireEvent.click(screen.getByText('Business facts & task Brief')); }
 it('keeps an unknown operation across remount, does not auto resend, and reconciles its exact original request', async () => {
   const posts: SaveMokinaBusinessRequest[] = [];
@@ -56,4 +57,52 @@ it('does not acknowledge a same-id receipt whose business content differs from t
   fireEvent.click(screen.getByRole('button', { name: 'Read current artifact, keep draft' }));
   await screen.findByText('Current artifact differs from the pending request. Compare before continuing with the draft.');
   expect((screen.getByRole('textbox', { name: 'Goal' }) as HTMLTextAreaElement).value).toBe('我的待保存要求');
+});
+
+const draftKey = 'od:composer-draft:mokina-business:["none","p1","c1"]:brief';
+const restoredDraft = JSON.stringify({ schema: 1, pending: false, request: { operationId: 'kept-operation', expectedRevision: null,
+  body: { kind: 'brief', value: { title: 'Brief', goal: '保留原输入', audience: '', deliverables: [], kpi: '', budget: '', period: '', constraints: '', missing: '' }, background: null } } });
+it.each(['local read', 'native flush'])('recovers a temporary %s failure by rereading the original draft without POST', async mode => {
+  localStorage.setItem(draftKey, restoredDraft);
+  const fetchMock = vi.fn(async (_url?: string, _init?: RequestInit) => Response.json({ result: null })); vi.stubGlobal('fetch', fetchMock);
+  if (mode === 'local read') vi.spyOn(Storage.prototype, 'getItem').mockImplementationOnce(() => { throw new Error('storage unavailable'); });
+  else vi.spyOn(recovery, 'flushDurableRecord').mockResolvedValue(false);
+  open(); await screen.findByRole('alert');
+  expect(screen.queryByRole('textbox', { name: 'Goal' })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Read current artifact, keep draft' }));
+  expect((await screen.findByRole('textbox', { name: 'Goal' }) as HTMLTextAreaElement).value).toBe('保留原输入');
+  expect(localStorage.getItem(draftKey)).toBe(restoredDraft);
+  expect(fetchMock.mock.calls.every(args => args.length === 0 || !(args[1] as RequestInit | undefined)?.method)).toBe(true);
+});
+it('preserves corrupt bytes until explicit backup and rebuild, then restores editing without creating a run', async () => {
+  const corrupt = '{broken business draft'; localStorage.setItem(draftKey, corrupt);
+  const fetchMock = vi.fn(async (_url?: string, _init?: RequestInit) => Response.json({ result: null })); vi.stubGlobal('fetch', fetchMock);
+  open(); await screen.findByRole('alert');
+  expect(localStorage.getItem(draftKey)).toBe(corrupt);
+  fireEvent.click(screen.getByRole('button', { name: 'Back up damaged draft and rebuild' }));
+  await screen.findByRole('textbox', { name: 'Goal' });
+  const backup = Object.keys(localStorage).find(key => key.startsWith(draftKey + ':unreadable:'));
+  expect(backup).toBeTruthy(); expect(localStorage.getItem(backup!)).toBe(corrupt);
+  expect(localStorage.getItem(draftKey)).toBeNull();
+  expect(props.onPrepare).not.toHaveBeenCalled();
+});
+it('refuses to rebuild over a competing draft and can reread that recovered record', async () => {
+  localStorage.setItem(draftKey, '{broken'); vi.stubGlobal('fetch', vi.fn(async () => Response.json({ result: null })));
+  open(); await screen.findByRole('alert');
+  localStorage.setItem(draftKey, restoredDraft);
+  fireEvent.click(screen.getByRole('button', { name: 'Back up damaged draft and rebuild' }));
+  await waitFor(() => expect(screen.getByRole('alert').textContent).toContain('Draft changed'));
+  expect(localStorage.getItem(draftKey)).toBe(restoredDraft);
+  fireEvent.click(screen.getByRole('button', { name: 'Read current artifact, keep draft' }));
+  expect((await screen.findByRole('textbox', { name: 'Goal' }) as HTMLTextAreaElement).value).toBe('保留原输入');
+});
+
+it('never deletes corrupt input when its backup cannot be mirrored', async () => {
+  localStorage.setItem(draftKey, '{broken'); vi.stubGlobal('fetch', vi.fn(async () => Response.json({ result: null })));
+  vi.spyOn(recovery, 'mirrorDurableRecord').mockResolvedValue(false);
+  open(); await screen.findByRole('alert');
+  fireEvent.click(screen.getByRole('button', { name: 'Back up damaged draft and rebuild' }));
+  await waitFor(() => expect(screen.getByRole('alert').textContent).toContain('Draft not safely saved'));
+  expect(localStorage.getItem(draftKey)).toBe('{broken');
+  expect(screen.queryByRole('textbox', { name: 'Goal' })).toBeNull();
 });

@@ -103,3 +103,27 @@ test('[P1] M1 unknown save survives reload without an automatic retry', async ({
   expect((await history.json()).versions).toHaveLength(1);
   expect((await page.request.delete(`/api/projects/${id}`)).ok()).toBe(true);
 });
+
+test('[P2] damaged Brief recovery keeps a backup and restores editing explicitly', async ({ page }, info) => {
+  await applyStandardMocks(page); await page.setViewportSize({ width: 1280, height: 800 });
+  const id = `m1-draft-${randomUUID()}`;
+  const created = await page.request.post('/api/projects', { data: { id, name: 'Brief draft recovery', skillId: null, designSystemId: null } });
+  expect(created.ok()).toBe(true);
+  const { conversationId } = await created.json();
+  const key = `od:composer-draft:mokina-business:${JSON.stringify(['none', id, conversationId])}:brief`;
+  await page.goto(`/projects/${id}`);
+  await expect(page.getByTestId('chat-composer-input')).toBeEditable({ timeout: T.long });
+  await page.evaluate(key => localStorage.setItem(key, '{damaged draft bytes'), key);
+  await page.reload();
+  await page.getByRole('button', { name: 'Materials', exact: true }).click();
+  const panel = page.getByTestId('mokina-business-brief'); await panel.locator('summary').first().click();
+  await expect(panel.getByRole('alert')).toBeVisible();
+  await info.attach('damaged-before-1280x800', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+  await panel.getByRole('button', { name: 'Back up damaged draft and rebuild', exact: true }).click();
+  await expect(panel.getByLabel('Goal', { exact: true })).toBeEditable();
+  const retained = await page.evaluate(key => Object.keys(localStorage).filter(item => item.startsWith(key + ':unreadable:')).map(item => localStorage.getItem(item)), key);
+  expect(retained).toEqual(['{damaged draft bytes']);
+  await panel.getByLabel('Goal', { exact: true }).fill('恢复后继续准备，不自动开始制作');
+  await info.attach('recovered-after-1280x800', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+  expect((await page.request.delete(`/api/projects/${id}`)).ok()).toBe(true);
+});

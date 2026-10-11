@@ -4,8 +4,8 @@ import type { MokinaBusinessBody, MokinaBusinessReadResult, WorkspaceCollabConte
 import { parseSaveMokinaBusinessRequest } from '@open-design/contracts';
 import { useT } from '../../i18n';
 import { workspaceIdentityCacheKey, workspaceProjectHeaders } from '../../collab/workspace-identity';
-import { businessBriefHandoff, businessDraftKey, emptyBusinessBody, persistBusinessDraft, readBusinessDraft, type BusinessDraft } from '../../runtime/mokina/business-brief';
-import { flushDurableRecord } from '../../runtime/persistence/mokina-recovery-store';
+import { BusinessDraftCorruptError, businessBriefHandoff, businessDraftKey, emptyBusinessBody, persistBusinessDraft, parseBusinessDraft, type BusinessDraft } from '../../runtime/mokina/business-brief';
+import { flushDurableRecord, mirrorDurableRecord, mutateDurableRecord } from '../../runtime/persistence/mokina-recovery-store';
 import { notifyMokinaEntriesChanged } from '../../runtime/mokina-entry-events';
 import styles from './MokinaBusinessBrief.module.css';
 
@@ -31,6 +31,8 @@ function DocumentEditor({ projectId, workspaceContext, scope, kind, disabled, on
   const [draft, setDraft] = useState<BusinessDraft | null>(null);
   const [saved, setSaved] = useState<MokinaBusinessReadResult | null>(null);
   const [error, setError] = useState('');
+  const [unreadable, setUnreadable] = useState<string | null>(null);
+  const backupKey = useRef<string | null>(null);
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
   const [sourceProject, setSourceProject] = useState(projectId);
@@ -50,13 +52,49 @@ function DocumentEditor({ projectId, workspaceContext, scope, kind, disabled, on
     if (!response.ok) throw Object.assign(new Error(data.error?.message ?? `${response.status}`), { status: response.status });
     return data;
   }
+  async function restoreLocalDraft(explicitRetry = false) {
+    recoveryReadable.current = false;
+    const mirrored = await flushDurableRecord(key);
+    // A completed failed write stays in the shared queue as a receipt. An
+    // explicit reread may recover the cache; the next save must still mirror it.
+    if (!mirrored && !explicitRetry) throw new Error(t('mokina.business.draftFailed'));
+    try {
+      const captured = localStorage.getItem(key);
+      const restored = parseBusinessDraft(captured);
+      if (!active.current) return null;
+      raw.current = captured;
+      recoveryReadable.current = true; setUnreadable(null);
+      if (restored) { current.current = restored; setDraft(restored); }
+      return restored;
+    } catch (cause) {
+      if (active.current) {
+        if (cause instanceof BusinessDraftCorruptError && cause.raw !== unreadable) backupKey.current = null;
+        setUnreadable(cause instanceof BusinessDraftCorruptError ? cause.raw : null);
+      }
+      throw cause;
+    }
+  }
+  async function rebuildUnreadable() {
+    if (unreadable === null || busy) return;
+    const original = unreadable;
+    const backup = backupKey.current ??= `${key}:unreadable:${crypto.randomUUID()}`;
+    setBusy(true); setError('');
+    try {
+      if (!await mirrorDurableRecord(backup, original) || !await flushDurableRecord(backup)) throw new Error(t('mokina.business.draftFailed'));
+      localStorage.setItem(backup, original);
+      if (!await mutateDurableRecord(key, value => value === original ? null : undefined)) throw new Error('Draft changed');
+      if (!active.current) return;
+      raw.current = null; recoveryReadable.current = false; setUnreadable(null);
+      await inspectCurrent(true);
+    } catch (cause) { if (active.current) setError(cause instanceof Error ? cause.message : t('mokina.business.draftFailed')); }
+    finally { if (active.current) setBusy(false); }
+  }
   useEffect(() => {
     active.current = true;
     void (async () => {
       try {
-        if (!await flushDurableRecord(key)) throw new Error(t('mokina.business.draftFailed'));
-        const restored = readBusinessDraft(key); recoveryReadable.current = true; raw.current = localStorage.getItem(key);
-        if (restored && active.current) { current.current = restored; setDraft(restored); }
+        const restored = await restoreLocalDraft();
+        if (!active.current) return;
         const { result } = await request(endpoint(projectId, kind));
         if (!active.current) return;
         setSaved(result);
@@ -107,9 +145,11 @@ function DocumentEditor({ projectId, workspaceContext, scope, kind, disabled, on
     }
     finally { if (active.current) setBusy(false); }
   }
-  async function inspectCurrent() {
-    if (busy) return; setBusy(true); setError('');
+  async function inspectCurrent(afterBackup = false) {
+    if (busy && !afterBackup) return; setBusy(true); setError('');
     try {
+      if (!recoveryReadable.current) await restoreLocalDraft(true);
+      if (!active.current) return;
       const { result } = await request(endpoint(projectId, kind));
       if (!active.current) return;
       setSaved(result);
@@ -147,7 +187,7 @@ function DocumentEditor({ projectId, workspaceContext, scope, kind, disabled, on
   return <>
     {error ? <p role="alert">{error}</p> : null}{status ? <p role="status">{status}</p> : null}
     <div className={styles.editor}>
-    {!body ? <><p>{t('mokina.business.loading')}</p><Button disabled={busy} onClick={() => void inspectCurrent()}>{t('mokina.business.inspect')}</Button></> : <>
+    {!body ? <><p>{error ? t('mokina.business.draftFailed') : t('mokina.business.loading')}</p>{unreadable !== null ? <Button disabled={busy} onClick={() => void rebuildUnreadable()}>{t('mokina.business.rebuild')}</Button> : null}<Button disabled={busy} onClick={() => void inspectCurrent()}>{t('mokina.business.inspect')}</Button></> : <>
       <label>{t('mokina.business.title')}<Input aria-label={t('mokina.business.title')} maxLength={200} value={body.value.title} disabled={locked} onChange={event => update(body.kind === 'background' ? { ...body, value: { ...body.value, title: event.target.value } } : { ...body, value: { ...body.value, title: event.target.value } })} /></label>
       {body.kind === 'background' ? <>
         <p>{t('mokina.business.confirmHint')}</p>

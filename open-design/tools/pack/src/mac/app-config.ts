@@ -50,7 +50,9 @@ export async function writeLaunchPackagedConfig(config: ToolPackConfig, appPath:
   }
 
   // Launcher preparation must not create a stable user profile before native migration.
-  const launchConfigPath = join(config.roots.output.namespaceRoot, "launch", "open-design-config.json");
+  const launchConfigPath = config.namespace === MOKINA_LOCAL_PREVIEW_NAMESPACE
+    ? join(config.roots.output.namespaceRoot, "launch", "open-design-config.json")
+    : join(config.roots.runtime.namespaceRoot, "runtime", "open-design-config.json");
   await mkdir(dirname(launchConfigPath), { recursive: true });
   await writeFile(
     launchConfigPath,

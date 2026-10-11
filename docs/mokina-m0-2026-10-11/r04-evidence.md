@@ -35,7 +35,7 @@
 
 真实 Electron 源码探针证据：`output/mokina-m0-2026-10-11/r04/electron-bootstrap.json`。选择前 ready=false；对话框 ready 时目标仍不存在；真实数据库复制成功；下一 Electron 进程在 ready 前使用正式 session。探针的按钮选择由测试 harness 提供；完整工具 launcher 交接及原生点击仍由最终同包验收覆盖。
 
-`tools-pack` 的启动配置和 stable profile 初始日志移到工具拥有的 output/launch，避免工具先创建空目标。packaged 只经允许的 `@open-design/desktop/main` façade 组装；CLI 使用无需 Electron 的声明子入口。
+`tools-pack` 仅对稳定 namespace `mokina-local` 将启动配置和初始日志移到工具拥有的 output/launch，避免工具先创建空目标；其他 namespace 保留原有 runtime 路径。packaged 只经允许的 `@open-design/desktop/main` façade 组装；CLI 使用无需 Electron 的声明子入口。
 
 ## 验证
 

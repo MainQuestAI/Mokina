@@ -519,12 +519,16 @@ export async function readProjectFileVersion(
     throw codedError('version not found', 'ENOENT');
   }
   const content = await readFile(path.join(versionRootFor(projectsRoot, projectId, safeName), entry.contentPath), 'utf8');
+  const contentDigest = projectFileVersionContentDigest(content);
+  if (entry.contentDigest && entry.contentDigest !== contentDigest) {
+    throw codedError('saved version content digest mismatch', 'VERSION_CONTENT_MISMATCH');
+  }
   const frozenContent = entry.frozenContentPath
     ? await readFile(path.join(versionRootFor(projectsRoot, projectId, safeName), entry.frozenContentPath), 'utf8')
     : undefined;
   return {
     version: publicVersion(entry, state.currentVersionId),
-    quality: readVersionEvidence(content, frozenContent, entry.id, projectFileVersionContentDigest(content)),
+    quality: readVersionEvidence(content, frozenContent, entry.id, contentDigest),
     content,
     ...(frozenContent ? { frozenContent } : {}),
   };
@@ -634,9 +638,13 @@ async function createProjectFileVersionUnlocked(
   let inheritedEvidence: MokinaQualitySnapshot | undefined;
   if (evidenceBase) {
     const baseText = await readFile(path.join(root, evidenceBase.contentPath), 'utf8');
+    const baseDigest = projectFileVersionContentDigest(baseText);
+    if (evidenceBase.contentDigest && evidenceBase.contentDigest !== baseDigest) {
+      throw codedError('saved base version content digest mismatch', 'VERSION_CONTENT_MISMATCH');
+    }
     if (hasVersionEvidence(baseText)) {
       const baseFrozen = evidenceBase.frozenContentPath ? await readFile(path.join(root, evidenceBase.frozenContentPath), 'utf8') : undefined;
-      inheritedEvidence = readVersionEvidence(baseText, baseFrozen, evidenceBase.id, projectFileVersionContentDigest(baseText));
+      inheritedEvidence = readVersionEvidence(baseText, baseFrozen, evidenceBase.id, baseDigest);
     }
   }
   await writeFile(path.join(root, contentPath), text);

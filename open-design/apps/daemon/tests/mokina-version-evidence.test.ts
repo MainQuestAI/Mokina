@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { ensureProject, projectDir } from '../src/projects.js';
-import { createProjectFileVersion, readProjectFileVersion } from '../src/project-file-versions.js';
+import { createProjectFileVersion, readProjectFileVersion, getProjectFileVersionRootStats } from '../src/project-file-versions.js';
 const digest = (s: string) => createHash('sha256').update(s).digest('hex');
 const csv = 'record_id,period,amount,currency\na,Jan,100,CNY\na,Jan,100,CNY\nb,Feb,,CNY\nc,Feb,90,USD\nd,Jan,0,CNY';
 const html = (sha: string) => `<html><body><section id="budget" data-mokina-id="budget"><table data-mokina-budget data-budget-limit="1000" data-capacity-hours="5"><tr data-budget-item><td data-quantity>2</td><td data-unit-price>300</td><td data-amount>700</td><td data-hours>6</td></tr></table></section><script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id: 'sales', path: 'sales.csv', sha256: sha, kind: 'data', locator: 'rows 1-6', limitation: 'synthetic', sectionId: 'budget', csv: { id: 'record_id', amount: 'amount', unit: 'currency' } }] })}</script></body></html>`;
@@ -111,4 +111,19 @@ it('preserves decimal CSV amounts when a large amount would swallow a small one 
   const source = html(digest(data));
   const frozen = await freezeVersionEvidence(source, 'v', digest(source), async () => Buffer.from(data));
   expect(readVersionEvidence(source, frozen, 'v', digest(source)).calculations.map(c => c.result)).toContain('1000000000000.00000001');
+});
+
+
+it('rejects a damaged original even when corruption removes the evidence declaration', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'mokina-evidence-original-'));
+  try {
+    await ensureProject(root, 'p'); await writeFile(path.join(projectDir(root, 'p'), 'sales.csv'), csv);
+    const source = html(digest(csv));
+    const version = await createProjectFileVersion(root, 'p', 'plan.html', source);
+    const store = await getProjectFileVersionRootStats(root, 'p', 'plan.html');
+    const manifest = JSON.parse(await readFile(path.join(store.root, 'manifest.json'), 'utf8'));
+    await writeFile(path.join(store.root, manifest.entries[0].contentPath), '<p>damaged original without declaration</p>');
+    await expect(readProjectFileVersion(root, 'p', 'plan.html', version.id)).rejects.toMatchObject({ code: 'VERSION_CONTENT_MISMATCH' });
+    await expect(createProjectFileVersion(root, 'p', 'plan.html', source, { candidate: true, baseVersionId: version.id })).rejects.toMatchObject({ code: 'VERSION_CONTENT_MISMATCH' });
+  } finally { await rm(root, { recursive: true, force: true }); }
 });

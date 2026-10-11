@@ -10,6 +10,7 @@
 import { constants as fsConstants, createReadStream } from 'node:fs';
 import { link, lstat, mkdir, readdir, readFile, realpath, rename, rm, stat, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 import { Readable } from 'node:stream';
 import JSZip from 'jszip';
 import {
@@ -850,7 +851,7 @@ export async function writeProjectFile(
   projectId,
   name,
   body,
-  { overwrite = true, artifactManifest = null } = {},
+  { overwrite = true, artifactManifest = null, atomic = false } = {},
   metadata?,
 ) {
   assertVisibleForImportedProject(name, metadata);
@@ -923,7 +924,11 @@ export async function writeProjectFile(
       }
     }
   }
-  await writeFile(target, body);
+  if (atomic) {
+    const temporary = path.join(path.dirname(target), `.mokina-write-${randomUUID()}.tmp`);
+    try { await writeFile(temporary, body, { flag: 'wx' }); await rename(temporary, target); }
+    finally { await rm(temporary, { force: true }); }
+  } else await writeFile(target, body);
   await projectFileWriteTestHooks.afterCommit?.({ safeName, target, body });
   if (validatedManifest) {
     const manifestFileName = artifactManifestNameFor(safeName);

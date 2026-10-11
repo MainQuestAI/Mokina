@@ -1,3 +1,4 @@
+import { registerMokinaBusinessRoutes } from './mokina-business.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { rm } from 'node:fs/promises';
 import path from 'node:path';
@@ -7268,6 +7269,8 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
       );
     }
   });
+
+  registerMokinaBusinessRoutes(app, { projectsRoot: PROJECTS_DIR, getProject: id => getProject(db, id), authorizeProjectRequest });
 
   app.get('/api/projects/:id/files/:name/material', async (req, res) => {
     try {

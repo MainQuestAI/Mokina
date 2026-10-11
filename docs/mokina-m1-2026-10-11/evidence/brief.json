@@ -1,0 +1,61 @@
+{
+  "result": {
+    "document": {
+      "schema": "mokina.business.v1",
+      "operationId": "brief1",
+      "requestDigest": "06f7f9eb7d4feb5b8f4348669cce37438a4136584fc8f1cb41ebd05c1aa1de96",
+      "body": {
+        "kind": "brief",
+        "value": {
+          "title": "线上获客内部评审 Brief",
+          "goal": "制作内部营销方案预览。“春日第一席新茶”只是待评审建议，未获得业务确认。",
+          "audience": "内部营销负责人，非面向顾客正式发布",
+          "deliverables": [
+            {
+              "id": "plan",
+              "title": "营销方案 plan.html"
+            },
+            {
+              "id": "landing",
+              "title": "对外活动页 landing.html"
+            }
+          ],
+          "kpi": "统计同意接收消息的新增线索，不承诺转化或收益",
+          "budget": "费用上限 30000 元人民币，包含制作与运营",
+          "period": "",
+          "constraints": "禁止线下活动、门店品鉴、到店预约和线下接待；不得换名称规避。不得编造产品功效、报价或已批准优惠。",
+          "missing": "具体周期、可用人员、产能、供应商报价与产品卖点待确认。预算只能作为待核实的额度建议。"
+        },
+        "background": {
+          "projectId": "m1-real-marketing",
+          "versionId": "8b4a9339-e088-4601-89ee-34c4e718d0c8",
+          "revision": "6cb85ec4a9c9fcf638baa480436ff81211658b8f80465a92f7e9ebedfa882d33",
+          "factIds": [
+            "online"
+          ]
+        }
+      },
+      "backgroundSnapshot": {
+        "projectId": "m1-real-marketing",
+        "versionId": "8b4a9339-e088-4601-89ee-34c4e718d0c8",
+        "revision": "6cb85ec4a9c9fcf638baa480436ff81211658b8f80465a92f7e9ebedfa882d33",
+        "factIds": [
+          "online"
+        ],
+        "title": "合成茶品牌",
+        "facts": [
+          {
+            "id": "online",
+            "text": "品牌仅在线上销售。",
+            "source": "合成验收案例中的用户明确确认",
+            "scope": "本次茶品牌",
+            "status": "confirmed"
+          }
+        ]
+      }
+    },
+    "revision": "488a10f9e7352e4321e0c8e5d698425de82ebc4d27844b34590b14228db6070c",
+    "fileName": "task-brief.html",
+    "versionId": "f595c73f-569d-4fc3-8cd5-d5943507158c"
+  }
+}

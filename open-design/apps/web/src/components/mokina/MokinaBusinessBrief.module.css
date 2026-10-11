@@ -1,0 +1,11 @@
+.panel { border: 1px solid var(--border, #ddd); border-radius: 10px; padding: 8px 12px; margin: 6px 0; font-size: 13px; min-width: 0; }
+.panel summary { cursor: pointer; font-weight: 600; }
+.panel p { margin: 8px 0; overflow-wrap: anywhere; }
+.editor { display: grid; gap: 10px; max-height: min(50vh, 480px); overflow: auto; overscroll-behavior: contain; padding: 6px 3px; }
+.editor label { display: grid; gap: 4px; min-width: 0; }
+.editor textarea, .editor input:not([type=checkbox]), .editor select { width: 100%; min-width: 0; box-sizing: border-box; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.fact { border: 1px solid var(--border, #ddd); border-radius: 8px; padding: 10px; min-width: 0; display: grid; gap: 8px; }
+.editor .check { display: flex; align-items: flex-start; gap: 8px; overflow-wrap: anywhere; }
+.check input { flex: 0 0 auto; margin-top: 3px; }
+.comparison { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }

@@ -1,0 +1,146 @@
+{
+  "runId": "f44cb47f-cbe9-491e-a488-e95dd71c8e95",
+  "status": "succeeded",
+  "elapsedMs": 187863,
+  "artifact": "plan.html",
+  "sha256": "8169fee7ea0b4ba62ec609f88545ffb3873298aa27485ed5a5eee1d304e143d7",
+  "budgetRowsRMB": [
+    {
+      "label": "内容制作",
+      "amount": 6000,
+      "unverifiedBasis": "素材数量、供应商报价"
+    },
+    {
+      "label": "线上投放",
+      "amount": 12000,
+      "unverifiedBasis": "渠道报价、试投成本"
+    },
+    {
+      "label": "线上运营",
+      "amount": 8000,
+      "unverifiedBasis": "人员工时、工具费用"
+    },
+    {
+      "label": "预留额度",
+      "amount": 4000,
+      "unverifiedBasis": "变更明细，另行审批"
+    }
+  ],
+  "independentSumRMB": 30000,
+  "limitRMB": 30000,
+  "checks": {
+    "Q01": "PASS: offline actions explicitly prohibited in actions and copy; all allocation rows describe online work or contingency",
+    "Q05": "PASS: suggested theme is pending review; preview does not confirm business approval",
+    "missingConditions": "PASS: staff, capacity, quotes, period and product evidence remain unresolved",
+    "selectedScope": "PASS: only plan.html added, no landing.html"
+  },
+  "viewports": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "horizontalOverflow": 0
+    },
+    {
+      "viewport": {
+        "width": 900,
+        "height": 600
+      },
+      "horizontalOverflow": 0
+    }
+  ],
+  "externalRequests": [],
+  "fileMetadata": [
+    {
+      "name": "plan.html",
+      "path": "plan.html",
+      "localPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/.tmp/mokina-m1-real-marketing/data/projects/m1-real-marketing/plan.html",
+      "type": "file",
+      "size": 10095,
+      "mtime": 1791703491333.9749,
+      "kind": "html",
+      "mime": "text/html; charset=utf-8",
+      "artifactKind": "html",
+      "artifactManifest": {
+        "version": 1,
+        "kind": "html",
+        "title": "plan.html",
+        "entry": "plan.html",
+        "renderer": "html",
+        "status": "complete",
+        "exports": [
+          "html",
+          "pdf",
+          "zip"
+        ],
+        "createdAt": "2026-10-11T07:24:51.333Z",
+        "updatedAt": "2026-10-11T07:24:51.333Z",
+        "metadata": {
+          "inferred": true,
+          "reconciled": true
+        }
+      }
+    },
+    {
+      "name": "task-brief.html",
+      "path": "task-brief.html",
+      "localPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/.tmp/mokina-m1-real-marketing/data/projects/m1-real-marketing/task-brief.html",
+      "type": "file",
+      "size": 3647,
+      "mtime": 1791703359106.9207,
+      "kind": "html",
+      "mime": "text/html; charset=utf-8",
+      "artifactKind": "html",
+      "artifactManifest": {
+        "version": 1,
+        "kind": "html",
+        "title": "task-brief.html",
+        "entry": "task-brief.html",
+        "renderer": "html",
+        "status": "complete",
+        "exports": [
+          "html",
+          "pdf",
+          "zip"
+        ],
+        "createdAt": "2026-10-11T07:22:39.106Z",
+        "updatedAt": "2026-10-11T07:22:39.106Z",
+        "metadata": {
+          "inferred": true,
+          "reconciled": true
+        }
+      }
+    },
+    {
+      "name": "business-background.html",
+      "path": "business-background.html",
+      "localPath": "/Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/.tmp/mokina-m1-real-marketing/data/projects/m1-real-marketing/business-background.html",
+      "type": "file",
+      "size": 1601,
+      "mtime": 1791703359093.2642,
+      "kind": "html",
+      "mime": "text/html; charset=utf-8",
+      "artifactKind": "html",
+      "artifactManifest": {
+        "version": 1,
+        "kind": "html",
+        "title": "business-background.html",
+        "entry": "business-background.html",
+        "renderer": "html",
+        "status": "complete",
+        "exports": [
+          "html",
+          "pdf",
+          "zip"
+        ],
+        "createdAt": "2026-10-11T07:22:39.093Z",
+        "updatedAt": "2026-10-11T07:22:39.093Z",
+        "metadata": {
+          "inferred": true,
+          "reconciled": true
+        }
+      }
+    }
+  ]
+}

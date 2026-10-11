@@ -120,3 +120,19 @@ it('reports a rejected exact fragment selection instead of printing a successful
   expect(result.stderr).toContain('INVALID_SELECTION');
   expect(result.stdout).not.toContain('"snapshot"');
 });
+
+it('exposes the same business save and fixed-version read contracts through the CLI', async () => {
+  const file = join(directory, 'brief-request.json');
+  const request = { operationId: 'business-save', expectedRevision: null, body: { kind: 'brief', value: {
+    title: 'Brief', goal: '线上获客', audience: '', deliverables: [{ id: 'plan', title: '营销方案' }],
+    kpi: '', budget: '3万元', period: '', constraints: '禁止线下活动', missing: '报价待确认',
+  }, background: null } };
+  await writeFile(file, JSON.stringify(request));
+  const saved = await invoke(['mokina', 'business', 'save', '--project', 'cli-project', '--kind', 'brief', '--prompt-file', file, '--json']);
+  expect(saved.code, saved.stderr).toBe(0);
+  expect(JSON.parse(requests[0]!.body)).toEqual(request);
+  expect(requests[0]!.url).toBe('/api/projects/cli-project/mokina/business/brief');
+  const read = await invoke(['mokina', 'business', 'get', '--project', 'cli-project', '--kind', 'brief', '--version', 'version1', '--json']);
+  expect(read.code, read.stderr).toBe(0);
+  expect(requests[1]!.url).toBe('/api/projects/cli-project/mokina/business/brief?versionId=version1');
+});

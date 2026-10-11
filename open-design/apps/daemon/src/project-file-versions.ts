@@ -69,6 +69,7 @@ export interface CreateProjectFileVersionOptions {
 
 export interface ProjectFileVersionLockContext {
   safeName: string;
+  hasOperation: (operationId: string) => Promise<boolean>;
   createVersion: (content: string, options?: CreateProjectFileVersionOptions) => Promise<ProjectFileVersion>;
   ensureCurrentVersion: (content: string, options?: CreateProjectFileVersionOptions) => Promise<ProjectFileVersion | null>;
   matchVersionContent: (content: string, versionId?: string) => Promise<ProjectFileVersionContentMatch>;
@@ -175,6 +176,7 @@ export async function withProjectFileVersionLock<T>(
   return withVersionFileLock(projectsRoot, projectId, safeName, () =>
     fn({
       safeName,
+      hasOperation: async operationId => (await readVersionManifestState(projectsRoot, projectId, safeName)).entries.some(entry => entry.operationId === operationId),
       createVersion: (content, options = {}) =>
         createProjectFileVersionUnlocked(projectsRoot, projectId, safeName, content, options, metadata),
       ensureCurrentVersion: (content, options = {}) =>

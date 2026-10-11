@@ -1,3 +1,4 @@
+import { MokinaBusinessBrief } from './mokina/MokinaBusinessBrief';
 import { MokinaFixedSource } from './mokina/MokinaFixedSource';
 import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
 import type { RecoveryActionBlockReason } from '../runtime/chat/recovery-gating';
@@ -211,6 +212,7 @@ export async function settleManualEditFiles(
 }
 
 interface Props {
+  onPrepareBusinessBrief?: (prompt: string) => void;
   projectId: string;
   projectKind: TrackingProjectKind;
   projectName?: string;
@@ -1465,6 +1467,7 @@ function MokinaMaterialPicker({ projectName, projectId, files }: {
 }
 
 export function FileWorkspace({
+  onPrepareBusinessBrief,
   projectId,
   projectKind,
   projectName,
@@ -4441,6 +4444,8 @@ export function FileWorkspace({
       </div> : null}
       {!viewerOnly && !designSystemProject && !initialMaterializationPending ? (
         <div className={MOKINA_LOCAL_EDITION ? 'mokina-materials-view' : undefined} hidden={MOKINA_LOCAL_EDITION && mokinaWorkspaceView !== 'materials'}>
+          {MOKINA_LOCAL_EDITION && onPrepareBusinessBrief ? <MokinaBusinessBrief projectId={projectId} conversationId={conversationId ?? activeConversationId ?? 'draft:first'}
+            workspaceContext={workspaceContext} onPrepare={prompt => { selectMokinaWorkspaceView('reading'); onPrepareBusinessBrief(prompt); }} /> : null}
           <MokinaContextPanel expanded={MOKINA_LOCAL_EDITION} projectId={projectId} files={files} projectDesignSystemId={projectDesignSystemId ?? null} />
           <MokinaMaterialPicker projectId={projectId} projectName={projectName || '市场工作'} files={files} />
         </div>

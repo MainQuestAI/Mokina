@@ -2150,7 +2150,9 @@ function surfaceFetchError(err, daemonUrl) {
 }
 
 function printMokinaHelp() {
-  console.log(`od mokina context prepare --project <id> --snapshot <id> (--selections <json|file|->) [--excluded <json|file>] [--json]
+  console.log(`od mokina business get --project <id> --kind <background|brief> [--version <id>] [--json]
+od mokina business save --project <id> --kind <background|brief> --prompt-file <request.json|-> [--json]
+od mokina context prepare --project <id> --snapshot <id> (--selections <json|file|->) [--excluded <json|file>] [--json]
 od mokina context get     --project <id> --snapshot <id> [--json]
 od mokina recovery export --project <id> --out <path.zip> [--operation-id <id>] [--allow-partial] [--json]
 od mokina recovery import --file <path.zip> --target-project <new-id> [--name <项目名>] [--operation-id <id>] [--json]`);
@@ -2158,11 +2160,15 @@ od mokina recovery import --file <path.zip> --target-project <new-id> [--name <�
 
 async function runMokina(args) {
   const [sub, ...rest] = args;
-  if ((sub !== 'context' && sub !== 'recovery') || args.includes('--help') || args.includes('-h') || sub == null) {
+  if ((sub !== 'context' && sub !== 'recovery' && sub !== 'business') || args.includes('--help') || args.includes('-h') || sub == null) {
     printMokinaHelp();
     process.exit(sub == null || sub === 'help' || args.includes('--help') || args.includes('-h') ? 0 : 2);
   }
   const [action, ...actionArgs] = rest;
+  if (sub === 'business') {
+    const { runMokinaBusiness } = await import('./mokina/business-cli.js');
+    return runMokinaBusiness(action, actionArgs, { parseFlags, cliDaemonUrl, safeReadJsonFile });
+  }
   if (sub === 'context' && action === 'prepare') return runMokinaContextPrepare(actionArgs);
   if (sub === 'context' && action === 'get') return runMokinaContextGet(actionArgs);
   if (action === 'export') return runMokinaRecoveryExport(actionArgs);

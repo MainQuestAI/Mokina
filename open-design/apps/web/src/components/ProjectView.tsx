@@ -14569,6 +14569,9 @@ export function ProjectView({
           </div>
         ) : null}
         <FileWorkspace
+          onPrepareBusinessBrief={prompt => setSendRecoveryRequest({ id: `brief:${crypto.randomUUID()}`, snapshot: {
+            prompt, extras: { attachments: [], commentAttachments: [], quotes: [], context: { skillIds: [], mcpServerIds: [], connectorIds: [], workspaceItems: [] } },
+          } })}
           projectId={project.id}
           projectName={currentProject.name}
           projectDesignSystemId={projectDesignSystemId}

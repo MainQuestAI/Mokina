@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rename, rm, stat, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, mkdtemp, readFile, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import JSZip from 'jszip';
@@ -8,6 +8,10 @@ import {
   MOKINA_RECOVERY_LIMITS,
   MOKINA_RECOVERY_MANIFEST_FILE,
   MOKINA_RECOVERY_MANIFEST_SCHEMA,
+  MOKINA_RECOVERY_LEGACY_SCHEMA,
+  readMokinaRecoveryIntegrity,
+  mokinaRecoveryWarnings,
+  type MokinaRecoveryIntegrity,
   type MokinaRecoveryManifest,
   type MokinaRecoveryManifestContext,
   type MokinaRecoveryManifestFile,
@@ -15,7 +19,9 @@ import {
 } from '@open-design/contracts';
 
 import { unwrapMokinaSnapshot, validateMokinaSnapshot } from './context-store.js';
-import { IGNORED_PROJECT_DIR_NAMES } from '../project-ignored-dirs.js';
+import { isSafeRecoveryPath, recoveryVersionCycles } from './recovery-export.js';
+export { buildProjectRecoveryPackage, isSafeRecoveryPath, RecoveryIncompleteError } from './recovery-export.js';
+export type { BuildRecoveryPackageResult } from './recovery-export.js';
 import { isSafeId, projectDir } from '../projects.js';
 
 /**
@@ -32,7 +38,6 @@ import { isSafeId, projectDir } from '../projects.js';
  *   project it does not own.
  */
 
-const MANAGED_DIR_NAMES = new Set(['.file-versions', '.mokina']);
 const VERSION_ID_RE = /^[A-Za-z0-9_-]+$/u;
 const SHA256_RE = /^[a-f0-9]{64}$/u;
 const IMPORT_COMMIT_FILE = '.mokina-recovery-import.json';
@@ -53,259 +58,8 @@ function sha256(buffer: Buffer): string {
   return createHash('sha256').update(buffer).digest('hex');
 }
 
-function toPosix(relative: string): string {
-  return relative.split(path.sep).join('/');
-}
-
-export function isSafeRecoveryPath(candidate: unknown): candidate is string {
-  if (typeof candidate !== 'string' || candidate.length === 0 || candidate.length > 400) return false;
-  if (candidate.startsWith('/') || candidate.includes('\\')) return false;
-  if (/^[A-Za-z]:/.test(candidate)) return false;
-  const segments = candidate.split('/');
-  return segments.every((segment) => segment.length > 0 && segment !== '.' && segment !== '..');
-}
-
-type CollectedFile = { path: string; absolutePath: string; kind: MokinaRecoveryManifestFile['kind'] };
-
-async function collectProjectFiles(projectRoot: string): Promise<CollectedFile[]> {
-  const collected: CollectedFile[] = [];
-  const walk = async (relativeDir: string): Promise<void> => {
-    const absoluteDir = path.join(projectRoot, relativeDir);
-    const entries = await readdir(absoluteDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (relativeDir === '' && entry.name === IMPORT_COMMIT_FILE) continue;
-      const relative = relativeDir ? `${relativeDir}/${entry.name}` : entry.name;
-      const absolute = path.join(projectRoot, relative);
-      if (entry.isSymbolicLink()) continue;
-      if (entry.isDirectory()) {
-        if (relativeDir === '' && (MANAGED_DIR_NAMES.has(entry.name) || IGNORED_PROJECT_DIR_NAMES.has(entry.name))) continue;
-        await walk(relative);
-        continue;
-      }
-      if (!entry.isFile()) continue;
-      collected.push({ path: toPosix(relative), absolutePath: absolute, kind: 'original' });
-    }
-  };
-  await walk('');
-  return collected;
-}
-
-async function collectVersionFiles(projectRoot: string): Promise<{
-  files: CollectedFile[];
-  versions: MokinaRecoveryManifestVersion[];
-  warnings: string[];
-}> {
-  const versionRoot = path.join(projectRoot, MOKINA_RECOVERY_VERSION_ROOT);
-  const files: CollectedFile[] = [];
-  const versions: MokinaRecoveryManifestVersion[] = [];
-  const warnings: string[] = [];
-  let dirs: string[];
-  try {
-    dirs = await readdir(versionRoot);
-  } catch {
-    return { files, versions, warnings };
-  }
-  for (const dir of dirs) {
-    const manifestPath = path.join(versionRoot, dir, 'manifest.json');
-    let state: unknown;
-    try {
-      state = JSON.parse(await readFile(manifestPath, 'utf8'));
-    } catch {
-      warnings.push(`版本清单无法读取，已跳过：${dir}`);
-      continue;
-    }
-    const record = state as { entries?: unknown; currentVersionId?: unknown };
-    if (!Array.isArray(record.entries)) {
-      warnings.push(`版本清单结构不符，已跳过：${dir}`);
-      continue;
-    }
-    const currentVersionId = typeof record.currentVersionId === 'string' ? record.currentVersionId : null;
-    for (const rawEntry of record.entries) {
-      const entry = rawEntry as Record<string, unknown>;
-      if (
-        typeof entry.id !== 'string' || typeof entry.fileName !== 'string'
-        || typeof entry.contentPath !== 'string' || typeof entry.version !== 'number'
-      ) {
-        warnings.push(`版本条目缺少必要字段，已跳过：${dir}`);
-        continue;
-      }
-      const contentMembers: Array<{ relative: string; kind: MokinaRecoveryManifestFile['kind'] }> = [
-        { relative: `${MOKINA_RECOVERY_VERSION_ROOT}/${dir}/${entry.contentPath}`, kind: 'version' },
-      ];
-      if (typeof entry.frozenContentPath === 'string') {
-        contentMembers.push({
-          relative: `${MOKINA_RECOVERY_VERSION_ROOT}/${dir}/${entry.frozenContentPath}`,
-          kind: 'frozen-version',
-        });
-      }
-      const contentId = typeof entry.contentDigest === 'string' && SHA256_RE.test(entry.contentDigest)
-        ? entry.contentDigest
-        : null;
-      const absoluteContentPath = path.join(projectRoot, contentMembers[0]!.relative);
-      const contentBuffer = await readFile(absoluteContentPath).catch(() => null);
-      if (contentBuffer == null) {
-        warnings.push(`版本内容缺失，已跳过：${entry.fileName} v${entry.version}`);
-        continue;
-      }
-      const digest = contentId ?? sha256(contentBuffer);
-      if (contentId != null && sha256(contentBuffer) !== contentId) {
-        warnings.push(`版本内容摘要不符，已跳过：${entry.fileName} v${entry.version}`);
-        continue;
-      }
-      for (const member of contentMembers) {
-        files.push({
-          path: member.relative,
-          absolutePath: path.join(projectRoot, member.relative),
-          kind: member.kind,
-        });
-      }
-      versions.push({
-        entry: entry.fileName,
-        originalVersionId: entry.id,
-        versionNumber: entry.version,
-        current: currentVersionId === entry.id,
-        candidate: entry.candidate === true,
-        contentPath: contentMembers[0]!.relative,
-        contentDigest: digest,
-        ...(typeof entry.frozenContentPath === 'string'
-          ? { frozenContentPath: contentMembers[1]!.relative }
-          : {}),
-        ...(typeof entry.parentVersionId === 'string' ? { parentOriginalVersionId: entry.parentVersionId } : {}),
-        ...(typeof entry.baseVersionId === 'string' ? { baseOriginalVersionId: entry.baseVersionId } : {}),
-      });
-    }
-  }
-  return { files, versions, warnings };
-}
-
-async function collectContextFiles(projectRoot: string): Promise<{
-  files: CollectedFile[];
-  contexts: MokinaRecoveryManifestContext[];
-  warnings: string[];
-}> {
-  const contextRoot = path.join(projectRoot, MOKINA_RECOVERY_CONTEXT_ROOT);
-  const files: CollectedFile[] = [];
-  const contexts: MokinaRecoveryManifestContext[] = [];
-  const warnings: string[] = [];
-
-  const contextsDir = path.join(contextRoot, 'contexts');
-  let names: string[] = [];
-  try {
-    names = (await readdir(contextsDir)).filter((name) => name.endsWith('.json'));
-  } catch {
-    names = [];
-  }
-  for (const name of names) {
-    const absolute = path.join(contextsDir, name);
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(await readFile(absolute, 'utf8'));
-    } catch {
-      warnings.push(`快照记录损坏，已跳过：${name}`);
-      continue;
-    }
-    const record = unwrapMokinaSnapshot(parsed);
-    if (!record) {
-      warnings.push(`快照记录结构不符，已跳过：${name}`);
-      continue;
-    }
-    files.push({
-      path: `${MOKINA_RECOVERY_CONTEXT_ROOT}/contexts/${name}`,
-      absolutePath: absolute,
-      kind: 'context-snapshot',
-    });
-    // Frozen asset bytes referenced by the snapshot travel with the package.
-    if (Array.isArray(record.items)) {
-      for (const item of record.items) {
-        const blobId = (item as { blobId?: unknown }).blobId;
-        if (typeof blobId !== 'string' || !SHA256_RE.test(blobId)) continue;
-        const blobAbsolute = path.join(contextRoot, 'blobs', blobId);
-        files.push({
-          path: `${MOKINA_RECOVERY_CONTEXT_ROOT}/blobs/${blobId}`,
-          absolutePath: blobAbsolute,
-          kind: 'asset',
-        });
-      }
-    }
-    contexts.push({
-      originalSnapshotId: record.snapshotId,
-      payloadPath: `${MOKINA_RECOVERY_CONTEXT_ROOT}/contexts/${name}`,
-      fingerprint: record.fingerprint,
-    });
-  }
-  return { files, contexts, warnings };
-}
-
-export type BuildRecoveryPackageResult = {
-  buffer: Buffer;
-  manifest: MokinaRecoveryManifest;
-  baseName: string;
-  warnings: string[];
-};
-
-export async function buildProjectRecoveryPackage(input: {
-  projectsRoot: string;
-  projectId: string;
-  projectName: string;
-  exportId: string;
-  now?: Date;
-}): Promise<BuildRecoveryPackageResult> {
-  const projectRoot = path.join(input.projectsRoot, input.projectId);
-  const originals = await collectProjectFiles(projectRoot);
-  const versioned = await collectVersionFiles(projectRoot);
-  const contexts = await collectContextFiles(projectRoot);
-  const warnings = [...versioned.warnings, ...contexts.warnings];
-
-  const all = [...originals, ...versioned.files, ...contexts.files];
-  if (all.length > MOKINA_RECOVERY_LIMITS.maxArchiveEntries) {
-    throw new Error('项目文件数量超过恢复包上限。');
-  }
-
-  const zip = new JSZip();
-  const manifestFiles: MokinaRecoveryManifestFile[] = [];
-  let totalBytes = 0;
-  for (const member of all) {
-    if (!isSafeRecoveryPath(member.path)) {
-      warnings.push(`跳过不安全的路径：${member.path}`);
-      continue;
-    }
-    let buffer: Buffer;
-    try {
-      buffer = await readFile(member.absolutePath);
-    } catch {
-      throw new Error(`恢复包捕获期间文件不可读：${member.path}`);
-    }
-    const info = await stat(member.absolutePath).catch(() => null);
-    if (info != null && info.size !== buffer.length) {
-      throw new Error(`恢复包捕获期间文件发生变化：${member.path}`);
-    }
-    if (buffer.length > MOKINA_RECOVERY_LIMITS.maxEntryBytes) {
-      throw new Error(`单个文件超过恢复包上限：${member.path}`);
-    }
-    totalBytes += buffer.length;
-    if (totalBytes > MOKINA_RECOVERY_LIMITS.maxUncompressedBytes) {
-      throw new Error('恢复包解压总量超过上限。');
-    }
-    zip.file(member.path, buffer);
-    manifestFiles.push({ path: member.path, kind: member.kind, byteLength: buffer.length, sha256: sha256(buffer) });
-  }
-
-  const manifest: MokinaRecoveryManifest = {
-    schema: MOKINA_RECOVERY_MANIFEST_SCHEMA,
-    exportId: input.exportId,
-    createdAt: (input.now ?? new Date()).toISOString(),
-    sourceProject: { id: input.projectId, name: input.projectName },
-    files: manifestFiles,
-    versions: versioned.versions,
-    contexts: contexts.contexts,
-  };
-  zip.file(MOKINA_RECOVERY_MANIFEST_FILE, JSON.stringify(manifest, null, 2));
-  const buffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
-  return { buffer, manifest, baseName: `${input.projectName || 'project'}-recovery`, warnings };
-}
-
 export type ImportRecoveryResult =
-  | { ok: true; projectId: string; warnings: string[]; manifest: MokinaRecoveryManifest }
+  | { ok: true; projectId: string; warnings: string[]; integrity: MokinaRecoveryIntegrity; manifest: MokinaRecoveryManifest }
   | { ok: false; status: number; code: string; message: string };
 
 function fail(status: number, code: string, message: string): ImportRecoveryResult {
@@ -315,13 +69,15 @@ function fail(status: number, code: string, message: string): ImportRecoveryResu
 export function parseRecoveryManifest(value: unknown): MokinaRecoveryManifest | null {
   if (value == null || typeof value !== 'object' || Array.isArray(value)) return null;
   const record = value as Record<string, unknown>;
-  if (record.schema !== MOKINA_RECOVERY_MANIFEST_SCHEMA) return null;
+  const integrity = readMokinaRecoveryIntegrity(record);
+  if (!integrity) return null;
   if (typeof record.exportId !== 'string' || typeof record.createdAt !== 'string') return null;
   const source = record.sourceProject as { id?: unknown; name?: unknown } | undefined;
   if (source == null || typeof source.id !== 'string' || typeof source.name !== 'string') return null;
   if (!Array.isArray(record.files) || !Array.isArray(record.versions) || !Array.isArray(record.contexts)) return null;
   const files: MokinaRecoveryManifestFile[] = [];
   for (const raw of record.files) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
     const file = raw as Record<string, unknown>;
     if (
       !isSafeRecoveryPath(file.path)
@@ -340,11 +96,12 @@ export function parseRecoveryManifest(value: unknown): MokinaRecoveryManifest | 
   }
   const versions: MokinaRecoveryManifestVersion[] = [];
   for (const raw of record.versions) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
     const version = raw as Record<string, unknown>;
     if (
       typeof version.entry !== 'string' || !isSafeRecoveryPath(version.entry)
       || typeof version.originalVersionId !== 'string' || !VERSION_ID_RE.test(version.originalVersionId)
-      || typeof version.versionNumber !== 'number' || !Number.isInteger(version.versionNumber)
+      || typeof version.versionNumber !== 'number' || !Number.isSafeInteger(version.versionNumber) || version.versionNumber < 1
       || typeof version.current !== 'boolean' || typeof version.candidate !== 'boolean'
       || typeof version.contentPath !== 'string' || !isSafeRecoveryPath(version.contentPath)
       || typeof version.contentDigest !== 'string' || !SHA256_RE.test(version.contentDigest)
@@ -354,6 +111,8 @@ export function parseRecoveryManifest(value: unknown): MokinaRecoveryManifest | 
     if (version.frozenContentPath != null && (typeof version.frozenContentPath !== 'string' || !isSafeRecoveryPath(version.frozenContentPath))) {
       return null;
     }
+    if (['parentOriginalVersionId', 'baseOriginalVersionId'].some(key => version[key] !== undefined
+      && (typeof version[key] !== 'string' || !VERSION_ID_RE.test(version[key] as string)))) return null;
     versions.push({
       entry: version.entry,
       originalVersionId: version.originalVersionId,
@@ -369,6 +128,7 @@ export function parseRecoveryManifest(value: unknown): MokinaRecoveryManifest | 
   }
   const contexts: MokinaRecoveryManifestContext[] = [];
   for (const raw of record.contexts) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
     const context = raw as Record<string, unknown>;
     if (
       typeof context.originalSnapshotId !== 'string'
@@ -383,8 +143,14 @@ export function parseRecoveryManifest(value: unknown): MokinaRecoveryManifest | 
       fingerprint: context.fingerprint,
     });
   }
+  if (new Set(files.map(file => file.path)).size !== files.length
+    || new Set(versions.map(version => `${version.entry}:${version.originalVersionId}`)).size !== versions.length
+    || new Set(versions.map(version => `${version.entry}:${version.versionNumber}`)).size !== versions.length
+    || new Set(contexts.map(context => context.originalSnapshotId)).size !== contexts.length) return null;
   return {
-    schema: MOKINA_RECOVERY_MANIFEST_SCHEMA,
+    ...(record.schema === MOKINA_RECOVERY_LEGACY_SCHEMA
+      ? { schema: MOKINA_RECOVERY_LEGACY_SCHEMA }
+      : { schema: MOKINA_RECOVERY_MANIFEST_SCHEMA, integrity: integrity as MokinaRecoveryIntegrity & { status: 'complete' | 'partial' } }),
     exportId: record.exportId,
     createdAt: record.createdAt,
     sourceProject: { id: source.id, name: source.name },
@@ -474,7 +240,10 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
     const owner = existing.metadata?.mokinaOperationId;
     if (owner === input.operationId && existing.metadata?.mokinaArchiveDigest === archiveDigest
       && target?.isDirectory() && !target.isSymbolicLink()) {
-      return { ok: true, projectId: input.targetProjectId, warnings: [], manifest: existing.metadata.mokinaRecoveryManifest as MokinaRecoveryManifest };
+      const manifest = parseRecoveryManifest(existing.metadata.mokinaRecoveryManifest);
+      if (!manifest) return fail(409, 'MOKINA_OPERATION_CONFLICT', '已导入项目的恢复清单不可读，不能确认本次恢复结果。');
+      const integrity = readMokinaRecoveryIntegrity(manifest)!;
+      return { ok: true, projectId: input.targetProjectId, warnings: recoveryWarnings(manifest), integrity, manifest };
     }
     return fail(409, 'MOKINA_OPERATION_CONFLICT', '目标项目 ID 已被其他项目占用。');
   }
@@ -541,11 +310,15 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
   }
 
   // Version graph invariants.
-  const versionIds = new Set(manifest.versions.map((version) => version.originalVersionId));
+  const versionIds = new Set(manifest.versions.map((version) => `${version.entry}:${version.originalVersionId}`));
+  if (recoveryVersionCycles(manifest.versions).size) return fail(400, 'BAD_REQUEST', '恢复包中的版本关系存在循环。');
   const currentCounts = new Map<string, number>();
   for (const version of manifest.versions) {
     if (!byPath.has(version.contentPath)) {
       return fail(400, 'BAD_REQUEST', `版本内容未包含在恢复包中：${version.entry}`);
+    }
+    if (sha256(buffers.get(version.contentPath)!) !== version.contentDigest) {
+      return fail(400, 'BAD_REQUEST', `版本内容摘要校验失败：${version.entry}`);
     }
     if (version.frozenContentPath != null && !byPath.has(version.frozenContentPath)) {
       return fail(400, 'BAD_REQUEST', `冻结版本内容未包含在恢复包中：${version.entry}`);
@@ -554,7 +327,7 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
       return fail(400, 'BAD_REQUEST', `候选版本不能同时是当前版本：${version.entry}`);
     }
     for (const relation of [version.parentOriginalVersionId, version.baseOriginalVersionId]) {
-      if (relation != null && !versionIds.has(relation)) {
+      if (relation != null && !versionIds.has(`${version.entry}:${relation}`)) {
         return fail(400, 'BAD_REQUEST', `版本关系引用了不存在的版本：${version.entry}`);
       }
     }
@@ -590,7 +363,8 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
 
   }
 
-  const warnings: string[] = [];
+  const integrity = readMokinaRecoveryIntegrity(manifest)!;
+  const warnings = recoveryWarnings(manifest);
   let staging: string | undefined;
   try {
     // Rebuild the version store faithfully: same layout, id mapping preserved,
@@ -652,10 +426,7 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
   } finally {
     if (staging) await rm(staging, { force: true, recursive: true });
   }
-  if (manifest.contexts.length === 0 && manifest.versions.length === 0) {
-    warnings.push('恢复包不含版本或快照，仅恢复原件。');
-  }
-  return { ok: true, projectId: input.targetProjectId, warnings, manifest };
+  return { ok: true, projectId: input.targetProjectId, warnings, integrity, manifest };
 }
 
 function groupByEntry(versions: MokinaRecoveryManifestVersion[]): Map<string, MokinaRecoveryManifestVersion[]> {
@@ -684,4 +455,10 @@ function mimeForEntry(entry: string): string {
   if (ext === '.png') return 'image/png';
   if (ext === '.jpg' || ext === '.jpeg') return 'image/jpeg';
   return 'application/octet-stream';
+}
+
+function recoveryWarnings(manifest: MokinaRecoveryManifest): string[] {
+  const warnings = mokinaRecoveryWarnings(readMokinaRecoveryIntegrity(manifest)!);
+  if (manifest.contexts.length === 0 && manifest.versions.length === 0) warnings.push('恢复包不含版本或快照，仅恢复原件。');
+  return warnings;
 }

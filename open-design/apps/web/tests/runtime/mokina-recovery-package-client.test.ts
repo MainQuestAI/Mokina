@@ -3,13 +3,22 @@
 // T14：恢复包 Web 客户端——导出（版本锁定的 ZIP 下载）与导入（新项目）。
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import JSZip from 'jszip';
 
 import {
   exportProjectRecoveryZip,
   importProjectRecoveryZip,
   mintRecoveryIdentity,
   saveRecoveryFile,
+  RecoveryExportIncompleteError,
 } from '../../src/runtime/mokina/recovery-package-client';
+
+async function archive(status: 'complete' | 'partial' = 'complete') {
+  const zip = new JSZip();
+  zip.file('mokina-recovery.json', JSON.stringify({ schema: 'mokina.project-recovery.v2', files: [], versions: [], contexts: [],
+    integrity: { status, issues: status === 'partial' ? [{ path: 'history', reason: 'missing', message: 'Missing version' }] : [] } }));
+  return zip.generateAsync({ type: 'arraybuffer' });
+}
 
 describe('recovery package client', () => {
   afterEach(() => {
@@ -31,7 +40,8 @@ describe('recovery package client', () => {
       expect(init?.method).toBe('POST');
       const body = JSON.parse(String(init?.body)) as { operationId: string };
       expect(body.operationId.length).toBeGreaterThan(0);
-      return new Response(new Blob(['zip-bytes']), {
+      expect(JSON.parse(String(init?.body)).mode).toBe('complete');
+      return new Response(await archive(), {
         status: 200,
         headers: { 'content-disposition': 'attachment; filename="Plan-recovery.zip"' },
       });
@@ -44,7 +54,7 @@ describe('recovery package client', () => {
   });
 
   it('falls back to a project-derived filename and surfaces server errors', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response(new Blob(['x']), { status: 200 })));
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(await archive(), { status: 200 })));
     expect((await exportProjectRecoveryZip('p2')).filename).toBe('p2-recovery.zip');
 
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({
@@ -67,7 +77,7 @@ describe('recovery package client', () => {
       targetProjectId: 'p9',
       projectName: '恢复后的项目',
     });
-    expect(result).toEqual({ projectId: 'p9', warnings: ['仅恢复原件'] });
+    expect(result).toEqual({ projectId: 'p9', warnings: ['仅恢复原件'], integrity: { status: 'unknown', issues: [] } });
     expect(captured).not.toBeNull();
     expect(captured!.get('operationId')).toBe('op-1');
     expect(captured!.get('targetProjectId')).toBe('p9');
@@ -99,5 +109,24 @@ describe('recovery package client', () => {
     expect(createObjectURL).toHaveBeenCalled();
     expect(click).toHaveBeenCalled();
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:temporary');
+  });
+
+  it('never automatically retries a failed complete export as salvage', async () => {
+    const issues = [{ path: '.file-versions', reason: 'unreadable', message: 'Permission denied' }];
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ error: {
+      code: 'MOKINA_RECOVERY_INCOMPLETE', message: 'Not complete', details: { issues, canSalvage: true },
+    } }), { status: 409 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(exportProjectRecoveryZip('p1')).rejects.toBeInstanceOf(RecoveryExportIncompleteError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads the actual partial ZIP report only after explicit salvage, and refuses silent downgrade', async () => {
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(await archive('partial'), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(exportProjectRecoveryZip('p1')).rejects.toThrow('未提供可确认完整');
+    const result = await exportProjectRecoveryZip('p1', { mode: 'partial' });
+    expect(result.integrity).toEqual({ status: 'partial', issues: [{ path: 'history', reason: 'missing', message: 'Missing version' }] });
+    expect(JSON.parse(String(fetchMock.mock.calls[1]?.[1]?.body)).mode).toBe('partial');
   });
 });

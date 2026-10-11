@@ -33,6 +33,7 @@ import { releaseChannelFromNamespace, releaseChannelFromVersion } from "@open-de
 import { join } from "node:path";
 import { app, dialog } from "electron";
 
+import { prepareMokinaProfileElectronPaths, preparePackagedMokinaProfile } from "./mokina-profile-startup.js";
 import { readPackagedConfig } from "./config.js";
 import {
   claimPackagedDownloadAttribution,
@@ -106,7 +107,7 @@ function applyPackagedUpdaterEnv(
 }
 
 async function main(): Promise<void> {
-  const config = await readPackagedConfig();
+  const config = readPackagedConfig(app);
   const headlessRequest = parsePackagedHeadlessRequest(process.argv.slice(1));
 
   // Must run BEFORE `app.whenReady()` below, because Chromium consumes
@@ -114,7 +115,7 @@ async function main(): Promise<void> {
   // renderer's `navigator.language` follow the OS instead of Chromium's
   // en-US default. runDesktopMain (called later) calls the same helper
   // again to recover the resolved locale string for the BrowserWindow.
-  applyOsLocaleSwitch(app);
+  const startupLocale = applyOsLocaleSwitch(app);
   // Must also land before whenReady — see the helper's docblock for the
   // connection-pool deadlock it prevents (electron/electron#47097).
   applyLoopbackConnectionLimitSwitch(app);
@@ -162,6 +163,12 @@ async function main(): Promise<void> {
   const namespace = convergedArgvStamp?.namespace ?? config.namespace;
   const namespaceConfig = namespace === config.namespace ? config : { ...config, namespace };
   const initialPaths = resolvePackagedNamespacePaths(namespaceConfig, namespace, process.env);
+  const profileElectronPaths = prepareMokinaProfileElectronPaths(namespaceConfig, initialPaths, app);
+  if (profileElectronPaths?.bootstrapRoot) process.once('exit', profileElectronPaths.dispose);
+  // Stable profile selection must run before bootstrap/launcher/session creates target paths.
+  if (!await preparePackagedMokinaProfile(namespaceConfig, initialPaths, headlessRequest.headless, {
+    locale: startupLocale, ready: () => app.whenReady(), prompt: options => dialog.showMessageBox(options),
+  })) { app.exit(isCurrentSidecarLauncher() ? 1 : 0); return; }
   const launchStamp: SidecarStamp = {
     app: APP_KEYS.DESKTOP,
     channel: convergedArgvStamp?.channel
@@ -224,6 +231,7 @@ async function main(): Promise<void> {
     app.exit(0);
     return;
   }
+  if (profileElectronPaths?.bootstrapRoot) throw new Error('Mokina profile was initialized in a chooser process; restart the application to enter the committed profile.');
   const existingDesktop = await inspectExistingDesktopForLauncher(launchStamp, {
     deeplinkUrl: findPackagedDeeplinkArg(process.argv),
     incomingVersion: namespaceConfig.appVersion,

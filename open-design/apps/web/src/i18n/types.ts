@@ -5874,6 +5874,15 @@ export interface Dict {
   'fileViewer.mokina.confirmAbandon': string;
   'fileViewer.mokina.revisionStatusUnknown': string;
   'fileViewer.mokina.continuationSectionAria': string;
+  'fileViewer.mokina.continuationDraftSaveFailed': string;
+  'fileViewer.mokina.continuationDraftReadFailed': string;
+  'fileViewer.mokina.continuationDraftUnreadable': string;
+  'fileViewer.mokina.continuationCheckingSources': string;
+  'fileViewer.mokina.continuationDraftSaving': string;
+  'fileViewer.mokina.continuationSourceChanged': string;
+  'fileViewer.mokina.continuationAssetChanged': string;
+  'fileViewer.mokina.continuationBrandChanged': string;
+  'fileViewer.mokina.continuationConfirmSource': string;
   'fileViewer.mokina.continuationTitle': string;
   'fileViewer.mokina.continuationIntro': string;
   'fileViewer.mokina.continuationBackgroundPlaceholder': string;
@@ -5919,6 +5928,15 @@ export interface Dict {
   'fileViewer.mokina.continuationBrandNone': string;
   'fileViewer.mokina.continuationBrandSelected': string;
   'recentProjects.exportRecovery': string;
+  'mokina.recovery.incompleteTitle': string;
+  'mokina.recovery.partialDownloaded': string;
+  'mokina.recovery.importedTitle': string;
+  'mokina.recovery.unknown': string;
+  'mokina.recovery.partial': string;
+  'mokina.recovery.missing': string;
+  'mokina.recovery.working': string;
+  'mokina.recovery.salvage': string;
+
   'recentProjects.exportRecoveryDone': string;
   'recentProjects.exportRecoveryFailed': string;
   'newproj.importRecoveryZip': string;

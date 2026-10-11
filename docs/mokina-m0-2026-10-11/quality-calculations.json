@@ -1,0 +1,160 @@
+{
+  "scope": "Historical real model outputs with synthetic business inputs; AI review, not human signoff",
+  "sourceHashes": {
+    "budget-brief.md": "18d9462995e6860705c30343458f00572edc23245e17b3dda0de8f70320a45dd",
+    "local10-closeout-evidence.json": "1a1b13e35120eee4bea73318987db94eb6776d577a92329b3ef92ca3d6bb35cb",
+    "local7-run-evidence.json": "2189c34417321c9c622b2343c6547d5c547d01903f4e9953d51174a5ade85285",
+    "native-downstream-local7.html": "899b68e9f78ed344ee08b78eb36a1883fde793934b7aa78ea7ba2212b5cd5d06"
+  },
+  "budgetSourceSha": "7ced0cf93b14387b9dd3740a218aac5b4e8bdbce",
+  "budgetCandidate": "0.0.3-local.10",
+  "budgets": [
+    {
+      "label": "A",
+      "runId": "2db14bad-5edd-426a-b20e-94d3beb88744",
+      "snapshotId": "21776ed8-c24e-4d6a-96e7-4a344fac58a9",
+      "rowsFromRawReply": [
+        {
+          "category": "店内品鉴材料与接待",
+          "amount": 90000,
+          "percent": 30
+        },
+        {
+          "category": "自有社群运营",
+          "amount": 60000,
+          "percent": 20
+        },
+        {
+          "category": "内容与视觉材料",
+          "amount": 48000,
+          "percent": 16
+        },
+        {
+          "category": "预约与名单管理",
+          "amount": 36000,
+          "percent": 12
+        },
+        {
+          "category": "反馈与评估",
+          "amount": 24000,
+          "percent": 8
+        },
+        {
+          "category": "预备金",
+          "amount": 42000,
+          "percent": 14
+        },
+        {
+          "category": "付费搜索广告",
+          "amount": 0,
+          "percent": 0
+        },
+        {
+          "category": "付费社交广告",
+          "amount": 0,
+          "percent": 0
+        },
+        {
+          "category": "达人赞助",
+          "amount": 0,
+          "percent": 0
+        },
+        {
+          "category": "购买个人联系方式名单",
+          "amount": 0,
+          "percent": 0
+        }
+      ],
+      "amountSum": 300000,
+      "checks": "PASS"
+    },
+    {
+      "label": "B",
+      "runId": "7df5870c-2abe-4595-9e10-7645ad1b0003",
+      "snapshotId": "b822cc7e-243a-40fc-a464-47a4188a6887",
+      "rowsFromRawReply": [
+        {
+          "category": "store tasting materials and reception（店内品鉴材料与接待）",
+          "amount": 0,
+          "percent": 0
+        },
+        {
+          "category": "owned-community operations（私域社群运营）",
+          "amount": 54000,
+          "percent": 30
+        },
+        {
+          "category": "content and visual materials（内容与视觉材料）",
+          "amount": 45000,
+          "percent": 25
+        },
+        {
+          "category": "booking and list management（预约与名单管理）",
+          "amount": 36000,
+          "percent": 20
+        },
+        {
+          "category": "feedback and evaluation（反馈与评估）",
+          "amount": 27000,
+          "percent": 15
+        },
+        {
+          "category": "contingency（预备金）",
+          "amount": 18000,
+          "percent": 10
+        },
+        {
+          "category": "paid search ads",
+          "amount": 0,
+          "percent": 0
+        },
+        {
+          "category": "paid social ads",
+          "amount": 0,
+          "percent": 0
+        },
+        {
+          "category": "influencer sponsorship",
+          "amount": 0,
+          "percent": 0
+        },
+        {
+          "category": "purchased personal-contact lists",
+          "amount": 0,
+          "percent": 0
+        }
+      ],
+      "amountSum": 180000,
+      "checks": "PASS"
+    }
+  ],
+  "csv": {
+    "runId": "a06b0720-4004-4622-ad6c-eb6b276de172",
+    "frozenTextSha256": "2927ffe5ef1b1538d5f6a810ee5d4246b0c5c37f8206f8d7f1c82b61bf9f5748",
+    "originalFileReverified": false,
+    "rowCount": 9,
+    "monthlyTotals": {
+      "2026-04": 69000,
+      "2026-05": 82000,
+      "2026-06": 88000
+    },
+    "total": 239000,
+    "growthPercent": {
+      "2026-05": 18.84,
+      "2026-06": 7.32
+    },
+    "tmallSharePercent": {
+      "2026-04": 60.87,
+      "2026-06": 46.59
+    },
+    "allResultsPresentInRawReply": true
+  },
+  "landing": {
+    "sourceSha": "4cf68e9c7feda8cc5222825ba209f179490cabbf",
+    "version": "0.0.3-local.7",
+    "runId": "e88e5ca1-ab42-4cd0-8678-ff1503da549d",
+    "projectId": "5e8f703b-2a47-48e0-a7be-1e2b1e07c8e4",
+    "conversationId": "882f4a39-439c-4654-9749-6394c9c153bc",
+    "artifactCount": 1
+  }
+}

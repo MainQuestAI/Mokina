@@ -1,5 +1,6 @@
 import { recordIncomingUpdateLifecycle, type UpdateLifecycleObservation } from "./update-lifecycle-observations.js";
 export { recordIncomingUpdateLifecycle, type UpdateLifecycleObservation } from "./update-lifecycle-observations.js";
+export { MOKINA_STABLE_PROFILE, prepareMokinaStableProfile, type MokinaProfileMigrationReport } from "./mokina-profile-migration.js";
 import { randomBytes, randomUUID } from "node:crypto";
 import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";

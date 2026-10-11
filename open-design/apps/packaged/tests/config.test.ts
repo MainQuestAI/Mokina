@@ -1,12 +1,29 @@
 import { join, resolve } from 'node:path';
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   PACKAGED_NAMESPACE_BASE_ROOT_ENV,
+  PACKAGED_CONFIG_PATH_ENV,
+  readPackagedConfig,
   resolvePackagedAmrProfile,
   resolvePackagedNamespaceBaseRoot,
 } from '../src/config.js';
+
+it('resolves the same explicit startup configuration synchronously before Electron can become ready',()=>{
+  const root=mkdtempSync(join(tmpdir(),'mokina-startup-config-'));
+  const resources=Object.getOwnPropertyDescriptor(process,'resourcesPath');
+  try{
+    Object.defineProperty(process,'resourcesPath',{value:root,configurable:true});
+    const configPath=join(root,'config.json');writeFileSync(configPath,JSON.stringify({namespace:'mokina-local',namespaceBaseRoot:join(root,'profiles')}));
+    vi.stubEnv(PACKAGED_CONFIG_PATH_ENV,configPath);
+    const result=readPackagedConfig({getPath:()=>join(root,'default'),getAppPath:()=>root});
+    expect(result).not.toBeInstanceOf(Promise);
+    expect(result).toMatchObject({namespace:'mokina-local',namespaceBaseRoot:join(root,'profiles')});
+  }finally{if(resources)Object.defineProperty(process,'resourcesPath',resources);else Reflect.deleteProperty(process,'resourcesPath');vi.unstubAllEnvs();rmSync(root,{recursive:true,force:true});}
+});
 
 describe('resolvePackagedNamespaceBaseRoot', () => {
   it('lets a historical handoff preserve the already-resolved namespace base root', () => {

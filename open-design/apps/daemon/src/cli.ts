@@ -2152,7 +2152,7 @@ function surfaceFetchError(err, daemonUrl) {
 function printMokinaHelp() {
   console.log(`od mokina context prepare --project <id> --snapshot <id> (--selections <json|file|->) [--excluded <json|file>] [--json]
 od mokina context get     --project <id> --snapshot <id> [--json]
-od mokina recovery export --project <id> --out <path.zip> [--operation-id <id>] [--json]
+od mokina recovery export --project <id> --out <path.zip> [--operation-id <id>] [--allow-partial] [--json]
 od mokina recovery import --file <path.zip> --target-project <new-id> [--name <项目名>] [--operation-id <id>] [--json]`);
 }
 
@@ -2189,23 +2189,34 @@ async function runMokinaRecoveryExport(rawArgs) {
     resp = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ operationId }),
+      body: JSON.stringify({ operationId, mode: flags['allow-partial'] ? 'partial' : 'complete' }),
     });
   } catch (err) {
     console.error(`[mokina] daemon request failed: ${err instanceof Error ? err.message : String(err)}`);
     process.exit(1);
   }
   if (!resp.ok) {
-    console.error(`[mokina] ${resp.status} ${resp.statusText}`);
+    console.error(`[mokina] ${resp.status} ${JSON.stringify(await resp.json().catch(() => ({ message: resp.statusText })))}`);
     process.exit(1);
   }
   const buffer = Buffer.from(await resp.arrayBuffer());
+  const { default: JSZip } = await import('jszip');
+  const { readMokinaRecoveryIntegrity, mokinaRecoveryWarnings } = await import('@open-design/contracts');
+  const zip = await JSZip.loadAsync(buffer);
+  const manifestFile = zip.file('mokina-recovery.json');
+  const integrity = manifestFile ? readMokinaRecoveryIntegrity(JSON.parse(await manifestFile.async('text'))) : null;
+  if (!integrity || (!flags['allow-partial'] && integrity.status !== 'complete')) {
+    console.error('[mokina] 恢复包未证明完整，未写入输出文件。请检查服务版本或明确使用 --allow-partial。');
+    process.exit(1);
+  }
+  const warnings = mokinaRecoveryWarnings(integrity);
   await writeFile(outPath, buffer);
   if (flags.json) {
-    process.stdout.write(JSON.stringify({ ok: true, out: outPath, bytes: buffer.length, operationId }, null, 2) + '\n');
+    process.stdout.write(JSON.stringify({ ok: true, out: outPath, bytes: buffer.length, operationId, integrity, warnings }, null, 2) + '\n');
     return;
   }
   console.log(`[mokina] recovery package written: ${outPath} (${buffer.length} bytes, operationId=${operationId})`);
+  for (const warning of warnings) console.log(`[mokina] ${warning}`);
 }
 
 async function runMokinaRecoveryImport(rawArgs) {
@@ -2246,7 +2257,7 @@ function parseMokinaContextFlags(rawArgs, { requireSelections, required = ['proj
   try {
     flags = parseFlags(rawArgs, {
       string: ['project', 'snapshot', 'selections', 'excluded', 'daemon-url', 'namespace', 'out', 'file', 'target-project', 'name', 'operation-id'],
-      boolean: ['json'],
+      boolean: ['json', 'allow-partial'],
     });
   } catch (err) {
     console.error(err instanceof Error ? err.message : String(err));

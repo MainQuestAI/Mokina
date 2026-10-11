@@ -1,0 +1,47 @@
+{
+  "source": "/Users/dingcheng/Coding-Project/02-key-project/Mokina/output/playwright/mokina-v003-repair-2026-10-07/native-downstream-local7.html",
+  "results": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "title": "春日第一席新茶｜活动预览",
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "sections": [
+        "hero",
+        "value",
+        "journey",
+        "details",
+        "proof",
+        "cta",
+        "footer"
+      ],
+      "images": [],
+      "forms": 0,
+      "networkAttempts": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "title": "春日第一席新茶｜活动预览",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "sections": [
+        "hero",
+        "value",
+        "journey",
+        "details",
+        "proof",
+        "cta",
+        "footer"
+      ],
+      "images": [],
+      "forms": 0,
+      "networkAttempts": []
+    }
+  ]
+}

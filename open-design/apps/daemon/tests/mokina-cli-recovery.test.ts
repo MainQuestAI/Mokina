@@ -5,9 +5,10 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import JSZip from 'jszip';
 
 const requests: Array<{ url: string; body: string; contentType: string }> = [];
-const archiveBytes = Buffer.from('CLI transport fixture');
+let archiveBytes: Buffer;
 const server = createServer(async (req, res) => {
   const chunks: Buffer[] = [];
   for await (const chunk of req) chunks.push(Buffer.from(chunk));
@@ -30,6 +31,10 @@ const server = createServer(async (req, res) => {
 let endpoint: string;
 let directory: string;
 beforeAll(async () => {
+  const zip = new JSZip();
+  zip.file('mokina-recovery.json', JSON.stringify({ schema: 'mokina.project-recovery.v2', files: [], versions: [], contexts: [],
+    integrity: { status: 'complete', issues: [] } }));
+  archiveBytes = await zip.generateAsync({ type: 'nodebuffer' });
   directory = await mkdtemp(join(tmpdir(), 'mokina-cli-recovery-'));
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   endpoint = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
@@ -67,7 +72,14 @@ it('executes the documented recovery export and writes the server bytes', async 
   const result = await invoke(['mokina', 'recovery', 'export', '--project', 'cli-project', '--out', output, '--operation-id', 'cli-operation', '--json']);
   expect(result.code, result.stderr + result.stdout).toBe(0);
   expect(await readFile(output)).toEqual(archiveBytes);
-  expect(requests).toEqual([{ url: '/api/projects/cli-project/mokina/recovery-export', body: JSON.stringify({ operationId: 'cli-operation' }), contentType: 'application/json' }]);
+  expect(requests).toEqual([{ url: '/api/projects/cli-project/mokina/recovery-export', body: JSON.stringify({ operationId: 'cli-operation', mode: 'complete' }), contentType: 'application/json' }]);
+  expect(JSON.parse(result.stdout).integrity).toEqual({ status: 'complete', issues: [] });
+});
+
+it('only requests partial rescue with the explicit CLI flag', async () => {
+  const result = await invoke(['mokina', 'recovery', 'export', '--project', 'cli-project', '--out', join(directory, 'partial.zip'), '--allow-partial', '--json']);
+  expect(result.code, result.stderr + result.stdout).toBe(0);
+  expect(JSON.parse(requests[0]!.body).mode).toBe('partial');
 });
 
 it('mints an operation identity when recovery export omits the optional flag', async () => {

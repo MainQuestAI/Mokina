@@ -305,6 +305,7 @@ export function NewProjectPanel({
   const recoveryInputRef = useRef<HTMLInputElement | null>(null);
   const [importRecoveryCopy, setImportRecoveryCopy] = useState(false);
   const [importingRecovery, setImportingRecovery] = useState(false);
+  const recoveryImportInFlight = useRef(false);
   const [importing, setImporting] = useState(false);
   const [importZipError, setImportZipError] = useState<
     { message: string; details?: string } | null
@@ -836,7 +837,8 @@ export function NewProjectPanel({
   async function handleImportRecoveryPicked(ev: React.ChangeEvent<HTMLInputElement>) {
     const file = ev.target.files?.[0];
     ev.target.value = '';
-    if (!file || !onImportMokinaRecovery) return;
+    if (!file || !onImportMokinaRecovery || recoveryImportInFlight.current) return;
+    recoveryImportInFlight.current = true;
     setImportingRecovery(true);
     setImportZipError(null);
     try {
@@ -853,6 +855,7 @@ export function NewProjectPanel({
         message: `${t('newproj.recoveryImportFailed')}：${err instanceof Error ? err.message : ''}`,
       });
     } finally {
+      recoveryImportInFlight.current = false;
       setImportingRecovery(false);
     }
   }

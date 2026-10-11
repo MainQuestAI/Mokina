@@ -114,6 +114,19 @@ function addWinLifecycleOptions(command: CacCommand) {
 
 const cli = cac("tools-pack");
 
+cli.command('profile-migrate', 'Offline Mokina macOS profile copy to the stable mokina-local identity')
+  .option('--base-root <path>', 'explicit namespace base root; no implicit user-data path')
+  .option('--source <namespace>', 'supported source: mokina-local-v004-1 or mokina-local-maturity-4')
+  .option('--target <namespace>', 'target must be mokina-local')
+  .option('--confirm', 'confirm copying the selected profile; existing target is never overwritten')
+  .action(async (options: { baseRoot?: string; source?: string; target?: string; confirm?: boolean }) => {
+    if (!options.confirm || !options.baseRoot || !options.source || !options.target) {
+      throw new Error('Required: --base-root <absolute path> --source <supported namespace> --target mokina-local --confirm. Quit source and target applications first.');
+    }
+    const { migrateMokinaProfile } = await import('@open-design/desktop/profile-migration');
+    printJson(await migrateMokinaProfile({ namespaceBaseRoot: options.baseRoot, sourceNamespace: options.source, targetNamespace: options.target }));
+  });
+
 cli.command('verify-runtime', 'Verify installed prerelease Vela/OpenCode identity against a release manifest')
   .option('--resources <path>', 'installed package Resources directory')
   .option('--manifest <path>', 'release platform manifest JSON')

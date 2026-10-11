@@ -17,7 +17,7 @@ import {
 import macBuilderSource from "@/mac/builder.ts?raw";
 import { runElectronBuilder } from "@/mac/builder.js";
 import { resolveSeededAppConfigPaths, seedPackagedAppConfig, writeLaunchPackagedConfig } from "@/mac/index.js";
-import { resolveMacPaths } from "@/mac/paths.js";
+import { desktopLogPath, resolveMacPaths } from "@/mac/paths.js";
 
 async function pathExists(path: string): Promise<boolean> {
   try {
@@ -567,7 +567,12 @@ describe("writeLaunchPackagedConfig", () => {
       const launchConfig = JSON.parse(await readFile(launchConfigPath, "utf8")) as Record<string, unknown>;
       const embeddedConfig = JSON.parse(await readFile(embeddedConfigPath, "utf8")) as Record<string, unknown>;
 
-      expect(launchConfigPath).toBe(join(config.roots.runtime.namespaceRoot, "runtime", "open-design-config.json"));
+      expect(launchConfigPath).toBe(join(config.roots.output.namespaceRoot, "launch", "open-design-config.json"));
+      expect(await pathExists(config.roots.runtime.namespaceRoot)).toBe(false);
+      const stable = { ...config, namespace: "mokina-local" };
+      await mkdir(dirname(desktopLogPath(stable)), { recursive: true });
+      await writeFile(desktopLogPath(stable), "launcher diagnostic");
+      expect(await pathExists(config.roots.runtime.namespaceRoot)).toBe(false);
       expect(launchConfig).toMatchObject({
         appVersion: "0.5.1-beta.2",
         namespace: "release-beta",

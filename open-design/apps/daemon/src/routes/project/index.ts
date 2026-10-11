@@ -7369,9 +7369,6 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
     }
   });
 
-  // T15: minimum local diagnostics. Sanitized by construction; the test suite
-  // scans the response for credential/path/subject leakage.
-  let mokinaCodexProbe: { at: number; state: 'detected' | 'missing' } | null = null;
   // T04: Codex connection check. `codex login status` is the authoritative
   // login probe (covers file AND system credential storage); the response
   // uses the daemon's existing failure vocabulary.
@@ -7390,16 +7387,14 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
 
   app.get('/api/mokina/diagnostics', async (_req, res) => {
     try {
-      if (mokinaCodexProbe == null || Date.now() - mokinaCodexProbe.at > 60_000) {
-        try {
-          const { execFile } = await import('node:child_process');
-          const { promisify } = await import('node:util');
-          await promisify(execFile)('codex', ['--version'], { timeout: 3000 });
-          mokinaCodexProbe = { at: Date.now(), state: 'detected' };
-        } catch {
-          mokinaCodexProbe = { at: Date.now(), state: 'missing' };
-        }
-      }
+      // Diagnostics must describe the same executable/profile as the current
+      // connection check and runs. Only expose detection, never raw CLI output
+      // or paths; authentication and model connectivity remain separate.
+      const config = await readAppConfig(ctx.paths.RUNTIME_DATA_DIR);
+      const connection = await probeMokinaCodexConnection(process.env, {
+        useCache: false,
+        ...(config.agentCliEnv ? { agentCliEnv: config.agentCliEnv } : {}),
+      });
       const report = buildMokinaDiagnostics({
         productId: process.env.MOKINA_PRODUCT_ID ?? 'mokina',
         productName: process.env.MOKINA_PRODUCT_NAME ?? 'Mokina',
@@ -7409,7 +7404,7 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
         startedAt: MOKINA_DIAGNOSTICS_STARTED_AT,
         checks: {
           daemon: 'ok',
-          codexCli: mokinaCodexProbe.state,
+          codexCli: connection.cli.resolved ? 'detected' : connection.state === 'cli_missing' ? 'missing' : 'unknown',
         },
       });
       assertMokinaDiagnosticsSanitized(report);

@@ -1,0 +1,3 @@
+
+> @open-design/daemon@0.22.1 build /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/apps/daemon
+> tsc -p tsconfig.json

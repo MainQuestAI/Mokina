@@ -24,6 +24,8 @@ export interface MokinaQualitySnapshot {
   versionId: string;
   contentDigest: string;
   frozenBodyDigest?: string;
+  /** Resource closure is independent of captured evidence bytes. Included in fingerprint. */
+  resources?: { status: 'complete' | 'incomplete'; reasons: string[] };
   status: 'unreviewed' | 'issues' | 'rules-clear' | 'incomplete';
   sources: Array<MokinaEvidenceSource & { text?: string; error?: string }>;
   issues: MokinaQualityIssue[];

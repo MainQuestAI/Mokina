@@ -202,7 +202,7 @@ async function collectVersions(capture: RecoveryCapture): Promise<MokinaRecovery
       const frozenContentPath = typeof entry.frozenContentPath === 'string' ? `${directory}/${entry.frozenContentPath}` : undefined;
       const frozen = frozenContentPath ? await capture.file(frozenContentPath, 'frozen-version') : undefined;
       if (frozenContentPath && !frozen) continue;
-      try { readVersionEvidence(content.toString('utf8'), frozen?.toString('utf8'), entry.id, digest(content)); }
+      try { readVersionEvidence(content.toString('utf8'), frozen?.toString('utf8'), entry.id, digest(content), { neverCaptured: !frozenContentPath }); }
       catch { capture.issue(contentPath, 'invalid', '版本证据冻结记录缺失或摘要不符。'); continue; }
       versions.push({ entry: entry.fileName, originalVersionId: entry.id, versionNumber: Number(entry.version),
         current: entry.id === currentId, candidate: entry.candidate === true, contentPath, contentDigest: digest(content),

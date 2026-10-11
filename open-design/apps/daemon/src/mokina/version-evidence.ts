@@ -61,6 +61,20 @@ function csvRows(text: string): string[][] {
   return rows;
 }
 const number = (value: string): number | null => /^-?\d+(?:\.\d+)?$/u.test(value.trim()) && Number.isFinite(Number(value)) && Math.abs(Number(value)) <= 1e12 ? Number(value) : null;
+/** Exact decimal inputs: unsupported precision is rejected, never rounded on read. */
+function decimal(value: string, digits = 8): bigint | null {
+  const text = value.trim();
+  if (!new RegExp(`^-?\\d+(?:\\.\\d{1,${digits}})?$`, 'u').test(text)) return null;
+  const [whole, fraction = ''] = text.replace(/^-/, '').split('.');
+  const scale = 10n ** BigInt(digits);
+  const units = BigInt(whole!) * scale + BigInt(fraction.padEnd(digits, '0'));
+  return units <= 1_000_000_000_000n * scale ? (text.startsWith('-') ? -units : units) : null;
+}
+function formatDecimal(value: bigint, digits: number): string {
+  const absolute = value < 0n ? -value : value; const scale = 10n ** BigInt(digits);
+  const fraction = String(absolute % scale).padStart(digits, '0').replace(/0+$/, '');
+  return `${value < 0n ? '-' : ''}${absolute / scale}${fraction ? '.' + fraction : ''}`;
+}
 function inspectCsv(source: MokinaEvidenceSource, text: string, issues: MokinaQualityIssue[], calculations: MokinaQualitySnapshot['calculations']) {
   const rows = csvRows(text.replace(/^\uFEFF/u, '')); const header = rows.shift()!;
   const fields = source.csv!; const indexes = [fields.id, fields.amount, fields.unit].map(k => header.indexOf(k));
@@ -68,24 +82,21 @@ function inspectCsv(source: MokinaEvidenceSource, text: string, issues: MokinaQu
   const [idIndex, amountIndex, unitIndex] = indexes as [number, number, number];
   const seen = new Set<string>(); const totals = new Map<string, bigint>(); let invalid = false;
   const issue = (code: string, message: string) => { invalid = true; issues.push({ code, sourceId: source.id, sectionId: source.sectionId, message }); };
+  if (!rows.length) issue('CSV_EMPTY', 'CSV has headers but no data rows; no calculation completed.');
   for (const [index, row] of rows.entries()) {
     const id = row[idIndex]!.trim(); const amountText = row[amountIndex]!.trim();
-    const amount = number(amountText);
+    const amount = decimal(amountText);
     const supportedPrecision = /^-?\d+(?:\.\d{1,8})?$/u.test(amountText); const unit = row[unitIndex]!.trim();
     if (!id || amount === null || !unit || !supportedPrecision) issue('CSV_MISSING', `Row ${index + 2}: missing identity/unit or invalid amount; no zero-fill.${amount !== null && !supportedPrecision ? ' At most 8 decimals are supported.' : ''}`);
     if (seen.has(id)) issue('CSV_DUPLICATE', `Row ${index + 2}: duplicate ${id}; no automatic deduplication.`);
     seen.add(id);
     if (amount !== null && unit && supportedPrecision) {
-      const [whole, fraction = ''] = amountText.replace(/^-/, '').split('.');
-      const units = BigInt(whole!) * 100_000_000n + BigInt(fraction.padEnd(8, '0'));
-      totals.set(unit, (totals.get(unit) ?? 0n) + (amountText.startsWith('-') ? -units : units));
+      totals.set(unit, (totals.get(unit) ?? 0n) + amount);
     }
   }
   if (totals.size > 1) issues.push({ code: 'CSV_MIXED_UNITS', sectionId: source.sectionId, sourceId: source.id, message: 'Multiple units; cross-unit total is undefined.' });
   if (!invalid) for (const [unit, sum] of totals) {
-    const absolute = sum < 0n ? -sum : sum;
-    const decimal = String(absolute % 100_000_000n).padStart(8, '0').replace(/0+$/, '');
-    const result = `${sum < 0n ? '-' : ''}${absolute / 100_000_000n}${decimal ? '.' + decimal : ''}`;
+    const result = formatDecimal(sum, 8);
     calculations.push({ sectionId: source.sectionId, expression: `${source.id}: sum(${fields.amount}) grouped by ${fields.unit}=${unit}; all ${rows.length} rows retained`, result });
   }
 }
@@ -95,14 +106,14 @@ export function hasVersionEvidence(content: string): boolean {
 }
 
 export async function freezeVersionEvidence(html: string, versionId: string, contentDigest: string,
-  readSource: (path: string, expectedDigest: string) => Promise<Buffer>): Promise<string> {
+  readSource: (path: string, expectedDigest: string) => Promise<Buffer>, resources?: MokinaQualitySnapshot['resources']): Promise<string> {
   if (!hasVersionEvidence(html)) return html;
   const $ = load(html); const declarations = $(`[id="${declarationId}"]`);
   if (!declarations.length) return html;
   $(`[id="${snapshotId}"], [data-mokina-evidence-appendix]`).remove();
   const frozenBodyDigest = sha($.html());
   const record: Omit<MokinaQualitySnapshot, 'fingerprint'> = { schema: 'mokina.quality.v1', versionId, contentDigest, frozenBodyDigest,
-    status: 'rules-clear', sources: [], issues: [], calculations: [] };
+    status: 'rules-clear', sources: [], issues: [], calculations: [], ...(resources ? { resources } : {}) };
   try {
     if (declarations.length !== 1 || declarations.attr('type') !== 'application/json') fail('Exactly one JSON evidence declaration required');
     const raw = declarations.text(); if (Buffer.byteLength(raw) > 64 * 1024) fail('Declaration too large');
@@ -131,29 +142,30 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
     for (const table of $('[data-mokina-budget]').toArray()) {
       const sectionId = $(table).closest('[data-mokina-id]').attr('data-mokina-id');
       const issue = (code: string, message: string) => record.issues.push({ code, ...(sectionId ? { sectionId } : {}), message });
-      const limit = number($(table).attr('data-budget-limit') ?? ''); const capacity = number($(table).attr('data-capacity-hours') ?? '');
-      let sum = 0; let hours = 0; let valid = true;
+      const limit = decimal($(table).attr('data-budget-limit') ?? '', 2); const capacity = decimal($(table).attr('data-capacity-hours') ?? '');
+      let sum = 0n; let hours = 0n; let valid = true;
       const rows = $(table).find('[data-budget-item]').toArray();
       if (!sectionId || !rows.length || limit === null || capacity === null || limit < 0 || capacity < 0) { issue('BUDGET_INPUT', 'Missing chapter, budget limit, capacity or action rows.'); valid = false; }
       for (const [index, row] of rows.entries()) {
         const cells = ['quantity', 'unit-price', 'amount', 'hours'].map(k => $(row).find(`[data-${k}]`));
-        const values = cells.map(c => c.length === 1 ? number(c.text()) : null);
-        if (values.some(v => v === null || v < 0)) { issue('BUDGET_INPUT', `Row ${index + 1}: numbers must be explicit, non-negative, and in one unit.`); valid = false; continue; }
-        const [quantity, price, amount, work] = values as [number, number, number, number];
-        const cents = Math.round(quantity * price * 100);
-        if (!Number.isSafeInteger(cents) || !Number.isSafeInteger(Math.round((sum + cents / 100) * 100))) { issue('BUDGET_INPUT', 'Budget exceeds exact cent arithmetic range.'); valid = false; continue; }
-        const computed = cents / 100;
-        if (Math.abs(computed - amount) > 0.005) issue('BUDGET_LINE', `Row ${index + 1}: ${quantity} × ${price} = ${computed}, displayed ${amount}.`);
-        sum += computed; hours += work;
-        record.calculations.push({ sectionId: sectionId ?? '', expression: `Row ${index + 1}: ${quantity} × ${price}`, result: String(computed) });
+        const values = cells.map((c, index) => c.length === 1 ? decimal(c.text(), index === 2 ? 2 : 8) : null);
+        if (values.some(v => v === null || v < 0)) { issue('BUDGET_INPUT', `Row ${index + 1}: numbers must be non-negative decimals up to 1e12, at most 8 decimal places (displayed amounts: 2), in one unit.`); valid = false; continue; }
+        const [quantity, price, amount, work] = values as [bigint, bigint, bigint, bigint];
+        // Both factors have 8 decimals. Round each nonnegative product once to cents.
+        const divisor = 100_000_000_000_000n;
+        const cents = (quantity * price + divisor / 2n) / divisor;
+        const computed = formatDecimal(cents, 2);
+        if (cents !== amount) issue('BUDGET_LINE', `Row ${index + 1}: ${formatDecimal(quantity, 8)} × ${formatDecimal(price, 8)} = ${computed}, displayed ${formatDecimal(amount, 2)}.`);
+        sum += cents; hours += work;
+        record.calculations.push({ sectionId: sectionId ?? '', expression: `Row ${index + 1}: ${formatDecimal(quantity, 8)} × ${formatDecimal(price, 8)}`, result: computed });
       }
       if (valid) {
-        sum = Math.round(sum * 100) / 100;
-        if (sum > limit!) issue('BUDGET_EXCEEDED', `Computed ${sum} exceeds ${limit}.`);
-        if (hours > capacity!) issue('CAPACITY_EXCEEDED', `${hours} hours exceeds ${capacity}.`);
-        record.calculations.push({ sectionId: sectionId!, expression: 'Computed total / unused budget / internal hours', result: `${sum} / ${Math.round((limit! - sum) * 100) / 100} / ${hours}` });
+        if (sum > limit!) issue('BUDGET_EXCEEDED', `Computed ${formatDecimal(sum, 2)} exceeds ${formatDecimal(limit!, 2)}.`);
+        if (hours > capacity!) issue('CAPACITY_EXCEEDED', `${formatDecimal(hours, 8)} hours exceeds ${formatDecimal(capacity!, 8)}.`);
+        record.calculations.push({ sectionId: sectionId!, expression: 'Computed total / unused budget / internal hours', result: `${formatDecimal(sum, 2)} / ${formatDecimal(limit! - sum, 2)} / ${formatDecimal(hours, 8)}` });
       }
     }
+
     for (const ratio of $('[data-mokina-ratio]').toArray()) {
       const sectionId = $(ratio).closest('[data-mokina-id]').attr('data-mokina-id');
       const values = ['numerator', 'denominator', 'ratio-result'].map(key => {
@@ -168,7 +180,7 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
         if (claimed == null || Math.abs(result - claimed) > 0.00000001) record.issues.push({ code: 'RATIO_RESULT', sectionId, message: `Expected decimal ratio ${result}; percentage display is a separate presentation.` });
       }
     }
-    if (!$('[data-mokina-budget]').length && !record.sources.some(s => s.csv)) record.issues.push({ code: 'NO_CALCULATION', message: 'No machine-readable budget or CSV mapping. Numerical claims remain unchecked.' });
+    if (!record.calculations.length) record.issues.push({ code: 'NO_CALCULATION', message: 'No valid budget, CSV or ratio calculation completed. Numerical claims remain unchecked.' });
   } catch (error) { record.status = 'incomplete'; record.issues.push({ code: 'DECLARATION_INVALID', message: error instanceof Error ? error.message : String(error) }); }
   if (record.status !== 'incomplete' && record.issues.length) record.status = 'issues';
   const snapshot: MokinaQualitySnapshot = { ...record, fingerprint: sha(JSON.stringify(record)) };
@@ -179,9 +191,10 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
   return $.html();
 }
 
-export function readVersionEvidence(content: string, frozen: string | undefined, versionId: string, contentDigest: string): MokinaQualitySnapshot {
+export function readVersionEvidence(content: string, frozen: string | undefined, versionId: string, contentDigest: string, options: { neverCaptured?: boolean } = {}): MokinaQualitySnapshot {
   const empty = { schema: 'mokina.quality.v1' as const, versionId, contentDigest, status: 'unreviewed' as const, sources: [], issues: [], calculations: [], fingerprint: '' };
   if (!hasVersionEvidence(content)) return empty;
+  if (!frozen && options.neverCaptured) return { ...empty, status: 'incomplete', issues: [{ code: 'EVIDENCE_NOT_CAPTURED', message: 'This version did not capture evidence. Original content is readable; current sources will not be substituted.' }] };
   if (!frozen) fail('Version evidence snapshot unavailable; current sources will not be substituted');
   const $ = load(frozen);
   const nodes = $(`[id="${snapshotId}"]`);
@@ -190,6 +203,10 @@ export function readVersionEvidence(content: string, frozen: string | undefined,
   if (record.schema !== 'mokina.quality.v1' || record.versionId !== versionId || record.contentDigest !== contentDigest
     || fingerprint !== sha(JSON.stringify(record)) || !Array.isArray(record.sources) || !Array.isArray(record.issues) || !Array.isArray(record.calculations)) fail('Version evidence integrity mismatch');
   if (!['incomplete', 'issues', 'rules-clear'].includes(String(record.status))) fail('Invalid inspection status');
+  if (record.resources !== undefined) {
+    const resources = object(record.resources);
+    if (!['complete', 'incomplete'].includes(String(resources.status)) || !Array.isArray(resources.reasons) || resources.reasons.some(reason => typeof reason !== 'string')) fail('Invalid resource capture state');
+  }
   for (const value of record.sources) {
     const source = parseSource(value); const entry = object(value);
     if (typeof entry.text === 'string' && sha(entry.text) !== source.sha256) fail('Evidence source bytes disagree with digest');

@@ -25,6 +25,7 @@ import {
 } from './inline-assets.js';
 import {
   MAX_STANDALONE_ENTRY_BYTES,
+  MAX_STANDALONE_OUTPUT_BYTES,
   StandaloneHtmlExportError,
   bundleStandaloneHtml,
   type StandaloneAssetReader,
@@ -833,7 +834,8 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
       { details: { kind: 'missing-version-resources', fileName, versionId,
         missingDependencies, action: 'restore-as-new-version' } });
     try {
-      const bundled = await bundleStandaloneHtml({ entryPath: fileName, html, readAsset: async () => null });
+      const bundled = await bundleStandaloneHtml({ entryPath: fileName, html, readAsset: async () => null,
+        limits: { entryBytes: MAX_STANDALONE_OUTPUT_BYTES, rawBytes: MAX_STANDALONE_OUTPUT_BYTES, outputBytes: MAX_STANDALONE_OUTPUT_BYTES } });
       if (bundled.externalDependencies.length > 0) {
         missingResources(bundled.externalDependencies);
         return null;
@@ -914,12 +916,13 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
             missing ? `HTML entry not found: ${fileName}` : String(error?.message || error));
         }
       }
-      if (ownerMeta.size > MAX_STANDALONE_ENTRY_BYTES) {
+      const entryLimit = historical ? MAX_STANDALONE_OUTPUT_BYTES : MAX_STANDALONE_ENTRY_BYTES;
+      if (ownerMeta.size > entryLimit) {
         return sendApiError(
           res,
           413,
           'PAYLOAD_TOO_LARGE',
-          `owner html ${ownerMeta.size} bytes exceeds ${MAX_STANDALONE_ENTRY_BYTES}`,
+          `owner html ${ownerMeta.size} bytes exceeds ${entryLimit}`,
           { details: { kind: 'limit-exceeded', limit: 'entryBytes' } },
         );
       }
@@ -1763,12 +1766,12 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
           );
         }
         const ownerBytes = Buffer.byteLength(ownerHtml, 'utf8');
-        if (ownerBytes > MAX_INLINE_OWNER_BYTES) {
+        if (ownerBytes > MAX_STANDALONE_OUTPUT_BYTES) {
           return sendApiError(
             res,
             413,
             'PAYLOAD_TOO_LARGE',
-            `owner html ${ownerBytes} bytes exceeds MAX_INLINE_OWNER_BYTES ${MAX_INLINE_OWNER_BYTES}`,
+            `frozen html ${ownerBytes} bytes exceeds ${MAX_STANDALONE_OUTPUT_BYTES}`,
           );
         }
       } else {
@@ -1877,6 +1880,7 @@ export function registerProjectExportRoutes(app: Express, ctx: RegisterProjectEx
         exportSource.html,
         exportSource.relPath,
         versionId ? async () => null : fileReader,
+        versionId ? { maxOwnerBytes: MAX_STANDALONE_OUTPUT_BYTES, maxTotalBytes: MAX_STANDALONE_OUTPUT_BYTES } : undefined,
       );
       // PR #1312 round-2 (lefarcen P2): top-level browser navigation to
       // this URL sends no Origin header, so the /api middleware lets it

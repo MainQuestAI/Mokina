@@ -1,5 +1,5 @@
 import type http from 'node:http';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -62,6 +62,29 @@ describe('project file version routes', () => {
     await fs.mkdir(projectDir, { recursive: true });
     await fs.writeFile(path.join(projectDir, '.file-versions'), 'blocked');
   }
+
+  for (const resource of ['https://example.invalid/photo.png', 'missing.png']) it(`reads, repairs and restores evidence despite unavailable ${resource}`, async () => {
+    const id = await createProject(); const source = 'quote';
+    await writeProjectFile(id, 'quote.txt', source);
+    const declaration = { schema: 'mokina.evidence.v1', sources: [{ id: 'quote', path: 'quote.txt', sha256: createHash('sha256').update(source).digest('hex'), kind: 'data', locator: 'all', limitation: 'fixture', sectionId: 'plan' }] };
+    const html = `<html><body><section id="plan" data-mokina-id="plan"><img src="${resource}">Original</section><script type="application/json" id="mokina-evidence">${JSON.stringify(declaration)}</script></body></html>`;
+    await writeProjectFile(id, 'plan.html', html);
+    const url = `${baseUrl}/api/projects/${id}/files/plan.html`;
+    const versions = await (await fetch(`${url}/versions?readOnly=true`)).json() as { versions: Array<{ id: string; current: boolean }> };
+    const version = versions.versions.find((v: { current: boolean }) => v.current)!;
+    const saved = await fetch(`${url}/versions/${version.id}`);
+    expect(saved.status).toBe(200);
+    expect((await saved.json() as { quality: unknown }).quality).toMatchObject({ resources: { status: 'incomplete' }, sources: [{ text: source }] });
+    const exported = await fetch(`${baseUrl}/api/projects/${id}/export/html`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fileName: 'plan.html', versionId: version.id }) });
+    expect(exported.status).toBe(422);
+    expect((await exported.json() as { error: { code: string } }).error.code).toBe('HISTORICAL_RESOURCES_UNAVAILABLE');
+    const candidate = await fetch(`${url}/candidates`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ baseVersionId: version.id, sectionId: 'plan', replacementHtml: '<section id="plan" data-mokina-id="plan">Repaired</section>', operationId: randomUUID(), prompt: 'repair' }) });
+    expect(candidate.status).toBe(200);
+    const repaired = (await candidate.json() as { version: { id: string } }).version;
+    expect((await fetch(`${baseUrl}/api/projects/${id}/export/html`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fileName: 'plan.html', versionId: repaired.id }) })).status).toBe(200);
+    const restored = await fetch(`${url}/versions/${version.id}/restore`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    expect(restored.status).toBe(200);
+  });
 
   it('readOnly listing of legacy HTML leaves version storage unchanged; normal GET remains compatible', async () => {
     const projectId = await createProject();

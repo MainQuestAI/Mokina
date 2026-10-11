@@ -1,3 +1,4 @@
+import { qualityLocationBridge } from '../runtime/mokina/quality-location';
 import type { MokinaQualitySnapshot } from '@open-design/contracts';
 import { MokinaVersionQuality } from './mokina/MokinaVersionQuality';
 import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ClipboardEvent as ReactClipboardEvent, type CSSProperties, type DragEvent as ReactDragEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
@@ -3752,6 +3753,14 @@ function FileVersionManagerModal({
   // version is then zero-fetch (and, because the srcDoc string value is stable,
   // zero-reparse). `inFlightRef` dedupes concurrent hover-prefetch + click.
   const qualityCacheRef = useRef<Map<string, MokinaQualitySnapshot>>(new Map());
+  const qualityRequestRef = useRef(new Map<string, 'loading' | 'ready' | 'error'>());
+  const [, refreshQuality] = useState(0);
+  const [versionReadAttempt, setVersionReadAttempt] = useState(0);
+  const [locatedSection, setLocatedSection] = useState<string | null>(null);
+  const [locationFailed, setLocationFailed] = useState(false);
+  const locationRequestRef = useRef<string | null>(null);
+  const locationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const locationToken = useMemo(() => crypto.randomUUID(), [selectedId]);
   const contentCacheRef = useRef<Map<string, string>>(new Map());
   const renderableContentCacheRef = useRef<Map<string, string>>(new Map());
   const renderableErrorCacheRef = useRef<Map<string, string>>(new Map());
@@ -3955,8 +3964,8 @@ function FileVersionManagerModal({
     selectedId && selectedRenderableVersionId === selectedId && selectedRenderableContent,
   );
   const srcDoc = useMemo(() => selectedRenderableContentMatchesVersion && selectedRenderableContent
-    ? fileVersionPreviewSrcDoc(projectId, file.name, selectedRenderableContent, workspaceContext)
-    : '', [file.name, projectId, selectedRenderableContent, selectedRenderableContentMatchesVersion, workspaceContext]);
+    ? fileVersionPreviewSrcDoc(projectId, file.name, selectedRenderableContent + (MOKINA_LOCAL_EDITION && selectedId ? qualityLocationBridge(selectedId, locationToken) : ''), workspaceContext)
+    : '', [file.name, projectId, selectedRenderableContent, selectedRenderableContentMatchesVersion, workspaceContext, selectedId, locationToken]);
   const frameReady = loadedSrcDoc === srcDoc;
 
   useEffect(() => {
@@ -3966,14 +3975,16 @@ function FileVersionManagerModal({
   // Fetch a single version's HTML into the cache exactly once. Reused by the
   // selection effect and by hover/focus prefetch so a click lands on warm data.
   const primeVersionContent = useCallback((versionId: string): Promise<void> => {
-    if (contentCacheRef.current.has(versionId) && renderableContentCacheRef.current.has(versionId)) {
+    if (contentCacheRef.current.has(versionId) && renderableContentCacheRef.current.has(versionId) && qualityRequestRef.current.get(versionId) === 'ready') {
       return Promise.resolve();
     }
     const pending = inFlightRef.current.get(versionId);
     if (pending) return pending;
+    qualityRequestRef.current.set(versionId, 'loading');
+    refreshQuality(value => value + 1);
     const request = Promise.allSettled([
       fetchProjectFileVersion(projectId, file.name, versionId, workspaceContext),
-      fetchProjectVersionHtml({
+      renderableContentCacheRef.current.has(versionId) ? Promise.resolve({ content: renderableContentCacheRef.current.get(versionId)! }) : fetchProjectVersionHtml({
         projectId,
         filePath: file.name,
         fallbackTitle: file.name,
@@ -3982,7 +3993,9 @@ function FileVersionManagerModal({
       }),
     ])
       .then(([rawResult, renderableResult]) => {
-        if (rawResult.status === 'fulfilled' && rawResult.value) {
+        const rawMatches = rawResult.status === 'fulfilled' && rawResult.value?.version.id === versionId;
+        qualityRequestRef.current.set(versionId, rawMatches && rawResult.value?.quality?.versionId === versionId ? 'ready' : 'error');
+        if (rawMatches && rawResult.status === 'fulfilled' && rawResult.value) {
           contentCacheRef.current.set(versionId, rawResult.value.content);
           if (rawResult.value.quality) qualityCacheRef.current.set(versionId, rawResult.value.quality);
         }
@@ -4000,6 +4013,7 @@ function FileVersionManagerModal({
       })
       .finally(() => {
         inFlightRef.current.delete(versionId);
+        refreshQuality(value => value + 1);
       });
     inFlightRef.current.set(versionId, request);
     return request;
@@ -4096,7 +4110,7 @@ function FileVersionManagerModal({
     // Cache hit: swap instantly with no fetch, no flash.
     const cached = contentCacheRef.current.get(selectedId);
     const cachedRenderable = renderableContentCacheRef.current.get(selectedId);
-    if (cached !== undefined && cachedRenderable !== undefined) {
+    if (cached !== undefined && cachedRenderable !== undefined && qualityRequestRef.current.get(selectedId) === 'ready') {
       setSelectedContent(cached);
       setSelectedContentVersionId(selectedId);
       setSelectedRenderableContent(cachedRenderable);
@@ -4135,7 +4149,37 @@ function FileVersionManagerModal({
     return () => {
       cancelled = true;
     };
-  }, [primeVersionContent, selectedId]);
+  }, [primeVersionContent, selectedId, versionReadAttempt]);
+
+  useEffect(() => {
+    setLocatedSection(null); setLocationFailed(false); locationRequestRef.current = null;
+    const receive = (event: MessageEvent) => {
+      const message = event.data;
+      if (event.source !== versionPreviewIframeRef.current?.contentWindow || !message
+        || message.type !== 'mokina:located' || message.versionId !== selectedId
+        || message.token !== locationToken || message.requestId !== locationRequestRef.current) return;
+      locationRequestRef.current = null;
+      if (locationTimeoutRef.current) clearTimeout(locationTimeoutRef.current);
+      setLocatedSection(message.found === true ? message.sectionId : null);
+      setLocationFailed(message.found !== true);
+    };
+    window.addEventListener('message', receive);
+    return () => {
+      window.removeEventListener('message', receive); locationRequestRef.current = null;
+      if (locationTimeoutRef.current) clearTimeout(locationTimeoutRef.current);
+    };
+  }, [selectedId, locationToken]);
+  function locateQualitySection(sectionId: string) {
+    if (!selectedId || !frameReady || !srcDoc) { setLocationFailed(true); return; }
+    const requestId = crypto.randomUUID(); locationRequestRef.current = requestId;
+    if (locationTimeoutRef.current) clearTimeout(locationTimeoutRef.current);
+    locationTimeoutRef.current = setTimeout(() => {
+      if (locationRequestRef.current === requestId) { locationRequestRef.current = null; setLocationFailed(true); }
+    }, 1500);
+    setLocatedSection(null); setLocationFailed(false);
+    versionPreviewIframeRef.current?.contentWindow?.postMessage({ type: 'mokina:locate',
+      versionId: selectedId, token: locationToken, requestId, sectionId }, '*');
+  }
 
   // Safety net: if the iframe's load event is ever missed, clear the overlay
   // after a grace period so it can't get stuck over a rendered document.
@@ -5060,11 +5104,15 @@ function FileVersionManagerModal({
           <p className="artifact-version-panel__note" role="alert">{error}</p>
         ) : null}
         <MokinaTaskSection name="versions" active={!MOKINA_LOCAL_EDITION || mokinaTask === 'versions'}>
-        {MOKINA_LOCAL_EDITION && selectedVersion && selectedContentMatchesVersion && !loadingContent ? <MokinaVersionQuality
+        {MOKINA_LOCAL_EDITION && selectedVersion ? <MokinaVersionQuality
           versionId={selectedVersion.id} quality={qualityCacheRef.current.get(selectedVersion.id)}
-          onLocate={(sectionId) => {
-            onActionRequest?.({ action: 'revision' }); setRevisionSectionId(sectionId);
-          }} /> : null}
+          requestState={qualityRequestRef.current.get(selectedVersion.id) ?? 'loading'}
+          onRetry={() => { qualityRequestRef.current.delete(selectedVersion.id); setVersionReadAttempt(value => value + 1); }}
+          onLocate={locateQualitySection} locateDisabled={!frameReady || !srcDoc}
+          locationFailed={locationFailed} locatedSection={locatedSection}
+          onRevise={selectedVersion.current && !viewerOnly ? () => {
+            if (locatedSection) { onActionRequest?.({ action: 'revision' }); setRevisionSectionId(locatedSection); }
+          } : undefined} /> : null}
         <div className="artifact-version-panel__preview">
           {srcDoc ? (
             <iframe

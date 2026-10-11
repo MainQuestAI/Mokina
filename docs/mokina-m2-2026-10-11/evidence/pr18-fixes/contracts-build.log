@@ -1,0 +1,3 @@
+
+> @open-design/contracts@0.22.1 build /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/packages/contracts
+> node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly

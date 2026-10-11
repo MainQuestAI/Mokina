@@ -20,7 +20,7 @@ kind 仅 full-text / summary / data / method。来源可选 url、accessedAt、e
 
 预算表使用 data-mokina-budget、data-budget-limit（总上限）、data-capacity-hours（内部总工时）。每个行动行 data-budget-item 必须有且仅有 data-quantity、data-unit-price、data-amount、data-hours 四个可见单元格。数字为纯十进制，单位放表头，不放数值单元格；单表单币种。data-hours 是该行总内部工时，不是单件工时，不能与外包工时混算。
 
-宿主复算每行 quantity×unit-price、总预算、剩余预算和总内部工时；显式展示未使用预算。不同方向各用一个预算表，不能把互斥方向合计。报价支持哪个单价、包含什么、不含什么，写在行内说明并引用源 ID。算术正确不证明报价真实、容量合理或ROI成立。
+数量、单价、工时及容量最多8位小数；展示金额与预算上限最多2位小数，单值不超过1e12，预算数值非负。宿主按十进制定点计算，每行 quantity×unit-price 四舍五入到分，再累加行金额；工时精确累加，不使用浮点容差。超精度输入明确报错，不截断。宿主复算总预算、剩余预算和总内部工时；显式展示未使用预算。不同方向各用一个预算表，不能把互斥方向合计。报价支持哪个单价、包含什么、不含什么，写在行内说明并引用源 ID。算术正确不证明报价真实、容量合理或ROI成立。
 
 比例用可见 data-mokina-ratio 容器，内部 data-numerator、data-denominator、data-ratio-result。结果是小数不是百分数。0分母须显示“不可计算”，不得填0/无穷大。环比 numerator=本期−前期，denominator=前期；展示原期值与计算口径供人工复核。该标记只复算已提供数值，不证明它们来自哪个CSV行。
 
@@ -28,4 +28,4 @@ CSV 源可声明 csv:{"id":"record_id","amount":"amount","unit":"currency"}。�
 
 ## 交付自查
 
-保存后通过 `od files versions <project> <file> --read-only --json` 找到对应版本，再 `od files version-read <project> <file> <version> --json` 查看 quality。未知保存结果先查版本，不重新运行。问题绑定该版本；补足资料或修正文案后保存新候选。rules-clear 只说明这些规则无发现，不是专业批准。旧成果无标记时保持 unreviewed。
+保存后通过 `od files versions <project> <file> --read-only --json` 找到对应版本，再 `od files version-read <project> <file> <version> --json` 查看 quality。未知保存结果先查版本，不重新运行。问题绑定该版本；补足资料或修正文案后保存新候选。比例计算也计入完成的检查；只有表头的CSV报告CSV_EMPTY，无有效计算报告NO_CALCULATION。rules-clear 只说明这些规则无发现，不是专业批准。旧成果无标记时保持 unreviewed。

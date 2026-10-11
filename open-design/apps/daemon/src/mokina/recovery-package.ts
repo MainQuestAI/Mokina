@@ -327,7 +327,7 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
     try {
       readVersionEvidence(buffers.get(version.contentPath)!.toString('utf8'),
         version.frozenContentPath ? buffers.get(version.frozenContentPath)?.toString('utf8') : undefined,
-        version.originalVersionId, version.contentDigest);
+        version.originalVersionId, version.contentDigest, { neverCaptured: !version.frozenContentPath });
     } catch { return fail(400, 'BAD_REQUEST', `版本证据冻结记录无效：${version.entry}`); }
     if (version.current && version.candidate) {
       return fail(400, 'BAD_REQUEST', `候选版本不能同时是当前版本：${version.entry}`);

@@ -1,0 +1,15 @@
+
+Running 6 tests using 1 worker
+
+(node:14142) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14142) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ui/mokina-business.test.ts:5:34 › [P1] M1 confirmed facts, Brief isolation and explicit handoff at 1440 (10.1s)
+  ✓  2 [chromium] › ui/mokina-business.test.ts:5:34 › [P1] M1 confirmed facts, Brief isolation and explicit handoff at 900 (8.9s)
+  ✓  3 [chromium] › ui/mokina-business.test.ts:72:1 › [P1] M1 unknown save survives reload without an automatic retry (5.4s)
+  ✓  4 [chromium] › ui/mokina-business.test.ts:107:1 › [P2] damaged Brief recovery keeps a backup and restores editing explicitly (4.9s)
+  ✓  5 [chromium] › ui/mokina-business.test.ts:131:34 › [P1] M2 freezes evidence across source replacement and shows selected-version issues at 1280 (12.4s)
+  ✓  6 [chromium] › ui/mokina-business.test.ts:131:34 › [P1] M2 freezes evidence across source replacement and shows selected-version issues at 900 (12.3s)
+
+  6 passed (1.3m)

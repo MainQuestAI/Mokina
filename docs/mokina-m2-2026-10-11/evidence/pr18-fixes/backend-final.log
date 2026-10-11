@@ -1,0 +1,8 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/apps/daemon
+
+
+ Test Files  7 passed (7)
+      Tests  152 passed (152)
+   Start at  21:47:54
+   Duration  17.40s (transform 2.66s, setup 30ms, import 5.14s, tests 11.77s, environment 0ms)

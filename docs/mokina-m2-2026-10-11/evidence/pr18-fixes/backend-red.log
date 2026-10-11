@@ -1,0 +1,107 @@
+
+ RUN  v4.1.6 /Users/dingcheng/Coding-Project/02-key-project/Mokina/open-design/apps/daemon
+
+ ❯ tests/mokina-version-evidence.test.ts (13 tests | 5 failed) 89ms
+     × keeps evidence and repair available with https://example.invalid/photo.png 5ms
+     × keeps evidence and repair available with missing.png 3ms
+     × inherits malformed but verified CSV bytes after source deletion, including recovery round trip 7ms
+     × rounds decimal products at the line, catches wrong cents and compares exact capacity 1ms
+     × counts completed ratios and rejects header-only CSV as no calculation 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/mokina-version-evidence.test.ts > PR18 review regressions > keeps evidence and repair available with https://example.invalid/photo.png
+ FAIL  tests/mokina-version-evidence.test.ts > PR18 review regressions > keeps evidence and repair available with missing.png
+Error: Version evidence snapshot unavailable; current sources will not be substituted
+ ❯ fail src/mokina/version-evidence.ts:11:47
+      9| const identifier = /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/u;
+     10| const MAX_BYTES = 512 * 1024;
+     11| function fail(message: string): never { throw new Error(message); }
+       |                                               ^
+     12| function object(value: unknown): Record<string, unknown> {
+     13|   return value && typeof value === 'object' && !Array.isArray(value) ?…
+ ❯ readVersionEvidence src/mokina/version-evidence.ts:185:16
+ ❯ readProjectFileVersion src/project-file-versions.ts:531:14
+ ❯ tests/mokina-version-evidence.test.ts:139:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/mokina-version-evidence.test.ts > PR18 review regressions > inherits malformed but verified CSV bytes after source deletion, including recovery round trip
+AssertionError: expected { Object (id, path, ...) } to match object { …(3) }
+(10 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "error": "Unclosed CSV quote",
++   "error": "ENOENT: no such file or directory, stat '/private/var/folders/6g/c6q7pcvx6l1bz9fmqfnfhzch0000gn/T/mokina-review-BHbreW/p/sales.csv'",
+    "sha256": "57332e2d69b4270bbbc3d8e3c0a28d2ddb7ba776883df0fc403f0521499e247a",
+-   "text": "record_id,amount,currency
+- a,\"800,CNY",
+  }
+
+ ❯ tests/mokina-version-evidence.test.ts:162:42
+    160|         const next = await createProjectFileVersion(root, 'p', 'plan.h…
+    161|         const saved = await readProjectFileVersion(root, 'p', 'plan.ht…
+    162|         expect(saved.quality.sources[0]).toMatchObject({ text: malform…
+       |                                          ^
+    163|       }
+    164|       const archive = await buildProjectRecoveryPackage({ projectsRoot…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/mokina-version-evidence.test.ts > PR18 review regressions > rounds decimal products at the line, catches wrong cents and compares exact capacity
+AssertionError: expected [ { code: 'BUDGET_LINE', …(2) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "code": "BUDGET_LINE",
++     "message": "Row 1: 1.5 × 100.05 = 150.07, displayed 150.08.",
++     "sectionId": "budget",
++   },
++ ]
+
+ ❯ tests/mokina-version-evidence.test.ts:178:96
+    176|   it('rounds decimal products at the line, catches wrong cents and com…
+    177|     const budget = (rows: string, limit: string, capacity: string) => …
+    178|     expect((await inspect(budget(row('1.5', '100.05', '150.08', '0'), …
+       |                                                                                                ^
+    179|     expect((await inspect(budget(row('1.5', '100.05', '150.07', '0'), …
+    180|     expect((await inspect(budget(row('1', '1', '1', '0.1') + row('1', …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/mokina-version-evidence.test.ts > PR18 review regressions > counts completed ratios and rejects header-only CSV as no calculation
+AssertionError: expected [ { code: 'NO_CALCULATION', …(1) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "code": "NO_CALCULATION",
++     "message": "No machine-readable budget or CSV mapping. Numerical claims remain unchecked.",
++   },
++ ]
+
+ ❯ tests/mokina-version-evidence.test.ts:183:163
+    181|   });
+    182|   it('counts completed ratios and rejects header-only CSV as no calcul…
+    183|     expect((await inspect('<div data-mokina-ratio><span data-numerator…
+       |                                                                                                                                                                   ^
+    184|     const empty = await inspect('', 'id,amount,unit\n', true);
+    185|     expect(empty.status).toBe('issues');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 8 passed (13)
+   Start at  21:27:45
+   Duration  455ms (transform 170ms, setup 15ms, import 284ms, tests 89ms, environment 0ms)

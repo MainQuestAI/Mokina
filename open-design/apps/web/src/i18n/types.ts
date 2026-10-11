@@ -67,6 +67,12 @@ export interface Dict {
   'mokina.quality.issues': string;
   'mokina.quality.rules-clear': string;
   'mokina.quality.incomplete': string;
+  'mokina.quality.loading': string;
+  'mokina.quality.retry': string;
+  'mokina.quality.locationFailed': string;
+  'mokina.quality.located': string;
+  'mokina.quality.revise': string;
+  'mokina.quality.resourcesIncomplete': string;
   'mokina.quality.unavailable': string;
   'mokina.quality.scope': string;
   'mokina.quality.locate': string;

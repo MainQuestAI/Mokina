@@ -1,0 +1,32 @@
+[
+  {
+    "title": "[P1] M1 confirmed facts, Brief isolation and explicit handoff at 1440",
+    "status": "passed",
+    "durationMs": 10130
+  },
+  {
+    "title": "[P1] M1 confirmed facts, Brief isolation and explicit handoff at 900",
+    "status": "passed",
+    "durationMs": 8918
+  },
+  {
+    "title": "[P1] M1 unknown save survives reload without an automatic retry",
+    "status": "passed",
+    "durationMs": 5396
+  },
+  {
+    "title": "[P2] damaged Brief recovery keeps a backup and restores editing explicitly",
+    "status": "passed",
+    "durationMs": 4862
+  },
+  {
+    "title": "[P1] M2 freezes evidence across source replacement and shows selected-version issues at 1280",
+    "status": "passed",
+    "durationMs": 12382
+  },
+  {
+    "title": "[P1] M2 freezes evidence across source replacement and shows selected-version issues at 900",
+    "status": "passed",
+    "durationMs": 12290
+  }
+]

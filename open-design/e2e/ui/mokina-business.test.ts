@@ -193,14 +193,34 @@ for (const width of [1280, 900]) test(`[P1] M2 freezes evidence across source re
       return unavailable.has(versionId) ? route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":{"message":"temporary read failure"}}' }) : route.continue();
     });
     const inspectionWrites: string[] = [];
-    const trackWrite = (request: import('@playwright/test').Request) => {
+    const trackWrite = (request: Pick<import('@playwright/test').Request, 'url' | 'method'>) => {
       // Preview HTML is a read-only POST; navigation also persists workspace tabs.
       // Neither may create a run or mutate artifact/version content.
       const pathname = new URL(request.url()).pathname;
       const previewRead = request.method() === 'POST' && pathname === `/api/projects/${id}/export/html`;
       const tabState = request.method() === 'PUT' && pathname === `/api/projects/${id}/tabs`;
-      if (pathname.startsWith(`/api/projects/${id}/`) && !['GET', 'HEAD'].includes(request.method()) && !previewRead && !tabState) inspectionWrites.push(request.method() + ' ' + request.url());
+      const globalCreation = request.method() === 'POST' && (pathname === '/api/runs' || pathname === '/api/projects');
+      const projectMutation = pathname.startsWith(`/api/projects/${id}/`) && !['GET', 'HEAD'].includes(request.method()) && !previewRead && !tabState;
+      if (globalCreation || projectMutation) inspectionWrites.push(request.method() + ' ' + request.url());
     };
+    // Check the actual collector before relying on its zero-write result.
+    // These are synthetic callbacks only: no project/run is created on the server.
+    const collectorCases = [
+      ['POST', '/api/runs', true],
+      ['POST', '/api/projects', true],
+      ['POST', `/api/projects/${id}/files`, true],
+      ['POST', `/api/projects/${id}/export/html`, false],
+      ['PUT', `/api/projects/${id}/tabs`, false],
+      ['DELETE', `/api/projects/${id}/tabs`, true],
+      ['GET', '/api/runs', false],
+      ['GET', '/api/projects', false],
+    ] as const;
+    for (const [method, pathname, captured] of collectorCases) {
+      const url = new URL(pathname, page.url()).href;
+      trackWrite({ method: () => method, url: () => url });
+      expect(inspectionWrites, `${method} ${pathname}: collector coverage`).toEqual(captured ? [`${method} ${url}`] : []);
+      inspectionWrites.length = 0;
+    }
     page.on('request', trackWrite);
     await open();
     for (const [label, version] of [['current', current], ['candidate', candidate], ['history', fixed]] as const) {

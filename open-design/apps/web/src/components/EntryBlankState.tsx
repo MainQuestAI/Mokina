@@ -1,4 +1,6 @@
 import { useId } from 'react';
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import { MokinaBrand } from './mokina/MokinaBrand';
 import { Icon } from './Icon';
 
 interface Props {
@@ -81,9 +83,9 @@ export function EntryBlankState({
         <h1 className="entry-section__title">{heading}</h1>
       </header>
       <div className="entry-blank">
-        <BlankMark />
+        {MOKINA_LOCAL_EDITION ? <MokinaBrand size={88} /> : <BlankMark />}
         <p className="entry-blank__desc">{description}</p>
-        <button type="button" className="entry-blank__cta" onClick={onCreate}>
+        <button type="button" className={`entry-blank__cta${MOKINA_LOCAL_EDITION ? ' primary' : ''}`} onClick={onCreate}>
           <Icon name="plus" size={15} /> {actionLabel}
         </button>
       </div>

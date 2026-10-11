@@ -1,6 +1,27 @@
 import type { Dict } from '../types';
 
 export const ru: Dict = {
+  "mokina.pages.newWork": "Начать новую работу",
+  "mokina.pages.materialsIntro": "Выберите фрагменты и подтвердите источники для этой задачи.",
+  "mokina.pages.readFailed": "Ошибка чтения",
+  "mokina.pages.homeTitle": "Над чем вы хотите поработать сегодня?",
+  "mokina.pages.homeSubtitle": "От анализа к плану — двигайте работу вперёд.",
+  "mokina.pages.start": "Начать работу",
+  "mokina.pages.projects": "Проекты",
+  "mokina.pages.subtitle": "Просматривайте результаты, ход работы и источники.",
+  "mokina.pages.empty": "Создайте проект для первой задачи.",
+  "mokina.pages.recent": "Недавние",
+  "mokina.pages.all": "Все",
+  "mokina.pages.scene": "Сценарий",
+  "mokina.pages.status": "Статус",
+  "mokina.pages.source": "Зафиксированный источник",
+  "mokina.pages.unclassified": "Без категории",
+  "mokina.pages.noSource": "Нет фиксированного источника",
+  "mokina.pages.unknown": "Неизвестно",
+  "mokina.pages.open": "Открыть",
+  "mokina.pages.materials": "Материалы",
+  "mokina.pages.reading": "Чтение",
+
   'mokina.runEvidence.receiptReadFailed': "Failed to read the run receipt.",
   'mokina.runEvidence.transmissionOnly': "Submitted confirms transmission only, not model adoption.",
   'mokina.repair.reselectFiles': "File entries and purposes were kept, but their bytes could not be restored. Select the files again or explicitly exclude them before sending.",

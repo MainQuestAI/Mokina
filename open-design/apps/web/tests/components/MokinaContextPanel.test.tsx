@@ -63,7 +63,7 @@ describe('MokinaContextPanel', () => {
     render(<MokinaContextPanel projectId="p1" files={[materialFile('logo.svg')]} />);
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: 'Preview readable range' }));
-    const role = await screen.findByRole('combobox', { name: 'logo.svg 素材角色' });
+    const role = await screen.findByRole('combobox', { name: 'logo.svg Assets carried into the continuation' });
     fireEvent.change(role, { target: { value: 'logo' } });
     fireEvent.click(screen.getByRole('button', { name: /Freeze as task snapshot/ }));
     await waitFor(() => expect(body?.selections[0]).toMatchObject({ mode: 'asset', role: 'logo', expectedSourceDigest: expect.stringMatching(/^[a-f0-9]{64}$/) }));

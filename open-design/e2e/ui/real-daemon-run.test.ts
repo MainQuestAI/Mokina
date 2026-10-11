@@ -2460,7 +2460,9 @@ test('[P1] Mokina RR3 real daemon refusal survives reload and explicit exit perm
     await route.fulfill({ response });
   });
   await page.getByRole('button', { name: 'Versions' }).click();
-  let dialog = page.getByRole('dialog', { name: 'Versions' });
+  // The same action panel changes its accessible name when switching from
+  // Versions to Revise section. Keep the mounted panel as the action scope.
+  const dialog = page.locator('.artifact-version-panel');
   await dialog.getByRole('button', { name: 'Revise section' }).click();
   await dialog.getByRole('combobox', { name: 'Section to revise' }).selectOption('strategy');
   await dialog.getByRole('textbox', { name: 'Section change request' }).fill('拒绝后保留这一条要求');
@@ -2468,7 +2470,7 @@ test('[P1] Mokina RR3 real daemon refusal survives reload and explicit exit perm
   await expect(dialog.getByRole('button', { name: 'End this unaccepted revision' })).toBeVisible();
   expect((await (await page.request.get(`/api/runs?projectId=${childProjectId}`)).json()).runs).toHaveLength(0);
   await page.reload({ waitUntil: 'domcontentloaded' }); await waitForLoadingToClear(page);
-  await page.getByRole('button', { name: 'Versions' }).click(); dialog = page.getByRole('dialog', { name: 'Versions' });
+  await page.getByRole('button', { name: 'Versions' }).click();
   await dialog.getByRole('button', { name: 'Revise section' }).click();
   await expect(dialog.getByRole('textbox', { name: 'Section change request' })).toHaveValue('拒绝后保留这一条要求');
   expect(posts).toBe(1);
@@ -2519,7 +2521,7 @@ test('[P1] Mokina revision lost POST response recovers the same run and adopts i
 
   const versionsButton = page.getByRole('button', { name: 'Versions' });
   await versionsButton.click();
-  const dialog = page.getByRole('dialog', { name: 'Versions' });
+  const dialog = page.locator('.artifact-version-panel');
   await expect(dialog).toBeVisible({ timeout: T.long });
   await dialog.getByRole('button', { name: 'Revise section' }).click();
   await dialog.getByRole('combobox', { name: 'Section to revise' }).selectOption('strategy');
@@ -2564,7 +2566,7 @@ test('[P1] Mokina revision lost POST response recovers the same run and adopts i
 
   // Recover the original artifact's job, collect a valid replacement and adopt it explicitly.
   await page.getByRole('button', { name: 'Versions' }).click();
-  const recoveredDialog = page.getByRole('dialog', { name: 'Versions' });
+  const recoveredDialog = page.locator('.artifact-version-panel');
   await recoveredDialog.getByRole('button', { name: 'Revise section' }).click();
   await expect(recoveredDialog.getByRole('button', { name: /Resume last revision candidate|Save candidate from finished run/ })).toBeVisible();
   const job = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), `mokina:revision:${projectId}:plan.html`);
@@ -2593,15 +2595,24 @@ test('[P1] Mokina revision lost POST response recovers the same run and adopts i
   }, { timeout: T.long }).toBeTruthy();
   expect(postCount).toBe(1);
   expect(candidate).toBeTruthy();
-  await expect(recoveredDialog.getByRole('button', { name: 'Adopt candidate', exact: true })).toBeVisible();
-  await recoveredDialog.getByRole('button', { name: 'Adopt candidate', exact: true }).click();
-  await page.locator('.file-version-restore-confirm').getByRole('button', { name: 'Adopt candidate', exact: true }).click();
+  // Revision mode offers review before adoption. Its candidate is persisted,
+  // but the original remains current until the user adopts in comparison.
+  await recoveredDialog.getByRole('button', { name: 'Compare', exact: true }).click();
+  const comparison = page.getByRole('dialog', { name: 'Candidate comparison', exact: true });
+  await expect(comparison).toBeVisible();
+  await expect(comparison).toContainText('原始策略：门店联合活动');
+  await expect(comparison).toContainText('新策略：社群为主');
+  const beforeAdoption = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
+  expect(await beforeAdoption.text()).toBe(baseHtml);
+  await comparison.getByRole('button', { name: 'Adopt candidate', exact: true }).click();
   await expect.poll(async () => {
     const response = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
     return (await response.text()).includes('新策略：社群为主');
   }, { timeout: T.long }).toBe(true);
   const adoptedFile = await page.request.get(`/api/projects/${projectId}/raw/plan.html`);
-  expect(await adoptedFile.text()).toContain('新策略：社群为主');
+  const adoptedHtml = await adoptedFile.text();
+  expect(adoptedHtml).toContain('新策略：社群为主');
+  expect(adoptedHtml).toContain('原始预算 50 万');
 
   await testInfo.attach('revision-receipt-loss', {
     body: JSON.stringify({ projectId, conversationId, revisionProjectId, revisionRunId, clientRequestId, postCount }),
@@ -2640,17 +2651,24 @@ test('[P1] Mokina historical version export locks the clicked version and export
   });
 
   await page.goto(`/projects/${projectId}/files/plan.html`, { waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(2500);
+  await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long });
   await page.getByRole('button', { name: 'Versions' }).click();
-  await page.waitForTimeout(900);
   // Pick the oldest version row, then export it.
   const panel = page.locator('.artifact-version-panel');
   await panel.getByText('Manual edit').last().click();
-  await page.waitForTimeout(900);
+  await expect(panel.getByText('Selected: v1 · History')).toBeVisible();
   await page.getByRole('button', { name: 'Download' }).click();
-  await page.waitForTimeout(500);
+  const downloaded = page.waitForEvent('download');
   await page.getByRole('menuitem', { name: 'Export as standalone HTML' }).click();
-  await expect.poll(() => exportBodies.length, { timeout: 10000 }).toBe(1);
+  const download = await downloaded;
+  expect(await download.failure()).toBeNull();
+  const downloadPath = await download.path();
+  expect(downloadPath).toBeTruthy();
+  const exportedHtml = await readFile(downloadPath!, 'utf8');
+  expect(exportedHtml).toContain('<html');
+  expect(exportedHtml).toContain('晨光茶饮');
+  expect(exportedHtml).not.toContain('Current version marker');
+  expect(exportBodies).toHaveLength(1);
 
   // The export carries exactly the version selected in the panel (T13 lock).
   expect(exportBodies[0]?.versionId).toBe(current.id);
@@ -2658,6 +2676,7 @@ test('[P1] Mokina historical version export locks the clicked version and export
     body: JSON.stringify({ projectId, versionId: current.id, exportBodies }),
     contentType: 'application/json',
   });
+  await testInfo.attach('selected-historical-version.html', { body: exportedHtml, contentType: 'text/html' });
 });
 
 test('[P1] Mokina reduced transparency degrades materials live and restores', async ({ page }, testInfo) => {

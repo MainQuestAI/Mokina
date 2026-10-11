@@ -1,3 +1,5 @@
+import { MOKINA_LOCAL_EDITION } from '../mokina-edition';
+import { MokinaBrand } from './mokina/MokinaBrand';
 import {
   type DragEvent,
   type ReactNode,
@@ -759,7 +761,8 @@ function shouldRehomeAuthorizedProjectAfterSignIn({
  *  rather than a hand-inlined path: the two sit on one vertical axis, so a
  *  different house drawing read as a bug. `currentColor` so it follows the
  *  button's muted/hover ink. */
-function ChromeHomeGlyph() {
+function ChromeHomeGlyph({ brand = false }: { brand?: boolean }) {
+  if (MOKINA_LOCAL_EDITION && brand) return <MokinaBrand size={22} />;
   return <Icon name="home" size={16} className="workspace-chrome-logo" />;
 }
 
@@ -2418,7 +2421,7 @@ export function WorkspaceTabsBar({
           data-testid="workspace-home-chrome"
           onClick={() => openTab(state.tabs[0]!)}
         >
-          <ChromeHomeGlyph />
+          <ChromeHomeGlyph brand={!entryRailOpen} />
         </button>
       ) : null}
       {dockPortal(
@@ -2501,7 +2504,7 @@ export function WorkspaceTabsBar({
                     }
                   }}
                 >
-                  <ChromeHomeGlyph />
+                  <ChromeHomeGlyph brand={!entryRailOpen} />
                   {/* Collapsed-rail hover swaps the logo for the expand-sidebar
                       glyph, so the button telegraphs its one action. CSS keys
                       the swap off :not(.is-inert):hover. */}
@@ -2531,7 +2534,7 @@ export function WorkspaceTabsBar({
                     openTab(tab);
                   }}
                 >
-                  <ChromeHomeGlyph />
+                  <ChromeHomeGlyph brand={!entryRailOpen} />
                 </button>
               ) : (
                 <>
@@ -2547,7 +2550,7 @@ export function WorkspaceTabsBar({
                           button — the brand logo — not the remembered
                           section's icon. */}
                       {isPinned ? (
-                        <ChromeHomeGlyph />
+                        <ChromeHomeGlyph brand={!entryRailOpen} />
                       ) : (
                         <Icon name={display.icon} size={14} />
                       )}

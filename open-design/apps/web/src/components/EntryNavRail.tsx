@@ -2022,7 +2022,7 @@ export function EntryNavRail({
   // #5517 renamed the rail's first item from 最近 (Recents) to 首页 (Home) —
   // the key keeps its historical name, the VALUE now reads Home in every
   // locale (polish round 2, ref 1db2d00c2).
-  const homeLabel = t('entry.navRecents');
+  const homeLabel = t(MOKINA_LOCAL_EDITION ? 'mokina.pages.start' : 'entry.navRecents');
   const isHome = view === 'home';
 
   const isTeam = Boolean(context) && context!.workspaceType === 'team';
@@ -2294,6 +2294,7 @@ export function EntryNavRail({
     >
       <div className="entry-nav-rail__panel">
       <div className="entry-nav-rail__group">
+        {MOKINA_LOCAL_EDITION ? <button type="button" className="mokina-nav-brand" aria-label="Mokina" onClick={() => selectView('home')}><MokinaBrand variant="horizontal" size={41} /></button> : null}
 
         {context ? (
           <div className="entry-nav-rail__team-wrap">
@@ -2473,13 +2474,37 @@ export function EntryNavRail({
                 opens that page on its 团队项目 tab, so it lights this item. */}
             <NavButton
               active={view === 'drafts' || view === 'all-projects'}
-              ariaLabel={t('entry.navDrafts')}
-              label={t('workspaceSwitcher.draftsTooltip')}
+              ariaLabel={t(MOKINA_LOCAL_EDITION ? 'mokina.pages.projects' : 'entry.navDrafts')}
+              label={t(MOKINA_LOCAL_EDITION ? 'mokina.pages.projects' : 'workspaceSwitcher.draftsTooltip')}
               onClick={() => selectView('drafts')}
               testId="entry-nav-drafts"
             >
               <Icon name="file" size={16} />
             </NavButton>
+            {MOKINA_LOCAL_EDITION ? (
+            <RailRecentSection
+              projects={recentProjects ?? []}
+              onOpen={onOpenRecentProject}
+              onRename={onRenameRecentProject}
+              onDelete={onDeleteRecentProject}
+              onDuplicate={onDuplicateRecentProject}
+              onExportRecovery={onExportRecoveryRecentProject ? (project) => onExportRecoveryRecentProject(project.id) : undefined}
+              isShared={isSharedRecentProject}
+              ownerMemberIds={recentProjectOwnerMemberIds}
+              onProjectShared={onRecentProjectShared}
+              onProjectShareFailed={onRecentProjectShareFailed}
+              workspaceContext={context}
+              analyticsPage={analyticsPage}
+              label={t('recentProjects.title')}
+            />
+            ) : null}
+            {MOKINA_LOCAL_EDITION ? <NavButton
+              ariaLabel={t('entry.navNewProject')}
+              label={t('entry.navNewProject')}
+              onClick={onNewProject}
+              disabled={newProjectDisabled}
+              testId="entry-nav-new-project"
+            ><Icon name="plus" size={16} /></NavButton> : null}
             <NavButton
               active={view === 'design-systems'}
               ariaLabel={t('entry.navDesignSystems')}
@@ -2520,9 +2545,7 @@ export function EntryNavRail({
             >
               <Icon name="settings" size={16} />
             </NavButton>
-            {/* 最近项目 sits under 设置 (per product) — the last thing in the
-                destination list, because it is a list of CONTENT rather than a
-                place to go. */}
+            {!MOKINA_LOCAL_EDITION ? (
             <RailRecentSection
               projects={recentProjects ?? []}
               onOpen={onOpenRecentProject}
@@ -2538,6 +2561,11 @@ export function EntryNavRail({
               analyticsPage={analyticsPage}
               label={t('recentProjects.title')}
             />
+            ) : null}
+            {/* 最近项目 sits under 设置 (per product) — the last thing in the
+                destination list, because it is a list of CONTENT rather than a
+                place to go. */}
+
             {/* No Workspace 设置 entry here (OPEND-3257, 2026-09-16): the
                 2026-07-20 decision that kept it below the recent list is
                 withdrawn for both spaces. Workspace settings stay reachable
@@ -2549,31 +2577,40 @@ export function EntryNavRail({
              the two destination lists read the same. The name is historical —
              nothing in it is team-specific. */
           <div className="entry-nav-rail__team-section">
-            {MOKINA_LOCAL_EDITION ? (
-              <NavButton
-                ariaLabel={t('entry.navNewProject')}
-                label={t('entry.navNewProject')}
-                onClick={onNewProject}
-                disabled={newProjectDisabled}
-                testId="entry-nav-new-project"
-              >
-                <Icon name="plus" size={16} />
-              </NavButton>
-            ) : null}
             {/* 项目 is a destination on BOTH branches (OPEND-3140): the local
                 shell's project list is the same page the signed-in 项目 item
                 opens — 草稿 folds to the whole local catalog without a
                 workspace — so the destination list reads the same either way.
                 No 团队项目 here: that grid is team-scoped. */}
             <NavButton
-              active={view === 'drafts'}
-              ariaLabel={t('entry.navDrafts')}
-              label={t('workspaceSwitcher.draftsTooltip')}
+              active={view === 'drafts' || (MOKINA_LOCAL_EDITION && view === 'projects')}
+              ariaLabel={t(MOKINA_LOCAL_EDITION ? 'mokina.pages.projects' : 'entry.navDrafts')}
+              label={t(MOKINA_LOCAL_EDITION ? 'mokina.pages.projects' : 'workspaceSwitcher.draftsTooltip')}
               onClick={() => selectView('drafts')}
               testId="entry-nav-drafts"
             >
               <Icon name="file" size={16} />
             </NavButton>
+            {MOKINA_LOCAL_EDITION ? (
+            <RailRecentSection
+              projects={recentProjects ?? []}
+              onOpen={onOpenRecentProject}
+              onRename={onRenameRecentProject}
+              onDelete={onDeleteRecentProject}
+              onDuplicate={onDuplicateRecentProject}
+              onExportRecovery={onExportRecoveryRecentProject ? (project) => onExportRecoveryRecentProject(project.id) : undefined}
+              workspaceContext={null}
+              analyticsPage={analyticsPage}
+              label={t('recentProjects.title')}
+            />
+            ) : null}
+            {MOKINA_LOCAL_EDITION ? <NavButton
+              ariaLabel={t('entry.navNewProject')}
+              label={t('entry.navNewProject')}
+              onClick={onNewProject}
+              disabled={newProjectDisabled}
+              testId="entry-nav-new-project"
+            ><Icon name="plus" size={16} /></NavButton> : null}
             <NavButton
               active={view === 'design-systems'}
               ariaLabel={t('entry.navDesignSystems')}
@@ -2615,14 +2652,7 @@ export function EntryNavRail({
             >
               <Icon name="settings" size={16} />
             </NavButton>
-            {/* 最近项目 under 设置, exactly as on the signed-in branch
-                (OPEND-3140). Without a cloud identity the catalog EntryShell
-                hands over IS the local project list, so the local shell gets
-                the same rows, the same run-status feed (the daemon answers a
-                headerless read for an unbound project) and the same ✓-spending
-                — and Home no longer needs a grid of its own. No team plane
-                here: the row menu's 转入团队空间 gates itself off a null
-                context, leaving 重命名 / 复制 / 删除. */}
+            {!MOKINA_LOCAL_EDITION ? (
             <RailRecentSection
               projects={recentProjects ?? []}
               onOpen={onOpenRecentProject}
@@ -2634,6 +2664,16 @@ export function EntryNavRail({
               analyticsPage={analyticsPage}
               label={t('recentProjects.title')}
             />
+            ) : null}
+            {/* 最近项目 under 设置, exactly as on the signed-in branch
+                (OPEND-3140). Without a cloud identity the catalog EntryShell
+                hands over IS the local project list, so the local shell gets
+                the same rows, the same run-status feed (the daemon answers a
+                headerless read for an unbound project) and the same ✓-spending
+                — and Home no longer needs a grid of its own. No team plane
+                here: the row menu's 转入团队空间 gates itself off a null
+                context, leaving 重命名 / 复制 / 删除. */}
+
             {/* No message-centre item here any more: signed out, the bell
                 rides the local account dock in the footer below (OPEND-3140),
                 the same slot the signed-in dock gives it. */}
@@ -2650,7 +2690,7 @@ export function EntryNavRail({
           has a notice to show — an empty shell here read as a dead white
           strip under the account row. Signed out renders the local twin of
           that dock down here, under the sign-in card. */}
-      {context ? (
+      {context || MOKINA_LOCAL_EDITION ? (
         footerNotice ? <div className="entry-nav-rail__footer">{footerNotice}</div> : null
       ) : (
         <div className="entry-nav-rail__footer">

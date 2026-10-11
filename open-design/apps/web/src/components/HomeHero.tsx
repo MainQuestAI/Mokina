@@ -1585,14 +1585,14 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
                 ? ' home-hero__title--optical-trim'
                 : '')
             }
-            aria-label={titleAriaLabel}
+            aria-label={MOKINA_LOCAL_EDITION ? t('mokina.pages.homeTitle') : titleAriaLabel}
           >
             {/* A locale opts into the rotating noun by putting `{word}` in its
                 own headline string — en / zh-CN / zh-TW do; the other 16 keep a
                 plain sentence and fall straight through to the `else`. Nothing
                 here knows which locale is which, so any translation can join
                 later by editing one string. */}
-            {titleParts ? (
+            {MOKINA_LOCAL_EDITION ? t('mokina.pages.homeTitle') : titleParts ? (
               <>
                 {titleParts.lead}
                 <RotatingTitleWord words={titleRotatingWords} pinned={titlePinnedWord} />
@@ -1603,7 +1603,7 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
             )}
           </h1>
           {/* One quiet line under the headline (per product). */}
-          <p className="home-hero__subtitle">{t('homeHero.subtitle')}</p>
+          <p className="home-hero__subtitle">{t(MOKINA_LOCAL_EDITION ? 'mokina.pages.homeSubtitle' : 'homeHero.subtitle')}</p>
         </>
       )}
 

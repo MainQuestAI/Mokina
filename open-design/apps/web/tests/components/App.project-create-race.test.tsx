@@ -1981,6 +1981,21 @@ describe('App project creation routing', () => {
     });
   });
 
+  it('preserves known projects when a background refresh cannot read the catalog', async () => {
+    mockedListProjects.mockResolvedValue([existingProject]);
+    render(<App />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Open Existing project' }));
+    await screen.findByRole('button', { name: 'Refresh projects' });
+    mockedListProjects.mockImplementation(async options => {
+      if (options?.throwOnError) throw new Error('catalog offline');
+      return [];
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh projects' }));
+    await act(async () => { await Promise.resolve(); });
+    fireEvent.click(screen.getByRole('button', { name: 'Back to projects' }));
+    expect(await screen.findByRole('button', { name: 'Open Existing project' })).toBeInTheDocument();
+  });
+
   it('keeps a newly created project open when a post-create refresh resolves stale', async () => {
     const bootstrapProjects = deferred<Project[]>();
     const staleRefreshProjects = deferred<Project[]>();

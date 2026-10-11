@@ -164,11 +164,122 @@ async function openRecoveryPanel() {
 }
 
 describe('Mokina revision recovery UI', () => {
+  it('keeps unsent revision requirements after closing and reopening without creating a run', async () => {
+    const { fetchMock } = setupRecoveryFetch('running');
+    const panel = await openRecoveryPanel();
+    const select = await within(panel).findByRole('combobox', { name: 'Section to revise' });
+    await waitFor(() => expect((select as HTMLSelectElement).options.length).toBeGreaterThan(1));
+    fireEvent.change(select, { target: { value: 'strategy' } });
+    fireEvent.change(within(panel).getByRole('textbox', { name: 'Section change request' }), {
+      target: { value: '先保留预算，再修订渠道。尚未发送。' },
+    });
+    await act(async () => {});
+    fireEvent.click(within(panel).getByRole('button', { name: 'Close' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Revise section' }));
+    await waitFor(() => expect((screen.getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).value)
+      .toBe('先保留预算，再修订渠道。尚未发送。'));
+    expect((screen.getByRole('combobox', { name: 'Section to revise' }) as HTMLSelectElement).value).toBe('strategy');
+    expect(fetchMock.mock.calls.some(([url, init]) => ['/api/projects', '/api/runs'].includes(String(url)) && init?.method === 'POST')).toBe(false);
+    cleanup();
+    await openRecoveryPanel();
+    expect((screen.getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).value)
+      .toBe('先保留预算，再修订渠道。尚未发送。');
+  });
+
+  it('keeps editable requirements and offers retry when the native draft mirror fails', async () => {
+    const { fetchMock } = setupRecoveryFetch('running');
+    const mirror = vi.spyOn(recoveryStore, 'mirrorDurableRecord').mockResolvedValue(false);
+    const panel = await openRecoveryPanel();
+    const select = await within(panel).findByRole('combobox', { name: 'Section to revise' });
+    await waitFor(() => expect((select as HTMLSelectElement).options.length).toBeGreaterThan(1));
+    fireEvent.change(select, { target: { value: 'strategy' } });
+    const prompt = within(panel).getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement;
+    fireEvent.change(prompt, { target: { value: '保存失败时仍可复制这段要求' } });
+    await within(panel).findByText(/Revision requirements could not be saved/);
+    expect(prompt.value).toBe('保存失败时仍可复制这段要求');
+    const submit = within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement;
+    expect(submit.disabled).toBe(true);
+    mirror.mockResolvedValue(true);
+    fireEvent.click(within(panel).getByRole('button', { name: 'Retry' }));
+    await waitFor(() => expect(within(panel).queryByText(/Revision requirements could not be saved/)).toBeNull());
+    expect(submit.disabled).toBe(false);
+    expect(JSON.parse(mirror.mock.calls.at(-1)![1])).toMatchObject({ prompt: prompt.value, sectionId: 'strategy', baseVersionId: 'v1' });
+    expect(fetchMock.mock.calls.some(([url, init]) => ['/api/projects', '/api/runs'].includes(String(url)) && init?.method === 'POST')).toBe(false);
+  });
+
+  it.each(['previous-version', undefined])('keeps the wording but requires a new section selection for source version %s', async baseVersionId => {
+    setupRecoveryFetch('running');
+    localStorage.setItem('od:revision:draft:project-1:index.html', JSON.stringify({
+      sectionId: 'strategy', prompt: '需要按新稿核对的要求', baseVersionId,
+    }));
+    const panel = await openRecoveryPanel();
+    const select = await within(panel).findByRole('combobox', { name: 'Section to revise' }) as HTMLSelectElement;
+    await waitFor(() => expect(select.options.length).toBeGreaterThan(1));
+    expect(select.value).toBe('');
+    expect((within(panel).getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).value)
+      .toBe('需要按新稿核对的要求');
+    expect((within(panel).getByRole('button', { name: 'Generate candidate (current draft unchanged)' }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('still shows an unconfirmed native save after the user reopens the panel', async () => {
+    setupRecoveryFetch('running');
+    localStorage.setItem('od:revision:draft:project-1:index.html', JSON.stringify({
+      sectionId: 'strategy', prompt: '缓存中保留但尚未持久化的要求', baseVersionId: 'v1',
+    }));
+    vi.spyOn(recoveryStore, 'flushDurableRecord').mockResolvedValue(false);
+    const panel = await openRecoveryPanel();
+    await within(panel).findByText(/Revision requirements could not be saved/);
+    expect((within(panel).getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).value)
+      .toBe('缓存中保留但尚未持久化的要求');
+  });
+
+  it.each(['{broken', JSON.stringify({ sectionId: 'strategy', prompt: 42 })])(
+    'preserves unreadable draft bytes until an explicit backup and reset: %s', async raw => {
+      const { fetchMock } = setupRecoveryFetch('running');
+      const key = 'od:revision:draft:project-1:index.html';
+      localStorage.setItem(key, raw);
+      const panel = await openRecoveryPanel();
+      await within(panel).findByText(/saved revision requirements cannot be read/i);
+      expect(localStorage.getItem(key)).toBe(raw);
+      expect((within(panel).getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).disabled).toBe(true);
+      const mirror = vi.spyOn(recoveryStore, 'mirrorDurableRecord').mockResolvedValue(false);
+      fireEvent.click(within(panel).getByRole('button', { name: 'Keep a backup and start a new draft' }));
+      await within(panel).findByText(/Revision requirements could not be saved/);
+      expect(localStorage.getItem(key)).toBe(raw);
+      mirror.mockResolvedValue(true);
+      fireEvent.click(within(panel).getByRole('button', { name: 'Keep a backup and start a new draft' }));
+      await waitFor(() => expect(localStorage.getItem(key)).toBeNull());
+      const backupKey = Object.keys(localStorage).find(name => name.startsWith(`${key}:unreadable:`));
+      expect(backupKey).toBeTruthy();
+      expect(localStorage.getItem(backupKey!)).toBe(raw);
+      expect((within(panel).getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).disabled).toBe(false);
+      expect(fetchMock.mock.calls.some(([url, init]) => ['/api/projects', '/api/runs'].includes(String(url)) && init?.method === 'POST')).toBe(false);
+    },
+  );
+
+  it('does not erase another window draft while backing up an unreadable record', async () => {
+    setupRecoveryFetch('running');
+    const key = 'od:revision:draft:project-1:index.html';
+    localStorage.setItem(key, '{broken');
+    let completeBackup!: (saved: boolean) => void;
+    vi.spyOn(recoveryStore, 'mirrorDurableRecord').mockImplementation(() => new Promise(resolve => { completeBackup = resolve; }));
+    const panel = await openRecoveryPanel();
+    await within(panel).findByText(/saved revision requirements cannot be read/i);
+    fireEvent.click(within(panel).getByRole('button', { name: 'Keep a backup and start a new draft' }));
+    const newer = JSON.stringify({ sectionId: 'strategy', prompt: '另一窗口已经恢复', baseVersionId: 'v1' });
+    localStorage.setItem(key, newer);
+    await act(async () => completeBackup(true));
+    await within(panel).findByText(/Revision requirements could not be saved/);
+    expect(localStorage.getItem(key)).toBe(newer);
+    expect((within(panel).getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).disabled).toBe(true);
+  });
+
   afterEach(() => {
     cleanup();
     localStorage.clear();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
+    recoveryStore.resetDurableRecoveryForTests();
   });
 
   it('RR3 persists a definitive refusal on the source intent and exits without looking for a nonexistent run', async () => {
@@ -188,6 +299,9 @@ describe('Mokina revision recovery UI', () => {
     const firstRequest = JSON.parse(String(posts[0]![1]?.body)).clientRequestId;
     fireEvent.click(within(panel).getByRole('button', { name: 'End this unaccepted revision' }));
     await waitFor(() => expect(localStorage.getItem(revisionKey)).toBeNull());
+    expect(JSON.parse(localStorage.getItem('od:revision:draft:project-1:index.html')!)).toMatchObject({
+      baseVersionId: 'v1', sectionId: 'strategy', prompt: '保留我的拒绝后要求',
+    });
     expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith('/api/runs?') || String(url).endsWith('/cancel'))).toBe(false);
     cleanup(); await openRecoveryPanel();
     expect((screen.getByRole('textbox', { name: 'Section change request' }) as HTMLTextAreaElement).value).toBe('保留我的拒绝后要求');

@@ -5802,7 +5802,7 @@ export function registerProjectArtifactRoutes(app: Express, ctx: RegisterProject
 
 }
 
-export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' | 'paths' | 'uploads' | 'node' | 'projectStore' | 'projectFiles' | 'documents' | 'artifacts' | 'projectPreviewScopes'> {
+export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' | 'paths' | 'uploads' | 'node' | 'projectStore' | 'projectFiles' | 'documents' | 'artifacts' | 'projectPreviewScopes' | 'appConfig'> {
   verifyWorkspaceRequestAuthority?: VerifyWorkspaceRequestAuthority;
   authorizeProjectRequest?: AuthorizeProjectRequest;
   /**
@@ -5828,6 +5828,7 @@ export interface RegisterProjectFileRoutesDeps extends RouteDeps<'db' | 'http' |
 }
 
 export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFileRoutesDeps) {
+  const { readAppConfig } = ctx.appConfig;
   const mokinaBrandDesignSystems = ctx.mokinaBrandDesignSystems;
   const { db } = ctx;
   const { sendApiError, sendMulterError } = ctx.http;
@@ -7376,7 +7377,11 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
   // uses the daemon's existing failure vocabulary.
   app.get('/api/mokina/codex-connection', async (_req, res) => {
     try {
-      const report = await probeMokinaCodexConnection();
+      const config = await readAppConfig(ctx.paths.RUNTIME_DATA_DIR);
+      const report = await probeMokinaCodexConnection(process.env, {
+        useCache: false,
+        ...(config.agentCliEnv ? { agentCliEnv: config.agentCliEnv } : {}),
+      });
       res.json(report);
     } catch (error: any) {
       sendApiError(res, 500, 'CODEX_CONNECTION_FAILED', error?.message || 'connection check failed');

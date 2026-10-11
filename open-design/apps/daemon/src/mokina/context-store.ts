@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
+import { link, mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import {
@@ -142,11 +142,26 @@ function isValidSnapshotId(value: unknown): value is string {
   return typeof value === 'string' && SNAPSHOT_ID_PATTERN.test(value);
 }
 
-async function writeJsonAtomic(target: string, value: unknown): Promise<void> {
+async function writeJsonAtomic(target: string, value: unknown, replace = true): Promise<boolean> {
   await mkdir(path.dirname(target), { recursive: true });
-  const temporary = `${target}.tmp-${process.pid}-${Date.now()}`;
-  await writeFile(temporary, `${JSON.stringify(value)}\n`, { encoding: 'utf8', mode: 0o600 });
-  await rename(temporary, target);
+  const temporary = `${target}.tmp-${randomUUID()}`;
+  try {
+    await writeFile(temporary, `${JSON.stringify(value)}\n`, { encoding: 'utf8', mode: 0o600, flag: 'wx' });
+    if (replace) {
+      await rename(temporary, target);
+    } else {
+      // Publish complete bytes without overwriting a snapshot another request
+      // committed while this request was still reading its sources.
+      try { await link(temporary, target); }
+      catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'EEXIST') return false;
+        throw error;
+      }
+    }
+    return true;
+  } finally {
+    await rm(temporary, { force: true });
+  }
 }
 
 export type RestoredMokinaContext = {
@@ -350,11 +365,16 @@ async function freezeItem(
     const blobTarget = mokinaBlobPath(input.projectsRoot, input.projectId, blobId);
     try {
       await stat(blobTarget);
-    } catch {
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
       await mkdir(path.dirname(blobTarget), { recursive: true });
-      const temporary = `${blobTarget}.tmp-${process.pid}-${Date.now()}`;
-      await writeFile(temporary, read.bytes, { mode: 0o600 });
-      await rename(temporary, blobTarget);
+      const temporary = `${blobTarget}.tmp-${randomUUID()}`;
+      try {
+        await writeFile(temporary, read.bytes, { mode: 0o600, flag: 'wx' });
+        await rename(temporary, blobTarget);
+      } finally {
+        await rm(temporary, { force: true });
+      }
     }
     return {
       ok: true,
@@ -524,9 +544,10 @@ export async function prepareMokinaContextSnapshot(input: PrepareSnapshotInput):
     return errorResult(409, MOKINA_CONTEXT_ERROR_CODES.SNAPSHOT_UNAVAILABLE, '已存在的快照记录损坏，不能覆盖。');
   }
   if (existingState === 'ok') {
-    const existing = await readSnapshotFile(target);
-    if (existing && existing.selectionFingerprint === selectionFingerprint) {
-      return { ok: true, snapshot: existing, reused: true };
+    const existing = await readMokinaContextSnapshot(projectsRoot, projectId, request.snapshotId);
+    if (!existing.ok) return existing;
+    if (existing.snapshot.selectionFingerprint === selectionFingerprint) {
+      return { ok: true, snapshot: existing.snapshot, reused: true };
     }
     return errorResult(409, MOKINA_CONTEXT_ERROR_CODES.SNAPSHOT_CONFLICT, '该 snapshotId 已有不同选择，请使用新的 snapshotId。');
   }
@@ -572,7 +593,14 @@ export async function prepareMokinaContextSnapshot(input: PrepareSnapshotInput):
     ...withoutFingerprint,
     fingerprint: computeSnapshotFingerprint(withoutFingerprint),
   };
-  await writeJsonAtomic(target, snapshot);
+  if (!await writeJsonAtomic(target, snapshot, false)) {
+    const existing = await readMokinaContextSnapshot(projectsRoot, projectId, request.snapshotId);
+    if (!existing.ok) return existing;
+    if (existing.snapshot.selectionFingerprint === selectionFingerprint) {
+      return { ok: true, snapshot: existing.snapshot, reused: true };
+    }
+    return errorResult(409, MOKINA_CONTEXT_ERROR_CODES.SNAPSHOT_CONFLICT, '该 snapshotId 已有不同选择，请使用新的 snapshotId。');
+  }
   return { ok: true, snapshot, reused: false };
 }
 

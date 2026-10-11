@@ -9151,6 +9151,7 @@ export async function startServer({
     projectPreviewScopes,
   });
   registerProjectFileRoutes(app, {
+    appConfig: appConfigDeps,
     mokinaBrandDesignSystems: {
       authorizeDesignSystemRead: designSystemRouteServices.authorizeDesignSystemRead,
       readDesignSystemForFreeze: designSystemRouteServices.readDesignSystemForFreeze,

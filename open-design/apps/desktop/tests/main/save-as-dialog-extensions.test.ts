@@ -7,6 +7,17 @@ import { saveAsDialogOptionsForFilename } from '../../src/main/runtime.js';
 // flow. A previous version only intercepted .pptx + images, so PDF silently
 // landed in the OS Downloads folder.
 describe('saveAsDialogOptionsForFilename', () => {
+  test.each([
+    ['plan-v2-candidate.html', 'HTML Document', 'html'],
+    ['project-recovery.zip', 'ZIP Archive', 'zip'],
+  ])('user work export %s receives explicit native save options', (filename, name, extension) => {
+    expect(saveAsDialogOptionsForFilename(filename)).toEqual({
+      title: 'Save As',
+      defaultPath: filename,
+      filters: [{ name, extensions: [extension] }, { name: 'All Files', extensions: ['*'] }],
+      properties: ['dontAddToRecent'],
+    });
+  });
   test('screenshot PDF download prompts Save As with a PDF filter', () => {
     const opts = saveAsDialogOptionsForFilename('My Deck.pdf');
     expect(opts).not.toBeNull();

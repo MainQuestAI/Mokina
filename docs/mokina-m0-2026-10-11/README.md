@@ -28,10 +28,10 @@
 
 ## 最终候选验收与交付位置
 
-候选版本预留 `0.0.4-local.5`、稳定 namespace `mokina-local`，使用 Node24 的 `tools-pack mac build --portable`。只在 `/Users/dingcheng/Mokina-M0-QA-20261011` 下安装临时副本，通过既有启动配置覆盖指向同根合成旧 profile；不得直接打开便携包而落入用户资料根。
+候选版本预留 `0.0.4-local.6`、稳定 namespace `mokina-local`，使用 Node24 的 `tools-pack mac build --portable`。只在 `/Users/dingcheng/Mokina-M0-QA-20261011` 下安装临时副本，通过既有启动配置覆盖指向同根合成旧 profile；不得直接打开便携包而落入用户资料根。
 
 同包验收包括：首次原生来源选择和取消、复制后的项目/版本/固定来源/P05草稿、P07未发送输入关闭应用后恢复、指定历史版本导出摘要、CLI连接与诊断一致、完整恢复包，以及停止/再启动。候选只代表 macOS arm64 的本地预览；未签收、公证或正式发布。
 
-为了避免“打包后再提交报告”改变来源 SHA，最终运行记录和清理清单保存在 `output/mokina-m0-2026-10-11/DELIVERY.md`，安装归档及绑定 SHA/版本/摘要的 manifest 保存在 QA 根的 `deliverables/0.0.4-local.5/`。这两个本地交付记录只有在实际验收后才可写为通过；PR 正文同步结果。旧 local.4 包不代表本轮提交。
+为了避免“打包后再提交报告”改变来源 SHA，最终运行记录和清理清单保存在 `output/mokina-m0-2026-10-11/DELIVERY.md`，安装归档及绑定 SHA/版本/摘要的 manifest 保存在 QA 根的 `deliverables/0.0.4-local.6/`。这两个本地交付记录只有在实际验收后才可写为通过；PR 正文同步结果。旧 local.4 包不代表本轮提交。
 
 现用 `/Users/dingcheng/Applications/Mokina.app`（已核验 `0.0.4-local.1`）及其资料继续保留。后续尚有 M1 Brief/业务事实、M2专业方法与研究、M3语义操作及完整接续、M4恢复容量治理与正式发行门禁，详见开发方案和成果评审中的具体退出条件。

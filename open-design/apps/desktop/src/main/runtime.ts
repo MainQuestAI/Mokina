@@ -1848,7 +1848,7 @@ const IMAGE_SAVE_AS_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp"]);
 // Every programmatic export that streams a download must prompt Save As, incl.
 // the screenshot PDF (the default Export PDF flow) — otherwise it silently lands
 // in the OS Downloads folder while PPTX/images prompt correctly.
-const SAVE_AS_EXTENSIONS = new Set([".pptx", ".pdf", ...IMAGE_SAVE_AS_EXTENSIONS]);
+const SAVE_AS_EXTENSIONS = new Set([".pptx", ".pdf", ".html", ".zip", ...IMAGE_SAVE_AS_EXTENSIONS]);
 
 interface SaveAsDialogOptions {
   title: string;
@@ -1873,7 +1873,12 @@ export function saveAsDialogOptionsForFilename(filename: string): SaveAsDialogOp
           { name: "PDF Document", extensions: ["pdf"] },
           { name: "All Files", extensions: ["*"] },
         ]
-      : [
+      : ext === ".html" || ext === ".zip"
+        ? [
+            { name: ext === ".html" ? "HTML Document" : "ZIP Archive", extensions: [ext.slice(1)] },
+            { name: "All Files", extensions: ["*"] },
+          ]
+        : [
           { name: "PowerPoint Presentation", extensions: ["pptx"] },
           { name: "All Files", extensions: ["*"] },
         ];

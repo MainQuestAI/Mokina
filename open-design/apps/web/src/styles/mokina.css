@@ -289,7 +289,7 @@ html[data-product='mokina'] .artifact-version-panel[data-mokina-task] .artifact-
 @container (max-width: 560px) {
   html[data-product='mokina'] .mokina-task-section--versions:not([hidden]), html[data-product='mokina'] .mokina-task-section--continue:not([hidden]) > section { display: flex; flex-direction: column; }
 }
-@media (max-width: 760px) {
+@media (max-width: 1080px) {
   html[data-product='mokina'] .mokina-project-table table { min-width: 0; }
   html[data-product='mokina'] .mokina-project-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   html[data-product='mokina'] .mokina-project-table :is(table, tbody) { display: block; }
@@ -327,3 +327,6 @@ html[data-product='mokina'] .mokina-context-panel--expanded .mokina-material-pic
     pointer-events: auto;
   }
 }
+
+html[data-product='mokina'] .mokina-artifact-catalog ul { list-style: none; padding: 0; margin: 8px 0; max-width: 22rem; }
+html[data-product='mokina'] .mokina-artifact-catalog li button { text-align: start; justify-content: start; white-space: normal; overflow-wrap: anywhere; }

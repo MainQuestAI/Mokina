@@ -150,7 +150,7 @@ export interface MokinaContinuationV2 {
   };
   sections: Array<{ id: string; text: string; textDigest?: MokinaSha256 }>;
   background?: string;
-  productionIntent: 'discuss' | 'landing-page' | 'custom';
+  productionIntent: 'discuss' | 'research' | 'strategy' | 'landing-page' | 'custom';
   /** Present once the continuation also froze a context snapshot (T06 UI). */
   contextSnapshotId?: string;
 }

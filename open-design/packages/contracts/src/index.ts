@@ -106,3 +106,5 @@ export * from './api/amr-continuation.js';
 export * from './api/mokina-business.js';
 
 export type { MokinaQualitySnapshot, MokinaQualityIssue, MokinaEvidenceSource } from './api/mokina-quality.js';
+
+export * from './api/mokina-operations.js';

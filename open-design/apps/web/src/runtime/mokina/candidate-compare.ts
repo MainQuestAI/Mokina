@@ -95,3 +95,12 @@ export function detectChangedSections(baseHtml: string, candidateHtml: string): 
   const ids = [...new Set([...listSectionIds(baseHtml), ...listSectionIds(candidateHtml)])];
   return ids.filter((id) => extractSectionHtml(baseHtml, id) !== extractSectionHtml(candidateHtml, id));
 }
+
+/** Readable comparison; parse inertly and omit executable/style text. Never inject artifact HTML into the host. */
+export function readableChapter(html: string): string {
+  const doc = parseDocument(html);
+  doc.querySelectorAll('script,style').forEach(node => node.remove());
+  doc.querySelectorAll('p,li,tr,h1,h2,h3,section').forEach(node => node.append('\n'));
+  doc.querySelectorAll('td,th').forEach(node => node.append(' · '));
+  return (doc.body.textContent ?? '').trim();
+}

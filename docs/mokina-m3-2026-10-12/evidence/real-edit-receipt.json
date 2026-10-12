@@ -1,0 +1,25 @@
+{
+  "supportedFields": 58,
+  "skippedFields": [
+    "Unsupported or ambiguous field: brand",
+    "Unsupported or ambiguous field: approval-status",
+    "Unsupported or ambiguous field: headline",
+    "Unsupported or ambiguous field: cta-status",
+    "Unsupported or ambiguous field: footer-status"
+  ],
+  "candidate": "849011e0-6655-4c94-9211-ef94996965e3",
+  "original": "77ac71c8-cbdf-4155-b76b-66f8e2a2b07d",
+  "originalPreserved": true,
+  "selectedVersionExport": true,
+  "externalRequests": [],
+  "dimensions": [
+    {
+      "viewport": 1440,
+      "scroll": 1440
+    },
+    {
+      "viewport": 900,
+      "scroll": 900
+    }
+  ]
+}

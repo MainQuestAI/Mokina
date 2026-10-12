@@ -6024,4 +6024,23 @@ export interface Dict {
   'mokina.empty.runningTitle': string;
   'mokina.empty.runningDescription': string;
   'mokina.model.unavailable': string;
+  'mokina.operations.title': string;
+  'mokina.operations.help': string;
+  'mokina.operations.donor': string;
+  'mokina.operations.none': string;
+  'mokina.operations.legacy': string;
+  'mokina.operations.save': string;
+  'mokina.operations.pending': string;
+  'mokina.operations.check': string;
+  'mokina.operations.absent': string;
+  'mokina.operations.retrySame': string;
+  'mokina.operations.editAgain': string;
+  'mokina.operations.backup': string;
+  'mokina.operations.research': string;
+  'mokina.operations.strategy': string;
+  'mokina.operations.catalog': string;
+  'mokina.operations.formal': string;
+  'mokina.operations.candidate': string;
+  'mokina.operations.empty': string;
+  'mokina.operations.backupRead': string;
 }

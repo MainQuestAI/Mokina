@@ -1,0 +1,16 @@
+{
+  "id": "2997aff2-0515-4569-ab19-537877dbae0d",
+  "projectId": "m3-real-chain",
+  "agentId": "codex",
+  "status": "succeeded",
+  "createdAt": 1791765369291,
+  "terminalAt": 1791765551734,
+  "clientRequestId": "m3-real-chain-run1",
+  "scope": "Synthetic case. Actual model run; human professional signoff pending.",
+  "landingSha256": "4d3a20d4e109acd704b3122023a3c31c42bb5e37b50d06569a02e3a3f4af17b4",
+  "sourceIdentities": {
+    "origin": "M2 real-model artifacts, read-only fixed copies for M3 landing continuation",
+    "plan": "510826456fe3bf875196df2b064aca9ba09c52c6521f66c0f847cda10623ffbc",
+    "analysis": "7faeda7b46e073ec6d85cf2f92b744515b01ab4a59edb6dc1ead4c7792419af3"
+  }
+}

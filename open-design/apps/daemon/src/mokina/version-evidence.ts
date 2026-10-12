@@ -1,3 +1,4 @@
+import { decimal, formatDecimal } from './decimal.js';
 import { createHash } from 'node:crypto';
 import { load } from 'cheerio';
 import type { MokinaEvidenceSource, MokinaQualityIssue, MokinaQualitySnapshot } from '@open-design/contracts';
@@ -61,20 +62,6 @@ function csvRows(text: string): string[][] {
   return rows;
 }
 const number = (value: string): number | null => /^-?\d+(?:\.\d+)?$/u.test(value.trim()) && Number.isFinite(Number(value)) && Math.abs(Number(value)) <= 1e12 ? Number(value) : null;
-/** Exact decimal inputs: unsupported precision is rejected, never rounded on read. */
-function decimal(value: string, digits = 8): bigint | null {
-  const text = value.trim();
-  if (!new RegExp(`^-?\\d+(?:\\.\\d{1,${digits}})?$`, 'u').test(text)) return null;
-  const [whole, fraction = ''] = text.replace(/^-/, '').split('.');
-  const scale = 10n ** BigInt(digits);
-  const units = BigInt(whole!) * scale + BigInt(fraction.padEnd(digits, '0'));
-  return units <= 1_000_000_000_000n * scale ? (text.startsWith('-') ? -units : units) : null;
-}
-function formatDecimal(value: bigint, digits: number): string {
-  const absolute = value < 0n ? -value : value; const scale = 10n ** BigInt(digits);
-  const fraction = String(absolute % scale).padStart(digits, '0').replace(/0+$/, '');
-  return `${value < 0n ? '-' : ''}${absolute / scale}${fraction ? '.' + fraction : ''}`;
-}
 function inspectCsv(source: MokinaEvidenceSource, text: string, issues: MokinaQualityIssue[], calculations: MokinaQualitySnapshot['calculations']) {
   const rows = csvRows(text.replace(/^\uFEFF/u, '')); const header = rows.shift()!;
   const fields = source.csv!; const indexes = [fields.id, fields.amount, fields.unit].map(k => header.indexOf(k));

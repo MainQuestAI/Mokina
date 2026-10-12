@@ -10,7 +10,7 @@ import { readPendingMokinaSnapshot, writePendingMokinaSnapshot } from './pending
 
 export type ContinuationIntent = {
   source: MokinaContinuationV2['source']; sections: MokinaContinuationV2['sections']; background: string;
-  productionIntent: 'discuss' | 'landing-page'; pluginId: string; promptLead: string; workspaceKey: string;
+  productionIntent: 'discuss' | 'research' | 'strategy' | 'landing-page'; pluginId: string; promptLead: string; workspaceKey: string;
   brand?: { id: string; digest: string };
   assets: Array<{ inputId: string; name: string; digest?: string; byteLength?: number; role: 'logo' | 'hero' | 'supporting'; usageNote: string }>;
 };

@@ -58,6 +58,8 @@ interface VersionManifestState {
 }
 
 export interface CreateProjectFileVersionOptions {
+  /** Server-resolved immutable donor versions used by controlled chapter combinations. */
+  evidenceVersionIds?: string[];
   candidate?: boolean;
   baseVersionId?: string;
   operationId?: string;
@@ -634,9 +636,14 @@ async function createProjectFileVersionUnlocked(
   if (options.operationId) entry.operationId = options.operationId;
   // An explicit base carries its immutable evidence into revisions/restores.
   // A changed declaration still has to resolve and validate a new source.
-  const evidenceBase = entries.find(item => item.id === (options.baseVersionId ?? options.restoreFromVersionId ?? entry.parentVersionId));
-  let inheritedEvidence: MokinaQualitySnapshot | undefined;
-  if (evidenceBase) {
+  const evidenceIds = [...new Set([options.baseVersionId ?? options.restoreFromVersionId ?? entry.parentVersionId, ...(options.evidenceVersionIds ?? [])].filter((id): id is string => Boolean(id)))];
+  const inheritedSources: MokinaQualitySnapshot['sources'] = [];
+  for (const evidenceId of evidenceIds) {
+    const evidenceBase = entries.find(item => item.id === evidenceId);
+    if (!evidenceBase) {
+      if (options.evidenceVersionIds?.includes(evidenceId)) throw codedError('evidence base version missing', 'VERSION_BASE_MISSING');
+      continue; // Preserve compatibility for implicit parents in older manifests.
+    }
     const baseText = await readFile(path.join(root, evidenceBase.contentPath), 'utf8');
     const baseDigest = projectFileVersionContentDigest(baseText);
     if (evidenceBase.contentDigest && evidenceBase.contentDigest !== baseDigest) {
@@ -644,7 +651,8 @@ async function createProjectFileVersionUnlocked(
     }
     if (hasVersionEvidence(baseText)) {
       const baseFrozen = evidenceBase.frozenContentPath ? await readFile(path.join(root, evidenceBase.frozenContentPath), 'utf8') : undefined;
-      inheritedEvidence = readVersionEvidence(baseText, baseFrozen, evidenceBase.id, baseDigest, { neverCaptured: !evidenceBase.frozenContentPath });
+      const evidence = readVersionEvidence(baseText, baseFrozen, evidenceBase.id, baseDigest, { neverCaptured: !evidenceBase.frozenContentPath });
+      if (evidence) inheritedSources.push(...evidence.sources);
     }
   }
   let frozenHtml: string | undefined;
@@ -673,7 +681,7 @@ async function createProjectFileVersionUnlocked(
     }
     if (hasVersionEvidence(text) || resources.status === 'complete') {
       frozenHtml = await freezeVersionEvidence(resourceHtml, id, entry.contentDigest!, async (sourcePath, expectedDigest) => {
-        const inherited = inheritedEvidence?.sources.find(item => item.path === sourcePath && item.sha256 === expectedDigest && item.text !== undefined);
+        const inherited = inheritedSources.find(item => item.path === sourcePath && item.sha256 === expectedDigest && item.text !== undefined);
         if (inherited?.text !== undefined) return Buffer.from(inherited.text, 'utf8');
         const source = await resolveProjectFilePath(projectsRoot, projectId, sourcePath, metadata);
         if (source.size > 512 * 1024) throw new Error('Evidence file exceeds 512 KiB');

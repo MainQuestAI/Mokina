@@ -3,7 +3,7 @@
   "specVersion": "1.0.0",
   "name": "mokina-marketing-plan",
   "title": "可操作营销方案",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "把目标、受众、行动、预算、周期和验证连接成可执行方案。",
   "license": "Apache-2.0",
   "author": {

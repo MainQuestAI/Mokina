@@ -56,6 +56,13 @@ describe('continuation v2 payload and creation journal', () => {
     });
   });
 
+  it.each([['research', 'mokina-market-analysis'], ['strategy', 'mokina-marketing-plan']] as const)('preserves explicit %s intent and scenario without starting production', (intent, pluginId) => {
+    expect(resolveMokinaContinuationTarget(intent).pluginId).toBe(pluginId);
+    const payload = buildMokinaContinuationV2({ projectId: 'p1', fileName: 'report.html', versionId: 'v1', versionState: 'historical', operationId: 'op1', targetProjectId: 'p2', sections: [{ id: 'facts', text: 'fixed facts' }], background: '', productionIntent: intent });
+    expect(payload.productionIntent).toBe(intent);
+    expect(payload.source.versionId).toBe('v1');
+  });
+
   it('keeps the landing-page intent in the v2 payload', () => {
     const payload = buildMokinaContinuationV2({
       projectId: 'p1',

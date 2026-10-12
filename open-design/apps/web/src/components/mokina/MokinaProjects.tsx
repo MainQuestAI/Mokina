@@ -1,3 +1,5 @@
+import { useMokinaProjectSummary, notifyMokinaEntriesChanged } from '../../hooks/useMokinaProjectSummaries';
+import { navigate, parseRoute } from '../../router';
 import { Button } from '@open-design/components';
 import { useMemo, useState } from 'react';
 import type { Project, WorkspaceCollabContext } from '@open-design/contracts';
@@ -38,9 +40,26 @@ export function MokinaProjects({ projects, loading, error, onStart, onRetry, onO
         return <tr key={project.id}><th scope="row"><Button type="button" onClick={() => onOpen(project.id)} disabled={openingProjectId === project.id}>{project.name}</Button></th>
           <td data-label={t('mokina.pages.scene')}>{project.metadata?.scenarioBinding?.taskProfile ? sceneLabels[project.metadata.scenarioBinding.taskProfile] : t('mokina.pages.unclassified')}</td>
           <td data-label={t('mokina.pages.status')}>{status ? t(STATUS_LABEL_KEYS[status]) : t('mokina.pages.unknown')}</td>
-          <td data-label={t('mokina.pages.source')}><MokinaFixedSource projectId={project.id} workspaceContext={workspaceContext} /></td>
+          <td data-label={t('mokina.pages.source')}><MokinaFixedSource projectId={project.id} workspaceContext={workspaceContext} /><ArtifactCatalog projectId={project.id} workspaceContext={workspaceContext} onOpen={onOpen} /></td>
           <td><Button type="button" disabled={openingProjectId === project.id} onClick={() => onOpen(project.id)}>{openingProjectId === project.id ? t('common.loading') : t('mokina.pages.open')}</Button></td></tr>;
       })}</tbody></table></div>}
     {!loading && !error && collection === 'all' && sorted.length > limit ? <Button type="button" onClick={() => setLimit(value => value + 20)}>{t('brandPicker.showMore')}</Button> : null}
   </section>;
+}
+
+function ArtifactCatalog({ projectId, workspaceContext, onOpen }: { projectId: string; workspaceContext?: WorkspaceCollabContext | null; onOpen: (id: string) => unknown }) {
+  const t = useT(); const [open, setOpen] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
+  const record = useMokinaProjectSummary(open ? projectId : null, { complete: true, workspaceContext });
+  const rows = record?.entries.flatMap(entry => (entry.versions ?? []).filter(v => v.current || v.candidate).map(version => ({ entry: entry.entry, version }))) ?? [];
+  return <details className="mokina-artifact-catalog" onToggle={e => setOpen(e.currentTarget.open)}><summary>{t('mokina.operations.catalog')}</summary>
+    {error ? <p role="alert">{error}</p> : null}
+    {!record || record.status === 'loading' ? <p role="status">{t('common.loading')}</p>
+      : record.status !== 'ok' || record.completeness !== 'complete' ? <div role="alert">{t('mokina.entrySummary.failed')}<Button onClick={() => notifyMokinaEntriesChanged(projectId)}>{t('preview.retry')}</Button></div>
+      : rows.length ? <ul>{rows.map(({ entry, version }) => <li key={version.id}><Button disabled={busy} onClick={async () => {
+        setBusy(true); setError('');
+        try { const result = await onOpen(projectId); const route = parseRoute(window.location.pathname); if (result !== false && route.kind === 'project' && route.projectId === projectId) navigate({ kind: 'project', projectId, fileName: entry, versionId: version.id }, { replace: true }); }
+        catch (e) { setError(String(e)); } finally { setBusy(false); }
+      }}>{entry} · v{version.version} · {t(version.candidate ? 'mokina.operations.candidate' : 'mokina.operations.formal')}</Button></li>)}</ul>
+      : <p>{t('mokina.operations.empty')}</p>}
+  </details>;
 }

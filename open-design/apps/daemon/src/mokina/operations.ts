@@ -57,8 +57,12 @@ function patched(html: string, patches: Patch[]): string {
   }
   return html;
 }
-export function applyOperationEdits(html: string, edits: MokinaOperationRequest['edits']): string {
+export function applyOperationEdits(html: string, edits: MokinaOperationRequest['edits'], recalculateSections: string[] = []): string {
   const { $, fields } = readFields(html); const patches: Patch[] = []; const changedTables = new Set<Node>();
+  for (const table of $('[data-mokina-budget]').toArray()) {
+    const section = $(table).parents('[data-mokina-id]').last().attr('data-mokina-id') ?? $(table).attr('data-mokina-id');
+    if (section && recalculateSections.includes(section)) changedTables.add(table);
+  }
   const values = new Map(edits.map(e => [e.id, e.value]));
   if (values.size !== edits.length) throw new Error('Duplicate field edit');
   for (const edit of edits) {
@@ -71,7 +75,9 @@ export function applyOperationEdits(html: string, edits: MokinaOperationRequest[
     const limit = decimal($(table).attr('data-budget-limit') ?? '', 2), capacity = decimal($(table).attr('data-capacity-hours') ?? '');
     if (limit === null || capacity === null || limit < 0n || capacity < 0n) throw new Error('Invalid budget limit or capacity');
     let total = 0n, hours = 0n;
-    for (const row of $(table).find('[data-budget-item]').toArray()) {
+    const rows = $(table).find('[data-budget-item]').toArray();
+    if (!rows.length) throw new Error('Budget has no action rows');
+    for (const row of rows) {
       const read = (kind: string) => {
         const cell = $(row).find(`[data-${kind}]`); const field = fields.find(f => f.node === cell[0]);
         const value = decimal(field && values.has(field.id) ? values.get(field.id)! : cell.text());
@@ -97,6 +103,23 @@ export function applyOperationEdits(html: string, edits: MokinaOperationRequest[
 }
 export function combineOperationSections(base: string, donor: string, ids: string[]): string {
   const sections = readHtmlSections(donor);
+  const layout = (html: string, id: string) => {
+    const $ = load(html);
+    return $('[data-mokina-budget]').toArray().flatMap((table, index) => {
+      const owner = $(table).parents('[data-mokina-id]').last().attr('data-mokina-id') ?? $(table).attr('data-mokina-id');
+      return owner === id ? [index] : [];
+    });
+  };
+  // Global summary markers address table ordinals. Do not silently retarget them.
+  for (const id of ids) {
+    const indices = layout(donor, id);
+    if (JSON.stringify(layout(base, id)) !== JSON.stringify(indices)) throw new Error('Budget table layout differs; use chapter revision to rebind summaries');
+    const $ = load(sections.find(section => section.id === id)?.html ?? '');
+    for (const attr of ['total', 'remaining', 'hours']) for (const node of $(`[data-mokina-budget-${attr}]`).toArray()) {
+      const index = Number($(node).attr(`data-mokina-budget-${attr}`));
+      if (!indices.includes(index)) throw new Error('Combined budget summary refers outside its chapter; use chapter revision');
+    }
+  }
   for (const id of ids) {
     const source = sections.find(s => s.id === id);
     if (!source) throw new Error(`Missing source chapter: ${id}`);

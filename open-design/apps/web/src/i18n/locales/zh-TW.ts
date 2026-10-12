@@ -6195,7 +6195,7 @@ export const zhTW: Dict = {
   'mokina.operations.check': '讀取儲存結果',
   'mokina.operations.absent': '尚未找到已儲存操作，可明確重試同一請求，保持原操作身分。',
   'mokina.operations.retrySame': '重試同一儲存',
-  'mokina.operations.editAgain': '返回編輯',
+  'mokina.operations.clearUnavailable': '保留備份並移除無法使用的草稿條目',
   'mokina.operations.backup': '保留備份並重建草稿',
   'mokina.operations.research': '繼續研究',
   'mokina.operations.strategy': '制定策略',

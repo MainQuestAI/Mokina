@@ -6034,7 +6034,7 @@ export interface Dict {
   'mokina.operations.check': string;
   'mokina.operations.absent': string;
   'mokina.operations.retrySame': string;
-  'mokina.operations.editAgain': string;
+  'mokina.operations.clearUnavailable': string;
   'mokina.operations.backup': string;
   'mokina.operations.research': string;
   'mokina.operations.strategy': string;

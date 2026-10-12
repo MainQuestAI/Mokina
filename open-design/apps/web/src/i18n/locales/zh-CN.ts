@@ -6188,7 +6188,7 @@ export const zhCN: Dict = {
   'mokina.operations.check': '读取保存结果',
   'mokina.operations.absent': '尚未找到已保存操作，可明确重试同一请求，保持原操作身份。',
   'mokina.operations.retrySame': '重试同一保存',
-  'mokina.operations.editAgain': '返回编辑',
+  'mokina.operations.clearUnavailable': '保留备份并移除不可用草稿条目',
   'mokina.operations.backup': '保留备份并重建草稿',
   'mokina.operations.research': '继续研究',
   'mokina.operations.strategy': '制定策略',

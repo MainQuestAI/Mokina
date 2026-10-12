@@ -13,12 +13,12 @@
 
 | 层面 | 状态 | 证据 |
 |---|---|---|
-| guard、全仓 typecheck、i18n | PASS | 本地 `output/mokina-m3-2026-10-12/{guard-final,typecheck-complete,i18n-final}.log` |
-| contracts / daemon / web 构建 | PASS | `build-complete.log` |
+| guard、全仓 typecheck、i18n | PASS | 本地 `output/mokina-m3-2026-10-12/{guard-final-review,typecheck-final-review,i18n-final-review}.log` |
+| contracts / daemon / web 构建 | PASS | `build-final-review.log` |
 | contracts 输入身份、组合边界 | PASS · 2 项 | `combine-identity-green.log`；已纳入 CI |
-| 版本、证据、恢复包、导出、操作后端 | PASS · 156 项 | `backend-complete.log`；并发同操作只产生一候选、不同意图拒绝、删除来源后继承、恢复包往返、严格失败边界 |
-| 操作、比较、接续组件/恢复 | PASS · 43 项 | `web-complete.log`；连续中文输入、草稿损坏备份、项目迟到请求、拒绝后继续编辑、未知结果不重发 |
-| 浏览器真实 daemon | PASS · 3 项，无重试 | `browser-accepted.log`；1440×900、900×600，服务端提交后断线→刷新→读取确认、组合、指定版本 HTML 导出、成果入口，研究→策略→活动页与上游变更隔离 |
+| 版本、证据、恢复包、导出、操作后端 | PASS · 159 项 | `backend-final-review.log` + `backend-timeout-rerun.log`；并发同操作只产生一候选、不同意图拒绝、删除来源后继承、恢复包往返、严格失败边界 |
+| 操作、比较、接续组件/恢复 | PASS · 44 项 | `web-final-review.log`；连续中文输入、草稿损坏备份、项目迟到请求、拒绝后继续编辑、未知结果不重发 |
+| 浏览器真实 daemon | PASS · 3 项，无重试 | `browser-final-review.log`；1440×900、900×600，服务端提交后断线→刷新→读取确认、组合、指定版本 HTML 导出、成果入口，研究→策略→活动页与上游变更隔离 |
 | 两个场景包验证 | PASS | `plugin-marketing.json`、`plugin-analysis.json`，diagnostics 为空；包版本 0.0.3，专业方法正文未变仍为 0.0.2 |
 | 真实模型接续 | PASS · 工程层 | [运行身份](evidence/model-run.json)，实际 Codex 运行 succeeded；沿 M2 的真实模型合成案例研究/策略固定资料制作活动页，无模拟成功 |
 | 真实成果受控编辑与冻结产物 | PASS | [编辑回执](evidence/real-edit-receipt.json)：58 个支持字段、5 个不支持标记明确跳过；候选编辑不改变原稿，冻结 HTML 可离线读取，两个尺寸无横向溢出，无外部请求 |
@@ -52,3 +52,5 @@
 受控编辑首批限文本/表格；含脚本、图片、SVG、资源 CSS 的成果继续使用现有章节修订。标记合计以外的文字与跨成果业务一致性由比较和人工评审确认，不承诺全篇自动语义重写。非中英语言新增键使用英文回退；人工专业评语与 M4 安装交付仍是独立下一步。
 
 测试使用源码隔离环境、临时合成项目与临时浏览器。失败日志/截图先保存，再通过 tools-dev 停止本轮运行并清除对应数据目录；真实模型临时凭据和运行根目录已删除。没有创建应用副本、挂载镜像或 LaunchServices 注册；其他任务、用户数据和既有应用保留。PR 的最终 SHA/CI 链接以 PR 检查和交付回执为准，不以历史 CI 代替。
+
+最后复跑说明：全组后端159项中157项通过，两个重型历史回归在并行构建期间超过既定20秒；保持原阈值、顺序复跑对应两个文件69项全部通过（13.86秒）。未放宽超时，也未将首次失败隐藏。

@@ -120,7 +120,7 @@ function Editor({ projectId, fileName, version, versions, workspaceContext, disa
         if (draft.donor && (!donor || donor.versionId !== draft.donor)) throw new Error('Source version is not ready');
         if (!active.current) return;
         pending = parseMokinaOperationRequest({ operationId: crypto.randomUUID(), baseVersionId: version.id, contentDigest: data.contentDigest,
-          edits: Object.entries(current.current.edits).filter(([id, value]) => data.fields.find(f => f.id === id)?.value !== value).map(([id, value]) => ({ id, value })),
+          edits: Object.entries(current.current.edits).filter(([id, value]) => { const field = data.fields.find(f => f.id === id); return field && field.value !== value; }).map(([id, value]) => ({ id, value })),
           ...(donor ? { combine: { versionId: donor.versionId, contentDigest: donor.contentDigest, sections: current.current.sections } } : {}) });
         if (!await persist({ ...current.current, pending })) return;
       }
@@ -133,8 +133,9 @@ function Editor({ projectId, fileName, version, versions, workspaceContext, disa
     } }
     finally { submitting.current = false; if (active.current) setBusy(false); }
   }
-  const hasEdits = Boolean(data && Object.entries(draft.edits).some(([id, value]) => data.fields.find(f => f.id === id)?.value !== value));
-  const locked = disabled || busy || saveFailed || !ready || data?.editable === false || Boolean(draft.pending);
+  const unavailableEdits = data ? Object.keys(draft.edits).filter(id => !data.fields.some(f => f.id === id)) : [];
+  const hasEdits = Boolean(data && Object.entries(draft.edits).some(([id, value]) => { const field = data.fields.find(f => f.id === id); return field && field.value !== value; }));
+  const locked = unavailableEdits.length > 0 || disabled || busy || saveFailed || !ready || data?.editable === false || Boolean(draft.pending);
   return <div ref={panelRef} className={styles.panel} data-testid="mokina-artifact-operations"><header><div><h2>{t('mokina.operations.title')}</h2><p>{fileName} · v{version.version} · {t(version.candidate ? 'mokina.operations.candidate' : version.current ? 'mokina.compare.currentDraft' : 'mokina.compare.historicalDraft')}</p></div><Button onClick={onClose}>{t('mokina.compare.close')}</Button></header>
     <p>{t('mokina.operations.help')}</p>
     {error ? <p role="alert">{error}</p> : null}
@@ -151,6 +152,13 @@ function Editor({ projectId, fileName, version, versions, workspaceContext, disa
         && await mutateDurableRecord(key, old => old === captured ? null : undefined)) void load();
     }}>{t('mokina.operations.backup')}</Button> : null}
     {ready && (!data?.fields.length || data.editable === false) ? <div><p>{t('mokina.operations.legacy')}</p>{data?.unsupportedReason ? <p role="status">{data.unsupportedReason}</p> : null}</div> : null}
+    {unavailableEdits.length ? <div role="alert"><p>{t('mokina.operations.legacy')}</p><p>{unavailableEdits.join('、')}</p><Button disabled={busy || Boolean(draft.pending) || saveFailed} onClick={async () => {
+      const text = JSON.stringify(current.current); const backup = `${key}:backup:${crypto.randomUUID()}`;
+      if (await mutateDurableRecord(backup, old => old === null ? text : undefined)) {
+        setBackupText(text);
+        await persist({ ...current.current, edits: Object.fromEntries(Object.entries(current.current.edits).filter(([id]) => !unavailableEdits.includes(id))) });
+      }
+    }}>{t('mokina.operations.clearUnavailable')}</Button></div> : null}
     {data?.fieldWarnings?.length ? <div role="status"><p>{t('mokina.operations.legacy')}</p><ul>{data.fieldWarnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul></div> : null}
     {data?.fields.map(field => <label key={field.id}>{field.label}<span>{field.kind}</span>
       <textarea aria-label={field.label} disabled={locked || Boolean(draft.donor)} value={Object.hasOwn(draft.edits, field.id) ? draft.edits[field.id] : field.value} onChange={e => update({ edits: { ...current.current.edits, [field.id]: e.target.value } })} />

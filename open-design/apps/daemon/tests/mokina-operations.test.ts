@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inspectOperationFields, applyOperationEdits, combineOperationSections } from '../src/mokina/operations.js';
+import { inspectOperationFields, applyOperationEdits, combineOperationSections, combineOperationEvidence } from '../src/mokina/operations.js';
 const html = '<!doctype html><title>keep</title><section id="strategy" data-mokina-id="strategy"><p data-mokina-field="value" data-mokina-kind="strategy">原方向</p></section><section id="budget" data-mokina-id="budget"><table data-mokina-budget data-budget-limit="200" data-capacity-hours="1"><tr data-budget-item><td data-quantity>1</td><td data-unit-price>100.05</td><td data-amount>100.05</td><td data-hours>0.1</td></tr></table><p data-mokina-budget-total="0">100.05</p></section><footer>字节保留 &amp; spaces</footer>';
 describe('controlled artifact operations', () => {
   it('edits escaped plain text without altering other bytes', () => {
@@ -107,4 +107,32 @@ it('returns a finished precommit failure to editing only after checking authorit
     })).rejects.toMatchObject({ code: 'MOKINA_OPERATION_NOT_SAVED' });
     expect(await listProjectFileVersions(root, 'p', 'plan.html')).toHaveLength(1);
   } finally { await rm(root, { recursive: true, force: true }); }
+});
+it('recalculates summaries outside a combined budget chapter and supports valid local anchors', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'mokina-operations-combine-budget-'));
+  try {
+    await ensureProject(root, 'p');
+    const summary = '<p data-mokina-budget-total="0">100.05</p>';
+    const baseHtml = html.replace(summary, '') + summary;
+    const donorHtml = baseHtml.replace('data-quantity>1<', 'data-quantity>1.5<').replace('原方向</p>', '新方向</p><a href="#budget">查看预算</a>');
+    const base = await createProjectFileVersion(root, 'p', 'plan.html', baseHtml);
+    const donor = await createProjectFileVersion(root, 'p', 'plan.html', donorHtml);
+    const scope = { projectsRoot: root, projectId: 'p', fileName: 'plan.html' };
+    const save = (sections: string[], operationId: string) => saveArtifactOperation(scope, { operationId, baseVersionId: base.id, contentDigest: sha256Hex(baseHtml), edits: [], combine: { versionId: donor.id, contentDigest: sha256Hex(donorHtml), sections } });
+    const budget = await save(['budget'], 'combine-budget');
+    const result = await readProjectFileVersion(root, 'p', 'plan.html', budget.id);
+    expect(result.content).toContain('data-mokina-budget-total="0">150.08');
+    expect(result.content).toContain('data-amount>150.08');
+    const anchor = await save(['strategy'], 'combine-anchor');
+    expect((await readProjectFileVersion(root, 'p', 'plan.html', anchor.id)).content).toContain('href="#budget"');
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+it('rejects donor budget layouts that would retarget global summary ordinals', () => {
+  const extra = '<section id="extra" data-mokina-id="extra"><table data-mokina-budget></table></section>';
+  expect(() => combineOperationSections(html, extra + html, ['budget'])).toThrow(/layout/);
+});
+it('keeps base declarations that surviving chapters may still reference', () => {
+  const declaration = (id: string) => `<script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id, sectionId: 'strategy' }] })}</script>`;
+  const combined = combineOperationEvidence(html + declaration('base-source'), html + declaration('donor-source'), ['strategy']);
+  expect(combined).toContain('base-source'); expect(combined).toContain('donor-source');
 });

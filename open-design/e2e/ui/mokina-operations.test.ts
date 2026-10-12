@@ -31,7 +31,9 @@ for (const width of [1440, 900]) test(`[P1] M3 edit, unknown save, combine and f
     await page.reload(); await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long }); await page.getByRole('button', { name: 'Versions', exact: true }).click(); await page.getByTestId('mokina-artifact-operations-open').click();
     await expect(panel.getByRole('button', { name: 'Read save result' })).toBeVisible(); expect(posts).toBe(1);
     await panel.getByRole('button', { name: 'Read save result' }).click();
-    await expect(page.locator('.artifact-version-panel')).toContainText('Candidate', { timeout: T.long }); await panel.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(page.getByRole('listbox', { name: 'File versions' }).getByRole('option', { selected: true })).toContainText('Candidate', { timeout: T.long });
+    await expect(panel.getByRole('button', { name: 'Read save result' })).toHaveCount(0);
+    await panel.getByRole('button', { name: 'Close', exact: true }).click();
     const versions = await list(); const candidate = versions.find((v: { candidate?: boolean }) => v.candidate);
     expect(versions.find((v: { current: boolean }) => v.current).id).toBe(base.id);
     const candidateRead = await (await page.request.get(`${url}/versions/${candidate.id}`)).json();

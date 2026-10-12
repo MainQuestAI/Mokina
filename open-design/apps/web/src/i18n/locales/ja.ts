@@ -5742,7 +5742,7 @@ export const ja: Dict = {
   'mokina.operations.check': 'Read save result',
   'mokina.operations.absent': 'No saved operation found yet. You can explicitly retry the same request; its identity is preserved.',
   'mokina.operations.retrySame': 'Retry same save',
-  'mokina.operations.editAgain': 'Return to editing',
+  'mokina.operations.clearUnavailable': 'Back up and remove unavailable draft fields',
   'mokina.operations.backup': 'Keep backup and reset draft',
   'mokina.operations.research': 'Continue research',
   'mokina.operations.strategy': 'Develop strategy',

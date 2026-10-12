@@ -71,3 +71,13 @@ it('returns definitive conflicts to editing, but never retries automatically', a
   fireEvent.click(screen.getByRole('button', { name: 'Save candidate' })); await screen.findByText('Error: Base missing');
   expect((screen.getByRole('textbox', { name: 'Strategy' }) as HTMLTextAreaElement).disabled).toBe(false);
 });
+it('backs up and removes unavailable draft fields after a parser upgrade without blocking valid edits', async () => {
+  const key = 'od:revision:operations:["none","p1","plan.html","v1"]';
+  localStorage.setItem(key, JSON.stringify({ edits: { retired: '不能丢失的旧条目', strategy: '有效编辑' }, donor: '', sections: [], pending: null }));
+  vi.stubGlobal('fetch', vi.fn(async () => Response.json(info)));
+  open(); await screen.findByDisplayValue('有效编辑');
+  fireEvent.click(screen.getByRole('button', { name: 'Back up and remove unavailable draft fields' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Save candidate' })).not.toBeDisabled());
+  expect(localStorage.getItem(key)).not.toContain('retired');
+  expect(Object.keys(localStorage).some(k => k.startsWith(key + ':backup:') && localStorage.getItem(k)?.includes('不能丢失的旧条目'))).toBe(true);
+});

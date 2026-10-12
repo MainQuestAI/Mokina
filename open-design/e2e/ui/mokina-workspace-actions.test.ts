@@ -271,11 +271,11 @@ for (const viewport of [{ width: 900, height: 600 }, { width: 390, height: 844 }
     await controlsInViewport();
     if (viewport.width < 860) {
       await dialog.getByRole('radio', { name: 'Base version', exact: true }).check();
-      await expect(dialog.locator('pre').filter({ hasText: '优先验证门店渠道。' })).toBeVisible();
+      await expect(dialog.locator('pre:visible').filter({ hasText: '优先验证门店渠道。' })).toBeVisible();
       await dialog.getByRole('radio', { name: 'Candidate', exact: true }).check();
-      await expect(dialog.locator('pre').filter({ hasText: '候选策略渠道300万元。' })).toBeVisible();
+      await expect(dialog.locator('pre:visible').filter({ hasText: '候选策略渠道300万元。' })).toBeVisible();
     } else {
-      await expect(dialog.locator('pre')).toHaveCount(2);
+      await expect(dialog.locator('pre:visible')).toHaveCount(2);
     }
     await adopt.focus(); await adopt.press('Tab'); await expect(close).toBeFocused();
     await close.press('Shift+Tab'); await expect(adopt).toBeFocused();

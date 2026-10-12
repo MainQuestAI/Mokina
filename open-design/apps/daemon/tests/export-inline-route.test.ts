@@ -1,10 +1,11 @@
 import type http from 'node:http';
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { ApiErrorResponse, RestoreProjectFileVersionResponse } from '@open-design/contracts';
+import type { ApiErrorResponse, MokinaOperationInspection, RestoreProjectFileVersionResponse } from '@open-design/contracts';
 
+import { saveArtifactOperation } from '../src/mokina/artifact-operations.js';
 import { inlineRelativeAssets, type InlineAssetReader } from '../src/inline-assets.js';
 import { startServer } from '../src/server.js';
 import { createProjectFileVersion, readProjectFileVersion } from '../src/project-file-versions.js';
@@ -527,6 +528,55 @@ describe('GET /api/projects/:id/export/*?inline=1 route', () => {
 
   const exportUrl = (name: string, query = 'inline=1') =>
     `${baseUrl}/api/projects/${projectId}/export/${name}${query ? `?${query}` : ''}`;
+
+  it('exports nested frozen evidence from the selected combined candidate after source deletion', async () => {
+    const text = 'nested-proof', digest = createHash('sha256').update(text).digest('hex');
+    const source = path.join(projectsRoot, projectId, 'nested-evidence.txt');
+    await writeFile(source, text);
+    const baseHtml = '<section id="strategy" data-mokina-id="strategy">base</section>';
+    const donorHtml = '<section id="strategy" data-mokina-id="strategy"><div id="claim" data-mokina-id="claim">nested-proof [nested]</div></section>' + `<script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id: 'nested', sectionId: 'claim', path: 'nested-evidence.txt', sha256: digest, kind: 'full-text', excerpt: text, locator: 'all', limitation: 'fixture' }] })}</script>`;
+    const donor = await createProjectFileVersion(projectsRoot, projectId, 'nested.html', donorHtml);
+    const base = await createProjectFileVersion(projectsRoot, projectId, 'nested.html', baseHtml);
+    await rm(source);
+    const candidate = await saveArtifactOperation({ projectsRoot, projectId, fileName: 'nested.html' }, { operationId: 'nested-combine', baseVersionId: base.id,
+      contentDigest: createHash('sha256').update(baseHtml).digest('hex'), edits: [], combine: { versionId: donor.id, contentDigest: createHash('sha256').update(donorHtml).digest('hex'), sections: ['strategy'] } });
+    const response = await fetch(`${baseUrl}/api/projects/${projectId}/export/html`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fileName: 'nested.html', versionId: candidate.id, title: 'Nested proof' }) });
+    expect(response.ok).toBe(true); const exported = await response.text();
+    expect(exported).toContain('"sectionId":"claim"'); expect(exported).toContain('"text":"nested-proof"'); expect(exported).toContain(digest);
+    expect((await readProjectFileVersion(projectsRoot, projectId, 'nested.html', base.id)).content).toBe(baseHtml);
+    expect((await readProjectFileVersion(projectsRoot, projectId, 'nested.html', donor.id)).content).toBe(donorHtml);
+  });
+
+  it('keeps integrity conflicts and real read failures distinct from bad input', async () => {
+    const name = 'operations-errors.html', content = '<section id="s" data-mokina-id="s">original</section>';
+    const version = await createProjectFileVersion(projectsRoot, projectId, name, content);
+    const root = path.join(projectsRoot, projectId, '.file-versions', createHash('sha256').update(name).digest('hex').slice(0, 24));
+    const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8')) as { entries: Array<{ id: string; contentPath: string }> };
+    const file = path.join(root, manifest.entries.find(entry => entry.id === version.id)!.contentPath);
+    const url = `${baseUrl}/api/projects/${projectId}/files/${name}/operations?versionId=${version.id}`;
+    try {
+      await writeFile(file, 'tampered'); expect((await fetch(url)).status).toBe(409);
+      await rm(file); await mkdir(file); expect((await fetch(url)).status).toBe(500);
+    } finally { await rm(file, { recursive: true, force: true }); await writeFile(file, content); }
+  });
+
+  it('returns an unsupported content result for malformed saved chapters without an endless 500 retry', async () => {
+    const name = 'ambiguous-chapter.html';
+    const version = await createProjectFileVersion(projectsRoot, projectId, name, '<section id="s" data-mokina-id="s">one</section><section id="s" data-mokina-id="s">two</section>');
+    const response = await fetch(`${baseUrl}/api/projects/${projectId}/files/${name}/operations?versionId=${version.id}`);
+    expect(response.status).toBe(200); const result = await response.json() as MokinaOperationInspection;
+    expect(result.editable).toBe(false); expect(result.sections).toEqual([]); expect(result.unsupportedReason).toMatch(/duplicate/);
+  });
+
+  it('classifies operations version and path input failures as client errors', async () => {
+    for (const versionId of ['', 'bad/id', 'bad!id']) {
+      const response = await fetch(`${baseUrl}/api/projects/${projectId}/files/index.html/operations?versionId=${encodeURIComponent(versionId)}`);
+      expect(response.status).toBe(400);
+      expect(((await response.json()) as ApiErrorResponse).error.code).toBe('BAD_REQUEST');
+    }
+    expect((await fetch(`${baseUrl}/api/projects/${projectId}/files/index.html/operations?versionId=not-found`)).status).toBe(404);
+    expect((await fetch(`${baseUrl}/api/projects/${projectId}/files/%5C%5C..%5C%5Cindex.html/operations?versionId=not-found`)).status).toBe(400);
+  });
 
   it('returns a self-contained HTML body when ?inline=1 on a 3-file layout', async () => {
     const res = await fetch(exportUrl('index.html'));

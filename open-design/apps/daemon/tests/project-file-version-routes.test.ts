@@ -1,4 +1,5 @@
 import type http from 'node:http';
+import type { MokinaOperationInspection, ProjectFileVersion } from '@open-design/contracts';
 import { randomUUID, createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -62,6 +63,26 @@ describe('project file version routes', () => {
     await fs.mkdir(projectDir, { recursive: true });
     await fs.writeFile(path.join(projectDir, '.file-versions'), 'blocked');
   }
+
+  it('keeps controlled editing isolated and returns an immutable candidate with idempotent retry', async () => {
+    const id = await createProject(); const other = await createProject();
+    const html = '<html><body><section id="strategy" data-mokina-id="strategy"><p data-mokina-field="value" data-mokina-kind="strategy">original</p></section></body></html>';
+    await writeProjectFile(id, 'plan.html', html);
+    const url = `${baseUrl}/api/projects/${id}/files/plan.html`;
+    const versions = await (await fetch(`${url}/versions?readOnly=true`)).json() as { versions: ProjectFileVersion[] };
+    const base = versions.versions.find(v => v.current)!;
+    const inspection = await (await fetch(`${url}/operations?versionId=${base.id}`)).json() as MokinaOperationInspection;
+    expect(inspection.fields[0]!.value).toBe('original');
+    const request = { baseVersionId: base.id, contentDigest: inspection.contentDigest, operationId: randomUUID(), edits: [{ id: 'value', value: 'changed' }] };
+    const post = (endpoint: string, body: unknown) => fetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const response = await post(`${url}/operations`, request); expect(response.status).toBe(200);
+    const { version } = await response.json() as { version: ProjectFileVersion }; expect(version.candidate).toBe(true); expect(version.baseVersionId).toBe(base.id);
+    expect(((await (await post(`${url}/operations`, request)).json()) as { version: ProjectFileVersion }).version.id).toBe(version.id);
+    expect((await post(`${url}/operations`, { ...request, edits: [{ id: 'value', value: 'different' }] })).status).toBe(409);
+    expect((await post(`${url}/operations`, { ...request, operationId: randomUUID(), edits: [{ id: 'absent', value: 'bad' }] })).status).toBe(400);
+    expect((await post(`${baseUrl}/api/projects/${other}/files/plan.html/operations`, request)).status).toBe(404);
+    const current = await (await fetch(`${url}/versions/${base.id}`)).json() as { content: string }; expect(current.content).toBe(html);
+  });
 
   for (const resource of ['https://example.invalid/photo.png', 'missing.png']) it(`reads, repairs and restores evidence despite unavailable ${resource}`, async () => {
     const id = await createProject(); const source = 'quote';

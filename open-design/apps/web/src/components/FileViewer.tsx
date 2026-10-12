@@ -1,3 +1,4 @@
+import { MokinaArtifactOperations } from './mokina/MokinaArtifactOperations';
 import { qualityLocationBridge } from '../runtime/mokina/quality-location';
 import type { MokinaQualitySnapshot } from '@open-design/contracts';
 import { MokinaVersionQuality } from './mokina/MokinaVersionQuality';
@@ -3388,13 +3389,15 @@ type ExportToastState = {
 export { readMokinaContinuationJournal } from '../runtime/mokina/continuation-recovery';
 export type { MokinaContinuationJournal } from '../runtime/mokina/continuation-recovery';
 
-export type MokinaContinuationIntent = 'discuss' | 'landing-page';
+export type MokinaContinuationIntent = 'discuss' | 'research' | 'strategy' | 'landing-page';
 
 /** Target scenario + prompt lead for a continuation intent (T10). */
 export function resolveMokinaContinuationTarget(intent: MokinaContinuationIntent): {
   pluginId: string;
   promptLead: string;
 } {
+  if (intent === 'research') return { pluginId: 'mokina-market-analysis', promptLead: '请基于以下固定结论继续研究。区分事实、推断、冲突和未知；只使用已选结论与明确背景。先讨论范围，我明确要求时再制作报告。' };
+  if (intent === 'strategy') return { pluginId: 'mokina-marketing-plan', promptLead: '请基于以下固定研究结论制定营销策略。保留品牌事实、优惠、KPI口径、时间与CTA约束；不足处明确询问，不能编造。先讨论取舍，我明确要求时再制作方案。' };
   return intent === 'landing-page'
     ? {
         pluginId: 'mokina-landing-page',
@@ -4088,7 +4091,7 @@ function FileVersionManagerModal({
       if (!(target instanceof Element)) return;
       if (
         target.closest(
-          '.artifact-version-panel, .file-version-download-menu, .file-version-restore-confirm, [data-od-version-entry]',
+          '.artifact-version-panel, .file-version-download-menu, .file-version-restore-confirm, [data-mokina-operations-dialog], [data-od-version-entry]',
         )
       ) {
         return;
@@ -5113,6 +5116,9 @@ function FileVersionManagerModal({
           onRevise={selectedVersion.current && !viewerOnly ? () => {
             if (locatedSection) { onActionRequest?.({ action: 'revision' }); setRevisionSectionId(locatedSection); }
           } : undefined} /> : null}
+        {MOKINA_LOCAL_EDITION && selectedVersion ? <MokinaArtifactOperations projectId={projectId} fileName={file.name}
+          version={selectedVersion} versions={versions} workspaceContext={workspaceContext} disabled={viewerOnly}
+          onSaved={version => { notifyMokinaEntriesChanged(projectId); void loadVersions(version.id); }} /> : null}
         <div className="artifact-version-panel__preview">
           {srcDoc ? (
             <iframe
@@ -5344,6 +5350,9 @@ function FileVersionManagerModal({
             ))}
             <fieldset className="artifact-version-panel__continuation-intent">
               <legend>{t('fileViewer.mokina.targetTask')}</legend>
+              {(['research', 'strategy'] as const).map(intent => <label key={intent}><input type="radio" name="mokina-continuation-intent"
+                disabled={continuationInputDisabled} checked={continuationIntent === intent}
+                onChange={() => continuationDraft.update({ intent }, continuationSource)} /><span>{t(`mokina.operations.${intent}`)}</span></label>)}
               <label>
                 <input
                   type="radio"
@@ -5619,6 +5628,7 @@ function FileVersionManagerModal({
       </aside>
       {candidateCompare && selectedVersion?.candidate && selectedContent ? (
         <MokinaCandidateCompare
+          versions={versions}
           returnFocusTo={candidateCompareTriggerRef.current}
           baseVersion={candidateCompare.base}
           candidateVersion={selectedVersion}

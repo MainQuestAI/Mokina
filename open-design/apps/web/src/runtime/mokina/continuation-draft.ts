@@ -7,7 +7,7 @@ export type ContinuationDraftAsset = {
 export type ContinuationDraftBrand = { id: string; title: string; chars: number; digest?: string };
 export type ContinuationDraft = {
   schemaVersion: 1; scope: string; baseVersionId: string; contentDigest?: string;
-  sections: string[]; background: string; intent: 'discuss' | 'landing-page';
+  sections: string[]; background: string; intent: 'discuss' | 'research' | 'strategy' | 'landing-page';
   assets: ContinuationDraftAsset[]; brand: ContinuationDraftBrand | null;
 };
 
@@ -19,7 +19,7 @@ export function parseContinuationDraft(raw: string | null, scope: string): Conti
     const value = JSON.parse(raw ?? 'null') as ContinuationDraft | null;
     if (!value || value.schemaVersion !== 1 || value.scope !== scope || typeof value.baseVersionId !== 'string'
       || (value.contentDigest !== undefined && typeof value.contentDigest !== 'string')
-      || typeof value.background !== 'string' || !['discuss', 'landing-page'].includes(value.intent)
+      || typeof value.background !== 'string' || !['discuss', 'research', 'strategy', 'landing-page'].includes(value.intent)
       || !Array.isArray(value.sections) || !value.sections.every(id => typeof id === 'string')
       || new Set(value.sections).size !== value.sections.length
       || !Array.isArray(value.assets) || !value.assets.every(asset => asset && typeof asset.name === 'string'

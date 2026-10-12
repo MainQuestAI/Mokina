@@ -8,6 +8,7 @@ import type { ProjectFileVersion } from '@open-design/contracts';
 
 import {
   compareMokinaChapter,
+  readableChapter,
   detectChangedSections,
   extractNumericTokens,
 } from '../../runtime/mokina/candidate-compare';
@@ -17,7 +18,8 @@ import styles from './MokinaCandidateCompare.module.css';
  * 候选比较（T12）：基础版本与候选并排（窄屏切换）；非所选章节以字节一致性判定，
  * 数值变化单独提示供人工核对口径；采用与取消入口始终可见。
  */
-export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml, candidateHtml, adopting, onClose, onAdopt, returnFocusTo }: {
+export function MokinaCandidateCompare({ versions, baseVersion, candidateVersion, baseHtml, candidateHtml, adopting, onClose, onAdopt, returnFocusTo }: {
+  versions?: readonly ProjectFileVersion[];
   baseVersion: ProjectFileVersion;
   candidateVersion: ProjectFileVersion;
   baseHtml: string;
@@ -38,7 +40,7 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
     const dialog = dialogRef.current;
     if (!dialog) return;
     const focusable = () => Array.from(dialog.querySelectorAll<HTMLElement>(
-      'button:not(:disabled), input:not(:disabled), [tabindex="0"], a[href]',
+      'button:not(:disabled), input:not(:disabled), select:not(:disabled), summary, [tabindex="0"], a[href]',
     )).filter(node => {
       if (node.closest('[hidden]')) return false;
       for (let parent: HTMLElement | null = node; parent && parent !== dialog; parent = parent.parentElement) {
@@ -67,10 +69,11 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
     () => detectChangedSections(baseHtml, candidateHtml),
     [baseHtml, candidateHtml],
   );
-  const primarySection = changedSections[0] ?? '';
+  const [chosenSection, setChosenSection] = useState('');
+  const primarySection = changedSections.includes(chosenSection) ? chosenSection : changedSections[0] ?? '';
   const comparison = useMemo(
-    () => compareMokinaChapter({ sectionId: primarySection, baseHtml, candidateHtml }),
-    [primarySection, baseHtml, candidateHtml],
+    () => compareMokinaChapter({ sectionId: primarySection, baseHtml, candidateHtml, baseVersionId: baseVersion.id, candidateVersionId: candidateVersion.id, versions: versions ?? [baseVersion, candidateVersion] }),
+    [primarySection, baseHtml, candidateHtml, baseVersion, candidateVersion, versions],
   );
   const [narrowPane, setNarrowPane] = useState<'base' | 'candidate'>('candidate');
 
@@ -126,6 +129,8 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
           </div>
         </div>
 
+        {changedSections.length > 1 ? <label>{t('mokina.compare.changedSections')}<select aria-label={t('mokina.compare.changedSections')} value={primarySection} onChange={event => setChosenSection(event.target.value)}>{changedSections.map(id => <option key={id} value={id}>{id}</option>)}</select></label> : null}
+
         <div className={styles.wideToggle} role="radiogroup" aria-label={t('mokina.compare.togglePanes')}>
           <label>
             <input
@@ -150,11 +155,11 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
         <div className={styles.wide}>
           <div tabIndex={0} className={`${styles.pane} ${styles.narrowPane} ${narrowPane === 'base' ? styles.narrowPaneActive : ''}`}>
             <h4>{t('mokina.compare.basePane')} · {primarySection || t('mokina.compare.sectionUnknown')}</h4>
-            <pre>{comparison.baseHtml ?? t('mokina.compare.baseSectionMissing')}</pre>
+            <pre>{comparison.baseHtml ? readableChapter(comparison.baseHtml) : t('mokina.compare.baseSectionMissing')}</pre><details><summary>{t('chat.plus.group.code')}</summary><pre>{comparison.baseHtml}</pre></details>
           </div>
           <div tabIndex={0} className={`${styles.pane} ${styles.narrowPane} ${narrowPane === 'candidate' ? styles.narrowPaneActive : ''}`}>
             <h4>{t('mokina.compare.candidatePane')} · {primarySection || t('mokina.compare.sectionUnknown')}</h4>
-            <pre>{comparison.candidateHtml ?? t('mokina.compare.candidateSectionMissing')}</pre>
+            <pre>{comparison.candidateHtml ? readableChapter(comparison.candidateHtml) : t('mokina.compare.candidateSectionMissing')}</pre><details><summary>{t('chat.plus.group.code')}</summary><pre>{comparison.candidateHtml}</pre></details>
           </div>
         </div>
 

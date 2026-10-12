@@ -1,8 +1,11 @@
+import { parseMokinaOperationRequest, type ProjectFileVersion } from '@open-design/contracts';
+
 /**
  * Candidate comparison helpers (T12).
  *
  * The comparison the reviewer sees must not rest on "looks the same": outside
- * the selected chapter the base and candidate strings are compared BYTE-wise,
+ * the selected chapter business strings are compared BYTE-wise after excluding
+ * only system receipts verified against the same file version catalog,
  * and numeric literals are surfaced as review prompts, not as truth.
  */
 
@@ -53,15 +56,47 @@ export function extractNumericTokens(html: string): string[] {
   return [...unique].sort();
 }
 
+/** Comparison-only projection. Original artifact bytes remain authoritative and unchanged. */
+export function comparisonBusinessContent(html: string, versionId?: string, versions: readonly ProjectFileVersion[] = []): string {
+  let current = versions.find(version => version.id === versionId);
+  if (!current?.contentDigest) return html;
+  let result = html;
+  const seen = new Set<string>();
+  while (current) {
+    if (seen.has(current.id)) return html;
+    seen.add(current.id);
+    if (!current.operationId && current.restoreFromVersionId) {
+      const source = versions.find(version => version.id === current!.restoreFromVersionId);
+      if (!source || source.contentDigest !== current.contentDigest || source.fileName !== current.fileName) return html;
+      current = source; continue;
+    }
+    const match = /\n<!-- mokina-operation ([A-Za-z0-9+/=]+) -->$/u.exec(result);
+    if (!match) return result;
+    try {
+      const decoded = new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(atob(match[1]!), char => char.charCodeAt(0)));
+      const operation = parseMokinaOperationRequest(JSON.parse(decoded));
+      const parent = versions.find(version => version.id === operation.baseVersionId);
+      if (operation.operationId !== current.operationId || !parent || parent.id === current.id
+        || parent.contentDigest !== operation.contentDigest || parent.fileName !== current.fileName) return html;
+      result = result.slice(0, match.index);
+      current = parent;
+    } catch { return html; }
+  }
+  return html;
+}
+
 export function compareMokinaChapter(input: {
   sectionId: string;
   baseHtml: string;
   candidateHtml: string;
+  baseVersionId?: string;
+  candidateVersionId?: string;
+  versions?: readonly ProjectFileVersion[];
 }): MokinaChapterCompare {
   const baseSection = extractSectionHtml(input.baseHtml, input.sectionId);
   const candidateSection = extractSectionHtml(input.candidateHtml, input.sectionId);
-  const baseRest = blankOutSection(input.baseHtml, input.sectionId);
-  const candidateRest = blankOutSection(input.candidateHtml, input.sectionId);
+  const baseRest = blankOutSection(comparisonBusinessContent(input.baseHtml, input.baseVersionId, input.versions), input.sectionId);
+  const candidateRest = blankOutSection(comparisonBusinessContent(input.candidateHtml, input.candidateVersionId, input.versions), input.sectionId);
   const baseNumbers = new Set(extractNumericTokens(baseSection ?? ''));
   const candidateNumbers = new Set(extractNumericTokens(candidateSection ?? ''));
   return {

@@ -18,7 +18,8 @@ import styles from './MokinaCandidateCompare.module.css';
  * 候选比较（T12）：基础版本与候选并排（窄屏切换）；非所选章节以字节一致性判定，
  * 数值变化单独提示供人工核对口径；采用与取消入口始终可见。
  */
-export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml, candidateHtml, adopting, onClose, onAdopt, returnFocusTo }: {
+export function MokinaCandidateCompare({ versions, baseVersion, candidateVersion, baseHtml, candidateHtml, adopting, onClose, onAdopt, returnFocusTo }: {
+  versions?: readonly ProjectFileVersion[];
   baseVersion: ProjectFileVersion;
   candidateVersion: ProjectFileVersion;
   baseHtml: string;
@@ -71,8 +72,8 @@ export function MokinaCandidateCompare({ baseVersion, candidateVersion, baseHtml
   const [chosenSection, setChosenSection] = useState('');
   const primarySection = changedSections.includes(chosenSection) ? chosenSection : changedSections[0] ?? '';
   const comparison = useMemo(
-    () => compareMokinaChapter({ sectionId: primarySection, baseHtml, candidateHtml }),
-    [primarySection, baseHtml, candidateHtml],
+    () => compareMokinaChapter({ sectionId: primarySection, baseHtml, candidateHtml, baseVersionId: baseVersion.id, candidateVersionId: candidateVersion.id, versions: versions ?? [baseVersion, candidateVersion] }),
+    [primarySection, baseHtml, candidateHtml, baseVersion, candidateVersion, versions],
   );
   const [narrowPane, setNarrowPane] = useState<'base' | 'candidate'>('candidate');
 

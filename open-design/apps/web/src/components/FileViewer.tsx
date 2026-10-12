@@ -5628,6 +5628,7 @@ function FileVersionManagerModal({
       </aside>
       {candidateCompare && selectedVersion?.candidate && selectedContent ? (
         <MokinaCandidateCompare
+          versions={versions}
           returnFocusTo={candidateCompareTriggerRef.current}
           baseVersion={candidateCompare.base}
           candidateVersion={selectedVersion}

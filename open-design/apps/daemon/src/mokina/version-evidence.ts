@@ -1,3 +1,4 @@
+import { inspectBudgetSummaries } from './budget-summaries.js';
 import { decimal, formatDecimal } from './decimal.js';
 import { createHash } from 'node:crypto';
 import { load } from 'cheerio';
@@ -95,7 +96,7 @@ export function hasVersionEvidence(content: string): boolean {
 export async function freezeVersionEvidence(html: string, versionId: string, contentDigest: string,
   readSource: (path: string, expectedDigest: string) => Promise<Buffer>, resources?: MokinaQualitySnapshot['resources']): Promise<string> {
   if (!hasVersionEvidence(html)) return html;
-  const $ = load(html); const declarations = $(`[id="${declarationId}"]`);
+  const $ = load(html, { sourceCodeLocationInfo: true }); const declarations = $(`[id="${declarationId}"]`);
   if (!declarations.length) return html;
   $(`[id="${snapshotId}"], [data-mokina-evidence-appendix]`).remove();
   const frozenBodyDigest = sha($.html());
@@ -126,7 +127,9 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
         record.status = 'incomplete'; record.issues.push({ code: 'SOURCE_UNAVAILABLE', sourceId: source.id, sectionId: source.sectionId, message: entry.error });
       }
     }
-    for (const table of $('[data-mokina-budget]').toArray()) {
+    const summaryBindings = inspectBudgetSummaries($);
+    for (const message of summaryBindings.warnings) record.issues.push({ code: 'BUDGET_SUMMARY', message });
+    for (const [tableIndex, table] of $('[data-mokina-budget]').toArray().entries()) {
       const sectionId = $(table).closest('[data-mokina-id]').attr('data-mokina-id');
       const issue = (code: string, message: string) => record.issues.push({ code, ...(sectionId ? { sectionId } : {}), message });
       const limit = decimal($(table).attr('data-budget-limit') ?? '', 2); const capacity = decimal($(table).attr('data-capacity-hours') ?? '');
@@ -147,6 +150,11 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
         record.calculations.push({ sectionId: sectionId ?? '', expression: `Row ${index + 1}: ${formatDecimal(quantity, 8)} × ${formatDecimal(price, 8)}`, result: computed });
       }
       if (valid) {
+        for (const summary of summaryBindings.summaries.filter(item => item.index === tableIndex)) {
+          const expected = summary.kind === 'total' ? sum : summary.kind === 'remaining' ? limit! - sum : hours;
+          const actual = decimal($(summary.node).text(), summary.kind === 'hours' ? 8 : 2);
+          if (actual !== expected) issue('BUDGET_SUMMARY', `Budget summary ${summary.kind} for table ${tableIndex} disagrees with calculated value ${formatDecimal(expected, summary.kind === 'hours' ? 8 : 2)}.`);
+        }
         if (sum > limit!) issue('BUDGET_EXCEEDED', `Computed ${formatDecimal(sum, 2)} exceeds ${formatDecimal(limit!, 2)}.`);
         if (hours > capacity!) issue('CAPACITY_EXCEEDED', `${formatDecimal(hours, 8)} hours exceeds ${formatDecimal(capacity!, 8)}.`);
         record.calculations.push({ sectionId: sectionId!, expression: 'Computed total / unused budget / internal hours', result: `${formatDecimal(sum, 2)} / ${formatDecimal(limit! - sum, 2)} / ${formatDecimal(hours, 8)}` });

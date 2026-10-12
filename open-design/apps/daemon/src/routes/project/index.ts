@@ -121,7 +121,7 @@ import {
 import { connectorService } from '../../connectors/service.js';
 import type { RouteDeps } from '../../server-context.js';
 import { listSkills } from '../../skills.js';
-import { isSafeId } from '../../projects.js';
+import { isSafeId, validateProjectPath } from '../../projects.js';
 import {
   ensureTeamProjectCommentConversations,
   getFirstProjectConversation,
@@ -7525,14 +7525,16 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
         if (!await authorizeProjectRequest(req, res, project.id, { mode: 'read' })) return;
       } else if (!await enforceWorkspaceProjectMutation(req, res, sendApiError, getWorkspaceProject, getWorkspaceProjectByProjectId, db, project.id, 'writeFiles')) return;
       if (!/\.html?$/iu.test(params[1])) return sendApiError(res, 400, 'BAD_REQUEST', 'HTML file required');
-      const scope = { projectsRoot: PROJECTS_DIR, projectId: project.id, fileName: params[1], metadata: project.metadata };
+      let safeFile: string;
+      try { safeFile = validateProjectPath(params[1]); } catch (error) { return sendApiError(res, 400, 'BAD_REQUEST', String((error as Error).message)); }
+      const scope = { projectsRoot: PROJECTS_DIR, projectId: project.id, fileName: safeFile, metadata: project.metadata };
       res.setHeader('Cache-Control', 'no-store');
       res.json(method === 'get'
         ? await readArtifactOperations(scope, String(req.query.versionId ?? ''))
         : { version: await saveArtifactOperation(scope, req.body) });
     } catch (error: any) {
       const code = String(error?.code ?? '');
-      const status = code === 'ENOENT' || code === 'VERSION_NOT_FOUND' ? 404 : code.startsWith('VERSION_') || code === 'MOKINA_OPERATION_NOT_SAVED' ? 409 : code === 'MOKINA_OPERATION_INPUT' ? 400 : 500;
+      const status = code === 'ENOENT' || code === 'VERSION_NOT_FOUND' ? 404 : code.startsWith('VERSION_') || code === 'MOKINA_OPERATION_NOT_SAVED' ? 409 : code === 'MOKINA_OPERATION_INPUT' || code === 'EINVAL' ? 400 : 500;
       sendApiError(res, status, status === 409 ? 'CONFLICT' : status === 404 ? 'NOT_FOUND' : status === 400 ? 'BAD_REQUEST' : 'INTERNAL_ERROR', String(error?.message || error));
     }
   });

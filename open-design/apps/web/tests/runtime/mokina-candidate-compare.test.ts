@@ -54,3 +54,38 @@ describe('candidate compare helpers', () => {
     expect(blanked).not.toContain('50 万');
   });
 });
+
+import type { ProjectFileVersion } from '@open-design/contracts';
+const record = (id: string, digest: string, operationId?: string, restoreFromVersionId?: string) => ({ id, contentDigest: digest, operationId, restoreFromVersionId } as ProjectFileVersion);
+const receipt = (operationId: string, baseVersionId: string, contentDigest: string) => '\n<!-- mokina-operation ' + btoa(JSON.stringify({ operationId, baseVersionId, contentDigest, edits: [{ id: 'field', value: 'changed' }] })) + ' -->';
+it('ignores only receipts bound to the version catalog across consecutive edits and exact restores', () => {
+  const d0 = 'a'.repeat(64), d1 = 'b'.repeat(64), d2 = 'c'.repeat(64);
+  const r1 = receipt('op1', 'v0', d0), r2 = receipt('op2', 'v1', d1);
+  const versions = [record('v0', d0), record('v1', d1, 'op1'), record('v2', d2, 'op2'), record('restored', d2, undefined, 'v2')];
+  const input = { sectionId: 'budget', baseHtml: base, candidateHtml: candidate + r1 + r2, baseVersionId: 'v0', candidateVersionId: 'v2', versions };
+  expect(compareMokinaChapter(input).restIdentical).toBe(true);
+  expect(compareMokinaChapter({ ...input, candidateVersionId: 'restored' }).restIdentical).toBe(true);
+  expect(compareMokinaChapter({ ...input, versions: versions.filter(v => v.id !== 'v1') }).restIdentical).toBe(false);
+  expect(compareMokinaChapter({ ...input, candidateHtml: candidate + r1 + receipt('forged', 'v1', d1) }).restIdentical).toBe(false);
+  expect(compareMokinaChapter({ ...input, candidateHtml: candidate + r1 + receipt('op2', 'v1', d0) }).restIdentical).toBe(false);
+  for (const extra of ['<!-- ordinary business comment -->', '<style>body{color:red}</style>', '<script type="application/json" id="mokina-evidence">{}</script>']) {
+    expect(compareMokinaChapter({ ...input, candidateHtml: candidate + extra + r1 + r2 }).restIdentical).toBe(false);
+  }
+  expect(compareMokinaChapter({ ...input, candidateHtml: candidate.replace('月度复盘', '季度复盘') + r1 + r2 }).restIdentical).toBe(false);
+});
+it('retains malformed, cyclic and mismatched restored receipts', () => {
+  const digest = 'd'.repeat(64), r = receipt('op', 'v', digest);
+  const input = { sectionId: 'budget', baseHtml: base, candidateHtml: candidate + r, baseVersionId: 'base', candidateVersionId: 'v', versions: [record('v', digest, 'op')] };
+  expect(compareMokinaChapter(input).restIdentical).toBe(false);
+  expect(compareMokinaChapter({ ...input, candidateHtml: candidate + '\n<!-- mokina-operation e30= -->' }).restIdentical).toBe(false);
+  expect(compareMokinaChapter({ ...input, candidateVersionId: 'restore', versions: [...input.versions, record('restore', 'e'.repeat(64), undefined, 'v')] }).restIdentical).toBe(false);
+});
+
+it('keeps adopted operation identity when the next candidate continues the receipt chain', () => {
+  const d0 = 'a'.repeat(64), d1 = 'b'.repeat(64), d2 = 'c'.repeat(64);
+  const r1 = receipt('op1', 'v0', d0), r2 = receipt('op2', 'v1', d1);
+  const adopted = { ...record('v1', d1, 'op1'), candidate: false, current: true, adoptionOperationId: 'adopt' };
+  const result = compareMokinaChapter({ sectionId: 'budget', baseHtml: base + r1, candidateHtml: candidate + r1 + r2,
+    baseVersionId: 'v1', candidateVersionId: 'v2', versions: [record('v0', d0), adopted, record('v2', d2, 'op2')] });
+  expect(result.restIdentical).toBe(true);
+});

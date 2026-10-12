@@ -1,5 +1,6 @@
 import { load } from 'cheerio';
 import type { MokinaEditableField, MokinaOperationRequest } from '@open-design/contracts';
+import { inspectBudgetSummaries, budgetSummaryIndex } from './budget-summaries.js';
 import { decimal, formatDecimal } from './decimal.js';
 import { readHtmlSections, replaceHtmlSection } from './sections.js';
 
@@ -41,11 +42,13 @@ function readFields(html: string) {
     });
   });
   if (fields.length > 100) throw new Error('At most 100 fields can be edited');
-  return { $, fields, warnings };
+  const summaryWarnings = inspectBudgetSummaries($).warnings;
+  warnings.push(...summaryWarnings);
+  return { $, fields, warnings, summaryWarnings };
 }
 export function inspectOperationSupport(html: string) {
-  const { fields, warnings } = readFields(html);
-  return { warnings, fields: fields.map(({ node: _node, table: _table, ...field }) => field) };
+  const { fields, warnings, summaryWarnings } = readFields(html);
+  return { warnings, fields: fields.filter(field => !field.table || !summaryWarnings.length).map(({ node: _node, table: _table, ...field }) => field) };
 }
 export function inspectOperationFields(html: string): MokinaEditableField[] { return inspectOperationSupport(html).fields; }
 function patched(html: string, patches: Patch[]): string {
@@ -71,6 +74,8 @@ export function applyOperationEdits(html: string, edits: MokinaOperationRequest[
     if (field.table) { const value = decimal(edit.value); if (value === null || value < 0n) throw new Error('Invalid budget decimal'); changedTables.add(field.table); }
     patches.push({ ...location(field.node), value: field.table ? formatDecimal(decimal(edit.value)!, 8) : edit.value });
   }
+  const summaryBindings = inspectBudgetSummaries($);
+  if (changedTables.size && summaryBindings.warnings.length) throw new Error(summaryBindings.warnings.join("; "));
   for (const table of changedTables) {
     const limit = decimal($(table).attr('data-budget-limit') ?? '', 2), capacity = decimal($(table).attr('data-capacity-hours') ?? '');
     if (limit === null || capacity === null || limit < 0n || capacity < 0n) throw new Error('Invalid budget limit or capacity');
@@ -93,7 +98,7 @@ export function applyOperationEdits(html: string, edits: MokinaOperationRequest[
     if (hours > capacity) throw new Error('Capacity exceeded');
     const ti = $('[data-mokina-budget]').toArray().findIndex(node => node === table);
     for (const [attr, value] of [['total', formatDecimal(total, 2)], ['remaining', formatDecimal(limit - total, 2)], ['hours', formatDecimal(hours, 8)]] as const) {
-      for (const node of $(`[data-mokina-budget-${attr}="${ti}"]`).toArray()) {
+      for (const { node } of summaryBindings.summaries.filter(summary => summary.kind === attr && summary.index === ti)) {
         if ($(node).children().length) throw new Error('Budget summary must be plain text');
         patches.push({ ...location(node), value });
       }
@@ -116,8 +121,8 @@ export function combineOperationSections(base: string, donor: string, ids: strin
     if (JSON.stringify(layout(base, id)) !== JSON.stringify(indices)) throw new Error('Budget table layout differs; use chapter revision to rebind summaries');
     const $ = load(sections.find(section => section.id === id)?.html ?? '');
     for (const attr of ['total', 'remaining', 'hours']) for (const node of $(`[data-mokina-budget-${attr}]`).toArray()) {
-      const index = Number($(node).attr(`data-mokina-budget-${attr}`));
-      if (!indices.includes(index)) throw new Error('Combined budget summary refers outside its chapter; use chapter revision');
+      const index = budgetSummaryIndex($(node).attr(`data-mokina-budget-${attr}`), load(donor)("[data-mokina-budget]").length);
+      if (index === null || !indices.includes(index)) throw new Error('Combined budget summary refers outside its chapter; use chapter revision');
     }
   }
   for (const id of ids) {
@@ -141,7 +146,13 @@ export function combineOperationEvidence(base: string, donor: string, ids: strin
   const a = read(base), b = read(donor);
   // Retain base declarations: another surviving chapter may still cite them.
   const sources = [...a.sources];
-  for (const source of b.sources.filter(s => ids.includes(String(s.sectionId)))) {
+  const donorDoc = load(donor); readHtmlSections(donor);
+  const selectedIds = new Set<string>();
+  for (const id of ids) {
+    const root = donorDoc('[data-mokina-id]').filter((_, node) => donorDoc(node).attr('data-mokina-id') === id);
+    for (const node of root.add(root.find('[data-mokina-id]')).toArray()) selectedIds.add(donorDoc(node).attr('data-mokina-id')!);
+  }
+  for (const source of b.sources.filter(s => selectedIds.has(String(s.sectionId)))) {
     const existing = sources.find(s => s.id === source.id);
     if (existing && JSON.stringify(existing) !== JSON.stringify(source)) throw new Error('Combined evidence source IDs conflict');
     if (!existing) sources.push(source);

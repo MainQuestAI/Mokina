@@ -47,13 +47,32 @@ for (const width of [1440, 900]) test(`[P1] M3 edit, unknown save, combine and f
     const savedResponse = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === `${url}/operations`);
     await panel.getByRole('button', { name: 'Save candidate', exact: true }).click(); const saved = await savedResponse; expect(saved.ok()).toBe(true);
     const combined = (await saved.json()).version;
-    const exported = await page.request.post(`/api/projects/${id}/export/html`, { data: { fileName: 'plan.html', versionId: combined.id, title: 'M3 combined' } });
-    expect(exported.ok()).toBe(true); const text = await exported.text(); expect(text).toContain('面向自由职业者'); expect(text).toContain('data-amount>100.05');
+    // Continue in the just-created candidate; never reopen the base route.
+    await expect(panel.locator('header')).toContainText(`v${combined.version}`);
+    await expect(panel.getByRole('textbox', { name: 'Strategy', exact: true })).toHaveValue('面向自由职业者，提供线上咨询；不举办线下活动。');
+    await panel.getByRole('textbox', { name: 'Strategy', exact: true }).fill('面向自由职业者，先验证线上咨询渠道；不举办线下活动。');
+    const refinedResponse = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === `${url}/operations`);
+    await panel.getByRole('button', { name: 'Save candidate', exact: true }).click();
+    const refined = (await (await refinedResponse).json()).version;
+    expect(refined.baseVersionId).toBe(base.id);
+    await expect(panel.locator('header')).toContainText(`v${refined.version}`);
+    await panel.getByRole('button', { name: 'Close', exact: true }).click();
+    await page.locator('.artifact-version-panel').getByRole('button', { name: 'Compare', exact: true }).click();
+    const comparison = page.getByRole('dialog', { name: 'Candidate comparison', exact: true });
+    await expect(comparison).toContainText('先验证线上咨询渠道');
+    await info.attach(`m3-comparison-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    await expect(comparison).not.toContainText('Changes outside the selected section were detected');
+    await expect(comparison).toContainText('byte-identical');
+    await comparison.getByRole('button', { name: 'Adopt candidate', exact: true }).click();
+    await expect(comparison).toHaveCount(0);
+    await expect.poll(async () => (await list()).find((v: { current: boolean }) => v.current)?.id).toBe(refined.id);
+    const exported = await page.request.post(`/api/projects/${id}/export/html`, { data: { fileName: 'plan.html', versionId: refined.id, title: 'M3 refined and adopted' } });
+    expect(exported.ok()).toBe(true); const text = await exported.text(); expect(text).toContain('先验证线上咨询渠道'); expect(text).toContain('data-amount>100.05');
     await page.goto('/projects'); await expect(page.getByTestId('mokina-projects')).toBeVisible({ timeout: T.long });
     const row = page.getByRole('row').filter({ hasText: 'M3 可操作成果' }); await row.getByText('Project artifacts', { exact: true }).click();
-    await expect(row).toContainText(`v${combined.version}`); await info.attach(`m3-catalog-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
-    await row.getByRole('button', { name: new RegExp(`plan.html · v${combined.version} · Candidate`) }).click();
-    await expect(page).toHaveURL(new RegExp(`/versions/${combined.id}/files/plan.html`));
+    await expect(row).toContainText(`v${refined.version}`); await info.attach(`m3-catalog-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    await row.getByRole('button', { name: new RegExp(`plan.html · v${refined.version} ·`) }).click();
+    await expect(page).toHaveURL(new RegExp(`/versions/${refined.id}/files/plan.html`));
   } finally { await page.request.delete(`/api/projects/${id}`); }
 });
 
@@ -93,4 +112,26 @@ test('[P1] M3 research to strategy to landing keeps fixed facts and never auto-s
     expect(runs).toEqual([]);
     await info.attach('m3-fixed-chain', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
   } finally { for (const id of ids.reverse()) await page.request.delete(`/api/projects/${id}`); }
+});
+
+test('[P1] M3 invalid budget binding keeps strategy work available and unsupported behavior has an explicit fallback', async ({ page }) => {
+  test.setTimeout(T.xlong); await applyStandardMocks(page); await page.setViewportSize({ width: 900, height: 600 });
+  const id = `m3-invalid-${randomUUID()}`;
+  expect((await page.request.post('/api/projects', { data: { id, name: 'M3 边界提示', skillId: null, designSystemId: null } })).ok()).toBe(true);
+  const put = async (content: string) => expect((await page.request.post(`/api/projects/${id}/files`, { data: { name: 'plan.html', content } })).ok()).toBe(true);
+  const open = async () => { await page.goto(`/projects/${id}/files/plan.html`); await expect(page.getByTestId('file-workspace')).toBeVisible({ timeout: T.long }); await page.getByRole('button', { name: 'Versions', exact: true }).click(); await page.getByTestId('mokina-artifact-operations-open').click(); };
+  try {
+    await put(MOKINA_M3_HTML.replace('budget-total="0"', 'budget-total="00"')); await open();
+    const panel = page.getByTestId('mokina-artifact-operations');
+    await expect(panel).toContainText('Invalid budget summary');
+    await expect(panel.getByRole('textbox', { name: 'budget · budget-0-0-quantity', exact: true })).toHaveCount(0);
+    await panel.getByRole('textbox', { name: 'Strategy', exact: true }).fill('预算待修复，策略草稿可继续。');
+    const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/files/plan.html/operations'));
+    await panel.getByRole('button', { name: 'Save candidate', exact: true }).click(); expect((await saved).ok()).toBe(true);
+    await expect(panel.getByRole('textbox', { name: 'Strategy', exact: true })).toHaveValue('预算待修复，策略草稿可继续。');
+    await panel.getByRole('button', { name: 'Close', exact: true }).click();
+    await put(MOKINA_M3_HTML.replace('<section id="strategy"', '<section onclick="alert(1)" id="strategy"')); await open();
+    await expect(panel).toContainText('unsupported behavior'); await expect(panel).toContainText('chapter revision');
+    await expect(panel.getByRole('button', { name: 'Save candidate', exact: true })).toBeDisabled();
+  } finally { await page.request.delete(`/api/projects/${id}`); }
 });

@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const archiveFault = vi.hoisted(() => ({ mode: null as null | 'corrupt-temp' | 'changed-temp' | 'read-temp' }));
 vi.mock('node:fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs/promises')>();
-  const isArchiveTemp = (path: unknown) => typeof path === 'string' && /\/\.deletions\.gz\.tmp(?:-|$)/u.test(path);
+  const isArchiveTemp = (path: unknown) => typeof path === 'string' && /[\\/]\.deletions\.gz\.tmp(?:-|$)/u.test(path);
   return {
     ...actual,
     async writeFile(...args: Parameters<typeof actual.writeFile>) {

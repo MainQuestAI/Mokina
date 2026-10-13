@@ -2339,6 +2339,10 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
     });
   });
   window.webContents.on("did-finish-load", () => {
+    // macOS can retain an empty compositor surface after a reload even when
+    // the new document has mounted. Request a paint without resizing the
+    // user's window, navigating again or resubmitting any work.
+    if (process.platform === "darwin") window.webContents.invalidate();
     console.info("[open-design desktop] main window did-finish-load", {
       title: window.getTitle(),
       url: window.webContents.getURL(),

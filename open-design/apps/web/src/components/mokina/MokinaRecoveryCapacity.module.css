@@ -1,0 +1,4 @@
+.root { display: grid; gap: 8px; padding-block: 16px; border-top: 1px solid var(--border); }
+.root h4, .root p { margin: 0; }
+.root p { font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }

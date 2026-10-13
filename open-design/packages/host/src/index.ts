@@ -37,6 +37,8 @@ export type {
   OpenDesignHostRecoveryStoreListResult,
   OpenDesignHostRecoveryStorePutResult,
   OpenDesignHostRecoveryStoreRecord,
+  OpenDesignHostRecoveryCapacity,
+  OpenDesignHostRecoveryCapacityResult,
   OpenDesignHostCaptureClip,
   OpenDesignHostCaptureOptions,
   OpenDesignHostCaptureSuccess,

@@ -1,6 +1,17 @@
 import type { Dict } from "../types";
 
 export const zhCN: Dict = {
+  'mokina.capacity.title': "草稿与恢复容量",
+  'mokina.capacity.description': "查看当前设备的草稿和请求恢复记录。整理只压缩已删除记录的凭据，保留未完成工作及未知请求。",
+  'mokina.capacity.unsupported': "当前宿主不支持容量管理。请在支持此功能的 Mokina 桌面候选中查看；浏览器草稿仍保留在当前浏览器。",
+  'mokina.capacity.usage': "活动记录 {active} / {limit} · 可整理 {reclaimable} · 已归档凭据 {archived}",
+  'mokina.capacity.full': "容量已满。先整理已删除记录；活动草稿可在对应项目中完成或明确放弃后再整理。",
+  'mokina.capacity.failed': "无法确认恢复库状态，请保留数据并重新读取。",
+  'mokina.capacity.done': "整理已完成。已删除记录的名额已释放，旧缓存仍不能恢复已删除内容。",
+  'mokina.capacity.confirm': "将完整保留删除身份并释放记录名额。整理后此 profile 需要当前或更新的宿主；旧版应用会拒绝读取。请勿用旧版覆盖此 profile。",
+  'mokina.capacity.refresh': "重新读取",
+  'mokina.capacity.compact': "整理已删除记录",
+  'mokina.capacity.proceed': "确认整理",
   "mokina.pages.newWork": "开始新工作",
   "mokina.pages.materialsIntro": "选择要使用的具体摘录，确认后固定为本次任务的来源。",
   "mokina.pages.readFailed": "读取失败",

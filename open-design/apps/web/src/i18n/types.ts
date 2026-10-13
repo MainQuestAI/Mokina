@@ -30,6 +30,17 @@ export const LOCALE_LABEL: Record<Locale, string> = {
 // flat (not deeply nested) so missing-key TS errors point straight at the
 // offending string instead of a generic object mismatch.
 export interface Dict {
+  'mokina.capacity.title': string;
+  'mokina.capacity.description': string;
+  'mokina.capacity.unsupported': string;
+  'mokina.capacity.usage': string;
+  'mokina.capacity.full': string;
+  'mokina.capacity.failed': string;
+  'mokina.capacity.done': string;
+  'mokina.capacity.confirm': string;
+  'mokina.capacity.refresh': string;
+  'mokina.capacity.compact': string;
+  'mokina.capacity.proceed': string;
   'mokina.pages.homeTitle': string;
   'mokina.pages.homeSubtitle': string;
   'mokina.pages.readFailed': string;

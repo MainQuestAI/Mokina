@@ -408,6 +408,13 @@ export type OpenDesignHostRecoveryStoreDeleteResult =
 
 export type OpenDesignHostRecoveryStoreListResult = { ok: true; keys: string[] } | OpenDesignHostFailure;
 
+export type OpenDesignHostRecoveryCapacity = {
+  active: number; reclaimable: number; archived: number; limit: number; archiveBytes: number;
+};
+export type OpenDesignHostRecoveryCapacityResult =
+  | { ok: true; result: OpenDesignHostRecoveryCapacity }
+  | { ok: false; reason: string };
+
 export type OpenDesignHostBridge = {
   // Optional so older host builds still satisfy the bridge shape; callers
   // must feature-detect before invoking.
@@ -444,6 +451,8 @@ export type OpenDesignHostBridge = {
   // Optional so web builds and older desktop hosts keep the same contract;
   // callers must feature-detect and keep their localStorage fallback.
   recoveryStore?: {
+    status?(): Promise<OpenDesignHostRecoveryCapacityResult>;
+    compact?(): Promise<OpenDesignHostRecoveryCapacityResult>;
     delete(key: string, expectedRecordId: string): Promise<OpenDesignHostRecoveryStoreDeleteResult>;
     get(key: string): Promise<OpenDesignHostRecoveryStoreGetResult>;
     list(prefix?: string): Promise<OpenDesignHostRecoveryStoreListResult>;

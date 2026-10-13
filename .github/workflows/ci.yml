@@ -61,7 +61,7 @@ jobs:
           pnpm --filter @open-design/desktop exec vitest run tests/main/export-document.test.ts tests/main/artifact-first-viewport-capture.test.ts tests/main/page-pdf-capture.test.ts
       - name: Brand UI review regression
         run: |
-          pnpm --filter @open-design/web exec vitest run tests/components/ChatPane.error-card-ladder.test.tsx tests/components/PreviewDrawOverlay.test.tsx tests/components/MokinaBrand.test.tsx tests/components/MokinaCodexConnectionRow.test.tsx tests/components/MokinaLiveStatus.test.tsx tests/i18n/product-brand.test.ts tests/components/HomeView.context-recovery.test.tsx tests/components/HomeView.plugin-workspace-scope.test.tsx tests/components/InlineModelSwitcher.byok-chip-label.test.tsx tests/runtime/chat/composer-draft.test.ts --maxWorkers=2
+          pnpm --filter @open-design/web exec vitest run tests/components/ChatPane.error-card-ladder.test.tsx tests/components/PreviewDrawOverlay.test.tsx tests/components/MokinaBrand.test.tsx tests/components/MokinaRecoveryCapacity.test.tsx tests/components/MokinaCodexConnectionRow.test.tsx tests/components/MokinaLiveStatus.test.tsx tests/i18n/product-brand.test.ts tests/components/HomeView.context-recovery.test.tsx tests/components/HomeView.plugin-workspace-scope.test.tsx tests/components/InlineModelSwitcher.byok-chip-label.test.tsx tests/runtime/chat/composer-draft.test.ts --maxWorkers=2
           pnpm --filter @open-design/contracts exec vitest run tests/social-share.test.ts tests/mokina-operations.test.ts
           pnpm --filter @open-design/release test
           pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-splash.test.ts tests/main/splash-stage-replay.test.ts
@@ -73,4 +73,4 @@ jobs:
       - name: Mokina input, continuation and navigation
         env:
           OD_PLAYWRIGHT_WORKERS: '1'
-        run: pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-operations.test.ts ui/mokina-business.test.ts ui/mokina-input-preparation.test.ts ui/mokina-cloud-handoff.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts ui/mokina-maturity.test.ts ui/mokina-recovery-integrity.test.ts ui/mokina-ime.test.ts ui/mokina-page-restoration.test.ts --workers=1
+        run: pnpm --filter @open-design/e2e exec playwright test -c playwright.config.ts ui/mokina-capacity.test.ts ui/mokina-operations.test.ts ui/mokina-business.test.ts ui/mokina-input-preparation.test.ts ui/mokina-cloud-handoff.test.ts ui/mokina-navigation.test.ts ui/mokina-workspace-actions.test.ts ui/mokina-maturity.test.ts ui/mokina-recovery-integrity.test.ts ui/mokina-ime.test.ts ui/mokina-page-restoration.test.ts --workers=1

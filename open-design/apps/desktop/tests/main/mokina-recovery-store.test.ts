@@ -1,3 +1,5 @@
+import { spawn } from "node:child_process";
+import { once } from "node:events";
 import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -174,4 +176,106 @@ describe("mokina recovery store", () => {
     expect(await store.put('od:revision:extra', { recordId: 'extra', value: 1 })).toEqual({ ok: false, reason: 'record-capacity' });
     expect(await createMokinaRecoveryStore(root).get('od:revision:0')).toMatchObject({ ok: true, result: { found: false, deletedRecordId: expect.any(String) } });
   });
+  it('M4 compacts deletion witnesses, frees capacity and fences stale writers after restart', async () => {
+    for (let i = 0; i < MOKINA_RECOVERY_STORE_LIMITS.maxRecords; i++) {
+      await store.put(`od:revision:${i}`, { recordId: `r${i}`, value: `draft ${i}` });
+    }
+    await store.delete('od:revision:0', 'r0');
+    const witness = await store.get('od:revision:0');
+    expect(await store.compact()).toMatchObject({ ok: true });
+    const reopened = createMokinaRecoveryStore(root);
+    expect(await reopened.get('od:revision:0')).toEqual(witness);
+    expect(await reopened.put('od:revision:0', { recordId: 'stale', value: 'deleted draft' }, 'r0')).toEqual({ ok: true, result: 'conflict' });
+    expect(await reopened.put('od:revision:0', { recordId: 'stale', value: 'deleted draft' })).toEqual({ ok: true, result: 'conflict' });
+    expect(await reopened.put('od:revision:new', { recordId: 'new', value: 'new work' })).toEqual({ ok: true, result: 'stored' });
+    expect(await reopened.get('od:revision:1')).toMatchObject({ ok: true, result: { found: true, record: { value: 'draft 1' } } });
+    expect(await reopened.status()).toMatchObject({ ok: true, result: { active: 512, archived: 1, reclaimable: 0, limit: 512 } });
+  });
+
+  it('M4 refuses compaction on corrupt data and preserves unknown requests', async () => {
+    await store.put('od:send-request:unknown', { recordId: 'u', value: { status: 'unknown' } });
+    await store.put('od:revision:bad', { recordId: 'b', value: 'keep' });
+    for (const file of (await readdir(root)).filter(n => n.endsWith('.json'))) {
+      const raw = await readFile(join(root, file), 'utf8');
+      if (JSON.parse(raw).key === 'od:revision:bad') await writeFile(join(root, file), '{broken');
+    }
+    expect(await store.compact()).toMatchObject({ ok: false });
+    expect(await store.get('od:send-request:unknown')).toMatchObject({ ok: true, result: { found: true, record: { value: { status: 'unknown' } } } });
+  });
+
+  it('M4 missing archive never permits deleted content to be recreated', async () => {
+    await store.put('od:revision:deleted', { recordId: 'r', value: 'old' });
+    await store.delete('od:revision:deleted', 'r');
+    await store.compact();
+    await rm(join(root, '.deletions.gz'));
+    const reopened = createMokinaRecoveryStore(root);
+    expect(await reopened.get('od:revision:deleted')).toEqual({ ok: false, reason: 'unreadable-archive' });
+    expect((await reopened.put('od:revision:deleted', { recordId: 'stale', value: 'old' })).ok).toBe(false);
+    expect((await reopened.list(undefined)).ok).toBe(false);
+  });
+
+  it('M4 a retained duplicate after interrupted cleanup is safe and compaction can be retried', async () => {
+    await store.put('od:revision:deleted', { recordId: 'r', value: 'old' });
+    await store.delete('od:revision:deleted', 'r');
+    const file = (await readdir(root)).find(n => n.endsWith('.json'))!;
+    const raw = await readFile(join(root, file));
+    const before = await store.get('od:revision:deleted');
+    await store.compact();
+    await writeFile(join(root, file), raw);
+    const reopened = createMokinaRecoveryStore(root);
+    expect(await reopened.get('od:revision:deleted')).toEqual(before);
+    expect((await reopened.compact()).ok).toBe(true);
+    expect(await reopened.get('od:revision:deleted')).toEqual(before);
+  });
+
+  it('M4 explicit recreation respects capacity and concurrent store instances share CAS ordering', async () => {
+    await store.put('od:revision:deleted', { recordId: 'r', value: 'old' });
+    await store.delete('od:revision:deleted', 'r'); await store.compact();
+    const witness = await store.get('od:revision:deleted');
+    const id = witness.ok && !witness.result.found ? witness.result.deletedRecordId! : '';
+    const other = createMokinaRecoveryStore(root);
+    const results = await Promise.all([
+      store.put('od:revision:deleted', { recordId: 'a', value: 'a' }, id),
+      other.put('od:revision:deleted', { recordId: 'b', value: 'b' }, id),
+    ]);
+    expect(results.filter(r => r.ok && r.result === 'stored')).toHaveLength(1);
+    expect(results.filter(r => r.ok && r.result === 'conflict')).toHaveLength(1);
+    await other.put('od:revision:another', { recordId: 'x', value: 'x' });
+    await other.delete('od:revision:another', 'x'); await other.compact();
+    expect(await other.get('od:revision:deleted')).toMatchObject({ ok: true, result: { found: true } });
+  });
+
+  it('M4 offline expansion restores old-host deletion witnesses without replacing live drafts', async () => {
+    await store.put('od:revision:deleted', { recordId: 'r', value: 'old' });
+    await store.delete('od:revision:deleted', 'r');
+    const before = await store.get('od:revision:deleted');
+    await store.compact();
+    await store.put('od:revision:live', { recordId: 'live', value: 'keep' });
+    expect((await store.expand()).ok).toBe(true);
+    expect(JSON.parse(await readFile(join(root, '.profile-state'), 'utf8')).schemaVersion).toBe(2);
+    expect((await readdir(root)).filter(n => n.endsWith('.json'))).toHaveLength(2);
+    expect(await createMokinaRecoveryStore(root).get('od:revision:deleted')).toEqual(before);
+    expect(await store.get('od:revision:live')).toMatchObject({ ok: true, result: { found: true, record: { value: 'keep' } } });
+  });
+
+  it('M4 another process holding the store lock cannot lose a successful write', async () => {
+    await store.put('od:revision:race', { recordId: 'before', value: 'keep' });
+    const child = spawn(process.execPath, ['--input-type=module', '-e', `
+      import { DatabaseSync } from 'node:sqlite';
+      const db = new DatabaseSync(process.argv[1]);
+      db.exec('BEGIN IMMEDIATE');
+      process.stdout.write('locked');
+      process.stdin.once('data', () => { db.close(); process.exit(0); });
+    `, join(root, '.store-lock.sqlite')], { stdio: ['pipe', 'pipe', 'pipe'] });
+    try {
+      await once(child.stdout!, 'data');
+      expect(await store.put('od:revision:race', { recordId: 'after', value: 'new' }, 'before')).toEqual({ ok: false, reason: 'recovery-store-busy' });
+      expect(await store.compact()).toEqual({ ok: false, reason: 'recovery-store-busy' });
+    } finally {
+      const ended = once(child, 'exit'); child.stdin!.end('release'); await ended;
+    }
+    expect(await store.get('od:revision:race')).toMatchObject({ ok: true, result: { found: true, record: { value: 'keep' } } });
+    expect(await store.put('od:revision:race', { recordId: 'after', value: 'new' }, 'before')).toEqual({ ok: true, result: 'stored' });
+  });
+
 });

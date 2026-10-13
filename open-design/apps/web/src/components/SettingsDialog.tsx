@@ -44,6 +44,7 @@ import type { Locale } from '../i18n';
 import type { Dict } from '../i18n/types';
 import { AgentIcon } from './AgentIcon';
 import { AgentDiagnosticRow } from './AgentDiagnosticRow';
+import { MokinaRecoveryCapacity } from './mokina/MokinaRecoveryCapacity';
 import { MokinaCodexConnectionRow } from './mokina/MokinaCodexConnectionRow';
 import { DeepSeekHarnessSetupDialog } from './DeepSeekHarnessSetupDialog';
 import { AmrLoginPill } from './AmrLoginPill';
@@ -6244,6 +6245,7 @@ export function SettingsDialog({
                   )}
                 </div>
               ) : null}
+              {MOKINA_LOCAL_EDITION ? <MokinaRecoveryCapacity /> : null}
               <div className="settings-about-diagnostics">
                 <div className="settings-about-diagnostics-text">
                   <h4>{t('diagnostics.exportTitle')}</h4>

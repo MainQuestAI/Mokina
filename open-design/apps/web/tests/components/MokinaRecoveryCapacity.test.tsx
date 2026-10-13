@@ -35,4 +35,22 @@ describe('recovery capacity', () => {
     expect(screen.getByText(/requires a supported Mokina desktop/)).toBeTruthy();
     expect(screen.queryByText(/Active 0/)).toBeNull();
   });
+  it('keeps compaction failure visible and only rereads on explicit refresh', async () => {
+    const status = vi.fn(async () => ({ ok: true, result: counts }));
+    const compact = vi.fn(async () => ({ ok: false, reason: 'compaction-failed' }));
+    state.host = { recoveryStore: { status, compact } }; draw();
+    await screen.findByText(/Active 10 \/ 512/);
+    fireEvent.click(screen.getByRole('button', { name: 'Compact deleted records' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm compaction' }));
+    expect((await screen.findByRole('alert')).textContent).toContain('compaction-failed');
+    expect(screen.queryByText(/Compaction completed/)).toBeNull();
+    expect(screen.getByText(/Active 10 \/ 512/)).toBeTruthy();
+    expect(compact).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Read again' }));
+    await screen.findByRole('button', { name: 'Compact deleted records' });
+    expect(status).toHaveBeenCalledTimes(2);
+    expect(compact).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.queryByText(/Compaction completed/)).toBeNull();
+  });
 });

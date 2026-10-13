@@ -96,6 +96,30 @@ const storeTails = new Map<string, Promise<unknown>>();
 const ARCHIVE = '.deletions.gz';
 const MAX_ARCHIVE_BYTES = 32 * 1024 * 1024;
 
+/** Standalone and archived deletion witnesses obey the same validity rules. */
+function isDeletionWitness(item: unknown): item is StoredFile {
+  return isRecord(item) && item.schemaVersion === 2 && item.deleted === true && item.value === null
+    && typeof item.key === 'string' && isAllowedMokinaRecoveryKey(item.key)
+    && typeof item.recordId === 'string' && item.recordId.length > 0
+    && typeof item.previousRecordId === 'string' && item.previousRecordId.length > 0
+    && typeof item.updatedAt === 'string';
+}
+
+function validateArchivePayload(payload: unknown): StoredFile[] {
+  if (!isRecord(payload) || payload.schemaVersion !== 1 || !Array.isArray(payload.records)) throw new Error('unreadable-archive');
+  const keys = new Set<string>();
+  for (const item of payload.records) {
+    if (!isDeletionWitness(item) || keys.has(item.key)) throw new Error('unreadable-archive');
+    keys.add(item.key);
+  }
+  return payload.records as StoredFile[];
+}
+
+function decodeArchive(data: Buffer): { records: StoredFile[]; bytes: number } {
+  const payload: unknown = JSON.parse(gunzipSync(data, { maxOutputLength: MAX_ARCHIVE_BYTES }).toString('utf8'));
+  return { records: validateArchivePayload(payload), bytes: data.length };
+}
+
 export class MokinaRecoveryStore {
   private legacyMissingRequiresConfirmation: boolean | undefined;
   private createdRoot = false;
@@ -174,7 +198,7 @@ export class MokinaRecoveryStore {
       || parsed.key !== key
       || typeof parsed.recordId !== "string"
       || parsed.recordId.length === 0
-      || (parsed.deleted === true && (parsed.schemaVersion !== 2 || typeof parsed.previousRecordId !== 'string' || !parsed.previousRecordId))
+      || (parsed.deleted === true && !isDeletionWitness(parsed))
     ) {
       return { kind: "error", reason: "unreadable-record" };
     }
@@ -208,17 +232,7 @@ export class MokinaRecoveryStore {
       if (marker.schemaVersion === 3) throw new Error('missing-archive');
       return { records: [], bytes: 0 };
     }
-    const payload = JSON.parse(gunzipSync(data, { maxOutputLength: MAX_ARCHIVE_BYTES }).toString('utf8')) as unknown;
-    if (!isRecord(payload) || payload.schemaVersion !== 1 || !Array.isArray(payload.records)) throw new Error('unreadable-archive');
-    const keys = new Set<string>();
-    for (const item of payload.records) {
-      if (!isRecord(item) || item.schemaVersion !== 2 || item.deleted !== true || item.value !== null
-        || typeof item.key !== 'string' || !isAllowedMokinaRecoveryKey(item.key) || keys.has(item.key)
-        || typeof item.recordId !== 'string' || !item.recordId || typeof item.previousRecordId !== 'string'
-        || !item.previousRecordId || typeof item.updatedAt !== 'string') throw new Error('unreadable-archive');
-      keys.add(item.key);
-    }
-    return { records: payload.records as StoredFile[], bytes: data.length };
+    return decodeArchive(data);
   }
 
   private async inventory() {
@@ -261,11 +275,22 @@ export class MokinaRecoveryStore {
           if (file.deleted) records.set(file.key, file);
           else records.delete(file.key);
         }
-        const raw = Buffer.from(JSON.stringify({ schemaVersion: 1, records: [...records.values()] }));
+        const payload = { schemaVersion: 1, records: [...records.values()] };
+        validateArchivePayload(payload);
+        const raw = Buffer.from(JSON.stringify(payload));
         if (raw.length > MAX_ARCHIVE_BYTES) return { ok: false, reason: 'archive-capacity' };
         const target = join(this.rootDir, ARCHIVE);
-        await writeFile(`${target}.tmp`, gzipSync(raw), { mode: 0o600 });
-        await rename(`${target}.tmp`, target);
+        const temporary = `${target}.tmp-${randomUUID()}`;
+        const encoded = gzipSync(raw);
+        try {
+          await writeFile(temporary, encoded, { mode: 0o600 });
+          const persisted = await readFile(temporary);
+          decodeArchive(persisted);
+          if (!persisted.equals(encoded)) throw new Error('archive-mismatch');
+          await rename(temporary, target);
+        } finally {
+          await rm(temporary, { force: true });
+        }
         const marker = join(this.rootDir, '.profile-state');
         await writeFile(`${marker}.tmp`, JSON.stringify({ schemaVersion: 3, confirmLegacyMissing: this.legacyMissingRequiresConfirmation }), { mode: 0o600 });
         await rename(`${marker}.tmp`, marker);

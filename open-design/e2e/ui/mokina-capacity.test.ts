@@ -3,7 +3,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test, expect } from '@/playwright/suite';
 import { applyStandardMocks } from '@/playwright/mock-factory';
-import { openSettingsDialog } from '@/playwright/amr';
+import { settingsSurface } from '@/playwright/amr';
+import { T } from '@/timeouts';
 // Actual built persistence authority; only the Electron transport is adapted for Chromium.
 const { createMokinaRecoveryStore } = await import(new URL('../../apps/desktop/dist/main/mokina-recovery-store.js', import.meta.url).href);
 for (const viewport of [{ width: 1440, height: 900 }, { width: 900, height: 600 }]) {
@@ -38,7 +39,11 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 900, height: 600 
       await page.setViewportSize(viewport);
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.goto('/');
-      const dialog = await openSettingsDialog(page);
+      // Wait for the actual entry control to become actionable. The generic
+      // helper probes visibility immediately and its legacy label fallback
+      // does not match Mokina's Settings control during a cold boot.
+      await page.getByTestId('entry-settings-button').click({ timeout: T.long });
+      const dialog = settingsSurface(page);
       await dialog.getByRole('button', { name: 'About', exact: true }).click();
       if (process.env.MOKINA_CAPACITY_BASELINE === '1') {
         await expect(page.getByTestId('mokina-recovery-capacity')).toHaveCount(0);

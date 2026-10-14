@@ -1,5 +1,6 @@
 import type {
   MokinaQualitySnapshot,
+  MokinaWebCaptureReceipt,
   ArtifactOrigin,
   ArtifactOriginStatus,
   ProjectFileKind,
@@ -7,6 +8,8 @@ import type {
   ProjectFileVersionPromptSource,
   ProjectFileVersionSource,
 } from '@open-design/contracts';
+import { parseMokinaWebCaptureReceipt } from '@open-design/contracts';
+import { readWebEvidenceDocument } from './mokina/web-evidence-document.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -28,6 +31,7 @@ type VersionPromptSource = ProjectFileVersionPromptSource;
 type VersionSource = ProjectFileVersionSource;
 
 interface VersionEntry {
+  webCapture?: MokinaWebCaptureReceipt;
   candidate?: boolean;
   baseVersionId?: string;
   operationId?: string;
@@ -58,6 +62,8 @@ interface VersionManifestState {
 }
 
 export interface CreateProjectFileVersionOptions {
+  /** Internal capture owner only. Ordinary file APIs never accept this metadata. */
+  webCapture?: MokinaWebCaptureReceipt;
   /** Server-resolved immutable donor versions used by controlled chapter combinations. */
   evidenceVersionIds?: string[];
   candidate?: boolean;
@@ -333,6 +339,10 @@ function normalizeManifestEntry(raw: Record<string, unknown>, fileName: string, 
   if (contentDigest) entry.contentDigest = contentDigest;
   if (parentVersionId) entry.parentVersionId = parentVersionId;
   if (origin) entry.origin = origin;
+  if (raw.webCapture !== undefined) {
+    try { entry.webCapture = parseMokinaWebCaptureReceipt(raw.webCapture); }
+    catch { throw codedError('web capture receipt in version manifest is invalid', 'VERSION_MANIFEST_INVALID'); }
+  }
   if (raw.candidate === true) entry.candidate = true;
   if (normalizeVersionId(raw.baseVersionId)) entry.baseVersionId = String(raw.baseVersionId);
   if (normalizeVersionId(raw.operationId)) entry.operationId = String(raw.operationId);
@@ -461,6 +471,7 @@ function publicVersion(entry: VersionEntry, currentId: string | null): ProjectFi
   if (entry.contentDigest) version.contentDigest = entry.contentDigest;
   if (entry.parentVersionId) version.parentVersionId = entry.parentVersionId;
   if (entry.origin) version.origin = entry.origin;
+  if (entry.webCapture) version.webCapture = entry.webCapture;
   if (entry.candidate) version.candidate = true;
   if (entry.baseVersionId) version.baseVersionId = entry.baseVersionId;
   if (entry.operationId) version.operationId = entry.operationId;
@@ -493,10 +504,11 @@ export async function listProjectFileVersions(
   projectId: string,
   fileName: string,
   metadata?: unknown,
+  options: { immutableSource?: boolean } = {},
 ): Promise<ProjectFileVersion[]> {
   const safeName = validateUserFileName(fileName);
   assertProjectAvailable(projectsRoot, projectId, metadata);
-  await recoverCandidateAdoption(projectsRoot, projectId, safeName);
+  if (!options.immutableSource) await recoverCandidateAdoption(projectsRoot, projectId, safeName);
   const state = await readVersionManifestState(projectsRoot, projectId, safeName);
   return state.entries.map((entry) => publicVersion(entry, state.currentVersionId));
 }
@@ -507,6 +519,8 @@ export async function readProjectFileVersion(
   fileName: string,
   versionId: string,
   metadata?: unknown,
+  /** Fixed sources never need adoption recovery; avoid taking a second file's mutation lock. */
+  options: { immutableSource?: boolean } = {},
 ): Promise<{ version: ProjectFileVersion; content: string; frozenContent?: string; quality: MokinaQualitySnapshot }> {
   const safeName = validateUserFileName(fileName);
   const safeVersionId = String(versionId || '').trim();
@@ -514,7 +528,7 @@ export async function readProjectFileVersion(
     throw codedError('version id required', 'EINVAL');
   }
   assertProjectAvailable(projectsRoot, projectId, metadata);
-  await recoverCandidateAdoption(projectsRoot, projectId, safeName);
+  if (!options.immutableSource) await recoverCandidateAdoption(projectsRoot, projectId, safeName);
   const state = await readVersionManifestState(projectsRoot, projectId, safeName);
   const entry = state.entries.find((item) => item.id === safeVersionId);
   if (!entry) {
@@ -634,6 +648,12 @@ async function createProjectFileVersionUnlocked(
   if (options.candidate) entry.candidate = true;
   if (options.baseVersionId) entry.baseVersionId = options.baseVersionId;
   if (options.operationId) entry.operationId = options.operationId;
+  if (options.webCapture) {
+    entry.webCapture = parseMokinaWebCaptureReceipt(options.webCapture);
+    readWebEvidenceDocument(text, entry.webCapture);
+  } else if (source === 'restore' && restoredFrom?.webCapture && restoredFrom.contentDigest === entry.contentDigest) {
+    entry.webCapture = restoredFrom.webCapture;
+  }
   // An explicit base carries its immutable evidence into revisions/restores.
   // A changed declaration still has to resolve and validate a new source.
   const evidenceIds = [...new Set([options.baseVersionId ?? options.restoreFromVersionId ?? entry.parentVersionId, ...(options.evidenceVersionIds ?? [])].filter((id): id is string => Boolean(id)))];
@@ -680,9 +700,15 @@ async function createProjectFileVersionUnlocked(
       resources = { status: 'incomplete', reasons: [error.message] };
     }
     if (hasVersionEvidence(text) || resources.status === 'complete') {
-      frozenHtml = await freezeVersionEvidence(resourceHtml, id, entry.contentDigest!, async (sourcePath, expectedDigest) => {
-        const inherited = inheritedSources.find(item => item.path === sourcePath && item.sha256 === expectedDigest && item.text !== undefined);
-        if (inherited?.text !== undefined) return Buffer.from(inherited.text, 'utf8');
+      frozenHtml = await freezeVersionEvidence(resourceHtml, id, entry.contentDigest!, async (sourcePath, expectedDigest, sourceVersionId) => {
+        const inherited = inheritedSources.find(item => item.path === sourcePath && item.sha256 === expectedDigest && item.versionId === sourceVersionId && item.text !== undefined);
+        if (inherited?.text !== undefined) return { bytes: Buffer.from(inherited.text, 'utf8'), ...(inherited.webCapture ? { webCapture: inherited.webCapture } : {}) };
+        if (sourceVersionId) {
+          const source = await readProjectFileVersion(projectsRoot, projectId, sourcePath, sourceVersionId, metadata, { immutableSource: true });
+          if (Buffer.byteLength(source.content) > 512 * 1024) throw new Error('Evidence file exceeds 512 KiB');
+          if (source.version.webCapture) readWebEvidenceDocument(source.content, source.version.webCapture);
+          return { bytes: Buffer.from(source.content, 'utf8'), ...(source.version.webCapture ? { webCapture: source.version.webCapture } : {}) };
+        }
         const source = await resolveProjectFilePath(projectsRoot, projectId, sourcePath, metadata);
         if (source.size > 512 * 1024) throw new Error('Evidence file exceeds 512 KiB');
         return (await readProjectFile(projectsRoot, projectId, sourcePath, metadata)).buffer;

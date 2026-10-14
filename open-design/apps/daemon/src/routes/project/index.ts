@@ -1,5 +1,7 @@
 import { readArtifactOperations, saveArtifactOperation } from '../../mokina/artifact-operations.js';
 import { registerMokinaBusinessRoutes } from './mokina-business.js';
+import { registerMokinaWebEvidenceRoutes } from './mokina-web-evidence.js';
+import { readCapturedWebEvidence } from '../../mokina/web-evidence.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { rm } from 'node:fs/promises';
 import path from 'node:path';
@@ -7272,6 +7274,7 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
   });
 
   registerMokinaBusinessRoutes(app, { projectsRoot: PROJECTS_DIR, getProject: id => getProject(db, id), authorizeProjectRequest });
+  registerMokinaWebEvidenceRoutes(app, { projectsRoot: PROJECTS_DIR, getProject: id => getProject(db, id), authorizeProjectRequest });
 
   app.get('/api/projects/:id/files/:name/material', async (req, res) => {
     try {
@@ -7279,7 +7282,10 @@ export function registerProjectFileRoutes(app: Express, ctx: RegisterProjectFile
       if (!project) return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
       if (!await authorizeProjectRequest(req, res, project.id, { mode: 'read' })) return;
       const file = await readProjectFile(PROJECTS_DIR, req.params.id, req.params.name, project.metadata);
-      res.json(await readMokinaMaterial(file.name, file.buffer));
+      const captureId = file.name.match(/^evidence\/web-([A-Za-z0-9][A-Za-z0-9_-]{0,127})\.md$/u)?.[1];
+      const captured = captureId ? await readCapturedWebEvidence({ projectsRoot: PROJECTS_DIR, projectId: project.id, metadata: project.metadata }, captureId) : null;
+      const material = await readMokinaMaterial(file.name, file.buffer);
+      res.json(captured?.contentDigest === material.contentDigest ? captured.material : material);
     } catch (error: any) {
       const status = error?.code === 'ENOENT' ? 404 : 400;
       sendApiError(res, status, status === 404 ? 'FILE_NOT_FOUND' : 'BAD_REQUEST',

@@ -1,4 +1,5 @@
 import { readVersionEvidence } from './version-evidence.js';
+import { readWebEvidenceDocument } from './web-evidence-document.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { lstat, mkdir, mkdtemp, readFile, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -12,6 +13,7 @@ import {
   MOKINA_RECOVERY_LEGACY_SCHEMA,
   readMokinaRecoveryIntegrity,
   mokinaRecoveryWarnings,
+  parseMokinaWebCaptureReceipt,
   type MokinaRecoveryIntegrity,
   type MokinaRecoveryManifest,
   type MokinaRecoveryManifestContext,
@@ -114,6 +116,9 @@ export function parseRecoveryManifest(value: unknown): MokinaRecoveryManifest | 
     }
     if (['parentOriginalVersionId', 'baseOriginalVersionId'].some(key => version[key] !== undefined
       && (typeof version[key] !== 'string' || !VERSION_ID_RE.test(version[key] as string)))) return null;
+    let webCapture;
+    try { if (version.webCapture !== undefined) webCapture = parseMokinaWebCaptureReceipt(version.webCapture); }
+    catch { return null; }
     versions.push({
       entry: version.entry,
       originalVersionId: version.originalVersionId,
@@ -122,6 +127,7 @@ export function parseRecoveryManifest(value: unknown): MokinaRecoveryManifest | 
       candidate: version.candidate,
       contentPath: version.contentPath,
       contentDigest: version.contentDigest,
+      ...(webCapture ? { webCapture } : {}),
       ...(typeof version.frozenContentPath === 'string' ? { frozenContentPath: version.frozenContentPath } : {}),
       ...(typeof version.parentOriginalVersionId === 'string' ? { parentOriginalVersionId: version.parentOriginalVersionId } : {}),
       ...(typeof version.baseOriginalVersionId === 'string' ? { baseOriginalVersionId: version.baseOriginalVersionId } : {}),
@@ -325,6 +331,7 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
       return fail(400, 'BAD_REQUEST', `冻结版本内容未包含在恢复包中：${version.entry}`);
     }
     try {
+      if (version.webCapture) readWebEvidenceDocument(buffers.get(version.contentPath)!.toString('utf8'), version.webCapture);
       readVersionEvidence(buffers.get(version.contentPath)!.toString('utf8'),
         version.frozenContentPath ? buffers.get(version.frozenContentPath)?.toString('utf8') : undefined,
         version.originalVersionId, version.contentDigest, { neverCaptured: !version.frozenContentPath });
@@ -392,6 +399,7 @@ async function importRecoveryIntoOwnedTarget(input: RecoveryImportInput): Promis
         contentPath: path.basename(version.contentPath),
         ...(version.frozenContentPath ? { frozenContentPath: path.basename(version.frozenContentPath) } : {}),
         contentDigest: version.contentDigest,
+        ...(version.webCapture ? { webCapture: version.webCapture, operationId: version.webCapture.operationId } : {}),
         ...(version.candidate ? { candidate: true } : {}),
         ...(version.parentOriginalVersionId ? { parentVersionId: version.parentOriginalVersionId } : {}),
         ...(version.baseOriginalVersionId ? { baseVersionId: version.baseOriginalVersionId } : {}),

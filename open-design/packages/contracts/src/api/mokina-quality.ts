@@ -15,6 +15,8 @@ export interface MokinaEvidenceSource {
   sectionId: string;
   url?: string;
   accessedAt?: string;
+  /** Selected immutable project source version; omitted for legacy current-file sources. */
+  versionId?: string;
   methodVersion?: string;
   excerpt?: string;
   csv?: { id: string; amount: string; unit: string };
@@ -27,7 +29,7 @@ export interface MokinaQualitySnapshot {
   /** Resource closure is independent of captured evidence bytes. Included in fingerprint. */
   resources?: { status: 'complete' | 'incomplete'; reasons: string[] };
   status: 'unreviewed' | 'issues' | 'rules-clear' | 'incomplete';
-  sources: Array<MokinaEvidenceSource & { text?: string; error?: string }>;
+  sources: Array<MokinaEvidenceSource & { text?: string; error?: string; webCapture?: import('./mokina-web-evidence.js').MokinaWebCaptureReceipt }>;
   issues: MokinaQualityIssue[];
   calculations: Array<{ sectionId: string; expression: string; result: string }>;
   /** Content-integrity checksum, not an authenticity signature. */

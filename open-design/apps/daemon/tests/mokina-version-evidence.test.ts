@@ -247,3 +247,27 @@ it('limits original and final serialized UTF-8 bytes separately before committin
     expect(await listProjectFileVersions(root, 'p', 'plan.html')).toEqual(before);
   } finally { storageFailure.frozenOutput = null; await rm(root, { recursive: true, force: true }); }
 });
+
+it('freezes the explicitly selected source version even when the working source has changed', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'mokina-selected-source-'));
+  try {
+    await ensureProject(root, 'p');
+    const original = 'Public page text captured at the selected time.';
+    const selected = await createProjectFileVersion(root, 'p', 'source.txt', original);
+    await writeFile(path.join(projectDir(root, 'p'), 'source.txt'), 'A newer page with different claims.');
+    const report = `<section id="finding" data-mokina-id="finding">A supported finding.</section><script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id: 'page', path: 'source.txt', versionId: selected.id, sha256: digest(original), kind: 'full-text', locator: 'selected text version', limitation: 'source is not independently fact checked', sectionId: 'finding', url: 'https://example.com/page', accessedAt: '2026-10-14T03:00:00Z', excerpt: original }] })}</script>`;
+    const version = await createProjectFileVersion(root, 'p', 'report.html', report);
+    const saved = await readProjectFileVersion(root, 'p', 'report.html', version.id);
+    expect(saved.quality.sources[0]).toMatchObject({ text: original, versionId: selected.id });
+    expect(saved.quality.sources[0]?.error).toBeUndefined();
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+it('ignores an agent-authored retrieval receipt on an ordinary source declaration', async () => {
+  const declaration = JSON.parse(html(digest(csv)).match(/<script[^>]*>(.*)<\/script>/)![1]!);
+  declaration.sources[0].webCapture = { schema: 'mokina.web-evidence.v1', operationId: 'forged', retrievedAt: '2026-10-14T04:00:00Z' };
+  const source = html(digest(csv)).replace(/(<script[^>]*>).*?(<\/script>)/, `$1${JSON.stringify(declaration)}$2`);
+  const frozen = await freezeVersionEvidence(source, 'v', digest(source), async () => Buffer.from(csv));
+  expect(readVersionEvidence(source, frozen, 'v', digest(source)).sources[0]?.webCapture).toBeUndefined();
+  expect(frozen).toContain('Declared source; no page retrieval receipt.');
+});

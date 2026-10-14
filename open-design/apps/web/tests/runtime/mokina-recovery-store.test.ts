@@ -23,6 +23,7 @@ import {
   LegacyRecoveryConfirmationRequired,
   resolveLegacyRecoveryRecords,
   mutateDurableRecord,
+  refreshDurableRecord,
 } from '../../src/runtime/persistence/mokina-recovery-store';
 
 import { persistRecoveredComposerDraft } from '../../src/runtime/chat/composer-draft';
@@ -104,6 +105,19 @@ describe('mokina durable recovery facade (web)', () => {
     await expect(resolveLegacyRecoveryRecords('restore')).rejects.toThrow('冲突');
     expect(store.records.get(key)?.value).toBe('另一窗口');
     expect(localStorage.getItem(key)).toBe('旧要求');
+  });
+  it('explicitly refreshes native identity after a conflict without overwriting either value', async () => {
+    const key = 'od:composer-draft:web-refresh';
+    const store = makeFakeStore({ [key]: { recordId: 'a', value: 'A' } }); installHost(store);
+    await hydrateDurableRecoveryIntoLocalStorage();
+    store.records.set(key, { recordId: 'b', value: 'B' });
+    localStorage.setItem(key, 'my input');
+    expect(await mirrorDurableRecord(key, 'my input')).toBe(false);
+    expect(await refreshDurableRecord(key)).toBe(true);
+    expect(localStorage.getItem(key)).toBe('B');
+    localStorage.setItem(key, 'accepted');
+    expect(await mirrorDurableRecord(key, 'accepted')).toBe(true);
+    expect(store.records.get(key)?.value).toBe('accepted');
   });
   beforeEach(() => {
     window.localStorage.clear();

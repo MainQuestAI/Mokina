@@ -16,6 +16,7 @@ import { parseDesignSystemRenameArgs } from './design-systems/rename-args.js';
 import { runLiveArtifactsToolCli } from './tools-live-artifacts-cli.js';
 import { runDeliverableSyntaxToolCli } from './tools-deliverable-syntax-cli.js';
 import { splitResearchSubcommand } from './research/cli-args.js';
+import { runWebEvidenceCli } from './mokina/web-evidence-cli.js';
 import { resolveDaemonUrl } from './daemon-url.js';
 import { SidecarFactory } from '@open-design/sidecar';
 import { APP_KEYS, SIDECAR_MESSAGES } from '@open-design/sidecar-proto';
@@ -1663,6 +1664,7 @@ async function runResearch(args) {
     printResearchHelp();
     process.exit(sub === 'help' || args.includes('--help') || args.includes('-h') ? 0 : 2);
   }
+  if (sub === 'capture' || sub === 'read') return runWebEvidenceCli(sub, subArgs, { parseFlags, cliDaemonUrl });
   if (sub !== 'search') {
     console.error(`unknown subcommand: od research ${sub}`);
     printResearchHelp();
@@ -1722,6 +1724,12 @@ async function runArtifacts(args) {
 function printResearchHelp() {
   console.log(`Usage:
   od research search --query <text> [--max-sources 5] [--daemon-url <url>]
+  od research capture --project <id> --url <public-url> --operation-id <id>
+  od research read --project <id> --operation-id <same-id>
+
+capture saves an immutable project source version, with limited static reading.
+read only queries saved evidence. Query unknown outcomes before explicitly retrying
+the SAME operation ID; never substitute a search summary for page text.
 
 Runs Tavily-backed shallow research through the local OpenDesign daemon.
 Output is JSON only on stdout:

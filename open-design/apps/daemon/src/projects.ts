@@ -926,9 +926,13 @@ export async function writeProjectFile(
   }
   if (atomic) {
     const temporary = path.join(path.dirname(target), `.mokina-write-${randomUUID()}.tmp`);
-    try { await writeFile(temporary, body, { flag: 'wx' }); await rename(temporary, target); }
+    try {
+      await writeFile(temporary, body, { flag: 'wx' });
+      if (overwrite) await rename(temporary, target);
+      else await link(temporary, target);
+    }
     finally { await rm(temporary, { force: true }); }
-  } else await writeFile(target, body);
+  } else await writeFile(target, body, { flag: overwrite ? 'w' : 'wx' });
   await projectFileWriteTestHooks.afterCommit?.({ safeName, target, body });
   if (validatedManifest) {
     const manifestFileName = artifactManifestNameFor(safeName);

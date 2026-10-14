@@ -130,6 +130,20 @@ export function removeDurableRecord(key: string | undefined): Promise<boolean> {
     return true;
   });
 }
+/** Explicitly refresh one record from its authority after a failed write or competing window. */
+export function refreshDurableRecord(key: string): Promise<boolean> {
+  return enqueue(key, async () => {
+    const store = hostRecoveryStore();
+    if (!store) return true;
+    const captured = window.localStorage.getItem(key);
+    const got = await store.get(key);
+    if (!got.ok || (got.found && typeof got.record.value !== 'string')) return false;
+    if (!publishCache(key, captured, got.found ? got.record.value as string : null)) return false;
+    identities.set(key, got.found ? got.record.recordId : got.deletedRecordId);
+    if (got.found) deletedKeys.delete(key); else deletedKeys.add(key);
+    return true;
+  });
+}
 /** Await the latest queued mutation, including failures, before a critical side effect. */
 export function flushDurableRecord(key: string): Promise<boolean> {
   return tails.get(key) ?? Promise.resolve(true);

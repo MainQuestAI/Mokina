@@ -1,0 +1,21 @@
+{
+  "fileName": "evidence/web-m5-live-rfc.md",
+  "versionId": "cb5abf51-0cca-42e8-9b01-b30b579369d9",
+  "contentDigest": "187cb49e1b5bad45e20c35cb80b8c68ff3c59b5c849c5b5b71040fe7e499bc11",
+  "receipt": {
+    "schema": "mokina.web-evidence.v1",
+    "operationId": "m5-live-rfc",
+    "requestedUrl": "https://www.rfc-editor.org/rfc/rfc8259.txt",
+    "resolvedUrl": "https://www.rfc-editor.org/rfc/rfc8259.txt",
+    "retrievedAt": "2026-10-14T04:51:03.115Z",
+    "statusCode": 200,
+    "contentType": "text/plain",
+    "bodyDigest": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7",
+    "textDigest": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7",
+    "parserVersion": "mokina-web/1",
+    "scope": "plain-text",
+    "limitations": [
+      "Plain text response; factual truth and publication date have not been independently verified."
+    ]
+  }
+}

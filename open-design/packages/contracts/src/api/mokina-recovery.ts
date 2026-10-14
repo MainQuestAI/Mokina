@@ -29,6 +29,7 @@ export interface MokinaRecoveryManifestFile {
 }
 
 export interface MokinaRecoveryManifestVersion {
+  webCapture?: import('./mokina-web-evidence.js').MokinaWebCaptureReceipt;
   /** Project-relative file name the version belongs to. */
   entry: string;
   originalVersionId: string;

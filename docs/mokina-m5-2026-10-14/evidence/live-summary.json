@@ -1,0 +1,78 @@
+{
+  "main": {
+    "sha": "3efd8aea5ee6bfd2005003c0c40a403dd559d0f1",
+    "ci": 38505885062,
+    "conclusion": "success"
+  },
+  "viewports": [
+    [
+      1440,
+      900
+    ],
+    [
+      900,
+      600
+    ]
+  ],
+  "live": {
+    "html": {
+      "fileName": "evidence/web-m5-live-html.md",
+      "versionId": "bdd83183-d2ca-47d3-b820-08eb952f85ba",
+      "contentDigest": "fd5070f1d1faa352e23966e31b66f84ecec90116c4c38820762237a35e1ad810",
+      "receipt": {
+        "schema": "mokina.web-evidence.v1",
+        "operationId": "m5-live-html",
+        "requestedUrl": "https://example.com/",
+        "resolvedUrl": "https://example.com/",
+        "retrievedAt": "2026-10-14T04:51:02.152Z",
+        "statusCode": 200,
+        "contentType": "text/html",
+        "bodyDigest": "25ddf2c883e0d1958ea971d279a7e4f0fd446724ee3db7db19dadabd4a62e484",
+        "textDigest": "0a080719be9fbb82a86a45b80dc8c2a430fbe17dc93d23758debac092864d00f",
+        "parserVersion": "mokina-web/1",
+        "scope": "static-html-text",
+        "limitations": [
+          "Static HTML text with normalized whitespace; scripts, images, charts and authenticated or dynamically loaded content were not read.",
+          "Captured text and retrieval time do not verify factual truth, publication date or complete article coverage."
+        ]
+      }
+    },
+    "rfc": {
+      "fileName": "evidence/web-m5-live-rfc.md",
+      "versionId": "cb5abf51-0cca-42e8-9b01-b30b579369d9",
+      "contentDigest": "187cb49e1b5bad45e20c35cb80b8c68ff3c59b5c849c5b5b71040fe7e499bc11",
+      "receipt": {
+        "schema": "mokina.web-evidence.v1",
+        "operationId": "m5-live-rfc",
+        "requestedUrl": "https://www.rfc-editor.org/rfc/rfc8259.txt",
+        "resolvedUrl": "https://www.rfc-editor.org/rfc/rfc8259.txt",
+        "retrievedAt": "2026-10-14T04:51:03.115Z",
+        "statusCode": 200,
+        "contentType": "text/plain",
+        "bodyDigest": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7",
+        "textDigest": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7",
+        "parserVersion": "mokina-web/1",
+        "scope": "plain-text",
+        "limitations": [
+          "Plain text response; factual truth and publication date have not been independently verified."
+        ]
+      }
+    },
+    "failure": {
+      "url": "https://httpbin.org/status/403",
+      "status": 502,
+      "code": "WEB_HTTP_ERROR",
+      "upstreamStatus": 403,
+      "lookup": null
+    }
+  },
+  "rules": "Retrieval receipt verifies bytes captured by daemon, not factual truth or professional signoff.",
+  "report": {
+    "versionId": "55ec4f20-a9ba-4482-947e-47694befdf50",
+    "originalSha256": "96907afd724ba53fe30d1cdfeacfa992ffdb5374bec92728d6f14cffbc4f9db7",
+    "frozenSha256": "b41784e4b40ab521c4fbe34f38faa0ae30fe91062ed2f312091450efca83cb70",
+    "frozenBytes": 68467,
+    "quality": "rules-clear",
+    "professionalSignoff": "NOT_RUN"
+  }
+}

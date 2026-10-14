@@ -7,7 +7,7 @@ import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 import { findSidecarProcessesInNamespace } from '@open-design/sidecar';
 import { MOKINA_LOCAL_PREVIEW_NAMESPACE } from '@open-design/release';
 import { MOKINA_V004_TABLES } from './mokina-profile-schema.js';
-import { isAllowedMokinaRecoveryKey } from './mokina-recovery-store.js';
+import { createMokinaRecoveryStore, isAllowedMokinaRecoveryKey } from './mokina-recovery-store.js';
 
 export const MOKINA_STABLE_PROFILE = MOKINA_LOCAL_PREVIEW_NAMESPACE;
 /** Deliberately not a scan/merge of every historical QA namespace. */
@@ -113,6 +113,7 @@ async function inventory(root: string): Promise<{ entries: Entry[]; excluded: st
     const full = join(root, path);
     const info = await lstat(full);
     if (info.isSymbolicLink()) fail(`不支持符号链接：${path}`);
+    if (/^user-data\/mokina-recovery\/\.store-lock\.sqlite(?:-journal|-wal|-shm)?$/.test(path)) { excluded.push(path); return; }
     if (excludedRunFile(path)) { excluded.push(path); return; }
     if (info.isDirectory()) {
       entries.push({ path, sha256: 'directory', bytes: 0 });
@@ -209,12 +210,14 @@ async function validateRecovery(stage: string): Promise<number> {
   if (!await exists(root)) return 0;
   let count = 0;
   for (const name of await readdir(root)) {
+    if (/^\.store-lock\.sqlite(?:-journal|-wal|-shm)?$/.test(name)) continue;
     const file = join(root, name);
+    if (name === '.deletions.gz') continue;
     if (name !== '.profile-state' && !/^[a-f0-9]{40}\.json$/.test(name)) fail(`不支持恢复记录 ${name}`);
     const value = parseJson(await readFile(file, 'utf8'), `mokina-recovery/${name}`);
     if (!record(value)) fail('恢复记录格式错误');
     if (name === '.profile-state') {
-      if (value.schemaVersion !== 2 || typeof value.confirmLegacyMissing !== 'boolean') fail('恢复 profile schema 不受支持');
+      if (![2, 3].includes(value.schemaVersion as number) || typeof value.confirmLegacyMissing !== 'boolean') fail('恢复 profile schema 不受支持');
     } else {
       if ((value.schemaVersion !== 1 && value.schemaVersion !== 2) || typeof value.key !== 'string'
         || !isAllowedMokinaRecoveryKey(value.key) || typeof value.recordId !== 'string' || !value.recordId
@@ -224,6 +227,8 @@ async function validateRecovery(stage: string): Promise<number> {
     }
     // Recovery values include frozen request identities. Preserve every byte and recordId.
   }
+  const health = await createMokinaRecoveryStore(root).status();
+  if (!health.ok) fail('恢复记录或归档不完整');
   return count;
 }
 
@@ -325,5 +330,23 @@ export async function prepareMokinaStableProfile(options: {
       await rename(fresh, target);
     } finally { await rm(fresh, { recursive: true, force: true }); }
     return report;
+  });
+}
+
+/** Native profile maintenance stays in its owner; daemon data roots never infer Electron paths. */
+export async function maintainMokinaRecovery(options: {
+  namespaceBaseRoot: string; namespace: string; compact?: boolean; expand?: boolean;
+}) {
+  if (options.namespace !== MOKINA_STABLE_PROFILE) sourceAllowed(options.namespace);
+  const base = await baseRoot(options.namespaceBaseRoot);
+  return withLock(base, async () => {
+    const profile = join(base, options.namespace);
+    await assertDirectory(profile);
+    await assertMokinaProfileQuiescent(profile, options.namespace);
+    const recovery = join(profile, 'user-data/mokina-recovery');
+    await assertDirectory(recovery);
+    const store = createMokinaRecoveryStore(recovery);
+    if (options.compact && options.expand) fail('不能同时整理和展开归档');
+    return options.compact ? store.compact() : options.expand ? store.expand() : store.status();
   });
 }

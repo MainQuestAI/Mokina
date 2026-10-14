@@ -206,6 +206,12 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: configuredAllowedDevHosts(),
   outputFileTracingRoot: WORKSPACE_ROOT,
   reactStrictMode: true,
+  // Packaged server output lives inside the sealed application bundle. Route
+  // shells may be generated on first visit, but their ISR cache must not write
+  // .html/.rsc/.meta files into that bundle and invalidate its signature.
+  // These are disposable page shells; project/version persistence is owned by
+  // the daemon, so the existing bounded in-memory cache is sufficient here.
+  ...(isServerOutput ? { experimental: { isrFlushToDisk: false } } : {}),
   // Emit browser sourcemaps so packaged-runtime exceptions can be symbolicated
   // by PostHog. `tools/pack/src/web-sourcemaps.ts` runs after `next build`
   // to inject chunk IDs, upload to PostHog, and ALWAYS delete the .map files

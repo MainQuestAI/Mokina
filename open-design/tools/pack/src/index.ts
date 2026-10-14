@@ -114,6 +114,23 @@ function addWinLifecycleOptions(command: CacCommand) {
 
 const cli = cac("tools-pack");
 
+cli.command('recovery-maintain', 'Inspect or compact an offline Mokina desktop recovery profile')
+  .option('--base-root <path>', 'explicit namespace base root')
+  .option('--namespace <name>', 'mokina-local or a supported migration source')
+  .option('--compact', 'preserve deletion witnesses in a compressed archive and free record slots')
+  .option('--expand', 'restore individual deletion witnesses for older hosts; may exceed the active slot limit')
+  .option('--confirm', 'confirm profile format upgrade; older hosts will refuse this profile')
+  .option('--json', 'print JSON (default)')
+  .action(async (options: { baseRoot?: string; namespace?: string; compact?: boolean; expand?: boolean; confirm?: boolean }) => {
+    if (!options.baseRoot || !options.namespace || ((options.compact || options.expand) && !options.confirm)) {
+      throw new Error('Required: --base-root <absolute path> --namespace <name>; --compact/--expand also requires --confirm. Quit the app first.');
+    }
+    const { maintainMokinaRecovery } = await import('@open-design/desktop/profile-migration');
+    const result = await maintainMokinaRecovery({ namespaceBaseRoot: options.baseRoot, namespace: options.namespace, compact: options.compact, expand: options.expand });
+    printJson(result);
+    if (!result.ok) process.exitCode = 1;
+  });
+
 cli.command('profile-migrate', 'Offline Mokina macOS profile copy to the stable mokina-local identity')
   .option('--base-root <path>', 'explicit namespace base root; no implicit user-data path')
   .option('--source <namespace>', 'supported source: mokina-local-v004-1 or mokina-local-maturity-4')

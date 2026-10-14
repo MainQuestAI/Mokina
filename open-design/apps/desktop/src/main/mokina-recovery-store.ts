@@ -1,6 +1,8 @@
 import { createHash, randomUUID } from "node:crypto";
-import { lstat, mkdir, readFile, readdir, rename, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { lstat, mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
+import { DatabaseSync } from "node:sqlite";
+import { gzipSync, gunzipSync } from "node:zlib";
+import { basename, join, resolve } from "node:path";
 
 /**
  * Narrow durable store for Mokina recovery state under the desktop profile:
@@ -14,8 +16,8 @@ import { join } from "node:path";
  *   is a conflict, NOT an unconditional overwrite.
  * - `delete` requires the expected record id.
  *
- * Ordering: every operation on one store instance runs on a single promise
- * chain, so main-process writes to the same key never interleave. Writes are
+ * Ordering: each profile has a shared in-process queue and a SQLite write
+ * lock across processes, released on close or process death. Writes are
  * atomic (temp file + rename). Values are bounded JSON documents.
  */
 
@@ -86,25 +88,56 @@ export function isAllowedMokinaRecoveryKey(key: string): boolean {
   );
 }
 
+export type MokinaRecoveryCapacity = {
+  active: number; reclaimable: number; archived: number; limit: number; archiveBytes: number;
+};
+// Several renderer windows share the same main-process authority.
+const storeTails = new Map<string, Promise<unknown>>();
+const ARCHIVE = '.deletions.gz';
+const MAX_ARCHIVE_BYTES = 32 * 1024 * 1024;
+
+/** Standalone and archived deletion witnesses obey the same validity rules. */
+function isDeletionWitness(item: unknown): item is StoredFile {
+  return isRecord(item) && item.schemaVersion === 2 && item.deleted === true && item.value === null
+    && typeof item.key === 'string' && isAllowedMokinaRecoveryKey(item.key)
+    && typeof item.recordId === 'string' && item.recordId.length > 0
+    && typeof item.previousRecordId === 'string' && item.previousRecordId.length > 0
+    && typeof item.updatedAt === 'string';
+}
+
+function validateArchivePayload(payload: unknown): StoredFile[] {
+  if (!isRecord(payload) || payload.schemaVersion !== 1 || !Array.isArray(payload.records)) throw new Error('unreadable-archive');
+  const keys = new Set<string>();
+  for (const item of payload.records) {
+    if (!isDeletionWitness(item) || keys.has(item.key)) throw new Error('unreadable-archive');
+    keys.add(item.key);
+  }
+  return payload.records as StoredFile[];
+}
+
+function decodeArchive(data: Buffer): { records: StoredFile[]; bytes: number } {
+  const payload: unknown = JSON.parse(gunzipSync(data, { maxOutputLength: MAX_ARCHIVE_BYTES }).toString('utf8'));
+  return { records: validateArchivePayload(payload), bytes: data.length };
+}
+
 export class MokinaRecoveryStore {
-  private tail: Promise<unknown> = Promise.resolve();
   private legacyMissingRequiresConfirmation: boolean | undefined;
+  private createdRoot = false;
 
   constructor(private readonly rootDir: string) {}
 
   /** A pre-v2 profile cannot distinguish old physical deletion from an unmigrated cache. */
   private async initializeProfilePolicy(): Promise<void> {
-    if (this.legacyMissingRequiresConfirmation !== undefined) return;
     const marker = join(this.rootDir, '.profile-state');
     try {
       const parsed: unknown = JSON.parse(await readFile(marker, 'utf8'));
-      if (!isRecord(parsed) || parsed.schemaVersion !== 2 || typeof parsed.confirmLegacyMissing !== 'boolean') throw new Error('unreadable-profile');
+      if (!isRecord(parsed) || ![2, 3].includes(parsed.schemaVersion as number) || typeof parsed.confirmLegacyMissing !== 'boolean') throw new Error('unreadable-profile');
       this.legacyMissingRequiresConfirmation = parsed.confirmLegacyMissing;
       return;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     }
-    let existed = true;
+    let existed = !this.createdRoot;
     try { await lstat(this.rootDir); }
     catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') existed = false; else throw error; }
     await mkdir(this.rootDir, { recursive: true });
@@ -121,11 +154,22 @@ export class MokinaRecoveryStore {
 
   /** Single-writer serialization; keeps a monotonic chain per instance. */
   private enqueue<T>(operation: () => Promise<T>): Promise<T> {
-    const run = this.tail.then(operation, operation);
-    this.tail = run.then(
-      () => undefined,
-      () => undefined,
-    );
+    const scope = resolve(this.rootDir);
+    const locked = async (): Promise<T> => {
+      // OS-backed lock covers readers and every writer, including offline CLI
+      // processes and an application starting immediately after quiescence check.
+      this.createdRoot = (await mkdir(this.rootDir, { recursive: true })) !== undefined;
+      const mutex = new DatabaseSync(join(this.rootDir, '.store-lock.sqlite'));
+      try {
+        try { mutex.exec('PRAGMA busy_timeout=0; BEGIN IMMEDIATE'); }
+        catch { return { ok: false, reason: 'recovery-store-busy' } as T; }
+        return await operation();
+      } finally { mutex.close(); }
+    };
+    const run = (storeTails.get(scope) ?? Promise.resolve()).then(locked, locked);
+    const settled = run.then(() => undefined, () => undefined);
+    storeTails.set(scope, settled);
+    void settled.then(() => { if (storeTails.get(scope) === settled) storeTails.delete(scope); });
     return run;
   }
 
@@ -134,7 +178,12 @@ export class MokinaRecoveryStore {
     try {
       raw = await readFile(this.keyPath(key), "utf8");
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "ENOENT") return { kind: "missing" };
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+        try {
+          const archived = (await this.readArchive()).records.find(file => file.key === key);
+          return archived ? { kind: 'deleted', file: archived } : { kind: 'missing' };
+        } catch { return { kind: 'error', reason: 'unreadable-archive' }; }
+      }
       return { kind: "error", reason: "read-failed" };
     }
     let parsed: unknown;
@@ -149,7 +198,7 @@ export class MokinaRecoveryStore {
       || parsed.key !== key
       || typeof parsed.recordId !== "string"
       || parsed.recordId.length === 0
-      || (parsed.deleted === true && (parsed.schemaVersion !== 2 || typeof parsed.previousRecordId !== 'string' || !parsed.previousRecordId))
+      || (parsed.deleted === true && !isDeletionWitness(parsed))
     ) {
       return { kind: "error", reason: "unreadable-record" };
     }
@@ -174,6 +223,102 @@ export class MokinaRecoveryStore {
     await rename(temporary, target);
   }
 
+  private async readArchive(): Promise<{ records: StoredFile[]; bytes: number }> {
+    let data: Buffer;
+    try { data = await readFile(join(this.rootDir, ARCHIVE)); }
+    catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      const marker = JSON.parse(await readFile(join(this.rootDir, '.profile-state'), 'utf8'));
+      if (marker.schemaVersion === 3) throw new Error('missing-archive');
+      return { records: [], bytes: 0 };
+    }
+    return decodeArchive(data);
+  }
+
+  private async inventory() {
+    await this.initializeProfilePolicy();
+    const archive = await this.readArchive();
+    const files: StoredFile[] = [];
+    for (const name of await readdir(this.rootDir)) {
+      if (!name.endsWith('.json')) continue;
+      const parsed: unknown = JSON.parse(await readFile(join(this.rootDir, name), 'utf8'));
+      if (!isRecord(parsed) || typeof parsed.key !== 'string' || !isAllowedMokinaRecoveryKey(parsed.key)
+        || join(this.rootDir, name) !== this.keyPath(parsed.key)) throw new Error('unreadable-record');
+      const record = await this.readStored(parsed.key);
+      if (record.kind !== 'found' && record.kind !== 'deleted') throw new Error('unreadable-record');
+      files.push(record.file);
+    }
+    const liveKeys = new Set(files.filter(f => !f.deleted).map(f => f.key));
+    const status: MokinaRecoveryCapacity = { active: liveKeys.size, reclaimable: files.filter(f => f.deleted).length,
+      archived: archive.records.filter(f => !liveKeys.has(f.key)).length, limit: MOKINA_RECOVERY_STORE_LIMITS.maxRecords, archiveBytes: archive.bytes };
+    return { archive, files, status };
+  }
+
+  status(): Promise<MokinaRecoveryStoreResult<MokinaRecoveryCapacity>> {
+    return this.enqueue(async () => {
+      try { return { ok: true, result: (await this.inventory()).status }; }
+      catch { return { ok: false, reason: 'unreadable-recovery-store' }; }
+    });
+  }
+
+  /** Exact deletion witnesses survive compaction; no active value is archived.
+   * Publish archive before unlink, so interruption leaves only harmless duplicates.
+   * The v3 profile marker fences older hosts that cannot read archived witnesses.
+   */
+  compact(): Promise<MokinaRecoveryStoreResult<MokinaRecoveryCapacity>> {
+    return this.enqueue(async () => {
+      try {
+        const { archive, files, status } = await this.inventory();
+        if (!status.reclaimable) return { ok: true, result: status };
+        const records = new Map(archive.records.map(f => [f.key, f]));
+        for (const file of files) {
+          if (file.deleted) records.set(file.key, file);
+          else records.delete(file.key);
+        }
+        const payload = { schemaVersion: 1, records: [...records.values()] };
+        validateArchivePayload(payload);
+        const raw = Buffer.from(JSON.stringify(payload));
+        if (raw.length > MAX_ARCHIVE_BYTES) return { ok: false, reason: 'archive-capacity' };
+        const target = join(this.rootDir, ARCHIVE);
+        const temporary = `${target}.tmp-${randomUUID()}`;
+        const encoded = gzipSync(raw);
+        try {
+          await writeFile(temporary, encoded, { mode: 0o600 });
+          const persisted = await readFile(temporary);
+          decodeArchive(persisted);
+          if (!persisted.equals(encoded)) throw new Error('archive-mismatch');
+          await rename(temporary, target);
+        } finally {
+          await rm(temporary, { force: true });
+        }
+        const marker = join(this.rootDir, '.profile-state');
+        await writeFile(`${marker}.tmp`, JSON.stringify({ schemaVersion: 3, confirmLegacyMissing: this.legacyMissingRequiresConfirmation }), { mode: 0o600 });
+        await rename(`${marker}.tmp`, marker);
+        // Validate persisted bytes before removing any individual witness.
+        await this.readArchive();
+        for (const file of files) if (file.deleted) await rm(this.keyPath(file.key));
+        return { ok: true, result: (await this.inventory()).status };
+      } catch { return { ok: false, reason: 'compaction-failed' }; }
+    });
+  }
+
+  /** Offline downgrade preparation: materialize every retained witness before
+   * removing the old-host fence. Active records always take precedence. */
+  expand(): Promise<MokinaRecoveryStoreResult<MokinaRecoveryCapacity>> {
+    return this.enqueue(async () => {
+      try {
+        const { archive, files } = await this.inventory();
+        const present = new Set(files.map(file => file.key));
+        for (const file of archive.records) if (!present.has(file.key)) await this.writeStored(file);
+        const marker = join(this.rootDir, '.profile-state');
+        await writeFile(`${marker}.tmp`, JSON.stringify({ schemaVersion: 2, confirmLegacyMissing: this.legacyMissingRequiresConfirmation }), { mode: 0o600 });
+        await rename(`${marker}.tmp`, marker);
+        await rm(join(this.rootDir, ARCHIVE), { force: true });
+        return { ok: true, result: (await this.inventory()).status };
+      } catch { return { ok: false, reason: 'expansion-failed' }; }
+    });
+  }
+
   get(key: string): Promise<MokinaRecoveryStoreResult<MokinaRecoveryStoreGetOutcome>> {
     return this.enqueue(async () => {
       if (!isAllowedMokinaRecoveryKey(key)) return { ok: false as const, reason: "invalid-key" };
@@ -196,6 +341,7 @@ export class MokinaRecoveryStore {
         return { ok: false as const, reason: "invalid-key" };
       }
       await this.initializeProfilePolicy();
+      try { await this.readArchive(); } catch { return { ok: false as const, reason: 'unreadable-archive' }; }
       let names: string[];
       try {
         names = await readdir(this.rootDir);
@@ -255,7 +401,7 @@ export class MokinaRecoveryStore {
         return { ok: true as const, result: "conflict" as const };
       }
 
-      if (stored.kind === 'missing') {
+      if (stored.kind === 'missing' || (stored.kind === 'deleted' && !(await readdir(this.rootDir)).includes(basename(this.keyPath(key))))) {
         await mkdir(this.rootDir, { recursive: true });
         const names = await readdir(this.rootDir);
         if (names.filter(name => name.endsWith('.json')).length >= MOKINA_RECOVERY_STORE_LIMITS.maxRecords) {

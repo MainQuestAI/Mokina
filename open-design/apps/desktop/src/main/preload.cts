@@ -346,6 +346,14 @@ const updater = {
 };
 
 const recoveryStore = {
+  status: async () => {
+    try { return await ipcRenderer.invoke('mokina:recovery-store:status'); }
+    catch (error) { return failure(reasonFromError(error)); }
+  },
+  compact: async () => {
+    try { return await ipcRenderer.invoke('mokina:recovery-store:compact'); }
+    catch (error) { return failure(reasonFromError(error)); }
+  },
   get: async (key: string): Promise<OpenDesignHostRecoveryStoreGetResult> => {
     try {
       return await ipcRenderer.invoke('mokina:recovery-store:get', key);

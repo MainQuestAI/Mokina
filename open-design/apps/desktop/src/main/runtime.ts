@@ -2693,6 +2693,16 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
   // may call these; the store enforces key namespaces, size bounds and
   // compare-and-swap semantics itself.
   const mokinaRecoveryStore = createMokinaRecoveryStore(join(app.getPath("userData"), "mokina-recovery"));
+  for (const action of ['status', 'compact'] as const) {
+    const channel = `mokina:recovery-store:${action}`;
+    ipcMain.removeHandler(channel);
+    ipcMain.handle(channel, async event => {
+      if (event.sender !== window.webContents || event.senderFrame !== window.webContents.mainFrame) {
+        return { ok: false, reason: 'recovery store sender not allowed' };
+      }
+      return mokinaRecoveryStore[action]();
+    });
+  }
   ipcMain.removeHandler("mokina:recovery-store:get");
   ipcMain.handle(
     "mokina:recovery-store:get",

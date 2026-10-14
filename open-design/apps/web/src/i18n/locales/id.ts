@@ -1,6 +1,17 @@
 import type { Dict } from '../types';
 
 export const id: Dict = {
+  'mokina.capacity.title': "Draft and recovery capacity",
+  'mokina.capacity.description': "Inspect drafts and request recovery on this device. Compaction preserves unfinished work and unknown requests; only deletion witnesses are compressed.",
+  'mokina.capacity.unsupported': "Capacity management requires a supported Mokina desktop host. Browser drafts remain in this browser.",
+  'mokina.capacity.usage': "Active {active} / {limit} · Compactable {reclaimable} · Archived witnesses {archived}",
+  'mokina.capacity.full': "Capacity is full. Compact deleted records first. Finish or explicitly discard active drafts in their projects before compacting again.",
+  'mokina.capacity.failed': "Recovery store state could not be confirmed. Preserve data and read again.",
+  'mokina.capacity.done': "Compaction completed. Deleted record slots are freed; stale caches still cannot resurrect deleted content.",
+  'mokina.capacity.confirm': "Deletion identities are preserved while record slots are freed. This profile will require this host or newer; older hosts refuse to read it. Do not overwrite this profile with an older app.",
+  'mokina.capacity.refresh': "Read again",
+  'mokina.capacity.compact': "Compact deleted records",
+  'mokina.capacity.proceed': "Confirm compaction",
   "mokina.pages.newWork": "Mulai pekerjaan baru",
   "mokina.pages.materialsIntro": "Pilih kutipan yang tepat, lalu konfirmasikan sumber untuk tugas ini.",
   "mokina.pages.readFailed": "Gagal membaca",

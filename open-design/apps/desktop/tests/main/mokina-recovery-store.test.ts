@@ -1,8 +1,37 @@
+import { spawn } from "node:child_process";
+import { once } from "node:events";
 import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { gzipSync, gunzipSync } from "node:zlib";
 
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const archiveFault = vi.hoisted(() => ({ mode: null as null | 'corrupt-temp' | 'changed-temp' | 'read-temp' }));
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs/promises')>();
+  const isArchiveTemp = (path: unknown) => typeof path === 'string' && /[\\/]\.deletions\.gz\.tmp(?:-|$)/u.test(path);
+  return {
+    ...actual,
+    async writeFile(...args: Parameters<typeof actual.writeFile>) {
+      if (archiveFault.mode === 'corrupt-temp' && isArchiveTemp(args[0])) {
+        return actual.writeFile(args[0], Buffer.from('damaged archive'), args[2]);
+      }
+      if (archiveFault.mode === 'changed-temp' && isArchiveTemp(args[0])) {
+        const payload = JSON.parse(gunzipSync(args[1] as Buffer).toString('utf8'));
+        payload.records[0].recordId += '-changed';
+        return actual.writeFile(args[0], gzipSync(JSON.stringify(payload)), args[2]);
+      }
+      return actual.writeFile(...args);
+    },
+    async readFile(...args: Parameters<typeof actual.readFile>) {
+      if (archiveFault.mode === 'read-temp' && isArchiveTemp(args[0])) {
+        throw Object.assign(new Error('archive read failed'), { code: 'EIO' });
+      }
+      return actual.readFile(...args);
+    },
+  };
+});
 
 import {
   MOKINA_RECOVERY_STORE_LIMITS,
@@ -16,11 +45,13 @@ describe("mokina recovery store", () => {
   let store: MokinaRecoveryStore;
 
   beforeEach(async () => {
+    archiveFault.mode = null;
     root = await mkdtemp(join(tmpdir(), "mokina-recovery-"));
     store = createMokinaRecoveryStore(root);
   });
 
   afterEach(async () => {
+    archiveFault.mode = null;
     await rm(root, { force: true, recursive: true });
   });
 
@@ -174,4 +205,173 @@ describe("mokina recovery store", () => {
     expect(await store.put('od:revision:extra', { recordId: 'extra', value: 1 })).toEqual({ ok: false, reason: 'record-capacity' });
     expect(await createMokinaRecoveryStore(root).get('od:revision:0')).toMatchObject({ ok: true, result: { found: false, deletedRecordId: expect.any(String) } });
   });
+  it('M4 compacts deletion witnesses, frees capacity and fences stale writers after restart', async () => {
+    for (let i = 0; i < MOKINA_RECOVERY_STORE_LIMITS.maxRecords; i++) {
+      await store.put(`od:revision:${i}`, { recordId: `r${i}`, value: `draft ${i}` });
+    }
+    await store.delete('od:revision:0', 'r0');
+    const witness = await store.get('od:revision:0');
+    expect(await store.compact()).toMatchObject({ ok: true });
+    const reopened = createMokinaRecoveryStore(root);
+    expect(await reopened.get('od:revision:0')).toEqual(witness);
+    expect(await reopened.put('od:revision:0', { recordId: 'stale', value: 'deleted draft' }, 'r0')).toEqual({ ok: true, result: 'conflict' });
+    expect(await reopened.put('od:revision:0', { recordId: 'stale', value: 'deleted draft' })).toEqual({ ok: true, result: 'conflict' });
+    expect(await reopened.put('od:revision:new', { recordId: 'new', value: 'new work' })).toEqual({ ok: true, result: 'stored' });
+    expect(await reopened.get('od:revision:1')).toMatchObject({ ok: true, result: { found: true, record: { value: 'draft 1' } } });
+    expect(await reopened.status()).toMatchObject({ ok: true, result: { active: 512, archived: 1, reclaimable: 0, limit: 512 } });
+  });
+
+  it('M4 refuses compaction on corrupt data and preserves unknown requests', async () => {
+    await store.put('od:send-request:unknown', { recordId: 'u', value: { status: 'unknown' } });
+    await store.put('od:revision:bad', { recordId: 'b', value: 'keep' });
+    for (const file of (await readdir(root)).filter(n => n.endsWith('.json'))) {
+      const raw = await readFile(join(root, file), 'utf8');
+      if (JSON.parse(raw).key === 'od:revision:bad') await writeFile(join(root, file), '{broken');
+    }
+    expect(await store.compact()).toMatchObject({ ok: false });
+    expect(await store.get('od:send-request:unknown')).toMatchObject({ ok: true, result: { found: true, record: { value: { status: 'unknown' } } } });
+  });
+
+  it('M4 missing archive never permits deleted content to be recreated', async () => {
+    await store.put('od:revision:deleted', { recordId: 'r', value: 'old' });
+    await store.delete('od:revision:deleted', 'r');
+    await store.compact();
+    await rm(join(root, '.deletions.gz'));
+    const reopened = createMokinaRecoveryStore(root);
+    expect(await reopened.get('od:revision:deleted')).toEqual({ ok: false, reason: 'unreadable-archive' });
+    expect((await reopened.put('od:revision:deleted', { recordId: 'stale', value: 'old' })).ok).toBe(false);
+    expect((await reopened.list(undefined)).ok).toBe(false);
+  });
+
+  for (const existingArchive of [false, true]) {
+    it.each(['missing', 'non-null'] as const)(`refuses an invalid deletion value before publication (existing archive: ${existingArchive}, value: %s)`, async (shape) => {
+      await store.put('od:send-request:unknown', { recordId: 'u', value: { status: 'unknown' } });
+      let originalWitness: Awaited<ReturnType<typeof store.get>> | undefined;
+      if (existingArchive) {
+        await store.put('od:revision:archived', { recordId: 'a', value: 'old' });
+        await store.delete('od:revision:archived', 'a');
+        originalWitness = await store.get('od:revision:archived');
+        expect((await store.compact()).ok).toBe(true);
+      }
+      await store.put('od:revision:bad', { recordId: 'b', value: 'old' });
+      await store.delete('od:revision:bad', 'b');
+      for (const name of (await readdir(root)).filter(n => n.endsWith('.json'))) {
+        const path = join(root, name);
+        const file = JSON.parse(await readFile(path, 'utf8'));
+        if (file.key !== 'od:revision:bad') continue;
+        if (shape === 'missing') delete file.value;
+        else file.value = 'not a deletion';
+        await writeFile(path, JSON.stringify(file));
+      }
+      const archiveBefore = existingArchive ? await readFile(join(root, '.deletions.gz')) : null;
+      const markerBefore = await readFile(join(root, '.profile-state'));
+      const filesBefore = await Promise.all((await readdir(root)).filter(n => n.endsWith('.json')).map(async name => ({ name, bytes: await readFile(join(root, name)) })));
+
+      expect(await store.compact()).toEqual({ ok: false, reason: 'compaction-failed' });
+      if (archiveBefore) expect(await readFile(join(root, '.deletions.gz'))).toEqual(archiveBefore);
+      else expect((await readdir(root))).not.toContain('.deletions.gz');
+      expect(await readFile(join(root, '.profile-state'))).toEqual(markerBefore);
+      for (const file of filesBefore) expect(await readFile(join(root, file.name))).toEqual(file.bytes);
+      expect(await store.get('od:revision:bad')).toEqual({ ok: false, reason: 'unreadable-record' });
+      expect(await store.status()).toEqual({ ok: false, reason: 'unreadable-recovery-store' });
+      if (originalWitness) {
+        expect(await createMokinaRecoveryStore(root).get('od:revision:archived')).toEqual(originalWitness);
+        expect(await store.put('od:revision:archived', { recordId: 'stale', value: 'old' })).toEqual({ ok: true, result: 'conflict' });
+      }
+      expect(await store.get('od:send-request:unknown')).toMatchObject({ ok: true, result: { found: true, record: { value: { status: 'unknown' } } } });
+      expect(await store.put('od:revision:new', { recordId: 'new', value: 'new draft' })).toEqual({ ok: true, result: 'stored' });
+      expect(await store.list(undefined)).toEqual({ ok: true, result: ['od:revision:new', 'od:send-request:unknown'] });
+      expect(await store.expand()).toEqual({ ok: false, reason: 'expansion-failed' });
+      expect(await readFile(join(root, '.profile-state'))).toEqual(markerBefore);
+    });
+
+    it.each(['corrupt-temp', 'changed-temp', 'read-temp'] as const)(`preserves published state on candidate I/O failure (existing archive: ${existingArchive}, fault: %s)`, async (fault) => {
+      if (existingArchive) {
+        await store.put('od:revision:archived', { recordId: 'a', value: 'old' });
+        await store.delete('od:revision:archived', 'a');
+        expect((await store.compact()).ok).toBe(true);
+      }
+      await store.put('od:revision:pending', { recordId: 'p', value: 'old' });
+      await store.delete('od:revision:pending', 'p');
+      const witness = await store.get('od:revision:pending');
+      const archiveBefore = existingArchive ? await readFile(join(root, '.deletions.gz')) : null;
+      const markerBefore = await readFile(join(root, '.profile-state'));
+      archiveFault.mode = fault;
+      const result = await store.compact();
+      archiveFault.mode = null;
+      expect(result).toEqual({ ok: false, reason: 'compaction-failed' });
+      if (archiveBefore) expect(await readFile(join(root, '.deletions.gz'))).toEqual(archiveBefore);
+      else expect(await readdir(root)).not.toContain('.deletions.gz');
+      expect(await readFile(join(root, '.profile-state'))).toEqual(markerBefore);
+      expect((await readdir(root)).filter(n => n.includes('.tmp'))).toEqual([]);
+      expect(await createMokinaRecoveryStore(root).get('od:revision:pending')).toEqual(witness);
+      expect((await store.compact()).ok).toBe(true);
+      expect(await store.get('od:revision:pending')).toEqual(witness);
+    });
+  }
+
+  it('M4 a retained duplicate after interrupted cleanup is safe and compaction can be retried', async () => {
+    await store.put('od:revision:deleted', { recordId: 'r', value: 'old' });
+    await store.delete('od:revision:deleted', 'r');
+    const file = (await readdir(root)).find(n => n.endsWith('.json'))!;
+    const raw = await readFile(join(root, file));
+    const before = await store.get('od:revision:deleted');
+    await store.compact();
+    await writeFile(join(root, file), raw);
+    const reopened = createMokinaRecoveryStore(root);
+    expect(await reopened.get('od:revision:deleted')).toEqual(before);
+    expect((await reopened.compact()).ok).toBe(true);
+    expect(await reopened.get('od:revision:deleted')).toEqual(before);
+  });
+
+  it('M4 explicit recreation respects capacity and concurrent store instances share CAS ordering', async () => {
+    await store.put('od:revision:deleted', { recordId: 'r', value: 'old' });
+    await store.delete('od:revision:deleted', 'r'); await store.compact();
+    const witness = await store.get('od:revision:deleted');
+    const id = witness.ok && !witness.result.found ? witness.result.deletedRecordId! : '';
+    const other = createMokinaRecoveryStore(root);
+    const results = await Promise.all([
+      store.put('od:revision:deleted', { recordId: 'a', value: 'a' }, id),
+      other.put('od:revision:deleted', { recordId: 'b', value: 'b' }, id),
+    ]);
+    expect(results.filter(r => r.ok && r.result === 'stored')).toHaveLength(1);
+    expect(results.filter(r => r.ok && r.result === 'conflict')).toHaveLength(1);
+    await other.put('od:revision:another', { recordId: 'x', value: 'x' });
+    await other.delete('od:revision:another', 'x'); await other.compact();
+    expect(await other.get('od:revision:deleted')).toMatchObject({ ok: true, result: { found: true } });
+  });
+
+  it('M4 offline expansion restores old-host deletion witnesses without replacing live drafts', async () => {
+    await store.put('od:revision:deleted', { recordId: 'r', value: 'old' });
+    await store.delete('od:revision:deleted', 'r');
+    const before = await store.get('od:revision:deleted');
+    await store.compact();
+    await store.put('od:revision:live', { recordId: 'live', value: 'keep' });
+    expect((await store.expand()).ok).toBe(true);
+    expect(JSON.parse(await readFile(join(root, '.profile-state'), 'utf8')).schemaVersion).toBe(2);
+    expect((await readdir(root)).filter(n => n.endsWith('.json'))).toHaveLength(2);
+    expect(await createMokinaRecoveryStore(root).get('od:revision:deleted')).toEqual(before);
+    expect(await store.get('od:revision:live')).toMatchObject({ ok: true, result: { found: true, record: { value: 'keep' } } });
+  });
+
+  it('M4 another process holding the store lock cannot lose a successful write', async () => {
+    await store.put('od:revision:race', { recordId: 'before', value: 'keep' });
+    const child = spawn(process.execPath, ['--input-type=module', '-e', `
+      import { DatabaseSync } from 'node:sqlite';
+      const db = new DatabaseSync(process.argv[1]);
+      db.exec('BEGIN IMMEDIATE');
+      process.stdout.write('locked');
+      process.stdin.once('data', () => { db.close(); process.exit(0); });
+    `, join(root, '.store-lock.sqlite')], { stdio: ['pipe', 'pipe', 'pipe'] });
+    try {
+      await once(child.stdout!, 'data');
+      expect(await store.put('od:revision:race', { recordId: 'after', value: 'new' }, 'before')).toEqual({ ok: false, reason: 'recovery-store-busy' });
+      expect(await store.compact()).toEqual({ ok: false, reason: 'recovery-store-busy' });
+    } finally {
+      const ended = once(child, 'exit'); child.stdin!.end('release'); await ended;
+    }
+    expect(await store.get('od:revision:race')).toMatchObject({ ok: true, result: { found: true, record: { value: 'keep' } } });
+    expect(await store.put('od:revision:race', { recordId: 'after', value: 'new' }, 'before')).toEqual({ ok: true, result: 'stored' });
+  });
+
 });

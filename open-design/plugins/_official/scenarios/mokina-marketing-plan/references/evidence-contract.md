@@ -25,6 +25,8 @@ kind 仅 full-text / summary / data / method。来源可选 url、accessedAt、e
 
 成果声明用返回的 `path`、`versionId`、`contentDigest`（填入 sha256），引用实际摘录和对应 sectionId。url/accessedAt 如填写必须使用回执 URL/实际读取时间。HTML 的 scope=static-html-text 必须用 kind=summary，并说明未读脚本、图片、图表及动态/登录内容；plain-text 也不能证明事实真假或发布日期。回执仅由 daemon 的来源版本提供，模型手写的 webCapture 不受信。已有搜索摘要继续标明是搜索摘要，不得升级为正文。
 
+恢复包导入的 webCapture 属于归档信任：导入时只重新校验包内冻结文本与回执自洽，没有独立签名，不证明原始读取确实发生过；跨机器传递恢复包时，包的来源与传输通道由交接双方负责。
+
 ```json
 {"id":"public-page","path":"evidence/web-实际操作ID.md","versionId":"返回的来源版本ID","sha256":"返回的contentDigest","kind":"summary","url":"回执URL","accessedAt":"回执retrievedAt","excerpt":"实际文本中的逐字支持摘录","locator":"静态文本的具体段落","limitation":"静态HTML提取，未读脚本/图片/动态内容；事实尚需交叉核对","sectionId":"对应结论章节"}
 ```

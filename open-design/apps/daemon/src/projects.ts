@@ -929,7 +929,15 @@ export async function writeProjectFile(
     try {
       await writeFile(temporary, body, { flag: 'wx' });
       if (overwrite) await rename(temporary, target);
-      else await link(temporary, target);
+      else {
+        try { await link(temporary, target); }
+        // exFAT/SMB/FUSE volumes reject hard links; `wx` keeps the exclusive
+        // create semantics on the same target.
+        catch (error) {
+          if (!['EPERM', 'ENOTSUP', 'EOPNOTSUPP'].includes((error as NodeJS.ErrnoException).code ?? '')) throw error;
+          await writeFile(target, body, { flag: 'wx' });
+        }
+      }
     }
     finally { await rm(temporary, { force: true }); }
   } else await writeFile(target, body, { flag: overwrite ? 'w' : 'wx' });

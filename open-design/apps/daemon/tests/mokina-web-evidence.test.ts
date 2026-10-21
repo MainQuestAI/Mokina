@@ -3,22 +3,24 @@ import { mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, expect, it, vi } from 'vitest';
-import { ensureProject, projectDir } from '../src/projects.js';
+import { ensureProject, projectDir, writeProjectFile } from '../src/projects.js';
 import { captureWebEvidence, readCapturedWebEvidence, webEvidenceFileName } from '../src/mokina/web-evidence.js';
 import { renderWebEvidenceDocument, webEvidenceDigest } from '../src/mokina/web-evidence-document.js';
 import { createProjectFileVersion, listProjectFileVersions, readProjectFileVersion } from '../src/project-file-versions.js';
 import { buildProjectRecoveryPackage, importProjectRecoveryPackage } from '../src/mokina/recovery-package.js';
 import type { CaptureMokinaWebEvidenceRequest, MokinaWebCaptureReceipt } from '@open-design/contracts';
-const fault = vi.hoisted(() => ({ target: '' }));
+const fault = vi.hoisted(() => ({ target: '', code: '' }));
 vi.mock('node:fs/promises', async original => {
   const actual = await original<typeof import('node:fs/promises')>();
   return { ...actual, link: async (...args: Parameters<typeof actual.link>) => {
-    if (fault.target && String(args[1]) === fault.target) throw new Error('disk write unavailable');
+    if (fault.target && String(args[1]) === fault.target) {
+      throw Object.assign(new Error(fault.code ? 'hard links are not supported here' : 'disk write unavailable'), fault.code ? { code: fault.code } : {});
+    }
     return actual.link(...args);
   } };
 });
 const roots: string[] = [];
-afterEach(async () => { fault.target = ''; await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); });
+afterEach(async () => { fault.target = ''; fault.code = ''; await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); });
 async function scope() { const projectsRoot = await mkdtemp(path.join(tmpdir(), 'mokina-web-')); roots.push(projectsRoot); await ensureProject(projectsRoot, 'p'); return { projectsRoot, projectId: 'p' }; }
 const request = { operationId: 'capture-one', url: 'https://example.com/article' };
 function page(input: CaptureMokinaWebEvidenceRequest) {
@@ -51,6 +53,28 @@ it('queries a saved version after partial failure and only repairs its working f
   fault.target = '';
   const recovered = await captureWebEvidence(s, request, undefined, read);
   expect(recovered.workingFile).toBe('matched'); expect(recovered.versionId).toBe(saved?.versionId); expect(read).toHaveBeenCalledTimes(1);
+});
+it('reports a concurrently materialized working file as changed instead of unavailable', async () => {
+  const s = await scope(); const read = vi.fn(async (input: CaptureMokinaWebEvidenceRequest) => page(input));
+  fault.target = path.join(await realpath(projectDir(s.projectsRoot, 'p')), webEvidenceFileName(request.operationId));
+  await expect(captureWebEvidence(s, request, undefined, read)).rejects.toThrow('disk write unavailable');
+  fault.target = '';
+  const file = path.join(projectDir(s.projectsRoot, 'p'), webEvidenceFileName(request.operationId));
+  await writeFile(file, 'A concurrent writer changed the source.');
+  const saved = await captureWebEvidence(s, request, undefined, read);
+  expect(saved.workingFile).toBe('changed'); expect(saved.content).toContain('Actual selected text');
+  expect(await readFile(file, 'utf8')).toBe('A concurrent writer changed the source.');
+});
+it('falls back to an exclusive write when the volume rejects hard links', async () => {
+  const s = await scope(); const read = vi.fn(async (input: CaptureMokinaWebEvidenceRequest) => page(input));
+  fault.target = path.join(await realpath(projectDir(s.projectsRoot, 'p')), webEvidenceFileName(request.operationId));
+  fault.code = 'EPERM';
+  const saved = await captureWebEvidence(s, request, undefined, read);
+  expect(saved.workingFile).toBe('matched'); expect(read).toHaveBeenCalledTimes(1);
+  fault.target = '';
+  // Exclusive create survives the fallback: an existing file still refuses overwrite.
+  await writeFile(path.join(projectDir(s.projectsRoot, 'p'), 'dup.md'), 'existing');
+  await expect(writeProjectFile(s.projectsRoot, 'p', 'dup.md', 'x', { overwrite: false, atomic: true })).rejects.toMatchObject({ code: 'EEXIST' });
 });
 it('never publishes evidence after a read failure, abort, or conflicting user file', async () => {
   const s = await scope(); const failure = vi.fn(async () => { throw new Error('HTTP 403'); });

@@ -60,7 +60,11 @@ export async function captureWebEvidence(scope: Scope, raw: CaptureMokinaWebEvid
     if (!saved) throw new Error('Saved web evidence could not be read back');
     if (saved.workingFile === 'missing') {
       // Recovery only materializes already-saved bytes. No second page request.
-      await writeProjectFile(scope.projectsRoot, scope.projectId, fileName, saved.content, { overwrite: false, atomic: true }, scope.metadata);
+      // A concurrent writer may have materialized the same path first; the
+      // read-back below then reports the truthful workingFile instead of
+      // surfacing EEXIST as an unavailable capture.
+      try { await writeProjectFile(scope.projectsRoot, scope.projectId, fileName, saved.content, { overwrite: false, atomic: true }, scope.metadata); }
+      catch (error) { if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error; }
       saved = await readCapturedWebEvidence(scope, request.operationId);
     }
     return saved!;

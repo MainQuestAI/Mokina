@@ -136,7 +136,10 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
         }
         const chapters = $('[data-mokina-id]').toArray().filter(el => $(el).attr('data-mokina-id') === source.sectionId);
         if (chapters.length !== 1 || $(chapters[0]!).attr('id') !== source.sectionId) fail('Referenced chapter is missing or ambiguous');
-        if (source.excerpt && !text.includes(source.excerpt)) fail('Supporting excerpt is not in captured text');
+        // Excerpts from a captured page must be verbatim in the page text, never
+        // in the embedded retrieval receipt JSON that shares the same document.
+        const excerptText = entry.webCapture ? readWebEvidenceDocument(text, entry.webCapture).text : text;
+        if (source.excerpt && !excerptText.includes(source.excerpt)) fail('Supporting excerpt is not in captured text');
         if (source.csv) inspectCsv(source, text, record.issues, record.calculations);
       } catch (error) {
         entry.error = error instanceof Error ? error.message : String(error);

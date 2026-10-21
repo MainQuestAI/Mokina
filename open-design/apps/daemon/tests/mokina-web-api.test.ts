@@ -8,6 +8,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { registerMokinaWebEvidenceRoutes } from '../src/routes/project/mokina-web-evidence.js';
+import { registerProjectMaterialRoute } from '../src/routes/project/project-material.js';
 import { fetchExternalBrandAsset } from '../src/brands/safe-fetch.js';
 vi.mock('../src/brands/safe-fetch.js', () => ({ fetchExternalBrandAsset: vi.fn() }));
 let root: string, server: Server, url: string;
@@ -15,8 +16,11 @@ const seen: string[] = [];
 beforeEach(async () => {
   root = await mkdtemp(path.join(tmpdir(), 'mokina-web-api-')); await mkdir(path.join(root, 'p')); await mkdir(path.join(root, 'q')); seen.length = 0;
   const app = express(); app.use(express.json());
-  registerMokinaWebEvidenceRoutes(app, { projectsRoot: root, getProject: id => ['p', 'q'].includes(id) ? { id } : null,
-    authorizeProjectRequest: async (req, res, id, options) => { seen.push(`${id}:${options.mode}`); if (req.headers['x-denied']) { res.status(403).json({ error: { code: 'DENIED' } }); return false; } return true; } });
+  const getProject = (id: string) => ['p', 'q'].includes(id) ? { id } : null;
+  const authorizeProjectRequest = async (req: import('express').Request, res: import('express').Response, id: string, options: { mode: string }) => { seen.push(`${id}:${options.mode}`); if (req.headers['x-denied']) { res.status(403).json({ error: { code: 'DENIED' } }); return false; } return true; };
+  registerMokinaWebEvidenceRoutes(app, { projectsRoot: root, getProject, authorizeProjectRequest: authorizeProjectRequest as Parameters<typeof registerMokinaWebEvidenceRoutes>[1]['authorizeProjectRequest'] });
+  registerProjectMaterialRoute(app, { projectsRoot: root, getProject, authorizeProjectRequest: authorizeProjectRequest as Parameters<typeof registerProjectMaterialRoute>[1]['authorizeProjectRequest'],
+    sendApiError: (res, status, code, message) => { res.status(status).json({ error: { code, message } }); } });
   server = createServer(app); await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve)); url = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
   vi.mocked(fetchExternalBrandAsset).mockImplementation(async () => new Response('<article><h1>Public page</h1><p>Supported statement.</p></article>', { headers: { 'content-type': 'text/html' } }));
 });
@@ -46,4 +50,20 @@ it('keeps HTTP failures explicit and detects damaged saved source bytes without 
   await writeFile(path.join(versionRoot, contentFile), 'Corrupt bytes');
   const damaged = await fetch(`${url}/api/projects/p/mokina/web-evidence/api-one`); expect(damaged.status).toBe(409); expect((await json(damaged)).error.code).toBe('WEB_CAPTURE_INTEGRITY');
   expect(fetchExternalBrandAsset).toHaveBeenCalledTimes(2);
+});
+it('serves captured material with its receipt and degrades to plain material when the capture is untrusted', async () => {
+  const saved = await json(await post('p')); const fileName = saved.result.fileName;
+  const ok = await fetch(`${url}/api/projects/p/files/${encodeURIComponent(fileName)}/material`);
+  expect(ok.status).toBe(200); const okBody = await ok.json() as { webCapture?: unknown; sourceVersionId?: string; contentDigest: string };
+  expect(okBody.sourceVersionId).toBe(saved.result.versionId); expect(okBody.webCapture).toBeTruthy();
+  expect((await fetch(`${url}/api/projects/p/files/nope.md/material`)).status).toBe(404);
+  expect((await fetch(`${url}/api/projects/missing/files/${encodeURIComponent(fileName)}/material`)).status).toBe(404);
+  const key = createHash('sha256').update(fileName).digest('hex').slice(0, 24);
+  const { readdir } = await import('node:fs/promises'); const versionRoot = path.join(root, 'p', '.file-versions', key);
+  const contentFile = (await readdir(versionRoot)).find(name => name.includes(saved.result.versionId))!;
+  await writeFile(path.join(versionRoot, contentFile), 'Corrupt bytes');
+  const degraded = await fetch(`${url}/api/projects/p/files/${encodeURIComponent(fileName)}/material`);
+  expect(degraded.status).toBe(200); const body = await degraded.json() as { webCapture?: unknown; sourceVersionId?: string; contentDigest: string };
+  expect(body.webCapture).toBeUndefined(); expect(body.sourceVersionId).toBeUndefined();
+  expect(body.contentDigest).toBe(okBody.contentDigest);
 });

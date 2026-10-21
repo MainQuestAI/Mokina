@@ -32,6 +32,13 @@ export const id: Dict = {
   "mokina.web.declared": "URL and access time are declared; no daemon page-retrieval receipt is attached.",
   "mokina.web.plain": "Captured plain text; facts and publication time are not independently verified.",
   "mokina.web.static": "Limited static HTML text; scripts, images and dynamic or authenticated content were not read.",
+  "mokina.web.conflict": "Jendela lain mengubah draf ini. Cadangkan masukan Anda dan baca draf saat ini sebelum melanjutkan.",
+  "mokina.web.persistFailed": "Draf tidak tersimpan secara permanen. Simpan masukan Anda dan coba lagi; tidak ada yang dikirim ke daemon.",
+  "mokina.web.mismatch": "Balasan tersimpan tidak cocok dengan permintaan ini. Tidak ada yang diterima; permintaan Anda tetap disimpan.",
+  "mokina.web.stopped": "Pembacaan dihentikan sebelum hasil tiba. Hasilnya tidak diketahui; periksa hasil operasi yang sama sebelum mencoba lagi.",
+  "mokina.web.queryTimeout": "Kueri habis waktu. Hasil tersimpan mungkin masih ada; coba periksa hasilnya lagi.",
+  "mokina.web.reloadWithoutBackup": "Buang masukan ini dan baca draf tersimpan",
+  "mokina.web.capturedUnverified": "Halaman tertangkap, tetapi rujukan ini gagal verifikasi:",
 
   'mokina.capacity.title': "Draft and recovery capacity",
   'mokina.capacity.description': "Inspect drafts and request recovery on this device. Compaction preserves unfinished work and unknown requests; only deletion witnesses are compressed.",

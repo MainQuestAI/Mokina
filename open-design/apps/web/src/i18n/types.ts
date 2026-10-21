@@ -56,6 +56,13 @@ export interface Dict {
   "mokina.web.preview": string;
   "mokina.web.sourceVersion": string;
   "mokina.web.captured": string;
+  "mokina.web.capturedUnverified": string;
+  "mokina.web.conflict": string;
+  "mokina.web.persistFailed": string;
+  "mokina.web.mismatch": string;
+  "mokina.web.stopped": string;
+  "mokina.web.queryTimeout": string;
+  "mokina.web.reloadWithoutBackup": string;
   "mokina.web.declared": string;
   "mokina.web.plain": string;
   "mokina.web.static": string;

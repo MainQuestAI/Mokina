@@ -32,6 +32,13 @@ export const zhCN: Dict = {
   "mokina.web.declared": "URL 与访问时间来自声明，尚无宿主网页读取回执。",
   "mokina.web.plain": "已捕获纯文本；其中事实和发布时间尚未独立核实。",
   "mokina.web.static": "有限的静态 HTML 文本；未读取脚本、图片、动态或登录后内容。",
+  "mokina.web.conflict": "其他窗口修改了本草稿。请先备份本窗口输入，再读取当前草稿。",
+  "mokina.web.persistFailed": "草稿未能安全保存。请保留输入并重试；尚未向守护进程发送任何请求。",
+  "mokina.web.mismatch": "已保存的回复与本次请求不符。未采纳任何内容；本次请求已保留。",
+  "mokina.web.stopped": "读取在结果返回前被停止。结果未知；请先查询同一次读取再决定重试。",
+  "mokina.web.queryTimeout": "查询超时。已保存的结果可能仍在，请再次查询读取结果。",
+  "mokina.web.reloadWithoutBackup": "放弃本输入，读取已保存草稿",
+  "mokina.web.capturedUnverified": "已捕获网页，但该引用未通过本次核验：",
 
   'mokina.capacity.title': "草稿与恢复容量",
   'mokina.capacity.description': "查看当前设备的草稿和请求恢复记录。整理只压缩已删除记录的凭据，保留未完成工作及未知请求。",

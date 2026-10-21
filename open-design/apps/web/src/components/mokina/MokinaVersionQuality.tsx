@@ -31,7 +31,8 @@ export function MokinaVersionQuality({ quality, versionId, onLocate, requestStat
         <p>{source.locator} · {source.limitation}</p>
         {source.methodVersion ? <p>{t('mokina.quality.method')} {source.methodVersion}</p> : null}
         {source.webCapture ? <>
-          <p>{t('mokina.web.captured')} · {source.webCapture.resolvedUrl} · {source.webCapture.retrievedAt}</p>
+          {/* A source that failed this reference's checks must not read as verified. */}
+          <p>{t(source.error ? 'mokina.web.capturedUnverified' : 'mokina.web.captured')} · {source.webCapture.resolvedUrl} · {source.webCapture.retrievedAt}</p>
           <p>{t(source.webCapture.scope === 'plain-text' ? 'mokina.web.plain' : 'mokina.web.static')}</p>
           {source.webCapture.limitations.map(item => <p key={item}>{item}</p>)}
         </> : source.url ? <p>{t('mokina.web.declared')}</p> : null}

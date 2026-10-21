@@ -103,3 +103,54 @@ it('backs up local input and re-reads a competing draft after a running CAS conf
   await waitFor(() => expect(JSON.parse(localStorage.getItem(key)!).request.url).toBe('https://example.com/accepted'));
   expect(fetchMock).not.toHaveBeenCalled();
 });
+
+it('completes a successful read, persists the saved state, and hands the capture to the workspace', async () => {
+  const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => Response.json({ result: init?.method === 'POST' ? reply(JSON.parse(String(init.body))) : null }));
+  vi.stubGlobal('fetch', fetchMock);
+  render(<MokinaWebEvidence {...props} />); await enter();
+  fireEvent.click(screen.getByRole('button', { name: 'Read public page' }));
+  await screen.findByText(/Source version saved/);
+  expect(props.onCaptured).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(localStorage.getItem(key)!).state).toBe('saved');
+  expect(screen.getByText(/Captured plain text/)).toBeTruthy();
+  expect(screen.getByText(/example\.com\/page · 2026-10-14T04:00:00Z/)).toBeTruthy();
+});
+
+it('keeps the draft when a competing window wins the pre-send save, without sending anything', async () => {
+  const fetchMock = vi.fn(); vi.stubGlobal('fetch', fetchMock);
+  render(<MokinaWebEvidence {...props} />); const input = await enter();
+  localStorage.setItem(key, JSON.stringify({ schema: 1, state: 'draft', request: { operationId: 'other-window', url: 'https://example.com/other' } }));
+  fireEvent.click(screen.getByRole('button', { name: 'Read public page' }));
+  await screen.findByText(/Another window changed this draft/);
+  expect(JSON.parse(localStorage.getItem(key)!).state).toBe('draft');
+  expect(fetchMock).not.toHaveBeenCalled();
+  expect(input).toHaveProperty('value', 'https://example.com/page');
+  expect(screen.queryByRole('button', { name: 'Read capture result' })).toBeNull();
+});
+
+it('keeps the panel editable with recovery exits when the draft save is not durable', async () => {
+  vi.spyOn(recovery, 'mirrorDurableRecord').mockResolvedValue(false);
+  const fetchMock = vi.fn(); vi.stubGlobal('fetch', fetchMock);
+  render(<MokinaWebEvidence {...props} />); const input = await enter();
+  fireEvent.click(screen.getByRole('button', { name: 'Read public page' }));
+  await screen.findByText(/not durably saved/);
+  expect(fetchMock).not.toHaveBeenCalled();
+  expect(input).toHaveProperty('value', 'https://example.com/page');
+  expect(screen.queryByRole('button', { name: 'Read capture result' })).toBeNull();
+  expect(screen.getByRole('button', { name: 'Back up my input and read current draft' })).toBeTruthy();
+  expect(screen.getByRole('button', { name: 'Discard this input and read the saved draft' })).toBeTruthy();
+});
+
+it('keeps a stuck query cancellable from the stop button and returns with a clear message', async () => {
+  // A realistic pending GET rejects with AbortError once its signal fires.
+  vi.stubGlobal('fetch', vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {
+    init?.signal?.addEventListener('abort', () => reject(new DOMException('This operation was aborted', 'AbortError')));
+  })));
+  localStorage.setItem(key, JSON.stringify({ schema: 1, request: { operationId: 'stuck', url: 'https://example.com/page' }, state: 'unknown' }));
+  render(<MokinaWebEvidence {...props} />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Read capture result' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Stop waiting' }));
+  await screen.findByText(/Reading was stopped/);
+  expect(await screen.findByRole('button', { name: 'Read capture result' })).toBeTruthy();
+  expect(screen.queryByRole('button', { name: 'Stop waiting' })).toBeNull();
+});

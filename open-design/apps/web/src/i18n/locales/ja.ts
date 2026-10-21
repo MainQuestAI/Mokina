@@ -32,6 +32,13 @@ export const ja: Dict = {
   "mokina.web.declared": "URL and access time are declared; no daemon page-retrieval receipt is attached.",
   "mokina.web.plain": "Captured plain text; facts and publication time are not independently verified.",
   "mokina.web.static": "Limited static HTML text; scripts, images and dynamic or authenticated content were not read.",
+  "mokina.web.conflict": "別のウィンドウがこの下書きを変更しました。続行する前に、入力をバックアップして現在の下書きを読み込んでください。",
+  "mokina.web.persistFailed": "下書きを永続保存できませんでした。入力を保持して再試行してください。デーモンには何も送信されていません。",
+  "mokina.web.mismatch": "保存された応答がこのリクエストと一致しません。何も採用されず、リクエストは保持されています。",
+  "mokina.web.stopped": "結果が届く前に読み取りが停止されました。結果は不明です。再試行の前に同じ操作の結果を照会してください。",
+  "mokina.web.queryTimeout": "照会がタイムアウトしました。保存された結果はまだ存在する可能性があります。もう一度結果を照会してください。",
+  "mokina.web.reloadWithoutBackup": "入力を破棄して保存済みの下書きを読む",
+  "mokina.web.capturedUnverified": "ページは取得済みですが、この参照は検証に合格していません:",
 
   'mokina.capacity.title': "Draft and recovery capacity",
   'mokina.capacity.description': "Inspect drafts and request recovery on this device. Compaction preserves unfinished work and unknown requests; only deletion witnesses are compressed.",

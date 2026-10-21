@@ -2,7 +2,8 @@
 //
 // T07：资料与背景面板——三层信息、服务端冻结、预算与来源变化拒绝、未纳入原因。
 
-import { webcrypto } from 'node:crypto';
+import { webcrypto, createHash } from 'node:crypto';
+import { TextEncoder } from 'node:util';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -120,6 +121,53 @@ describe('MokinaContextPanel', () => {
     const pending = readPendingMokinaSnapshot('p1');
     expect(pending?.snapshotId).toBeTruthy();
     expect(pending?.itemCount).toBe(1);
+  });
+
+  it('carries a captured web material into the snapshot with its fixed source version', async () => {
+    vi.stubGlobal('crypto', webcrypto);
+    vi.stubGlobal('TextEncoder', TextEncoder);
+    const refresh = vi.fn();
+    const content = 'Public text supporting the claim.';
+    const sha = createHash('sha256').update(content).digest('hex');
+    const name = 'evidence/web-panel-cap.md';
+    const receipt = { schema: 'mokina.web-evidence.v1', operationId: 'panel-cap', requestedUrl: 'https://example.com/page', resolvedUrl: 'https://example.com/page',
+      retrievedAt: '2026-10-14T04:00:00Z', statusCode: 200, contentType: 'text/plain', bodyDigest: sha, textDigest: sha,
+      parserVersion: 'mokina-web/1', scope: 'plain-text', limitations: ['Not a factual assessment.'] };
+    const result = { fileName: name, versionId: 'wv1', contentDigest: sha, content, receipt, workingFile: 'matched',
+      material: { name, sourceVersionId: 'wv1', contentDigest: sha, parserVersion: 'mokina-material/2', status: 'read',
+        limitations: ['Not a factual assessment.'],
+        sections: [{ fragmentId: 'fragment:1', location: '第 1 行', text: content, groupId: 'heading:1', groupLabel: '捕获' }], webCapture: receipt } };
+    const bodies: Array<{ selections: Array<Record<string, unknown>> }> = [];
+    vi.stubGlobal('fetch', vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      const url = typeof input === 'string' ? input : String(input);
+      if (url.includes('/mokina/web-evidence')) {
+        // The editor assigns its own operation ID; the reply must mirror it.
+        const sent = JSON.parse(String(init?.body)) as { operationId: string };
+        const operationName = `evidence/web-${sent.operationId}.md`;
+        const matched = { ...result, fileName: operationName, receipt: { ...receipt, operationId: sent.operationId },
+          material: { ...result.material, name: operationName, webCapture: { ...receipt, operationId: sent.operationId } } };
+        return Response.json({ result: matched });
+      }
+      if (url.includes('/mokina/context-snapshots')) {
+        bodies.push(JSON.parse(String(init?.body)));
+        return new Response(JSON.stringify({ snapshot: { items: [{ displayName: name, kind: 'material-excerpt', text: content }] }, reused: false }), { status: 201 });
+      }
+      return new Response('');
+    }));
+    render(<MokinaContextPanel projectId="p1" files={[]} expanded onRefreshFiles={refresh} />);
+    fireEvent.change(await screen.findByRole('textbox', { name: 'Public page URL' }), { target: { value: 'https://example.com/page' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Read public page' }));
+    await screen.findByText(/Source version saved/);
+    await waitFor(() => expect(refresh).toHaveBeenCalled());
+    fetchProjectMaterialMock.mockResolvedValue(result.material);
+    fireEvent.click(screen.getByRole('checkbox', { name: /evidence\/web-.*\.md/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Preview readable range' }));
+    fireEvent.click(await screen.findByRole('checkbox', { name: /捕获/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Freeze as task snapshot/ }));
+    await waitFor(() => {
+      expect(bodies[0]?.selections?.[0]).toMatchObject({ mode: 'fragments', textKind: 'material-excerpt',
+        sourceRef: { kind: 'project-file', projectId: 'p1', versionId: 'wv1' }, fragmentIds: ['fragment:1'] });
+    });
   });
 
   it('keeps an unreadable file as an original with an explicit reason instead of blocking the flow', async () => {

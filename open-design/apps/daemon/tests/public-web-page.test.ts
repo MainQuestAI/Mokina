@@ -11,6 +11,12 @@ it('captures real response bytes separately from limited static text and never e
   expect(parsed.text).toContain('支持摘录'); expect(parsed.text).not.toContain('danger'); expect(parsed.text).not.toContain('hidden claim');
   expect(saved.receipt.scope).toBe('static-html-text'); expect(saved.receipt.bodyDigest).not.toBe(saved.receipt.textDigest); expect(saved.receipt.limitations.join(' ')).toContain('scripts');
 });
+it('records a markdown page with its own content type and the limited plain-text scope', async () => {
+  vi.mocked(fetchExternalBrandAsset).mockResolvedValue(new Response('# Heading\n\nSupported markdown claim.\n', { headers: { 'content-type': 'text/markdown; charset=utf-8' } }));
+  const saved = await readPublicWebPage(request);
+  expect(saved.receipt.contentType).toBe('text/markdown'); expect(saved.receipt.scope).toBe('plain-text');
+  expect(readWebEvidenceDocument(saved.content, saved.receipt).text).toContain('Supported markdown claim.');
+});
 it.each([
   [403, 'text/html', '<p>Denied</p>', 'WEB_HTTP_ERROR'],
   [200, 'application/pdf', 'PDF', 'WEB_FORMAT_UNSUPPORTED'],

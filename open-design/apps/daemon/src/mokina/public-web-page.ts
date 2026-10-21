@@ -53,7 +53,8 @@ export async function readPublicWebPage(input: CaptureMokinaWebEvidenceRequest, 
     if (!text.trim()) throw new WebEvidenceError('WEB_EMPTY', 'No readable static text was returned. Search summaries cannot substitute for a page body.');
     const receipt: MokinaWebCaptureReceipt = { schema: 'mokina.web-evidence.v1', operationId: request.operationId,
       requestedUrl: request.url, resolvedUrl: response.url || request.url, retrievedAt: new Date().toISOString(), statusCode: response.status,
-      contentType: html ? 'text/html' : 'text/plain', bodyDigest: webEvidenceDigest(bytes), textDigest: webEvidenceDigest(text), parserVersion: 'mokina-web/1',
+      // Record the accepted MIME verbatim; markdown counts as limited plain text.
+      contentType: html ? 'text/html' : mime === 'text/markdown' ? 'text/markdown' : 'text/plain', bodyDigest: webEvidenceDigest(bytes), textDigest: webEvidenceDigest(text), parserVersion: 'mokina-web/1',
       scope: html ? 'static-html-text' : 'plain-text', limitations: html
         ? ['Static HTML text with normalized whitespace; scripts, images, charts and authenticated or dynamically loaded content were not read.', 'Captured text and retrieval time do not verify factual truth, publication date or complete article coverage.']
         : ['Plain text response; factual truth and publication date have not been independently verified.'] };

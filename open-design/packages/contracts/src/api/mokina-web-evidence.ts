@@ -8,7 +8,7 @@ export interface MokinaWebCaptureReceipt {
   resolvedUrl: string;
   retrievedAt: string;
   statusCode: number;
-  contentType: 'text/plain' | 'text/html';
+  contentType: 'text/plain' | 'text/html' | 'text/markdown';
   bodyDigest: string;
   textDigest: string;
   parserVersion: string;
@@ -55,8 +55,10 @@ export function parseMokinaWebCaptureReceipt(value: unknown): MokinaWebCaptureRe
   if (raw.schema !== 'mokina.web-evidence.v1' || !digest(raw.bodyDigest) || !digest(raw.textDigest)
     || typeof raw.retrievedAt !== 'string' || !Number.isFinite(Date.parse(raw.retrievedAt))
     || typeof raw.statusCode !== 'number' || !Number.isInteger(raw.statusCode) || raw.statusCode < 200 || raw.statusCode >= 300
-    || !['text/plain', 'text/html'].includes(String(raw.contentType))
+    || !['text/plain', 'text/html', 'text/markdown'].includes(String(raw.contentType))
     || !['plain-text', 'static-html-text'].includes(String(raw.scope))
+    // Only the HTML extractor yields static-html-text; plain text and
+    // markdown both record the limited plain-text scope.
     || (raw.contentType === 'text/html') !== (raw.scope === 'static-html-text')
     || typeof raw.parserVersion !== 'string' || !raw.parserVersion || raw.parserVersion.length > 100
     || !Array.isArray(raw.limitations) || !raw.limitations.length || raw.limitations.length > 8

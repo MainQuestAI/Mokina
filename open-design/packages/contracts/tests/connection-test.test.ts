@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   isAllowlistedInternalHost,
+  isBlockedExternalApiHostname,
   isLoopbackApiHost,
   validateBaseUrl,
 } from '../src/api/connectionTest';
@@ -73,6 +74,9 @@ describe('provider base URL validation', () => {
       'http://[64:ff9b::a9fe:1]/v1',           // NAT64 → 169.254.0.1
       'http://[64:ff9b:0:0:0:0:c0a8:105]/v1',  // NAT64 full form → 192.168.1.5
       'http://[64:ff9b::a00:1]/v1',            // NAT64 → 10.0.0.1
+      'http://[64:ff9b:1:ac10:0:500::]/v1',    // local-use NAT64 (/48) → 172.16.0.5
+      'http://[64:ff9b:1:c0a8:1:500::]/v1',    // local-use NAT64 (/48) → 192.168.1.5
+      'http://[64:ff9b:1::7f00:1]/v1',         // local-use (/48) decodes to 0.0.0.0 — fail closed
       'http://[2002:ac10:5::]/v1',             // 6to4 → 172.16.0.5
       'http://[2002:c0a8:105::1]/v1',          // 6to4 → 192.168.1.5
       'http://[2002:a00:1::]/v1',              // 6to4 → 10.0.0.1
@@ -82,6 +86,9 @@ describe('provider base URL validation', () => {
         forbidden: true,
       });
     }
+    // The shared guard also rejects the uncompressed IPv4-mapped spelling.
+    expect(isBlockedExternalApiHostname('0:0:0:0:0:ffff:c0a8:101')).toBe(true);
+    expect(isBlockedExternalApiHostname('0:0:0:0:0:ffff:100:1')).toBe(false);
   });
 
   it('treats loopback and public IPv4 embedded in NAT64 and 6to4 literals like their IPv4 equivalents', () => {
@@ -89,13 +96,16 @@ describe('provider base URL validation', () => {
     // space passes the guard.
     for (const baseUrl of [
       'http://[64:ff9b::7f00:1]/v1',           // NAT64 → 127.0.0.1
+      'http://[64:ff9b:1:7f00:0:100::]/v1',    // local-use NAT64 (/48) → 127.0.0.1
       'http://[2002:7f00:1::]/v1',             // 6to4 → 127.0.0.1
       'http://[64:ff9b::8080:8080]/v1',        // NAT64 → 128.128.128.128
+      'http://[64:ff9b:1:c000:2:2100::]/v1',   // local-use NAT64 (/48) → 192.0.2.33
       'http://[2002:5db8:d811::]/v1',          // 6to4 → 93.184.216.17 (public)
     ]) {
       expect(validateBaseUrl(baseUrl).error).toBeUndefined();
     }
     expect(isLoopbackApiHost('[64:ff9b::7f00:1]')).toBe(true);
+    expect(isLoopbackApiHost('[64:ff9b:1:7f00:0:100::]')).toBe(true);
     expect(isLoopbackApiHost('[2002:7f00:1::]')).toBe(true);
   });
 });

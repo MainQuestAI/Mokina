@@ -29,7 +29,9 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
   const headers = workspaceContext ? workspaceProjectHeaders(workspaceContext) : {};
   // Localized failure copy: draft/persistence/closure failures, cancellation
   // and timeout each get their own message; server details stay as diagnostics.
-  function describeFailure(cause: unknown): string {
+  // The fallback prefix names the failing operation, so a read-back conflict
+  // never reads as a page-reading failure.
+  function describeFailure(cause: unknown, fallback: 'read' | 'query' | 'draft' = 'read'): string {
     if (cause instanceof WebEvidenceDraftError) {
       if (cause.reason === 'cas-conflict') return t('mokina.web.conflict');
       if (cause.reason === 'not-durable') return t('mokina.web.persistFailed');
@@ -38,7 +40,8 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
     if (cause instanceof DOMException && cause.name === 'AbortError') {
       return queryTimedOut.current ? t('mokina.web.queryTimeout') : t('mokina.web.stopped');
     }
-    return `${t('mokina.web.readFailed')} ${cause instanceof Error ? cause.message : t('mokina.web.unknown')}`;
+    const prefix = fallback === 'query' ? t('mokina.web.queryFailed') : fallback === 'draft' ? t('mokina.web.draftFailed') : t('mokina.web.readFailed');
+    return `${prefix} ${cause instanceof Error ? cause.message : t('mokina.web.unknown')}`;
   }
   async function load(refresh = false) {
     setBusy(true); setError(''); setResult(null); setCanRetry(false);
@@ -51,7 +54,7 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
       if (!active.current) return;
       next ??= { schema: 1 as const, state: 'draft' as const, request: { operationId: randomUUID(), url: '' } };
       readable.current = true; setSaveFailed(false); current.current = next; setDraft(next); setCorrupt(null);
-    } catch (cause) { readable.current = false; if (active.current) setError(describeFailure(cause)); }
+    } catch (cause) { readable.current = false; if (active.current) setError(describeFailure(cause, 'draft')); }
     finally { if (active.current) setBusy(false); }
   }
   useEffect(() => { active.current = true; void load(); return () => { active.current = false; controller.current?.abort(); }; }, []);
@@ -71,14 +74,21 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
   function pruneBackups(kind: 'conflict' | 'unknown' | 'unreadable') {
     // Backup entries mirror into the shared desktop recovery store, so unbounded
     // growth would eventually crowd out every other feature's recovery records.
+    // Keys embed a base36 timestamp, so keep the newest three by key order even
+    // when hydration re-materializes old durable records out of order.
     const prefix = `${key}:${kind}:`;
+    const stamp = (name: string) => name.slice(prefix.length).split('-')[0] ?? '';
     const names: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const name = localStorage.key(i); if (name && name.startsWith(prefix)) names.push(name);
     }
-    for (const name of names.slice(0, Math.max(0, names.length - BACKUPS_KEPT))) {
-      localStorage.removeItem(name); void removeDurableRecord(name);
-    }
+    names.sort((a, b) => stamp(a).localeCompare(stamp(b)));
+    return Promise.all(names.slice(0, Math.max(0, names.length - BACKUPS_KEPT)).map(async name => {
+      localStorage.removeItem(name);
+      // Never swallow a failed durable delete silently: hydration would bring
+      // the record back, so report it instead of pretending the bound holds.
+      if (!await removeDurableRecord(name)) console.warn('[mokina] backup prune could not delete a durable record');
+    }));
   }
   async function backUpInput(kind: 'conflict' | 'unknown') {
     const value = current.current; if (!value) throw new Error(t('mokina.web.draftFailed'));
@@ -86,12 +96,12 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
     const bytes = JSON.stringify(value);
     if (!await mirrorDurableRecord(backupKey, bytes) || !await flushDurableRecord(backupKey)) throw new Error(t('mokina.web.draftFailed'));
     localStorage.setItem(backupKey, bytes);
-    pruneBackups(kind);
+    await pruneBackups(kind);
   }
   async function recoverInput() {
     if (busy) return; setBusy(true); setError('');
     try { await backUpInput('conflict'); await load(true); }
-    catch (cause) { if (active.current) setError(describeFailure(cause)); }
+    catch (cause) { if (active.current) setError(describeFailure(cause, 'draft')); }
     finally { if (active.current) setBusy(false); }
   }
   async function prepareNewRead() {
@@ -104,7 +114,7 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
       if (!active.current) return;
       if (localStorage.getItem(key) !== JSON.stringify(next)) throw new Error(t('mokina.web.draftFailed'));
       raw.current = JSON.stringify(next); current.current = next; setDraft(next); setResult(null); setCanRetry(false); setSaveFailed(false);
-    } catch (cause) { if (active.current) { setSaveFailed(true); setError(describeFailure(cause)); } }
+    } catch (cause) { if (active.current) { setSaveFailed(true); setError(describeFailure(cause, 'draft')); } }
     finally { if (active.current) setBusy(false); }
   }
   async function accept(value: unknown, sent: WebEvidenceDraft) {
@@ -121,7 +131,7 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
     try { sent = { ...current.current, request: parseCaptureMokinaWebEvidenceRequest({ ...current.current.request,
       ...(current.current.state === 'saved' ? { operationId: randomUUID() } : {}) }), state: 'unknown' }; }
     catch (cause) { setError(`${t('mokina.web.invalid')} ${cause instanceof Error ? cause.message : ''}`); return; }
-    setBusy(true); setError(''); setResult(null); setCanRetry(false); controller.current = new AbortController();
+    setBusy(true); setError(''); setResult(null); setCanRetry(false); queryTimedOut.current = false; controller.current = new AbortController();
     try {
       // No request before the exact intent is recoverable, and the panel only
       // turns unknown once that persisted intent is about to be sent.
@@ -150,17 +160,17 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
       if (!active.current) return;
       if (body.result === null) { setCanRetry(true); setError(t('mokina.web.notFound')); return; }
       await accept(body.result, sent);
-    } catch (cause) { if (active.current) setError(describeFailure(cause)); }
+    } catch (cause) { if (active.current) setError(describeFailure(cause, 'query')); }
     finally { window.clearTimeout(timer); controller.current = null; if (active.current) setBusy(false); }
   }
   async function rebuild() {
     if (corrupt === null || busy) return;
     setBusy(true); setError('');
     try {
-      backup.current ??= `${key}:unreadable:${randomUUID()}`;
+      backup.current ??= `${key}:unreadable:${Date.now().toString(36)}-${randomUUID()}`;
       if (!await mirrorDurableRecord(backup.current, corrupt) || !await flushDurableRecord(backup.current)) throw new Error(t('mokina.web.draftFailed'));
       localStorage.setItem(backup.current, corrupt);
-      pruneBackups('unreadable');
+      await pruneBackups('unreadable');
       if (!await mutateDurableRecord(key, value => value === corrupt ? null : undefined)) throw new Error(t('mokina.web.draftFailed'));
       await load();
     } catch (cause) { if (active.current) setError(String(cause instanceof Error ? cause.message : cause)); }
@@ -176,7 +186,7 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
     {draft && readable.current ? <>
       <label>{t('mokina.web.url')}<Input aria-label={t('mokina.web.url')} maxLength={4096} value={draft.request.url} disabled={busy || draft.state === 'unknown'} onChange={event => {
         if (!current.current) return; setResult(null); setError(''); setCanRetry(false);
-        void persist({ schema: 1, state: 'draft', request: { operationId: randomUUID(), url: event.target.value } }).catch(cause => { if (active.current) setError(describeFailure(cause)); });
+        void persist({ schema: 1, state: 'draft', request: { operationId: randomUUID(), url: event.target.value } }).catch(cause => { if (active.current) setError(describeFailure(cause, 'draft')); });
       }} /></label>
       <div className={styles.actions}>
         {draft.state !== 'unknown' ? <Button disabled={busy || saveFailed || !draft.request.url.trim()} onClick={() => void capture()}>{t(draft.state === 'saved' ? 'mokina.web.newRead' : 'mokina.web.capture')}</Button> : <>

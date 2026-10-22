@@ -123,17 +123,34 @@ const hexPairToDotted = (hi: string, lo: string): string => {
 };
 
 /**
- * The last 32 bits of a NAT64 (`64:ff9b::/96`) or 6to4 (`2002::/16`) host
- * embed an IPv4 address, so these literals can name private space without
- * matching any other blocked form. Returns the dotted-quad embedding.
+ * NAT64, 6to4 and IPv4-mapped literals embed an IPv4 address, so they can name
+ * private space without matching any other blocked form. Returns the
+ * dotted-quad embedding for:
+ * - the well-known NAT64 prefix `64:ff9b::/96` (IPv4 in the last 32 bits),
+ * - the local-use NAT64 prefix `64:ff9b:1::/48` (RFC 6052 split layout),
+ * - 6to4 `2002::/16` (IPv4 in groups 2-3),
+ * - `::ffff:0:0/96` in its uncompressed hex form.
  */
 function embeddedIpv4ToDotted(host: string): string | null {
   const groups = expandIpv6(host);
   if (!groups) return null;
   const [g0, g1, g2] = groups;
   if (!g0 || !g1 || !g2) return null;
-  if (Number.parseInt(g0, 16) === 0x64 && Number.parseInt(g1, 16) === 0xff9b
-    && groups.slice(2, 6).every((group) => Number.parseInt(group, 16) === 0)) {
+  if (Number.parseInt(g0, 16) === 0x64 && Number.parseInt(g1, 16) === 0xff9b) {
+    const family = Number.parseInt(g2, 16);
+    if (family === 0) return hexPairToDotted(groups[6]!, groups[7]!);
+    // RFC 6052 48-bit prefix: first 16 IPv4 bits in group 3, the u octet in
+    // group 4's high byte, last 16 bits in group 4's low byte and group 5.
+    if (family === 1) {
+      const g3 = Number.parseInt(groups[3]!, 16);
+      const g4 = Number.parseInt(groups[4]!, 16);
+      const g5 = Number.parseInt(groups[5]!, 16);
+      return [(g3 >> 8) & 255, g3 & 255, g4 & 255, (g5 >> 8) & 255].join('.');
+    }
+    return null;
+  }
+  if (groups.slice(0, 5).every((group) => Number.parseInt(group, 16) === 0)
+    && Number.parseInt(groups[5]!, 16) === 0xffff) {
     return hexPairToDotted(groups[6]!, groups[7]!);
   }
   if (Number.parseInt(g0, 16) === 0x2002) return hexPairToDotted(g1, g2);

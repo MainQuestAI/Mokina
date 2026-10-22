@@ -9,18 +9,23 @@ import { renderWebEvidenceDocument, webEvidenceDigest } from '../src/mokina/web-
 import { createProjectFileVersion, listProjectFileVersions, readProjectFileVersion } from '../src/project-file-versions.js';
 import { buildProjectRecoveryPackage, importProjectRecoveryPackage } from '../src/mokina/recovery-package.js';
 import type { CaptureMokinaWebEvidenceRequest, MokinaWebCaptureReceipt } from '@open-design/contracts';
-const fault = vi.hoisted(() => ({ target: '', code: '' }));
+const fault = vi.hoisted(() => ({ target: '', code: '', race: '' }));
 vi.mock('node:fs/promises', async original => {
   const actual = await original<typeof import('node:fs/promises')>();
   return { ...actual, link: async (...args: Parameters<typeof actual.link>) => {
     if (fault.target && String(args[1]) === fault.target) {
+      if (fault.race) {
+        // A racing writer wins the exclusive create, then our link observes EEXIST.
+        await actual.writeFile(String(args[1]), fault.race);
+        throw Object.assign(new Error('file already exists'), { code: 'EEXIST' });
+      }
       throw Object.assign(new Error(fault.code ? 'hard links are not supported here' : 'disk write unavailable'), fault.code ? { code: fault.code } : {});
     }
     return actual.link(...args);
   } };
 });
 const roots: string[] = [];
-afterEach(async () => { fault.target = ''; fault.code = ''; await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); });
+afterEach(async () => { fault.target = ''; fault.code = ''; fault.race = ''; await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); });
 async function scope() { const projectsRoot = await mkdtemp(path.join(tmpdir(), 'mokina-web-')); roots.push(projectsRoot); await ensureProject(projectsRoot, 'p'); return { projectsRoot, projectId: 'p' }; }
 const request = { operationId: 'capture-one', url: 'https://example.com/article' };
 function page(input: CaptureMokinaWebEvidenceRequest) {
@@ -64,6 +69,20 @@ it('reports a concurrently materialized working file as changed instead of unava
   const saved = await captureWebEvidence(s, request, undefined, read);
   expect(saved.workingFile).toBe('changed'); expect(saved.content).toContain('Actual selected text');
   expect(await readFile(file, 'utf8')).toBe('A concurrent writer changed the source.');
+});
+it('absorbs a racing exclusive-create failure and reports the changed working file', async () => {
+  const s = await scope(); const read = vi.fn(async (input: CaptureMokinaWebEvidenceRequest) => page(input));
+  const file = path.join(await realpath(projectDir(s.projectsRoot, 'p')), webEvidenceFileName(request.operationId));
+  // First capture leaves the version saved but the working file missing.
+  fault.target = file; await expect(captureWebEvidence(s, request, undefined, read)).rejects.toThrow('disk write unavailable');
+  // The recovery write loses the exclusive create to a racing writer: link
+  // materializes the rival bytes and reports EEXIST, which must not surface
+  // as an unavailable capture.
+  fault.race = 'A racing writer materialized this path.';
+  const saved = await captureWebEvidence(s, request, undefined, read);
+  expect(saved.workingFile).toBe('changed');
+  expect(await readFile(file, 'utf8')).toBe('A racing writer materialized this path.');
+  expect(read).toHaveBeenCalledTimes(1);
 });
 it('falls back to an exclusive write when the volume rejects hard links', async () => {
   const s = await scope(); const read = vi.fn(async (input: CaptureMokinaWebEvidenceRequest) => page(input));

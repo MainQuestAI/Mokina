@@ -10,10 +10,18 @@ it('sends one explicit capture and queries the same operation without a retry or
   expect(fetchMock.mock.calls[0]).toEqual(['http://127.0.0.1:12345/api/projects/p/mokina/web-evidence', expect.objectContaining({ method: 'POST', body: JSON.stringify({ operationId: 'one', url: 'https://example.com/page' }) })]);
   expect(fetchMock.mock.calls[1]).toEqual(['http://127.0.0.1:12345/api/projects/p/mokina/web-evidence/one', {}]);
 });
-it('rejects unknown flags and missing values through the real strict parser', async () => {
+it('reports usage errors with exit code 2 instead of a stack trace', async () => {
+  const logged = vi.spyOn(console, 'error').mockImplementation(() => {});
   vi.spyOn(process.stdout, 'write').mockReturnValue(true);
-  await expect(runWebEvidenceCli('capture', ['--project', 'p', '--operation-id', 'one', '--url', 'https://example.com/', '--unknown', 'x'], deps)).rejects.toThrow('unknown flag: --unknown');
-  await expect(runWebEvidenceCli('capture', ['--project', 'p', '--operation-id', 'one', '--url'], deps)).rejects.toThrow('flag --url requires a value');
+  await runWebEvidenceCli('capture', ['--project', 'p', '--operation-id', 'one', '--url', 'https://example.com/', '--unknown', 'x'], deps);
+  expect(process.exitCode).toBe(2); expect(logged.mock.calls.join()).toContain('unknown flag: --unknown');
+  process.exitCode = 0;
+  await runWebEvidenceCli('capture', ['--project', 'p', '--operation-id', 'one', '--url'], deps);
+  expect(process.exitCode).toBe(2); expect(logged.mock.calls.join()).toContain('flag --url requires a value');
+  process.exitCode = 0;
+  await runWebEvidenceCli('capture', ['--project', 'p', '--operation-id', 'one', '--url', 'http://127.0.0.1/'], deps);
+  expect(process.exitCode).toBe(2); expect(logged.mock.calls.join()).toContain('Only public HTTP(S) pages');
+  process.exitCode = 0;
 });
 it('exits 3 on transport failure and 4 on a daemon error body', async () => {
   const logged = vi.spyOn(console, 'error').mockImplementation(() => {});

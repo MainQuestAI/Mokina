@@ -32,3 +32,31 @@ it('keeps loading and failed reads visible and retries only on explicit action',
   expect(retry).toHaveBeenCalledOnce();
   expect(screen.queryByText(/2 × 300/)).toBeNull();
 });
+
+const receipt = { schema: 'mokina.web-evidence.v1' as const, operationId: 'one', requestedUrl: 'https://example.com/a', resolvedUrl: 'https://example.com/a',
+  retrievedAt: '2026-10-14T04:00:00Z', statusCode: 200, contentType: 'text/plain' as const, bodyDigest: 'c'.repeat(64), textDigest: 'd'.repeat(64),
+  parserVersion: 'mokina-web/1', scope: 'plain-text' as const, limitations: ['Not a factual assessment.'] };
+const webSource = (error?: string) => ({ id: 'page', path: 'evidence/web-one.md', sha256: 'e'.repeat(64), kind: 'full-text' as const,
+  sectionId: 'budget', locator: 'captured plain text', limitation: 'no factual assessment', url: 'https://example.com/a',
+  accessedAt: receipt.retrievedAt, versionId: 'web-v1', excerpt: 'Supported claim.', webCapture: receipt, ...(error ? { error } : {}) });
+
+it('renders the retrieval receipt and excerpt for a verified captured source', () => {
+  const snapshot = { ...quality, sources: [webSource()], issues: [], calculations: [] };
+  render(<MokinaVersionQuality quality={snapshot} versionId="v1" onLocate={() => {}} />);
+  fireEvent.click(screen.getByText(/Evidence and quality/));
+  fireEvent.click(screen.getByText(/page · full-text/));
+  expect(screen.getByText(/Public page retrieval receipt/)).toBeTruthy();
+  expect(screen.getByText('https://example.com/a')).toBeTruthy();
+  expect(screen.getByText(/Supported claim\./)).toBeTruthy();
+  expect(screen.getByText(/Fixed source version web-v1/)).toBeTruthy();
+});
+
+it('marks a captured source that failed verification instead of reading as verified', () => {
+  const snapshot = { ...quality, sources: [webSource('Supporting excerpt is not in captured text')], issues: [], calculations: [] };
+  render(<MokinaVersionQuality quality={snapshot} versionId="v1" onLocate={() => {}} />);
+  fireEvent.click(screen.getByText(/Evidence and quality/));
+  fireEvent.click(screen.getByText(/page · full-text/));
+  expect(screen.getByText(/Captured page, but this reference failed verification/)).toBeTruthy();
+  expect(screen.queryByText(/Public page retrieval receipt/)).toBeNull();
+  expect(screen.getByRole('alert').textContent).toContain('Supporting excerpt');
+});

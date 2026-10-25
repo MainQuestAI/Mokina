@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MokinaLiveStatus } from './MokinaLiveStatus';
+import { MokinaWebEvidence } from './MokinaWebEvidence';
 import { Button } from '@open-design/components';
 
 import { joinMokinaExcerpt, mokinaContextBudgetExceeded, MOKINA_CONTEXT_BUDGETS, type MokinaContextSelection, type ProjectMaterialExtraction } from '@open-design/contracts';
@@ -51,7 +52,8 @@ type ReadResult = {
   unreadable: boolean;
 };
 
-export function MokinaContextPanel({ projectId, files, projectDesignSystemId, expanded = false }: {
+export function MokinaContextPanel({ projectId, files, projectDesignSystemId, expanded = false, onRefreshFiles }: {
+  onRefreshFiles?: () => unknown;
   expanded?: boolean;
   projectId: string;
   files: ProjectFile[];
@@ -69,9 +71,11 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
   const [brandId, setBrandId] = useState('');
   const [brandLoading, setBrandLoading] = useState(false);
   const [acceptUnreadable, setAcceptUnreadable] = useState(false);
+  const [capturedMaterials, setCapturedMaterials] = useState<Record<string, ProjectMaterialExtraction>>({});
   const candidates = useMemo(
-    () => files.filter((file) => file.name !== 'MOKINA-CONTINUATION.json' && (MOKINA_MATERIAL_EXTENSIONS.test(file.name) || MOKINA_ASSET_EXTENSIONS.test(file.name))),
-    [files],
+    () => [...files.filter((file) => file.name !== 'MOKINA-CONTINUATION.json' && (MOKINA_MATERIAL_EXTENSIONS.test(file.name) || MOKINA_ASSET_EXTENSIONS.test(file.name))),
+      ...Object.values(capturedMaterials).filter(item => !files.some(file => file.name === item.name)).map(item => ({ name: item.name, size: new TextEncoder().encode(item.sections.map(section => section.text).join('\n')).byteLength }))],
+    [files, capturedMaterials],
   );
   const [selected, setSelected] = useState<string[]>([]);
   const [results, setResults] = useState<ReadResult[] | null>(null);
@@ -106,6 +110,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
     brandSequence.current++;
     setBrand(null); setBrandId(''); setBrandLoading(false); setBrandError(null);
     setResults(null); setAssets([]); setSelected([]); setSelectedGroups([]); setBusy(false); setAcceptUnreadable(false);
+    setCapturedMaterials({});
     setDesignSystems([]); setBrandCatalogLoaded(false); setBrandCatalogError(false);
     void fetchDesignSystemsResult(workspaceContext)
       .then((result) => {
@@ -190,6 +195,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
     try {
       const extracted = await Promise.all(
         selected.map(async name => {
+          if (capturedMaterials[name]) return capturedMaterials[name];
           if (!MOKINA_ASSET_EXTENSIONS.test(name)) return fetchProjectMaterial(projectId, name, workspaceContext);
           const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}/raw/${name.split('/').map(encodeURIComponent).join('/')}`,
             workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
@@ -238,11 +244,11 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
       return;
     }
     const snapshotId = randomUUID();
-    const byFile = new Map<string, { digest: string; parserVersion: string; fragmentIds: Set<string> }>();
+    const byFile = new Map<string, { digest: string; parserVersion: string; fragmentIds: Set<string>; versionId?: string }>();
     for (const group of chosenGroups) {
       const material = readableMaterials.find((item) => item.name === group.name);
       if (!material) continue;
-      const entry = byFile.get(group.name) ?? { digest: material.contentDigest, parserVersion: material.parserVersion ?? '', fragmentIds: new Set<string>() };
+      const entry = byFile.get(group.name) ?? { digest: material.contentDigest, parserVersion: material.parserVersion ?? '', fragmentIds: new Set<string>(), ...(material.sourceVersionId ? { versionId: material.sourceVersionId } : {}) };
       for (const section of group.sections) {
         if (!section.fragmentId || !entry.parserVersion) { setError(t('mokina.contextPanel.sourceChanged')); return; }
         entry.fragmentIds.add(section.fragmentId);
@@ -253,7 +259,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
       itemId: `S${index + 1}`,
       mode: 'fragments' as const,
       textKind: 'material-excerpt' as const,
-      sourceRef: { kind: 'project-file' as const, projectId, fileName },
+      sourceRef: { kind: 'project-file' as const, projectId, fileName, ...(entry.versionId ? { versionId: entry.versionId } : {}) },
       expectedSourceDigest: entry.digest,
       expectedParserVersion: entry.parserVersion,
       fragmentIds: [...entry.fragmentIds],
@@ -348,6 +354,10 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
       <MokinaLiveStatus identity={scopeIdentity} summary={frozen?.snapshotId ?? ''} label={frozen ? t('mokina.contextPanel.frozenTitle') : ''} />
       {expanded ? <h1>{t('mokina.pages.materials')}</h1> : <summary>{t('mokina.contextPanel.summary')}</summary>}
       <p>{t(expanded ? 'mokina.pages.materialsIntro' : 'mokina.contextPanel.intro')}</p>
+      {expanded ? <MokinaWebEvidence projectId={projectId} conversationId={conversationId ?? 'draft:first'} workspaceContext={workspaceContext} onCaptured={result => {
+        setCapturedMaterials(current => ({ ...current, [result.fileName]: result.material }));
+        void onRefreshFiles?.();
+      }} /> : null}
       <div className="mokina-context-panel__brand">
         <label>
           {t('mokina.contextPanel.brandSource')}
@@ -414,6 +424,7 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
               }}
             />
             <span>{file.name}</span>
+            {capturedMaterials[file.name]?.sourceVersionId ? <small>{t('mokina.web.sourceVersion')} {capturedMaterials[file.name]?.sourceVersionId}</small> : null}
             <small>{t('mokina.contextPanel.uploaded')} · {(file.size / 1024).toFixed(1)} KB</small>
           </label>
         ))}

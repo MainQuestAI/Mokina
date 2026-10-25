@@ -1,0 +1,15 @@
+{
+  "base": "3efd8aea5ee6bfd2005003c0c40a403dd559d0f1",
+  "viewports": [
+    [
+      1440,
+      900
+    ],
+    [
+      900,
+      600
+    ]
+  ],
+  "fixture": "网页研究证据 / report.html / 等待选择公开来源，不编造事实。",
+  "result": "Expected red: public web evidence control absent. Captured before frontend changes; new source-version regression separately red then green."
+}

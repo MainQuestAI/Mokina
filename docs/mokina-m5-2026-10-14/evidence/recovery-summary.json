@@ -1,0 +1,20 @@
+{
+  "reportOriginal": "55ec4f20-a9ba-4482-947e-47694befdf50",
+  "restoredAsNewVersion": "6e470a0b-099f-4279-ad16-c9ac336fec4e",
+  "restoredPackageProject": "m5-live-restored",
+  "packageRoundTripQuality": "PASS",
+  "frozenBytesRoundTrip": "PASS",
+  "receipts": [
+    {
+      "operationId": "m5-live-html",
+      "versionId": "bdd83183-d2ca-47d3-b820-08eb952f85ba",
+      "contentDigest": "fd5070f1d1faa352e23966e31b66f84ecec90116c4c38820762237a35e1ad810"
+    },
+    {
+      "operationId": "m5-live-rfc",
+      "versionId": "cb5abf51-0cca-42e8-9b01-b30b579369d9",
+      "contentDigest": "187cb49e1b5bad45e20c35cb80b8c68ff3c59b5c849c5b5b71040fe7e499bc11"
+    }
+  ],
+  "packageSha256": "79241c0c4bb123eb07e52e70677f46cde6f59e38a87ebc3ee5a588dcabe980cf"
+}

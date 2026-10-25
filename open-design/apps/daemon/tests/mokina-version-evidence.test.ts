@@ -52,6 +52,8 @@ describe('version evidence closure', () => {
 
 import { freezeVersionEvidence, readVersionEvidence } from '../src/mokina/version-evidence.js';
 import { buildProjectRecoveryPackage, importProjectRecoveryPackage } from '../src/mokina/recovery-package.js';
+import { renderWebEvidenceDocument } from '../src/mokina/web-evidence-document.js';
+import type { MokinaWebCaptureReceipt } from '@open-design/contracts';
 
 describe('evidence failures and offline recovery', () => {
   it('keeps old HTML unreviewed and rejects declared but missing/tampered evidence', async () => {
@@ -246,4 +248,50 @@ it('limits original and final serialized UTF-8 bytes separately before committin
       .rejects.toMatchObject({ code: 'PAYLOAD_TOO_LARGE' });
     expect(await listProjectFileVersions(root, 'p', 'plan.html')).toEqual(before);
   } finally { storageFailure.frozenOutput = null; await rm(root, { recursive: true, force: true }); }
+});
+
+it('freezes the explicitly selected source version even when the working source has changed', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'mokina-selected-source-'));
+  try {
+    await ensureProject(root, 'p');
+    const original = 'Public page text captured at the selected time.';
+    const selected = await createProjectFileVersion(root, 'p', 'source.txt', original);
+    await writeFile(path.join(projectDir(root, 'p'), 'source.txt'), 'A newer page with different claims.');
+    const report = `<section id="finding" data-mokina-id="finding">A supported finding.</section><script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id: 'page', path: 'source.txt', versionId: selected.id, sha256: digest(original), kind: 'full-text', locator: 'selected text version', limitation: 'source is not independently fact checked', sectionId: 'finding', url: 'https://example.com/page', accessedAt: '2026-10-14T03:00:00Z', excerpt: original }] })}</script>`;
+    const version = await createProjectFileVersion(root, 'p', 'report.html', report);
+    const saved = await readProjectFileVersion(root, 'p', 'report.html', version.id);
+    expect(saved.quality.sources[0]).toMatchObject({ text: original, versionId: selected.id });
+    expect(saved.quality.sources[0]?.error).toBeUndefined();
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+it('ignores an agent-authored retrieval receipt on an ordinary source declaration', async () => {
+  const declaration = JSON.parse(html(digest(csv)).match(/<script[^>]*>(.*)<\/script>/)![1]!);
+  declaration.sources[0].webCapture = { schema: 'mokina.web-evidence.v1', operationId: 'forged', retrievedAt: '2026-10-14T04:00:00Z' };
+  const source = html(digest(csv)).replace(/(<script[^>]*>).*?(<\/script>)/, `$1${JSON.stringify(declaration)}$2`);
+  const frozen = await freezeVersionEvidence(source, 'v', digest(source), async () => Buffer.from(csv));
+  expect(readVersionEvidence(source, frozen, 'v', digest(source)).sources[0]?.webCapture).toBeUndefined();
+  expect(frozen).toContain('Declared source; no page retrieval receipt.');
+});
+
+it('rejects excerpts quoted from the embedded receipt instead of the captured page text', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'mokina-evidence-receipt-'));
+  try {
+    await ensureProject(root, 'p');
+    const text = 'Actual page sentence with the supported claim.\n';
+    const receipt: MokinaWebCaptureReceipt = { schema: 'mokina.web-evidence.v1', operationId: 'cap', requestedUrl: 'https://example.com/a', resolvedUrl: 'https://example.com/a',
+      retrievedAt: '2026-10-14T04:00:00Z', statusCode: 200, contentType: 'text/plain', bodyDigest: digest(text), textDigest: digest(text),
+      parserVersion: 'mokina-web/1', scope: 'plain-text', limitations: ['Public test source; no factual assessment.'] };
+    const doc = renderWebEvidenceDocument(receipt, text);
+    const selected = await createProjectFileVersion(root, 'p', 'evidence/web-cap.md', doc,
+      { source: 'manual', promptSource: 'manual', operationId: 'cap', label: 'Captured public page', webCapture: receipt });
+    const report = (excerpt: string) => `<section id="finding" data-mokina-id="finding">A claim.</section><script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id: 'page', path: 'evidence/web-cap.md', versionId: selected.id, sha256: digest(doc), kind: 'full-text', locator: 'captured plain text', limitation: 'no factual assessment', sectionId: 'finding', url: receipt.requestedUrl, accessedAt: receipt.retrievedAt, excerpt }] })}</script>`;
+    // This substring only exists inside the embedded receipt JSON, never in the page text.
+    const fromReceipt = await createProjectFileVersion(root, 'p', 'bad.html', report('mokina-web/1'));
+    const bad = (await readProjectFileVersion(root, 'p', 'bad.html', fromReceipt.id)).quality;
+    expect(bad.status).toBe('incomplete');
+    expect(bad.sources[0]?.error).toContain('Supporting excerpt');
+    const fromPage = await createProjectFileVersion(root, 'p', 'ok.html', report('supported claim'));
+    expect((await readProjectFileVersion(root, 'p', 'ok.html', fromPage.id)).quality.sources[0]?.error).toBeUndefined();
+  } finally { await rm(root, { recursive: true, force: true }); }
 });

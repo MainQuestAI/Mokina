@@ -1,0 +1,31 @@
+{
+  "outerViewport": [
+    900,
+    600
+  ],
+  "frames": [
+    {
+      "url": "http://127.0.0.1:48171/projects/m5-live-evidence/conversations/aff5b624-3191-425b-9bb7-67d514682c9f/files/report.html",
+      "located": []
+    },
+    {
+      "url": "",
+      "located": []
+    },
+    {
+      "url": "http://127.0.0.1:48171/api/projects/m5-live-evidence/raw/report.html?v=1791953980882&r=0&odPreviewBridge=scroll&odPrevie",
+      "located": []
+    },
+    {
+      "url": "",
+      "located": [
+        {
+          "id": "finding",
+          "top": 67.015625,
+          "bottom": 510.5859375,
+          "viewportHeight": 578
+        }
+      ]
+    }
+  ]
+}

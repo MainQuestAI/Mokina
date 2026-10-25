@@ -30,7 +30,16 @@ export function MokinaVersionQuality({ quality, versionId, onLocate, requestStat
         <summary>{source.id} · {source.kind} · {source.path}</summary>
         <p>{source.locator} · {source.limitation}</p>
         {source.methodVersion ? <p>{t('mokina.quality.method')} {source.methodVersion}</p> : null}
+        {source.webCapture ? <>
+          {/* A source that failed this reference's checks must not read as verified. */}
+          <p>{t(source.error ? 'mokina.web.capturedUnverified' : 'mokina.web.captured')} · {source.webCapture.resolvedUrl} · {source.webCapture.retrievedAt}</p>
+          <p>{t(source.webCapture.scope === 'plain-text' ? 'mokina.web.plain' : 'mokina.web.static')}</p>
+          {source.webCapture.limitations.map(item => <p key={item}>{item}</p>)}
+        </> : source.url ? <p>{t('mokina.web.declared')}</p> : null}
         {source.url ? <p><a href={source.url} target="_blank" rel="noreferrer">{source.url}</a> · {source.accessedAt}</p> : null}
+        {source.versionId ? <code className={styles.identity}>{t('mokina.web.sourceVersion')} {source.versionId}</code> : null}
+        {source.excerpt ? <blockquote>{source.excerpt}</blockquote> : null}
+        <Button variant="ghost" disabled={locateDisabled} onClick={() => onLocate(source.sectionId)}>{t('mokina.web.locateQuote')} {source.sectionId}</Button>
         <code className={styles.identity}>{source.sha256}</code>
         {source.error ? <p role="alert">{source.error}</p> : null}{source.text !== undefined ? <pre>{source.text}</pre> : null}
       </details>)}

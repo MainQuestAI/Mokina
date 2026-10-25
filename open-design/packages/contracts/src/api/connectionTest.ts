@@ -97,12 +97,74 @@ function ipv4MappedToDotted(hostname: string): string | null {
   ].join('.');
 }
 
+/** Full 8-group expansion of an IPv6 literal, or null for anything else. */
+function expandIpv6(host: string): string[] | null {
+  if (!/^[0-9a-f:.]+$/i.test(host)) return null;
+  const halves = host.split('::');
+  if (halves.length > 2) return null;
+  const head = halves[0] ? halves[0].split(':') : [];
+  const tail = halves.length === 2 && halves[1] ? halves[1].split(':') : [];
+  const missing = 8 - head.length - tail.length;
+  if (missing < 0 || (halves.length === 1 && missing !== 0)) return null;
+  const groups = [...head, ...Array<string>(missing).fill('0'), ...tail];
+  return groups.length === 8 && groups.every((group) => /^[0-9a-f]{1,4}$/i.test(group))
+    ? groups.map((group) => group.toLowerCase())
+    : null;
+}
+
+const hexPairToDotted = (hi: string, lo: string): string => {
+  const value = (Number.parseInt(hi, 16) << 16) | Number.parseInt(lo, 16);
+  return [
+    (value >>> 24) & 255,
+    (value >>> 16) & 255,
+    (value >>> 8) & 255,
+    value & 255,
+  ].join('.');
+};
+
+/**
+ * NAT64, 6to4 and IPv4-mapped literals embed an IPv4 address, so they can name
+ * private space without matching any other blocked form. Returns the
+ * dotted-quad embedding for:
+ * - the well-known NAT64 prefix `64:ff9b::/96` (IPv4 in the last 32 bits),
+ * - the local-use NAT64 prefix `64:ff9b:1::/48` (RFC 6052 split layout),
+ * - 6to4 `2002::/16` (IPv4 in groups 2-3),
+ * - `::ffff:0:0/96` in its uncompressed hex form.
+ */
+function embeddedIpv4ToDotted(host: string): string | null {
+  const groups = expandIpv6(host);
+  if (!groups) return null;
+  const [g0, g1, g2] = groups;
+  if (!g0 || !g1 || !g2) return null;
+  if (Number.parseInt(g0, 16) === 0x64 && Number.parseInt(g1, 16) === 0xff9b) {
+    const family = Number.parseInt(g2, 16);
+    if (family === 0) return hexPairToDotted(groups[6]!, groups[7]!);
+    // RFC 6052 48-bit prefix: first 16 IPv4 bits in group 3, the u octet in
+    // group 4's high byte, last 16 bits in group 4's low byte and group 5.
+    if (family === 1) {
+      const g3 = Number.parseInt(groups[3]!, 16);
+      const g4 = Number.parseInt(groups[4]!, 16);
+      const g5 = Number.parseInt(groups[5]!, 16);
+      return [(g3 >> 8) & 255, g3 & 255, g4 & 255, (g5 >> 8) & 255].join('.');
+    }
+    return null;
+  }
+  if (groups.slice(0, 5).every((group) => Number.parseInt(group, 16) === 0)
+    && Number.parseInt(groups[5]!, 16) === 0xffff) {
+    return hexPairToDotted(groups[6]!, groups[7]!);
+  }
+  if (Number.parseInt(g0, 16) === 0x2002) return hexPairToDotted(g1, g2);
+  return null;
+}
+
 export function isLoopbackApiHost(hostname: string): boolean {
   const host = normalizeBracketedIpv6(hostname);
   if (host === 'localhost' || host === '::1') return true;
   if (isLoopbackIpv4(host)) return true;
   const mapped = ipv4MappedToDotted(host);
-  return Boolean(mapped && isLoopbackIpv4(mapped));
+  if (mapped && isLoopbackIpv4(mapped)) return true;
+  const embedded = embeddedIpv4ToDotted(host);
+  return Boolean(embedded && isLoopbackIpv4(embedded));
 }
 
 export function isBlockedExternalApiHostname(hostname: string): boolean {
@@ -112,7 +174,9 @@ export function isBlockedExternalApiHostname(hostname: string): boolean {
   if (/^f[cd][0-9a-f]{2}:/i.test(host)) return true;
   if (/^fe[89ab][0-9a-f]:/i.test(host)) return true;
   const mapped = ipv4MappedToDotted(host);
-  return Boolean(mapped && isBlockedIpv4(mapped));
+  if (mapped && isBlockedIpv4(mapped)) return true;
+  const embedded = embeddedIpv4ToDotted(host);
+  return Boolean(embedded && isBlockedIpv4(embedded));
 }
 
 // Normalized forms a hostname can be matched under: the bracket-stripped,

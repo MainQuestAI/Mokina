@@ -3,7 +3,7 @@
   "specVersion": "1.0.0",
   "name": "mokina-market-analysis",
   "title": "市场与营销分析",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "基于用户资料与可核对来源形成市场、竞品和营销判断。",
   "license": "Apache-2.0",
   "author": {

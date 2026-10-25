@@ -4446,7 +4446,7 @@ export function FileWorkspace({
         <div className={MOKINA_LOCAL_EDITION ? 'mokina-materials-view' : undefined} hidden={MOKINA_LOCAL_EDITION && mokinaWorkspaceView !== 'materials'}>
           {MOKINA_LOCAL_EDITION && onPrepareBusinessBrief ? <MokinaBusinessBrief projectId={projectId} conversationId={conversationId ?? activeConversationId ?? 'draft:first'}
             workspaceContext={workspaceContext} onPrepare={prompt => { selectMokinaWorkspaceView('reading'); onPrepareBusinessBrief(prompt); }} /> : null}
-          <MokinaContextPanel expanded={MOKINA_LOCAL_EDITION} projectId={projectId} files={files} projectDesignSystemId={projectDesignSystemId ?? null} />
+          <MokinaContextPanel expanded={MOKINA_LOCAL_EDITION} projectId={projectId} files={files} projectDesignSystemId={projectDesignSystemId ?? null} onRefreshFiles={onRefreshFiles} />
           <MokinaMaterialPicker projectId={projectId} projectName={projectName || '市场工作'} files={files} />
         </div>
       ) : null}

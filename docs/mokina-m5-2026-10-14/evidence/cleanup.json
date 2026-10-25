@@ -1,0 +1,24 @@
+{
+  "portsReleased": {
+    "48170": true,
+    "48171": true
+  },
+  "removedOwnedSyntheticResources": [
+    "output/mokina-next-2026-10-14/live-runtime",
+    "output/mokina-next-2026-10-14/live-data",
+    "open-design/.tmp/e2e/playwright-87237-8ed08737-w0/i1-p88578",
+    "open-design/.tmp/e2e/playwright-87237-8ed08737-w0/i0-p87243"
+  ],
+  "nativeApplicationsCreated": [],
+  "mountsCreated": [],
+  "launchServicesRegistrationsCreated": [],
+  "selectedApplication": "/Users/dingcheng/Applications/Mokina.app",
+  "selectedApplicationVersion": "0.0.4-local.1",
+  "protectedRootBytes": "unchanged",
+  "retained": [
+    "docs/mokina-m5-2026-10-14",
+    "output/mokina-next-2026-10-14 logs and recovery zip",
+    "output/playwright/mokina-m5 evidence"
+  ],
+  "scope": "Only this stage resources; no user data, model configuration or older resources deleted."
+}

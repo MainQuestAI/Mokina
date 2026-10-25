@@ -30,6 +30,45 @@ export const LOCALE_LABEL: Record<Locale, string> = {
 // flat (not deeply nested) so missing-key TS errors point straight at the
 // offending string instead of a generic object mismatch.
 export interface Dict {
+  "mokina.web.prepareNew": string;
+  "mokina.web.recoverInput": string;
+  "mokina.web.readFailed": string;
+  "mokina.web.title": string;
+  "mokina.web.description": string;
+  "mokina.web.url": string;
+  "mokina.web.capture": string;
+  "mokina.web.query": string;
+  "mokina.web.retry": string;
+  "mokina.web.completeSave": string;
+  "mokina.web.stop": string;
+  "mokina.web.reading": string;
+  "mokina.web.unknown": string;
+  "mokina.web.notFound": string;
+  "mokina.web.queryFailed": string;
+  "mokina.web.invalid": string;
+  "mokina.web.saved": string;
+  "mokina.web.fileMissing": string;
+  "mokina.web.fileChanged": string;
+  "mokina.web.draftFailed": string;
+  "mokina.web.damaged": string;
+  "mokina.web.reloadDraft": string;
+  "mokina.web.rebuild": string;
+  "mokina.web.preview": string;
+  "mokina.web.sourceVersion": string;
+  "mokina.web.captured": string;
+  "mokina.web.capturedUnverified": string;
+  "mokina.web.conflict": string;
+  "mokina.web.persistFailed": string;
+  "mokina.web.mismatch": string;
+  "mokina.web.stopped": string;
+  "mokina.web.queryTimeout": string;
+  "mokina.web.reloadWithoutBackup": string;
+  "mokina.web.declared": string;
+  "mokina.web.plain": string;
+  "mokina.web.static": string;
+
+  'mokina.web.newRead': string;
+  'mokina.web.locateQuote': string;
   'mokina.capacity.title': string;
   'mokina.capacity.description': string;
   'mokina.capacity.unsupported': string;

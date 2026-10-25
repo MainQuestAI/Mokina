@@ -16,6 +16,8 @@ import { parseDesignSystemRenameArgs } from './design-systems/rename-args.js';
 import { runLiveArtifactsToolCli } from './tools-live-artifacts-cli.js';
 import { runDeliverableSyntaxToolCli } from './tools-deliverable-syntax-cli.js';
 import { splitResearchSubcommand } from './research/cli-args.js';
+import { runWebEvidenceCli } from './mokina/web-evidence-cli.js';
+import { parseFlags, positionalArgs, surfaceFetchError } from './cli-shared.js';
 import { resolveDaemonUrl } from './daemon-url.js';
 import { SidecarFactory } from '@open-design/sidecar';
 import { APP_KEYS, SIDECAR_MESSAGES } from '@open-design/sidecar-proto';
@@ -1663,6 +1665,7 @@ async function runResearch(args) {
     printResearchHelp();
     process.exit(sub === 'help' || args.includes('--help') || args.includes('-h') ? 0 : 2);
   }
+  if (sub === 'capture' || sub === 'read') return runWebEvidenceCli(sub, subArgs, { parseFlags, cliDaemonUrl });
   if (sub !== 'search') {
     console.error(`unknown subcommand: od research ${sub}`);
     printResearchHelp();
@@ -1722,6 +1725,12 @@ async function runArtifacts(args) {
 function printResearchHelp() {
   console.log(`Usage:
   od research search --query <text> [--max-sources 5] [--daemon-url <url>]
+  od research capture --project <id> --url <public-url> --operation-id <id>
+  od research read --project <id> --operation-id <same-id>
+
+capture saves an immutable project source version, with limited static reading.
+read only queries saved evidence. Query unknown outcomes before explicitly retrying
+the SAME operation ID; never substitute a search summary for page text.
 
 Runs Tavily-backed shallow research through the local OpenDesign daemon.
 Output is JSON only on stdout:
@@ -2125,30 +2134,6 @@ async function pollUntilDoneOrBudget(daemonUrl, taskId, sinceStart, options = {}
   await flushStreamsAndExit(stillRunningExitCode);
 }
 
-function surfaceFetchError(err, daemonUrl) {
-  const cause = err && typeof err === 'object' ? err.cause : null;
-  const code =
-    cause && typeof cause === 'object' && typeof cause.code === 'string'
-      ? cause.code
-      : null;
-  const causeMsg =
-    cause && typeof cause === 'object' && typeof cause.message === 'string'
-      ? cause.message
-      : '';
-  let detail = err && err.message ? err.message : String(err);
-  if (code) detail = `${code}${causeMsg ? ` — ${causeMsg}` : ''}`;
-  else if (causeMsg) detail = causeMsg;
-  console.error(`failed to reach daemon at ${daemonUrl}: ${detail}`);
-  if (code === 'EPERM' || code === 'ENETUNREACH') {
-    console.error(
-      'hint: outbound connect was denied by a sandbox. If you launched ' +
-        'this command from a code agent, check the agent\'s sandbox / ' +
-        'network policy. The OpenDesign daemon itself is unaffected - it can be ' +
-        'reached from a regular shell.',
-    );
-  }
-}
-
 function printMokinaHelp() {
   console.log(`od mokina business get --project <id> --kind <background|brief> [--version <id>] [--json]
 od mokina business save --project <id> --kind <background|brief> --prompt-file <request.json|-> [--json]
@@ -2362,73 +2347,6 @@ async function runMokinaContextGet(rawArgs) {
     process.exit(1);
   }
   process.stdout.write(JSON.stringify(data, null, 2) + '\n');
-}
-
-function parseFlags(argv, opts = {}) {
-  const stringFlags = opts.string instanceof Set ? opts.string : new Set();
-  const booleanFlags = opts.boolean instanceof Set ? opts.boolean : new Set();
-  const knownFlags = new Set([...stringFlags, ...booleanFlags]);
-  // Positionals collected silently; callers that take `<id>` style
-  // positional args (e.g. `od plugin info <id>`) re-scan `argv`
-  // themselves to pick them up. Strict positional rejection here
-  // would break those commands, so we only enforce strict-flag
-  // semantics for things that *are* prefixed with `--`.
-  const out = {};
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (!a || !a.startsWith('--')) {
-      // Positional — let the caller decide what to do with it.
-      continue;
-    }
-    const eq = a.indexOf('=');
-    const key = eq >= 0 ? a.slice(2, eq) : a.slice(2);
-    if (knownFlags.size > 0 && !knownFlags.has(key)) {
-      throw new Error(
-        `unknown flag: --${key}. Run with --help for the list of accepted flags.`,
-      );
-    }
-    if (eq >= 0) {
-      out[key] = a.slice(eq + 1);
-      continue;
-    }
-    if (booleanFlags.has(key)) {
-      out[key] = true;
-      continue;
-    }
-    if (stringFlags.has(key)) {
-      const next = argv[i + 1];
-      if (next == null) {
-        throw new Error(`flag --${key} requires a value`);
-      }
-      out[key] = next;
-      i++;
-      continue;
-    }
-    const next = argv[i + 1];
-    if (next != null && !next.startsWith('--')) {
-      out[key] = next;
-      i++;
-    } else {
-      out[key] = true;
-    }
-  }
-  return out;
-}
-
-function positionalArgs(argv, stringFlags = new Set()) {
-  const out = [];
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (!a) continue;
-    if (!a.startsWith('--')) {
-      out.push(a);
-      continue;
-    }
-    const eq = a.indexOf('=');
-    const key = eq >= 0 ? a.slice(2, eq) : a.slice(2);
-    if (eq < 0 && stringFlags.has(key)) i++;
-  }
-  return out;
 }
 
 function repeatableFlagValues(argv, name) {

@@ -1,4 +1,5 @@
 import { readVersionEvidence } from './version-evidence.js';
+import { readWebEvidenceDocument } from './web-evidence-document.js';
 import { createHash } from 'node:crypto';
 import { lstat, readFile, readdir } from 'node:fs/promises';
 import type { Dirent } from 'node:fs';
@@ -7,6 +8,7 @@ import JSZip from 'jszip';
 import {
   MOKINA_RECOVERY_LIMITS, MOKINA_RECOVERY_MANIFEST_FILE, MOKINA_RECOVERY_MANIFEST_SCHEMA,
   mokinaRecoveryWarnings, type MokinaRecoveryIntegrity, type MokinaRecoveryIssue,
+  parseMokinaWebCaptureReceipt,
   type MokinaRecoveryManifest, type MokinaRecoveryManifestContext,
   type MokinaRecoveryManifestFile, type MokinaRecoveryManifestVersion,
 } from '@open-design/contracts';
@@ -200,6 +202,9 @@ async function collectVersions(capture: RecoveryCapture): Promise<MokinaRecovery
         capture.issue(contentPath, 'invalid', '版本内容与已保存摘要不符。'); capture.files.delete(contentPath); continue;
       }
       const frozenContentPath = typeof entry.frozenContentPath === 'string' ? `${directory}/${entry.frozenContentPath}` : undefined;
+      let webCapture;
+      try { if (entry.webCapture !== undefined) { webCapture = parseMokinaWebCaptureReceipt(entry.webCapture); readWebEvidenceDocument(content.toString('utf8'), webCapture); } }
+      catch { capture.issue(contentPath, 'invalid', '网页捕获回执损坏。'); continue; }
       const frozen = frozenContentPath ? await capture.file(frozenContentPath, 'frozen-version') : undefined;
       if (frozenContentPath && !frozen) continue;
       try { readVersionEvidence(content.toString('utf8'), frozen?.toString('utf8'), entry.id, digest(content), { neverCaptured: !frozenContentPath }); }
@@ -207,6 +212,7 @@ async function collectVersions(capture: RecoveryCapture): Promise<MokinaRecovery
       versions.push({ entry: entry.fileName, originalVersionId: entry.id, versionNumber: Number(entry.version),
         current: entry.id === currentId, candidate: entry.candidate === true, contentPath, contentDigest: digest(content),
         ...(frozenContentPath ? { frozenContentPath } : {}),
+        ...(webCapture ? { webCapture } : {}),
         ...(typeof entry.parentVersionId === 'string' ? { parentOriginalVersionId: entry.parentVersionId } : {}),
         ...(typeof entry.baseVersionId === 'string' ? { baseOriginalVersionId: entry.baseVersionId } : {}) });
     }

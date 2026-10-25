@@ -58,6 +58,8 @@ export interface ProjectFilesResponse {
 }
 
 export interface ProjectMaterialExtraction {
+  sourceVersionId?: string;
+  webCapture?: import('./mokina-web-evidence.js').MokinaWebCaptureReceipt;
   name: string;
   contentDigest: string;
   /** Parser identity that produced this extraction; frozen into context snapshots. */
@@ -112,6 +114,7 @@ export type ArtifactOriginStatus =
   | 'unknown';
 
 export interface ProjectFileVersion {
+  webCapture?: import('./mokina-web-evidence.js').MokinaWebCaptureReceipt;
   /** AI proposal saved without advancing the working file. */
   candidate?: boolean;
   baseVersionId?: string;

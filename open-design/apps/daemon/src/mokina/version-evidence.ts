@@ -3,6 +3,8 @@ import { decimal, formatDecimal } from './decimal.js';
 import { createHash } from 'node:crypto';
 import { load } from 'cheerio';
 import type { MokinaEvidenceSource, MokinaQualityIssue, MokinaQualitySnapshot } from '@open-design/contracts';
+import { parseMokinaWebCaptureReceipt, type MokinaWebCaptureReceipt } from '@open-design/contracts';
+import { readWebEvidenceDocument } from './web-evidence-document.js';
 
 const declarationId = 'mokina-evidence';
 const snapshotId = 'mokina-quality-snapshot';
@@ -29,6 +31,10 @@ function parseSource(value: unknown): MokinaEvidenceSource {
   const source: MokinaEvidenceSource = { id, path, sha256: digest, kind: v.kind as MokinaEvidenceSource['kind'], sectionId,
     locator: string(v.locator), limitation: string(v.limitation) };
   for (const key of ['url', 'accessedAt', 'methodVersion', 'excerpt'] as const) if (v[key] !== undefined) source[key] = string(v[key]);
+  if (v.versionId !== undefined) {
+    source.versionId = string(v.versionId, 128);
+    if (!/^[A-Za-z0-9_-]+$/u.test(source.versionId)) fail('Invalid source version ID');
+  }
   if (source.url && !/^https?:\/\//u.test(source.url)) fail('Source URL must be HTTP(S); it will not be fetched');
   if (!source.locator.trim() || (source.kind === 'summary' && !source.limitation.trim())) fail('Reading range and summary limitations must be explicit');
   if (source.url && (!source.accessedAt || !Number.isFinite(Date.parse(source.accessedAt)))) fail('Web evidence requires a declared access time');
@@ -94,7 +100,7 @@ export function hasVersionEvidence(content: string): boolean {
 }
 
 export async function freezeVersionEvidence(html: string, versionId: string, contentDigest: string,
-  readSource: (path: string, expectedDigest: string) => Promise<Buffer>, resources?: MokinaQualitySnapshot['resources']): Promise<string> {
+  readSource: (path: string, expectedDigest: string, sourceVersionId?: string) => Promise<Buffer | { bytes: Buffer; webCapture?: MokinaWebCaptureReceipt }>, resources?: MokinaQualitySnapshot['resources']): Promise<string> {
   if (!hasVersionEvidence(html)) return html;
   const $ = load(html, { sourceCodeLocationInfo: true }); const declarations = $(`[id="${declarationId}"]`);
   if (!declarations.length) return html;
@@ -113,14 +119,27 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
     for (const source of sources) {
       const entry: MokinaQualitySnapshot['sources'][number] = { ...source }; record.sources.push(entry);
       try {
-        const bytes = await readSource(source.path, source.sha256); total += bytes.length;
+        const captured = await readSource(source.path, source.sha256, source.versionId);
+        const bytes = Buffer.isBuffer(captured) ? captured : captured.bytes; total += bytes.length;
         if (bytes.length > MAX_BYTES || total > 2 * 1024 * 1024) fail('Evidence exceeds capture size limit');
         const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
         if (createHash('sha256').update(bytes).digest('hex') !== source.sha256) fail('Source SHA-256 changed');
+        // Preserve verified bytes even when an agent's URL/scope/chapter claim is wrong.
+        // Repair candidates must not depend on the current file or today's web page.
         entry.text = text;
+        if (!Buffer.isBuffer(captured) && captured.webCapture) {
+          entry.webCapture = parseMokinaWebCaptureReceipt(captured.webCapture);
+          if (!source.versionId) fail('Captured web evidence requires a selected source version');
+          if (source.url && ![entry.webCapture.requestedUrl, entry.webCapture.resolvedUrl].includes(source.url)) fail('Declared URL disagrees with the captured page');
+          if (source.accessedAt && source.accessedAt !== entry.webCapture.retrievedAt) fail('Declared access time disagrees with the retrieval receipt');
+          if (entry.webCapture.scope === 'static-html-text' && source.kind !== 'summary') fail('Static HTML extraction must be declared as limited text, not full-text');
+        }
         const chapters = $('[data-mokina-id]').toArray().filter(el => $(el).attr('data-mokina-id') === source.sectionId);
         if (chapters.length !== 1 || $(chapters[0]!).attr('id') !== source.sectionId) fail('Referenced chapter is missing or ambiguous');
-        if (source.excerpt && !text.includes(source.excerpt)) fail('Supporting excerpt is not in captured text');
+        // Excerpts from a captured page must be verbatim in the page text, never
+        // in the embedded retrieval receipt JSON that shares the same document.
+        const excerptText = entry.webCapture ? readWebEvidenceDocument(text, entry.webCapture).text : text;
+        if (source.excerpt && !excerptText.includes(source.excerpt)) fail('Supporting excerpt is not in captured text');
         if (source.csv) inspectCsv(source, text, record.issues, record.calculations);
       } catch (error) {
         entry.error = error instanceof Error ? error.message : String(error);
@@ -182,7 +201,7 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
   // Reserved records are daemon-owned; never trust an agent-authored inspection.
   $(`[id="${snapshotId}"], [data-mokina-evidence-appendix]`).remove();
   const json = JSON.stringify(snapshot).replaceAll('<', '\\u003c');
-  $('body').append(`<script type="application/json" id="${snapshotId}">${json}</script><details data-mokina-evidence-appendix><summary>Evidence / calculations · ${escape(record.status)}</summary><p>Version ${escape(versionId)} · ${escape(contentDigest)}. Rule checks only; not professional approval. URLs and method usage are declared, not independently verified.</p>${record.issues.map(i => `<p>${escape(i.code)}: ${escape(i.message)}</p>`).join('')}${record.calculations.map(c => `<p>${escape(c.expression)} = ${escape(c.result)}</p>`).join('')}${record.sources.map(s => `<details><summary>${escape(s.id)} · ${escape(s.kind)} · ${escape(s.path)}</summary><p>${escape(s.locator)} · ${escape(s.limitation)} · SHA-256 ${s.sha256}</p><pre>${escape(s.text ?? s.error ?? '')}</pre></details>`).join('')}</details>`);
+  $('body').append(`<script type="application/json" id="${snapshotId}">${json}</script><details data-mokina-evidence-appendix><summary>Evidence / calculations · ${escape(record.status)}</summary><p>Version ${escape(versionId)} · ${escape(contentDigest)}. Rule checks only; not professional approval. Retrieval receipts record captured bytes, not factual truth. Other URLs and method usage are declared, not independently verified.</p>${record.issues.map(i => `<p>${escape(i.code)}: ${escape(i.message)}</p>`).join('')}${record.calculations.map(c => `<p>${escape(c.expression)} = ${escape(c.result)}</p>`).join('')}${record.sources.map(s => `<details><summary>${escape(s.id)} · ${escape(s.kind)} · ${escape(s.path)}</summary><p>${escape(s.locator)} · ${escape(s.limitation)} · SHA-256 ${s.sha256}</p>${s.webCapture ? `<p>Page retrieval receipt · ${escape(s.webCapture.requestedUrl)} → ${escape(s.webCapture.resolvedUrl)} · ${escape(s.webCapture.retrievedAt)} · HTTP ${s.webCapture.statusCode} · ${escape(s.webCapture.scope)} · source version ${escape(s.versionId ?? '')}</p><p>${escape(s.webCapture.limitations.join(' · '))}</p>` : '<p>Declared source; no page retrieval receipt.</p>'}${s.error ? `<p>${escape(s.error)}</p>` : ''}<pre>${escape(s.text ?? s.error ?? '')}</pre></details>`).join('')}</details>`);
   return $.html();
 }
 
@@ -204,6 +223,11 @@ export function readVersionEvidence(content: string, frozen: string | undefined,
   }
   for (const value of record.sources) {
     const source = parseSource(value); const entry = object(value);
+    if (entry.webCapture !== undefined) {
+      const capture = parseMokinaWebCaptureReceipt(entry.webCapture);
+      if (entry.error === undefined && (!source.versionId || (source.url && ![capture.requestedUrl, capture.resolvedUrl].includes(source.url)))) fail('Web capture identity mismatch');
+      if (typeof entry.text === 'string') readWebEvidenceDocument(entry.text, capture);
+    }
     if (typeof entry.text === 'string' && sha(entry.text) !== source.sha256) fail('Evidence source bytes disagree with digest');
     if (entry.text === undefined && typeof entry.error !== 'string') fail('Evidence source closure missing');
   }

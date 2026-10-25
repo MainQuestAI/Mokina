@@ -48,10 +48,6 @@ jobs:
           pnpm --filter @open-design/e2e exec vitest run -c vitest.config.ts tests/mokina/profile-migration.test.ts
       - name: Recovery import submission boundaries
         run: pnpm --filter @open-design/web exec vitest run tests/components/NewProjectPanel.recovery-import.test.tsx --maxWorkers=2
-      - name: Browser prerequisites
-        run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/e2e exec playwright install --with-deps chromium
       - name: Capture and dependency owner regression
         run: |
           pnpm --filter @open-design/web exec vitest run tests/runtime/mermaid-owner-security.test.ts
@@ -61,11 +57,34 @@ jobs:
           pnpm --filter @open-design/desktop exec vitest run tests/main/export-document.test.ts tests/main/artifact-first-viewport-capture.test.ts tests/main/page-pdf-capture.test.ts
       - name: Brand UI review regression
         run: |
-          pnpm --filter @open-design/web exec vitest run tests/components/ChatPane.error-card-ladder.test.tsx tests/components/PreviewDrawOverlay.test.tsx tests/components/MokinaBrand.test.tsx tests/components/MokinaRecoveryCapacity.test.tsx tests/components/MokinaCodexConnectionRow.test.tsx tests/components/MokinaLiveStatus.test.tsx tests/i18n/product-brand.test.ts tests/components/HomeView.context-recovery.test.tsx tests/components/HomeView.plugin-workspace-scope.test.tsx tests/components/InlineModelSwitcher.byok-chip-label.test.tsx tests/runtime/chat/composer-draft.test.ts --maxWorkers=2
+          pnpm --filter @open-design/web exec vitest run tests/components/ChatPane.error-card-ladder.test.tsx tests/components/PreviewDrawOverlay.test.tsx tests/components/MokinaBrand.test.tsx tests/components/MokinaRecoveryCapacity.test.tsx tests/components/MokinaCodexConnectionRow.test.tsx tests/components/MokinaLiveStatus.test.tsx tests/i18n/product-brand.test.ts tests/components/HomeView.context-recovery.test.tsx tests/components/HomeView.plugin-workspace-scope.test.tsx tests/components/InlineModelSwitcher.byok-chip-label.test.ts tests/runtime/chat/composer-draft.test.ts --maxWorkers=2
           pnpm --filter @open-design/contracts exec vitest run tests/social-share.test.ts tests/mokina-operations.test.ts
           pnpm --filter @open-design/release test
           pnpm --filter @open-design/desktop exec vitest run tests/main/mokina-splash.test.ts tests/main/splash-stage-replay.test.ts
           pnpm --filter @open-design/tools-pack exec vitest run tests/resources/mokina-brand.test.ts
+  browser:
+    # Split from validate so the Playwright batches stop consuming the unit-job
+    # timeout budget (measured 2026-10-25: batches 15.2 min of a 35-min job).
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: open-design
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: open-design/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Browser prerequisites
+        run: |
+          pnpm --filter @open-design/daemon build
+          pnpm --filter @open-design/e2e exec playwright install --with-deps chromium
       - name: Real daemon request recovery
         env:
           OD_PLAYWRIGHT_WORKERS: '1'

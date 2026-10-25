@@ -3,3 +3,19 @@
 /tmp/
 # GitHub blocks the generated offline archives above 100 MB; keep them in the local delivery output.
 /output/**/*.zip
+.gbrain-source
+.zcode/
+# Historical generated runtime copies and HTML report bundles (original files retained).
+/output/**/scratch/
+/output/**/playwright-html-report/
+/output/**/*.json
+/output/mokina-gbrain-completion-2026-10-12/
+/public/demo-spacemaster-v6/payloads/
+/docs/evidence/**/*.json
+/Lilith SpaceMaster Demo V6.html
+/Marketing Desktop Demo.html
+/output/demo-spacemaster-v6/finalized.html
+/output/marketing-desktop/Marketing Desktop Prototype v0.1.1/Marketing Desktop Demo.html
+/output/marketing-desktop/Marketing Desktop Prototype v0.1.2/Marketing Desktop Demo.html
+/output/marketing-desktop/Marketing Desktop Prototype v0.1/Marketing Desktop Demo.html
+/open-design/plugins/_official/examples/**/assets/_next/

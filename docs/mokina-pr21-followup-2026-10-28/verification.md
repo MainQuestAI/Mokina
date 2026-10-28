@@ -46,3 +46,11 @@ PNG 的实际尺寸与下表一致，修复前后使用相同测试资料与故�
 [900×600：同一次操作查询并恢复后的界面](evidence/web-recovery-reconciled-900-after.png)。小窗口中，已有固定底栏遮挡截图中的部分长内容；实际查询按钮操作与状态恢复测试通过。本轮未修改该布局，不将截图视为无遮挡布局验收。
 
 本轮测试进程与隔离运行数据已清理，保留必要证据。未创建临时原生应用、挂载或 LaunchServices 注册；现用应用、用户数据与模型配置未改动。
+
+## PR #23 复审补修
+
+PR 创建后的独立复审进一步确认一项 P3：来源版本已保存、但工作文件发布失败时，CLI 的非 2xx 分支只有 daemon 诊断，没有同操作查询指引。真实隔离 source capture、HTTP 路由与 CLI 联合探针确认：返回 `500 WEB_CAPTURE_UNAVAILABLE` 时来源仍可 GET 读取，工作文件为 `missing`，没有数据丢失。
+
+补修保留 daemon 诊断及退出码 **4**，只在 capture 收到 `WEB_CAPTURE_UNAVAILABLE` 时提示查询原 operation ID，不断言一定已保存，不自动重发 POST。明确的输入拒绝、已知读取失败和 GET 原行为保持不变。
+
+500／409 两项新增回归在补修前失败，补修后 CLI **22/22** 通过；CLI、真实 API 和捕获回归合计 **37/37** 通过（包含这 22 项）。daemon 重新构建与 `pnpm guard` 通过。联合探针补修后得到：`captureExitCode=4`、`hasReadRecoveryHint=true`、`getStatus=200`、`savedVersionStillReadable=true`、`sourceReaderCalls=1`、`sameOperation=true`。探针仅替换页面输入与硬链接故障，使用真实临时目录、版本存储和 HTTP 路由；临时服务和数据均已清理。前文的 120/42/4 项结果是初始七项修复的验证记录，最终补修的 CI 和复审结论以 PR 当前 head 为准。

@@ -53,11 +53,11 @@ export async function runWebEvidenceCli(action: string, args: string[], deps: {
   }
   const result = await response.json().catch(() => null);
   if (!response.ok) {
-    // Daemon error body surfaced verbatim; a rejected request is exit 4.
-    const message = result && typeof result === 'object' && 'error' in result
-      ? JSON.stringify((result as { error: unknown }).error)
-      : response.statusText;
+    // Preserve daemon diagnostics and exit 4 even when saving may have begun.
+    const error = result && typeof result === 'object' && 'error' in result ? result.error : undefined;
+    const message = error !== undefined ? JSON.stringify(error) : response.statusText;
     process.stderr.write(`daemon ${response.status}: ${message}\n`);
+    if (request && error && typeof error === 'object' && 'code' in error && error.code === 'WEB_CAPTURE_UNAVAILABLE') reportUnknown();
     process.exitCode = 4;
     return;
   }

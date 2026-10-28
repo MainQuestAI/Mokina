@@ -34,6 +34,8 @@ export const de: Dict = {
   "mokina.web.static": "Begrenzter statischer HTML-Text; Skripte, Bilder sowie dynamische oder authentifizierte Inhalte sind nicht enthalten.",
   "mokina.web.conflict": "Ein anderes Fenster hat diesen Entwurf geändert. Sichern Sie Ihre Eingabe und lesen Sie den aktuellen Entwurf, bevor Sie fortfahren.",
   "mokina.web.persistFailed": "Der Entwurf wurde nicht dauerhaft gespeichert. Behalten Sie Ihre Eingabe und versuchen Sie es erneut; es wurde nichts an den Daemon gesendet.",
+  "mokina.web.resultPersistFailed": "Die Identität und Prüfsumme der Quellenantwort wurden geprüft, aber der Wiederherstellungsstatus dieser Anfrage wurde nicht dauerhaft gespeichert. Behalten Sie die Anfrage und lesen Sie ihr Ergebnis erneut, bevor Sie einen neuen Abruf starten.",
+  "mokina.web.failedReadPersistFailed": "Der Daemon hat diesen Abruf abgelehnt, aber der Wiederherstellungsstatus wurde nicht dauerhaft gespeichert. Behalten Sie die Anfrage und laden Sie den Entwurf vor einem erneuten Versuch neu.",
   "mokina.web.mismatch": "Die gespeicherte Antwort passt nicht zu dieser Anfrage. Es wurde nichts angenommen; Ihre Anfrage bleibt erhalten.",
   "mokina.web.stopped": "Die Lesung wurde beendet, bevor ein Ergebnis eintraf. Das Ergebnis ist unbekannt; fragen Sie dieselbe Operation ab, bevor Sie es erneut versuchen.",
   "mokina.web.queryTimeout": "Die Abfrage hat das Zeitlimit überschritten. Ein gespeichertes Ergebnis kann dennoch vorhanden sein; versuchen Sie, das Ergebnis erneut zu lesen.",

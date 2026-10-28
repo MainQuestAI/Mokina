@@ -59,6 +59,8 @@ export interface Dict {
   "mokina.web.capturedUnverified": string;
   "mokina.web.conflict": string;
   "mokina.web.persistFailed": string;
+  "mokina.web.resultPersistFailed": string;
+  "mokina.web.failedReadPersistFailed": string;
   "mokina.web.mismatch": string;
   "mokina.web.stopped": string;
   "mokina.web.queryTimeout": string;

@@ -141,6 +141,62 @@ it('keeps the panel editable with recovery exits when the draft save is not dura
   expect(screen.getByRole('button', { name: 'Discard this input and read the saved draft' })).toBeTruthy();
 });
 
+it.each(['POST', 'GET'] as const)('keeps the verified %s result when saving its recovery state fails, then reconciles without another POST', async (method) => {
+  const original = { operationId: 'verified-result', url: 'https://example.com/page' };
+  localStorage.setItem(key, JSON.stringify({ schema: 1, request: original, state: method === 'GET' ? 'unknown' : 'draft' }));
+  let failSavedState = true;
+  vi.spyOn(recovery, 'mirrorDurableRecord').mockImplementation(async (_key, raw) => {
+    if (JSON.parse(raw).state === 'saved' && failSavedState) { failSavedState = false; return false; }
+    return true;
+  });
+  const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) => Response.json({ result: reply(original) })); vi.stubGlobal('fetch', fetchMock);
+  render(<MokinaWebEvidence {...props} />);
+  fireEvent.click(await screen.findByRole('button', { name: method === 'GET' ? 'Read capture result' : 'Read public page' }));
+
+  expect((await screen.findByRole('alert')).textContent).toMatch(/response was verified/);
+  expect(screen.getByRole('alert').textContent).not.toMatch(/nothing was sent/);
+  expect(screen.getByText(/Source version saved/)).toBeTruthy();
+  expect(screen.getByText(/evidence\/web-verified-result\.md · v1/)).toBeTruthy();
+  expect(props.onCaptured).toHaveBeenCalledTimes(1);
+  expect(props.onCaptured).toHaveBeenCalledWith(reply(original));
+  expect(JSON.parse(localStorage.getItem(key)!).request).toEqual(original);
+  expect(screen.getByRole('button', { name: 'Read page again as a new source' })).toHaveProperty('disabled', true);
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+
+  const query = screen.getByRole('button', { name: 'Read capture result' });
+  expect(query).toHaveProperty('disabled', false); fireEvent.click(query);
+  await waitFor(() => expect(screen.queryByRole('alert')).toBeNull());
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Read page again as a new source' })).toHaveProperty('disabled', false));
+  expect(fetchMock).toHaveBeenCalledTimes(2);
+  const calls = fetchMock.mock.calls;
+  expect(calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(method === 'POST' ? 1 : 0);
+  expect(calls[1]![0]).toBe('/api/projects/p/mokina/web-evidence/verified-result');
+  expect(JSON.parse(localStorage.getItem(key)!).request).toEqual(original);
+  expect(props.onCaptured).toHaveBeenCalledTimes(1);
+});
+
+it('retains a known server failure and its request when the return to editable draft cannot be mirrored', async () => {
+  const original = { operationId: 'rejected-read', url: 'https://example.com/page' };
+  localStorage.setItem(key, JSON.stringify({ schema: 1, request: original, state: 'draft' }));
+  vi.spyOn(recovery, 'mirrorDurableRecord').mockImplementation(async (_key, raw) => JSON.parse(raw).state !== 'draft');
+  const fetchMock = vi.fn(async () => Response.json({ error: { code: 'WEB_HTTP_ERROR', message: 'HTTP 403' } }, { status: 502 })); vi.stubGlobal('fetch', fetchMock);
+  render(<MokinaWebEvidence {...props} />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Read public page' }));
+
+  const alert = await screen.findByRole('alert');
+  expect(alert.textContent).toMatch(/daemon rejected this read/);
+  expect(alert.textContent).toMatch(/HTTP 403/);
+  expect(alert.textContent).not.toMatch(/nothing was sent/);
+  expect(JSON.parse(localStorage.getItem(key)!).request).toEqual(original);
+  expect(props.onCaptured).not.toHaveBeenCalled();
+  expect(screen.getByRole('button', { name: 'Read public page' })).toHaveProperty('disabled', true);
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+  fireEvent.click(screen.getByRole('button', { name: 'Discard this input and read the saved draft' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Read public page' })).toHaveProperty('disabled', false));
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(localStorage.getItem(key)!).request).toEqual(original);
+});
+
 it('keeps a stuck query cancellable from the stop button and returns with a clear message', async () => {
   // A realistic pending GET rejects with AbortError once its signal fires.
   vi.stubGlobal('fetch', vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {

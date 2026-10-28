@@ -34,6 +34,8 @@ export const esES: Dict = {
   "mokina.web.static": "Texto HTML estático limitado; no se incluyen scripts, imágenes ni contenido dinámico o autenticado.",
   "mokina.web.conflict": "Otra ventana modificó este borrador. Guarda tu entrada y lee el borrador actual antes de continuar.",
   "mokina.web.persistFailed": "El borrador no se guardó de forma duradera. Conserva tu entrada y reinténtalo; no se envió nada al daemon.",
+  "mokina.web.resultPersistFailed": "Se verificaron la identidad y el resumen de la respuesta de origen, pero no se guardó de forma duradera el estado de recuperación de esta solicitud. Conserve la solicitud y vuelva a leer su resultado antes de iniciar otra lectura.",
+  "mokina.web.failedReadPersistFailed": "El daemon rechazó esta lectura, pero no se guardó de forma duradera el estado de recuperación. Conserve la solicitud y vuelva a cargar el borrador antes de reintentar.",
   "mokina.web.mismatch": "La respuesta guardada no coincide con esta solicitud. No se aceptó nada; tu solicitud se conserva.",
   "mokina.web.stopped": "La lectura se detuvo antes de llegar un resultado. El resultado es desconocido; consulta la misma operación antes de reintentar.",
   "mokina.web.queryTimeout": "La consulta caducó. Puede que exista un resultado guardado; intenta leer el resultado de nuevo.",

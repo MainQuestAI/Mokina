@@ -34,6 +34,8 @@ export const id: Dict = {
   "mokina.web.static": "Teks HTML statis terbatas; skrip, gambar, serta konten dinamis atau terautentikasi tidak disertakan.",
   "mokina.web.conflict": "Jendela lain mengubah draf ini. Cadangkan masukan Anda dan baca draf saat ini sebelum melanjutkan.",
   "mokina.web.persistFailed": "Draf tidak tersimpan secara permanen. Simpan masukan Anda dan coba lagi; tidak ada yang dikirim ke daemon.",
+  "mokina.web.resultPersistFailed": "Identitas dan ringkasan respons sumber telah diverifikasi, tetapi status pemulihan permintaan ini belum tersimpan secara permanen. Pertahankan permintaan dan baca kembali hasilnya sebelum memulai pembacaan baru.",
+  "mokina.web.failedReadPersistFailed": "Daemon menolak pembacaan ini, tetapi status pemulihannya belum tersimpan secara permanen. Pertahankan permintaan dan muat ulang draf sebelum mencoba lagi.",
   "mokina.web.mismatch": "Balasan tersimpan tidak cocok dengan permintaan ini. Tidak ada yang diterima; permintaan Anda tetap disimpan.",
   "mokina.web.stopped": "Pembacaan dihentikan sebelum hasil tiba. Hasilnya tidak diketahui; periksa hasil operasi yang sama sebelum mencoba lagi.",
   "mokina.web.queryTimeout": "Kueri habis waktu. Hasil tersimpan mungkin masih ada; coba periksa hasilnya lagi.",

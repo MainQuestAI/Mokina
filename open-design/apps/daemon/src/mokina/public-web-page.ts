@@ -1,7 +1,7 @@
 import { load } from 'cheerio';
 import { parseCaptureMokinaWebEvidenceRequest, type CaptureMokinaWebEvidenceRequest, type MokinaWebCaptureReceipt } from '@open-design/contracts';
 import { fetchExternalBrandAsset } from '../brands/safe-fetch.js';
-import { renderWebEvidenceDocument, webEvidenceDigest } from './web-evidence-document.js';
+import { renderWebEvidenceDocument, webEvidenceDigest, WebEvidenceTooLargeError } from './web-evidence-document.js';
 
 export class WebEvidenceError extends Error {
   constructor(public readonly code: string, message: string, public readonly status = 502) { super(message); }
@@ -47,6 +47,8 @@ export async function readPublicWebPage(input: CaptureMokinaWebEvidenceRequest, 
       const $ = load(text);
       $('script,style,noscript,template,svg,iframe,[hidden],[aria-hidden="true"]').remove();
       $('br').replaceWith('\n');
+      // Adjacent cells in minified HTML still represent separate values.
+      $('td,th').append(' ');
       $('p,div,li,h1,h2,h3,h4,h5,h6,section,article,tr').append('\n');
       text = $('body').text().replace(/[\t \u00a0]+/gu, ' ').replace(/ *\n */gu, '\n').replace(/\n{3,}/gu, '\n\n').trim();
     }
@@ -54,13 +56,16 @@ export async function readPublicWebPage(input: CaptureMokinaWebEvidenceRequest, 
     const receipt: MokinaWebCaptureReceipt = { schema: 'mokina.web-evidence.v1', operationId: request.operationId,
       requestedUrl: request.url, resolvedUrl: response.url || request.url, retrievedAt: new Date().toISOString(), statusCode: response.status,
       // Record the accepted MIME verbatim; markdown counts as limited plain text.
-      contentType: html ? 'text/html' : mime === 'text/markdown' ? 'text/markdown' : 'text/plain', bodyDigest: webEvidenceDigest(bytes), textDigest: webEvidenceDigest(text), parserVersion: 'mokina-web/1',
+      contentType: html ? 'text/html' : mime === 'text/markdown' ? 'text/markdown' : 'text/plain', bodyDigest: webEvidenceDigest(bytes), textDigest: webEvidenceDigest(text), parserVersion: 'mokina-web/2',
       scope: html ? 'static-html-text' : 'plain-text', limitations: html
         ? ['Static HTML text with normalized whitespace; scripts, images, charts and authenticated or dynamically loaded content were not read.', 'Captured text and retrieval time do not verify factual truth, publication date or complete article coverage.']
         : ['Plain text response; factual truth and publication date have not been independently verified.'] };
     if (controller.signal.aborted) throw new WebEvidenceError('WEB_READ_STOPPED', 'Page reading was stopped before saving.');
     try { return { content: renderWebEvidenceDocument(receipt, text), receipt }; }
-    catch { throw new WebEvidenceError('WEB_TOO_LARGE', 'Captured text and receipt exceed the 512 KiB source limit; no truncated evidence was saved.', 413); }
+    catch (error) {
+      if (error instanceof WebEvidenceTooLargeError) throw new WebEvidenceError('WEB_TOO_LARGE', 'Captured text and receipt exceed the 512 KiB source limit; no truncated evidence was saved.', 413);
+      throw error;
+    }
   } catch (error) {
     if (error instanceof WebEvidenceError) throw error;
     throw new WebEvidenceError('WEB_READ_FAILED', `Could not read the public page: ${error instanceof Error ? error.message : String(error)}`);

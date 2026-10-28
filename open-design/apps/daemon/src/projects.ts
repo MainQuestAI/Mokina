@@ -931,11 +931,16 @@ export async function writeProjectFile(
       if (overwrite) await rename(temporary, target);
       else {
         try { await link(temporary, target); }
-        // exFAT/SMB/FUSE volumes reject hard links; `wx` keeps the exclusive
-        // create semantics on the same target.
         catch (error) {
           if (!['EPERM', 'ENOTSUP', 'EOPNOTSUPP'].includes((error as NodeJS.ErrnoException).code ?? '')) throw error;
-          await writeFile(target, body, { flag: 'wx' });
+          // An exclusive direct write can leave truncated bytes on failure.
+          // Removing them by path could then delete a concurrent user's file.
+          // Keep the atomic contract: publish complete bytes, or leave the
+          // destination alone so callers can recover their saved version.
+          throw Object.assign(new Error(
+            'The filesystem or its permissions do not support atomic exclusive creation. No direct write was attempted; check the destination before retrying.',
+            { cause: error },
+          ), { code: 'ATOMIC_EXCLUSIVE_UNSUPPORTED' });
         }
       }
     }

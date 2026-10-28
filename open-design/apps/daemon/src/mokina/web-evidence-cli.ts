@@ -1,5 +1,13 @@
-import { mokinaWebOperationId, parseCaptureMokinaWebEvidenceRequest } from '@open-design/contracts';
+import { mokinaWebOperationId, parseCaptureMokinaWebEvidenceRequest, parseMokinaWebCaptureResult } from '@open-design/contracts';
 import { surfaceFetchError } from '../cli-shared.js';
+import { webEvidenceDigest } from './web-evidence-document.js';
+
+function validateReply(value: unknown, operationId: string, requestedUrl?: string): void {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || !('result' in value)) throw new Error('Missing result envelope');
+  if (value.result === null && requestedUrl === undefined) return;
+  const row = parseMokinaWebCaptureResult(value.result, { operationId, ...(requestedUrl !== undefined ? { url: requestedUrl } : {}) });
+  if (webEvidenceDigest(row.content) !== row.contentDigest) throw new Error('Saved result bytes do not match the digest');
+}
 
 export async function runWebEvidenceCli(action: string, args: string[], deps: {
   parseFlags: (args: string[], options: { string: ReadonlySet<string>; boolean: ReadonlySet<string> }) => Record<string, unknown>;
@@ -26,6 +34,12 @@ export async function runWebEvidenceCli(action: string, args: string[], deps: {
   }
   const base = (await deps.cliDaemonUrl(flags)).replace(/\/$/u, '');
   const endpoint = `${base}/api/projects/${encodeURIComponent(flags.project as string)}/mokina/web-evidence`;
+  // A successful HTTP status does not establish that the saved result arrived.
+  // Keep the operation identity recoverable without issuing another capture.
+  const reportUnknown = () => {
+    const quote = (value: string) => `'${value.replace(/'/gu, `'"'"'`)}'`;
+    process.stderr.write(`Web evidence result is unknown for operation ${operationId}. Query the same operation without repeating capture: od research read --project ${quote(flags.project as string)} --operation-id ${operationId} --daemon-url ${quote(base)}\n`);
+  };
   let response: Response;
   try {
     response = await fetch(request ? endpoint : `${endpoint}/${encodeURIComponent(operationId)}`, request
@@ -33,17 +47,25 @@ export async function runWebEvidenceCli(action: string, args: string[], deps: {
   } catch (err) {
     // Same exit contract as `od research search`: transport failure is 3.
     surfaceFetchError(err, base);
+    if (request) reportUnknown();
     process.exitCode = 3;
     return;
   }
   const result = await response.json().catch(() => null);
   if (!response.ok) {
-    // Daemon error body surfaced verbatim; a rejected request is exit 4.
-    const message = result && typeof result === 'object' && 'error' in result
-      ? JSON.stringify((result as { error: unknown }).error)
-      : response.statusText;
+    // Preserve daemon diagnostics and exit 4 even when saving may have begun.
+    const error = result && typeof result === 'object' && 'error' in result ? result.error : undefined;
+    const message = error !== undefined ? JSON.stringify(error) : response.statusText;
     process.stderr.write(`daemon ${response.status}: ${message}\n`);
+    if (request && error && typeof error === 'object' && 'code' in error && error.code === 'WEB_CAPTURE_UNAVAILABLE') reportUnknown();
     process.exitCode = 4;
+    return;
+  }
+  try { validateReply(result, operationId, request?.url); }
+  catch (error) {
+    process.stderr.write(`Invalid daemon web evidence response: ${error instanceof Error ? error.message : String(error)}\n`);
+    reportUnknown();
+    process.exitCode = 3;
     return;
   }
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');

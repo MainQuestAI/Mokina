@@ -1,4 +1,5 @@
 import { readVersionEvidence } from './version-evidence.js';
+import { materializeFrozenAssets } from './frozen-assets.js';
 import { readWebEvidenceDocument } from './web-evidence-document.js';
 import { createHash } from 'node:crypto';
 import { lstat, readFile, readdir } from 'node:fs/promises';
@@ -209,6 +210,19 @@ async function collectVersions(capture: RecoveryCapture): Promise<MokinaRecovery
       if (frozenContentPath && !frozen) continue;
       try { readVersionEvidence(content.toString('utf8'), frozen?.toString('utf8'), entry.id, digest(content), { neverCaptured: !frozenContentPath }); }
       catch { capture.issue(contentPath, 'invalid', '版本证据冻结记录缺失或摘要不符。'); continue; }
+      // The on-disk frozen record may reference content-addressed assets to
+      // avoid duplicating identical image bytes per version. The archive ships
+      // the materialized standalone bytes so imports never need the asset store.
+      if (frozen && frozenContentPath) {
+        try {
+          const materialized = await materializeFrozenAssets(path.join(capture.managedRoot, directory), frozen.toString('utf8'));
+          capture.files.set(frozenContentPath, { bytes: Buffer.from(materialized, 'utf8'), kind: 'frozen-version' });
+        } catch {
+          capture.issue(frozenContentPath, 'unreadable', '冻结版本的资源文件缺失，无法生成可独立交付的恢复包。');
+          capture.files.delete(frozenContentPath);
+          continue;
+        }
+      }
       versions.push({ entry: entry.fileName, originalVersionId: entry.id, versionNumber: Number(entry.version),
         current: entry.id === currentId, candidate: entry.candidate === true, contentPath, contentDigest: digest(content),
         ...(frozenContentPath ? { frozenContentPath } : {}),

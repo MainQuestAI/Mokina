@@ -18,6 +18,7 @@ import { isSafeId, kindFor, mimeFor, readProjectFile, resolveProjectDir, resolve
 import { bundleStandaloneHtml, StandaloneHtmlExportError, MAX_STANDALONE_ENTRY_BYTES, MAX_STANDALONE_OUTPUT_BYTES } from './artifacts/standalone-html.js';
 
 import { freezeVersionEvidence, hasVersionEvidence, readVersionEvidence } from './mokina/version-evidence.js';
+import { externalizeFrozenAssets, materializeFrozenAssets } from './mokina/frozen-assets.js';
 
 const VERSION_ROOT = '.file-versions';
 const VERSION_MANIFEST = 'manifest.json';
@@ -539,12 +540,16 @@ export async function readProjectFileVersion(
   if (entry.contentDigest && entry.contentDigest !== contentDigest) {
     throw codedError('saved version content digest mismatch', 'VERSION_CONTENT_MISMATCH');
   }
-  const frozenContent = entry.frozenContentPath
+  const storedFrozenContent = entry.frozenContentPath
     ? await readFile(path.join(versionRootFor(projectsRoot, projectId, safeName), entry.frozenContentPath), 'utf8')
+    : undefined;
+  const quality = readVersionEvidence(content, storedFrozenContent, entry.id, contentDigest, { neverCaptured: !entry.frozenContentPath });
+  const frozenContent = storedFrozenContent
+    ? await materializeFrozenAssets(versionRootFor(projectsRoot, projectId, safeName), storedFrozenContent)
     : undefined;
   return {
     version: publicVersion(entry, state.currentVersionId),
-    quality: readVersionEvidence(content, frozenContent, entry.id, contentDigest, { neverCaptured: !entry.frozenContentPath }),
+    quality,
     content,
     ...(frozenContent ? { frozenContent } : {}),
   };
@@ -700,7 +705,8 @@ async function createProjectFileVersionUnlocked(
       resources = { status: 'incomplete', reasons: [error.message] };
     }
     if (hasVersionEvidence(text) || resources.status === 'complete') {
-      frozenHtml = await freezeVersionEvidence(resourceHtml, id, entry.contentDigest!, async (sourcePath, expectedDigest, sourceVersionId) => {
+      const externalized = await externalizeFrozenAssets(root, resourceHtml);
+      frozenHtml = await freezeVersionEvidence(externalized, id, entry.contentDigest!, async (sourcePath, expectedDigest, sourceVersionId) => {
         const inherited = inheritedSources.find(item => item.path === sourcePath && item.sha256 === expectedDigest && item.versionId === sourceVersionId && item.text !== undefined);
         if (inherited?.text !== undefined) return { bytes: Buffer.from(inherited.text, 'utf8'), ...(inherited.webCapture ? { webCapture: inherited.webCapture } : {}) };
         if (sourceVersionId) {

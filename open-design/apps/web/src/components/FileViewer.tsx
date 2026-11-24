@@ -1,4 +1,6 @@
 import { MokinaArtifactOperations } from './mokina/MokinaArtifactOperations';
+import { MokinaCanvasQuickEdit } from './mokina/MokinaCanvasQuickEdit';
+import { mokinaCanvasEditBridgeScript } from '../runtime/mokina/canvas-edit';
 import { qualityLocationBridge } from '../runtime/mokina/quality-location';
 import type { MokinaQualitySnapshot } from '@open-design/contracts';
 import { MokinaVersionQuality } from './mokina/MokinaVersionQuality';
@@ -136,7 +138,7 @@ import {
   publicFilePublishFailureKey,
   type PublicFilePublishFailureKey,
 } from '../collab/public-file-publish';
-import { createProject, moveWorkspaceProject } from '../state/projects';
+import { createConversation, moveWorkspaceProject } from '../state/projects';
 import { navigate } from '../router';
 import { MoveToTeamConfirmDialog, moveConfirmSkipped } from './MoveToTeamConfirmDialog';
 import type { Dict, Locale } from '../i18n/types';
@@ -3967,8 +3969,10 @@ function FileVersionManagerModal({
     selectedId && selectedRenderableVersionId === selectedId && selectedRenderableContent,
   );
   const srcDoc = useMemo(() => selectedRenderableContentMatchesVersion && selectedRenderableContent
-    ? fileVersionPreviewSrcDoc(projectId, file.name, selectedRenderableContent + (MOKINA_LOCAL_EDITION && selectedId ? qualityLocationBridge(selectedId, locationToken) : ''), workspaceContext)
-    : '', [file.name, projectId, selectedRenderableContent, selectedRenderableContentMatchesVersion, workspaceContext, selectedId, locationToken]);
+    ? fileVersionPreviewSrcDoc(projectId, file.name, selectedRenderableContent
+      + (MOKINA_LOCAL_EDITION && selectedVersion?.current ? `<script>${mokinaCanvasEditBridgeScript}</script>` : '')
+      + (MOKINA_LOCAL_EDITION && selectedId ? qualityLocationBridge(selectedId, locationToken) : ''), workspaceContext)
+    : '', [file.name, projectId, selectedRenderableContent, selectedRenderableContentMatchesVersion, workspaceContext, selectedId, locationToken, selectedVersion?.current]);
   const frameReady = loadedSrcDoc === srcDoc;
 
   useEffect(() => {
@@ -4698,11 +4702,12 @@ function FileVersionManagerModal({
     if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return false;
     setPendingRevisionStatus('succeeded');
     setRevisionProgress('正在校验并保存候选…');
+    const replacementPath = `.mokina/revisions/${job.operationId}/MOKINA-REPLACEMENT.html`;
     const replacement = await fetchProjectFileText(job.revisionProjectId,
-      'MOKINA-REPLACEMENT.html', { cache: 'no-store', workspaceContext });
+      replacementPath, { cache: 'no-store', workspaceContext });
     if (!revisionPanelActiveRef.current) return false;
     if (!isSameMokinaRevisionJob(parseMokinaRevisionJob(localStorage.getItem(revisionStorageKey)), job)) return false;
-    if (!replacement) throw new Error('模型未写出 MOKINA-REPLACEMENT.html；当前稿未变化。');
+    if (!replacement) throw new Error('模型未写出修订替换章节；当前稿未变化。');
     const candidateResponse = await fetch(
       `/api/projects/${encodeURIComponent(projectId)}/files/${file.name.split('/').map(encodeURIComponent).join('/')}/candidates`,
       {
@@ -4914,7 +4919,7 @@ function FileVersionManagerModal({
     const operationId = newClientOperationId();
     const clientRequestId = operationId;
     let intent: MokinaRevisionJob = {
-      operationId, clientRequestId, revisionProjectId: newClientOperationId(),
+      operationId, clientRequestId, revisionProjectId: projectId,
       sourceProjectId: projectId, sourceFile: file.name, workspaceContext,
       baseVersionId, sectionId: revisionSectionId, prompt: request, dispatched: false, submissionState: 'prepared',
     };
@@ -4929,38 +4934,26 @@ function FileVersionManagerModal({
       setPendingRevisionJob(intent);
       const prompt = [
         `只修改 HTML 章节 ${revisionSectionId}。根据下方用户要求，生成一个完整的替换章节元素。`,
-        `请把结果写入 MOKINA-REPLACEMENT.html。文件必须且只能包含一个顶层元素，其 id 与 data-mokina-id 都等于 ${revisionSectionId}。不要输出整篇 HTML、Markdown 代码围栏或其他章节。保留可核对事实，不编造来源。`,
+        `请把结果写入 .mokina/revisions/${operationId}/MOKINA-REPLACEMENT.html。文件必须且只能包含一个顶层元素，其 id 与 data-mokina-id 都等于 ${revisionSectionId}。不要输出整篇 HTML、Markdown 代码围栏或其他章节。保留可核对事实，不编造来源。`,
         `【修改要求】\n${request}`,
         `【原章节】\n${original.outerHTML}`,
       ].join('\n\n');
-      const sourceResponse = await fetch(`/api/projects/${encodeURIComponent(projectId)}`,
-        workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
-      if (!sourceResponse.ok) throw new Error('无法核对原项目的营销场景；当前稿未变化。');
-      const sourceBody = await sourceResponse.json() as { project?: { metadata?: { scenarioBinding?: { pluginId?: string } } } };
-      const boundPlugin = sourceBody?.project?.metadata?.scenarioBinding?.pluginId;
-      const revisionPlugin = boundPlugin === 'mokina-marketing-plan' || boundPlugin === 'mokina-market-analysis'
-        ? boundPlugin : 'mokina-market-analysis';
-      const revisionProject = await createProject({
-        id: intent.revisionProjectId,
-        name: `${file.name} · ${revisionSectionId} 修订`,
-        skillId: null,
-        designSystemId: null,
-        metadata: { kind: 'other', intent: 'marketing' },
-        pluginId: revisionPlugin,
-        workspaceContext,
-      });
-      const snapshotSaved = await writeProjectTextFile(revisionProject.project.id,
-        'MOKINA-BASE-SECTION.html', original.outerHTML, undefined, workspaceContext);
+      const revisionConversation = await createConversation(projectId,
+        `${file.name} · ${revisionSectionId} 修订`, { workspaceContext, throwOnError: true });
+      if (!revisionConversation) throw new Error('创建修订会话失败；当前稿未变化。');
+      const revisionBasePath = `.mokina/revisions/${operationId}/MOKINA-BASE-SECTION.html`;
+      const snapshotSaved = await writeProjectTextFile(projectId,
+        revisionBasePath, original.outerHTML, undefined, workspaceContext);
       if (!snapshotSaved) throw new Error('原章节快照保存失败，模型尚未运行。');
-      revisionScope = { projectId: revisionProject.project.id, conversationId: revisionProject.conversationId };
-      const bound = { ...intent, revisionProjectId: revisionProject.project.id, conversationId: revisionProject.conversationId };
-      if (!await persistMokinaRevisionJob(revisionStorageKey, bound, intent)) throw new Error('修订项目绑定保存失败，模型尚未运行。');
+      revisionScope = { projectId, conversationId: revisionConversation.id };
+      const bound = { ...intent, conversationId: revisionConversation.id };
+      if (!await persistMokinaRevisionJob(revisionStorageKey, bound, intent)) throw new Error('修订会话绑定保存失败，模型尚未运行。');
       intent = bound; setPendingRevisionJob(intent);
       // Persist the full send intent BEFORE the model can run: a storage
       // failure refuses the POST (PR3 send semantics, Spec T11 §5.3).
       const sendRecord = await persistPendingSendRequest({
-        projectId: revisionProject.project.id,
-        conversationId: revisionProject.conversationId,
+        projectId,
+        conversationId: revisionConversation.id,
         clientRequestId,
         prompt,
         snapshot: {
@@ -4977,8 +4970,8 @@ function FileVersionManagerModal({
         throw new Error('修订发送意图未能安全保存，未启动作业；请重试。');
       }
       const dispatched = await persistDispatchedSendRequest(
-        revisionProject.project.id,
-        revisionProject.conversationId,
+        projectId,
+        revisionConversation.id,
         clientRequestId,
       );
       if (!dispatched) {
@@ -4993,8 +4986,8 @@ function FileVersionManagerModal({
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}) },
         body: JSON.stringify({
-          agentId: 'codex', projectId: revisionProject.project.id,
-          conversationId: revisionProject.conversationId,
+          agentId: 'codex', projectId,
+          conversationId: revisionConversation.id,
           clientRequestId,
           sessionMode: 'design', message: prompt, currentPrompt: prompt,
           priorTranscript: '', locale: 'zh-CN',
@@ -5021,7 +5014,7 @@ function FileVersionManagerModal({
         throw new Error('已受理修订，但身份交接保存失败；请恢复原任务。');
       }
       intent = job;
-      await persistClearSendRequest(revisionProject.project.id, revisionProject.conversationId, clientRequestId);
+      await persistClearSendRequest(projectId, revisionConversation.id, clientRequestId);
       setPendingRevisionJob(job);
       setPendingRevisionStatus('running');
       await finishChapterCandidate(job);
@@ -5119,6 +5112,9 @@ function FileVersionManagerModal({
         {MOKINA_LOCAL_EDITION && selectedVersion ? <MokinaArtifactOperations projectId={projectId} fileName={file.name}
           version={selectedVersion} versions={versions} workspaceContext={workspaceContext} disabled={viewerOnly}
           onSaved={version => { notifyMokinaEntriesChanged(projectId); void loadVersions(version.id); }} /> : null}
+        {MOKINA_LOCAL_EDITION && selectedVersion ? <MokinaCanvasQuickEdit projectId={projectId} fileName={file.name}
+          version={selectedVersion} workspaceContext={workspaceContext} iframeRef={versionPreviewIframeRef}
+          ready={frameReady} onSaved={version => { notifyMokinaEntriesChanged(projectId); void loadVersions(version.id); }} /> : null}
         <div className="artifact-version-panel__preview">
           {srcDoc ? (
             <iframe
@@ -16460,6 +16456,14 @@ function HtmlViewer({
     const pdfTitle = context?.title ?? exportTitle;
     const pdfSource = context?.content ?? source ?? '';
     const pdfDeck = deckExportSignalForContext(context);
+    // Mokina reports use the system print dialog so CJK text stays selectable
+    // and the template's @media print page-break rules apply. Electron's
+    // printToPDF drops CJK glyphs in the packaged runtime, and the raster
+    // slicer cuts tables mid-row.
+    if (MOKINA_LOCAL_EDITION) {
+      await exportAsPdf(pdfSource, pdfTitle, { deck: pdfDeck, onProgress: onExportProgress, preferSystemPrint: true });
+      return;
+    }
     if (isOpenDesignHostAvailable()) {
       const res = await exportProjectScreenshotPdf({
         projectId,
@@ -16482,7 +16486,7 @@ function HtmlViewer({
     }
     await exportProjectAsPdf({
       deck: pdfDeck,
-      fallbackPdf: () => exportAsPdf(pdfSource, pdfTitle, { deck: pdfDeck, onProgress: onExportProgress }),
+      fallbackPdf: () => exportAsPdf(pdfSource, pdfTitle, { deck: pdfDeck, onProgress: onExportProgress, preferSystemPrint: MOKINA_LOCAL_EDITION }),
       filePath: file.name,
       projectId,
       title: pdfTitle,

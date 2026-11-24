@@ -54,7 +54,9 @@ import {
   writeProjectBase64File,
   writeProjectTextFile,
 } from '../providers/registry';
-import { createProject } from '../state/projects';
+import { createConversation } from '../state/projects';
+import { stageAutoSendPrompt } from '../runtime/chat/auto-send-prompt';
+import { randomUUID as newClientOperationId } from '../utils/uuid';
 import type { Dict } from '../i18n/types';
 import { STAGE_ATTACHMENT_EVENT, type StageAttachmentEventDetail } from './ChatComposer';
 import { setPendingDesignSystemCreateEntry } from '../analytics/ds-create-entry';
@@ -1397,18 +1399,17 @@ function MokinaMaterialPicker({ projectName, projectId, files }: {
         '本次只能依据下列固定摘录及我在此工作中提供的新信息。请标明资料位置、提取限制、事实与推断；不要读取原项目或未选资料。',
         snapshot,
       ].join('\n\n');
-      const created = await createProject({
-        name: `${projectName} · 资料分析`,
-        skillId: null,
-        designSystemId: null,
-        metadata: { kind: 'other', intent: 'marketing' },
-        pluginId: 'mokina-market-analysis',
-        pendingPrompt: prompt,
+      const operationId = newClientOperationId();
+      const conversation = await createConversation(projectId, `${projectName} · 资料分析`, {
         workspaceContext,
+        throwOnError: true,
       });
-      const saved = await writeProjectTextFile(created.project.id, 'MOKINA-MATERIALS.md', snapshot, undefined, workspaceContext);
-      if (!saved) throw new Error(t('fileViewer.mokina.materialSnapshotSaveFailed', { name: created.project.name }));
-      navigate({ kind: 'project', projectId: created.project.id, conversationId: created.conversationId, fileName: null });
+      if (!conversation) throw new Error(t('fileViewer.mokina.materialSnapshotSaveFailed', { name: projectName }));
+      const snapshotPath = `.mokina/materials/${operationId}/MOKINA-MATERIALS.md`;
+      const saved = await writeProjectTextFile(projectId, snapshotPath, snapshot, undefined, workspaceContext);
+      if (!saved) throw new Error(t('fileViewer.mokina.materialSnapshotSaveFailed', { name: projectName }));
+      stageAutoSendPrompt(projectId, prompt);
+      navigate({ kind: 'project', projectId, conversationId: conversation.id, fileName: null });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : t('fileViewer.mokina.materialStartFailed'));
     } finally {

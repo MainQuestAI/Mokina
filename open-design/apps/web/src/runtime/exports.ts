@@ -1420,7 +1420,7 @@ export function openSandboxedPreviewInNewTab(
 export async function exportAsPdf(
   html: string,
   title: string,
-  opts?: SrcdocOptions & { sandboxedPreview?: boolean; onProgress?: ExportProgress },
+  opts?: SrcdocOptions & { sandboxedPreview?: boolean; onProgress?: ExportProgress; preferSystemPrint?: boolean },
 ): Promise<void> {
   const sandboxedPreview = opts?.sandboxedPreview ?? true;
   // Generate a per-export nonce so the print-ready handshake is resistant to
@@ -1437,7 +1437,7 @@ export async function exportAsPdf(
   // omits allow-modals here because the native flow never calls
   // window.print(); granting it would let untrusted artifact code call
   // alert()/confirm() and stall the hidden Electron window indefinitely.
-  if (isOpenDesignHostAvailable()) {
+  if (!opts?.preferSystemPrint && isOpenDesignHostAvailable()) {
     if (sandboxedPreview) {
       doc = buildSandboxedPreviewDocument(doc, title);
     }
@@ -1460,11 +1460,16 @@ export async function exportAsPdf(
   // each slide (deck) or the full page through the export-capture bridge, then
   // build it with jsPDF. No print dialog, no agent. The window.print() popup
   // below is kept only as a last-resort fallback if the capture path throws.
-  try {
-    await exportArtifactAsPdf(html, title, { deck: !!opts?.deck, onProgress: opts?.onProgress });
-    return;
-  } catch (err) {
-    console.warn('[exportAsPdf] programmatic PDF failed, falling back to print popup:', err);
+  // Mokina reports opt out of both Electron printToPDF and the raster slicer
+  // via preferSystemPrint: the system print dialog preserves selectable text
+  // and the template's @media print page-break rules.
+  if (!opts?.preferSystemPrint) {
+    try {
+      await exportArtifactAsPdf(html, title, { deck: !!opts?.deck, onProgress: opts?.onProgress });
+      return;
+    } catch (err) {
+      console.warn('[exportAsPdf] programmatic PDF failed, falling back to print popup:', err);
+    }
   }
 
   // Last-resort: wrap with allow-modals so the injected script can call

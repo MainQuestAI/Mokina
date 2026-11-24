@@ -125,7 +125,7 @@ function setupRecoveryFetch(
     if (url === '/api/runs/run-a/cancel' && method === 'POST') {
       return new Response(JSON.stringify({ error: 'unavailable' }), { status: 503 });
     }
-    if (url === '/api/projects/project-run-a/raw/MOKINA-REPLACEMENT.html') {
+    if (url === '/api/projects/project-run-a/raw/.mokina/revisions/operation-a/MOKINA-REPLACEMENT.html') {
       if (failure === 'missing-replacement') return new Response('{}', { status: 404 });
       return new Response('<section id="strategy" data-mokina-id="strategy">新渠道</section>', { status: 200 });
     }
@@ -145,7 +145,10 @@ function setupRecoveryFetch(
     if (url === '/api/projects' && method === 'POST') {
       return new Response(JSON.stringify({ project: { id: 'project-run-b' }, conversationId: 'conversation-b' }), { status: 200 });
     }
-    if (url === '/api/projects/project-run-b/files' && method === 'POST') {
+    if (url === '/api/projects/project-1/conversations' && method === 'POST') {
+      return new Response(JSON.stringify({ conversation: { id: 'conversation-revision-1' } }), { status: 200 });
+    }
+    if ((url === '/api/projects/project-run-b/files' || url === '/api/projects/project-1/files') && method === 'POST') {
       return new Response(JSON.stringify({ file }), { status: 200 });
     }
     if (url === '/api/runs' && method === 'POST') {
@@ -532,7 +535,7 @@ describe('Mokina revision recovery UI', () => {
   });
 
   it.each([
-    ['missing-replacement', '模型未写出 MOKINA-REPLACEMENT.html；当前稿未变化。'],
+    ['missing-replacement', '模型未写出修订替换章节；当前稿未变化。'],
     ['invalid-candidate', '替换章节无效'],
   ] as const)('lets the user abandon a succeeded job with %s and start a new revision', async (failure, message) => {
     const saved = job('run-a', 'operation-a');

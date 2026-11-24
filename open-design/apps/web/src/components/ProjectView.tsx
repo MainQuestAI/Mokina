@@ -1476,9 +1476,7 @@ function questionFormAnswerIdentity(
   return { clientRequestId: answerId, userMessageId: `${answerId}-user` };
 }
 
-function autoSendPromptKey(projectId: string): string {
-  return `od:auto-send-prompt:${projectId}`;
-}
+import { autoSendPromptKey } from '../runtime/chat/auto-send-prompt';
 
 function autoSendAttachmentsKey(projectId: string): string {
   return `od:auto-send-attachments:${projectId}`;

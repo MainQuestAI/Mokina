@@ -13,7 +13,8 @@ export function MokinaVersionQuality({ quality, versionId, onLocate, requestStat
   if (quality && quality.versionId !== versionId) quality = undefined;
   const state = requestState ?? (quality ? 'ready' : 'error');
   if (state !== 'ready') quality = undefined;
-  return <details className={styles.panel} data-testid="mokina-version-quality">
+  const autoOpen = Boolean(quality && (quality.status === 'issues' || quality.status === 'incomplete'));
+  return <details className={styles.panel} data-testid="mokina-version-quality" open={autoOpen || undefined}>
     <summary>{t('mokina.quality.title')} · {state === 'loading' ? t('mokina.quality.loading') : quality ? t(`mokina.quality.${quality.status}`) : t('mokina.quality.unavailable')}</summary>
     <p>{t('mokina.quality.scope')}</p>
     {state === 'error' && onRetry ? <Button variant="ghost" onClick={onRetry}>{t('mokina.quality.retry')}</Button> : null}

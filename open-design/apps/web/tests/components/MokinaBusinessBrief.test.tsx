@@ -106,3 +106,29 @@ it('never deletes corrupt input when its backup cannot be mirrored', async () =>
   expect(localStorage.getItem(draftKey)).toBe('{broken');
   expect(screen.queryByRole('textbox', { name: 'Goal' })).toBeNull();
 });
+
+it('hides redundant recovery buttons during normal editing and supports one-click save and start production', async () => {
+  vi.stubGlobal('fetch', vi.fn(async (_url: string, init?: RequestInit) => {
+    if (init?.method !== 'POST') return Response.json({ result: null });
+    const req = JSON.parse(String(init.body)) as SaveMokinaBusinessRequest;
+    return Response.json({
+      result: {
+        fileName: 'task-brief.html',
+        revision: 'r1',
+        versionId: 'v1',
+        document: { schema: 'mokina.business.v1', operationId: req.operationId, requestDigest: 'd1', body: req.body, backgroundSnapshot: null },
+      },
+    });
+  }));
+  open();
+  const goal = await screen.findByRole('textbox', { name: 'Goal' });
+  // In normal editing state without pending/error, the recovery button is hidden
+  expect(screen.queryByRole('button', { name: 'Read current artifact, keep draft' })).toBeNull();
+  fireEvent.change(goal, { target: { value: 'Q4 降噪耳塞冷启动' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Add deliverable' }));
+  const deliverableInput = await screen.findByRole('textbox', { name: 'Deliverables 1' });
+  fireEvent.change(deliverableInput, { target: { value: '市场竞争分析报告' } });
+  fireEvent.click(screen.getByTestId('mokina-brief-save-and-prepare'));
+  await waitFor(() => expect(props.onPrepare).toHaveBeenCalledTimes(1));
+  expect(props.onPrepare.mock.calls[0]?.[0]).toContain('市场竞争分析报告');
+});

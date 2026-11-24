@@ -121,7 +121,7 @@ function DocumentEditor({ projectId, workspaceContext, scope, kind, disabled, on
     const next = { ...current.current, request: { ...current.current.request, operationId: crypto.randomUUID(), body } };
     void persist(next).catch(() => undefined);
   }
-  async function save() {
+  async function save(prepareAllAfterSave = false) {
     if (!current.current || busy || disabled) return;
     setBusy(true); setError(''); setStatus('');
     try {
@@ -135,7 +135,19 @@ function DocumentEditor({ projectId, workspaceContext, scope, kind, disabled, on
       // This write belongs to its captured scope even if the panel has closed.
       await persist(next);
       notifyMokinaEntriesChanged(projectId);
-      if (active.current) { setSaved(result); setError(''); setStatus(t('mokina.business.saved')); }
+      if (active.current) {
+        setSaved(result); setError('');
+        if (prepareAllAfterSave && result.document.body.kind === 'brief') {
+          const allIds = result.document.body.value.deliverables.filter(d => d.title.trim()).map(d => d.id);
+          if (allIds.length) {
+            setSelected(allIds);
+            onPrepare(businessBriefHandoff(result, allIds));
+            setStatus(t('mokina.business.prepared'));
+            return;
+          }
+        }
+        setStatus(t('mokina.business.saved'));
+      }
     } catch (cause) {
       const status = (cause as { status?: number }).status;
       if (status && status >= 400 && status < 500 && current.current) {
@@ -229,8 +241,9 @@ function DocumentEditor({ projectId, workspaceContext, scope, kind, disabled, on
         <p>{body.background ? `${t('mokina.business.fixedSource')} ${body.background.projectId} / ${body.background.versionId} · ${body.background.factIds.length}` : t('mokina.business.noReuse')}</p>
         {body.background ? <Button disabled={locked} onClick={() => update({ ...body, background: null })}>{t('mokina.business.clearSource')}</Button> : null}
       </>}
-      <div className={styles.actions}><Button variant="primary" disabled={busy || disabled || !!(identical && saved.versionId && !draft.pending && draft.request.expectedRevision === saved.revision)} onClick={() => void save()}>{draft.pending ? t('mokina.business.reconcile') : t('mokina.business.save')}</Button>
-        <Button disabled={busy} onClick={() => void inspectCurrent()}>{t('mokina.business.inspect')}</Button></div>
+      <div className={styles.actions}><Button variant="primary" disabled={busy || disabled || !!(identical && saved.versionId && !draft.pending && draft.request.expectedRevision === saved.revision)} onClick={() => void save(false)}>{draft.pending ? t('mokina.business.reconcile') : t('mokina.business.save')}</Button>
+        {body.kind === 'brief' && !draft.pending && body.value.deliverables.some(item => item.title.trim()) ? <Button data-testid="mokina-brief-save-and-prepare" variant="secondary" disabled={busy || disabled} onClick={() => void save(true)}>保存并一键开始制作</Button> : null}
+        {(draft.pending || Boolean(error)) ? <Button disabled={busy} onClick={() => void inspectCurrent()}>{t('mokina.business.inspect')}</Button> : null}</div>
       {draft.pending ? <p>{t('mokina.business.unknown')}</p> : null}
       {saved ? <BusinessCurrentContent saved={saved} /> : null}
       {saved ? <p>{t('mokina.business.current')} {saved.fileName} · {saved.versionId ?? t('mokina.business.unknown')}</p> : null}

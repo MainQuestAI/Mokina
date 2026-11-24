@@ -81,3 +81,23 @@ it('backs up and removes unavailable draft fields after a parser upgrade without
   expect(localStorage.getItem(key)).not.toContain('retired');
   expect(Object.keys(localStorage).some(k => k.startsWith(key + ':backup:') && localStorage.getItem(k)?.includes('不能丢失的旧条目'))).toBe(true);
 });
+it('saves and immediately adopts a user edit on the current version in one click', async () => {
+  const calls: string[] = [];
+  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+    if (init?.method === 'POST' && url.endsWith('/operations')) {
+      calls.push('operations');
+      return Response.json({ version: { id: 'cand-1', version: 2, candidate: true, baseVersionId: 'v1' } });
+    }
+    if (init?.method === 'POST' && url.endsWith('/versions/cand-1/adopt')) {
+      calls.push('adopt');
+      return Response.json({ version: { id: 'cand-1', version: 2, current: true, candidate: false } });
+    }
+    return Response.json(info);
+  }));
+  open();
+  const field = await screen.findByRole('textbox', { name: 'Strategy' });
+  fireEvent.change(field, { target: { value: '一键直接生效的新方向' } });
+  fireEvent.click(screen.getByTestId('mokina-operations-save-and-adopt'));
+  await waitFor(() => expect(props.onSaved).toHaveBeenCalledWith(expect.objectContaining({ id: 'cand-1', current: true, candidate: false })));
+  expect(calls).toEqual(['operations', 'adopt']);
+});

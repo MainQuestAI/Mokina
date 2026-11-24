@@ -234,19 +234,26 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
     }
   }
 
-  async function freezeSnapshot() {
+  async function freezeSnapshot(override?: { results: ReadResult[]; assets: typeof assets; chosenGroupKeys: string[]; acceptUnreadable?: boolean }) {
     const issuedScope = scopeIdentity;
     const capturedGeneration = readPendingMokinaSnapshot(projectId, scope)?.generation ?? null;
-    if (busy || brandLoading || (!brand && !results)) return;
-    if (results?.some(item => item.unreadable) && !acceptUnreadable) { setError(t('mokina.repair.acceptUnreadable')); return; }
-    if (chosenGroups.length === 0 && assets.length === 0 && !brand) {
+    const activeResults = override ? override.results : results;
+    const activeAssets = override ? override.assets : assets;
+    const activeReadable = (activeResults ?? []).filter((item) => !item.unreadable && !MOKINA_ASSET_EXTENSIONS.test(item.material.name)).map((item) => item.material);
+    const activeGroups = groupMokinaMaterialSections(activeReadable);
+    const activeChosenGroups = activeGroups.filter((group) => (override ? override.chosenGroupKeys : selectedGroups).includes(group.key));
+    const activeChosenChars = activeReadable.reduce((sum, material) => sum + joinMokinaExcerpt(activeChosenGroups
+      .filter(group => group.name === material.name).flatMap(group => group.sections.map(section => section.text))).length, 0) + (brand?.chars ?? 0);
+    if (busy || brandLoading || (!brand && !activeResults)) return;
+    if (activeResults?.some(item => item.unreadable) && !(override?.acceptUnreadable ?? acceptUnreadable)) { setError(t('mokina.repair.acceptUnreadable')); return; }
+    if (activeChosenGroups.length === 0 && activeAssets.length === 0 && !brand) {
       setError(t('mokina.contextPanel.selectGroup'));
       return;
     }
     const snapshotId = randomUUID();
     const byFile = new Map<string, { digest: string; parserVersion: string; fragmentIds: Set<string>; versionId?: string }>();
-    for (const group of chosenGroups) {
-      const material = readableMaterials.find((item) => item.name === group.name);
+    for (const group of activeChosenGroups) {
+      const material = activeReadable.find((item) => item.name === group.name);
       if (!material) continue;
       const entry = byFile.get(group.name) ?? { digest: material.contentDigest, parserVersion: material.parserVersion ?? '', fragmentIds: new Set<string>(), ...(material.sourceVersionId ? { versionId: material.sourceVersionId } : {}) };
       for (const section of group.sections) {
@@ -264,12 +271,12 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
       expectedParserVersion: entry.parserVersion,
       fragmentIds: [...entry.fragmentIds],
     }));
-    selections.push(...assets.map((asset, index) => ({ itemId: `A${index + 1}`, mode: 'asset' as const,
+    selections.push(...activeAssets.map((asset, index) => ({ itemId: `A${index + 1}`, mode: 'asset' as const,
       sourceRef: { kind: 'project-file' as const, projectId, fileName: asset.name }, expectedSourceDigest: asset.digest,
       role: asset.role, usageNote: asset.usageNote })));
     if (brand) {
       selections.push({
-        itemId: `B${assets.length + 1}`,
+        itemId: `B${activeAssets.length + 1}`,
         mode: 'groups' as const,
         textKind: 'brand-rule' as const,
         sourceRef: { kind: 'design-system' as const, designSystemId: brand.id },
@@ -281,11 +288,11 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
       setError(t('mokina.contextPanel.noStableGroup'));
       return;
     }
-    if (mokinaContextBudgetExceeded({ itemCount: selections.length, excerptUnits: chosenChars,
-      assetBytes: assets.reduce((sum, asset) => sum + (candidates.find(file => file.name === asset.name)?.size ?? 0), 0) })) {
+    if (mokinaContextBudgetExceeded({ itemCount: selections.length, excerptUnits: activeChosenChars,
+      assetBytes: activeAssets.reduce((sum, asset) => sum + (candidates.find(file => file.name === asset.name)?.size ?? 0), 0) })) {
       setError(t('mokina.contextPanel.budgetExceeded')); return;
     }
-    const excluded = (results ?? [])
+    const excluded = (activeResults ?? [])
       .filter((item) => item.unreadable)
       .map((item) => ({ displayName: item.material.name, reason: 'unreadable', explanation: item.material.limitations.join('；') || t('mokina.contextPanel.unreadable') }));
     setBusy(true);
@@ -485,6 +492,61 @@ export function MokinaContextPanel({ projectId, files, projectDesignSystemId, ex
         catch (cause) { setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.freezeFailed')); }
       }}>{t('mokina.repair.claimLegacy')}</Button> : null}
       <div className="mokina-context-panel__actions">
+        <button
+          type="button"
+          data-testid="mokina-context-quick-freeze"
+          disabled={busy || brandLoading || (!selected.length && !brand)}
+          className="primary"
+          onClick={async () => {
+            const issuedScope = scopeIdentity;
+            if (busy) return;
+            if (!selected.length && brand) {
+              await freezeSnapshot({ results: [], assets: [], chosenGroupKeys: [] });
+              return;
+            }
+            setBusy(true); setError(null);
+            try {
+              const extracted = await Promise.all(
+                selected.map(async name => {
+                  if (capturedMaterials[name]) return capturedMaterials[name];
+                  if (!MOKINA_ASSET_EXTENSIONS.test(name)) return fetchProjectMaterial(projectId, name, workspaceContext);
+                  const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}/raw/${name.split('/').map(encodeURIComponent).join('/')}`,
+                    workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined);
+                  if (!response.ok) return { error: '素材读取失败' };
+                  return { name, contentDigest: await mokinaBytesDigest(await response.arrayBuffer()), status: 'read' as const,
+                    limitations: ['仅冻结素材字节；实际提供方式以运行回执为准。'], sections: [] };
+                }),
+              );
+              if (issuedScope !== scopeRef.current) return;
+              const nextResults: ReadResult[] = extracted.map((result, index) => {
+                const name = selected[index]!;
+                if (!result || 'error' in result) {
+                  return { material: { name, contentDigest: '', status: 'unreadable', limitations: [result && 'error' in result ? result.error : t('mokina.contextPanel.readFailed')], sections: [] }, unreadable: true };
+                }
+                return { material: result, unreadable: result.status === 'unreadable' };
+              });
+              const nextAssets = nextResults.filter(item => !item.unreadable && MOKINA_ASSET_EXTENSIONS.test(item.material.name)).map(item => ({
+                name: item.material.name, digest: item.material.contentDigest, role: 'supporting' as const, usageNote: '' }));
+              const nextReadable = nextResults.filter(item => !item.unreadable && !MOKINA_ASSET_EXTENSIONS.test(item.material.name)).map(item => item.material);
+              const nextGroups = groupMokinaMaterialSections(nextReadable);
+              let runningChars = brand?.chars ?? 0;
+              const autoGroupKeys: string[] = [];
+              for (const g of nextGroups) {
+                const gChars = joinMokinaExcerpt(g.sections.map(s => s.text)).length;
+                if (runningChars + gChars <= budget) {
+                  autoGroupKeys.push(g.key);
+                  runningChars += gChars;
+                }
+              }
+              setResults(nextResults); setAssets(nextAssets); setSelectedGroups(autoGroupKeys); setBusy(false);
+              await freezeSnapshot({ results: nextResults, assets: nextAssets, chosenGroupKeys: autoGroupKeys, acceptUnreadable: true });
+            } catch (cause) {
+              if (issuedScope === scopeRef.current) { setError(cause instanceof Error ? cause.message : t('mokina.contextPanel.readFailed')); setBusy(false); }
+            }
+          }}
+        >
+          一键全选并绑定
+        </button>
         <button
           type="button"
           disabled={busy || !selected.length}

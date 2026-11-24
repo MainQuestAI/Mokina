@@ -111,7 +111,7 @@ function Editor({ projectId, fileName, version, versions, workspaceContext, disa
     } catch (e) { if (active.current) setError(String(e)); }
     finally { if (active.current) setBusy(false); }
   }
-  async function save(retry = false) {
+  async function save(retry = false, adoptImmediately = false) {
     if (!data || submitting.current) return; submitting.current = true; setBusy(true); setError('');
     try {
       let pending = current.current.pending;
@@ -126,7 +126,19 @@ function Editor({ projectId, fileName, version, versions, workspaceContext, disa
       }
       if (!pending) return;
       const result = await request(`${endpoint}/operations`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pending) });
-      if (active.current) await complete(result.version);
+      let finalVersion: ProjectFileVersion = result.version;
+      if (adoptImmediately && version.current && finalVersion?.id) {
+        const adopted = await request(`${endpoint}/versions/${encodeURIComponent(finalVersion.id)}/adopt`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ expectedCurrentVersionId: version.id, operationId: crypto.randomUUID() }),
+        });
+        if (adopted?.version) finalVersion = adopted.version;
+      }
+      if (active.current) {
+        await complete(finalVersion);
+        if (adoptImmediately) onClose();
+      }
     } catch (e) { if (active.current) {
       if ([400, 404, 409].includes((e as { status?: number }).status ?? 0)) await persist({ ...current.current, pending: null });
       setError(String(e)); setAbsent(false);
@@ -171,6 +183,9 @@ function Editor({ projectId, fileName, version, versions, workspaceContext, disa
     {draft.donor ? data?.sections.map(s => <label className={styles.choice} key={s.id}><input type="checkbox" disabled={locked} checked={draft.sections.includes(s.id)} onChange={e => update({ sections: e.target.checked ? [...draft.sections, s.id] : draft.sections.filter(id => id !== s.id) })} /><span>{s.id}<br />{s.text.slice(0, 100)}<br />→ {donorData?.sections.find(source => source.id === s.id)?.text ?? '—'}</span></label>) : null}
     {draft.pending ? <div><p role="status">{t(busy ? 'common.loading' : 'mokina.operations.pending')}</p><Button disabled={busy || disabled} onClick={() => void reconcile()}>{t('mokina.operations.check')}</Button>
       {absent ? <><Button disabled={busy || disabled} onClick={() => void save(true)}>{t('mokina.operations.retrySame')}</Button></> : null}
-    </div> : <Button variant="primary" disabled={locked || saveFailed || Boolean(draft.donor && !donorData) || (draft.donor ? !draft.sections.length : !hasEdits)} onClick={() => void save()}>{t('mokina.operations.save')}</Button>}
+    </div> : <div>
+      {version.current ? <Button data-testid="mokina-operations-save-and-adopt" variant="primary" disabled={locked || saveFailed || Boolean(draft.donor && !donorData) || (draft.donor ? !draft.sections.length : !hasEdits)} onClick={() => void save(false, true)}>保存并直接生效</Button> : null}
+      <Button variant={version.current ? 'secondary' : 'primary'} disabled={locked || saveFailed || Boolean(draft.donor && !donorData) || (draft.donor ? !draft.sections.length : !hasEdits)} onClick={() => void save(false, false)}>{t('mokina.operations.save')}</Button>
+    </div>}
   </div>;
 }

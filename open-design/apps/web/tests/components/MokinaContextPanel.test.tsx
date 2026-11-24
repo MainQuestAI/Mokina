@@ -226,4 +226,29 @@ describe('MokinaContextPanel', () => {
     await screen.findByText(/超过 24,000 字符上限/);
     expect(readPendingMokinaSnapshot('p1')).toBeNull();
   });
+
+  it('supports one-click quick freeze to extract, auto-select all readable groups within budget, and bind snapshot in a single step', async () => {
+    vi.stubGlobal('crypto', webcrypto);
+    fetchProjectMaterialMock.mockResolvedValue(extraction());
+    const posts: Array<{ selections: Array<{ fragmentIds: string[] }> }> = [];
+    vi.stubGlobal('fetch', vi.fn(async (_url: string, init?: RequestInit) => {
+      if (init?.method === 'POST') {
+        posts.push(JSON.parse(String(init.body)));
+        return new Response(JSON.stringify({
+          snapshot: { items: [{ displayName: 'brief.md', kind: 'material-excerpt', text: '全选内容' }] },
+          reused: false,
+        }), { status: 201 });
+      }
+      return new Response(JSON.stringify({ designSystems: [] }));
+    }));
+
+    render(<MokinaContextPanel projectId="p1" files={[materialFile('brief.md')]} />);
+    fireEvent.click(screen.getByRole('checkbox', { name: /brief\.md/ }));
+    fireEvent.click(screen.getByTestId('mokina-context-quick-freeze'));
+
+    await screen.findByText(/Added to the task snapshot/);
+    expect(posts).toHaveLength(1);
+    expect(posts[0]?.selections[0]?.fragmentIds).toEqual(['fragment:1', 'fragment:2', 'fragment:3']);
+    expect(readPendingMokinaSnapshot('p1')?.itemCount).toBe(1);
+  });
 });

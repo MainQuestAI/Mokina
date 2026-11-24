@@ -235,3 +235,54 @@ it('explicitly rejects conflicting source identities instead of dropping histori
   const declaration = (sha256: string) => `<script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id: 'shared', sectionId: 'strategy', sha256 }] })}</script>`;
   expect(() => combineOperationEvidence(html + declaration('a'.repeat(64)), html + declaration('b'.repeat(64)), ['strategy'])).toThrow(/conflict/);
 });
+it('allows static inline SVG charts, project-local or data images, and static inline style attributes in controlled operations', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'mokina-rich-html-'));
+  try {
+    await ensureProject(root, 'p');
+    const scope = { projectsRoot: root, projectId: 'p', fileName: 'plan.html' };
+    const richHtml = html.replace(
+      '原方向</p>',
+      '原方向</p><div style="display:flex;gap:8px"><svg viewBox="0 0 100 20"><rect width="60" height="20" style="fill:#2563eb"></rect></svg><img src="assets/brand-hero.png" alt="品牌主视觉"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=" alt="内联图"></div>',
+    );
+    const donorHtml = richHtml.replace('原方向', '带图表的方向B').replace('width="60"', 'width="80"');
+    const base = await createProjectFileVersion(root, 'p', 'plan.html', richHtml);
+    const donor = await createProjectFileVersion(root, 'p', 'plan.html', donorHtml);
+    const inspected = await readArtifactOperations(scope, base.id);
+    expect(inspected.editable).toBe(true);
+    expect(inspected.fields.some(f => f.id === 'value')).toBe(true);
+    const edited = applyOperationEdits(richHtml, [{ id: 'budget-0-0-quantity', value: '1.5' }]);
+    expect(edited).toContain('data-amount>150.08');
+    expect(edited).toContain('<svg viewBox="0 0 100 20">');
+    const combined = await saveArtifactOperation(scope, {
+      operationId: 'combine-rich',
+      baseVersionId: base.id,
+      contentDigest: sha256Hex(richHtml),
+      edits: [],
+      combine: { versionId: donor.id, contentDigest: sha256Hex(donorHtml), sections: ['strategy'] },
+    });
+    expect(combined.candidate).toBe(true);
+    expect((await readProjectFileVersion(root, 'p', 'plan.html', combined.id)).content).toContain('带图表的方向B');
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+it('validates all three bundled Mokina scenario HTML templates for structure, SVG richness, and controlled editing', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const { inspectMokinaHtmlStructure } = await import('../src/mokina/deliverable-structure.js');
+  const { unsupportedControlledContent } = await import('../src/mokina/controlled-content.js');
+  const scenariosDir = path.resolve(import.meta.dirname, '../../../plugins/_official/scenarios');
+  for (const [plugin, relPath, expectedMinFields] of [
+    ['mokina-market-analysis', 'templates/report.html', 7],
+    ['mokina-marketing-plan', 'templates/report.html', 11],
+    ['mokina-landing-page', 'templates/landing.html', 16],
+  ] as const) {
+    const content = await readFile(path.join(scenariosDir, plugin, relPath), 'utf8');
+    expect(inspectMokinaHtmlStructure(content).ok).toBe(true);
+    expect(unsupportedControlledContent(content)).toBeNull();
+    const support = inspectOperationSupport(content);
+    expect(support.warnings).toEqual([]);
+    expect(support.fields.length).toBeGreaterThanOrEqual(expectedMinFields);
+    if (plugin === 'mokina-landing-page') {
+      expect(content).toContain('<svg');
+      expect(content).not.toContain('data-mokina-budget');
+    }
+  }
+});

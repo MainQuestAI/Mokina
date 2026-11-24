@@ -136,7 +136,7 @@ export function classifyMokinaCodexConnection(probes: MokinaCodexProbeResults): 
         ...base,
         state: 'unknown',
         auth: { state: 'unconfirmed', methodLabel: null },
-        nextAction: '无法确认登录状态；不要当作已连接。重试探测，或复制脱敏诊断用于排查。',
+        nextAction: '无法确认登录状态；不要当作已连接。重试探测、检查 ~/.codex/config.toml 是否存在失效 MCP 配置，或复制脱敏诊断用于排查。',
       };
   }
 }

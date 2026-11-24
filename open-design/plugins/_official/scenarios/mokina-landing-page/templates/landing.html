@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>结构模板 · 高转化商业营销活动落地页</title>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-dark: #0f172a;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: #eff6ff;
+      --border: #e2e8f0;
+      --amber-bg: #fffbeb;
+      --amber-text: #b45309;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text-primary);
+      background: var(--bg-page);
+      margin: 0;
+    }
+    .page-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 24px 72px;
+    }
+    .hero-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      border-radius: 24px;
+      padding: 56px 48px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 36px;
+      align-items: center;
+      margin-bottom: 40px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+    }
+    .hero-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #93c5fd;
+      background: rgba(37, 99, 235, 0.25);
+      border: 1px solid rgba(147, 197, 253, 0.35);
+      padding: 5px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    .hero-section h1 {
+      font-size: 38px;
+      line-height: 1.2;
+      margin: 0 0 16px;
+      color: #ffffff;
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: #cbd5e1;
+      margin: 0 0 28px;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+    }
+    section[data-mokina-id] {
+      margin: 40px 0;
+    }
+    .section-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 44px;
+    }
+    h2 {
+      font-size: 26px;
+      line-height: 1.3;
+      margin: 0 0 24px;
+      color: var(--text-primary);
+    }
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .bento-item {
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .bento-item h3 {
+      font-size: 18px;
+      margin: 0 0 10px;
+      color: var(--text-primary);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+      font-size: 15px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      text-align: left;
+    }
+    th {
+      background: var(--bg-page);
+      font-weight: 600;
+    }
+    .cta-box {
+      background: var(--accent-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: 20px;
+      padding: 40px 44px;
+      text-align: center;
+    }
+    footer[data-mokina-id] {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+      .hero-section { grid-template-columns: 1fr; padding: 36px 28px; }
+      .hero-section h1 { font-size: 28px; }
+    }
+    @media print {
+      body { background: #fff; }
+      .page-wrap { padding: 0; max-width: 100%; }
+      section[data-mokina-id], .bento-item, .section-card, tr { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <section id="hero" data-mokina-id="hero" class="hero-section">
+      <div>
+        <span class="hero-badge" data-mokina-field="hero-badge" data-mokina-kind="strategy" data-mokina-label="首屏场景标签">核心场景解决方案</span>
+        <h1><span data-mokina-field="hero-headline" data-mokina-kind="strategy" data-mokina-label="首屏主标题">待替换：一句话直击目标客户痛点与核心价值承诺</span></h1>
+        <p class="hero-sub" data-mokina-field="hero-subheadline" data-mokina-kind="strategy" data-mokina-label="首屏副标题">基于已确认产品事实与品牌主张，清晰阐述客户可获得的具体收益（生成时替换为真实活动内容）。</p>
+        <a href="#cta" class="btn-primary"><span data-mokina-field="hero-cta" data-mokina-kind="strategy" data-mokina-label="首屏主按钮">立即了解详情</span></a>
+      </div>
+      <div>
+        <svg viewBox="0 0 360 220" width="100%" height="220" role="img" aria-label="核心价值可视化示意">
+          <rect x="0" y="0" width="360" height="220" rx="16" fill="#1e293b" stroke="#334155"/>
+          <rect x="24" y="28" width="140" height="72" rx="10" fill="#0f172a" stroke="#3b82f6"/>
+          <text x="40" y="56" font-size="12" fill="#93c5fd">核心优势指标</text>
+          <text x="40" y="82" font-size="22" font-weight="bold" fill="#ffffff">真实可查</text>
+          <rect x="184" y="28" width="152" height="72" rx="10" fill="#0f172a" stroke="#475569"/>
+          <text x="200" y="56" font-size="12" fill="#cbd5e1">体验升级</text>
+          <text x="200" y="82" font-size="18" font-weight="bold" fill="#38bdf8">即刻可感知</text>
+          <rect x="24" y="118" width="312" height="74" rx="10" fill="#0f172a" stroke="#334155"/>
+          <text x="40" y="148" font-size="13" fill="#e2e8f0">100% 源自已核实品牌事实与公开参数</text>
+          <text x="40" y="172" font-size="12" fill="#94a3b8">拒绝虚构夸大 · 每一项主张均有据可查</text>
+        </svg>
+      </div>
+    </section>
+
+    <section id="value" data-mokina-id="value" class="section-card">
+      <h2>为什么选择我们：三大核心价值支撑</h2>
+      <div class="bento-grid">
+        <div class="bento-item">
+          <h3><span data-mokina-field="value-1-title" data-mokina-kind="strategy" data-mokina-label="价值点一标题">01. 核心价值支柱一</span></h3>
+          <p data-mokina-field="value-1-desc" data-mokina-kind="strategy" data-mokina-label="价值点一说明">围绕客户高频痛点，说明产品如何通过具体特性带来直接体验提升。</p>
+        </div>
+        <div class="bento-item">
+          <h3><span data-mokina-field="value-2-title" data-mokina-kind="strategy" data-mokina-label="价值点二标题">02. 核心价值支柱二</span></h3>
+          <p data-mokina-field="value-2-desc" data-mokina-kind="strategy" data-mokina-label="价值点二说明">阐述与传统替代方案的差异化优势，提供清晰可感知的使用场景。</p>
+        </div>
+        <div class="bento-item">
+          <h3><span data-mokina-field="value-3-title" data-mokina-kind="strategy" data-mokina-label="价值点三标题">03. 核心价值支柱三</span></h3>
+          <p data-mokina-field="value-3-desc" data-mokina-kind="strategy" data-mokina-label="价值点三说明">基于真实资料的品质、服务或效率保障，消除客户决策顾虑。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="proof" data-mokina-id="proof" class="section-card">
+      <h2>产品实证参数与方案对比</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>对比维度</th>
+            <th>本方案核心表现</th>
+            <th>传统替代方式</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>核心规格 / 体验指标</td>
+            <td data-mokina-field="proof-our-spec" data-mokina-kind="matrix" data-mokina-label="我方实证表现">引用真实产品事实与公开参数</td>
+            <td data-mokina-field="proof-alt-spec" data-mokina-kind="matrix" data-mokina-label="传统方案表现">基于已读资料的客观对比描述</td>
+          </tr>
+        </tbody>
+      </table>
+      <p data-mokina-ratio>
+        公开参数折算示例：核心规格比值 <span data-numerator>80</span> / <span data-denominator>100</span> = <span data-ratio-result>0.8</span>（生成时替换为真实公开产品参数或价格规格比值；严禁在此处放入内部采购预算与员工工时表）。
+      </p>
+    </section>
+
+    <section id="cta" data-mokina-id="cta" class="cta-box">
+      <h2><span data-mokina-field="cta-heading" data-mokina-kind="strategy" data-mokina-label="行动区标题">准备好开启全新体验了吗？</span></h2>
+      <p data-mokina-field="cta-subtext" data-mokina-kind="strategy" data-mokina-label="行动区说明">明确参与条件、活动时间窗口与下一步操作说明（当前为本地预览交互，未连接外部表单后端）。</p>
+      <a href="#hero" class="btn-primary"><span data-mokina-field="cta-button" data-mokina-kind="strategy" data-mokina-label="底部行动按钮">立即预约 / 了解方案</span></a>
+    </section>
+
+    <footer id="footer" data-mokina-id="footer">
+      <p data-mokina-field="footer-note" data-mokina-kind="strategy" data-mokina-label="页脚品牌与合规说明">品牌官方活动页面 · 页面所载产品参数与权益均依据已确认资料生成。</p>
+    </footer>
+    <!-- 交付时按 evidence-contract.md 注入真实读取资料的 <script type="application/json" id="mokina-evidence"> -->
+  </div>
+</body>
+</html>

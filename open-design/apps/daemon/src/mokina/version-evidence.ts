@@ -69,6 +69,19 @@ function csvRows(text: string): string[][] {
   return rows;
 }
 const number = (value: string): number | null => /^-?\d+(?:\.\d+)?$/u.test(value.trim()) && Number.isFinite(Number(value)) && Math.abs(Number(value)) <= 1e12 ? Number(value) : null;
+function matchesRatioClaim(expectedRatio: number, rawClaim: string): boolean {
+  const trimmed = rawClaim.trim();
+  const isPercent = trimmed.endsWith('%');
+  const numText = isPercent ? trimmed.slice(0, -1).trim() : trimmed;
+  const parsed = number(numText);
+  if (parsed === null) return false;
+  const target = isPercent ? expectedRatio * 100 : expectedRatio;
+  if (Math.abs(target - parsed) <= 0.00000001) return true;
+  const decimals = numText.includes('.') ? numText.split('.')[1]!.length : 0;
+  if (decimals >= 1 && Number(target.toFixed(decimals)) === parsed) return true;
+  if (isPercent && decimals === 0 && Math.abs(Math.round(target) - parsed) <= 0.000001) return true;
+  return false;
+}
 function inspectCsv(source: MokinaEvidenceSource, text: string, issues: MokinaQualityIssue[], calculations: MokinaQualitySnapshot['calculations']) {
   const rows = csvRows(text.replace(/^\uFEFF/u, '')); const header = rows.shift()!;
   const fields = source.csv!; const indexes = [fields.id, fields.amount, fields.unit].map(k => header.indexOf(k));
@@ -178,20 +191,28 @@ export async function freezeVersionEvidence(html: string, versionId: string, con
         if (hours > capacity!) issue('CAPACITY_EXCEEDED', `${formatDecimal(hours, 8)} hours exceeds ${formatDecimal(capacity!, 8)}.`);
         record.calculations.push({ sectionId: sectionId!, expression: 'Computed total / unused budget / internal hours', result: `${formatDecimal(sum, 2)} / ${formatDecimal(limit! - sum, 2)} / ${formatDecimal(hours, 8)}` });
       }
+      const isLandingPageSurface = $('[data-mokina-id="hero"]').length > 0 && $('[data-mokina-id="cta"]').length > 0;
+      const isHiddenInternalNote = $(table).closest('details,[hidden],[data-mokina-internal-notes]').length > 0;
+      if (isLandingPageSurface && !isHiddenInternalNote) {
+        issue('AUDIENCE_LEAK_INTERNAL_BUDGET', 'Customer-facing landing page exposes internal budget or hours table in visible body.');
+      }
     }
 
     for (const ratio of $('[data-mokina-ratio]').toArray()) {
       const sectionId = $(ratio).closest('[data-mokina-id]').attr('data-mokina-id');
-      const values = ['numerator', 'denominator', 'ratio-result'].map(key => {
-        const cell = $(ratio).find(`[data-${key}]`); return cell.length === 1 ? number(cell.text()) : null;
-      });
-      const [numerator, denominator, claimed] = values;
+      const numCell = $(ratio).find('[data-numerator]');
+      const denCell = $(ratio).find('[data-denominator]');
+      const resCell = $(ratio).find('[data-ratio-result]');
+      const numerator = numCell.length === 1 ? number(numCell.text()) : null;
+      const denominator = denCell.length === 1 ? number(denCell.text()) : null;
+      const rawClaim = resCell.length === 1 ? resCell.text() : '';
       if (!sectionId || numerator == null || denominator == null) record.issues.push({ code: 'RATIO_INPUT', ...(sectionId ? { sectionId } : {}), message: 'Ratio inputs or chapter missing.' });
       else if (denominator === 0) record.issues.push({ code: 'ZERO_DENOMINATOR', sectionId, message: 'Zero denominator: ratio is undefined, never zero or infinity.' });
       else {
-        const result = Number((numerator / denominator).toFixed(8));
+        const exactRatio = numerator / denominator;
+        const result = Number(exactRatio.toFixed(8));
         record.calculations.push({ sectionId, expression: `${numerator} / ${denominator} (decimal, not percent)`, result: String(result) });
-        if (claimed == null || Math.abs(result - claimed) > 0.00000001) record.issues.push({ code: 'RATIO_RESULT', sectionId, message: `Expected decimal ratio ${result}; percentage display is a separate presentation.` });
+        if (!resCell.length || !matchesRatioClaim(exactRatio, rawClaim)) record.issues.push({ code: 'RATIO_RESULT', sectionId, message: `Expected decimal ratio ${result}; percentage display is a separate presentation.` });
       }
     }
     if (!record.calculations.length) record.issues.push({ code: 'NO_CALCULATION', message: 'No valid budget, CSV or ratio calculation completed. Numerical claims remain unchecked.' });

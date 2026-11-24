@@ -1,14 +1,27 @@
 import { load } from 'cheerio';
 
+function isSafeLocalOrDataImageSrc(src: string): boolean {
+  const value = src.trim();
+  if (!value) return false;
+  if (/^data:image\/(?:png|jpeg|jpg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/=]+$/iu.test(value)) return true;
+  if (value.startsWith('/') || value.startsWith('\\') || value.includes(':') || value.includes('//') || value.includes('\\')) return false;
+  return !value.split('/').some(part => !part || part === '.' || part === '..' || part.startsWith('.'));
+}
+
 /** Shared read/write boundary, not a sanitizer: unsupported behavior uses chapter revision. */
 export function unsupportedControlledContent(html: string, mode: 'document' | 'chapter' = 'document'): string | null {
   const $ = load(html);
   const unsupported = 'This content contains resources or unsupported behavior; use chapter revision instead';
   if ($('script').toArray().some(node => mode === 'chapter' || $(node).attr('type') !== 'application/json')
-    || $('img,video,audio,iframe,object,embed,applet,svg,link,base,form,noscript,meta[http-equiv],[src],[srcset],[srcdoc]').length
-    || (mode === 'chapter' && $('style,[style]').length)
+    || $('video,audio,iframe,object,embed,applet,link,base,form,noscript,meta[http-equiv],[srcset],[srcdoc]').length
+    || $('svg script,svg foreignObject,svg iframe,svg image,svg use,svg a').length
+    || (mode === 'chapter' && $('style').length)
     || /url\s*\(|@import/i.test($('style').text())
-    || $('[style]').toArray().some(node => /url\s*\(/i.test($(node).attr('style') ?? ''))) return unsupported;
+    || $('[style]').toArray().some(node => /url\s*\(|@import/i.test($(node).attr('style') ?? ''))) return unsupported;
+  for (const node of $('[src]').toArray()) {
+    if (node.type !== 'tag' || node.tagName.toLowerCase() !== 'img') return unsupported;
+    if (!isSafeLocalOrDataImageSrc($(node).attr('src') ?? '')) return unsupported;
+  }
   for (const node of $('*').toArray()) {
     if (node.type !== 'tag' && node.type !== 'script' && node.type !== 'style') continue;
     for (const [name, value] of Object.entries(node.attribs)) {

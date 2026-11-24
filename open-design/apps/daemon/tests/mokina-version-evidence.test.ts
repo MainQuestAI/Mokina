@@ -295,3 +295,23 @@ it('rejects excerpts quoted from the embedded receipt instead of the captured pa
     expect((await readProjectFileVersion(root, 'p', 'ok.html', fromPage.id)).quality.sources[0]?.error).toBeUndefined();
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+
+it('flags internal budget and hours tables exposed inside customer-facing landing pages (AUDIENCE_LEAK_INTERNAL_BUDGET)', async () => {
+  const sourceText = '品牌已确认产品卖点：冷萃茶包 3 秒即溶。';
+  const landingHtml = `<html><body><section id="hero" data-mokina-id="hero"><h1>3秒冷萃茶</h1></section><section id="budget" data-mokina-id="budget"><table data-mokina-budget data-budget-limit="18000" data-capacity-hours="20"><tr data-budget-item><td data-quantity>4</td><td data-unit-price>800</td><td data-amount>3200</td><td data-hours>8</td></tr></table></section><section id="cta" data-mokina-id="cta"><a href="#hero">立即了解</a></section><script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id: 'brand', path: 'brand.txt', sha256: digest(sourceText), kind: 'full-text', locator: 'line 1', limitation: 'internal note', sectionId: 'hero', excerpt: sourceText }] })}</script></body></html>`;
+  const frozen = await freezeVersionEvidence(landingHtml, 'v1', digest(landingHtml), async () => Buffer.from(sourceText));
+  const checked = readVersionEvidence(landingHtml, frozen, 'v1', digest(landingHtml));
+  expect(checked.status).toBe('issues');
+  expect(checked.issues).toEqual(expect.arrayContaining([
+    expect.objectContaining({ code: 'AUDIENCE_LEAK_INTERNAL_BUDGET', sectionId: 'budget' }),
+  ]));
+});
+
+it('accepts human-readable percentage claims in data-mokina-ratio without forcing 8-decimal fractions', async () => {
+  const sourceText = '上季度线上推广总花费 28400 元，其中小红书与知乎测评花费 16000 元。';
+  const reportHtml = `<html><body><section id="scope" data-mokina-id="scope"><div data-mokina-ratio><span data-numerator>16000</span><span data-denominator>28400</span><span data-ratio-result>56.3%</span></div></section><script type="application/json" id="mokina-evidence">${JSON.stringify({ schema: 'mokina.evidence.v1', sources: [{ id: 'bill', path: 'bill.txt', sha256: digest(sourceText), kind: 'full-text', locator: 'line 1', limitation: 'internal bill', sectionId: 'scope', excerpt: sourceText }] })}</script></body></html>`;
+  const frozen = await freezeVersionEvidence(reportHtml, 'v1', digest(reportHtml), async () => Buffer.from(sourceText));
+  const checked = readVersionEvidence(reportHtml, frozen, 'v1', digest(reportHtml));
+  expect(checked.status).toBe('rules-clear');
+  expect(checked.issues).toEqual([]);
+});

@@ -1,9 +1,288 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>结构模板·不是客户成果</title><style>body{font:16px/1.6 system-ui;max-width:960px;margin:40px auto;padding:0 24px;color:#17212b;background:#fff}section{margin:32px 0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:8px;text-align:left}aside{padding:12px;border:1px solid #bbb}@media print{section{break-inside:avoid}details>*{display:block}body{margin:0}}</style><body><h1>待替换标题</h1><aside>结构示例，未完成研究、检查或批准。不要把模板数据当作用户事实。</aside><section id="objectives" data-mokina-id="objectives"><h2>目标与状态</h2><p>候选方案，尚未批准。写明目标、时点、已确认约束和未知项。</p></section>
-<section id="audience" data-mokina-id="audience"><h2>受众与瓶颈</h2><p>事实、推断分开，写支持来源ID。</p></section>
-<section id="directions" data-mokina-id="directions"><h2>两个可行方向</h2><p data-mokina-field="direction" data-mokina-kind="strategy" data-mokina-label="策略方向">方向A与B：各自条件、机制、取舍、风险和验证路径。</p></section>
-<section id="actions" data-mokina-id="actions"><h2>行动与周期</h2><p data-mokina-field="action" data-mokina-kind="strategy" data-mokina-label="行动安排">行动对应目标、角色、周次、依赖和停止条件。</p></section>
-<section id="budget" data-mokina-id="budget"><h2>预算与容量</h2><p>每方向单独用下方表格；数字为教学示例，必须替换。</p><table data-mokina-budget data-budget-limit="18000" data-capacity-hours="20"><caption>教学示例：CNY，内部总工时；报价与范围必须引用真实输入</caption><tr><th>行动</th><th>数量</th><th>单价CNY</th><th>金额CNY</th><th>内部工时</th><th>依据</th></tr><tr data-budget-item><td>内容</td><td data-quantity>4</td><td data-unit-price>800</td><td data-amount>3200</td><td data-hours>8</td><td>替换为报价source ID与条目定位</td></tr></table><p>示例总金额<span data-mokina-budget-total="0">3200</span>元；未分配预算<span data-mokina-budget-remaining="0">14800</span>元；工时<span data-mokina-budget-hours="0">8</span>。外包与内部工时独立核算。</p></section>
-<section id="measurement" data-mokina-id="measurement"><h2>验证与KPI</h2><p>分子、分母、窗口、数据源；未知转化率/利润时不算ROI。</p></section>
-<section id="sources" data-mokina-id="sources"><h2>依据与未核实项</h2><p>逐结论标来源ID、定位、原文/摘要、限制。</p></section>
-<!-- 根据 evidence-contract.md 添加实际读取资料的证据声明；没有真实摘要时不得伪造。 -->
-</body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>结构模板 · 可操作营销与 GTM 执行方案</title>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --border: #e2e8f0;
+      --amber-bg: #fffbeb;
+      --amber-text: #b45309;
+      --amber-border: #fde68a;
+      --emerald-bg: #ecfdf5;
+      --emerald-text: #047857;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text-primary);
+      background: var(--bg-page);
+      margin: 0;
+      padding: 40px 24px 80px;
+    }
+    .plan-shell {
+      max-width: 1040px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 56px;
+      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
+    }
+    header.exec-header {
+      border-bottom: 2px solid var(--text-primary);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 30px;
+      line-height: 1.25;
+      margin: 0 0 14px;
+      color: var(--text-primary);
+    }
+    .constraint-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .constraint-pill {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .constraint-pill .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .constraint-pill .val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 4px;
+    }
+    section[data-mokina-id] {
+      margin: 40px 0;
+      padding-top: 8px;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 18px 0 10px;
+    }
+    .pillar-grid, .direction-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin: 18px 0;
+    }
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+    .card-highlight {
+      border-color: var(--accent);
+      background: linear-gradient(180deg, var(--accent-soft) 0%, #ffffff 48%);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--bg-subtle);
+      font-weight: 600;
+    }
+    .budget-summary-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 12px 0 24px;
+    }
+    .budget-summary-bar span[data-mokina-budget-total],
+    .budget-summary-bar span[data-mokina-budget-remaining],
+    .budget-summary-bar span[data-mokina-budget-hours] {
+      color: var(--accent);
+      font-size: 16px;
+      margin: 0 4px;
+    }
+    .badge-pending {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--amber-text);
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-border);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .plan-shell { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+      section[data-mokina-id], .card, .constraint-pill, .budget-summary-bar, tr { break-inside: avoid; }
+      details > * { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="plan-shell">
+    <header class="exec-header">
+      <span class="eyebrow">Go-To-Market &amp; Campaign Execution Plan</span>
+      <h1>待替换：可操作营销战役与资源配置方案</h1>
+      <p>围绕核心业务目标、受众漏斗瓶颈与预算工时双约束制定的可执行营销方案（模板示例数字在生成时必须完整替换为真实任务事实）。</p>
+      <div class="constraint-bar">
+        <div class="constraint-pill">
+          <div class="label">核心业务目标</div>
+          <div class="val">待填核心目标</div>
+        </div>
+        <div class="constraint-pill">
+          <div class="label">资金预算总上限</div>
+          <div class="val">见下方预算核算表</div>
+        </div>
+        <div class="constraint-pill">
+          <div class="label">内部工时总上限</div>
+          <div class="val">外包与内部独立核算</div>
+        </div>
+        <div class="constraint-pill">
+          <div class="label">禁投 / 禁用红线</div>
+          <div class="val">严格按实质行为穿透</div>
+        </div>
+      </div>
+    </header>
+
+    <section id="objectives" data-mokina-id="objectives">
+      <h2>01. 业务目标、硬约束与关键前提</h2>
+      <p data-mokina-field="executive-summary" data-mokina-kind="strategy" data-mokina-label="核心策略主张">在此概括核心战役切入点、推荐战略方向与预算工时配置原则。</p>
+      <p data-mokina-field="objective-scope" data-mokina-kind="strategy" data-mokina-label="目标与约束边界">明确周期、目标口径、已确认约束以及需要业务方拍板的待确认项。</p>
+    </section>
+
+    <section id="audience" data-mokina-id="audience">
+      <h2>02. 受众分层、漏斗瓶颈与价值主张屋（Message House）</h2>
+      <p data-mokina-field="core-value-prop" data-mokina-kind="strategy" data-mokina-label="顶层价值主张">核心价值主张：针对核心目标人群的最迫切痛点，给出有事实背书的差异化承诺。</p>
+      <div class="pillar-grid">
+        <div class="card">
+          <h3>支柱一：痛点与场景切口</h3>
+          <p>明确高意向人群触发购买或咨询的具体业务场景与现有替代方案痛点。</p>
+        </div>
+        <div class="card">
+          <h3>支柱二：核心产品利益点</h3>
+          <p>将产品事实转化为客户可感知的效率、体验或成本收益（标注来源 ID）。</p>
+        </div>
+        <div class="card">
+          <h3>支柱三：实证与信任背书</h3>
+          <p>仅引用已固定的资料、实测数据或公开网页抓取回执，零虚构承诺。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="directions" data-mokina-id="directions">
+      <h2>03. 两个实质互斥的可行战略方向对比</h2>
+      <p data-mokina-field="direction" data-mokina-kind="strategy" data-mokina-label="策略方向总述">方向 A 与方向 B 在目标客群切口、渠道机制与验证周期上实质互斥，按需选择或分阶段验证。</p>
+      <div class="direction-grid">
+        <div class="card card-highlight">
+          <h3>战略方向 A（主推候选）</h3>
+          <p data-mokina-field="direction-a-detail" data-mokina-kind="strategy" data-mokina-label="方向A机制与条件">列明方向 A 的目标人群、核心渠道机制、成立前提、优势与主要风险。</p>
+        </div>
+        <div class="card">
+          <h3>战略方向 B（替代对比方向）</h3>
+          <p data-mokina-field="direction-b-detail" data-mokina-kind="strategy" data-mokina-label="方向B机制与条件">列明方向 B 的替代获客路径、适用情境、学习速度及不可与 A 同时执行的原因。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="actions" data-mokina-id="actions">
+      <h2>04. 阶段推进排期与动作派工单</h2>
+      <p data-mokina-field="action" data-mokina-kind="strategy" data-mokina-label="行动排期安排">按周次拆解每项动作的目标对应关系、负责人角色、前置依赖和止损阈值。</p>
+    </section>
+
+    <section id="budget" data-mokina-id="budget">
+      <h2>05. 预算与内部工时双约束核算（定点联动）</h2>
+      <table data-mokina-budget data-budget-limit="18000" data-capacity-hours="20">
+        <caption>结构示例（生成时必须替换为真实报价与任务上限）：单币种 CNY · 内部总工时独立核算</caption>
+        <thead>
+          <tr>
+            <th>具体行动项</th>
+            <th>数量</th>
+            <th>单价 (CNY)</th>
+            <th>行金额 (CNY)</th>
+            <th>内部工时 (h)</th>
+            <th>报价来源 ID 与包含范围</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-budget-item>
+            <td>深度对比内容生产与审校（教学示例）</td>
+            <td data-quantity>4</td>
+            <td data-unit-price>800</td>
+            <td data-amount>3200</td>
+            <td data-hours>8</td>
+            <td>引用真实报价 source ID 与定位；注明外包制作与内部审校边界</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="budget-summary-bar">
+        <div>已分配总金额：<span data-mokina-budget-total="0">3200</span> CNY</div>
+        <div>保留机动未分配预算：<span data-mokina-budget-remaining="0">14800</span> CNY</div>
+        <div>占用内部总工时：<span data-mokina-budget-hours="0">8</span> 小时</div>
+      </div>
+    </section>
+
+    <section id="measurement" data-mokina-id="measurement">
+      <h2>06. 北极星 KPI 口径与小步验证止损线</h2>
+      <p data-mokina-field="measurement-rule" data-mokina-kind="strategy" data-mokina-label="KPI口径与止损线">明确每个验证指标的分子、分母、观察窗口与数据源；设定继续放量与暂停复盘的明确阈值。</p>
+    </section>
+
+    <section id="sources" data-mokina-id="sources">
+      <h2>07. 证据来源台账与待核实边界</h2>
+      <p>逐项列出本次方案绑定的资料来源 ID、文件/网页定位、实际摘录与未核实前提。</p>
+    </section>
+    <!-- 交付时按 evidence-contract.md 注入真实读取资料的 <script type="application/json" id="mokina-evidence"> -->
+  </div>
+</body>
+</html>

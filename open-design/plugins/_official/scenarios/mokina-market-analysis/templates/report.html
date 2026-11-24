@@ -1,7 +1,299 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>结构模板·不是客户成果</title><style>body{font:16px/1.6 system-ui;max-width:960px;margin:40px auto;padding:0 24px;color:#17212b;background:#fff}section{margin:32px 0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:8px;text-align:left}aside{padding:12px;border:1px solid #bbb}@media print{section{break-inside:avoid}details>*{display:block}body{margin:0}}</style><body><h1>待替换标题</h1><aside>结构示例，未完成研究、检查或批准。不要把模板数据当作用户事实。</aside><section id="scope" data-mokina-id="scope"><h2>决策问题与口径</h2><p>明确地区、时期、币种、样本和待验证假设。</p></section>
-<section id="findings" data-mokina-id="findings"><h2>发现与备选解释</h2><table><tr><th>观察</th><th>依据与反证</th><th>含义</th></tr><tr><td data-mokina-field="observation" data-mokina-kind="matrix" data-mokina-label="研究观察">待填观察，不编造</td><td data-mokina-field="evidence-note" data-mokina-kind="matrix" data-mokina-label="依据与反证">来源ID与局限</td><td data-mokina-field="implication" data-mokina-kind="matrix" data-mokina-label="决策含义">推断与决策影响</td></tr></table></section>
-<section id="evidence" data-mokina-id="evidence"><h2>依据与计算</h2><p>列原始数据问题、清洗规则、计算过程及来源ID。</p></section>
-<section id="implications" data-mokina-id="implications"><h2>选择与验证</h2><p>两种行动条件、风险、证伪信号；不要把相关性当因果。</p></section>
-<section id="limits" data-mokina-id="limits"><h2>边界与未知</h2><p>摘要不代表全文；样本不代表总体；缺失和零分母不能补零。</p></section>
-<!-- 根据 evidence-contract.md 添加实际读取资料的证据声明；没有真实摘要时不得伪造。 -->
-</body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>结构模板 · 市场与竞品深度研究报告</title>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --border: #e2e8f0;
+      --amber-bg: #fffbeb;
+      --amber-text: #b45309;
+      --amber-border: #fde68a;
+      --emerald-bg: #ecfdf5;
+      --emerald-text: #047857;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text-primary);
+      background: var(--bg-page);
+      margin: 0;
+      padding: 40px 24px 80px;
+    }
+    .report-shell {
+      max-width: 1040px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 56px;
+      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
+    }
+    header.exec-header {
+      border-bottom: 2px solid var(--text-primary);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 30px;
+      line-height: 1.25;
+      margin: 0 0 14px;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+    .exec-lead {
+      font-size: 16px;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      border-left: 4px solid var(--accent);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+    }
+    .meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 28px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+    section[data-mokina-id] {
+      margin: 40px 0;
+      padding-top: 8px;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: var(--text-primary);
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .kpi-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 6px 0 4px;
+    }
+    .kpi-note {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .chart-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--bg-subtle);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .direction-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .direction-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      background: var(--bg-surface);
+    }
+    .badge-source {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+    .badge-pending {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--amber-text);
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-border);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .report-shell { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+      section[data-mokina-id], .kpi-card, .direction-card, .chart-box, tr { break-inside: avoid; }
+      details > * { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="report-shell">
+    <header class="exec-header">
+      <span class="eyebrow">Market &amp; Competitive Intelligence</span>
+      <h1>待替换：市场格局与竞争切入深度研究报告</h1>
+      <div class="exec-lead">
+        <strong>核心决策结论（Executive Summary）：</strong>
+        <p>在下方第一章概括一针见血的商业判断（仅依据已读资料；模板占位文字在生成时必须完整替换为真实任务分析）。</p>
+      </div>
+      <div class="meta-strip">
+        <span><strong>研究范围：</strong>待填市场与地区口径</span>
+        <span><strong>时间与币种口径：</strong>待填时间窗口 / CNY 或原币种</span>
+        <span><strong>证据基线：</strong>仅限本次已绑定资料与公开网页抓取回执</span>
+      </div>
+    </header>
+
+    <section id="scope" data-mokina-id="scope">
+      <h2>01. 决策锚点与市场口径界定</h2>
+      <p data-mokina-field="executive-thesis" data-mokina-kind="strategy" data-mokina-label="核心研究结论">在此概括一针见血的商业判断与本次研究所支撑的核心决策问题。</p>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">核心业务问题</div>
+          <div class="kpi-value">市场切入与定位</div>
+          <div class="kpi-note">明确本次研究直接服务的业务拍板事项</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">统计口径与时间</div>
+          <div class="kpi-value">存量 vs 增量</div>
+          <div class="kpi-note">严格区分出货额、终端零售额与不同币种</div>
+        </div>
+        <div class="kpi-card" data-mokina-ratio>
+          <div class="kpi-label">样本关键结构比值（示例）</div>
+          <div class="kpi-value"><span data-ratio-result>0.6</span></div>
+          <div class="kpi-note">分子 <span data-numerator>60</span> / 分母 <span data-denominator>100</span>（十进制小数）</div>
+        </div>
+      </div>
+      <p data-mokina-field="scope-hypothesis" data-mokina-kind="strategy" data-mokina-label="关键验证假设">在此列出决定业务走向的核心假设及改变判断所需的证据门槛。</p>
+    </section>
+
+    <section id="findings" data-mokina-id="findings">
+      <h2>02. 竞争替代格局与核心发现（April Dunford 视角）</h2>
+      <div class="chart-box">
+        <h3>价格带与价值主张分布示意（内联静态 SVG）</h3>
+        <svg viewBox="0 0 680 180" width="100%" height="180" role="img" aria-label="竞争定位分布图">
+          <rect x="0" y="0" width="680" height="180" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+          <line x1="60" y1="145" x2="640" y2="145" stroke="#94a3b8" stroke-width="1.5"/>
+          <line x1="60" y1="25" x2="60" y2="145" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="65" y="42" font-size="11" fill="#475569">高专业深度 / 强实证</text>
+          <text x="530" y="165" font-size="11" fill="#475569">价格带 / 客单价 →</text>
+          <circle cx="170" cy="115" r="14" fill="#94a3b8" opacity="0.7"/>
+          <text x="192" y="119" font-size="12" fill="#334155">传统低价替代品（同质化拥挤区）</text>
+          <circle cx="490" cy="95" r="14" fill="#64748b" opacity="0.7"/>
+          <text x="512" y="99" font-size="12" fill="#334155">高溢价头部竞品</text>
+          <circle cx="330" cy="52" r="16" fill="#2563eb"/>
+          <text x="354" y="56" font-size="12" font-weight="bold" fill="#1d4ed8">差异化破局切口（Wedge）</text>
+        </svg>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>竞争替代维度</th>
+            <th>关键观察与事实依据</th>
+            <th>证据来源与读取限制</th>
+            <th>对本业务的决策含义</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>直接竞品 / 替代方案 A</td>
+            <td data-mokina-field="observation" data-mokina-kind="matrix" data-mokina-label="核心观察">待填具体观察，不编造事实</td>
+            <td data-mokina-field="evidence-note" data-mokina-kind="matrix" data-mokina-label="依据与反证">标注来源 ID 与静态摘录范围</td>
+            <td data-mokina-field="implication" data-mokina-kind="matrix" data-mokina-label="决策含义">指出我方应避开的红海与可攻击的短板</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="evidence" data-mokina-id="evidence">
+      <h2>03. 数据核算、清洗规则与来源台账</h2>
+      <p>逐项说明原始 CSV/表格的记录数、重复项、空值、币种拆分及定点求和过程；公开网页标明抓取 URL、访问时间与逐字支持摘录。</p>
+    </section>
+
+    <section id="implications" data-mokina-id="implications">
+      <h2>04. 双备选战略解释与破局验证路径</h2>
+      <div class="direction-grid">
+        <div class="direction-card">
+          <h3>备选解释 / 破局路径 A</h3>
+          <p data-mokina-field="path-a-logic" data-mokina-kind="strategy" data-mokina-label="路径A逻辑">阐述路径 A 的核心驱动机理、适用前提与最小验证信号。</p>
+        </div>
+        <div class="direction-card">
+          <h3>备选解释 / 破局路径 B</h3>
+          <p data-mokina-field="path-b-logic" data-mokina-kind="strategy" data-mokina-label="路径B逻辑">阐述路径 B 的替代机制、风险边界与反证指标。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="limits" data-mokina-id="limits">
+      <h2>05. 证据边界与待补充核实清单</h2>
+      <p>集中列出静态网页未覆盖的动态信息、样本外推边界，以及建议业务方下一步补充的内部数据。</p>
+    </section>
+    <!-- 交付时按 evidence-contract.md 注入真实读取资料的 <script type="application/json" id="mokina-evidence"> -->
+  </div>
+</body>
+</html>

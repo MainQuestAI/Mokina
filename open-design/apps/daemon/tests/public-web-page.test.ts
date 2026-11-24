@@ -11,6 +11,21 @@ it('captures real response bytes separately from limited static text and never e
   expect(parsed.text).toContain('支持摘录'); expect(parsed.text).not.toContain('danger'); expect(parsed.text).not.toContain('hidden claim');
   expect(saved.receipt.scope).toBe('static-html-text'); expect(saved.receipt.bodyDigest).not.toBe(saved.receipt.textDigest); expect(saved.receipt.limitations.join(' ')).toContain('scripts');
 });
+it('keeps adjacent table headers and numeric cells separate without breaking text inside a cell', async () => {
+  const html = '<table><tr><th>年份</th><th>收入</th></tr><tr><td>20<span>25</span></td><td>100</td></tr><tr><td>2026</td><td>200</td></tr></table>';
+  vi.mocked(fetchExternalBrandAsset).mockResolvedValue(new Response(html, { headers: { 'content-type': 'text/html' } }));
+  const saved = await readPublicWebPage(request);
+  const parsed = readWebEvidenceDocument(saved.content, saved.receipt);
+  expect(parsed.text).toBe('年份 收入\n2025 100\n2026 200');
+  expect(saved.receipt.bodyDigest).not.toBe(saved.receipt.textDigest);
+});
+it('reports an invalid final URL as a read failure rather than falsely claiming the source is too large', async () => {
+  const response = new Response('A small readable page.', { headers: { 'content-type': 'text/plain' } });
+  Object.defineProperty(response, 'url', { value: `https://example.com/${'a'.repeat(4096)}` });
+  vi.mocked(fetchExternalBrandAsset).mockResolvedValue(response);
+  await expect(readPublicWebPage(request)).rejects.toMatchObject({ code: 'WEB_READ_FAILED', status: 502 });
+  expect(fetchExternalBrandAsset).toHaveBeenCalledTimes(1);
+});
 it('records a markdown page with its own content type and the limited plain-text scope', async () => {
   vi.mocked(fetchExternalBrandAsset).mockResolvedValue(new Response('# Heading\n\nSupported markdown claim.\n', { headers: { 'content-type': 'text/markdown; charset=utf-8' } }));
   const saved = await readPublicWebPage(request);

@@ -34,6 +34,8 @@ export const en: Dict = {
   "mokina.web.static": "Limited static HTML text; scripts, images and dynamic or authenticated content were not read.",
   "mokina.web.conflict": "Another window changed this draft. Back up your input and read the current draft before continuing.",
   "mokina.web.persistFailed": "The draft was not durably saved. Keep your input and retry; nothing was sent to the daemon.",
+  "mokina.web.resultPersistFailed": "The source response was verified, but this request's recovery state was not durably saved. Keep the request and read its result again before starting another read.",
+  "mokina.web.failedReadPersistFailed": "The daemon rejected this read, but the recovery state was not durably saved. Keep the request and reload the draft before retrying.",
   "mokina.web.mismatch": "The saved reply does not match this request. Nothing was accepted; your request is retained.",
   "mokina.web.stopped": "Reading was stopped before a result arrived. The result is unknown; query the same operation before retrying.",
   "mokina.web.queryTimeout": "The query timed out. A saved result may still exist; try reading the result again.",

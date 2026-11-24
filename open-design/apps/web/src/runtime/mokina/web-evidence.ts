@@ -1,4 +1,4 @@
-import { mokinaWebOperationId, parseCaptureMokinaWebEvidenceRequest, parseMokinaWebCaptureReceipt, type MokinaWebCaptureResult } from '@open-design/contracts';
+import { mokinaWebOperationId, parseCaptureMokinaWebEvidenceRequest, parseMokinaWebCaptureResult, type MokinaWebCaptureResult } from '@open-design/contracts';
 import { flushDurableRecord, mirrorDurableRecord } from '../persistence/mokina-recovery-store';
 import { mokinaBytesDigest } from './digest';
 
@@ -25,14 +25,9 @@ export async function persistWebEvidenceDraft(key: string, value: WebEvidenceDra
   return raw;
 }
 export async function validateWebCaptureReply(value: unknown, request: WebEvidenceDraft['request']): Promise<MokinaWebCaptureResult> {
-  const row = value as MokinaWebCaptureResult;
-  if (!row || typeof row !== 'object' || row.fileName !== `evidence/web-${request.operationId}.md`
-    || typeof row.versionId !== 'string' || !/^[A-Za-z0-9_-]+$/u.test(row.versionId)
-    || typeof row.content !== 'string' || !['matched', 'missing', 'changed'].includes(row.workingFile)
-    || !row.material || row.material.name !== row.fileName || !Array.isArray(row.material.sections)
-    || row.material.contentDigest !== row.contentDigest || row.material.sourceVersionId !== row.versionId) throw new WebEvidenceDraftError('reply-mismatch', 'Web capture response identity mismatch');
-  const receipt = parseMokinaWebCaptureReceipt(row.receipt);
-  if (receipt.operationId !== request.operationId || receipt.requestedUrl !== parseCaptureMokinaWebEvidenceRequest(request).url
-    || await mokinaBytesDigest(new TextEncoder().encode(row.content).buffer) !== row.contentDigest) throw new WebEvidenceDraftError('request-mismatch', 'Web capture response does not match this request');
-  return { ...row, receipt };
+  let row: MokinaWebCaptureResult;
+  try { row = parseMokinaWebCaptureResult(value, request); }
+  catch { throw new WebEvidenceDraftError('reply-mismatch', 'Web capture response identity mismatch'); }
+  if (await mokinaBytesDigest(new TextEncoder().encode(row.content).buffer) !== row.contentDigest) throw new WebEvidenceDraftError('request-mismatch', 'Web capture response does not match this request');
+  return row;
 }

@@ -2,6 +2,7 @@ import JSZip from 'jszip';
 import { describe, expect, it } from 'vitest';
 import { MOKINA_MATERIAL_PARSER_VERSION, readMokinaMaterial } from '../src/mokina/materials.js';
 import { resolvePdftotextBinary } from '../src/pdftotext.js';
+import { renderWebEvidenceDocument, webEvidenceDigest } from '../src/mokina/web-evidence-document.js';
 
 describe('Mokina material extraction', () => {
   it('keeps spreadsheet cell positions and does not invent an uncached formula result', async () => {
@@ -43,6 +44,25 @@ describe('Mokina material extraction', () => {
     const material = await readMokinaMaterial('notes.txt', Buffer.from('预算 50 万'));
     expect(material.parserVersion).toBe(MOKINA_MATERIAL_PARSER_VERSION);
     expect(material.contentDigest).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it('extracts a hand-authored web-format document without claiming a trusted capture occurred', async () => {
+    const text = 'A user-authored statement, not a fetched response.';
+    const digest = webEvidenceDigest(text);
+    const content = renderWebEvidenceDocument({
+      schema: 'mokina.web-evidence.v1', operationId: 'hand-authored',
+      requestedUrl: 'https://example.com/article', resolvedUrl: 'https://example.com/article',
+      retrievedAt: '2026-10-28T00:00:00.000Z', statusCode: 200, contentType: 'text/plain',
+      bodyDigest: digest, textDigest: digest, parserVersion: 'mokina-web/1',
+      scope: 'plain-text', limitations: ['User-authored fixture.'],
+    }, text);
+    const material = await readMokinaMaterial('notes.md', Buffer.from(content));
+    expect(material.sections.map(section => section.text)).toEqual([text]);
+    expect(material.parserVersion).toBe('mokina-material/web-1');
+    expect(material).not.toHaveProperty('webCapture');
+    expect(material).not.toHaveProperty('sourceVersionId');
+    expect(material.limitations.join(' ')).not.toContain('已捕获');
+    expect(material.limitations.join(' ')).toContain('网页文档格式');
   });
 
   it('prefers the packaged pdftotext path and falls back to known absolute locations before PATH', () => {

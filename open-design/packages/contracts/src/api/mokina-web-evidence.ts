@@ -68,3 +68,20 @@ export function parseMokinaWebCaptureReceipt(value: unknown): MokinaWebCaptureRe
     bodyDigest: raw.bodyDigest as string, textDigest: raw.textDigest as string, parserVersion: raw.parserVersion,
     scope: raw.scope as MokinaWebCaptureReceipt['scope'], limitations: raw.limitations as string[] };
 }
+
+/** Shared response identity check. Callers must additionally hash content bytes. */
+export function parseMokinaWebCaptureResult(value: unknown, request: { operationId: string; url?: string }): MokinaWebCaptureResult {
+  const operationId = mokinaWebOperationId(request.operationId);
+  const row = value as MokinaWebCaptureResult | null;
+  if (!row || typeof row !== 'object' || Array.isArray(row) || row.fileName !== `evidence/web-${operationId}.md`
+    || typeof row.versionId !== 'string' || !/^[A-Za-z0-9_-]+$/u.test(row.versionId)
+    || typeof row.content !== 'string' || typeof row.contentDigest !== 'string' || !/^[a-f0-9]{64}$/u.test(row.contentDigest)
+    || !['matched', 'missing', 'changed'].includes(row.workingFile)
+    || !row.material || row.material.name !== row.fileName || !Array.isArray(row.material.sections)
+    || row.material.contentDigest !== row.contentDigest || row.material.sourceVersionId !== row.versionId) throw new Error('Web capture response identity mismatch');
+  const receipt = parseMokinaWebCaptureReceipt(row.receipt);
+  if (receipt.operationId !== operationId || (request.url !== undefined && receipt.requestedUrl !== mokinaPublicWebUrl(request.url))) {
+    throw new Error('Web capture response does not match the requested operation');
+  }
+  return { ...row, receipt };
+}

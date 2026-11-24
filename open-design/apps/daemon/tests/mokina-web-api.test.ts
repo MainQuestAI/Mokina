@@ -2,7 +2,7 @@ import express from 'express';
 import type { MokinaWebCaptureResult } from '@open-design/contracts';
 const json = (response: Response) => response.json() as Promise<{ result: MokinaWebCaptureResult; error: { code: string } }>;
 import { createServer, type Server } from 'node:http';
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
@@ -10,6 +10,7 @@ import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { registerMokinaWebEvidenceRoutes } from '../src/routes/project/mokina-web-evidence.js';
 import { registerProjectMaterialRoute } from '../src/routes/project/project-material.js';
 import { fetchExternalBrandAsset } from '../src/brands/safe-fetch.js';
+import * as webEvidence from '../src/mokina/web-evidence.js';
 vi.mock('../src/brands/safe-fetch.js', () => ({ fetchExternalBrandAsset: vi.fn() }));
 let root: string, server: Server, url: string;
 const seen: string[] = [];
@@ -24,7 +25,7 @@ beforeEach(async () => {
   server = createServer(app); await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve)); url = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
   vi.mocked(fetchExternalBrandAsset).mockImplementation(async () => new Response('<article><h1>Public page</h1><p>Supported statement.</p></article>', { headers: { 'content-type': 'text/html' } }));
 });
-afterEach(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); await rm(root, { recursive: true, force: true }); vi.mocked(fetchExternalBrandAsset).mockReset(); });
+afterEach(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); await rm(root, { recursive: true, force: true }); vi.restoreAllMocks(); vi.mocked(fetchExternalBrandAsset).mockReset(); });
 const request = { operationId: 'api-one', url: 'https://example.com/page' };
 const post = (project: string, value: unknown = request, denied = false) => fetch(`${url}/api/projects/${project}/mokina/web-evidence`, { method: 'POST', headers: { 'content-type': 'application/json', ...(denied ? { 'x-denied': '1' } : {}) }, body: JSON.stringify(value) });
 it('authorizes before reading external content, rejects bad inputs, and isolates saved operations by project', async () => {
@@ -66,4 +67,26 @@ it('serves captured material with its receipt and degrades to plain material whe
   expect(degraded.status).toBe(200); const body = await degraded.json() as { webCapture?: unknown; sourceVersionId?: string; contentDigest: string };
   expect(body.webCapture).toBeUndefined(); expect(body.sourceVersionId).toBeUndefined();
   expect(body.contentDigest).toBe(okBody.contentDigest);
+});
+it.each(['receipt', 'manifest JSON'] as const)('keeps working-file material readable without trusted identity when capture %s is damaged', async damage => {
+  const saved = await json(await post('p')); const fileName = saved.result.fileName;
+  const key = createHash('sha256').update(fileName).digest('hex').slice(0, 24);
+  const manifestPath = path.join(root, 'p', '.file-versions', key, 'manifest.json');
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as { entries: Array<{ webCapture: { textDigest: string } }> };
+  manifest.entries[0]!.webCapture.textDigest = 'damaged';
+  await writeFile(manifestPath, damage === 'receipt' ? JSON.stringify(manifest) : '{');
+  const response = await fetch(`${url}/api/projects/p/files/${encodeURIComponent(fileName)}/material`);
+  expect(response.status).toBe(200);
+  const body = await response.json() as MokinaWebCaptureResult['material'];
+  expect(body.webCapture).toBeUndefined(); expect(body.sourceVersionId).toBeUndefined();
+  expect(body.contentDigest).toBe(saved.result.contentDigest); expect(body.sections).toEqual(saved.result.material.sections);
+  expect((await fetch(`${url}/api/projects/p/mokina/web-evidence/api-one`)).status).toBe(damage === 'receipt' ? 409 : 500);
+  expect(fetchExternalBrandAsset).toHaveBeenCalledTimes(1);
+});
+it('does not degrade a capture metadata I/O failure into successful plain material', async () => {
+  const saved = await json(await post('p'));
+  vi.spyOn(webEvidence, 'readCapturedWebEvidence').mockRejectedValueOnce(Object.assign(new Error('metadata I/O failed'), { code: 'EIO' }));
+  const response = await fetch(`${url}/api/projects/p/files/${encodeURIComponent(saved.result.fileName)}/material`);
+  expect(response.ok).toBe(false);
+  expect((await response.json() as { error: { message: string } }).error.message).toBe('metadata I/O failed');
 });

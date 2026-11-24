@@ -1,14 +1,98 @@
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import type { MokinaWebCaptureReceipt, MokinaWebCaptureResult } from '@open-design/contracts';
 import { runWebEvidenceCli } from '../src/mokina/web-evidence-cli.js';
 import { parseFlags } from '../src/cli-shared.js';
-afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+import { renderWebEvidenceDocument, webEvidenceDigest } from '../src/mokina/web-evidence-document.js';
+const originalExitCode = process.exitCode;
+beforeEach(() => { process.exitCode = 0; });
+afterEach(() => { process.exitCode = originalExitCode; vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 const deps = { parseFlags, cliDaemonUrl: async () => 'http://127.0.0.1:12345' };
+const args = ['--project', 'p', '--url', 'https://example.com/page', '--operation-id', 'one'];
+function captured(): MokinaWebCaptureResult {
+  const text = 'A saved public statement.';
+  const receipt: MokinaWebCaptureReceipt = { schema: 'mokina.web-evidence.v1', operationId: 'one',
+    requestedUrl: 'https://example.com/page', resolvedUrl: 'https://example.com/page', retrievedAt: '2026-10-28T00:00:00.000Z',
+    statusCode: 200, contentType: 'text/plain', bodyDigest: webEvidenceDigest(text), textDigest: webEvidenceDigest(text),
+    parserVersion: 'mokina-public-web-v1', scope: 'plain-text', limitations: ['Static text only.'] };
+  const content = renderWebEvidenceDocument(receipt, text), contentDigest = webEvidenceDigest(content);
+  return { fileName: 'evidence/web-one.md', versionId: 'saved-one', contentDigest, content, receipt, workingFile: 'matched',
+    material: { name: 'evidence/web-one.md', sourceVersionId: 'saved-one', webCapture: receipt, contentDigest,
+      status: 'read', limitations: [], sections: [{ location: 'paragraph 1', text }] } };
+}
 it('sends one explicit capture and queries the same operation without a retry or a second POST', async () => {
-  const fetchMock = vi.fn(async () => Response.json({ result: null })); vi.stubGlobal('fetch', fetchMock); vi.spyOn(process.stdout, 'write').mockReturnValue(true);
-  const args = ['--project', 'p', '--url', 'https://example.com/page', '--operation-id', 'one'];
+  const fetchMock = vi.fn(async () => Response.json({ result: captured() })); vi.stubGlobal('fetch', fetchMock); vi.spyOn(process.stdout, 'write').mockReturnValue(true);
   await runWebEvidenceCli('capture', args, deps); await runWebEvidenceCli('read', args, deps);
   expect(fetchMock.mock.calls[0]).toEqual(['http://127.0.0.1:12345/api/projects/p/mokina/web-evidence', expect.objectContaining({ method: 'POST', body: JSON.stringify({ operationId: 'one', url: 'https://example.com/page' }) })]);
   expect(fetchMock.mock.calls[1]).toEqual(['http://127.0.0.1:12345/api/projects/p/mokina/web-evidence/one', {}]);
+  expect(process.exitCode).toBe(0);
+});
+it('accepts a successful read with no saved result', async () => {
+  vi.stubGlobal('fetch', vi.fn(async () => Response.json({ result: null })));
+  const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+  await runWebEvidenceCli('read', args, deps);
+  expect(process.exitCode).toBe(0); expect(stdout).toHaveBeenCalledWith('{\n  "result": null\n}\n');
+});
+it.each([
+  ['invalid JSON', () => new Response('{')],
+  ['missing result', () => Response.json({})],
+  ['null capture', () => Response.json({ result: null })],
+  ['missing fields', () => Response.json({ result: { versionId: 'saved-one' } })],
+  ['wrong operation', () => Response.json({ result: { ...captured(), receipt: { ...captured().receipt, operationId: 'other' } } })],
+  ['wrong URL', () => Response.json({ result: { ...captured(), receipt: { ...captured().receipt, requestedUrl: 'https://example.com/other' } } })],
+  ['wrong material version', () => Response.json({ result: { ...captured(), material: { ...captured().material, sourceVersionId: 'other' } } })],
+  ['damaged receipt', () => Response.json({ result: { ...captured(), receipt: { ...captured().receipt, textDigest: 'bad' } } })],
+  ['damaged content', () => Response.json({ result: { ...captured(), content: 'Changed after save' } })],
+] as const)('reports an unknown capture result for a 2xx %s without retrying POST', async (_label, response) => {
+  const fetchMock = vi.fn(async () => response()); vi.stubGlobal('fetch', fetchMock);
+  const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+  const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+  await runWebEvidenceCli('capture', args, deps);
+  expect(process.exitCode).toBe(3); expect(stdout).not.toHaveBeenCalled(); expect(fetchMock).toHaveBeenCalledTimes(1);
+  expect(stderr.mock.calls.join()).toContain('unknown');
+  expect(stderr.mock.calls.join()).toContain("od research read --project 'p' --operation-id one");
+});
+it('treats a successful read with an invalid envelope as unavailable instead of an empty result', async () => {
+  const fetchMock = vi.fn(async () => Response.json({})); vi.stubGlobal('fetch', fetchMock);
+  const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true); vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+  await runWebEvidenceCli('read', args, deps);
+  expect(process.exitCode).toBe(3); expect(stdout).not.toHaveBeenCalled(); expect(fetchMock).toHaveBeenCalledTimes(1);
+  expect(fetchMock).toHaveBeenCalledWith('http://127.0.0.1:12345/api/projects/p/mokina/web-evidence/one', {});
+});
+it.each([500, 409])('keeps daemon %i capture diagnostics and advises a same-operation read when storage may have completed', async (status) => {
+  const error = { code: 'WEB_CAPTURE_UNAVAILABLE', message: 'The saved source could not be published.' };
+  const fetchMock = vi.fn(async () => Response.json({ error }, { status })); vi.stubGlobal('fetch', fetchMock);
+  const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+  const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+  await runWebEvidenceCli('capture', args, deps);
+  expect(process.exitCode).toBe(4); expect(stdout).not.toHaveBeenCalled(); expect(fetchMock).toHaveBeenCalledTimes(1);
+  expect(fetchMock).toHaveBeenCalledWith('http://127.0.0.1:12345/api/projects/p/mokina/web-evidence', expect.objectContaining({ method: 'POST' }));
+  expect(stderr).toHaveBeenCalledWith(`daemon ${status}: ${JSON.stringify(error)}\n`);
+  expect(stderr).toHaveBeenCalledWith("Web evidence result is unknown for operation one. Query the same operation without repeating capture: od research read --project 'p' --operation-id one --daemon-url 'http://127.0.0.1:12345'\n");
+});
+it.each([
+  [400, 'BAD_REQUEST'],
+  [409, 'WEB_CAPTURE_CONFLICT'],
+  [502, 'WEB_READ_FAILED'],
+  [502, 'WEB_READ_STOPPED'],
+  [502, 'WEB_HTTP_ERROR'],
+] as const)('keeps a known rejected capture %i %s diagnostic without an unknown-result hint', async (status, code) => {
+  const error = { code, message: 'The request could not complete.' };
+  const fetchMock = vi.fn(async () => Response.json({ error }, { status })); vi.stubGlobal('fetch', fetchMock);
+  const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+  const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+  await runWebEvidenceCli('capture', args, deps);
+  expect(process.exitCode).toBe(4); expect(stdout).not.toHaveBeenCalled(); expect(fetchMock).toHaveBeenCalledTimes(1);
+  expect(stderr).toHaveBeenCalledExactlyOnceWith(`daemon ${status}: ${JSON.stringify(error)}\n`);
+});
+it('reports a failed read without retrying capture or printing capture recovery guidance', async () => {
+  const error = { code: 'WEB_CAPTURE_UNAVAILABLE', message: 'The source is unavailable.' };
+  const fetchMock = vi.fn(async () => Response.json({ error }, { status: 500 })); vi.stubGlobal('fetch', fetchMock);
+  const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+  const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+  await runWebEvidenceCli('read', args, deps);
+  expect(process.exitCode).toBe(4); expect(stdout).not.toHaveBeenCalled();
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('http://127.0.0.1:12345/api/projects/p/mokina/web-evidence/one', {});
+  expect(stderr).toHaveBeenCalledExactlyOnceWith(`daemon 500: ${JSON.stringify(error)}\n`);
 });
 it('reports usage errors with exit code 2 instead of a stack trace', async () => {
   const logged = vi.spyOn(console, 'error').mockImplementation(() => {});

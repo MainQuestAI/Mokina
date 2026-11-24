@@ -29,7 +29,12 @@ export function registerProjectMaterialRoute(app: Express, deps: {
           // Known-untrusted bytes stay readable as a plain material without the
           // trusted receipt; only capture metadata failures degrade — everything
           // else keeps its specific status instead of collapsing into 400.
-          if (!(error instanceof WebEvidenceError) || !['WEB_CAPTURE_INTEGRITY', 'WEB_CAPTURE_CONFLICT'].includes(error.code)) throw error;
+          // The manifest reader preserves JSON.parse's SyntaxError as well as
+          // its typed schema errors. Neither grants this file a source identity.
+          const invalidManifest = error instanceof SyntaxError
+            || (error as NodeJS.ErrnoException | null)?.code === 'VERSION_MANIFEST_INVALID';
+          if (!invalidManifest && (!(error instanceof WebEvidenceError)
+            || !['WEB_CAPTURE_INTEGRITY', 'WEB_CAPTURE_CONFLICT'].includes(error.code))) throw error;
         }
       }
       return void res.json(captured?.contentDigest === material.contentDigest ? captured.material : material);

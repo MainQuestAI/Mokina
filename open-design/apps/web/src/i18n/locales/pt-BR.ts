@@ -34,6 +34,8 @@ export const ptBR: Dict = {
   "mokina.web.static": "Texto HTML estático limitado; scripts, imagens e conteúdo dinâmico ou autenticado não são incluídos.",
   "mokina.web.conflict": "Outra janela alterou este rascunho. Faça backup da sua entrada e leia o rascunho atual antes de continuar.",
   "mokina.web.persistFailed": "O rascunho não foi salvo de forma durável. Mantenha sua entrada e tente novamente; nada foi enviado ao daemon.",
+  "mokina.web.resultPersistFailed": "A identidade e o resumo da resposta da fonte foram verificados, mas o estado de recuperação desta solicitação não foi salvo de forma durável. Mantenha a solicitação e leia seu resultado novamente antes de iniciar outra leitura.",
+  "mokina.web.failedReadPersistFailed": "O daemon rejeitou esta leitura, mas o estado de recuperação não foi salvo de forma durável. Mantenha a solicitação e recarregue o rascunho antes de tentar novamente.",
   "mokina.web.mismatch": "A resposta salva não corresponde a esta solicitação. Nada foi aceito; sua solicitação é mantida.",
   "mokina.web.stopped": "A leitura foi interrompida antes de chegar um resultado. O resultado é desconhecido; consulte a mesma operação antes de tentar novamente.",
   "mokina.web.queryTimeout": "A consulta expirou. Um resultado salvo ainda pode existir; tente ler o resultado novamente.",

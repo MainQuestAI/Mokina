@@ -34,6 +34,8 @@ export const fr: Dict = {
   "mokina.web.static": "Texte HTML statique limité ; les scripts, images et contenus dynamiques ou authentifiés ne sont pas inclus.",
   "mokina.web.conflict": "Une autre fenêtre a modifié ce brouillon. Sauvegardez votre saisie et lisez le brouillon actuel avant de continuer.",
   "mokina.web.persistFailed": "Le brouillon n'a pas été enregistré de façon durable. Conservez votre saisie et réessayez ; rien n'a été envoyé au daemon.",
+  "mokina.web.resultPersistFailed": "L’identité et l’empreinte de la réponse source ont été vérifiées, mais l’état de récupération de cette requête n’a pas été enregistré durablement. Conservez la requête et relisez son résultat avant de lancer une autre lecture.",
+  "mokina.web.failedReadPersistFailed": "Le daemon a refusé cette lecture, mais l’état de récupération n’a pas été enregistré durablement. Conservez la requête et rechargez le brouillon avant de réessayer.",
   "mokina.web.mismatch": "La réponse enregistrée ne correspond pas à cette requête. Rien n'a été accepté ; votre requête est conservée.",
   "mokina.web.stopped": "La lecture a été arrêtée avant l'arrivée d'un résultat. Le résultat est inconnu ; interrogez la même opération avant de réessayer.",
   "mokina.web.queryTimeout": "L'interrogation a expiré. Un résultat enregistré peut encore exister ; essayez de relire le résultat.",

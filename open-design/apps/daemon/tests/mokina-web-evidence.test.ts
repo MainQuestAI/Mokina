@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, realpath, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, expect, it, vi } from 'vitest';
@@ -9,7 +9,7 @@ import { renderWebEvidenceDocument, webEvidenceDigest } from '../src/mokina/web-
 import { createProjectFileVersion, listProjectFileVersions, readProjectFileVersion } from '../src/project-file-versions.js';
 import { buildProjectRecoveryPackage, importProjectRecoveryPackage } from '../src/mokina/recovery-package.js';
 import type { CaptureMokinaWebEvidenceRequest, MokinaWebCaptureReceipt } from '@open-design/contracts';
-const fault = vi.hoisted(() => ({ target: '', code: '', race: '' }));
+const fault = vi.hoisted(() => ({ target: '', code: '', race: '', partialWrite: false }));
 vi.mock('node:fs/promises', async original => {
   const actual = await original<typeof import('node:fs/promises')>();
   return { ...actual, link: async (...args: Parameters<typeof actual.link>) => {
@@ -22,10 +22,16 @@ vi.mock('node:fs/promises', async original => {
       throw Object.assign(new Error(fault.code ? 'hard links are not supported here' : 'disk write unavailable'), fault.code ? { code: fault.code } : {});
     }
     return actual.link(...args);
+  }, writeFile: async (...args: Parameters<typeof actual.writeFile>) => {
+    if (fault.partialWrite && String(args[0]) === fault.target) {
+      await actual.writeFile(args[0], String(args[1]).slice(0, 50), args[2]);
+      throw Object.assign(new Error('disk full after a partial write'), { code: 'ENOSPC' });
+    }
+    return actual.writeFile(...args);
   } };
 });
 const roots: string[] = [];
-afterEach(async () => { fault.target = ''; fault.code = ''; fault.race = ''; await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); });
+afterEach(async () => { fault.target = ''; fault.code = ''; fault.race = ''; fault.partialWrite = false; await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); });
 async function scope() { const projectsRoot = await mkdtemp(path.join(tmpdir(), 'mokina-web-')); roots.push(projectsRoot); await ensureProject(projectsRoot, 'p'); return { projectsRoot, projectId: 'p' }; }
 const request = { operationId: 'capture-one', url: 'https://example.com/article' };
 function page(input: CaptureMokinaWebEvidenceRequest) {
@@ -84,16 +90,36 @@ it('absorbs a racing exclusive-create failure and reports the changed working fi
   expect(await readFile(file, 'utf8')).toBe('A racing writer materialized this path.');
   expect(read).toHaveBeenCalledTimes(1);
 });
-it('falls back to an exclusive write when the volume rejects hard links', async () => {
+it('keeps the complete source recoverable when the volume cannot publish atomically without replacing a file', async () => {
   const s = await scope(); const read = vi.fn(async (input: CaptureMokinaWebEvidenceRequest) => page(input));
   fault.target = path.join(await realpath(projectDir(s.projectsRoot, 'p')), webEvidenceFileName(request.operationId));
   fault.code = 'EPERM';
-  const saved = await captureWebEvidence(s, request, undefined, read);
-  expect(saved.workingFile).toBe('matched'); expect(read).toHaveBeenCalledTimes(1);
+  await expect(captureWebEvidence(s, request, undefined, read)).rejects.toMatchObject({ code: 'ATOMIC_EXCLUSIVE_UNSUPPORTED' });
+  const saved = await readCapturedWebEvidence(s, request.operationId);
+  expect(saved?.workingFile).toBe('missing');
+  expect(saved?.content).toBe(page(request).content);
+  expect(await readdir(path.dirname(fault.target))).toEqual([]);
   fault.target = '';
-  // Exclusive create survives the fallback: an existing file still refuses overwrite.
+  const recovered = await captureWebEvidence(s, request, undefined, read);
+  expect(recovered.workingFile).toBe('matched');
+  expect(recovered.versionId).toBe(saved?.versionId); expect(read).toHaveBeenCalledTimes(1);
+  // A competing file must still refuse overwrite.
   await writeFile(path.join(projectDir(s.projectsRoot, 'p'), 'dup.md'), 'existing');
   await expect(writeProjectFile(s.projectsRoot, 'p', 'dup.md', 'x', { overwrite: false, atomic: true })).rejects.toMatchObject({ code: 'EEXIST' });
+});
+it('never leaves a partial working file when unsafe direct writes would run out of space', async () => {
+  const s = await scope(); const read = vi.fn(async (input: CaptureMokinaWebEvidenceRequest) => page(input));
+  fault.target = path.join(await realpath(projectDir(s.projectsRoot, 'p')), webEvidenceFileName(request.operationId));
+  fault.code = 'ENOTSUP'; fault.partialWrite = true;
+  await expect(captureWebEvidence(s, request, undefined, read)).rejects.toThrow();
+  const saved = await readCapturedWebEvidence(s, request.operationId);
+  expect(saved?.workingFile).toBe('missing');
+  expect(saved?.content).toBe(page(request).content);
+  expect(await readdir(path.dirname(fault.target))).toEqual([]);
+  fault.target = ''; fault.partialWrite = false;
+  const recovered = await captureWebEvidence(s, request, undefined, read);
+  expect(recovered.workingFile).toBe('matched'); expect(recovered.versionId).toBe(saved?.versionId);
+  expect(read).toHaveBeenCalledTimes(1);
 });
 it('never publishes evidence after a read failure, abort, or conflicting user file', async () => {
   const s = await scope(); const failure = vi.fn(async () => { throw new Error('HTTP 403'); });

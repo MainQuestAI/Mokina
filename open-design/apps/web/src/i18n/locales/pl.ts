@@ -34,6 +34,8 @@ export const pl: Dict = {
   "mokina.web.static": "Ograniczony statyczny tekst HTML; skrypty, obrazy oraz treści dynamiczne lub wymagające uwierzytelnienia nie są uwzględnione.",
   "mokina.web.conflict": "Inne okno zmieniło ten szkic. Zarchiwizuj swoją treść i przeczytaj bieżący szkic przed kontynuowaniem.",
   "mokina.web.persistFailed": "Szkic nie został trwale zapisany. Zachowaj swoją treść i spróbuj ponownie; nic nie wysłano do demona.",
+  "mokina.web.resultPersistFailed": "Zweryfikowano tożsamość i sumę kontrolną odpowiedzi źródła, ale stan odzyskiwania żądania nie został trwale zapisany. Zachowaj żądanie i ponownie odczytaj wynik przed rozpoczęciem nowego odczytu.",
+  "mokina.web.failedReadPersistFailed": "Demon odrzucił ten odczyt, ale stan odzyskiwania nie został trwale zapisany. Zachowaj żądanie i ponownie wczytaj szkic przed kolejną próbą.",
   "mokina.web.mismatch": "Zapisana odpowiedź nie pasuje do tego żądania. Nic nie zostało zaakceptowane; Twoje żądanie jest zachowane.",
   "mokina.web.stopped": "Odczytanie zostało zatrzymane przed uzyskaniem wyniku. Wynik jest nieznany; odpytaj tę samą operację przed ponowną próbą.",
   "mokina.web.queryTimeout": "Czas odpytania minął. Zapisany wynik może nadal istnieć; spróbuj ponownie odczytać wynik.",

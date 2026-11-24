@@ -34,6 +34,8 @@ export const zhTW: Dict = {
   "mokina.web.static": "有限的靜態 HTML 文字；未讀取腳本、圖片、動態或登入後內容。",
   "mokina.web.conflict": "其他視窗修改了本草稿。請先備份本視窗輸入，再讀取目前草稿。",
   "mokina.web.persistFailed": "草稿未能安全儲存。請保留輸入並重試；尚未向守護程序送出任何請求。",
+  "mokina.web.resultPersistFailed": "來源回覆已通過身分與摘要驗證，但本次請求的復原狀態未能安全儲存。請保留請求並重新讀取結果，再開始新讀取。",
+  "mokina.web.failedReadPersistFailed": "守護程式已拒絕本次讀取，但復原狀態未能安全儲存。請保留請求，重新讀取草稿後再重試。",
   "mokina.web.mismatch": "已儲存的回覆與本次請求不符。未採納任何內容；本次請求已保留。",
   "mokina.web.stopped": "讀取在結果返回前被停止。結果未知；請先查詢同一次讀取再決定重試。",
   "mokina.web.queryTimeout": "查詢逾時。已儲存的結果可能仍在，請再次查詢讀取結果。",

@@ -34,6 +34,8 @@ export const hu: Dict = {
   "mokina.web.static": "Korlátozott statikus HTML-szöveg; szkriptek, képek valamint dinamikus vagy hitelesített tartalom nem szerepel benne.",
   "mokina.web.conflict": "Egy másik ablak módosította ezt a piszkozatot. Mentse a bevitelét, és olvassa el a jelenlegi piszkozatot, mielőtt folytatja.",
   "mokina.web.persistFailed": "A piszkozat nem menthető tartósan. Őrizze meg a bevitelét, és próbálja újra; a daemonnak semmi sem lett elküldve.",
+  "mokina.web.resultPersistFailed": "A forrás válaszának azonosítója és ellenőrző összege ellenőrizve, de a kérés helyreállítási állapotát nem sikerült tartósan menteni. Őrizze meg a kérést, és új olvasás előtt olvassa újra az eredményét.",
+  "mokina.web.failedReadPersistFailed": "A démon elutasította az olvasást, de a helyreállítási állapotot nem sikerült tartósan menteni. Őrizze meg a kérést, és újrapróbálkozás előtt töltse be újra a piszkozatot.",
   "mokina.web.mismatch": "A mentett válasz nem egyezik ezzel a kéréssel. Semmi sem lett elfogadva; a kérése megmarad.",
   "mokina.web.stopped": "Az olvasás az eredmény megérkezése előtt leállt. Az eredmény ismeretlen; újrapróbálás előtt kérdezze le ugyanazt a műveletet.",
   "mokina.web.queryTimeout": "A lekérdezés időtúllépést szenvedett. Lehet, hogy még létezik mentett eredmény; próbálja újra elolvasni az eredményt.",

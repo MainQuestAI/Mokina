@@ -120,10 +120,24 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
   async function accept(value: unknown, sent: WebEvidenceDraft) {
     const saved = await validateWebCaptureReply(value, sent.request);
     if (!active.current || current.current?.request.operationId !== sent.request.operationId) return;
-    await persist({ ...sent, state: saved.workingFile === 'missing' ? 'unknown' : 'saved' });
-    if (!active.current) return;
+    const alreadyCaptured = result?.fileName === saved.fileName && result.versionId === saved.versionId
+      && result.contentDigest === saved.contentDigest && result.workingFile !== 'missing';
+    // The validated daemon result remains authoritative even if its local
+    // recovery marker cannot be mirrored. Keep the result and request identity
+    // visible, and reconcile by GET before another capture can be sent.
     setResult(saved); setCanRetry(saved.workingFile === 'missing'); setError('');
-    if (saved.workingFile !== 'missing') onCaptured(saved);
+    if (saved.workingFile !== 'missing' && !alreadyCaptured) onCaptured(saved);
+    await persistReply({ ...sent, state: saved.workingFile === 'missing' ? 'unknown' : 'saved' }, t('mokina.web.resultPersistFailed'));
+  }
+  async function persistReply(next: WebEvidenceDraft, failureMessage: string): Promise<boolean> {
+    try { await persist(next); return true; }
+    catch (cause) {
+      // A response has already arrived. Never reuse the pre-send "nothing was
+      // sent" copy, and retain CAS diagnostics without replacing the result.
+      if (active.current) setError(cause instanceof WebEvidenceDraftError && cause.reason === 'cas-conflict'
+        ? `${failureMessage} ${t('mokina.web.conflict')}` : failureMessage);
+      return false;
+    }
   }
   async function capture() {
     if (!current.current || !readable.current || busy || saveFailed) return;
@@ -142,8 +156,10 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
       if (!response.ok) {
         // Reader failures happen before publication. Storage/transport failures stay unknown.
         const code = String(body.error?.code ?? '');
-        if (['WEB_HTTP_ERROR', 'WEB_FORMAT_UNSUPPORTED', 'WEB_TOO_LARGE', 'WEB_ENCODING_UNSUPPORTED', 'WEB_EMPTY', 'WEB_READ_FAILED', 'WEB_READ_STOPPED', 'BAD_REQUEST'].includes(code)) await persist({ ...sent, state: 'draft' });
-        throw new Error(body.error?.message ?? t('mokina.web.unknown'));
+        const failure = new Error(body.error?.message ?? t('mokina.web.unknown'));
+        if (['WEB_HTTP_ERROR', 'WEB_FORMAT_UNSUPPORTED', 'WEB_TOO_LARGE', 'WEB_ENCODING_UNSUPPORTED', 'WEB_EMPTY', 'WEB_READ_FAILED', 'WEB_READ_STOPPED', 'BAD_REQUEST'].includes(code)
+          && !await persistReply({ ...sent, state: 'draft' }, `${t('mokina.web.failedReadPersistFailed')} ${failure.message}`)) return;
+        throw failure;
       }
       await accept(body.result, sent);
     } catch (cause) { if (active.current) setError(describeFailure(cause)); }
@@ -190,14 +206,14 @@ function EvidenceEditor({ projectId, workspaceContext, onCaptured, scope }: Prop
       }} /></label>
       <div className={styles.actions}>
         {draft.state !== 'unknown' ? <Button disabled={busy || saveFailed || !draft.request.url.trim()} onClick={() => void capture()}>{t(draft.state === 'saved' ? 'mokina.web.newRead' : 'mokina.web.capture')}</Button> : <>
-          <Button disabled={busy || saveFailed} onClick={() => void query()}>{t('mokina.web.query')}</Button>
+          <Button disabled={busy} onClick={() => void query()}>{t('mokina.web.query')}</Button>
           {canRetry && !saveFailed ? <Button disabled={busy} onClick={() => void capture()}>{t(result?.workingFile === 'missing' ? 'mokina.web.completeSave' : 'mokina.web.retry')}</Button> : null}
         <Button variant="ghost" disabled={busy || saveFailed} onClick={() => void prepareNewRead()}>{t('mokina.web.prepareNew')}</Button>
         </>}
         {busy && controller.current ? <Button variant="ghost" onClick={() => controller.current?.abort()}>{t('mokina.web.stop')}</Button> : null}
       </div>
       {draft.state === 'unknown' ? <p ref={statusRef} tabIndex={-1} role="status">{t(busy ? 'mokina.web.reading' : 'mokina.web.unknown')}</p> : null}
-      {draft.state === 'saved' && !result ? <Button variant="ghost" disabled={busy} onClick={() => void query()}>{t('mokina.web.query')}</Button> : null}
+      {draft.state === 'saved' && (!result || saveFailed) ? <Button variant="ghost" disabled={busy} onClick={() => void query()}>{t('mokina.web.query')}</Button> : null}
     </> : <Button disabled={busy} onClick={() => void load(true)}>{t('mokina.web.reloadDraft')}</Button>}
     {saveFailed ? <>
       <Button disabled={busy} onClick={() => void recoverInput()}>{t('mokina.web.recoverInput')}</Button>

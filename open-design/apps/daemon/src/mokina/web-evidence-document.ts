@@ -3,10 +3,14 @@ import { parseMokinaWebCaptureReceipt, type MokinaWebCaptureReceipt } from '@ope
 
 const prefix = '# Captured web text\n\n```json\n';
 const separator = '\n```\n\n';
+export class WebEvidenceTooLargeError extends Error {
+  constructor() { super('Web evidence exceeds 512 KiB'); }
+}
 export const webEvidenceDigest = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 export function renderWebEvidenceDocument(receipt: MokinaWebCaptureReceipt, text: string): string {
   const content = prefix + JSON.stringify(parseMokinaWebCaptureReceipt(receipt), null, 2) + separator + text;
-  if (webEvidenceDigest(text) !== receipt.textDigest || Buffer.byteLength(content) > 512 * 1024) throw new Error('Web evidence exceeds 512 KiB or has inconsistent text');
+  if (webEvidenceDigest(text) !== receipt.textDigest) throw new Error('Captured web text does not match the receipt digest');
+  if (Buffer.byteLength(content) > 512 * 1024) throw new WebEvidenceTooLargeError();
   return content;
 }
 export function readWebEvidenceDocument(content: string, expected: MokinaWebCaptureReceipt): { receipt: MokinaWebCaptureReceipt; text: string } {

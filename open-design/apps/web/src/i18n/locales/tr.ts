@@ -34,6 +34,8 @@ export const tr: Dict = {
   "mokina.web.static": "Sınırlı statik HTML metni; betikler, görüntüler ile dinamik veya kimlik doğrulamalı içerik dahil değildir.",
   "mokina.web.conflict": "Başka bir pencere bu taslağı değiştirdi. Devam etmeden önce girdinizi yedekleyin ve güncel taslağı okuyun.",
   "mokina.web.persistFailed": "Taslak kalıcı olarak kaydedilmedi. Girdinizi saklayın ve yeniden deneyin; daemon'a hiçbir şey gönderilmedi.",
+  "mokina.web.resultPersistFailed": "Kaynak yanıtının kimliği ve özeti doğrulandı, ancak isteğin kurtarma durumu kalıcı olarak kaydedilemedi. İsteği koruyun ve yeni bir okuma başlatmadan önce sonucunu yeniden okuyun.",
+  "mokina.web.failedReadPersistFailed": "Daemon bu okumayı reddetti, ancak kurtarma durumu kalıcı olarak kaydedilemedi. İsteği koruyun ve yeniden denemeden önce taslağı yeniden yükleyin.",
   "mokina.web.mismatch": "Kaydedilen yanıt bu istekle eşleşmiyor. Hiçbir şey kabul edilmedi; isteğiniz saklanır.",
   "mokina.web.stopped": "Okuma, sonuç gelmeden önce durduruldu. Sonuç bilinmiyor; yeniden denemeden önce aynı işlemi sorgulayın.",
   "mokina.web.queryTimeout": "Sorgu zaman aşımına uğradı. Kaydedilmiş bir sonuç yine var olabilir; sonucu tekrar okumayı deneyin.",

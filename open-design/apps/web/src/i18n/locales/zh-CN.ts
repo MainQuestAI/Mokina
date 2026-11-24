@@ -34,6 +34,8 @@ export const zhCN: Dict = {
   "mokina.web.static": "有限的静态 HTML 文本；未读取脚本、图片、动态或登录后内容。",
   "mokina.web.conflict": "其他窗口修改了本草稿。请先备份本窗口输入，再读取当前草稿。",
   "mokina.web.persistFailed": "草稿未能安全保存。请保留输入并重试；尚未向守护进程发送任何请求。",
+  "mokina.web.resultPersistFailed": "来源回复已通过身份与摘要校验，但本次请求的恢复状态未能安全保存。请保留请求并重新读取结果，再开始新读取。",
+  "mokina.web.failedReadPersistFailed": "守护进程已拒绝本次读取，但恢复状态未能安全保存。请保留请求，重新读取草稿后再重试。",
   "mokina.web.mismatch": "已保存的回复与本次请求不符。未采纳任何内容；本次请求已保留。",
   "mokina.web.stopped": "读取在结果返回前被停止。结果未知；请先查询同一次读取再决定重试。",
   "mokina.web.queryTimeout": "查询超时。已保存的结果可能仍在，请再次查询读取结果。",

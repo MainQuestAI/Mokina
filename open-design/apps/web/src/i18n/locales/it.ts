@@ -34,6 +34,8 @@ export const it: Dict = {
   "mokina.web.static": "Testo HTML statico limitato; script, immagini e contenuti dinamici o autenticati non sono inclusi.",
   "mokina.web.conflict": "Un'altra finestra ha modificato questa bozza. Salva il tuo input e leggi la bozza attuale prima di continuare.",
   "mokina.web.persistFailed": "La bozza non è stata salvata in modo durevole. Conserva il tuo input e riprova; nulla è stato inviato al daemon.",
+  "mokina.web.resultPersistFailed": "L’identità e l’impronta della risposta della fonte sono state verificate, ma lo stato di ripristino della richiesta non è stato salvato in modo permanente. Conserva la richiesta e rileggi il risultato prima di avviare un’altra lettura.",
+  "mokina.web.failedReadPersistFailed": "Il daemon ha rifiutato questa lettura, ma lo stato di ripristino non è stato salvato in modo permanente. Conserva la richiesta e ricarica la bozza prima di riprovare.",
   "mokina.web.mismatch": "La risposta salvata non corrisponde a questa richiesta. Nulla è stato accettato; la tua richiesta è conservata.",
   "mokina.web.stopped": "La lettura è stata interrotta prima dell'arrivo di un risultato. Il risultato è sconosciuto; interroga la stessa operazione prima di riprovare.",
   "mokina.web.queryTimeout": "L'interrogazione è scaduta. Potrebbe esistere comunque un risultato salvato; prova a leggere di nuovo il risultato.",
